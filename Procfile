@@ -1,1 +1,1 @@
-web: gunicorn military-dms.wsgi --log-file -
+web: gunicorn djangoherokuapp.wsgi --log-file -
