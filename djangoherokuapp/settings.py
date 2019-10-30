@@ -26,7 +26,6 @@ SECRET_KEY = '$90t+&c37ktz*-snw^(s2e07ui)lzm@c7s=!7@56x#lw2$$6ad'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'military-dms.herokuapp.com',
 ]
 
 
