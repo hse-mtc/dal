@@ -192,6 +192,9 @@ def subjects(request):
     }, status=HTTP_200_OK)
 
 
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
 def educational_materials(request):
     data = [
         {
