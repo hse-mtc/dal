@@ -14,3 +14,4 @@ class UserProfileInfo(models.Model):
 class Documents(models.Model):
     title = models.TextField()
     authors = models.ManyToManyField(UserProfileInfo)
+

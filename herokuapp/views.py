@@ -193,7 +193,45 @@ def subjects(request):
 
 
 def educational_materials(request):
+    data = [
+        {
+            'id': 1,
+            'title': 'Матеша',
+            'lectures': [
+                {
+                    'id': 1,
+                    'title': 'Справочник по матеше',
+                    'url': '',
+                    'edited': '2014-09-08T08:02:17-05:00',
+                    'created': '2014-09-08T08:02:17-05:00'
+                },
+                {
+                    'id': 2,
+                    'title': 'Справочник по матеше 2',
+                    'url': '',
+                    'edited': '2014-09-08T08:02:17-05:00',
+                    'created': '2014-09-08T08:02:17-05:00'
+                }
+            ],
+            'seminars': [
+                {
+                    'id': 1,
+                    'title': 'Семинар по матеше',
+                    'url': '',
+                    'edited': '2014-09-08T08:02:17-05:00',
+                    'created': '2014-09-08T08:02:17-05:00'
+                },
+                {
+                    'id': 2,
+                    'title': 'Семинар по матеше 2',
+                    'url': '',
+                    'edited': '2014-09-08T08:02:17-05:00',
+                    'created': '2014-09-08T08:02:17-05:00'
+                }
+            ]
+        }
+    ]
     return Response({
         'code': HTTP_200_OK * 100,
-        'data': {}
+        'data': data
     }, status=HTTP_200_OK)
