@@ -157,7 +157,24 @@ def nir(request):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def subjects(request):
-    data = ['ТП', 'ВСП', 'ТП(РХБЗ)', 'ТП(В-ИП)']
+    data = [
+        {
+            'id': 1,
+            'title': 'ТП'
+        },
+        {
+            'id': 2,
+            'title': 'ВСП'
+        },
+        {
+            'id': 3,
+            'title': 'ТП(РХБЗ)'
+        },
+        {
+            'id': 4,
+            'title': 'ТП(В-ИП)'
+        }
+    ]
     return Response({
         'code': HTTP_200_OK * 100,
         'data': data
