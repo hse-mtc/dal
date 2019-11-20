@@ -1,8 +1,7 @@
 from django.contrib.auth import authenticate
-from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
-from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.status import (
@@ -10,10 +9,7 @@ from rest_framework.status import (
     HTTP_404_NOT_FOUND,
     HTTP_200_OK
 )
-from django.template import loader
 from rest_framework.response import Response
-
-import psycopg2
 
 
 @csrf_exempt
@@ -40,17 +36,118 @@ def login(request):
 
 @csrf_exempt
 @api_view(["GET"])
-def MyToken(request):
-    tok = request.data.get("token")
-    print(tok)
-    context = {'token': tok}
+def info(request):
+    data = {
+        'roles': ['admin'],
+        'introduction': 'I am a administrator',
+        'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        'name': 'Пеляк В.С.'
+    }
 
-    conn = psycopg2.connect(dbname='military', user='marat', password='marat', host='0.0.0.0')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * ')
+    if request.user.username != 'sampleuser':
+        data['roles'] = ['editor']
+        data['name'] = 'editor'
 
-    return render(request, 'info/token.html', context)
-    #messages.info(request, request.to_string())
-    #return render_to_response('template_name', message='Save complete')
-    #data = {'sample_data': 123}
-    #return Response(data, status=HTTP_200_OK)
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': data
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def logout(request):
+    try:
+        request.user.auth_token.delete()
+    except (AttributeError, ObjectDoesNotExist):
+        pass
+
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': 'success'
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def documents(request):
+    data = {
+        'total': 3,
+        'items': [
+            {
+                'id': 1,
+                'title': 'Особенности организации и проведения военно-научной работы на военной кафедре',
+                'authors': ['Коргутов В.А.',
+                            'Пеляк В.С.'],
+                'annotation': 'В статье проанализированы требования руководящих нормативных документов, регламентирующих '
+                              'организацию военно-научной работы на военных кафедрах при государственных образовательных '
+                              'организациях высшего образования, и предложены инновационные подходы по вопросам '
+                              'интеграции военной науки и военного образования в интересах повышения качества подготовки '
+                              'студентов по действующим учебным программам.',
+                'keywords': [],
+                'status': 'enabled',  # (enabled, created, hidden)
+                'publish_at': "2014-09-08T08:02:17-05:00",
+                'publish_places': 'Журнал 1'
+            },
+            {
+                'id': 2,
+                'title': 'Расширение возможностей экологического мониторинга с помощью рамановской спектроскопии',
+                'authors': ['Пеляк В.С.', 'Кузин А.Ю.'],
+                'annotation': 'Одной из самых актуальных тем в наше время является экологический мониторинг окружающей '
+                              'среды. В данной работе предлагается концепция использования рамановской спектроскопии для '
+                              'своевременного контроля состояния и обстановки природной среды.',
+                'keywords': [],
+                'status': 'enabled',  # (enabled, created, hidden)
+                'publish_at': "2015-09-08T08:02:17-05:00",
+                'publish_places': 'Журнал 2'
+            },
+            {
+                'id': 3,
+                'title': 'Подход к определению рационального содержания военной подготовки офицеров запаса в военных '
+                         'учебных центрах при гражданских образовательных организациях',
+                'authors': ['Семенов П.Ю.',
+                            'Пеляк В.С.',
+                            'Репалов Д.Н.',
+                            'Никандров И.В.'],
+                'annotation': '',
+                'keywords': [],
+                'status': 'enabled',  # (enabled, created, hidden)
+                'publish_at': "2016-09-08T08:02:17-05:00",
+                'publish_places': 'Журнал 3'
+            }
+        ]}
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': data
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def nir(request):
+    data = {
+        'total': 1,
+        'items': [
+            {
+                'id': 1,
+                'title': 'Особенности организации и проведения военно-научной работы на военной кафедре',
+                'authors': ['Коргутов В.А.',
+                            'Пеляк В.С.'],
+                'annotation': 'В статье проанализированы требования руководящих нормативных документов, регламентирующих '
+                              'организацию военно-научной работы на военных кафедрах при государственных образовательных '
+                              'организациях высшего образования, и предложены инновационные подходы по вопросам '
+                              'интеграции военной науки и военного образования в интересах повышения качества подготовки '
+                              'студентов по действующим учебным программам.',
+                'keywords': [],
+                'status': 'enabled',  # (enabled, created, hidden)
+                'publish_at': "2014-09-08T08:02:17-05:00",
+                'publish_places': 'Журнал 1'
+            }
+        ]}
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': data
+    }, status=HTTP_200_OK)
