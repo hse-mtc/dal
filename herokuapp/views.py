@@ -151,3 +151,14 @@ def nir(request):
         'code': HTTP_200_OK * 100,
         'data': data
     }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def subjects(request):
+    data = ['ТП', 'ВСП', 'ТП(РХБЗ)', 'ТП(В-ИП)']
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': data
+    }, status=HTTP_200_OK)
