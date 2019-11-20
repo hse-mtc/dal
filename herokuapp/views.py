@@ -39,14 +39,9 @@ def login(request):
 def info(request):
     data = {
         'roles': ['admin'],
-        'introduction': 'I am a administrator',
-        'avatar': 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-        'name': 'Пеляк В.С.'
+        'avatar': request.user.userprofileinfo.profile_pic,
+        'name': request.user.userprofileinfo.name,
     }
-
-    if request.user.username != 'sampleuser':
-        data['roles'] = ['editor']
-        data['name'] = 'editor'
 
     return Response({
         'code': HTTP_200_OK * 100,
@@ -178,4 +173,11 @@ def subjects(request):
     return Response({
         'code': HTTP_200_OK * 100,
         'data': data
+    }, status=HTTP_200_OK)
+
+
+def educational_materials(request):
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': {}
     }, status=HTTP_200_OK)
