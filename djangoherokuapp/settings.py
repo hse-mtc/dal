@@ -26,7 +26,9 @@ SECRET_KEY = '$90t+&c37ktz*-snw^(s2e07ui)lzm@c7s=!7@56x#lw2$$6ad'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '127.0.0.1',
+    '192.168.0.108', 
+    '127.0.0.1', 
+    '0.0.0.0',
     'military-dms.herokuapp.com',
 ]
 
@@ -40,11 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'herokuapp',
+    'corsheaders',
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +57,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'djangoherokuapp.urls'
@@ -80,9 +89,18 @@ WSGI_APPLICATION = 'djangoherokuapp.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE':   'django.db.backends.postgresql_psycopg2',
+        'NAME':     'military_dms',
+        'USER':     'military_dms',
+        'PASSWORD': 'military_dms',
+        'HOST':     'localhost',
+        'PORT':     '',
+    },
+
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'NAME':    os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
 }
 
 
@@ -134,6 +152,38 @@ STATICFILES_DIRS = (
 
 #  Add configuration for static files storage using whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Rest configurations
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
+# Cors configurations
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:9528',
+]
+
+CORS_ORIGIN_REGEX_WHITELIST = [
+    'http://localhost:9528',
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 
 import dj_database_url 
