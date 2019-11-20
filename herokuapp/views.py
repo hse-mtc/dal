@@ -181,11 +181,11 @@ def subjects(request):
         {
             'id': 6,
             'title': 'Матеша'
-        }
+        },
         {
             'id': 7,
             'title': 'Русский',
-        }
+        },
         {
             'id': 8,
             'title': 'АКОС'
