@@ -173,6 +173,22 @@ def subjects(request):
         {
             'id': 4,
             'title': 'ТП(В-ИП)'
+        },
+        {
+            'id': 5,
+            'title': 'ОП'
+        },
+        {
+            'id': 6,
+            'title': 'Матеша'
+        }
+        {
+            'id': 7,
+            'title': 'Русский',
+        }
+        {
+            'id': 8,
+            'title': 'АКОС'
         }
     ]
     return Response({
