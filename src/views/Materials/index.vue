@@ -1,15 +1,15 @@
 <template>
   <div class="app-container">
-    <ScienceWorks />
+    <Materials />
   </div>
 </template>
 
 <script>
-import ScienceWorks from '../../components/ScienceWorks/ScienceWorks'
+import Materials from '../../components/Materials/Materials'
 
 export default {
   components: {
-    ScienceWorks
+    Materials
   },
   data() {
     return {

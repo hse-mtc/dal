@@ -1,12 +1,12 @@
 <template>
-  <div class="navbar">
+  <div class="mynavbar">
     <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
 
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper" style="font-size: 19px">
+        <div class="avatar-wrapper m-0" style="font-size: 19px">
 <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
           {{name}}
           <i class="el-icon-caret-bottom" />
@@ -39,7 +39,6 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar',
       'name'
     ])
   },
@@ -56,14 +55,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.navbar {
+.mynavbar {
   height: 50px;
   overflow: hidden;
   position: relative;
-  background: #fff;
+  /*background: #fff;*/
   box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  background-color: #2D3746;
+  color: #fff !important;
+
 
   .hamburger-container {
+    margin-left: 60px;
     line-height: 46px;
     height: 100%;
     float: left;
@@ -78,9 +81,13 @@ export default {
 
   .breadcrumb-container {
     float: left;
+    color: #fff;
+    color: #fff !important;
+
   }
 
   .right-menu {
+    margin-right: 120px;
     float: right;
     height: 100%;
     line-height: 50px;
@@ -94,7 +101,7 @@ export default {
       padding: 0 8px;
       height: 100%;
       font-size: 18px;
-      color: #5a5e66;
+      color: #fff !important;
       vertical-align: text-bottom;
 
       &.hover-effect {
@@ -113,6 +120,7 @@ export default {
       .avatar-wrapper {
         margin-top: 5px;
         position: relative;
+        color: #fff !important;
 
         .user-avatar {
           cursor: pointer;

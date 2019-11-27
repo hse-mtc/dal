@@ -1,0 +1,30 @@
+.count {
+  font-size: 18px;
+}
+
+.cool-hr {
+  hr {
+    border: 0.5px solid #D9D9DE;
+    width: 90%;
+  }
+}
+
+.document-card {
+
+  &-title {
+    font-size: 22px;
+    color: #0050B2;
+    margin-bottom: 7px;
+  }
+
+  &-authors {
+    color: #333333;
+    font-size: 18px;
+  }
+
+  &-annotation {
+    margin-top: 7px;
+    color: #333333;
+    font-size: 18px;
+  }
+}

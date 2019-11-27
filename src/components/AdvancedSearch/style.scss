@@ -1,0 +1,21 @@
+.my-advanced-search {
+  display: flex;
+  justify-content: flex-end;
+  &-text {
+    color: #0050B2;
+    font-size: 18px;
+  }
+}
+
+.filters {
+  color: #76767A;
+  font-size: 18px;
+  background-color: #F5F5F7;
+  &-title {
+    margin-bottom: 5px;
+  }
+
+  &-select {
+    width: 100%;
+  }
+}

@@ -60,20 +60,13 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/msw/science-articles',
     name: 'Military scientific work',
-    meta: { title: 'Военно-научные работы', icon: '' },
     children: [
       {
         path: 'science-articles',
         name: 'Science Articles',
         component: () => import('@/views/ScienceArticles/index'),
-        meta: { title: 'Научные статьи', icon: '' }
+        meta: { title: 'Военно-научные работы', icon: '' },
       },
-      {
-        path: 'research-work',
-        name: 'Research hWork',
-        component: () => import('@/views/ResearchWork/index'),
-        meta: { title: 'Научно-исследовательские работы', icon: '' }
-      }
     ]
   },
   //
@@ -154,7 +147,7 @@ export const constantRoutes = [
     children: [{
       path: 'materials',
       name: 'Teaching Materials',
-      component: () => import('@/views/nested/menu1/index'),
+      component: () => import('@/views/Materials/index'),
       meta: { title: 'Учебно-методические материалы', icon: '' }
     }]
   },

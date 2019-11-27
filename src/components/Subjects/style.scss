@@ -1,0 +1,25 @@
+.subjects {
+  width: 100%;
+  background-color: #F5F5F7;
+  //padding: 20px 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+
+  &-title {
+    font-size: 20px;
+    padding-left: 10px;
+  }
+
+  &-content {
+    font-size: 20px;
+    padding-left: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    cursor: pointer;
+  }
+  .active {
+    border-left: 6px solid #6074FB;
+    padding-left: 24px;
+    background-color: white !important;
+  }
+}
