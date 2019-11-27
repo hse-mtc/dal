@@ -66,7 +66,7 @@ export default {
 
 
   .hamburger-container {
-    margin-left: 60px;
+    margin-left: 20px;
     line-height: 46px;
     height: 100%;
     float: left;
