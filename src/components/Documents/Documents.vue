@@ -10,43 +10,47 @@
       <div v-else-if="count > 0">
         {{ count }} документ
       </div>
-      <div class="cool-hr d-flex align-items-center">
-        <hr class="mr-3">
-        2019
-        <hr class="ml-3">
+
+      <div v-for="year in documents" :key="year.year">
+        <div class="cool-hr d-flex align-items-center">
+          <hr class="mr-3">
+          {{year.year}}
+          <hr class="ml-3">
+        </div>
+        <el-row v-for="item in year" :key="item.id" class="document-card mt-3 mb-4">
+          <el-col :span="2" style="font-size: 22px" class="mt-4">
+            № {{ ++index }}
+          </el-col>
+          <el-col :span="21">
+            <div class="d-flex">
+              <div>
+                {{ item.publish_at | moment }}
+              </div>
+              <div class="ml-5" style="color: #76767A">
+                {{ item.publish_places }}
+              </div>
+            </div>
+            <div class="document-card-title">{{ item.title }}</div>
+            <div v-for="(author, index) in item.authors" :key="index" class="document-card-authors">{{ author }}</div>
+            <div class="document-card-annotation">{{ item.annotation }}</div>
+          </el-col>
+          <el-col :span="1" class="d-flex justify-content-end mt-4" >
+            <el-popover
+                    placement="bottom"
+                    trigger="click"
+            >
+              <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
+                <div style="cursor:pointer;">Скачать</div>
+                <div style="cursor:pointer;">Удалить</div>
+              </div>
+              <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
+                <img src="../../assets/scienceWorks/popover.svg" alt="">
+              </div>
+            </el-popover>
+          </el-col>
+        </el-row>
       </div>
-      <el-row v-for="(item, index) in documents" :key="item.id" class="document-card mt-3 mb-4">
-        <el-col :span="2" style="font-size: 22px" class="mt-4">
-          № {{ ++index }}
-        </el-col>
-        <el-col :span="21">
-          <div class="d-flex">
-            <div>
-              {{ item.publish_at | moment }}
-            </div>
-            <div class="ml-5" style="color: #76767A">
-              {{ item.publish_places }}
-            </div>
-          </div>
-          <div class="document-card-title">{{ item.title }}</div>
-          <div v-for="(author, index) in item.authors" :key="index" class="document-card-authors">{{ author }}</div>
-          <div class="document-card-annotation">{{ item.annotation }}</div>
-        </el-col>
-        <el-col :span="1" class="d-flex justify-content-end mt-4" >
-          <el-popover
-            placement="bottom"
-            trigger="click"
-          >
-            <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
-              <div style="cursor:pointer;">Скачать</div>
-              <div style="cursor:pointer;">Удалить</div>
-            </div>
-            <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
-              <img src="../../assets/scienceWorks/popover.svg" alt="">
-            </div>
-          </el-popover>
-        </el-col>
-      </el-row>
+
     </div>
     <div v-else class="my-document">
       Документы не найдены
@@ -71,7 +75,8 @@ export default {
   data() {
     return {
       documents: [],
-      count: undefined
+      count: undefined,
+      index: 0
     }
   },
   watch: {

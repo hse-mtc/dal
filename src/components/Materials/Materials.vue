@@ -6,12 +6,9 @@
       </el-col>
     </el-row>
     <el-row class="search ">
-      <el-col :span="5">
-        <Subjects />
-      </el-col>
-      <el-col :span="18" :offset="1">
+      <el-col :span="23">
         <Search placeholder="Введите название темы или документа" />
-        <SubjectFiles />
+        <Subjects />
       </el-col>
     </el-row>
   </el-col>
