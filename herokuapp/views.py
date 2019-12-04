@@ -149,9 +149,9 @@ def documents(request):
     #         }
     #     ]}
 
-    data['items'].sort(
-        key=lambda item: item.publish_at
-    )
+    # data['items'].sort(
+    #     key=lambda item: item.publish_at
+    # )
 
     return Response({
         'code': HTTP_200_OK * 100,
