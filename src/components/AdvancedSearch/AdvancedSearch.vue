@@ -10,7 +10,7 @@
       <el-row class="">
         <el-col :span="10" :offset="1">
           <div class="filters-title pl-1">Автор</div>
-          <el-select v-model="author" placeholder="Все авторы" class="filters-select">
+          <el-select v-model="author" placeholder="Все авторы" class="filters-select" @change="selectAuthors()">
             <el-option
               v-for="item in authors"
               :key="item.value"
@@ -21,7 +21,7 @@
         </el-col>
         <el-col :span="10" :offset="1">
           <div class="filters-title pl-1">Размещение</div>
-          <el-select v-model="placing" placeholder="Все авторы" class="filters-select">
+          <el-select v-model="placing" placeholder="Все размещения" class="filters-select">
             <el-option
               v-for="item in placings"
               :key="item.value"
@@ -102,7 +102,13 @@ export default {
         filters.style.display = 'none'
         array.style.transform = 'rotate(180deg)'
       }
-    }
+    },
+    // selectAuthors() {
+    //   console.log(this.$route)
+    //   this.$router.replace({
+    //     params: {author: this.author}
+    //           })
+    // }
   }
 }
 

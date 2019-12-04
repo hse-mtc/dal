@@ -4,8 +4,11 @@
       <div v-if="count > 5" class="count">
         {{ count }} документов
       </div>
-      <div>
+      <div v-else-if="count > 1">
         {{ count }} документа
+      </div>
+      <div v-else-if="count > 0">
+        {{ count }} документ
       </div>
       <div class="cool-hr d-flex align-items-center">
         <hr class="mr-3">
@@ -101,6 +104,8 @@ export default {
           console.log('Данные по документам не указаны')
         })
       }
+
+
     },
     moment: function() {
       return moment()
