@@ -5,12 +5,17 @@
     color: #0050B2;
     font-size: 18px;
   }
+
+  &-arrow {
+    transform: rotate(180deg);
+  }
 }
 
 .filters {
   color: #76767A;
   font-size: 18px;
   background-color: #F5F5F7;
+  display: none;
   &-title {
     margin-bottom: 5px;
   }

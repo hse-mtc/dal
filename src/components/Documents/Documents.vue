@@ -86,8 +86,11 @@ export default {
   },
   methods: {
     fetchData(target) {
+      let author = this.$route.query.author ?  this.$route.query.author :  null
+      let place = this.$route.query.place ?  this.$route.query.place :  null
+      console.log(author, place)
       if (target === 'scienceArticles') {
-        getDocuments().then(response => {
+        getDocuments(author, place).then(response => {
           console.log(response.data)
           this.documents = response.data.items
           this.count = response.data.total
@@ -96,7 +99,7 @@ export default {
         })
       }
       if (target === 'scienceWorks') {
-        nir().then(response => {
+        nir(author, place).then(response => {
           console.log(response.data)
           this.documents = response.data.items
           this.count = response.data.total
@@ -110,7 +113,7 @@ export default {
     moment: function() {
       return moment()
     }
-  }
+  },
 }
 
 </script>

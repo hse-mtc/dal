@@ -6,11 +6,11 @@
         <img src="../../assets/scienceWorks/dropdown.svg" alt="" class="my-advanced-search-arrow ml-2">
       </div>
     </div>
-    <div class="filters mt-3 pt-3 pb-3">
+    <div class="filters mt-3 pt-3 pb-3" style="display: none">
       <el-row class="">
         <el-col :span="10" :offset="1">
           <div class="filters-title pl-1">Автор</div>
-          <el-select v-model="author" placeholder="Все авторы" class="filters-select" @change="selectAuthors()">
+          <el-select clearable v-model="author" placeholder="Все авторы" class="filters-select" @change="changeAuthors">
             <el-option
               v-for="item in authors"
               :key="item.value"
@@ -21,7 +21,7 @@
         </el-col>
         <el-col :span="10" :offset="1">
           <div class="filters-title pl-1">Размещение</div>
-          <el-select v-model="placing" placeholder="Все размещения" class="filters-select">
+          <el-select clearable v-model="placing" placeholder="Все размещения" class="filters-select" @change="changePlacing">
             <el-option
               v-for="item in placings"
               :key="item.value"
@@ -49,44 +49,17 @@
 </template>
 
 <script>
+  import {getAuthors} from "@/api/authors"
+  import {getPublishPlaces} from "@/api/published_places"
+
 export default {
   name: '',
   components: {},
   data() {
     return {
-      authors: [{
-        value: 'Option1',
-        label: 'Option1'
-      }, {
-        value: 'Option2',
-        label: 'Option2'
-      }, {
-        value: 'Option3',
-        label: 'Option3'
-      }, {
-        value: 'Option4',
-        label: 'Option4'
-      }, {
-        value: 'Option5',
-        label: 'Option5'
-      }],
+      authors: [],
       author: '',
-      placings: [{
-        value: 'Option1',
-        label: 'Option1'
-      }, {
-        value: 'Option2',
-        label: 'Option2'
-      }, {
-        value: 'Option3',
-        label: 'Option3'
-      }, {
-        value: 'Option4',
-        label: 'Option4'
-      }, {
-        value: 'Option5',
-        label: 'Option5'
-      }],
+      placings: [],
       placing: '',
       valueDate: ''
     }
@@ -103,10 +76,67 @@ export default {
         array.style.transform = 'rotate(180deg)'
       }
     },
-    // selectAuthors() {
-    //   console.log(this.$route)
-    //   this.$route.query.author = this.author
-    // }
+    changeAuthors() {
+      if (this.$route.query.place) { // если указано размещение и автор
+        this.$router.push({
+          query:{
+            section: this.$route.query.section,
+            author: this.author,
+            place: this.$route.query.place
+          }
+        })
+      } else if (this.author) {
+        this.$router.push({
+          query:{
+            section: this.$route.query.section,
+            author: this.author
+          }
+        })
+      } else {
+        this.$router.push({ //если ничего не указано
+          query:{
+            section: this.$route.query.section,
+          }
+        })
+      }
+    },
+    changePlacing() {
+      if(this.$route.query.author) { //если указан автор и размещение
+        this.$router.push({
+          query:{
+            author: this.$route.query.author,
+            section: this.$route.query.section,
+            place: this.placing
+          }
+        })
+      } else if(this.placing) { //если указано только размещение
+        this.$router.push({
+          query:{
+            section: this.$route.query.section,
+            place: this.placing
+          }
+        })
+      } else {
+        this.$router.push({ //если ничего не указано
+          query:{
+            section: this.$route.query.section,
+          }
+        })
+      }
+    }
+  },
+  mounted() {
+    getAuthors().then(response => {
+      this.authors = response.data
+    }).catch(() => {
+      console.log('Данные по авторам не указаны')
+    })
+
+    getPublishPlaces().then(response => {
+      this.placings = response.data
+    }).catch(() => {
+      console.log('Данные по размещениям не указаны')
+    })
   }
 }
 

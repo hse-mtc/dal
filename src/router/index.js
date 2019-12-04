@@ -62,7 +62,7 @@ export const constantRoutes = [
     name: 'Military scientific work',
     children: [
       {
-        path: 'science-articles',
+        path: '/msw/science-articles',
         name: 'Science Articles',
         component: () => import('@/views/ScienceArticles/index'),
         meta: { title: 'Военно-научные работы', icon: '' },

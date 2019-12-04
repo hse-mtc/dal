@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getAuthors(params) {
+export function getPublishPlaces(params) {
   return request({
-    url: '/authors',
+    url: '/published_places',
     method: 'get',
     params
   })

@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getDocuments(params) {
+export function getAuthors(params) {
   return request({
-    url: '/documents',
+    url: '/authors',
     method: 'get',
     params
   })
