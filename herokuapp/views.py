@@ -11,7 +11,7 @@ from rest_framework.status import (
 )
 from rest_framework.response import Response
 
-from herokuapp.models import Subjects, Documents
+from herokuapp.models import Subjects, Documents, PublishPlaces, UserProfileInfo
 
 
 @csrf_exempt
@@ -236,4 +236,24 @@ def educational_materials(request):  # TODO: Добавить параметр �
     return Response({
         'code': HTTP_200_OK * 100,
         'data': data
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def authors(request):
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': list(UserProfileInfo.objects.values_list('name', flat=True))
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def published_places(request):
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': list(PublishPlaces.objects.values_list('place', flat=True))
     }, status=HTTP_200_OK)
