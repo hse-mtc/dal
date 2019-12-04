@@ -87,11 +87,18 @@ def documents(request):
 
     data = {
         'items': list(
-            map(lambda x: {'id': x.id, 'title': x.title, 'authors': list(x.authors.values_list('name', flat=True)),
-                           'annotation': x.annotation, 'keywords': list(x.keywords.names()),
-                           'status': x.status.status, 'publish_at': x.published_at.isoformat(),
-                           'publish_places': x.published_places.place},
-                list(db_request))
+            map(lambda item: {
+                    'id': item.id, 
+                    'title': item.title, 
+                    'authors': list(item.authors.values_list('name', flat=True)),
+                    'annotation': item.annotation,
+                    'keywords': list(item.keywords.names()),
+                    'status': item.status.status,
+                    'publish_at': item.published_at.isoformat(),
+                    'publish_places': item.published_places.place
+                },
+                list(db_request)
+            )
         )
     }
     data['total'] = len(data['items'])
@@ -141,6 +148,11 @@ def documents(request):
     #             'publish_places': 'Журнал 3'
     #         }
     #     ]}
+
+    data['items'].sort(
+        key=lambda item: item.publish_at
+    )
+
     return Response({
         'code': HTTP_200_OK * 100,
         'data': data
@@ -263,5 +275,13 @@ def authors(request):
 def published_places(request):
     return Response({
         'code': HTTP_200_OK * 100,
-        'data': list(map(lambda x: {'label': x, 'value': x}, PublishPlaces.objects.values_list('place', flat=True)))
+        'data': list(
+            map(lambda x: 
+                {
+                    'label': x, 
+                    'value': x,
+                }, 
+                PublishPlaces.objects.values_list('place', flat=True)
+            )
+        )
     }, status=HTTP_200_OK)
