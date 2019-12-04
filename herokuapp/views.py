@@ -245,7 +245,15 @@ def educational_materials(request):  # TODO: Добавить параметр �
 def authors(request):
     return Response({
         'code': HTTP_200_OK * 100,
-        'data': list(map(lambda x: {'label': x, 'value': x}, UserProfileInfo.objects.values_list('name', flat=True)))
+        'data': list(
+            map(lambda x:
+                {
+                    'label': x,
+                    'value': x
+                }, 
+                UserProfileInfo.objects.values_list('name', flat=True)
+            )
+        )
     }, status=HTTP_200_OK)
 
 
