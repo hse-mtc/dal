@@ -105,9 +105,7 @@ export default {
     },
     // selectAuthors() {
     //   console.log(this.$route)
-    //   this.$router.replace({
-    //     params: {author: this.author}
-    //           })
+    //   this.$route.query.author = this.author
     // }
   }
 }
