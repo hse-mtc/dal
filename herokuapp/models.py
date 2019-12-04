@@ -61,3 +61,12 @@ class Subjects(models.Model):
     class Meta:
         verbose_name = 'Subject'
         verbose_name_plural = 'Subjects'
+
+
+class Researches(Documents):
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Research'
+        verbose_name_plural = 'Researches'

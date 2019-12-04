@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models.functions import ExtractYear
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -11,7 +12,7 @@ from rest_framework.status import (
 )
 from rest_framework.response import Response
 
-from herokuapp.models import Subjects, Documents, PublishPlaces, UserProfileInfo
+from herokuapp.models import Subjects, Documents, PublishPlaces, UserProfileInfo, Researches
 
 
 @csrf_exempt
@@ -66,16 +67,35 @@ def logout(request):
     }, status=HTTP_200_OK)
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def documents(request):
+def extract_documents_from_queryset(documents_queryset):
+    return list(
+        map(lambda item: {
+            'id': item.id,
+            'title': item.title,
+            'authors': list(item.authors.values_list('name', flat=True)),
+            'annotation': item.annotation,
+            'keywords': list(item.keywords.names()),
+            'status': item.status.status,
+            'publish_at': item.published_at.isoformat(),
+            'publish_places': item.published_places.place
+        },
+            list(documents_queryset)
+            )
+    )
+
+
+def get_documents_by_type(request, model_name):
     authors = request.query_params.get('authors')
     start_time = request.query_params.get('start_time')
     end_time = request.query_params.get('end_time')
     publish_places = request.query_params.get('publish_places')
+    db_request = None
 
-    db_request = Documents.objects.filter()
+    if model_name == 'documents':
+        db_request = Documents.objects.filter()
+    elif model_name == 'nir':
+        db_request = Researches.objects.filter()
+
     if authors is not None:
         db_request = db_request.filter(authors__name__in=authors.split(','))
     if start_time is not None:
@@ -87,22 +107,17 @@ def documents(request):
 
     db_request = db_request.order_by('-published_at')
 
+    t_dict = {}
     data = {
-        'items': list(
-            map(lambda item: {
-                'id': item.id,
-                'title': item.title,
-                'authors': list(item.authors.values_list('name', flat=True)),
-                'annotation': item.annotation,
-                'keywords': list(item.keywords.names()),
-                'status': item.status.status,
-                'publish_at': item.published_at.isoformat(),
-                'publish_places': item.published_places.place
-            },
-                list(db_request)
-                )
-        )
+        'items': []
     }
+
+    for year in db_request.annotate(year=ExtractYear('published_at')).values_list('year', flat=True).distinct():
+        t_dict[year] = extract_documents_from_queryset(db_request.filter(published_at__year=year))
+
+    for key, value in t_dict.items():
+        data['items'].append({'year': key, 'items': value})
+
     data['total'] = len(data['items'])
 
     return Response({
@@ -114,30 +129,15 @@ def documents(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
+def documents(request):
+    return get_documents_by_type(request, 'documents')
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
 def nir(request):
-    data = {
-        'total': 1,
-        'items': [
-            {
-                'id': 1,
-                'title': 'Особенности организации и проведения военно-научной работы на военной кафедре',
-                'authors': ['Коргутов В.А.',
-                            'Пеляк В.С.'],
-                'annotation': 'В статье проанализированы требования руководящих нормативных документов, регламентирующих '
-                              'организацию военно-научной работы на военных кафедрах при государственных образовательных '
-                              'организациях высшего образования, и предложены инновационные подходы по вопросам '
-                              'интеграции военной науки и военного образования в интересах повышения качества подготовки '
-                              'студентов по действующим учебным программам.',
-                'keywords': [],
-                'status': 'enabled',  # (enabled, created, hidden)
-                'publish_at': "2014-09-08T08:02:17-05:00",
-                'publish_places': 'Журнал 1'
-            }
-        ]}
-    return Response({
-        'code': HTTP_200_OK * 100,
-        'data': data
-    }, status=HTTP_200_OK)
+    return get_documents_by_type(request, 'nir')
 
 
 @csrf_exempt

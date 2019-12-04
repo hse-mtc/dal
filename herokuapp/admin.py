@@ -1,5 +1,5 @@
 from django.contrib import admin
-from herokuapp.models import UserProfileInfo, Documents, Status, Subjects, PublishPlaces
+from herokuapp.models import UserProfileInfo, Documents, Status, Subjects, PublishPlaces, Researches
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
@@ -19,4 +19,5 @@ admin.site.register(Documents)
 admin.site.register(Status)
 admin.site.register(Subjects)
 admin.site.register(PublishPlaces)
+admin.site.register(Researches)
 # Register your models here.
