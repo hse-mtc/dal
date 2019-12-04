@@ -85,7 +85,7 @@ def documents(request):
     if publish_places is not None:
         db_request = db_request.filter(published_places__place__in=publish_places.split(','))
 
-    db_request.order_by('-published_at')
+    db_request = db_request.order_by('-published_at')
 
     data = {
         'items': list(
