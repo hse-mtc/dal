@@ -11,6 +11,8 @@ from rest_framework.status import (
 )
 from rest_framework.response import Response
 
+from herokuapp.models import Subjects, Documents
+
 
 @csrf_exempt
 @api_view(["POST"])
@@ -68,51 +70,70 @@ def logout(request):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def documents(request):
+    authors = request.query_params.get('authors')
+    start_time = request.query_params.get('start_time')
+    end_time = request.query_params.get('end_time')
+    publish_places = request.query_params.get('publish_places')
+
     data = {
-        'total': 3,
-        'items': [
-            {
-                'id': 1,
-                'title': 'Особенности организации и проведения военно-научной работы на военной кафедре.',
-                'authors': ['Коргутов В.А.',
-                            'Пеляк В.С.'],
-                'annotation': 'В статье проанализированы требования руководящих нормативных документов, регламентирующих '
-                              'организацию военно-научной работы на военных кафедрах при государственных образовательных '
-                              'организациях высшего образования, и предложены инновационные подходы по вопросам '
-                              'интеграции военной науки и военного образования в интересах повышения качества подготовки '
-                              'студентов по действующим учебным программам.',
-                'keywords': [],
-                'status': 'enabled',  # (enabled, created, hidden)
-                'publish_at': "2014-09-08T08:02:17-05:00",
-                'publish_places': 'Журнал 1'
-            },
-            {
-                'id': 2,
-                'title': 'Расширение возможностей экологического мониторинга с помощью рамановской спектроскопии',
-                'authors': ['Пеляк В.С.', 'Кузин А.Ю.'],
-                'annotation': 'Одной из самых актуальных тем в наше время является экологический мониторинг окружающей '
-                              'среды. В данной работе предлагается концепция использования рамановской спектроскопии для '
-                              'своевременного контроля состояния и обстановки природной среды.',
-                'keywords': [],
-                'status': 'enabled',  # (enabled, created, hidden)
-                'publish_at': "2015-09-08T08:02:17-05:00",
-                'publish_places': 'Журнал 2'
-            },
-            {
-                'id': 3,
-                'title': 'Подход к определению рационального содержания военной подготовки офицеров запаса в военных '
-                         'учебных центрах при гражданских образовательных организациях',
-                'authors': ['Семенов П.Ю.',
-                            'Пеляк В.С.',
-                            'Репалов Д.Н.',
-                            'Никандров И.В.'],
-                'annotation': '',
-                'keywords': [],
-                'status': 'enabled',  # (enabled, created, hidden)
-                'publish_at': "2016-09-08T08:02:17-05:00",
-                'publish_places': 'Журнал 3'
-            }
-        ]}
+        'items': list(
+            map(lambda x: {'id': x.id, 'title': x.title, 'authors': list(x.authors.values_list('name', flat=True)),
+                           'annotation': x.annotation, 'keywords': list(x.keywords.names()),
+                           'status': x.status.status, 'publish_at': x.published_at.isoformat(),
+                           'publish_places': x.published_places.place},
+                list(Documents.objects.filter(authors__name__in=authors.split(','),
+                                              published_at__gte=start_time,
+                                              published_at__lte=end_time,
+                                              published_places__place__in=publish_places.split(','))))
+        )
+    }
+    data['total'] = len(data['items'])
+
+    # data = {
+    #     'total': 3,
+    #     'items': [
+    #         {
+    #             'id': 1,
+    #             'title': 'Особенности организации и проведения военно-научной работы на военной кафедре.',
+    #             'authors': ['Коргутов В.А.',
+    #                         'Пеляк В.С.'],
+    #             'annotation': 'В статье проанализированы требования руководящих нормативных документов, регламентирующих '
+    #                           'организацию военно-научной работы на военных кафедрах при государственных образовательных '
+    #                           'организациях высшего образования, и предложены инновационные подходы по вопросам '
+    #                           'интеграции военной науки и военного образования в интересах повышения качества подготовки '
+    #                           'студентов по действующим учебным программам.',
+    #             'keywords': [],
+    #             'status': 'enabled',  # (enabled, created, hidden)
+    #             'publish_at': "2014-09-08T08:02:17-05:00",
+    #             'publish_places': 'Журнал 1'
+    #         },
+    #         {
+    #             'id': 2,
+    #             'title': 'Расширение возможностей экологического мониторинга с помощью рамановской спектроскопии',
+    #             'authors': ['Пеляк В.С.', 'Кузин А.Ю.'],
+    #             'annotation': 'Одной из самых актуальных тем в наше время является экологический мониторинг окружающей '
+    #                           'среды. В данной работе предлагается концепция использования рамановской спектроскопии для '
+    #                           'своевременного контроля состояния и обстановки природной среды.',
+    #             'keywords': [],
+    #             'status': 'enabled',  # (enabled, created, hidden)
+    #             'publish_at': "2015-09-08T08:02:17-05:00",
+    #             'publish_places': 'Журнал 2'
+    #         },
+    #         {
+    #             'id': 3,
+    #             'title': 'Подход к определению рационального содержания военной подготовки офицеров запаса в военных '
+    #                      'учебных центрах при гражданских образовательных организациях',
+    #             'authors': ['Семенов П.Ю.',
+    #                         'Пеляк В.С.',
+    #                         'Репалов Д.Н.',
+    #                         'Никандров И.В.'],
+    #             'annotation': '',
+    #             'keywords': [],
+    #             'status': 'enabled',  # (enabled, created, hidden)
+    #             'publish_at': "2016-09-08T08:02:17-05:00",
+    #             'publish_places': 'Журнал 3'
+    #         }
+    #     ]}
     return Response({
         'code': HTTP_200_OK * 100,
         'data': data
@@ -152,40 +173,7 @@ def nir(request):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def subjects(request):
-    data = [
-        {
-            'id': 1,
-            'title': 'ТП'
-        },
-        {
-            'id': 2,
-            'title': 'ВСП'
-        },
-        {
-            'id': 3,
-            'title': 'ТП(РХБЗ)'
-        },
-        {
-            'id': 4,
-            'title': 'ТП(В-ИП)'
-        },
-        {
-            'id': 5,
-            'title': 'ОП'
-        },
-        {
-            'id': 6,
-            'title': 'Матеша'
-        },
-        {
-            'id': 7,
-            'title': 'Русский',
-        },
-        {
-            'id': 8,
-            'title': 'АКОС'
-        }
-    ]
+    data = list(map(lambda x: {'id': x.id, 'title': x.title}, list(Subjects.objects.all())))
     return Response({
         'code': HTTP_200_OK * 100,
         'data': data
@@ -195,11 +183,15 @@ def subjects(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def educational_materials(request):
+def educational_materials(request):  # TODO: Добавить параметр айди предмета
     data = [
         {
             'id': 1,
             'title': 'Матеша',
+            'subject': {
+                'id': 1,
+                'title': 'Subject'
+            },
             'lectures': [
                 {
                     'id': 1,

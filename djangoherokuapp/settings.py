@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'taggit',
     'herokuapp',
     'corsheaders',
     'rest_framework',
@@ -155,6 +155,7 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+TAGGIT_CASE_INSENSITIVE = True
 
 # Setup PostgreSQL database from heroku
 
