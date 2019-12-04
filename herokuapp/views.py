@@ -11,7 +11,7 @@ from rest_framework.status import (
 )
 from rest_framework.response import Response
 
-from herokuapp.models import Subjects, Documents
+from herokuapp.models import Subjects, Documents, PublishPlaces, UserProfileInfo
 
 
 @csrf_exempt
@@ -75,16 +75,23 @@ def documents(request):
     end_time = request.query_params.get('end_time')
     publish_places = request.query_params.get('publish_places')
 
+    db_request = Documents.objects.filter()
+    if authors is not None:
+        db_request = db_request.filter(authors__name__in=authors.split(','))
+    if start_time is not None:
+        db_request = db_request.filter(published_at__gte=start_time)
+    if end_time is not None:
+        db_request = db_request.filter(published_at__lte=end_time)
+    if publish_places is not None:
+        db_request = db_request.filter(published_places__place__in=publish_places.split(','))
+
     data = {
         'items': list(
             map(lambda x: {'id': x.id, 'title': x.title, 'authors': list(x.authors.values_list('name', flat=True)),
                            'annotation': x.annotation, 'keywords': list(x.keywords.names()),
                            'status': x.status.status, 'publish_at': x.published_at.isoformat(),
                            'publish_places': x.published_places.place},
-                list(Documents.objects.filter(authors__name__in=authors.split(','),
-                                              published_at__gte=start_time,
-                                              published_at__lte=end_time,
-                                              published_places__place__in=publish_places.split(','))))
+                list(db_request))
         )
     }
     data['total'] = len(data['items'])
@@ -157,7 +164,7 @@ def nir(request):
                               'организациях высшего образования, и предложены инновационные подходы по вопросам '
                               'интеграции военной науки и военного образования в интересах повышения качества подготовки '
                               'студентов по действующим учебным программам.',
-                'keywords': [],
+                'keywords': ["нормативные документы", "учебные программы", "качество подготовки"],
                 'status': 'enabled',  # (enabled, created, hidden)
                 'publish_at': "2014-09-08T08:02:17-05:00",
                 'publish_places': 'Журнал 1'
@@ -229,4 +236,33 @@ def educational_materials(request):  # TODO: Добавить параметр �
     return Response({
         'code': HTTP_200_OK * 100,
         'data': data
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def authors(request):
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': list(map(lambda x: {'label': x, 'value': x}, UserProfileInfo.objects.values_list('name', flat=True)))
+    }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def published_places(request):
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': list(map(lambda x: {'label': x, 'value': x}, PublishPlaces.objects.values_list('place', flat=True)))
+    }, status=HTTP_200_OK)
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def keywords_search(request):
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': list(map(lambda x: {'label': x, 'value': x}, PublishPlaces.objects.values_list('place', flat=True)))
     }, status=HTTP_200_OK)

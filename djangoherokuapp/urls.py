@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from herokuapp.views import login, info, logout, documents, nir, subjects, educational_materials
+from herokuapp.views import authors, login, info, logout, documents, nir, subjects, educational_materials
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/nir', nir),
     path('api/subjects', subjects),
     path('api/educational_materials', educational_materials),
+    path('api/authors', authors)
 ]
