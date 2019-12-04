@@ -83,16 +83,9 @@ WSGI_APPLICATION = 'djangoherokuapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'military',
-        'USER': 'marat',
-        'PASSWORD': 'marat',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
+
+DATABASES = {}
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -166,4 +159,4 @@ TAGGIT_CASE_INSENSITIVE = True
 
 # Setup PostgreSQL database from heroku
 
-# DATABASES['default'] = dj_database_url.config(conn_max_age=500)
+DATABASES['default'] = dj_database_url.config(conn_max_age=500)

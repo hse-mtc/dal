@@ -214,15 +214,3 @@ def published_places(request):
         'code': HTTP_200_OK * 100,
         'data': list(map(lambda x: {'label': x, 'value': x}, PublishPlaces.objects.values_list('place', flat=True)))
     }, status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def keywords_search(request):
-    keywords = Documents.objects.values_list('keywords', flat=True)
-    keywords = set(keywords)
-    return Response({
-        'code': HTTP_200_OK * 100,
-        'data': list(map(lambda x: {'name': x, 'code': x}, keywords))
-    }, status=HTTP_200_OK)
