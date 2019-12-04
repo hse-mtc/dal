@@ -17,7 +17,7 @@
           {{year.year}}
           <hr class="ml-3">
         </div>
-        <el-row v-for="item in year" :key="item.id" class="document-card mt-3 mb-4">
+        <el-row v-for="item in year.items" :key="item.id" class="document-card mt-3 mb-4">
           <el-col :span="2" style="font-size: 22px" class="mt-4">
             № {{ ++index }}
           </el-col>
