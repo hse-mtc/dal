@@ -11,6 +11,7 @@ class UserProfileInfo(models.Model):
     def __str__(self):
         return self.name
 
+
 # Для отображения имени
 class Status(models.Model):
     status = models.CharField(max_length=50)

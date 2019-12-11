@@ -108,6 +108,7 @@ def get_documents_by_type(request, model_name):
     db_request = db_request.order_by('-published_at')
 
     t_dict = {}
+    total = 0
     data = {
         'items': []
     }
@@ -117,8 +118,9 @@ def get_documents_by_type(request, model_name):
 
     for key, value in t_dict.items():
         data['items'].append({'year': key, 'items': value})
+        total += len(value)
 
-    data['total'] = len(data['items'])
+    data['total'] = total
 
     return Response({
         'code': HTTP_200_OK * 100,
