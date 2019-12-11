@@ -40,7 +40,7 @@
             align="right"
             start-placeholder="Начало"
             end-placeholder="Конец"
-            default-value=""
+            @change="changeDate"
           />
         </el-col>
       </el-row>
@@ -51,6 +51,7 @@
 <script>
   import {getAuthors} from "@/api/authors"
   import {getPublishPlaces} from "@/api/published_places"
+  import moment from "moment"
 
 export default {
   name: '',
@@ -76,6 +77,22 @@ export default {
         array.style.transform = 'rotate(180deg)'
       }
     },
+
+    renderQuery(item) {
+      let temp = {section: this.$route.query.section}
+      if (this.$route.query.place) {
+        temp.place = this.$route.query.place
+      }
+      if (this.$route.query.author) {
+        temp.author = this.$route.query.author
+      }
+      if (this.$route.query.start_date) {
+        temp.start_date = this.$route.query.start_date
+        temp.end_date = this.$route.query.end_date
+      }
+      temp[item] = this[temp] 
+    },
+
     changeAuthors() {
       if (this.$route.query.place) { // если указано размещение и автор
         this.$router.push({
@@ -100,6 +117,7 @@ export default {
         })
       }
     },
+
     changePlacing() {
       if(this.$route.query.author) { //если указан автор и размещение
         this.$router.push({
@@ -123,6 +141,11 @@ export default {
           }
         })
       }
+    },
+
+    changeDate() {
+      console.log(moment(this.valueDate[0]).format("DD.MM.YYYY"))
+
     }
   },
   mounted() {
