@@ -14,20 +14,27 @@ class TokenAuthSupportQueryString(TokenAuthentication):
 
     def authenticate(self, request):
         key = 'token'
-        if key in request.query_params \
-                and 'HTTP_AUTHORIZATION' not in request.META \
-                and 'HTTP_X_TOKEN' not in request.META:
+        if (
+            key in request.query_params
+                and 'HTTP_AUTHORIZATION' not in request.META
+                and 'HTTP_X_TOKEN' not in request.META
+        ):
             return self.authenticate_credentials(request.query_params.get(key))
-        elif 'HTTP_X_TOKEN' in request.META:
+        
+        if 'HTTP_X_TOKEN' in request.META:
             auth = get_authorization_header(request).split()
+            
             if not auth or auth[0].lower() != self.keyword.lower().encode():
                 return None
+            
             if len(auth) == 1:
                 msg = _('Invalid token header. No credentials provided.')
                 raise exceptions.AuthenticationFailed(msg)
-            elif len(auth) > 2:
+                
+            if len(auth) > 2:
                 msg = _('Invalid token header. Token string should not contain spaces.')
                 raise exceptions.AuthenticationFailed(msg)
+                
             try:
                 token = auth[1].decode()
             except UnicodeError:
@@ -35,5 +42,5 @@ class TokenAuthSupportQueryString(TokenAuthentication):
                 raise exceptions.AuthenticationFailed(msg)
 
             return self.authenticate_credentials(token)
-        else:
-            return super(TokenAuthSupportQueryString, self).authenticate(request)
+        
+        return super(TokenAuthSupportQueryString, self).authenticate(request)
