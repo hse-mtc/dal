@@ -14,6 +14,7 @@ class TokenAuthSupportQueryString(TokenAuthentication):
 
     def authenticate(self, request):
         key = 'token'
+        
         if (
             key in request.query_params
             and 'HTTP_AUTHORIZATION' not in request.META
