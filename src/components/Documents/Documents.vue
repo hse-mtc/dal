@@ -17,9 +17,9 @@
           {{year.year}}
           <hr class="ml-3">
         </div>
-        <el-row v-for="item in year.items" :key="item.id" class="document-card mt-3 mb-4">
+        <el-row v-for="(item, index) in year.items" :key="item.id" class="document-card mt-3 mb-4">
           <el-col :span="2" style="font-size: 22px" class="mt-4">
-            № {{ ++index }}
+            № {{ index+1 }}
           </el-col>
           <el-col :span="21">
             <div class="d-flex">
@@ -76,7 +76,6 @@ export default {
     return {
       documents: [],
       count: undefined,
-      index: 0
     }
   },
   watch: {
@@ -93,9 +92,10 @@ export default {
     fetchData(target) {
       let author = this.$route.query.author ?  this.$route.query.author :  null
       let place = this.$route.query.place ?  this.$route.query.place :  null
-      console.log(author, place)
+      let start_date = this.$route.query.start_date ?  this.$route.query.start_date :  null
+      let end_date = this.$route.query.end_date ?  this.$route.query.end_date :  null
       if (target === 'scienceArticles') {
-        getDocuments(author, place).then(response => {
+        getDocuments(author, place, start_date, end_date).then(response => {
           console.log(response.data)
           this.documents = response.data.items
           this.count = response.data.total
@@ -104,7 +104,7 @@ export default {
         })
       }
       if (target === 'scienceWorks') {
-        nir(author, place).then(response => {
+        nir(author, place, start_date, end_date).then(response => {
           console.log(response.data)
           this.documents = response.data.items
           this.count = response.data.total
