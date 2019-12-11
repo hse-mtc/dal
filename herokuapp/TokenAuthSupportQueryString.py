@@ -16,8 +16,8 @@ class TokenAuthSupportQueryString(TokenAuthentication):
         key = 'token'
         if (
             key in request.query_params
-                and 'HTTP_AUTHORIZATION' not in request.META
-                and 'HTTP_X_TOKEN' not in request.META
+            and 'HTTP_AUTHORIZATION' not in request.META
+            and 'HTTP_X_TOKEN' not in request.META
         ):
             return self.authenticate_credentials(request.query_params.get(key))
         
