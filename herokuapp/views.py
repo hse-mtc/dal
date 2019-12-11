@@ -12,7 +12,7 @@ from rest_framework.status import (
 )
 from rest_framework.response import Response
 
-from herokuapp.models import Subjects, Documents, PublishPlaces, UserProfileInfo, Researches
+from herokuapp.models import Subjects, Articles, PublishPlaces, UserProfileInfo, Researches
 
 
 @csrf_exempt
@@ -91,8 +91,8 @@ def get_documents_by_type(request, model_name):
     publish_places = request.query_params.get('publish_places')
     db_request = None
 
-    if model_name == 'documents':
-        db_request = Documents.objects.filter()
+    if model_name == 'articles':
+        db_request = Articles.objects.filter()
     elif model_name == 'nir':
         db_request = Researches.objects.filter()
 
@@ -131,8 +131,8 @@ def get_documents_by_type(request, model_name):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def documents(request):
-    return get_documents_by_type(request, 'documents')
+def articles(request):
+    return get_documents_by_type(request, 'articles')
 
 
 @csrf_exempt

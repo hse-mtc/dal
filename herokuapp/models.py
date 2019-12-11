@@ -41,15 +41,26 @@ class Documents(models.Model):
     annotation = models.TextField()
     keywords = TaggableManager()
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
-    published_at = models.DateTimeField()
+    published_at = models.DateField()
     published_places = models.ForeignKey(PublishPlaces, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name = 'Document'
-        verbose_name_plural = 'Documents'
+        abstract = True
+
+
+class Articles(Documents):
+    class Meta:
+        verbose_name = 'Article'
+        verbose_name_plural = 'Articles'
+
+
+class Researches(Documents):
+    class Meta:
+        verbose_name = 'Research'
+        verbose_name_plural = 'Researches'
 
 
 class Subjects(models.Model):
@@ -62,12 +73,3 @@ class Subjects(models.Model):
     class Meta:
         verbose_name = 'Subject'
         verbose_name_plural = 'Subjects'
-
-
-class Researches(Documents):
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = 'Research'
-        verbose_name_plural = 'Researches'
