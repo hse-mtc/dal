@@ -86,8 +86,8 @@ def extract_documents_from_queryset(documents_queryset):
 
 def get_documents_by_type(request, model_name):
     authors = request.query_params.get('authors')
-    start_time = request.query_params.get('start_time')
-    end_time = request.query_params.get('end_time')
+    start_date = request.query_params.get('start_date')
+    end_date = request.query_params.get('end_date')
     publish_places = request.query_params.get('publish_places')
     db_request = None
 
@@ -98,10 +98,10 @@ def get_documents_by_type(request, model_name):
 
     if authors is not None:
         db_request = db_request.filter(authors__name__in=authors.split(','))
-    if start_time is not None:
-        db_request = db_request.filter(published_at__gte=start_time)
-    if end_time is not None:
-        db_request = db_request.filter(published_at__lte=end_time)
+    if start_date is not None:
+        db_request = db_request.filter(published_at__gte=start_date)
+    if end_date is not None:
+        db_request = db_request.filter(published_at__lte=end_date)
     if publish_places is not None:
         db_request = db_request.filter(published_places__place__in=publish_places.split(','))
 
