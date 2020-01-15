@@ -239,3 +239,43 @@ def published_places(request):
                 )
         )
     }, status=HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def subject(request):
+    return Response({
+        'code': HTTP_200_OK * 100,
+        'data': {
+            'parts': [
+                {
+                    'title': 'Введение',
+                    'topics': [
+                        {
+                            'id': 1,
+                            'title': 'История развития',
+                            'lectures': [
+                                {
+                                    'name': 'ЛР 2-1',
+                                    'link': 'https://google.com',
+                                }
+                            ],
+                            'seminars': [
+                                {
+                                    'name': 'СР 3-1',
+                                    'link': 'https://yandex.ru',
+                                }
+                            ],
+                            'group_classes': [
+                                {
+                                    'name': 'ГЗ 4-1',
+                                    'link': 'https://vk.com',
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }, status=HTTP_200_OK)
