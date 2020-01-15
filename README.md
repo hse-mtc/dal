@@ -17,3 +17,8 @@ $ psql db_name
     
 $ python manage.py migrate
 ```
+
+## Running Backend Server
+```
+$ python manage.py runserver
+```
