@@ -144,12 +144,20 @@ export const constantRoutes = [
     path: '/teachingmaterials',
     component: Layout,
     redirect: '/materials',
-    children: [{
-      path: 'materials',
-      name: 'Teaching Materials',
-      component: () => import('@/views/Materials/index'),
-      meta: { title: 'Учебно-методические материалы', icon: '' }
-    }]
+    children: [
+      {
+        path: 'materials',
+        name: 'Teaching Materials',
+        component: () => import('@/views/Materials/index'),
+        meta: { title: 'Учебно-методические материалы', icon: '' }
+      },
+      // {
+      //   path: 'subject',
+      //   name: 'Subject',
+      //   component: () => import('@/views/Materials/index'),
+      //   meta: { title: 'Предмет', icon: '' }
+      // }
+    ]
   },
   {
     path: '',

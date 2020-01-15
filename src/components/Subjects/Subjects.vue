@@ -2,7 +2,7 @@
   <el-row v-if="subjects.length !== 0" class="subjects mt-5">
     <el-col :span="8" v-for="(item, index) in subjects" :key="subjects.id" class="subjects-wrapper mt-5">
       <el-col>
-        <div class="subjects-card" v-bind:class="{ 'm-0': ++index % 3 === 0 }">{{item.title}}</div>
+        <div class="subjects-card" :id="item.id" v-bind:class="{ 'm-0': ++index % 3 === 0 }" @click="selectSubject">{{item.title}}</div>
       </el-col>
     </el-col>
   </el-row>
@@ -24,6 +24,7 @@ export default {
       this.subjects = response.data
       this.$router.replace({ name: 'Teaching Materials'})
     }).catch(() => {
+      // eslint-disable-next-line no-console
       console.log('Данные по предметам не указаны')
     })
   },
@@ -31,7 +32,12 @@ export default {
   },
   methods: {
     selectSubject(event) {
-
+      // eslint-disable-next-line no-console
+      this.$router.push({
+        query: {
+          subjectId: event.target.id
+        }
+      })
     }
   }
 }
