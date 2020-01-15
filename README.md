@@ -39,6 +39,13 @@ db_name=# CREATE USER db_user WITH PASSWORD 'db_user_password';
 db_name=# \q
 ```
 
+Change database settings to local in `djangoherokuapp/settings.py`:
+```
+    ...
+    DATABASE_SETTINGS = 'local'
+    ...
+```
+
 Synchronize the database state using Django's `migrate`:
 ```
 $ python manage.py migrate
