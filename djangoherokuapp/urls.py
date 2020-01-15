@@ -21,13 +21,13 @@ from herokuapp.views import login, info, logout, articles, nir, subjects, educat
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/user/login', login),
-    path('api/user/info', info),
-    path('api/user/logout', logout),
     path('api/articles', articles),
-    path('api/nir', nir),
-    path('api/subjects', subjects),
-    path('api/educational_materials', educational_materials),
     path('api/authors', authors),
+    path('api/educational_materials', educational_materials),
+    path('api/nir', nir),
     path('api/published_places', published_places),
+    path('api/subjects', subjects),
+    path('api/user/info', info),
+    path('api/user/login', login),
+    path('api/user/logout', logout),
 ]
