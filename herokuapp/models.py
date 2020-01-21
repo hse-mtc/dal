@@ -12,7 +12,6 @@ class UserProfileInfo(models.Model):
         return self.name
 
 
-# Для отображения имени
 class Status(models.Model):
     status = models.CharField(max_length=50)
 
@@ -20,8 +19,8 @@ class Status(models.Model):
         return self.status
 
     class Meta:
-        verbose_name = 'Status'
-        verbose_name_plural = 'Statuses'
+        verbose_name = "Status"
+        verbose_name_plural = "Statuses"
 
 
 class PublishPlaces(models.Model):
@@ -31,8 +30,8 @@ class PublishPlaces(models.Model):
         return self.place
 
     class Meta:
-        verbose_name = 'Publish place'
-        verbose_name_plural = 'Publish places'
+        verbose_name = "Publish place"
+        verbose_name_plural = "Publish places"
 
 
 class Documents(models.Model):
@@ -53,14 +52,14 @@ class Documents(models.Model):
 
 class Articles(Documents):
     class Meta:
-        verbose_name = 'Article'
-        verbose_name_plural = 'Articles'
+        verbose_name = "Article"
+        verbose_name_plural = "Articles"
 
 
 class Researches(Documents):
     class Meta:
-        verbose_name = 'Research'
-        verbose_name_plural = 'Researches'
+        verbose_name = "Research"
+        verbose_name_plural = "Researches"
 
 
 class Subjects(models.Model):
@@ -71,5 +70,5 @@ class Subjects(models.Model):
         return self.abbreviation
 
     class Meta:
-        verbose_name = 'Subject'
-        verbose_name_plural = 'Subjects'
+        verbose_name = "Subject"
+        verbose_name_plural = "Subjects"
