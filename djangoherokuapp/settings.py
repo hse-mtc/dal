@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import dj_database_url
 
-# Choose database settings
-DATABASE_SETTINGS = "heroku"
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -97,7 +94,7 @@ DATABASES = {
     }
 }
 
-if DATABASE_SETTINGS == "heroku":
+if os.environ.get("USE_HEROKU_DATABASE") is not None:
     DATABASES["default"] = dj_database_url.config(conn_max_age=500)
 
 
