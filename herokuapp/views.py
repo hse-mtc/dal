@@ -245,7 +245,10 @@ def subject(request):
                                 "title": "История развития",
                                 "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
                                 "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
-                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                                "group_classes": [
+                                    {"name": "ГЗ 4-1", "link": "https://vk.com"},
+                                    {"name": "ГЗ 4-2", "link": "https://yahoo.com"},
+                                ],
                             }
                         ],
                     },
@@ -255,7 +258,11 @@ def subject(request):
                             {
                                 "id": 1,
                                 "title": "История развития",
-                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
+                                "lectures": [
+                                    {"name": "ЛР 2-1", "link": "https://google.com"},
+                                    {"name": "ЛР 2-2", "link": "https://mail.com"},
+                                    {"name": "ЛР 2-3", "link": "https://office.com"},
+                                ],
                                 "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
                                 "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
                             }
@@ -268,7 +275,12 @@ def subject(request):
                                 "id": 1,
                                 "title": "История развития",
                                 "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
-                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
+                                "seminars": [
+                                    {"name": "СР 3-1", "link": "https://yandex.ru"},
+                                    {"name": "СР 3-2", "link": "https://yandex.ru"},
+                                    {"name": "СР 3-3", "link": "https://yandex.ru"},
+                                    {"name": "СР 3-4", "link": "https://yandex.ru"},
+                                ],
                                 "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
                             }
                         ],
