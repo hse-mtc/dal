@@ -238,6 +238,54 @@ def subject(request):
             "data": {
                 "parts": [
                     {
+                        "title": "Титул",
+                        "topics": [
+                            {
+                                "id": 1,
+                                "title": "История развития",
+                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
+                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
+                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                            }
+                        ],
+                    },
+                    {
+                        "title": "Имя",
+                        "topics": [
+                            {
+                                "id": 1,
+                                "title": "История развития",
+                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
+                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
+                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                            }
+                        ],
+                    },
+                    {
+                        "title": "Титульник",
+                        "topics": [
+                            {
+                                "id": 1,
+                                "title": "История развития",
+                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
+                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
+                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                            }
+                        ],
+                    },
+                    {
+                        "title": "Название",
+                        "topics": [
+                            {
+                                "id": 1,
+                                "title": "История развития",
+                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
+                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
+                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                            }
+                        ],
+                    },
+                    {
                         "title": "Введение",
                         "topics": [
                             {
