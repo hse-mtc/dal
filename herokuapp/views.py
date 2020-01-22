@@ -254,6 +254,18 @@ def subject(request):
                                 "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
                             }
                         ],
+                    },
+                    {
+                        "title": "Основная часть",
+                        "topics": [
+                            {
+                                "id": 1,
+                                "title": "История развития",
+                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
+                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
+                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                            }
+                        ],
                     }
                 ]
             },
