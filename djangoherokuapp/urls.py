@@ -27,7 +27,7 @@ from herokuapp.views import (
     authors,
     published_places,
     subject,
-)
+    delete_article, delete_nir)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -41,4 +41,6 @@ urlpatterns = [
     path("api/user/info", info),
     path("api/user/login", login),
     path("api/user/logout", logout),
+    path("api/delete_article", delete_article),
+    path("api/delete_nir", delete_nir),
 ]

@@ -19,7 +19,7 @@ from herokuapp.models import (
     PublishPlaces,
     UserProfileInfo,
     Researches,
-)
+    Status)
 
 
 @csrf_exempt
@@ -36,11 +36,11 @@ def login(request):
 
     user = authenticate(username=username, password=password)
     if not user:
-        return Response({"error": "Invalid Credentials"}, status=HTTP_404_NOT_FOUND,)
+        return Response({"error": "Invalid Credentials"}, status=HTTP_404_NOT_FOUND, )
 
     token, _ = Token.objects.get_or_create(user=user)
 
-    return Response({"code": HTTP_200_OK * 100, "data": {"token": token.key}}, status=HTTP_200_OK,)
+    return Response({"code": HTTP_200_OK * 100, "data": {"token": token.key}}, status=HTTP_200_OK, )
 
 
 @csrf_exempt
@@ -52,7 +52,7 @@ def info(request):
         "name": request.user.userprofileinfo.name,
     }
 
-    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK,)
+    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK, )
 
 
 @csrf_exempt
@@ -113,9 +113,9 @@ def get_documents_by_type(request, model_name):
     data = {"items": []}
 
     for year in (
-        db_request.annotate(year=ExtractYear("published_at"))
-        .values_list("year", flat=True)
-        .distinct()
+            db_request.annotate(year=ExtractYear("published_at"))
+                    .values_list("year", flat=True)
+                    .distinct()
     ):
         t_dict[year] = extract_documents_from_queryset(db_request.filter(published_at__year=year))
 
@@ -132,14 +132,14 @@ def get_documents_by_type(request, model_name):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def articles(request):
-    return get_documents_by_type(request, "articles",)
+    return get_documents_by_type(request, "articles", )
 
 
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def nir(request):
-    return get_documents_by_type(request, "nir",)
+    return get_documents_by_type(request, "nir", )
 
 
 @csrf_exempt
@@ -148,7 +148,7 @@ def nir(request):
 def subjects(request):
     data = list(map(lambda x: {"id": x.id, "title": x.title}, list(Subjects.objects.all())))
 
-    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK,)
+    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK, )
 
 
 @csrf_exempt
@@ -195,7 +195,7 @@ def educational_materials(request):  # TODO: Добавить параметр �
         }
     ]
 
-    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK,)
+    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK, )
 
 
 @csrf_exempt
@@ -208,7 +208,7 @@ def authors(request):
             "data": list(
                 map(
                     lambda x: {"label": x, "value": x},
-                    UserProfileInfo.objects.values_list("name", flat=True,),
+                    UserProfileInfo.objects.values_list("name", flat=True, ),
                 )
             ),
         },
@@ -226,7 +226,7 @@ def published_places(request):
             "data": list(
                 map(
                     lambda x: {"label": x, "value": x},
-                    PublishPlaces.objects.values_list("place", flat=True,),
+                    PublishPlaces.objects.values_list("place", flat=True, ),
                 )
             ),
         },
@@ -269,6 +269,38 @@ def subject(request):
                     }
                 ]
             },
+        },
+        status=HTTP_200_OK,
+    )
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def delete_article(request):
+    article_id = request.query_params.get("id")
+    hidden_status = Status.objects.get(status='hidden')
+    Articles.objects.filter(pk=article_id).update(status=hidden_status)
+
+    return Response(
+        {
+            "code": HTTP_200_OK * 100,
+        },
+        status=HTTP_200_OK,
+    )
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def delete_nir(request):
+    nir_id = request.query_params.get("id")
+    hidden_status = Status.objects.get(status='hidden')
+    Researches.objects.filter(pk=nir_id).update(status=hidden_status)
+
+    return Response(
+        {
+            "code": HTTP_200_OK * 100,
         },
         status=HTTP_200_OK,
     )
