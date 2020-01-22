@@ -295,4 +295,3 @@ def delete_nir(request):
     Researches.objects.filter(pk=nir_id).update(status=hidden_status)
 
     return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK,)
-
