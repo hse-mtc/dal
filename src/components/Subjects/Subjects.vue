@@ -20,13 +20,19 @@ export default {
     }
   },
   created() {
-    getSubjects().then(response => {
-      this.subjects = response.data
-      this.$router.replace({ name: 'Teaching Materials'})
-    }).catch(() => {
-      // eslint-disable-next-line no-console
-      console.log('Данные по предметам не указаны')
-    })
+    if (this.$store.getters.subjects.length === 0) {
+      getSubjects().then(response => {
+        this.subjects = response.data
+        this.$store.dispatch('projectData/addSubjects', this.subjects);
+        this.$router.replace({ name: 'Teaching Materials'})
+      }).catch(() => {
+        // eslint-disable-next-line no-console
+        console.log('Данные по предметам не указаны')
+      })
+    } else {
+      this.subjects = this.$store.getters.subjects
+    }
+
   },
   mounted() {
   },
