@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 import dj_database_url
 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djangoherokuapp.settings")
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,9 +28,7 @@ SECRET_KEY = "$90t+&c37ktz*-snw^(s2e07ui)lzm@c7s=!7@56x#lw2$$6ad"
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "192.168.0.108",
-    "127.0.0.1",
-    "military-dms.herokuapp.com",
+    "*"
 ]
 
 # Application definition
@@ -85,11 +85,11 @@ WSGI_APPLICATION = "djangoherokuapp.wsgi.application"
 # Setup Postgres database
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": "db_name",
         "USER": "db_user",
         "PASSWORD": "db_user_password",
-        "HOST": "127.0.0.1",
+        "HOST": "db",
         "PORT": "5432",
     }
 }
