@@ -283,7 +283,7 @@ def delete_article(request):
     hidden_status = Status.objects.get(status="hidden")
     Articles.objects.filter(pk=article_id).update(status=hidden_status)
 
-    return Response({"code": HTTP_200_OK * 100,}, status=HTTP_200_OK,)
+    return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK,)
 
 
 @csrf_exempt
@@ -294,5 +294,5 @@ def delete_nir(request):
     hidden_status = Status.objects.get(status="hidden")
     Researches.objects.filter(pk=nir_id).update(status=hidden_status)
 
-    return Response({"code": HTTP_200_OK * 100,}, status=HTTP_200_OK,)
+    return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK,)
 
