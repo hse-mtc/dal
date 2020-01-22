@@ -1,7 +1,16 @@
 # military-dms
 
+## Using Docker
 
-## Installing Dependencies
+```
+$ docker-compose up
+```
+
+Back-end will be available at https://localhost:8000.
+
+## Without Docker
+
+### Installing Dependencies
 Create new virtual environment using `virtualenv`:
 ```
 $ virtualenv --python=<path/to/python3.7.4> .venv
@@ -23,7 +32,7 @@ $ pip install -r requirements.txt
 ```
 
 
-## Local Postgres Database
+### Local Postgres Database
 (Virtual environment must be activated.)
 
 Create new database and open it using `psql`:
@@ -52,7 +61,7 @@ $ python manage.py migrate
 ```
 
 
-## Running Backend Server
+### Running Backend Server
 (Virtual environment must be activated.)
 
 ```
