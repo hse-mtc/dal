@@ -1,0 +1,16 @@
+setup:
+  addons:
+    - plan: heroku-postgresql
+      as: DATABASE
+
+build:
+  docker:
+    web: Dockerfile
+
+run:
+  web: gunicorn djangoherokuapp.wsgi --log-file -
+
+release:
+    image: web
+    command:
+        - python manage.py migrate
