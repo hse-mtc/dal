@@ -1,4 +1,4 @@
-# military-dms
+# Military DMS
 
 ## Using Docker
 
