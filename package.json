@@ -10,7 +10,8 @@
     "preview": "node build/index.js --preview",
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
     "test:ci": "npm run lint && npm run test:unit",
-    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
+    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
+    "deploy": "git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
     "axios": "^0.18.1",

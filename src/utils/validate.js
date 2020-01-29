@@ -1,8 +1,4 @@
 /**
- * Created by PanJiaChen on 16/11/18.
- */
-
-/**
  * @param {string} path
  * @returns {Boolean}
  */
@@ -15,6 +11,13 @@ export function isExternal(path) {
  * @returns {Boolean}
  */
 export function validUsername(str) {
-  const valid_map = ['admin', 'editor', 'sampleuser', "vspelyak", "ivretjunskih"]
-  return valid_map.indexOf(str.trim()) >= 0
+  let usernameRegex = /^[a-zA-Z0-9]+$/;
+  const validUsername = str.trim().match(usernameRegex);
+  if(validUsername == null){
+    alert("Неправильно введен логин");
+    return false;
+  }
+  return true
+  // const valid_map = ['admin', 'editor', 'sampleuser', "vspelyak", "ivretjunskih"]
+  // return valid_map.indexOf(str.trim()) >= 0
 }

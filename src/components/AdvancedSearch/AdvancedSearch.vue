@@ -34,7 +34,7 @@
                 </el-col>
             </el-row>
             <el-row class="mt-3">
-                <el-col :offset="1" :span="8">
+                <el-col :offset="1" :span="10">
                     <div class="filters-title pl-1">Период публикации</div>
                     <el-date-picker
                             v-model="valueDate"
@@ -45,6 +45,9 @@
                             end-placeholder="Конец"
                             @change="changeDate"
                     />
+                </el-col>
+                <el-col :offset="1" :span="8" class="mt-1 d-flex align-items-center">
+                    <el-checkbox v-model="checked" @change="showDeleted">Показывать удаленные</el-checkbox>
                 </el-col>
             </el-row>
         </div>
@@ -65,10 +68,38 @@
         author: '',
         placings: [],
         placing: '',
-        valueDate: ''
+        valueDate: '',
+        checked: false
       }
     },
     methods: {
+      showDeleted() {
+        if (this.checked) {
+          this.$router.push({
+            query: {
+              text: this.$route.query.text,
+              section: this.$route.query.section,
+              place: this.$route.query.place,
+              author: this.$route.query.author,
+              start_date: this.$route.query.start_date,
+              end_date: this.$route.query.end_date,
+              show: 'all'
+            }
+          })
+        } else {
+          this.$router.push({
+            query: {
+              text: this.$route.query.text,
+              section: this.$route.query.section,
+              place: this.$route.query.place,
+              author: this.$route.query.author,
+              start_date: this.$route.query.start_date,
+              end_date: this.$route.query.end_date,
+              show: 'enabled'
+            }
+          })
+        }
+      },
       advancedClick() {
         const filters = document.querySelector('.filters')
         const array = document.querySelector('.my-advanced-search-arrow')
@@ -108,7 +139,9 @@
                 end_date: end_date,
                 author: this.author,
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.author && this.$route.query.place) {
@@ -117,7 +150,9 @@
                 start_date: start_date,
                 end_date: end_date,
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.author && !this.$route.query.place) {
@@ -126,7 +161,9 @@
                 start_date: start_date,
                 end_date: end_date,
                 section: this.$route.query.section,
-                author: this.author
+                author: this.author,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.$route.query.place) {
@@ -134,7 +171,9 @@
               query: {
                 section: this.$route.query.section,
                 start_date: start_date,
-                end_date: end_date
+                end_date: end_date,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -146,27 +185,35 @@
               query: {
                 author: this.author,
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.author && this.$route.query.place) {
             this.$router.push({
               query: {
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.author && !this.$route.query.place) {
             this.$router.push({
               query: {
                 section: this.$route.query.section,
-                author: this.author
+                author: this.author,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.author && !this.$route.query.place) {
             this.$router.push({
               query: {
-                section: this.$route.query.section
+                section: this.$route.query.section,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -186,7 +233,9 @@
                 end_date: end_date,
                 author: this.$route.query.author,
                 section: this.$route.query.section,
-                place: this.placing
+                place: this.placing,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.placing) {
@@ -195,7 +244,9 @@
                 start_date: start_date,
                 end_date: end_date,
                 section: this.$route.query.section,
-                place: this.placing
+                place: this.placing,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.placing) {
@@ -204,7 +255,9 @@
                 start_date: start_date,
                 end_date: end_date,
                 section: this.$route.query.section,
-                author: this.$route.query.author
+                author: this.$route.query.author,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.placing) {
@@ -212,39 +265,48 @@
               query: {
                 section: this.$route.query.section,
                 start_date: start_date,
-                end_date: end_date
+                end_date: end_date,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
 
         } else {
-
           if (this.$route.query.author && this.placing) {
             this.$router.push({
               query: {
                 author: this.$route.query.author,
                 section: this.$route.query.section,
-                place: this.placing
+                place: this.placing,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.placing) {
             this.$router.push({
               query: {
                 section: this.$route.query.section,
-                place: this.placing
+                place: this.placing,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.placing) {
             this.$router.push({
               query: {
                 section: this.$route.query.section,
-                author: this.$route.query.author
+                author: this.$route.query.author,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.placing) {
             this.$router.push({
               query: {
-                section: this.$route.query.section
+                section: this.$route.query.section,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -264,7 +326,9 @@
                 end_date: end_date,
                 author: this.$route.query.author,
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.$route.query.place) {
@@ -273,7 +337,9 @@
                 start_date: start_date,
                 end_date: end_date,
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.$route.query.place) {
@@ -282,7 +348,9 @@
                 start_date: start_date,
                 end_date: end_date,
                 section: this.$route.query.section,
-                author: this.$route.query.author
+                author: this.$route.query.author,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.$route.query.place) {
@@ -290,39 +358,48 @@
               query: {
                 section: this.$route.query.section,
                 start_date: start_date,
-                end_date: end_date
+                end_date: end_date,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
 
         } else {
-
           if (this.$route.query.author && this.$route.query.place) {
             this.$router.push({
               query: {
                 author: this.$route.query.author,
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.$route.query.place) {
             this.$router.push({
               query: {
                 section: this.$route.query.section,
-                place: this.$route.query.place
+                place: this.$route.query.place,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.$route.query.place) {
             this.$router.push({
               query: {
                 section: this.$route.query.section,
-                author: this.$route.query.author
+                author: this.$route.query.author,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.$route.query.place) {
             this.$router.push({
               query: {
-                section: this.$route.query.section
+                section: this.$route.query.section,
+                text: this.$route.query.text ? this.$route.query.text : null,
+                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }

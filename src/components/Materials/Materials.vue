@@ -77,13 +77,11 @@ export default {
     }
   },
   created() {
-    console.log('created')
     if (this.$route.query.subjectId) {
       this.setSubject(this.$route.query.subjectId)
     }
   },
   updated() {
-    console.log('updated')
     if (document.querySelector('.part')) {
       // document.querySelector('.part').classList.add('part-selected')
     }
