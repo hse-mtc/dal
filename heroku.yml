@@ -13,4 +13,5 @@ run:
 release:
     image: backend
     command:
+      - python manage.py makemigrations
       - python manage.py migrate
