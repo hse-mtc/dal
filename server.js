@@ -11,5 +11,3 @@ app.get(
     }
 );
 app.listen(port);
-
-console.log("DEBUG: Server started.");
