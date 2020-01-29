@@ -1,55 +1,70 @@
-# military-dms-frontend
+# Military DMS
 
-> A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
+## Using Docker
 
-**Live demo:** http://panjiachen.github.io/vue-admin-template
-
-
-**The current version is `v4.0+` build on `vue-cli`. If you want to use the old version , you can switch branch to [tag/3.11.0](https://github.com/PanJiaChen/vue-admin-template/tree/tag/3.11.0), it does not rely on `vue-cli`**
-
-## Build Setup
-
-
-```bash
-# clone the project
-git clone https://github.com/PanJiaChen/vue-admin-template.git
-
-# enter the project directory
-cd vue-admin-template
-
-# install dependency
-npm install
-
-# develop
-npm run dev
+```
+$ docker-compose up
 ```
 
-This will automatically open http://localhost:9528
+Back-end will be available at https://localhost:8000.
 
-## Build
 
-```bash
-# build for test environment
-npm run build:stage
+## Without Docker
 
-# build for production environment
-npm run build:prod
+### Installing Dependencies
+Create new virtual environment using `virtualenv`:
+```
+$ virtualenv --python=<path/to/python3.7.4> .venv
 ```
 
-## Advanced
-
-```bash
-# preview the release environment effect
-npm run preview
-
-# preview the release environment effect + static resource analysis
-npm run preview -- --report
-
-# code format check
-npm run lint
-
-# code format check and auto fix
-npm run lint -- --fix
+Another way:
+```
+$ <path/to/python3.7.4> -m venv .venv
 ```
 
-Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information
+Activate it:
+```
+$ source .venv/bin/activate
+```
+
+Install requirements using `pip`:
+```
+$ pip install -r requirements.txt
+```
+
+
+### Local Postgres Database
+(Virtual environment must be activated.)
+
+Create new database and open it using `psql`:
+
+```
+$ createdb db_name
+$ psql db_name
+```
+
+Create new user with password:
+```
+db_name=# CREATE USER db_user WITH PASSWORD 'db_user_password';
+db_name=# \q
+```
+
+Change database settings to local in `djangoherokuapp/settings.py`:
+```
+    ...
+    DATABASE_SETTINGS = 'local'
+    ...
+```
+
+Synchronize the database state using Django's `migrate`:
+```
+$ python manage.py migrate
+```
+
+
+### Running Backend Server
+(Virtual environment must be activated.)
+
+```
+$ python manage.py runserver
+```
