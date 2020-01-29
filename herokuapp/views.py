@@ -16,6 +16,7 @@ from rest_framework.status import (
     HTTP_200_OK,
 )
 from rest_framework.response import Response
+from taggit.models import Tag
 
 from herokuapp.models import Subjects, Articles, PublishPlaces, UserProfileInfo, Researches, Status
 
@@ -127,7 +128,8 @@ def get_documents_by_type(request, model_name):
         db_request = db_request.filter(published_places__place__in=publish_places.split(","))
     if text is not None:
         db_request = db_request.filter(reduce(operator.and_, [Q(title__icontains=word) for word in text.split()])
-                                       | reduce(operator.and_, [Q(annotation__icontains=word) for word in text.split()]))
+                                       | reduce(operator.and_, [Q(annotation__icontains=word) for word in text.split()])
+                                       | reduce(operator.and_, [Q(keywords__name__icontains=word) for word in text.split()]))
 
     db_request = db_request.order_by("-published_at")
 
