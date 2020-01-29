@@ -6,6 +6,7 @@ setup:
 build:
   docker:
     web: Dockerfile
+    frontend: frontend/Dockerfile
 
 run:
   web: gunicorn djangoherokuapp.wsgi --log-file -
