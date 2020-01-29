@@ -34,11 +34,11 @@ def login(request):
 
     user = authenticate(username=username, password=password)
     if not user:
-        return Response({"error": "Invalid Credentials"}, status=HTTP_404_NOT_FOUND, )
+        return Response({"error": "Invalid Credentials"}, status=HTTP_404_NOT_FOUND,)
 
     token, _ = Token.objects.get_or_create(user=user)
 
-    return Response({"code": HTTP_200_OK * 100, "data": {"token": token.key}}, status=HTTP_200_OK, )
+    return Response({"code": HTTP_200_OK * 100, "data": {"token": token.key}}, status=HTTP_200_OK,)
 
 
 @csrf_exempt
@@ -50,7 +50,7 @@ def info(request):
         "name": request.user.userprofileinfo.name,
     }
 
-    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK, )
+    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK,)
 
 
 @csrf_exempt
@@ -89,11 +89,13 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     data = {"items": []}
 
     for year in (
-            documents_queryset.annotate(year=ExtractYear("published_at"))
-                    .values_list("year", flat=True)
-                    .distinct()
+        documents_queryset.annotate(year=ExtractYear("published_at"))
+        .values_list("year", flat=True)
+        .distinct()
     ):
-        t_dict[year] = extract_documents_from_queryset(documents_queryset.filter(published_at__year=year))
+        t_dict[year] = extract_documents_from_queryset(
+            documents_queryset.filter(published_at__year=year)
+        )
 
     for key, value in t_dict.items():
         data["items"].append({"year": key, "items": value})
@@ -113,9 +115,9 @@ def get_documents_by_type(request, model_name):
     db_request = None
 
     if model_name == "articles":
-        db_request = Articles.objects.filter(status__status='enabled')
+        db_request = Articles.objects.filter()
     elif model_name == "nir":
-        db_request = Researches.objects.filter(status__status='enabled')
+        db_request = Researches.objects.filter()
 
     if authors is not None:
         db_request = db_request.filter(authors__name__in=authors.split(","))
@@ -126,8 +128,10 @@ def get_documents_by_type(request, model_name):
     if publish_places is not None:
         db_request = db_request.filter(published_places__place__in=publish_places.split(","))
     if text is not None:
-        db_request = db_request.filter(reduce(operator.and_, [Q(title__icontains=word) for word in text.split()])
-                                       | reduce(operator.and_, [Q(annotation__icontains=word) for word in text.split()]))
+        db_request = db_request.filter(
+            reduce(operator.and_, [Q(title__icontains=word) for word in text.split()])
+            | reduce(operator.and_, [Q(annotation__icontains=word) for word in text.split()])
+        )
 
     db_request = db_request.order_by("-published_at")
 
@@ -140,14 +144,14 @@ def get_documents_by_type(request, model_name):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def articles(request):
-    return get_documents_by_type(request, "articles", )
+    return get_documents_by_type(request, "articles",)
 
 
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def nir(request):
-    return get_documents_by_type(request, "nir", )
+    return get_documents_by_type(request, "nir",)
 
 
 @csrf_exempt
@@ -156,7 +160,7 @@ def nir(request):
 def subjects(request):
     data = list(map(lambda x: {"id": x.id, "title": x.title}, list(Subjects.objects.all())))
 
-    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK, )
+    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK,)
 
 
 @csrf_exempt
@@ -203,7 +207,7 @@ def educational_materials(request):  # TODO: Добавить параметр �
         }
     ]
 
-    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK, )
+    return Response({"code": HTTP_200_OK * 100, "data": data}, status=HTTP_200_OK,)
 
 
 @csrf_exempt
@@ -216,7 +220,7 @@ def authors(request):
             "data": list(
                 map(
                     lambda x: {"label": x, "value": x},
-                    UserProfileInfo.objects.values_list("name", flat=True, ),
+                    UserProfileInfo.objects.values_list("name", flat=True,),
                 )
             ),
         },
@@ -234,7 +238,7 @@ def published_places(request):
             "data": list(
                 map(
                     lambda x: {"label": x, "value": x},
-                    PublishPlaces.objects.values_list("place", flat=True, ),
+                    PublishPlaces.objects.values_list("place", flat=True,),
                 )
             ),
         },
@@ -357,7 +361,7 @@ def delete_article(request):
     hidden_status = Status.objects.get(status="hidden")
     Articles.objects.filter(pk=article_id).update(status=hidden_status)
 
-    return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK, )
+    return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK,)
 
 
 @csrf_exempt
@@ -368,4 +372,5 @@ def delete_nir(request):
     hidden_status = Status.objects.get(status="hidden")
     Researches.objects.filter(pk=nir_id).update(status=hidden_status)
 
-    return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK, )
+    return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK,)
+
