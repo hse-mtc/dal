@@ -126,8 +126,8 @@ def get_documents_by_type(request, model_name):
     if publish_places is not None:
         db_request = db_request.filter(published_places__place__in=publish_places.split(","))
     if text is not None:
-        db_request = db_request.filter(reduce(operator.or_, [Q(title__icontains=word) for word in text.split()])
-                                       | reduce(operator.or_, [Q(annotation__icontains=word) for word in text.split()]))
+        db_request = db_request.filter(reduce(operator.and_, [Q(title__icontains=word) for word in text.split()])
+                                       | reduce(operator.and_, [Q(annotation__icontains=word) for word in text.split()]))
 
     db_request = db_request.order_by("-published_at")
 
