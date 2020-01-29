@@ -18,7 +18,20 @@
                         <div class="file" v-for="(lecture, index) in topic.lectures" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
                             <div class="file-title">{{lecture.name}}</div>
-                            <div class="file-kebab"><img src="../../assets/subject/greyKebab.svg" alt="" class="kebab"></div>
+                            <div class="file-kebab">
+                                <el-popover
+                                        placement="bottom"
+                                        trigger="click"
+                                >
+                                    <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
+                                        <div style="cursor:pointer;">Действие 1</div>
+                                        <div style="cursor:pointer;">Действие 2</div>
+                                    </div>
+                                    <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
+                                        <img src="../../assets/subject/greyKebab.svg" alt="" class="kebab">
+                                    </div>
+                                </el-popover>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -31,7 +44,20 @@
                         <div class="file" v-for="(seminar, index) in topic.seminars" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
                             <div class="file-title">{{seminar.name}}</div>
-                            <div class="file-kebab"><img src="../../assets/subject/greyKebab.svg" alt="" class="kebab"></div>
+                            <div class="file-kebab">
+                                <el-popover
+                                        placement="bottom"
+                                        trigger="click"
+                                >
+                                    <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
+                                        <div style="cursor:pointer;">Действие 1</div>
+                                        <div style="cursor:pointer;">Действие 2</div>
+                                    </div>
+                                    <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
+                                        <img src="../../assets/subject/greyKebab.svg" alt="" class="kebab">
+                                    </div>
+                                </el-popover>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -44,7 +70,20 @@
                         <div class="file" v-for="(group_class, index) in topic.group_classes" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
                             <div class="file-title">{{group_class.name}}</div>
-                            <div class="file-kebab"><img src="../../assets/subject/greyKebab.svg" alt="" class="kebab"></div>
+                            <div class="file-kebab">
+                                <el-popover
+                                        placement="bottom"
+                                        trigger="click"
+                                >
+                                    <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
+                                        <div style="cursor:pointer;">Действие 1</div>
+                                        <div style="cursor:pointer;">Действие 2</div>
+                                    </div>
+                                    <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
+                                        <img src="../../assets/subject/greyKebab.svg" alt="" class="kebab">
+                                    </div>
+                                </el-popover>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -57,7 +96,20 @@
                         <div class="file" v-for="(lecture, index) in topic.lectures" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
                             <div class="file-title">{{lecture.name}}</div>
-                            <div class="file-kebab"><img src="../../assets/subject/greyKebab.svg" alt="" class="kebab"></div>
+                            <div class="file-kebab">
+                                <el-popover
+                                        placement="bottom"
+                                        trigger="click"
+                                >
+                                    <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
+                                        <div style="cursor:pointer;">Действие 1</div>
+                                        <div style="cursor:pointer;">Действие 2</div>
+                                    </div>
+                                    <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
+                                        <img src="../../assets/subject/greyKebab.svg" alt="" class="kebab">
+                                    </div>
+                                </el-popover>
+                            </div>
                         </div>
                     </div>
                 </div>
