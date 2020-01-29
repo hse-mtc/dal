@@ -13,3 +13,6 @@ tests/**/coverage/
 *.ntvs*
 *.njsproj
 *.sln
+
+# heroku deployment
+dist/
