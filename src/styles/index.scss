@@ -94,7 +94,8 @@ div:focus {
 
 .el-menu-item.is-active {
   color: white !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
+  background-color: $menuHover !important;
 }
 
 .menu-wrapper a{
