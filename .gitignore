@@ -16,3 +16,4 @@ tests/**/coverage/
 
 # heroku deployment
 dist/
+.mypy*
