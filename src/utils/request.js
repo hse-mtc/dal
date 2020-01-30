@@ -7,9 +7,9 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // baseURL: "http://192.168.0.112:12345/api", // url = base url + request url
-  baseURL: process.env.HEROKU_DEPLOYMENT === "true"
-  ? "https://military-dms.herokuapp.com/api"
-  : "http://localhost:8000/api",
+  baseURL: process.env.VUE_APP_LOCAL_DEPLOYMENT === "true"
+           ? "http://localhost:8000/api"
+           : "https://military-dms.herokuapp.com/api",
 
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout

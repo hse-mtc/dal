@@ -1,5 +1,8 @@
 FROM node:lts-alpine
 
+ARG VUE_APP_LOCAL_DEPLOYMENT
+ENV VUE_APP_LOCAL_DEPLOYMENT $VUE_APP_LOCAL_DEPLOYMENT
+
 # install simple http server for serving static content
 RUN npm install -g express
 

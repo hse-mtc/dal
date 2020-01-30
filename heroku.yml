@@ -1,6 +1,4 @@
 build:
-  config:
-    HEROKU_DEPLOYMENT: true
   docker:
     web: Dockerfile
 
