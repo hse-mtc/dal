@@ -8,11 +8,10 @@ build:
     web: Dockerfile
     frontend: frontend/Dockerfile
 
+run:
+  web: gunicorn djangoherokuapp.wsgi --log-file -
+
 release:
     image: web
     command:
       - python manage.py migrate
-
-run:
-  web: gunicorn djangoherokuapp.wsgi --log-file -
-  frontend: npm run start
