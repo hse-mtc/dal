@@ -6,7 +6,7 @@ setup:
 build:
   docker:
     backend: Dockerfile
-    web: frontend/Dockerfile
+    frontend: frontend/Dockerfile
 
 release:
   image: backend
@@ -15,4 +15,4 @@ release:
 
 run:
   backend: gunicorn djangoherokuapp.wsgi --log-file -
-  web: npm run start
+  frontend: npm run start
