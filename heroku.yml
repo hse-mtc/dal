@@ -1,7 +1,8 @@
-setup:
-  config:
-    NODE_ENV: heroku
-
 build:
+  config:
+    HEROKU_DEPLOYMENT: true
   docker:
     web: Dockerfile
+
+run:
+  web: npm run start

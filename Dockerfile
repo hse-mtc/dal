@@ -17,6 +17,3 @@ COPY . .
 
 # build app for production with minification
 RUN npm run build:prod
-
-# run server
-CMD ["npm", "run", "start"]
