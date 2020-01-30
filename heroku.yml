@@ -1,3 +1,7 @@
+setup:
+  config:
+    NODE_ENV: heroku
+
 build:
   docker:
     web: Dockerfile
