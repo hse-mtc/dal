@@ -5,12 +5,12 @@ setup:
 
 build:
   docker:
-    backend: Dockerfile
+    web: Dockerfile
 
 run:
-  backend: gunicorn djangoherokuapp.wsgi --log-file -
+  web: gunicorn djangoherokuapp.wsgi --log-file -
 
 release:
-    image: backend
+    image: web
     command:
       - python manage.py migrate
