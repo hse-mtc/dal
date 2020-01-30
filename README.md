@@ -1,70 +1,55 @@
-# Military DMS
+# military-dms-frontend
 
-## Using Docker
+> A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
 
-```
-$ docker-compose up
-```
-
-Back-end will be available at https://localhost:8000.
+**Live demo:** http://panjiachen.github.io/vue-admin-template
 
 
-## Without Docker
+**The current version is `v4.0+` build on `vue-cli`. If you want to use the old version , you can switch branch to [tag/3.11.0](https://github.com/PanJiaChen/vue-admin-template/tree/tag/3.11.0), it does not rely on `vue-cli`**
 
-### Installing Dependencies
-Create new virtual environment using `virtualenv`:
-```
-$ virtualenv --python=<path/to/python3.7.4> .venv
-```
-
-Another way:
-```
-$ <path/to/python3.7.4> -m venv .venv
-```
-
-Activate it:
-```
-$ source .venv/bin/activate
-```
-
-Install requirements using `pip`:
-```
-$ pip install -r requirements.txt
-```
+## Build Setup
 
 
-### Local Postgres Database
-(Virtual environment must be activated.)
+```bash
+# clone the project
+git clone https://github.com/PanJiaChen/vue-admin-template.git
 
-Create new database and open it using `psql`:
+# enter the project directory
+cd vue-admin-template
 
-```
-$ createdb db_name
-$ psql db_name
-```
+# install dependency
+npm install
 
-Create new user with password:
-```
-db_name=# CREATE USER db_user WITH PASSWORD 'db_user_password';
-db_name=# \q
+# develop
+npm run dev
 ```
 
-Change database settings to local in `djangoherokuapp/settings.py`:
-```
-    ...
-    DATABASE_SETTINGS = 'local'
-    ...
+This will automatically open http://localhost:9528
+
+## Build
+
+```bash
+# build for test environment
+npm run build:stage
+
+# build for production environment
+npm run build:prod
 ```
 
-Synchronize the database state using Django's `migrate`:
-```
-$ python manage.py migrate
+## Advanced
+
+```bash
+# preview the release environment effect
+npm run preview
+
+# preview the release environment effect + static resource analysis
+npm run preview -- --report
+
+# code format check
+npm run lint
+
+# code format check and auto fix
+npm run lint -- --fix
 ```
 
-
-### Running Backend Server
-(Virtual environment must be activated.)
-
-```
-$ python manage.py runserver
-```
+Refer to [Documentation](https://panjiachen.github.io/vue-element-admin-site/guide/essentials/deploy.html) for more information

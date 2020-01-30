@@ -1,16 +1,22 @@
-# pull official base image
-FROM python:3.7
+FROM node:lts-alpine
 
-# set work directory
-WORKDIR /code
+# install simple http server for serving static content
+RUN npm install -g express
 
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# make the 'app' folder the current working directory
+WORKDIR /front
 
-# install dependencies
-COPY requirements.txt /code/
-RUN pip install -r requirements.txt
+# copy both 'package.json' and 'package-lock.json' (if available)
+COPY package*.json ./
 
-# copy project
-COPY . /code/
+# install project dependencies
+RUN npm install
+
+# copy project files and folders to the current working directory
+COPY . .
+
+# build app for production with minification
+RUN npm run build:prod
+
+EXPOSE 8080
+CMD ["npm", "run", "start"]
