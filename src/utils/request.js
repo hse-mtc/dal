@@ -9,7 +9,7 @@ const service = axios.create({
   // baseURL: "http://192.168.0.112:12345/api", // url = base url + request url
   baseURL: process.env.NODE_ENV === "heroku"
   ? "https://military-dms.herokuapp.com/api"
-  : "http://localhost:8000",
+  : "http://localhost:8000/api",
 
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
