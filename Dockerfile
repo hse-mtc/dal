@@ -4,7 +4,7 @@ FROM node:lts-alpine
 RUN npm install -g express
 
 # make the 'app' folder the current working directory
-WORKDIR /front
+WORKDIR /code
 
 # copy both 'package.json' and 'package-lock.json' (if available)
 COPY package*.json ./
