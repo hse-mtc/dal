@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // baseURL: "http://192.168.0.112:12345/api", // url = base url + request url
-  baseURL: process.env.NODE_ENV === "heroku"
+  baseURL: process.env.HEROKU_DEPLOYMENT === "true"
   ? "https://military-dms.herokuapp.com/api"
   : "http://localhost:8000/api",
 
