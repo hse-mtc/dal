@@ -5,7 +5,7 @@
 With Docker running execute this command:
 
 ``` bash
-$ docker-compose up
+docker-compose up
 ```
 
 ## Build Setup
