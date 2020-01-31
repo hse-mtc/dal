@@ -5,7 +5,7 @@
 With Docker running execute this command:
 
 ``` bash
-docker-compose up
+$ docker-compose up
 ```
 
 > A minimal vue admin template with Element UI & axios & iconfont & permission control & lint
