@@ -47,7 +47,7 @@ def login(request):
 def info(request):
     data = {
         "roles": ["admin"],
-        "avatar": request.user.userprofileinfo.profile_pic,
+        "avatar": request.user.userprofileinfo.avatar,
         "name": request.user.userprofileinfo.name,
     }
 

@@ -5,7 +5,7 @@ from taggit.managers import TaggableManager
 
 class UserProfileInfo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_pic = models.URLField(blank=True)
+    avatar = models.URLField(blank=True)
     name = models.CharField(max_length=250)
 
     def __str__(self):
