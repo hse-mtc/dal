@@ -6,8 +6,3 @@ Django==2.2.6
 djangorestframework-simplejwt==4.3.0
 djangorestframework==3.10.3
 gunicorn==19.9.0
-psycopg2==2.8.3
-PyJWT==1.7.1
-pytz==2019.3
-PyYAML==5.1.2
-sqlparse==0.3.0
