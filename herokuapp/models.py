@@ -42,6 +42,7 @@ class Documents(models.Model):
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     published_at = models.DateField()
     published_places = models.ForeignKey(PublishPlaces, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='documents/')
 
     def __str__(self):
         return self.title

@@ -27,7 +27,8 @@ from herokuapp.views import (
     authors,
     published_places,
     subject,
-    delete_article, delete_nir)
+    delete_article, delete_nir, get_file,
+    UploadNirView)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -43,4 +44,6 @@ urlpatterns = [
     path("api/user/logout", logout),
     path("api/delete_article", delete_article),
     path("api/delete_nir", delete_nir),
+    path("api/get_file", get_file),
+    path("api/upload", UploadNirView.as_view()),
 ]
