@@ -52,7 +52,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "djangoherokuapp.urls"
@@ -81,7 +80,7 @@ WSGI_APPLICATION = "djangoherokuapp.wsgi.application"
 # Setup Postgres database
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "db_name",
         "USER": "db_user",
         "PASSWORD": "db_user_password",
@@ -117,16 +116,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
 STATIC_URL = "/static/"
-PROJECT_ROOT = os.path.join(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "staticfiles")
-
-# Extra lookup directories for collectstatic to find static files
-STATICFILES_DIRS = (os.path.join(PROJECT_ROOT, "static"),)
-
-#  Add configuration for static files storage using whitenoise
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Rest configurations
 REST_FRAMEWORK = {
