@@ -8,7 +8,7 @@ build:
     web: Dockerfile
 
 run:
-  web: uvicorn dms.asgi:backend
+  web: uvicorn dms.asgi:application
 
 release:
     image: web
