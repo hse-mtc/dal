@@ -1,7 +1,7 @@
-"""djangoherokuapp URL Configuration
+"""dms URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/2.2/topics/http/urls/
+    https://docs.djangoproject.com/en/3.0/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from herokuapp.views import (
+from backend.views import (
     login,
     info,
     logout,
@@ -27,8 +27,7 @@ from herokuapp.views import (
     authors,
     published_places,
     subject,
-    delete_article, delete_nir, get_file,
-    UploadNirView)
+    delete_article, delete_nir)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -44,6 +43,4 @@ urlpatterns = [
     path("api/user/logout", logout),
     path("api/delete_article", delete_article),
     path("api/delete_nir", delete_nir),
-    path("api/get_file", get_file),
-    path("api/upload", UploadNirView.as_view()),
 ]

@@ -1,17 +1,14 @@
 # pull official base image
-FROM python:3.7
-
-# set work directory
-RUN mkdir /code
-WORKDIR /code
+FROM python
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# install dependencies
-COPY requirements.txt /code/
-RUN pip install -r requirements.txt
+# set work directory
+COPY . /code
+WORKDIR /code
 
-# copy project
-COPY . /code/
+# install dependencies
+RUN pip install pipenv
+RUN pipenv install --system --deploy --ignore-pipfile

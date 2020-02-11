@@ -6,6 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 
 def get_authorization_header(request):
     auth = request.META.get("HTTP_X_TOKEN", b"")
+
     if isinstance(auth, str):
         auth = auth.encode(HTTP_HEADER_ENCODING)
 
@@ -46,3 +47,4 @@ class TokenAuthSupportQueryString(TokenAuthentication):
             raise exceptions.AuthenticationFailed(msg)
 
         return self.authenticate_credentials(token)
+
