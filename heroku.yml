@@ -8,9 +8,10 @@ build:
     web: Dockerfile
 
 run:
-  web: gunicorn djangoherokuapp.wsgi --log-file -
+  web: uvicorn dms.asgi:backend
 
 release:
     image: web
-    command:
-        - python manage.py migrate
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate"
