@@ -12,6 +12,6 @@ run:
 
 release:
     image: web
-    command: >
-      sh -c "python manage.py makemigrations &&
-             python manage.py migrate"
+    command:
+      - python manage.py makemigrations
+      - python manage.py migrate"
