@@ -6,16 +6,20 @@ from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.functions import ExtractYear
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
-    HTTP_200_OK,
 )
 
 from backend.models import (
@@ -24,6 +28,64 @@ from backend.models import (
     Publisher,
     Subject,
 )
+
+
+@permission_classes((AllowAny,))
+class UploadNirView(APIView):
+    parser_classes = (
+        FileUploadParser,
+    )
+
+    def put(self, request):
+        """
+        Usage PUT request to api/upload?type=nir&id=21
+        curl -X PUT -H 'Content-Disposition: attachment; filename=ptu.png' 'http://127.0.0.1:8000/api/upload?id=1' --upload-file Колледж\ ПТУ.png
+        :param request:
+        :return:
+        """
+
+        if "file" not in request.data:
+            return Response(
+                {
+                    "error": "No file provided",
+                },
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        doc = Document.objects.all()
+        f = request.data["file"]
+        doc.get(
+            pk=request.query_params.get("id")
+        ).file.save(
+            name=f.name,
+            content=f,
+            save=True,
+        )
+
+        return Response(
+            {
+                "code": HTTP_201_CREATED * 100,
+            },
+            status=HTTP_201_CREATED,
+        )
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def get_file(request):
+    """
+    Usage: api/get_file?type=nir&id=3
+    :param request:
+    :return:
+    """
+    doc = Document.objects.all()
+    f = doc.get(pk=request.query_params.get("id")).file
+    filename = f.name.split('/')[-1]
+    response = HttpResponse(f.path, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response
 
 
 @csrf_exempt
