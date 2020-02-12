@@ -10,7 +10,7 @@
     </el-row>
     <el-row class="search" v-if="subjectId === undefined" >
       <el-col :span="23">
-        <Search placeholder="Введите название темы или документа" />
+        <SearchForSubjects placeholder="Введите название предмета" />
         <Subjects />
       </el-col>
     </el-row>
@@ -24,7 +24,7 @@
         </div>
       </el-col>
       <el-col :span="17" :offset="1">
-        <Search placeholder="Введите название темы или документа" />
+        <SearchForMaterials placeholder="Введите название темы или документа" />
         <div class="main-parts">
           <div v-for="(mainPart, index) in  subjectInfo" :key="index" class="main-part" :id="'part-'+(index+1)">
             <div class="main-part-title" @click="togglePart">
@@ -53,7 +53,8 @@
 </template>
 
 <script>
-import Search from '../Search/Search'
+import SearchForMaterials from '../Search/SearchForMaterials'
+import SearchForSubjects from "../Search/SearchForSubjects";
 import Subjects from '../Subjects/Subjects'
 import SubjectFiles from '../SubjectFiles/SubjectFiles'
 import {getSubject} from '../../api/subject'
@@ -63,7 +64,8 @@ import SubjectTopic from '../SubjectTopic/SubjectTopic'
 export default {
   name: '',
   components: {
-    Search,
+    SearchForMaterials,
+    SearchForSubjects,
     Subjects,
     SubjectFiles,
     SubjectTopic
@@ -82,9 +84,13 @@ export default {
     }
   },
   updated() {
+    if (this.$route.query.subjectId === undefined) {
+      this.subject = "Учебно-методические материалы"
+    }
     if (document.querySelector('.part')) {
       // document.querySelector('.part').classList.add('part-selected')
     }
+
   },
   methods: {
     togglePart(event) {

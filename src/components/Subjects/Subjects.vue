@@ -1,6 +1,6 @@
 <template>
   <el-row v-if="subjects.length !== 0" class="subjects mt-0">
-    <el-col :span="8" v-for="(item, index) in subjects" :key="subjects.id" class="subjects-wrapper mt-5">
+    <el-col :span="8" v-for="(item, index) in filteredSubjects" :key="index" class="subjects-wrapper mt-5">
       <el-col>
         <div class="subjects-card" :id="item.id" v-bind:class="{ 'm-0': ++index % 3 === 0 }" @click="selectSubject">{{item.title}}</div>
       </el-col>
@@ -16,13 +16,15 @@ export default {
   components: {},
   data() {
     return {
-      subjects: []
+      subjects: [],
+      filteredSubjects: []
     }
   },
   created() {
     if (this.$store.getters.subjects.length === 0) {
       getSubjects().then(response => {
         this.subjects = response.data
+        this.filteredSubjects = response.data
         this.$store.dispatch('projectData/addSubjects', this.subjects);
         this.$router.replace({ name: 'Teaching Materials'})
       }).catch(() => {
@@ -31,6 +33,7 @@ export default {
       })
     } else {
       this.subjects = this.$store.getters.subjects
+      this.filteredSubjects = this.$store.getters.subjects
     }
 
   },
@@ -45,7 +48,21 @@ export default {
         }
       })
     }
-  }
+  },
+  watch: {
+    '$route'(to, from) {
+      if (this.$route.query.subjectsSearch) {
+        const subjectsSearch = this.$route.query.subjectsSearch
+        if (subjectsSearch.trim()) {
+          this.filteredSubjects = this.subjects.filter(item => item.title.toUpperCase().includes(subjectsSearch.toUpperCase()))
+        } else {
+          this.filteredSubjects = this.subjects
+        }
+      } else {
+        this.filteredSubjects = this.subjects
+      }
+    }
+  },
 }
 
 </script>

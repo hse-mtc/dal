@@ -1,6 +1,7 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+    <div class="dashboard-text">{{ name }}, добро пожаловать на сайт.</div>
+    <div>Страница сейчас находится на стадии разработки, по всем вопросам: <a href="mailto:vmloskutov@edu.hse.ru">vmloskutov@edu.hse.ru</a></div>
   </div>
 </template>
 

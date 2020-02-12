@@ -46,9 +46,6 @@
                             @change="changeDate"
                     />
                 </el-col>
-                <el-col :offset="1" :span="8" class="mt-1 d-flex align-items-center">
-                    <el-checkbox v-model="checked" @change="showDeleted">Показывать удаленные</el-checkbox>
-                </el-col>
             </el-row>
         </div>
     </div>
@@ -69,46 +66,18 @@
         placings: [],
         placing: '',
         valueDate: '',
-        checked: false
       }
     },
     methods: {
-      showDeleted() {
-        if (this.checked) {
-          this.$router.push({
-            query: {
-              text: this.$route.query.text,
-              section: this.$route.query.section,
-              place: this.$route.query.place,
-              author: this.$route.query.author,
-              start_date: this.$route.query.start_date,
-              end_date: this.$route.query.end_date,
-              show: 'all'
-            }
-          })
-        } else {
-          this.$router.push({
-            query: {
-              text: this.$route.query.text,
-              section: this.$route.query.section,
-              place: this.$route.query.place,
-              author: this.$route.query.author,
-              start_date: this.$route.query.start_date,
-              end_date: this.$route.query.end_date,
-              show: 'enabled'
-            }
-          })
-        }
-      },
       advancedClick() {
         const filters = document.querySelector('.filters')
         const array = document.querySelector('.my-advanced-search-arrow')
         if (filters.style.display === 'none') {
           filters.style.display = 'block'
-          array.style.transform = 'rotate(0deg)'
+          array.style.transform = 'rotate(180deg)'
         } else {
           filters.style.display = 'none'
-          array.style.transform = 'rotate(180deg)'
+          array.style.transform = 'rotate(0deg)'
         }
       },
 
@@ -141,7 +110,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.author && this.$route.query.place) {
@@ -152,7 +120,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.author && !this.$route.query.place) {
@@ -163,7 +130,6 @@
                 section: this.$route.query.section,
                 author: this.author,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.$route.query.place) {
@@ -173,7 +139,6 @@
                 start_date: start_date,
                 end_date: end_date,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -187,7 +152,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.author && this.$route.query.place) {
@@ -196,7 +160,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.author && !this.$route.query.place) {
@@ -205,7 +168,6 @@
                 section: this.$route.query.section,
                 author: this.author,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.author && !this.$route.query.place) {
@@ -213,7 +175,6 @@
               query: {
                 section: this.$route.query.section,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -235,7 +196,6 @@
                 section: this.$route.query.section,
                 place: this.placing,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.placing) {
@@ -246,7 +206,6 @@
                 section: this.$route.query.section,
                 place: this.placing,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.placing) {
@@ -257,7 +216,6 @@
                 section: this.$route.query.section,
                 author: this.$route.query.author,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.placing) {
@@ -267,7 +225,6 @@
                 start_date: start_date,
                 end_date: end_date,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -280,7 +237,6 @@
                 section: this.$route.query.section,
                 place: this.placing,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.placing) {
@@ -289,7 +245,6 @@
                 section: this.$route.query.section,
                 place: this.placing,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.placing) {
@@ -298,7 +253,6 @@
                 section: this.$route.query.section,
                 author: this.$route.query.author,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.placing) {
@@ -306,7 +260,6 @@
               query: {
                 section: this.$route.query.section,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -328,7 +281,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.$route.query.place) {
@@ -339,7 +291,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.$route.query.place) {
@@ -350,7 +301,6 @@
                 section: this.$route.query.section,
                 author: this.$route.query.author,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.$route.query.place) {
@@ -360,7 +310,6 @@
                 start_date: start_date,
                 end_date: end_date,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }
@@ -373,7 +322,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && this.$route.query.place) {
@@ -382,7 +330,6 @@
                 section: this.$route.query.section,
                 place: this.$route.query.place,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (this.$route.query.author && !this.$route.query.place) {
@@ -391,7 +338,6 @@
                 section: this.$route.query.section,
                 author: this.$route.query.author,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           } else if (!this.$route.query.author && !this.$route.query.place) {
@@ -399,7 +345,6 @@
               query: {
                 section: this.$route.query.section,
                 text: this.$route.query.text ? this.$route.query.text : null,
-                show: this.$route.query.show ? this.$route.query.show : 'enabled'
               }
             })
           }

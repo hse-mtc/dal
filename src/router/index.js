@@ -46,7 +46,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/my-materials',
+    redirect: '/msw',
     children: [{
       path: 'my-materials',
       name: 'Мои материалы',

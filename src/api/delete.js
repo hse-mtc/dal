@@ -1,16 +1,8 @@
 import request from '@/utils/request'
 
-export function deleteNir(params) {
+export function deleteDocument(params) {
   return request({
-    url: '/delete_nir',
-    method: 'get',
-    params
-  })
-}
-
-export function deleteArticle(params) {
-  return request({
-    url: '/delete_article',
+    url: '/delete_document',
     method: 'get',
     params
   })

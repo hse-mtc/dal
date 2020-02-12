@@ -24,10 +24,10 @@
           <el-col :span="21">
             <div class="d-flex">
               <div>
-                {{ item.publish_at | moment }}
+                {{ item.publication_date | moment }}
               </div>
               <div class="ml-5" style="color: #76767A">
-                {{ item.publish_places }}
+                <span v-for="(publisher, index) in item.publishers" :key="index">{{ publisher }}</span>
               </div>
             </div>
             <div class="document-card-title">{{ item.title }}</div>
@@ -40,7 +40,9 @@
                     trigger="click"
             >
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
-                <div style="cursor:pointer;">Скачать</div>
+                <div style="cursor:pointer;">
+                  Скачать
+                </div>
                 <div style="cursor:pointer;" @click="deleteArticle(item.id)">Удалить</div>
               </div>
               <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
@@ -60,9 +62,7 @@
 
 <script>
 import { getDocuments } from '@/api/documents'
-import { deleteNir } from '@/api/delete'
-import { deleteArticle } from '@/api/delete'
-import { nir } from '@/api/nir'
+import { deleteDocument } from '@/api/delete'
 
 import moment from 'moment'
 
@@ -95,38 +95,21 @@ export default {
       const deletedId = {
         'id': id
       }
-      if (this.$route.query.section === 'scienceArticles') {
-        deleteArticle(deletedId).then(response => {
-          this.documents.forEach(item => {
-            item.items = item.items.filter(i => {
-              return i.id !== id
-            })
+      deleteDocument(deletedId).then(response => {
+        this.documents.forEach(item => {
+          item.items = item.items.filter(i => {
+            return i.id !== id
           })
-          this.documents = this.documents.filter(item => {
-            return item.items.length !== 0
-          })
-          console.log('файл удален')
-          this.count = this.count - 1
-        }).catch(() => {
-          console.log('Ошибка удаления файла')
         })
-      } else {
-        deleteNir(deletedId).then(response => {
-          this.documents.forEach(item => {
-            item.items = item.items.filter(i => {
-              return i.id !== id
-            })
-          })
-          this.documents = this.documents.filter(item => {
-            console.log(item.items.length === 0)
-            return item.items.length !== 0
-          })
-          console.log('файл удален')
-          this.count = this.count - 1
-        }).catch(() => {
-          console.log('Ошибка удаления файла')
+        this.documents = this.documents.filter(item => {
+          return item.items.length !== 0
         })
-      }
+        console.log('файл удален')
+        this.count = this.count - 1
+      }).catch(() => {
+        console.log('Ошибка удаления файла')
+      })
+
     },
     fetchData(target) {
       let author = this.$route.query.author ?  this.$route.query.author :  null
@@ -134,25 +117,15 @@ export default {
       let start_date = this.$route.query.start_date ?  this.$route.query.start_date :  null
       let end_date = this.$route.query.end_date ?  this.$route.query.end_date :  null
       let text = this.$route.query.text ?  this.$route.query.text :  null
-      let show = this.$route.query.show ?  this.$route.query.show :  'enabled'
-      if (target === 'scienceArticles') {
-        getDocuments(author, place, start_date, end_date, text, show).then(response => {
-          this.documents = response.data.items
-          this.count = response.data.total
-        }).catch(() => {
-          console.log('Данные по документам не указаны')
-        })
-      }
-      if (target === 'scienceWorks') {
-        nir(author, place, start_date, end_date, text).then(response => {
-          this.documents = response.data.items
-          this.count = response.data.total
-        }).catch(() => {
-          console.log('Данные по документам не указаны')
-        })
-      }
-
-
+      let category
+      if (target === 'scienceArticles') category = 'article'
+      else if (target === 'scienceWorks') category = 'research'
+      getDocuments(category, author, place, start_date, end_date, text).then(response => {
+        this.documents = response.data.items
+        this.count = response.data.total
+      }).catch(() => {
+        console.log('Данные по документам не указаны')
+      })
     },
     moment: function() {
       return moment()
