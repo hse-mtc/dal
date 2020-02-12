@@ -527,8 +527,7 @@ def create_authors(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def fulfil_database(request):
-
+def fill_with_mock(request):
     documents_count = Document.objects.all().count()
     if documents_count > 5:
         return Response({"message": "В БД %d документов. Добавление не требуется." % (documents_count)},
