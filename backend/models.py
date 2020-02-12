@@ -53,6 +53,56 @@ class Publisher(models.Model):
         return self.name
 
 
+class Subject(models.Model):
+    title = models.CharField(
+        max_length=255,
+    )
+    abbreviation = models.CharField(
+        max_length=16,
+    )
+
+    class Meta:
+        verbose_name = "Subject"
+        verbose_name_plural = "Subjects"
+
+    def __str__(self):
+        return self.title
+
+
+class Section(models.Model):
+    title = models.CharField(
+        max_length=255,
+    )
+    subject = models.ForeignKey(
+        to=Subject,
+        on_delete=models.DO_NOTHING,
+    )
+
+    class Meta:
+        verbose_name = "Section"
+        verbose_name_plural = "Sections"
+
+    def __str__(self):
+        return self.title
+
+
+class Topic(models.Model):
+    title = models.CharField(
+        max_length=255,
+    )
+    section = models.ForeignKey(
+        to=Section,
+        on_delete=models.DO_NOTHING,
+    )
+
+    class Meta:
+        verbose_name = "Topic"
+        verbose_name_plural = "Topics"
+
+    def __str__(self):
+        return self.title
+
+
 class Document(models.Model):
     class Category(models.TextChoices):
         ARTICLE = "ARTICLE", _("Article")
@@ -87,6 +137,14 @@ class Document(models.Model):
         to=Publisher,
         blank=True,
     )
+    topic = models.ForeignKey(
+        to=Topic,
+        on_delete=models.DO_NOTHING,
+    )
+    subject = models.ForeignKey(
+        to=Subject,
+        on_delete=models.DO_NOTHING,
+    )
     file = models.FileField(
         upload_to=get_upload_path(),
         blank=True,
@@ -98,56 +156,6 @@ class Document(models.Model):
     class Meta:
         verbose_name = "Document"
         verbose_name_plural = "Documents"
-
-    def __str__(self):
-        return self.title
-
-
-class Subject(models.Model):
-    title = models.CharField(
-        max_length=255,
-    )
-    abbreviation = models.CharField(
-        max_length=16,
-    )
-
-    class Meta:
-        verbose_name = "Subject"
-        verbose_name_plural = "Subjects"
-
-    def __str__(self):
-        return self.title
-
-
-class Section(models.Model):
-    title = models.CharField(
-        max_length=255,
-    )
-    subject = models.ForeignKey(
-        Subject,
-        on_delete=models.DO_NOTHING,
-    )
-
-    class Meta:
-        verbose_name = "Section"
-        verbose_name_plural = "Sections"
-
-    def __str__(self):
-        return self.title
-
-
-class Topic(models.Model):
-    title = models.CharField(
-        max_length=255,
-    )
-    section = models.ForeignKey(
-        Section,
-        on_delete=models.DO_NOTHING,
-    )
-
-    class Meta:
-        verbose_name = "Topic"
-        verbose_name_plural = "Topics"
 
     def __str__(self):
         return self.title
