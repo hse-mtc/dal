@@ -227,7 +227,11 @@ def documents(request):
     text = request.query_params.get("text")
     category = request.query_params.get("category")
 
-    db_request = Document.objects.filter(category=str(category).upper())
+    db_request = (
+        Document.objects
+            .filter(category=str(category).upper())
+            .exclude(is_in_trash=True)
+    )
 
     if authors is not None:
         db_request = db_request.filter(authors__name__in=authors.split(","))
