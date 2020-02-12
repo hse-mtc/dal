@@ -41,8 +41,8 @@
             >
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
                 <div style="cursor:pointer;">
-                  <form action="/api/get_file" method="get">
-                    <input :value="item.id" type="hidden">
+                  <form action="https://military-dms-back.herokuapp.com/api/get_file" method="get">
+                    <input :value="item.id" type="hidden" name="id">
                     <button class="download-kebab-button">Скачать</button>
                   </form>
                 </div>
