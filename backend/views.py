@@ -507,32 +507,14 @@ def subject(request):
 
 
 # TODO: move to Document model
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
 def delete_document(request):
     document_id = request.query_params.get("id")
     document = Document.objects.get(id=document_id)
     document.is_in_trash = True
     document.save()
-
-
-# TODO: merge with `delete_nir`
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def delete_article(request):
-    delete_document(request)
-    return Response(
-        {
-            "code": HTTP_200_OK * 100
-        },
-        status=HTTP_200_OK,
-    )
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def delete_nir(request):
-    delete_document(request)
     return Response(
         {
             "code": HTTP_200_OK * 100
