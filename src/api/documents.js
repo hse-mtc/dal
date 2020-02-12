@@ -4,6 +4,6 @@ export function getDocuments(category, authors, published_places, start_date, en
   return request({
     url: '/documents',
     method: 'get',
-    params : {category: category, authors: authors, publish_places: published_places, start_date: start_date, end_date: end_date, text: text}
+    params : {category: category, authors: authors, publishers: published_places, start_date: start_date, end_date: end_date, text: text}
   })
 }
