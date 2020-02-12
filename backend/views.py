@@ -77,17 +77,18 @@ class UploadNirView(APIView):
 @permission_classes((AllowAny,))
 def get_file(request):
     """
-    Usage: api/get_file?type=nir&id=3
+    Usage: api/get_file?id=3
     :param request:
     :return:
     """
     doc = Document.objects.all()
     f = doc.get(pk=request.query_params.get("id")).file
     filename = f.name.split('/')[-1]
-    response = HttpResponse(f.path, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
-    return response
+    with open(f.name, "rb") as content:
+        response = HttpResponse(content, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+        return response
 
 
 @csrf_exempt
