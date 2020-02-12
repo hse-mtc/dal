@@ -17,11 +17,11 @@ from django.contrib import admin
 from django.urls import path
 
 from backend.views import (
-    UploadNirView,
     authors,
     delete_document,
     documents,
     educational_materials,
+    fill_with_mock,
     get_file,
     info,
     login,
@@ -29,6 +29,8 @@ from backend.views import (
     published_places,
     subject,
     subjects,
+
+    UploadNirView,
 )
 
 urlpatterns = [
@@ -45,4 +47,5 @@ urlpatterns = [
     path("api/user/info", info),
     path("api/user/login", login),
     path("api/user/logout", logout),
+    path("fill_with_mock", fill_with_mock),
 ]

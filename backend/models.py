@@ -117,3 +117,37 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Section(models.Model):
+    title = models.CharField(
+        max_length=255,
+    )
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.DO_NOTHING,
+    )
+
+    class Meta:
+        verbose_name = "Section"
+        verbose_name_plural = "Sections"
+
+    def __str__(self):
+        return self.title
+
+
+class Topic(models.Model):
+    title = models.CharField(
+        max_length=255,
+    )
+    section = models.ForeignKey(
+        Section,
+        on_delete=models.DO_NOTHING,
+    )
+
+    class Meta:
+        verbose_name = "Topic"
+        verbose_name_plural = "Topics"
+
+    def __str__(self):
+        return self.title

@@ -26,7 +26,9 @@ from backend.models import (
     Author,
     Document,
     Publisher,
+    Section,
     Subject,
+    Topic,
 )
 
 
@@ -179,7 +181,7 @@ def extract_documents_from_queryset(documents_queryset):
                 "annotation": item.annotation,
                 "keywords": list(item.keywords.names()),
                 "publication_date": item.publication_date.isoformat(),
-                "publishers": item.publishers.objects.all().values_list("name", flat=True),
+                "publishers": item.publishers.values_list("name", flat=True),
             },
             list(documents_queryset),
         )
@@ -508,3 +510,79 @@ def delete_document(request):
         },
         status=HTTP_200_OK,
     )
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def fill_with_mock(request):
+    documents_count = Document.objects.all().count()
+    if documents_count > 5:
+        return Response(
+            {
+                "message": "В БД {} документов. Добавление не требуется.".format(documents_count)
+            },
+            status=HTTP_200_OK,
+        )
+
+    subject = Subject()
+    subject.title = "Военно-тактическая подготовка"
+    subject.abbreviation = "ВТП"
+    subject.save()
+
+    author = Author()
+    author.name = "Кашин А.В."
+    author.save()
+
+    publisher = Publisher()
+    publisher.name = "М.: НИУ ВШЭ"
+    publisher.save()
+
+    s_names = ["Топографические карты", "Организация ВС РФ", "Управление подразделениями в мирное время"]
+    section_quantity = len(s_names)
+    section_names = [f"Часть {k + 1}: {s_names[k]}" for k in range(section_quantity)]
+    sections = []
+    for i in range(section_quantity):
+        section = Section(
+            subject=subject,
+            title=section_names[i],
+        )
+        sections.append(section)
+        section.save()
+
+    relative_names = [" по картам", " по организации", " по управлению"]
+    keyword_list = [
+        ["графика", "ориентирование"],
+        ["структура", "стратификация"],
+        ["дежурство", "боевая подготовка", "мобилизационная работа"]
+    ]
+
+    t_names = ["Введение", "Основная часть", "Заключение"]
+    topic_quantity = len(t_names)
+    topics = []
+    for i in range(section_quantity):
+        topic_names = [t_names[k] + relative_names[i] for k in range(topic_quantity)]
+        print(section_quantity, topic_quantity)
+        for j in range(topic_quantity):
+            topic = Topic(section=sections[i], title=topic_names[j])
+            topics.append(topic)
+            topic.save()
+
+    document_prefixes = ["Вводный документ", "Основной документ", "Заключительный документ"]
+    document_names = []
+
+    for i in range(section_quantity):
+        for j in range(topic_quantity):
+            document_names.append(document_prefixes[j] + relative_names[i])
+
+    for index, name in enumerate(document_names):
+        annotation_name = "Аннотация к документу: " + name
+        document, _ = Document.objects.get_or_create(subject=subject, annotation=annotation_name,
+                                                     title=name, topic=topics[index % topic_quantity])
+        document.publishers.add(publisher)
+        document.keywords.add(*keyword_list[index % section_quantity])
+        if index % topic_quantity == 1:
+            document.category = Document.Category.SEMINAR
+        else:
+            document.category = Document.Category.LECTURE
+        document.save()
