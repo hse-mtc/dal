@@ -236,7 +236,7 @@ def documents(request):
     if end_date is not None:
         db_request = db_request.filter(publication_date__lte=end_date)
     if publishers is not None:
-        db_request = db_request.filter(publisher__name__in=publishers.split(","))
+        db_request = db_request.filter(publishers__name__in=publishers.split(","))
     if text is not None:
         db_request = db_request.filter(
             reduce(operator.and_, [Q(title__icontains=word) for word in text.split()])
