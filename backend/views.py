@@ -23,8 +23,8 @@ from rest_framework.status import (
 )
 
 from backend.models import (
+    Author,
     Document,
-    Profile,
     Publisher,
     Subject,
 )
@@ -364,7 +364,7 @@ def authors(request):
                         "label": x,
                         "value": x
                     },
-                    Profile.objects.all().values_list(
+                    Author.objects.all().values_list(
                         "name",
                         flat=True,
                     ),
