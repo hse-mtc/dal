@@ -521,15 +521,11 @@ def create_authors():
         author.save()
     return Response({"message": f"{len(author_names)} авторов успешно добавлено."}, status=HTTP_200_OK)
 
+
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def fill_with_mock(request):
-    documents_count = Document.objects.all().count()
-    if documents_count > 5:
-        return Response({"message": "В БД %d документов. Добавление не требуется." % (documents_count)},
-                        status=HTTP_200_OK)
-
     subject = Subject()
     subject.title = "Военно-тактическая подготовка"
     subject.abbreviation = "ВТП"
@@ -571,25 +567,34 @@ def fill_with_mock(request):
             topic = Topic(section=sections[i], title=topic_names[j])
             topics.append(topic)
             topic.save()
-    
+
     document_prefixes = ["Вводный документ", "Основной документ", "Заключительный документ"]
     document_names = []
-    
+
     for i in range(section_quantity):
         for j in range(topic_quantity):
             document_names.append(document_prefixes[j] + relative_names[i])
 
     for index, name in enumerate(document_names):
-        annotation_name = "Аннотация к документу: " + name
-        document, _ = Document.objects.get_or_create(subject=subject, annotation=annotation_name, 
-                            title=name, topic=topics[index % topic_quantity])
-        document.publishers.add(publisher)
-        document.keywords.add(*keyword_list[index % section_quantity])
         if index % topic_quantity == 1:
-            document.category = Document.Category.SEMINAR
+            category = Document.Category.ARTICLE
         else:
-            document.category = Document.Category.LECTURE
+            category = Document.Category.RESEARCH
+
+        annotation_name = "Аннотация к документу: " + name
+        document, is_created = Document.objects.get_or_create(
+            annotation=annotation_name,
+            category=category,
+            subject=subject,
+            title=name,
+            topic=topics[index % topic_quantity],
+        )
+        if is_created:
+            continue
+
+        document.publishers.add(publisher)
+        document.authors.add(author)
+        document.keywords.add(*keyword_list[index % section_quantity])
         document.save()
 
     return Response({"message": f"{len(document_names)} объектов успешно добавлено."}, status=HTTP_200_OK)
-
