@@ -515,15 +515,23 @@ def delete_document(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def fill_with_mock(request):
+def create_authors(request):
+    author_names = ["Пеляк В.С.", "Репалов Д.Н.", "Никандров И.В.", "Усиков Ю.В."]
+    for name in author_names:
+        author = Author()
+        author.name = name
+        author.save()
+    return Response({"message": f"{len(author_names)} авторов успешно добавлено."}, status=HTTP_200_OK)
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def fulfil_database(request):
+
     documents_count = Document.objects.all().count()
     if documents_count > 5:
-        return Response(
-            {
-                "message": "В БД {} документов. Добавление не требуется.".format(documents_count)
-            },
-            status=HTTP_200_OK,
-        )
+        return Response({"message": "В БД %d документов. Добавление не требуется." % (documents_count)},
+                        status=HTTP_200_OK)
 
     subject = Subject()
     subject.title = "Военно-тактическая подготовка"
@@ -534,6 +542,8 @@ def fill_with_mock(request):
     author.name = "Кашин А.В."
     author.save()
 
+    create_authors(None)
+
     publisher = Publisher()
     publisher.name = "М.: НИУ ВШЭ"
     publisher.save()
@@ -543,10 +553,7 @@ def fill_with_mock(request):
     section_names = [f"Часть {k + 1}: {s_names[k]}" for k in range(section_quantity)]
     sections = []
     for i in range(section_quantity):
-        section = Section(
-            subject=subject,
-            title=section_names[i],
-        )
+        section = Section(subject=subject, title=section_names[i])
         sections.append(section)
         section.save()
 
@@ -567,18 +574,18 @@ def fill_with_mock(request):
             topic = Topic(section=sections[i], title=topic_names[j])
             topics.append(topic)
             topic.save()
-
+    
     document_prefixes = ["Вводный документ", "Основной документ", "Заключительный документ"]
     document_names = []
-
+    
     for i in range(section_quantity):
         for j in range(topic_quantity):
             document_names.append(document_prefixes[j] + relative_names[i])
 
     for index, name in enumerate(document_names):
         annotation_name = "Аннотация к документу: " + name
-        document, _ = Document.objects.get_or_create(subject=subject, annotation=annotation_name,
-                                                     title=name, topic=topics[index % topic_quantity])
+        document, _ = Document.objects.get_or_create(subject=subject, annotation=annotation_name, 
+                            title=name, topic=topics[index % topic_quantity])
         document.publishers.add(publisher)
         document.keywords.add(*keyword_list[index % section_quantity])
         if index % topic_quantity == 1:
@@ -586,3 +593,6 @@ def fill_with_mock(request):
         else:
             document.category = Document.Category.LECTURE
         document.save()
+
+    return Response({"message": f"{len(document_names)} объектов успешно добавлено."}, status=HTTP_200_OK)
+
