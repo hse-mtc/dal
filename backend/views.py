@@ -216,14 +216,17 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     return data
 
 
-def get_documents_by_category(request, category):
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def documents(request):
     authors = request.query_params.get("authors")
     start_date = request.query_params.get("start_date")
     end_date = request.query_params.get("end_date")
     publishers = request.query_params.get("publish_places")
     text = request.query_params.get("text")
 
-    db_request = Document.objects.filter(category=category)
+    db_request = Document.objects.all()
 
     if authors is not None:
         db_request = db_request.filter(authors__name__in=authors.split(","))
@@ -250,27 +253,6 @@ def get_documents_by_category(request, category):
             "data": data
         },
         status=HTTP_200_OK,
-    )
-
-
-# TODO: merge with `nir`
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def articles(request):
-    return get_documents_by_category(
-        request,
-        Document.Category.ARTICLE,
-    )
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def nir(request):
-    return get_documents_by_category(
-        request,
-        Document.Category.RESEARCH,
     )
 
 
