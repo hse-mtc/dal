@@ -513,10 +513,7 @@ def delete_document(request):
     )
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def create_authors(request):
+def create_authors():
     author_names = ["Пеляк В.С.", "Репалов Д.Н.", "Никандров И.В.", "Усиков Ю.В."]
     for name in author_names:
         author = Author()
@@ -542,7 +539,7 @@ def fill_with_mock(request):
     author.name = "Кашин А.В."
     author.save()
 
-    create_authors(None)
+    create_authors()
 
     publisher = Publisher()
     publisher.name = "М.: НИУ ВШЭ"
