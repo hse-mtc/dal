@@ -179,7 +179,7 @@ def extract_documents_from_queryset(documents_queryset):
                 "annotation": item.annotation,
                 "keywords": list(item.keywords.names()),
                 "publication_date": item.publication_date.isoformat(),
-                "publishers": item.publishers.name,
+                "publishers": item.publishers.objects.all().values_list("name", flat=True),
             },
             list(documents_queryset),
         )
