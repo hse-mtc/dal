@@ -351,8 +351,7 @@ def authors(request):
             "data": list(
                 map(
                     lambda x: {
-                        "label": x,
-                        "value": x
+                        "value": x,
                     },
                     Author.objects.all().values_list(
                         "name",
@@ -375,8 +374,7 @@ def published_places(request):
             "data": list(
                 map(
                     lambda x: {
-                        "label": x,
-                        "value": x
+                        "value": x,
                     },
                     Publisher.objects.all().values_list(
                         "name",
@@ -519,11 +517,10 @@ def create_authors():
         author = Author()
         author.name = name
         author.save()
-    return Response({"message": f"{len(author_names)} авторов успешно добавлено."}, status=HTTP_200_OK)
 
 
 @csrf_exempt
-@api_view(["GET"])
+@api_view(["POST"])
 @permission_classes((AllowAny,))
 def fill_with_mock(request):
     subject = Subject()
@@ -582,14 +579,14 @@ def fill_with_mock(request):
             category = Document.Category.RESEARCH
 
         annotation_name = "Аннотация к документу: " + name
-        document, is_created = Document.objects.get_or_create(
+        document, created = Document.objects.get_or_create(
             annotation=annotation_name,
             category=category,
             subject=subject,
             title=name,
             topic=topics[index % topic_quantity],
         )
-        if is_created:
+        if not created:
             continue
 
         document.publishers.add(publisher)
@@ -597,4 +594,9 @@ def fill_with_mock(request):
         document.keywords.add(*keyword_list[index % section_quantity])
         document.save()
 
-    return Response({"message": f"{len(document_names)} объектов успешно добавлено."}, status=HTTP_200_OK)
+    return Response(
+        {
+            "message": "{} объектов успешно добавлено.".format(len(document_names)),
+        },
+        status=HTTP_200_OK,
+    )
