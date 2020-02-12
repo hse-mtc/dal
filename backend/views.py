@@ -223,7 +223,7 @@ def documents(request):
     authors = request.query_params.get("authors")
     start_date = request.query_params.get("start_date")
     end_date = request.query_params.get("end_date")
-    publishers = request.query_params.get("publish_places")
+    publishers = request.query_params.get("publishers")
     text = request.query_params.get("text")
     category = request.query_params.get("category")
 
