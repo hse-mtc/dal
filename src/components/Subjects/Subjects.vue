@@ -1,11 +1,14 @@
 <template>
-  <el-row v-if="subjects.length !== 0" class="subjects mt-0">
-    <el-col :span="8" v-for="(item, index) in filteredSubjects" :key="index" class="subjects-wrapper mt-5">
-      <el-col>
-        <div class="subjects-card" :id="item.id" v-bind:class="{ 'm-0': ++index % 3 === 0 }" @click="selectSubject">{{item.title}}</div>
+  <div>
+    <el-row v-if="filteredSubjects.length !== 0" class="subjects mt-0">
+      <el-col :span="8" v-for="(item, index) in filteredSubjects" :key="index" class="subjects-wrapper mt-5">
+        <el-col>
+          <div class="subjects-card" :id="item.id" v-bind:class="{ 'm-0': ++index % 3 === 0 }" @click="selectSubject">{{item.title}}</div>
+        </el-col>
       </el-col>
-    </el-col>
-  </el-row>
+    </el-row>
+    <div v-else>Предметов с таким названием не найдено.</div>
+  </div>
 </template>
 
 <script>

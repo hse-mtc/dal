@@ -41,7 +41,10 @@
             >
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
                 <div style="cursor:pointer;">
-                  Скачать
+                  <form action="/api/get_file" method="get">
+                    <input :value="item.id" type="hidden">
+                    <button class="download-kebab-button">Скачать</button>
+                  </form>
                 </div>
                 <div style="cursor:pointer;" @click="deleteArticle(item.id)">Удалить</div>
               </div>
