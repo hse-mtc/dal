@@ -19,7 +19,7 @@
         <div class="parts">
           <div class="parts-all">Все разделы</div>
           <div v-for="(part, index) in subjectInfo" :key="index" class="part" @click="selectPart" :id="index+1">
-            Раздел {{index+1}}. {{part.title}}
+            {{part.title}}
           </div>
         </div>
       </el-col>
@@ -28,7 +28,7 @@
         <div class="main-parts">
           <div v-for="(mainPart, index) in  subjectInfo" :key="index" class="main-part" :id="'part-'+(index+1)">
             <div class="main-part-title" @click="togglePart">
-              <div>Раздел {{index+1}}. {{mainPart.title}}</div>
+              <div>{{mainPart.title}}</div>
               <div class="">
                 <el-popover
                         placement="bottom"
