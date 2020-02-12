@@ -283,7 +283,7 @@ def subjects(request):
         map(
             lambda x: {
                 "id": x.id,
-                "title": x.title
+                "title": x.title,
             },
             list(Subject.objects.all())
         )
@@ -291,7 +291,8 @@ def subjects(request):
     return Response(
         {
             "code": HTTP_200_OK * 100,
-            "data": data},
+            "data": data,
+        },
         status=HTTP_200_OK,
     )
 
@@ -510,6 +511,7 @@ def delete_document(request):
     document_id = request.query_params.get("id")
     document = Document.objects.get(id=document_id)
     document.is_in_trash = True
+    document.save()
 
 
 # TODO: merge with `delete_nir`
