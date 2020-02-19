@@ -1,20 +1,30 @@
+# coding=utf-8
+
 import operator
+import typing as tp
 
 from functools import reduce
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import (
+    Q,
+    F,
+)
 
 from rest_framework.authtoken.models import Token
-from rest_framework.decorators import api_view, permission_classes
 from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+)
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
@@ -38,7 +48,7 @@ class UploadNirView(APIView):
         FileUploadParser,
     )
 
-    def put(self, request):
+    def put(self, request: Request) -> Response:
         """
         Usage PUT request to api/upload?type=nir&id=21
         curl -X PUT -H 'Content-Disposition: attachment; filename=ptu.png' 'http://127.0.0.1:8000/api/upload?id=1' --upload-file Колледж\ ПТУ.png
@@ -75,12 +85,13 @@ class UploadNirView(APIView):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def get_file(request):
+def get_file(request: Request) -> HttpResponse:
     """
     Usage: api/get_file?id=3
     :param request:
     :return:
     """
+
     doc = Document.objects.all()
     f = doc.get(pk=request.query_params.get("id")).file
     filename = f.name.split('/')[-1]
@@ -94,11 +105,10 @@ def get_file(request):
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
-def login(request):
+def login(request: Request) -> Response:
     username = request.data.get("username")
     password = request.data.get("password")
-
-    if username is None or password is None:
+    if not username or not password:
         return Response(
             {
                 "error": "Please provide both username and password"
@@ -124,8 +134,8 @@ def login(request):
         {
             "code": HTTP_200_OK * 100,
             "data": {
-                "token": token.key
-            }
+                "token": token.key,
+            },
         },
         status=HTTP_200_OK,
     )
@@ -133,11 +143,11 @@ def login(request):
 
 @csrf_exempt
 @api_view(["GET"])
-def info(request):
+def info(request: Request) -> Response:
     data = {
-        "roles": ["admin"],
+        "roles":  ["admin"],
         "avatar": request.user.profile.photo,
-        "name": request.user.profile.name,
+        "name":   request.user.profile.name,
     }
 
     return Response(
@@ -152,7 +162,7 @@ def info(request):
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
-def logout(request):
+def logout(request: Request) -> Response:
     try:
         request.user.auth_token.delete()
     except (AttributeError, ObjectDoesNotExist):
@@ -168,21 +178,23 @@ def logout(request):
 
 
 # TODO: refactor
-def extract_documents_from_queryset(documents_queryset):
+def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
     return list(
         map(
             lambda item: {
-                "id": item.id,
-                "title": item.title,
-                "authors": list(
+                "annotation":       item.annotation,
+                "authors":          list(
                     item.authors.values_list(
-                        "name", flat=True
+                        "name", flat=True,
                     )
                 ),
-                "annotation": item.annotation,
-                "keywords": list(item.keywords.names()),
+                "id":               item.id,
+                "keywords":         list(item.keywords.names()),
                 "publication_date": item.publication_date.isoformat(),
-                "publishers": item.publishers.values_list("name", flat=True),
+                "publishers":       item.publishers.values_list(
+                    "name", flat=True,
+                ),
+                "title":            item.title,
             },
             list(documents_queryset),
         )
@@ -193,13 +205,15 @@ def extract_documents_from_queryset(documents_queryset):
 def extract_documents_by_year_from_queryset(documents_queryset):
     t_dict = {}
     total = 0
-    data = {"items": []}
+    data = {
+        "items": [],
+    }
 
     for year in (
-            documents_queryset
-                    .annotate(year=ExtractYear("publication_date"))
-                    .values_list("year", flat=True)
-                    .distinct()
+        documents_queryset
+            .annotate(year=ExtractYear("publication_date"))
+            .values_list("year", flat=True)
+            .distinct()
     ):
         t_dict[year] = extract_documents_from_queryset(
             documents_queryset.filter(publication_date__year=year)
@@ -208,8 +222,8 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     for key, value in t_dict.items():
         data["items"].append(
             {
-                "year": key,
-                "items": value
+                "year":  key,
+                "items": value,
             }
         )
         total += len(value)
@@ -222,7 +236,7 @@ def extract_documents_by_year_from_queryset(documents_queryset):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def documents(request):
+def documents(request: Request) -> Response:
     authors = request.query_params.get("authors")
     start_date = request.query_params.get("start_date")
     end_date = request.query_params.get("end_date")
@@ -231,7 +245,8 @@ def documents(request):
     category = request.query_params.get("category")
 
     db_request = (
-        Document.objects
+        Document
+            .objects
             .filter(category=str(category).upper())
             .exclude(is_in_trash=True)
     )
@@ -269,19 +284,12 @@ def documents(request):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def subjects(request):
-    data = list(
-        map(
-            lambda x: {
-                "id": x.id,
-                "title": x.title,
-            },
-            list(Subject.objects.all())
-        )
-    )
     return Response(
         {
             "code": HTTP_200_OK * 100,
-            "data": data,
+            "data": Subject.objects.values(
+                "id", "title",
+            ),
         },
         status=HTTP_200_OK,
     )
@@ -293,38 +301,41 @@ def subjects(request):
 def educational_materials(request):  # TODO: Добавить параметр айди предмета
     data = [
         {
-            "id": 1,
-            "title": "Матеша",
-            "subject": {"id": 1, "title": "Subject"},
+            "id":       1,
+            "title":    "Матеша",
+            "subject":  {
+                "id":    1,
+                "title": "Subject"
+            },
             "lectures": [
                 {
-                    "id": 1,
-                    "title": "Справочник по матеше",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
+                    "id":      1,
+                    "title":   "Справочник по матеше",
+                    "url":     "",
+                    "edited":  "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
                 {
-                    "id": 2,
-                    "title": "Справочник по матеше 2",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
+                    "id":      2,
+                    "title":   "Справочник по матеше 2",
+                    "url":     "",
+                    "edited":  "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
             ],
             "seminars": [
                 {
-                    "id": 1,
-                    "title": "Семинар по матеше",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
+                    "id":      1,
+                    "title":   "Семинар по матеше",
+                    "url":     "",
+                    "edited":  "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
                 {
-                    "id": 2,
-                    "title": "Семинар по матеше 2",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
+                    "id":      2,
+                    "title":   "Семинар по матеше 2",
+                    "url":     "",
+                    "edited":  "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
             ],
@@ -348,17 +359,7 @@ def authors(request):
     return Response(
         {
             "code": HTTP_200_OK * 100,
-            "data": list(
-                map(
-                    lambda x: {
-                        "value": x,
-                    },
-                    Author.objects.all().values_list(
-                        "name",
-                        flat=True,
-                    ),
-                )
-            ),
+            "data": Author.objects.annotate(value=F("name")).values("value"),
         },
         status=HTTP_200_OK,
     )
@@ -367,21 +368,11 @@ def authors(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def published_places(request):
+def published_places(request: Request) -> Response:
     return Response(
         {
             "code": HTTP_200_OK * 100,
-            "data": list(
-                map(
-                    lambda x: {
-                        "value": x,
-                    },
-                    Publisher.objects.all().values_list(
-                        "name",
-                        flat=True,
-                    ),
-                )
-            ),
+            "data": Publisher.objects.annotate(value=F("name")).values("value")
         },
         status=HTTP_200_OK,
     )
@@ -390,100 +381,181 @@ def published_places(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def subject(request):
+def subject(request: Request) -> Response:
     return Response(
         {
             "code": HTTP_200_OK * 100,
             "data": {
                 "parts": [
                     {
-                        "title": "Введение",
+                        "title":  "Введение",
                         "topics": [
                             {
-                                "id": 1,
-                                "title": "История",
-                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
-                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
+                                "id":            1,
+                                "title":         "История",
+                                "lectures":      [{
+                                    "name": "ЛР 2-1",
+                                    "link": "https://google.com"
+                                }],
+                                "seminars":      [{
+                                    "name": "СР 3-1",
+                                    "link": "https://yandex.ru"
+                                }],
                                 "group_classes": [
-                                    {"name": "ГЗ 4-1", "link": "https://vk.com"},
-                                    {"name": "ГЗ 4-2", "link": "https://yahoo.com"},
+                                    {
+                                        "name": "ГЗ 4-1",
+                                        "link": "https://vk.com"
+                                    },
+                                    {
+                                        "name": "ГЗ 4-2",
+                                        "link": "https://yahoo.com"
+                                    },
                                 ],
                             }
                         ],
                     },
                     {
-                        "title": "Вступление",
+                        "title":  "Вступление",
                         "topics": [
                             {
-                                "id": 1,
-                                "title": "Понятия и термины",
-                                "lectures": [
-                                    {"name": "ЛР 2-1", "link": "https://google.com"},
-                                    {"name": "ЛР 2-2", "link": "https://mail.com"},
-                                    {"name": "ЛР 2-3", "link": "https://office.com"},
+                                "id":            1,
+                                "title":         "Понятия и термины",
+                                "lectures":      [
+                                    {
+                                        "name": "ЛР 2-1",
+                                        "link": "https://google.com"
+                                    },
+                                    {
+                                        "name": "ЛР 2-2",
+                                        "link": "https://mail.com"
+                                    },
+                                    {
+                                        "name": "ЛР 2-3",
+                                        "link": "https://office.com"
+                                    },
                                 ],
-                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
-                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                                "seminars":      [{
+                                    "name": "СР 3-1",
+                                    "link": "https://yandex.ru"
+                                }],
+                                "group_classes": [{
+                                    "name": "ГЗ 4-1",
+                                    "link": "https://vk.com"
+                                }],
                             }
                         ],
                     },
                     {
-                        "title": "Основная часть 1",
+                        "title":  "Основная часть 1",
                         "topics": [
                             {
-                                "id": 1,
-                                "title": "Боевые действия",
-                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
-                                "seminars": [
-                                    {"name": "СР 3-1", "link": "https://yandex.ru"},
-                                    {"name": "СР 3-2", "link": "https://yandex.ru"},
-                                    {"name": "СР 3-3", "link": "https://yandex.ru"},
-                                    {"name": "СР 3-4", "link": "https://yandex.ru"},
+                                "id":            1,
+                                "title":         "Боевые действия",
+                                "lectures":      [{
+                                    "name": "ЛР 2-1",
+                                    "link": "https://google.com"
+                                }],
+                                "seminars":      [
+                                    {
+                                        "name": "СР 3-1",
+                                        "link": "https://yandex.ru"
+                                    },
+                                    {
+                                        "name": "СР 3-2",
+                                        "link": "https://yandex.ru"
+                                    },
+                                    {
+                                        "name": "СР 3-3",
+                                        "link": "https://yandex.ru"
+                                    },
+                                    {
+                                        "name": "СР 3-4",
+                                        "link": "https://yandex.ru"
+                                    },
                                 ],
-                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                                "group_classes": [{
+                                    "name": "ГЗ 4-1",
+                                    "link": "https://vk.com"
+                                }],
                             }
                         ],
                     },
                     {
-                        "title": "Основная часть 2",
+                        "title":  "Основная часть 2",
                         "topics": [
                             {
-                                "id": 1,
-                                "title": "Действия в бою",
-                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
-                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
-                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                                "id":            1,
+                                "title":         "Действия в бою",
+                                "lectures":      [{
+                                    "name": "ЛР 2-1",
+                                    "link": "https://google.com"
+                                }],
+                                "seminars":      [{
+                                    "name": "СР 3-1",
+                                    "link": "https://yandex.ru"
+                                }],
+                                "group_classes": [{
+                                    "name": "ГЗ 4-1",
+                                    "link": "https://vk.com"
+                                }],
                             }
                         ],
                     },
                     {
-                        "title": "Завершение",
+                        "title":  "Завершение",
                         "topics": [
                             {
-                                "id": 1,
-                                "title": "Итоги",
-                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
-                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
-                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                                "id":            1,
+                                "title":         "Итоги",
+                                "lectures":      [{
+                                    "name": "ЛР 2-1",
+                                    "link": "https://google.com"
+                                }],
+                                "seminars":      [{
+                                    "name": "СР 3-1",
+                                    "link": "https://yandex.ru"
+                                }],
+                                "group_classes": [{
+                                    "name": "ГЗ 4-1",
+                                    "link": "https://vk.com"
+                                }],
                             }
                         ],
                     },
                     {
-                        "title": "Окончание",
+                        "title":  "Окончание",
                         "topics": [
                             {
-                                "id": 1,
-                                "title": "Авторы",
-                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
-                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
-                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                                "id":            1,
+                                "title":         "Авторы",
+                                "lectures":      [{
+                                    "name": "ЛР 2-1",
+                                    "link": "https://google.com"
+                                }],
+                                "seminars":      [{
+                                    "name": "СР 3-1",
+                                    "link": "https://yandex.ru"
+                                }],
+                                "group_classes": [{
+                                    "name": "ГЗ 4-1",
+                                    "link": "https://vk.com"
+                                }],
                             },
                             {
-                                "id": 2,
-                                "title": "Благодарности",
-                                "lectures": [{"name": "ЛР 2-1", "link": "https://google.com"}],
-                                "seminars": [{"name": "СР 3-1", "link": "https://yandex.ru"}],
-                                "group_classes": [{"name": "ГЗ 4-1", "link": "https://vk.com"}],
+                                "id":            2,
+                                "title":         "Благодарности",
+                                "lectures":      [{
+                                    "name": "ЛР 2-1",
+                                    "link": "https://google.com"
+                                }],
+                                "seminars":      [{
+                                    "name": "СР 3-1",
+                                    "link": "https://yandex.ru"
+                                }],
+                                "group_classes": [{
+                                    "name": "ГЗ 4-1",
+                                    "link": "https://vk.com"
+                                }],
                             },
                         ],
                     },
@@ -498,14 +570,15 @@ def subject(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def delete_document(request):
+def delete_document(request: Request) -> Response:
     document_id = request.query_params.get("id")
     document = Document.objects.get(id=document_id)
     document.is_in_trash = True
     document.save()
+
     return Response(
         {
-            "code": HTTP_200_OK * 100
+            "code": HTTP_200_OK * 100,
         },
         status=HTTP_200_OK,
     )
@@ -522,7 +595,7 @@ def create_authors():
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
-def fill_with_mock(request):
+def fill_with_mock(request: Request) -> Response:
     subject = Subject()
     subject.title = "Военно-тактическая подготовка"
     subject.abbreviation = "ВТП"
