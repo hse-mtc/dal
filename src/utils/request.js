@@ -12,7 +12,7 @@ const service = axios.create({
            : "https://military-dms-back.herokuapp.com/api",
 
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  timeout: 10000 // request timeout
 })
 
 // request interceptor

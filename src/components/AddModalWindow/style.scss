@@ -1,0 +1,64 @@
+.addModal {
+  margin-top: 50px;
+  position: fixed;
+  top: 50%;
+  left: calc(50%);
+  transform: translate(calc(-0%), -50%);
+  z-index: 11;
+  width: 50vw;
+  height: 100%;
+  background-color: white;
+  padding: 32px 23px;
+  border: 1px solid #ccc;
+  z-index: 202;
+  overflow-y: scroll;
+
+  .add-author {
+    &-title {
+      margin-left: 160px;
+      //margin-top: 20px;
+      //margin-bottom: 20px;
+      font-size: 14px;
+      color: #606266;
+      line-height: 40px;
+    }
+  }
+  .tags-input-root {
+    line-height: 1.5em;
+  }
+
+  .add-files {
+    input[type="file"]{
+      position: absolute;
+      top: -500px;
+    }
+    div.file-listing{
+      width: 200px;
+    }
+    span.remove-file{
+      color: red;
+      cursor: pointer;
+      float: right;
+    }
+    &-title {
+      font-size: 14px;
+      color: #606266;
+      line-height: 30px;
+      font-weight: 700;
+    }
+    &-subtitle {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 21px;
+      letter-spacing: 0.04em;
+      color: #76767A;
+    }
+    &-container {
+      width: 300px;
+      margin-top: 10px;
+      border: 1px solid #A7A7AB;
+      border-radius: 4px;
+    }
+  }
+}

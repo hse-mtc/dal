@@ -15,7 +15,6 @@
                         <el-option
                                 v-for="item in authors"
                                 :key="item.value"
-                                :label="item.label"
                                 :value="item.value"
                         />
                     </el-select>
@@ -27,7 +26,6 @@
                         <el-option
                                 v-for="item in placings"
                                 :key="item.value"
-                                :label="item.label"
                                 :value="item.value"
                         />
                     </el-select>
@@ -353,17 +351,29 @@
       }
     },
     mounted() {
-      getAuthors().then(response => {
-        this.authors = response.data
-      }).catch(() => {
-        console.log('Данные по авторам не указаны')
-      })
+        if (this.$store.getters.authors.length === 0) {
+            getAuthors().then(response => {
+                this.authors = response.data
+                this.$store.commit('SET_AUTHORS', this.authors);
+            }).catch(() => {
+                console.log('Данные по авторам не указаны')
+            })
 
-      getPublishPlaces().then(response => {
-        this.placings = response.data
-      }).catch(() => {
-        console.log('Данные по размещениям не указаны')
-      })
+        } else {
+            this.authors = this.$store.getters.authors
+        }
+
+        if (this.$store.getters.publishers.length === 0) {
+            getPublishPlaces().then(response => {
+                this.placings = response.data
+                this.$store.commit('SET_PUBLISHERS', this.placings);
+            }).catch(() => {
+                console.log('Данные по размещениям не указаны')
+            })
+
+        } else {
+            this.placings = this.$store.getters.publishers
+        }
     }
   }
 

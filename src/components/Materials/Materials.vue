@@ -112,7 +112,7 @@ export default {
       subjects.forEach(item => {
         if (item.id == this.subjectId) {
           this.subject = item.title
-          getSubject().then(response => {
+          getSubject({id: item.id}).then(response => {
             this.subjectInfo = response.data.parts
           }).catch(() => {
             // eslint-disable-next-line no-console
