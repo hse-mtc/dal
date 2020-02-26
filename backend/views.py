@@ -7,6 +7,7 @@ from functools import reduce
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Max
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -146,9 +147,9 @@ def login(request: Request) -> Response:
 @api_view(["GET"])
 def info(request: Request) -> Response:
     data = {
-        "roles": ["admin"],
+        "roles":  ["admin"],
         "avatar": request.user.profile.photo,
-        "name": request.user.profile.name,
+        "name":   request.user.profile.name,
     }
 
     return Response(
@@ -183,19 +184,19 @@ def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
     return list(
         map(
             lambda item: {
-                "annotation": item.annotation,
-                "authors": list(
+                "annotation":       item.annotation,
+                "authors":          list(
                     item.authors.values_list(
                         "name", flat=True,
                     )
                 ),
-                "id": item.id,
-                "keywords": list(item.keywords.names()),
+                "id":               item.id,
+                "keywords":         list(item.keywords.names()),
                 "publication_date": item.publication_date.isoformat(),
-                "publishers": item.publishers.values_list(
+                "publishers":       item.publishers.values_list(
                     "name", flat=True,
                 ),
-                "title": item.title,
+                "title":            item.title,
             },
             list(documents_queryset),
         )
@@ -211,10 +212,10 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     }
 
     for year in (
-            documents_queryset
-                    .annotate(year=ExtractYear("publication_date"))
-                    .values_list("year", flat=True)
-                    .distinct()
+        documents_queryset
+            .annotate(year=ExtractYear("publication_date"))
+            .values_list("year", flat=True)
+            .distinct()
     ):
         t_dict[year] = extract_documents_from_queryset(
             documents_queryset.filter(publication_date__year=year)
@@ -223,7 +224,7 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     for key, value in t_dict.items():
         data["items"].append(
             {
-                "year": key,
+                "year":  key,
                 "items": value,
             }
         )
@@ -296,62 +297,6 @@ def subjects(request):
     )
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def educational_materials(request):  # TODO: Добавить параметр айди предмета
-    data = [
-        {
-            "id": 1,
-            "title": "Матеша",
-            "subject": {
-                "id": 1,
-                "title": "Subject"
-            },
-            "lectures": [
-                {
-                    "id": 1,
-                    "title": "Справочник по матеше",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
-                    "created": "2014-09-08T08:02:17-05:00",
-                },
-                {
-                    "id": 2,
-                    "title": "Справочник по матеше 2",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
-                    "created": "2014-09-08T08:02:17-05:00",
-                },
-            ],
-            "seminars": [
-                {
-                    "id": 1,
-                    "title": "Семинар по матеше",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
-                    "created": "2014-09-08T08:02:17-05:00",
-                },
-                {
-                    "id": 2,
-                    "title": "Семинар по матеше 2",
-                    "url": "",
-                    "edited": "2014-09-08T08:02:17-05:00",
-                    "created": "2014-09-08T08:02:17-05:00",
-                },
-            ],
-        }
-    ]
-
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": data
-        },
-        status=HTTP_200_OK,
-    )
-
-
 # TODO: merge with `published_places`
 @csrf_exempt
 @api_view(["GET"])
@@ -379,199 +324,13 @@ def published_places(request: Request) -> Response:
     )
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def subject(request: Request) -> Response:
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": {
-                "parts": [
-                    {
-                        "title": "Введение",
-                        "topics": [
-                            {
-                                "id": 1,
-                                "title": "История",
-                                "lectures": [{
-                                    "name": "ЛР 2-1",
-                                    "link": "https://google.com"
-                                }],
-                                "seminars": [{
-                                    "name": "СР 3-1",
-                                    "link": "https://yandex.ru"
-                                }],
-                                "group_classes": [
-                                    {
-                                        "name": "ГЗ 4-1",
-                                        "link": "https://vk.com"
-                                    },
-                                    {
-                                        "name": "ГЗ 4-2",
-                                        "link": "https://yahoo.com"
-                                    },
-                                ],
-                            }
-                        ],
-                    },
-                    {
-                        "title": "Вступление",
-                        "topics": [
-                            {
-                                "id": 1,
-                                "title": "Понятия и термины",
-                                "lectures": [
-                                    {
-                                        "name": "ЛР 2-1",
-                                        "link": "https://google.com"
-                                    },
-                                    {
-                                        "name": "ЛР 2-2",
-                                        "link": "https://mail.com"
-                                    },
-                                    {
-                                        "name": "ЛР 2-3",
-                                        "link": "https://office.com"
-                                    },
-                                ],
-                                "seminars": [{
-                                    "name": "СР 3-1",
-                                    "link": "https://yandex.ru"
-                                }],
-                                "group_classes": [{
-                                    "name": "ГЗ 4-1",
-                                    "link": "https://vk.com"
-                                }],
-                            }
-                        ],
-                    },
-                    {
-                        "title": "Основная часть 1",
-                        "topics": [
-                            {
-                                "id": 1,
-                                "title": "Боевые действия",
-                                "lectures": [{
-                                    "name": "ЛР 2-1",
-                                    "link": "https://google.com"
-                                }],
-                                "seminars": [
-                                    {
-                                        "name": "СР 3-1",
-                                        "link": "https://yandex.ru"
-                                    },
-                                    {
-                                        "name": "СР 3-2",
-                                        "link": "https://yandex.ru"
-                                    },
-                                    {
-                                        "name": "СР 3-3",
-                                        "link": "https://yandex.ru"
-                                    },
-                                    {
-                                        "name": "СР 3-4",
-                                        "link": "https://yandex.ru"
-                                    },
-                                ],
-                                "group_classes": [{
-                                    "name": "ГЗ 4-1",
-                                    "link": "https://vk.com"
-                                }],
-                            }
-                        ],
-                    },
-                    {
-                        "title": "Основная часть 2",
-                        "topics": [
-                            {
-                                "id": 1,
-                                "title": "Действия в бою",
-                                "lectures": [{
-                                    "name": "ЛР 2-1",
-                                    "link": "https://google.com"
-                                }],
-                                "seminars": [{
-                                    "name": "СР 3-1",
-                                    "link": "https://yandex.ru"
-                                }],
-                                "group_classes": [{
-                                    "name": "ГЗ 4-1",
-                                    "link": "https://vk.com"
-                                }],
-                            }
-                        ],
-                    },
-                    {
-                        "title": "Завершение",
-                        "topics": [
-                            {
-                                "id": 1,
-                                "title": "Итоги",
-                                "lectures": [{
-                                    "name": "ЛР 2-1",
-                                    "link": "https://google.com"
-                                }],
-                                "seminars": [{
-                                    "name": "СР 3-1",
-                                    "link": "https://yandex.ru"
-                                }],
-                                "group_classes": [{
-                                    "name": "ГЗ 4-1",
-                                    "link": "https://vk.com"
-                                }],
-                            }
-                        ],
-                    },
-                    {
-                        "title": "Окончание",
-                        "topics": [
-                            {
-                                "id": 1,
-                                "title": "Авторы",
-                                "lectures": [{
-                                    "name": "ЛР 2-1",
-                                    "link": "https://google.com"
-                                }],
-                                "seminars": [{
-                                    "name": "СР 3-1",
-                                    "link": "https://yandex.ru"
-                                }],
-                                "group_classes": [{
-                                    "name": "ГЗ 4-1",
-                                    "link": "https://vk.com"
-                                }],
-                            },
-                            {
-                                "id": 2,
-                                "title": "Благодарности",
-                                "lectures": [{
-                                    "name": "ЛР 2-1",
-                                    "link": "https://google.com"
-                                }],
-                                "seminars": [{
-                                    "name": "СР 3-1",
-                                    "link": "https://yandex.ru"
-                                }],
-                                "group_classes": [{
-                                    "name": "ГЗ 4-1",
-                                    "link": "https://vk.com"
-                                }],
-                            },
-                        ],
-                    },
-                ]
-            },
-        },
-        status=HTTP_200_OK,
-    )
-
-
 # TODO: move to Document model
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def delete_document(request: Request) -> Response:
+def delete_document(
+    request: Request,
+) -> Response:
     document_id = request.query_params.get("id")
     document = Document.objects.get(id=document_id)
     document.is_in_trash = True
@@ -594,9 +353,26 @@ def create_authors():
 
 
 @csrf_exempt
-@api_view(["POST", "GET"])
+@api_view(["GET"])
 @permission_classes((AllowAny,))
-def fill_with_mock(request: Request) -> Response:
+def fill_with_mock(
+    request: Request
+) -> Response:
+    """
+    Fill database with fake data for testing purposes
+    :param request: empty GET
+    :return: response with status
+    """
+
+    documents_count = Document.objects.all().count()
+    if documents_count > 5:
+        return Response(
+            {
+                "message": f"В БД {documents_count} документов. Добавление не требуется.",
+            },
+            status=HTTP_200_OK,
+        )
+
     subject = Subject()
     subject.title = "Военно-тактическая подготовка"
     subject.abbreviation = "ВТП"
@@ -633,7 +409,6 @@ def fill_with_mock(request: Request) -> Response:
     topics = []
     for i in range(section_quantity):
         topic_names = [t_names[k] + relative_names[i] for k in range(topic_quantity)]
-        print(section_quantity, topic_quantity)
         for j in range(topic_quantity):
             topic = Topic(section=sections[i], title=topic_names[j])
             topics.append(topic)
@@ -647,30 +422,20 @@ def fill_with_mock(request: Request) -> Response:
             document_names.append(document_prefixes[j] + relative_names[i])
 
     for index, name in enumerate(document_names):
-        if index % topic_quantity == 1:
-            category = Document.Category.ARTICLE
-        else:
-            category = Document.Category.RESEARCH
-
         annotation_name = "Аннотация к документу: " + name
-        document, created = Document.objects.get_or_create(
-            annotation=annotation_name,
-            category=category,
-            subject=subject,
-            title=name,
-            topic=topics[index % topic_quantity],
-        )
-        if not created:
-            continue
-
+        document, _ = Document.objects.get_or_create(subject=subject, annotation=annotation_name,
+                                                     title=name, topic=topics[index])
         document.publishers.add(publisher)
-        document.authors.add(author)
         document.keywords.add(*keyword_list[index % section_quantity])
+        if index % topic_quantity == 1:
+            document.category = Document.Category.SEMINAR
+        else:
+            document.category = Document.Category.LECTURE
         document.save()
 
     return Response(
         {
-            "message": "{} объектов успешно добавлено.".format(len(document_names)),
+            "message": f"{len(document_names)} объектов успешно добавлено."
         },
         status=HTTP_200_OK,
     )
@@ -685,7 +450,7 @@ def XEP(request: Request) -> Response:
     return Response(
         {
             "code": HTTP_200_OK * 100,
-            "data": ''
+            "data": '',
         },
         status=HTTP_200_OK,
     )
@@ -694,7 +459,9 @@ def XEP(request: Request) -> Response:
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def get_tags(request: Request) -> Response:
+def get_tags(
+    request: Request,
+) -> Response:
     return Response(
         {
             "code": HTTP_200_OK * 100,
@@ -702,3 +469,94 @@ def get_tags(request: Request) -> Response:
         },
         status=HTTP_200_OK,
     )
+
+
+@permission_classes((AllowAny,))
+class SubjectSectionView(APIView):
+    """
+    Describes a relationship with SubjectFilterSerializer
+    in order to return Subject Page
+    """
+
+    @staticmethod
+    def convert2dict(doc):
+        return {
+            "id":    doc.id,
+            "title": doc.title,
+            "file":  doc.file or "http://google.com/",  # TODO: add mock files
+        }
+
+    def get(self, request):
+        searching_id = request.query_params.get("id")
+        searching_title = Subject.objects.filter(id=searching_id)[0].title
+
+        source_documents = Document.objects.filter(subject__title=searching_title)
+        section_title_documents = source_documents.annotate(section_title=Max("topic__section__title"))
+        section_id_documents = section_title_documents.annotate(section_id=Max("topic__section__id"))
+        documents_merged = section_id_documents.annotate(topic_title=Max("topic__title"))
+
+        source_topics = Topic.objects.filter(section__subject__title=searching_title)
+        topics = source_topics.annotate(section_title=Max("section__title"))
+
+        data = {
+            "title": searching_title,
+            "parts": [],
+        }
+
+        section_set = set()
+        section_id = 0
+        for document in documents_merged:
+            if document.section_title in section_set:
+                continue
+            section_set.add(document.section_title)
+            section = dict()
+            section["title"] = document.section_title
+            section["id"] = section_id
+            topic_list = []
+            topic_id = 0
+            for topic in topics:
+                if topic.section_title == document.section_title:
+                    topic_json_format = {
+                        "id":               topic_id,
+                        "title":            topic.title,
+                        "lectures":         [],
+                        "seminars":         [],
+                        "group_classes":    [],
+                        "practice_classes": [],
+                    }
+
+                    lectures = documents_merged.filter(topic_id=topic.id,
+                                                       section_title=document.section_title,
+                                                       category=Document.Category.LECTURE)
+                    seminars = documents_merged.filter(topic_id=topic.id,
+                                                       section_title=document.section_title,
+                                                       category=Document.Category.SEMINAR)
+                    group_classes = documents_merged.filter(topic_id=topic.id,
+                                                            section_title=document.section_title,
+                                                            category=Document.Category.GROUP_CLASS)
+                    practice_classes = documents_merged.filter(topic_id=topic.id,
+                                                               section_title=document.section_title,
+                                                               category=Document.Category.PRACTICE_CLASS)
+
+                    for lec in lectures:
+                        topic_json_format["lectures"].append(SubjectSectionView.convert2dict(lec))
+                    for sem in seminars:
+                        topic_json_format["seminars"].append(SubjectSectionView.convert2dict(sem))
+                    for group in group_classes:
+                        topic_json_format["group_classes"].append(SubjectSectionView.convert2dict(group))
+                    for practice in practice_classes:
+                        topic_json_format["practice_classes"].append(SubjectSectionView.convert2dict(practice))
+
+                    topic_list.append(topic_json_format)
+                    topic_id += 1
+            section["topics"] = topic_list
+            data["parts"].append(section)
+            section_id += 1
+
+        return Response(
+            {
+                "data": data,
+                "code": HTTP_200_OK * 100,
+            },
+            status=HTTP_201_CREATED,
+        )
