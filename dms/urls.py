@@ -31,7 +31,7 @@ from backend.views import (
     subjects,
 
     UploadNirView,
-)
+    XEP, get_tags)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -48,4 +48,6 @@ urlpatterns = [
     path("api/user/login", login),
     path("api/user/logout", logout),
     path("fill_with_mock", fill_with_mock),
+    path("api/XEP", XEP),
+    path("api/get_tags", get_tags),
 ]

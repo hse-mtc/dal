@@ -31,6 +31,7 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
 )
+from taggit.models import Tag
 
 from backend.models import (
     Author,
@@ -145,9 +146,9 @@ def login(request: Request) -> Response:
 @api_view(["GET"])
 def info(request: Request) -> Response:
     data = {
-        "roles":  ["admin"],
+        "roles": ["admin"],
         "avatar": request.user.profile.photo,
-        "name":   request.user.profile.name,
+        "name": request.user.profile.name,
     }
 
     return Response(
@@ -182,19 +183,19 @@ def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
     return list(
         map(
             lambda item: {
-                "annotation":       item.annotation,
-                "authors":          list(
+                "annotation": item.annotation,
+                "authors": list(
                     item.authors.values_list(
                         "name", flat=True,
                     )
                 ),
-                "id":               item.id,
-                "keywords":         list(item.keywords.names()),
+                "id": item.id,
+                "keywords": list(item.keywords.names()),
                 "publication_date": item.publication_date.isoformat(),
-                "publishers":       item.publishers.values_list(
+                "publishers": item.publishers.values_list(
                     "name", flat=True,
                 ),
-                "title":            item.title,
+                "title": item.title,
             },
             list(documents_queryset),
         )
@@ -210,10 +211,10 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     }
 
     for year in (
-        documents_queryset
-            .annotate(year=ExtractYear("publication_date"))
-            .values_list("year", flat=True)
-            .distinct()
+            documents_queryset
+                    .annotate(year=ExtractYear("publication_date"))
+                    .values_list("year", flat=True)
+                    .distinct()
     ):
         t_dict[year] = extract_documents_from_queryset(
             documents_queryset.filter(publication_date__year=year)
@@ -222,7 +223,7 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     for key, value in t_dict.items():
         data["items"].append(
             {
-                "year":  key,
+                "year": key,
                 "items": value,
             }
         )
@@ -301,41 +302,41 @@ def subjects(request):
 def educational_materials(request):  # TODO: Добавить параметр айди предмета
     data = [
         {
-            "id":       1,
-            "title":    "Матеша",
-            "subject":  {
-                "id":    1,
+            "id": 1,
+            "title": "Матеша",
+            "subject": {
+                "id": 1,
                 "title": "Subject"
             },
             "lectures": [
                 {
-                    "id":      1,
-                    "title":   "Справочник по матеше",
-                    "url":     "",
-                    "edited":  "2014-09-08T08:02:17-05:00",
+                    "id": 1,
+                    "title": "Справочник по матеше",
+                    "url": "",
+                    "edited": "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
                 {
-                    "id":      2,
-                    "title":   "Справочник по матеше 2",
-                    "url":     "",
-                    "edited":  "2014-09-08T08:02:17-05:00",
+                    "id": 2,
+                    "title": "Справочник по матеше 2",
+                    "url": "",
+                    "edited": "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
             ],
             "seminars": [
                 {
-                    "id":      1,
-                    "title":   "Семинар по матеше",
-                    "url":     "",
-                    "edited":  "2014-09-08T08:02:17-05:00",
+                    "id": 1,
+                    "title": "Семинар по матеше",
+                    "url": "",
+                    "edited": "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
                 {
-                    "id":      2,
-                    "title":   "Семинар по матеше 2",
-                    "url":     "",
-                    "edited":  "2014-09-08T08:02:17-05:00",
+                    "id": 2,
+                    "title": "Семинар по матеше 2",
+                    "url": "",
+                    "edited": "2014-09-08T08:02:17-05:00",
                     "created": "2014-09-08T08:02:17-05:00",
                 },
             ],
@@ -388,16 +389,16 @@ def subject(request: Request) -> Response:
             "data": {
                 "parts": [
                     {
-                        "title":  "Введение",
+                        "title": "Введение",
                         "topics": [
                             {
-                                "id":            1,
-                                "title":         "История",
-                                "lectures":      [{
+                                "id": 1,
+                                "title": "История",
+                                "lectures": [{
                                     "name": "ЛР 2-1",
                                     "link": "https://google.com"
                                 }],
-                                "seminars":      [{
+                                "seminars": [{
                                     "name": "СР 3-1",
                                     "link": "https://yandex.ru"
                                 }],
@@ -415,12 +416,12 @@ def subject(request: Request) -> Response:
                         ],
                     },
                     {
-                        "title":  "Вступление",
+                        "title": "Вступление",
                         "topics": [
                             {
-                                "id":            1,
-                                "title":         "Понятия и термины",
-                                "lectures":      [
+                                "id": 1,
+                                "title": "Понятия и термины",
+                                "lectures": [
                                     {
                                         "name": "ЛР 2-1",
                                         "link": "https://google.com"
@@ -434,7 +435,7 @@ def subject(request: Request) -> Response:
                                         "link": "https://office.com"
                                     },
                                 ],
-                                "seminars":      [{
+                                "seminars": [{
                                     "name": "СР 3-1",
                                     "link": "https://yandex.ru"
                                 }],
@@ -446,16 +447,16 @@ def subject(request: Request) -> Response:
                         ],
                     },
                     {
-                        "title":  "Основная часть 1",
+                        "title": "Основная часть 1",
                         "topics": [
                             {
-                                "id":            1,
-                                "title":         "Боевые действия",
-                                "lectures":      [{
+                                "id": 1,
+                                "title": "Боевые действия",
+                                "lectures": [{
                                     "name": "ЛР 2-1",
                                     "link": "https://google.com"
                                 }],
-                                "seminars":      [
+                                "seminars": [
                                     {
                                         "name": "СР 3-1",
                                         "link": "https://yandex.ru"
@@ -481,16 +482,16 @@ def subject(request: Request) -> Response:
                         ],
                     },
                     {
-                        "title":  "Основная часть 2",
+                        "title": "Основная часть 2",
                         "topics": [
                             {
-                                "id":            1,
-                                "title":         "Действия в бою",
-                                "lectures":      [{
+                                "id": 1,
+                                "title": "Действия в бою",
+                                "lectures": [{
                                     "name": "ЛР 2-1",
                                     "link": "https://google.com"
                                 }],
-                                "seminars":      [{
+                                "seminars": [{
                                     "name": "СР 3-1",
                                     "link": "https://yandex.ru"
                                 }],
@@ -502,16 +503,16 @@ def subject(request: Request) -> Response:
                         ],
                     },
                     {
-                        "title":  "Завершение",
+                        "title": "Завершение",
                         "topics": [
                             {
-                                "id":            1,
-                                "title":         "Итоги",
-                                "lectures":      [{
+                                "id": 1,
+                                "title": "Итоги",
+                                "lectures": [{
                                     "name": "ЛР 2-1",
                                     "link": "https://google.com"
                                 }],
-                                "seminars":      [{
+                                "seminars": [{
                                     "name": "СР 3-1",
                                     "link": "https://yandex.ru"
                                 }],
@@ -523,16 +524,16 @@ def subject(request: Request) -> Response:
                         ],
                     },
                     {
-                        "title":  "Окончание",
+                        "title": "Окончание",
                         "topics": [
                             {
-                                "id":            1,
-                                "title":         "Авторы",
-                                "lectures":      [{
+                                "id": 1,
+                                "title": "Авторы",
+                                "lectures": [{
                                     "name": "ЛР 2-1",
                                     "link": "https://google.com"
                                 }],
-                                "seminars":      [{
+                                "seminars": [{
                                     "name": "СР 3-1",
                                     "link": "https://yandex.ru"
                                 }],
@@ -542,13 +543,13 @@ def subject(request: Request) -> Response:
                                 }],
                             },
                             {
-                                "id":            2,
-                                "title":         "Благодарности",
-                                "lectures":      [{
+                                "id": 2,
+                                "title": "Благодарности",
+                                "lectures": [{
                                     "name": "ЛР 2-1",
                                     "link": "https://google.com"
                                 }],
-                                "seminars":      [{
+                                "seminars": [{
                                     "name": "СР 3-1",
                                     "link": "https://yandex.ru"
                                 }],
@@ -593,7 +594,7 @@ def create_authors():
 
 
 @csrf_exempt
-@api_view(["POST"])
+@api_view(["POST", "GET"])
 @permission_classes((AllowAny,))
 def fill_with_mock(request: Request) -> Response:
     subject = Subject()
@@ -670,6 +671,34 @@ def fill_with_mock(request: Request) -> Response:
     return Response(
         {
             "message": "{} объектов успешно добавлено.".format(len(document_names)),
+        },
+        status=HTTP_200_OK,
+    )
+
+
+@csrf_exempt
+@api_view(["POST", "GET"])
+@permission_classes((AllowAny,))
+def XEP(request: Request) -> Response:
+    print(request)
+
+    return Response(
+        {
+            "code": HTTP_200_OK * 100,
+            "data": ''
+        },
+        status=HTTP_200_OK,
+    )
+
+
+@csrf_exempt
+@api_view(["GET"])
+@permission_classes((AllowAny,))
+def get_tags(request: Request) -> Response:
+    return Response(
+        {
+            "code": HTTP_200_OK * 100,
+            "data": Tag.objects.values(key=F('id'), value=F('name'))
         },
         status=HTTP_200_OK,
     )
