@@ -9,7 +9,7 @@
                 {{topic.title}}
             </div>
             <div class="topic-files">
-                <div class="lectures file-group">
+                <div class="lectures file-group" v-if="topic.lectures.length !== 0">
                     <div class="lectures-title file-section-title" @click="toggleFiles">
                         <div>Лекции</div>
                         <img src="../../assets/scienceWorks/dropdown.svg" alt="" class="files-dropdown">
@@ -17,7 +17,7 @@
                     <div class="files" style="display: none">
                         <div class="file" v-for="(lecture, index) in topic.lectures" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
-                            <div class="file-title">{{lecture.name}}</div>
+                            <div class="file-title">{{lecture.title}}</div>
                             <div class="file-kebab">
                                 <el-popover
                                         placement="bottom"
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="seminars file-group">
+                <div class="seminars file-group" v-if="topic.seminars.length !== 0">
                     <div class="seminars-title file-section-title" @click="toggleFiles">
                         <div>Семинары</div>
                         <img src="../../assets/scienceWorks/dropdown.svg" alt="" class="files-dropdown">
@@ -43,7 +43,7 @@
                     <div class="files" style="display: none">
                         <div class="file" v-for="(seminar, index) in topic.seminars" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
-                            <div class="file-title">{{seminar.name}}</div>
+                            <div class="file-title">{{seminar.title}}</div>
                             <div class="file-kebab">
                                 <el-popover
                                         placement="bottom"
@@ -61,7 +61,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="group-classes file-group">
+                <div class="group-classes file-group" v-if="topic.group_classes.length !== 0">
                     <div class="group-classes-title file-section-title" @click="toggleFiles">
                         <div>Групповые занятия</div>
                         <img src="../../assets/scienceWorks/dropdown.svg" alt="" class="files-dropdown">
@@ -69,7 +69,7 @@
                     <div class="files" style="display: none">
                         <div class="file" v-for="(group_class, index) in topic.group_classes" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
-                            <div class="file-title">{{group_class.name}}</div>
+                            <div class="file-title">{{group_class.title}}</div>
                             <div class="file-kebab">
                                 <el-popover
                                         placement="bottom"
@@ -87,15 +87,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="practice-classes file-group">
+                <div class="practice-classes file-group" v-if="topic.practice_classes.length !== 0">
                     <div class="practice-classes-title file-section-title" @click="toggleFiles">
                         <div>Практические занятия</div>
                         <img src="../../assets/scienceWorks/dropdown.svg" alt="" class="files-dropdown">
                     </div>
                     <div class="files" style="display: none">
-                        <div class="file" v-for="(lecture, index) in topic.lectures" :key="index">
+                        <div class="file" v-for="(lecture, index) in topic.practice_classes" :key="index">
                             <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
-                            <div class="file-title">{{lecture.name}}</div>
+                            <div class="file-title">{{lecture.title}}</div>
                             <div class="file-kebab">
                                 <el-popover
                                         placement="bottom"
