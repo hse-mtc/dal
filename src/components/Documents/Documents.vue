@@ -66,6 +66,7 @@
 <script>
 import { getDocuments } from '@/api/documents'
 import { deleteDocument } from '@/api/delete'
+import EventBus from '../EventBus';
 
 import moment from 'moment'
 
@@ -92,6 +93,13 @@ export default {
   created() {
     const temp = 'scienceArticles'
     this.fetchData(temp)
+  },
+  mounted() {
+    const self = this
+    EventBus.$on('UPDATE_EVENT', function () {
+      console.log('update')
+      self.fetchData(self.$route.query.section)
+    })
   },
   methods: {
     deleteArticle(id) {

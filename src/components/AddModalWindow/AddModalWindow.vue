@@ -14,12 +14,14 @@
                     <el-option
                             v-for="item in authors"
                             :key="item.value"
-                            :value="item.value"
+                            :value="item.id"
+                            :label="item.value"
+
                     />
                 </el-select>
             </el-form-item>
 
-            <div v-if="form.author === 'Добавить нового'" class="add-author">
+            <div v-if="form.author === -1" class="add-author">
                 <el-form-item label="Фамилия">
                     <el-input v-model="form.newAuthorLastName" placeholder="Введите фамилию"></el-input>
                 </el-form-item>
@@ -36,14 +38,15 @@
                     <el-option
                             v-for="item in publishers"
                             :key="item.value"
-                            :value="item.value"
+                            :value="item.id"
+                            :label="item.value"
                     />
                 </el-select>
             </el-form-item>
 
-            <div v-if="form.publisher === 'Добавить новое'" class="add-publishers">
+            <div v-if="form.publisher === -1" class="add-publishers">
                 <el-form-item label="Название размещения">
-                    <el-input v-model="form.newAuthorName" placeholder="Введите имя"></el-input>
+                    <el-input v-model="form.newPublisher" placeholder="Введите имя"></el-input>
                 </el-form-item>
             </div>
 
@@ -62,7 +65,8 @@
                             :existing-tags="existingTags"
                             :typeahead="true"
                             placeholder="Добавить ключевое слово"
-                            :typeahead-hide-discard="true">
+                            :typeahead-hide-discard="true"
+                            class="add-tags">
                 </tags-input>
             </el-form-item>
 
@@ -71,26 +75,50 @@
 <!--                    <div class="add-files-title">Загрузите новый материал</div>-->
 <!--                    <div class="add-files-subtitle">Файл в формате: pdf, pptx, doc, docx, xls, xlsx</div>-->
 <!--                    <div class="add-files-container">-->
+<!--                        <input type="file" id="files" ref="files" v-on:change="handleFilesUpload()"/>-->
 <!--                        <div class="large-12 medium-12 small-12 cell">-->
-<!--                            <label>-->
-<!--                                <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>-->
-<!--                            </label>-->
+<!--                            <div v-for="(file, key) in form.files" class="file-listing">-->
+<!--                                {{ file.name }} <span class="remove-file" v-on:click="removeFile( key )">Удалить</span>-->
+<!--                            </div>-->
 <!--                        </div>-->
 <!--                        <div class="large-12 medium-12 small-12 cell">-->
-<!--                            <div v-for="(file, key) in form.files" class="file-listing">{{ file.name }} <span class="remove-file" v-on:click="removeFile( key )">Remove</span></div>-->
-<!--                        </div>-->
-<!--                        <div class="large-12 medium-12 small-12 cell">-->
-<!--                            <button v-on:click="addFiles()">Add Files</button>-->
+<!--                            <button v-on:click="addFiles()">Добавить файл</button>-->
 <!--                        </div>-->
 <!--                    </div>-->
 <!--                </div>-->
 <!--            </el-form-item>-->
+
+            <el-form-item>
+                <el-upload
+                        class="upload-demo"
+                        action="‍"
+                        :on-preview="handlePreview"
+                        :on-remove="handleRemove"
+                        :before-remove="beforeRemove"
+                        :on-change="addFile"
+                        ref="upload"
+                        :limit="1"
+                        :on-exceed="handleExceed"
+                        :file-list="form.fileList"
+                        :auto-upload="false">
+                    <el-button size="small" type="primary" style="outline: none">Добавить файл</el-button>
+                    <div slot="tip" class="el-upload__tip"></div>
+                </el-upload>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">Отправить</el-button>
+                <el-button @click="closeModal">Отменить</el-button>
+            </el-form-item>
         </el-form>
     </div>
 </template>
 
 <script>
     import {getExistingTags} from "../../api/existingTags";
+    import axios from "axios";
+    import moment from 'moment'
+    import EventBus from '../EventBus';
+    import {uploadDocs} from "../../api/upload";
 
     export default {
         name: "AddModalWindow",
@@ -105,26 +133,24 @@
                     newAuthorLastName: '',
                     newAuthorPatronymic: '',
                     publisher: '',
-                    tags: [
-                        { name: 'Tag 2', type: 'success' },
-                        { name: 'Tag 3', type: 'info' },
-                        { name: 'Tag 4', type: 'warning' },
-                        { name: 'Tag 5', type: 'danger' }
-                    ],
-                    selectedTags: [{}],
-                    files: []
+                    newPublisher: '',
+                    selectedTags: [],
+                    fileList: []
                 },
                 existingTags: [
                     { key: 1, value: 'Стратегия' },
                     { key: 2, value: 'Тактика' },
                     { key: 3, value: 'Хуяктика' },
                 ],
-                authors: [{value: 'Добавить нового'}, ...this.$store.getters.authors],
-                publishers: [{value: 'Добавить новое'}, ...this.$store.getters.publishers],
+                authors: [{value: 'Добавить нового', id: -1}, ...this.$store.getters.authors],
+                publishers: [{value: 'Добавить новое', id: -1}, ...this.$store.getters.publishers],
             }
         },
         created() {
             this.fetchData()
+        },
+        updated() {
+            console.log(this.form.fileList)
         },
         methods: {
             fetchData() {
@@ -136,40 +162,82 @@
                     })
             },
             onSubmit() {
-                console.log('submit!');
-            },
-            addFiles(){
-                this.$refs.files.click();
-            },
-            submitFiles(){
+                const self = this
+                if (this.form.title !== '') {
+                    let formData = new FormData();
+                    this.$route.query.section === 'scienceArticles' ? formData.append('category', 'Article') : formData.append('category', 'Research')
+                    formData.append('title', this.form.title);
 
-                let formData = new FormData();
-                for( var i = 0; i < this.form.files.length; i++ ){
-                    let file = this.from.files[i];
-                    formData.append('files[' + i + ']', file);
+                    if (this.form.annotation !== '') formData.append('annotation', this.form.annotation);
+
+                    if (this.form.author !== '') {
+                        if (this.form.author === -1) {
+                            formData.append('authorName', this.form.newAuthorName);
+                            formData.append('authorLastName', this.form.newAuthorLastName);
+                            formData.append('authorPatronymic', this.form.newAuthorPatronymic);
+                        } else {
+                            formData.append('authorId', this.form.author);
+                        }
+                    }
+
+                    if (this.form.publisher !== '') {
+                        if (this.form.publisher === -1) {
+                            formData.append('newPublisher', this.form.newPublisher);
+                        } else {
+                            formData.append('publisherId', this.form.publisher);
+                        }
+                    }
+
+                    if (this.form.publicationDate !== '') {
+                        formData.append('date', moment(this.form.publicationDate).format('DD.MM.YYYY'));
+                    }
+
+                    if (this.form.selectedTags.length !== 0) {
+                        formData.append('keywords', JSON.stringify( this.form.selectedTags));
+                    }
+
+                    if (this.form.fileList.length !== 0) {
+                        formData.append('file', this.form.fileList[0].raw);
+                        uploadDocs(formData)
+                            .then(function(){
+                            console.log('SUCCESS!!');
+                            EventBus.$emit('UPDATE_EVENT');
+                            self.$emit('closeModal');
+                            }).catch(function(){
+                                console.log('FAILURE!!');
+                            });
+                    } else {
+                        this.$message.error(`Приложите файл`);
+                    }
+
+                    for (var key of formData.entries()) {
+                        console.log(key[0] + ', ' + key[1])
+                    }
+
+
+                } else {
+                    this.$message.error(`Заполните название документа`);
                 }
-                // axios.post( '/select-files',
-                //     formData,
-                //     {
-                //         headers: {
-                //             'Content-Type': 'multipart/form-data'
-                //         }
-                //     }
-                // ).then(function(){
-                //     console.log('SUCCESS!!');
-                // })
-                //     .catch(function(){
-                //         console.log('FAILURE!!');
-                //     });
             },
-            handleFilesUpload(){
-                let uploadedFiles = this.$refs.files.files;
-                for( var i = 0; i < uploadedFiles.length; i++ ){
-                    this.form.files.push( uploadedFiles[i] );
-                }
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+                this.form.fileList = this.form.fileList.filter(item => item.uid !== file.uid)
             },
-            removeFile( key ){
-                this.form.files.splice( key, 1 );
+            handlePreview(file) {
+                console.log(file);
+            },
+            addFile(file, fileList) {
+                console.log(file, 'add')
+                this.form.fileList.push(file)
+            },
+            handleExceed(files, fileList) {
+                this.$message.warning(`Вы можете выбрать максимум 1 файл.`);
+            },
+            beforeRemove(file, fileList) {
+                return this.$confirm(`Удалить ${ file.name } ?`);
+            },
+            closeModal() {
+                this.$emit('closeModal');
             }
         }
     }

@@ -63,7 +63,7 @@
                 </div>
                 <div class="group-classes file-group">
                     <div class="group-classes-title file-section-title" @click="toggleFiles">
-                        <div>Групповые заняти</div>
+                        <div>Групповые занятия</div>
                         <img src="../../assets/scienceWorks/dropdown.svg" alt="" class="files-dropdown">
                     </div>
                     <div class="files" style="display: none">

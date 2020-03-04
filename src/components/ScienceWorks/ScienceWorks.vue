@@ -35,7 +35,7 @@
         </el-col>
       </el-row>
     </el-col>
-    <AddModalWindow v-if="addModal" />
+    <AddModalWindow v-if="addModal" v-on:closeModal="addModal = false" />
     <div v-if="addModal" class="background" @click="addModal = false"></div>
   </div>
 </template>

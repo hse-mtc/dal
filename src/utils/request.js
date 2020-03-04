@@ -10,6 +10,9 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_LOCAL_DEPLOYMENT === "true"
            ? "http://localhost:8000/api"
            : "https://military-dms-back.herokuapp.com/api",
+  // baseURL: process.env.VUE_APP_LOCAL_DEPLOYMENT === "true"
+  //          ? "http://localhost:8000/api"
+  //          : "http://172.20.10.3:8000/api",
 
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
