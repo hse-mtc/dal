@@ -305,7 +305,11 @@ def authors(request):
     return Response(
         {
             "code": HTTP_200_OK * 100,
-            "data": Author.objects.annotate(value=F("name")).values("value"),
+            "data": Author.objects.annotate(
+                value=F("name"),
+            ).values(
+                "value", "id",
+            ),
         },
         status=HTTP_200_OK,
     )
@@ -318,7 +322,11 @@ def published_places(request: Request) -> Response:
     return Response(
         {
             "code": HTTP_200_OK * 100,
-            "data": Publisher.objects.annotate(value=F("name")).values("value")
+            "data": Publisher.objects.annotate(
+                value=F("name"),
+            ).values(
+                "value", "id",
+            ),
         },
         status=HTTP_200_OK,
     )
