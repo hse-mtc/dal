@@ -16,7 +16,7 @@
                     </div>
                     <div class="files" style="display: none">
                         <div class="file" v-for="(lecture, index) in topic.lectures" :key="index">
-                            <div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div>
+                            <a :href="`https://military-dms-back.herokuapp.com${lecture.file}`" download><div class="file-icon"><img src="../../assets/subject/iconPowerPoint.svg" alt="" class="kebab"></div></a>
                             <div class="file-title">{{lecture.title}}</div>
                             <div class="file-kebab">
                                 <el-popover
