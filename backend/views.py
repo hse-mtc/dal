@@ -48,6 +48,7 @@ from datetime import datetime
 
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
+
     def post(self, request: Request) -> Response:
         if "file" not in request.data:
             return Response(
