@@ -106,20 +106,34 @@ export default {
       const deletedId = {
         'id': id
       }
-      deleteDocument(deletedId).then(response => {
-        this.documents.forEach(item => {
-          item.items = item.items.filter(i => {
-            return i.id !== id
-          })
-        })
-        this.documents = this.documents.filter(item => {
-          return item.items.length !== 0
-        })
-        console.log('файл удален')
-        this.count = this.count - 1
-      }).catch(() => {
-        console.log('Ошибка удаления файла')
+      this.$confirm('Вы уверены?', 'Подтвердите действие', {
+        confirmButtonText: 'Удалить',
+        cancelButtonText: 'Отменить',
+        type: 'warning'
       })
+              .then(() => {
+                deleteDocument(deletedId).then(response => {
+                  this.documents.forEach(item => {
+                    item.items = item.items.filter(i => {
+                      return i.id !== id
+                    })
+                  })
+                  this.documents = this.documents.filter(item => {
+                    return item.items.length !== 0
+                  })
+                  console.log('файл удален')
+                  this.count = this.count - 1
+                }).catch(() => {
+                  console.log('Ошибка удаления файла')
+                })
+                this.$message({
+                  type: 'success',
+                  message: 'Удаление завершено'
+                })
+              })
+              .catch(() => { })
+
+
 
     },
     fetchData(target) {
