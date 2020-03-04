@@ -552,7 +552,7 @@ class SubjectSectionView(APIView):
         return {
             "id": doc.id,
             "title": doc.title,
-            "file": doc.file or "http://google.com/",  # TODO: add mock files
+            "file": "/api/get_file?id=" + str(doc.id),  # TODO: add mock files
         }
 
     def get(self, request):
