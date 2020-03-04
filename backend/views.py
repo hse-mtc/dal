@@ -63,30 +63,33 @@ class UploadNirView(APIView):
 
         doc.title = request.data["title"]
 
-        doc.annotation = request.data["annotation"]
+        if request.data.get("annotation"):
+            doc.annotation = request.data["annotation"]
 
-        doc.publication_date = datetime.strptime(request.data["date"], '%d.%m.%Y')
+        if request.data.get("date") and request.data.get("date") != "Invalid date":
+            doc.publication_date = datetime.strptime(request.data["date"], '%d.%m.%Y')
 
         doc.save()
 
-        keywords_list = list(map(lambda x: x['value'], json.loads(request.data['keywords'])))
+        if request.data.get("keywords"):
+            keywords_list = list(map(lambda x: x['value'], json.loads(request.data['keywords'])))
 
-        if len(keywords_list) > 0:
-            doc.keywords.add(*keywords_list)
+            if len(keywords_list) > 0:
+                doc.keywords.add(*keywords_list)
 
-        if "authorId" in request.data:
+        if request.data.get("authorId"):
             author = Author.objects.get(pk=request.data["authorId"])
             doc.authors.add(author)
-        else:
+        elif request.data.get("authorName"):
             author_name = request.data["authorName"]
             author_last_name = request.data["authorLastName"]
             author_patronymic = request.data["authorPatronymic"]
             doc.authors.create(name=author_name[0] + '.' + author_patronymic[0] + '. ' + author_last_name)
 
-        if "publisherId" in request.data:
+        if request.data.get("publisherId"):
             publisher = Publisher.objects.get(pk=request.data["publisherId"])
             doc.publishers.add(publisher)
-        else:
+        elif request.data.get("newPublisher"):
             doc.publishers.create(request.data["newPublisher"])
 
         doc.file.save(
