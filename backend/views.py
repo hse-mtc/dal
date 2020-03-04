@@ -64,6 +64,9 @@ class UploadNirView(APIView):
 
         doc.title = request.data["title"]
 
+        if request.data.get("category"):
+            doc.category = request.data["category"].upper()
+
         if request.data.get("annotation"):
             doc.annotation = request.data["annotation"]
 
@@ -85,13 +88,13 @@ class UploadNirView(APIView):
             author_name = request.data["authorName"]
             author_last_name = request.data["authorLastName"]
             author_patronymic = request.data["authorPatronymic"]
-            doc.authors.create(name=author_name[0] + '.' + author_patronymic[0] + '. ' + author_last_name)
+            doc.authors.create(name=author_last_name + " " + author_name[0] + '.' + author_patronymic[0] + '.')
 
         if request.data.get("publisherId"):
             publisher = Publisher.objects.get(pk=request.data["publisherId"])
             doc.publishers.add(publisher)
         elif request.data.get("newPublisher"):
-            doc.publishers.create(request.data["newPublisher"])
+            doc.publishers.create(name=request.data["newPublisher"])
 
         doc.file.save(
             name=f.name,
@@ -325,6 +328,8 @@ def documents(request: Request) -> Response:
         )
 
     db_request = db_request.order_by("-publication_date")
+
+    db_request = db_request.distinct()
 
     data = extract_documents_by_year_from_queryset(db_request)
 

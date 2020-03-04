@@ -105,6 +105,7 @@ class Topic(models.Model):
 
 
 class Document(models.Model):
+    # TODO: remove underscores
     class Category(models.TextChoices):
         ARTICLE = "ARTICLE", _("Article")
         GROUP_CLASS = "GROUP_CLASS", _("Group class")
