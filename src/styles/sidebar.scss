@@ -7,6 +7,11 @@
     position: relative;
   }
 
+  .stop-scrolling {
+    overflow: hidden;
+    height: 100%;
+  }
+
   .sidebar-container {
     transition: width 0.28s;
     width: $sideBarWidth !important;

@@ -21,7 +21,7 @@
       <el-row class="search ">
         <el-col :span="14">
           <Search placeholder="Введите ключевые слова" />
-          <div class="add-document" @click="addModal=true">+ <span>Добавить публикацию</span></div>
+          <div class="add-document" @click="openModal">+ <span>Добавить публикацию</span></div>
           <AdvancedSearch class="advanced-search" />
           <Documents class="documents" />
         </el-col>
@@ -35,8 +35,8 @@
         </el-col>
       </el-row>
     </el-col>
-    <AddModalWindow v-if="addModal" v-on:closeModal="addModal = false" />
-    <div v-if="addModal" class="background" @click="addModal = false"></div>
+    <AddModalWindow v-if="addModal" v-on:closeModal="closeModal" />
+    <div v-if="addModal" class="background" @click="closeModal"></div>
   </div>
 </template>
 
@@ -68,6 +68,14 @@ export default {
     this.$router.replace({ name: 'Science Articles', query: { section: 'scienceArticles' }})
   },
   methods: {
+    closeModal() {
+      this.addModal = false
+      document.getElementById('main-container').classList.remove('stop-scrolling')
+    },
+    openModal() {
+      this.addModal = true
+      document.getElementById('main-container').classList.add('stop-scrolling')
+    },
     selectClick(event) {
       Array.from(document.getElementsByClassName(event.target.className)).forEach(item => item.classList.remove('selected'))
       event.target.classList.add('selected')
