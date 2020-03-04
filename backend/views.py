@@ -4,7 +4,7 @@ import operator
 import typing as tp
 
 from functools import reduce
-
+import json
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
@@ -43,12 +43,64 @@ from backend.models import (
     Topic,
 )
 
+from datetime import datetime
+
 
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
-    parser_classes = (
-        FileUploadParser,
-    )
+    def post(self, request: Request) -> Response:
+        if "file" not in request.data:
+            return Response(
+                {
+                    "error": "No file provided",
+                },
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        f = request.data["file"]
+
+        doc = Document()
+
+        doc.title = request.data["title"]
+
+        doc.annotation = request.data["annotation"]
+
+        doc.publication_date = datetime.strptime(request.data["date"], '%d.%m.%Y')
+
+        doc.save()
+
+        keywords_list = list(map(lambda x: x['value'], json.loads(request.data['keywords'])))
+
+        if len(keywords_list) > 0:
+            doc.keywords.add(*keywords_list)
+
+        if "authorId" in request.data:
+            author = Author.objects.get(pk=request.data["authorId"])
+            doc.authors.add(author)
+        else:
+            author_name = request.data["authorName"]
+            author_last_name = request.data["authorLastName"]
+            author_patronymic = request.data["authorPatronymic"]
+            doc.authors.create(name=author_name[0] + '.' + author_patronymic[0] + '. ' + author_last_name)
+
+        if "publisherId" in request.data:
+            publisher = Publisher.objects.get(pk=request.data["publisherId"])
+            doc.publishers.add(publisher)
+        else:
+            doc.publishers.create(request.data["newPublisher"])
+
+        doc.file.save(
+            name=f.name,
+            content=f,
+            save=True,
+        )
+
+        return Response(
+            {
+                "code": HTTP_200_OK * 100,
+            },
+            status=HTTP_200_OK,
+        )
 
     def put(self, request: Request) -> Response:
         """
@@ -147,9 +199,9 @@ def login(request: Request) -> Response:
 @api_view(["GET"])
 def info(request: Request) -> Response:
     data = {
-        "roles":  ["admin"],
+        "roles": ["admin"],
         "avatar": request.user.profile.photo,
-        "name":   request.user.profile.name,
+        "name": request.user.profile.name,
     }
 
     return Response(
@@ -184,19 +236,19 @@ def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
     return list(
         map(
             lambda item: {
-                "annotation":       item.annotation,
-                "authors":          list(
+                "annotation": item.annotation,
+                "authors": list(
                     item.authors.values_list(
                         "name", flat=True,
                     )
                 ),
-                "id":               item.id,
-                "keywords":         list(item.keywords.names()),
+                "id": item.id,
+                "keywords": list(item.keywords.names()),
                 "publication_date": item.publication_date.isoformat(),
-                "publishers":       item.publishers.values_list(
+                "publishers": item.publishers.values_list(
                     "name", flat=True,
                 ),
-                "title":            item.title,
+                "title": item.title,
             },
             list(documents_queryset),
         )
@@ -212,10 +264,10 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     }
 
     for year in (
-        documents_queryset
-            .annotate(year=ExtractYear("publication_date"))
-            .values_list("year", flat=True)
-            .distinct()
+            documents_queryset
+                    .annotate(year=ExtractYear("publication_date"))
+                    .values_list("year", flat=True)
+                    .distinct()
     ):
         t_dict[year] = extract_documents_from_queryset(
             documents_queryset.filter(publication_date__year=year)
@@ -224,7 +276,7 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     for key, value in t_dict.items():
         data["items"].append(
             {
-                "year":  key,
+                "year": key,
                 "items": value,
             }
         )
@@ -337,7 +389,7 @@ def published_places(request: Request) -> Response:
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def delete_document(
-    request: Request,
+        request: Request,
 ) -> Response:
     document_id = request.query_params.get("id")
     document = Document.objects.get(id=document_id)
@@ -364,7 +416,7 @@ def create_authors():
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def fill_with_mock(
-    request: Request
+        request: Request
 ) -> Response:
     """
     Fill database with fake data for testing purposes
@@ -468,7 +520,7 @@ def XEP(request: Request) -> Response:
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def get_tags(
-    request: Request,
+        request: Request,
 ) -> Response:
     return Response(
         {
@@ -489,9 +541,9 @@ class SubjectSectionView(APIView):
     @staticmethod
     def convert2dict(doc):
         return {
-            "id":    doc.id,
+            "id": doc.id,
             "title": doc.title,
-            "file":  doc.file or "http://google.com/",  # TODO: add mock files
+            "file": doc.file or "http://google.com/",  # TODO: add mock files
         }
 
     def get(self, request):
@@ -525,11 +577,11 @@ class SubjectSectionView(APIView):
             for topic in topics:
                 if topic.section_title == document.section_title:
                     topic_json_format = {
-                        "id":               topic_id,
-                        "title":            topic.title,
-                        "lectures":         [],
-                        "seminars":         [],
-                        "group_classes":    [],
+                        "id": topic_id,
+                        "title": topic.title,
+                        "lectures": [],
+                        "seminars": [],
+                        "group_classes": [],
                         "practice_classes": [],
                     }
 

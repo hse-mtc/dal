@@ -28,6 +28,7 @@ class Profile(models.Model):
 
 
 class Author(models.Model):
+    # TODO: не выбрасывать полное ФИО
     name = models.CharField(
         max_length=255,
     )
@@ -140,10 +141,14 @@ class Document(models.Model):
     topic = models.ForeignKey(
         to=Topic,
         on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
     )
     subject = models.ForeignKey(
         to=Subject,
         on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
     )
     file = models.FileField(
         upload_to=get_upload_path(),
