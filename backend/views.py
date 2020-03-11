@@ -18,7 +18,6 @@ from django.db.models import (
 
 import re
 from rest_framework.authtoken.models import Token
-from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -42,9 +41,48 @@ from backend.models import (
     Section,
     Subject,
     Topic,
+    Category,
 )
 
 from datetime import datetime
+
+
+@permission_classes((AllowAny,))
+class CategoryView(APIView):
+
+    @csrf_exempt
+    def put(self, request: Request) -> Response:
+        if "title" not in request.query_params:
+            return Response(
+                {
+                    "error": "No title provided",
+                },
+                status=HTTP_400_BAD_REQUEST,
+            )
+
+        category = Category()
+        category.title = request.query_params.get("title")
+        category.save()
+
+        return Response(
+            {
+                "code": HTTP_200_OK * 100,
+            },
+            status=HTTP_200_OK,
+        )
+
+    @csrf_exempt
+    def get(self, request: Request) -> Response:
+        data = Category.objects.values('id', 'title')
+
+        return Response(
+            {
+                "code": HTTP_200_OK * 100,
+                "data": data
+            },
+            status=HTTP_200_OK,
+        )
+
 
 
 @permission_classes((AllowAny,))

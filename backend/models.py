@@ -109,6 +109,17 @@ class Topic(models.Model):
         return self.title
 
 
+class Category(models.Model):
+    title = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
+    def __str__(self):
+        return self.title
+
+
 class Document(models.Model):
     # TODO: remove underscores
     class Category(models.TextChoices):
