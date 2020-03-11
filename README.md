@@ -12,19 +12,19 @@ Back-end will be available at https://localhost:8000.
 ## Without Docker
 
 ### Installing Dependencies
-Create new virtual environment:
+Install required Python version using `pyenv`:
 ```bash
-python3 -m venv .venv
+pyenv install 3.8.1
 ```
 
-Activate it:
+Activate `pipenv`:
 ```bash
-source .venv/bin/activate
+pipenv shell
 ```
 
-Install requirements using `pip`:
+If pipenv doesn't install dependencies from Pipfile, use:
 ```bash
-pip install -r requirements.txt
+pipenv sync
 ```
 
 
