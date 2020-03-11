@@ -84,7 +84,7 @@ class CategoryView(APIView):
 
     @csrf_exempt
     def delete(self, request: Request) -> Response:
-        Category.objects.get(pk=request.query_params.get('title')).delete()
+        Category.objects.get(pk=request.query_params.get("id")).delete()
         return Response(
             {
                 "code": HTTP_200_OK * 100,
