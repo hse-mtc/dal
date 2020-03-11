@@ -91,7 +91,8 @@ class CategoryView(APIView):
         if Document.objects.filter(category=category).exists():
             return Response(
                 data={
-                    "code": HTTP_412_PRECONDITION_FAILED * 100
+                    "code":    HTTP_412_PRECONDITION_FAILED * 100,
+                    "message": "Категорию нельзя удалить, пока в ней есть хотя бы один документ.",
                 },
                 status=HTTP_200_OK,
             )
