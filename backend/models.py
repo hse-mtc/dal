@@ -28,7 +28,7 @@ class Profile(models.Model):
 
 
 class Author(models.Model):
-    display_name = models.CharField(
+    last_name = models.CharField(
         max_length=255,
     )
     first_name = models.CharField(
@@ -43,7 +43,7 @@ class Author(models.Model):
         verbose_name_plural = "Authors"
 
     def __str__(self):
-        return self.display_name
+        return " ".join([self.last_name, self.first_name, self.patronymic])
 
 
 class Publisher(models.Model):
@@ -101,26 +101,32 @@ class Topic(models.Model):
         on_delete=models.DO_NOTHING,
     )
 
+
     class Meta:
         verbose_name = "Topic"
         verbose_name_plural = "Topics"
+
+
+    def __str__(self):
+        return self.title
+
+
+class Category(models.Model):
+    title = models.CharField(
+        max_length=255,
+    )
+
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
 
     def __str__(self):
         return self.title
 
 
 class Document(models.Model):
-    # TODO: remove underscores
-    class Category(models.TextChoices):
-        ARTICLE = "ARTICLE", _("Article")
-        GROUP_CLASS = "GROUP_CLASS", _("Group class")
-        LECTURE = "LECTURE", _("Lecture")
-        PRACTICE_CLASS = "PRACTICE_CLASS", _("Practice class")
-        RESEARCH = "RESEARCH", _("Research")
-        SEMINAR = "SEMINAR", _("Seminar")
-        TEXTBOOK = "TEXTBOOK", _("Textbook")
-        MANUAL = "MANUAL", _("Manual")
-
     title = models.TextField()
     authors = models.ManyToManyField(
         to=Author,
@@ -132,10 +138,9 @@ class Document(models.Model):
     keywords = TaggableManager(
         blank=True,
     )
-    category = models.CharField(
-        max_length=32,
-        choices=Category.choices,
-        blank=True,
+    category = models.ForeignKey(
+        to=Category,
+        on_delete=models.DO_NOTHING,
     )
     publication_date = models.DateField(
         default=datetime.date.today,
