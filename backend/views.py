@@ -421,12 +421,12 @@ def check_on_conformity(full_name: str) -> (bool, str):
     if len(data) != 3:
         return False, 'Некорректно переданные ФИО [число слов].'
     surname, name, patronymic = data
-    if re.search(r'[^а-яА-ЯёЁ]', surname) is None:
-        return False, 'Ошибка при форматировании фамилии.'
-    if re.search(r'[^а-яА-ЯёЁ]', name) is None:
-        return False, 'Ошибка при форматировании имени.'
-    if re.search(r'[^а-яА-ЯёЁ]', patronymic) is None:
-        return False, 'Ошибка при форматировании отчества.'
+#     if re.search(r'[^а-яА-ЯёЁ]', surname) is None:
+#         return False, 'Ошибка при форматировании фамилии.'
+#     if re.search(r'[^а-яА-ЯёЁ]', name) is None:
+#         return False, 'Ошибка при форматировании имени.'
+#     if re.search(r'[^а-яА-ЯёЁ]', patronymic) is None:
+#         return False, 'Ошибка при форматировании отчества.'
     return True, None
 
 
