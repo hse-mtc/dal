@@ -52,7 +52,7 @@ class CategoryView(APIView):
 
     @csrf_exempt
     def put(self, request: Request) -> Response:
-        if "title" not in request.query_params:
+        if "title" not in request.data:
             return Response(
                 {
                     "error": "No title provided",
@@ -61,7 +61,7 @@ class CategoryView(APIView):
             )
 
         category = Category()
-        category.title = request.query_params.get("title")
+        category.title = request.data.get("title")
         category.save()
 
         return Response(
@@ -84,7 +84,6 @@ class CategoryView(APIView):
         )
 
 
-
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
 
@@ -104,7 +103,7 @@ class UploadNirView(APIView):
         doc.title = request.data["title"]
 
         if request.data.get("category"):
-            doc.category = request.data["category"].upper()
+            doc.category = request.data["category"]
 
         if request.data.get("annotation"):
             doc.annotation = request.data["annotation"]
@@ -147,39 +146,6 @@ class UploadNirView(APIView):
                 "code": HTTP_200_OK * 100,
             },
             status=HTTP_200_OK,
-        )
-
-    def put(self, request: Request) -> Response:
-        """
-        Usage PUT request to api/upload?type=nir&id=21
-        curl -X PUT -H 'Content-Disposition: attachment; filename=ptu.png' 'http://127.0.0.1:8000/api/upload?id=1' --upload-file Колледж\ ПТУ.png
-        :param request:
-        :return:
-        """
-
-        if "file" not in request.data:
-            return Response(
-                {
-                    "error": "No file provided",
-                },
-                status=HTTP_400_BAD_REQUEST,
-            )
-
-        doc = Document.objects.all()
-        f = request.data["file"]
-        doc.get(
-            pk=request.query_params.get("id")
-        ).file.save(
-            name=f.name,
-            content=f,
-            save=True,
-        )
-
-        return Response(
-            {
-                "code": HTTP_201_CREATED * 100,
-            },
-            status=HTTP_201_CREATED,
         )
 
 
@@ -459,12 +425,12 @@ def check_on_conformity(full_name: str) -> (bool, str):
     if len(data) != 3:
         return False, 'Некорректно переданные ФИО [число слов].'
     surname, name, patronymic = data
-#     if re.search(r'[^а-яА-ЯёЁ]', surname) is None:
-#         return False, 'Ошибка при форматировании фамилии.'
-#     if re.search(r'[^а-яА-ЯёЁ]', name) is None:
-#         return False, 'Ошибка при форматировании имени.'
-#     if re.search(r'[^а-яА-ЯёЁ]', patronymic) is None:
-#         return False, 'Ошибка при форматировании отчества.'
+    #     if re.search(r'[^а-яА-ЯёЁ]', surname) is None:
+    #         return False, 'Ошибка при форматировании фамилии.'
+    #     if re.search(r'[^а-яА-ЯёЁ]', name) is None:
+    #         return False, 'Ошибка при форматировании имени.'
+    #     if re.search(r'[^а-яА-ЯёЁ]', patronymic) is None:
+    #         return False, 'Ошибка при форматировании отчества.'
     return True, None
 
 
@@ -484,6 +450,7 @@ def select_name_patronymic(full_name: str, ) -> (str, str):
         raise NameError(message)
     _, name, patronymic = full_name.split()
     return name, patronymic
+
 
 def create_authors():
     author_names = ["Кашин Андрей Владимирович", "Никандров Игорь Владимирович",
