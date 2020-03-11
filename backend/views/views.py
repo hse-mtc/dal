@@ -49,10 +49,9 @@ from datetime import datetime
 @permission_classes((AllowAny,))
 class CategoryView(APIView):
 
-
     @csrf_exempt
     def put(self, request: Request) -> Response:
-        if "title" not in request.query_params:
+        if "title" not in request.data:
             return Response(
                 {
                     "error": "No title provided",
@@ -61,7 +60,7 @@ class CategoryView(APIView):
             )
 
         category = Category()
-        category.title = request.query_params.get("title")
+        category.title = request.data.get("title")
         category.save()
 
         return Response(
@@ -83,6 +82,15 @@ class CategoryView(APIView):
             status=HTTP_200_OK,
         )
 
+    @csrf_exempt
+    def delete(self, request: Request) -> Response:
+        Category.objects.get(pk=request.query_params.get('title')).delete()
+        return Response(
+            {
+                "code": HTTP_200_OK * 100,
+            },
+            status=HTTP_200_OK,
+        )
 
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
@@ -104,7 +112,7 @@ class UploadNirView(APIView):
         doc.title = request.data["title"]
 
         if request.data.get("category"):
-            doc.category = request.data["category"].upper()
+            doc.category = request.data["category"]
 
         if request.data.get("annotation"):
             doc.annotation = request.data["annotation"]
