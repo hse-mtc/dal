@@ -149,12 +149,12 @@ export default {
                   })
                   console.log('Категория удалена')
                   this.fetchData()
+                  this.$message({
+                    type: 'success',
+                    message: 'Удаление завершено'
+                  })
                 }).catch(() => {
                   console.log('Ошибка удаления категории')
-                })
-                this.$message({
-                  type: 'success',
-                  message: 'Удаление завершено'
                 })
               })
               .catch(() => { })
