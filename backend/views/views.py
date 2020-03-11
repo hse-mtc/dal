@@ -16,7 +16,6 @@ from django.db.models import (
     F,
 )
 
-import re
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -49,6 +48,7 @@ from datetime import datetime
 
 @permission_classes((AllowAny,))
 class CategoryView(APIView):
+
 
     @csrf_exempt
     def put(self, request: Request) -> Response:
@@ -84,9 +84,9 @@ class CategoryView(APIView):
         )
 
 
-
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
+
 
     def post(self, request: Request) -> Response:
         if "file" not in request.data:
@@ -127,8 +127,11 @@ class UploadNirView(APIView):
             author_name = request.data["authorName"]
             author_last_name = request.data["authorLastName"]
             author_patronymic = request.data["authorPatronymic"]
-            doc.authors.create(first_name=author_name, patronymic=author_patronymic,
-                               display_name=author_last_name + " " + author_name[0] + '.' + author_patronymic[0] + '.')
+            doc.authors.create(
+                last_name=author_last_name,
+                first_name=author_name,
+                patronymic=author_patronymic,
+            )
 
         if request.data.get("publisherId"):
             publisher = Publisher.objects.get(pk=request.data["publisherId"])
@@ -139,7 +142,6 @@ class UploadNirView(APIView):
         doc.file.save(
             name=f.name,
             content=f,
-            save=True,
         )
 
         return Response(
@@ -246,9 +248,9 @@ def login(request: Request) -> Response:
 @api_view(["GET"])
 def info(request: Request) -> Response:
     data = {
-        "roles": ["admin"],
+        "roles":  ["admin"],
         "avatar": request.user.profile.photo,
-        "name": request.user.profile.name,
+        "name":   request.user.profile.name,
     }
 
     return Response(
@@ -283,19 +285,19 @@ def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
     return list(
         map(
             lambda item: {
-                "annotation": item.annotation,
-                "authors": list(
-                    item.authors.values_list(
-                        "name", flat=True,
+                "annotation":       item.annotation,
+                "authors":          list(
+                    item.authors.values_list(  # TODO(Lev): refactor
+                        "last_name", flat=True,
                     )
                 ),
-                "id": item.id,
-                "keywords": list(item.keywords.names()),
+                "id":               item.id,
+                "keywords":         list(item.keywords.names()),
                 "publication_date": item.publication_date.isoformat(),
-                "publishers": item.publishers.values_list(
+                "publishers":       item.publishers.values_list(
                     "name", flat=True,
                 ),
-                "title": item.title,
+                "title":            item.title,
             },
             list(documents_queryset),
         )
@@ -311,10 +313,10 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     }
 
     for year in (
-            documents_queryset
-                    .annotate(year=ExtractYear("publication_date"))
-                    .values_list("year", flat=True)
-                    .distinct()
+        documents_queryset
+            .annotate(year=ExtractYear("publication_date"))
+            .values_list("year", flat=True)
+            .distinct()
     ):
         t_dict[year] = extract_documents_from_queryset(
             documents_queryset.filter(publication_date__year=year)
@@ -323,7 +325,7 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     for key, value in t_dict.items():
         data["items"].append(
             {
-                "year": key,
+                "year":  key,
                 "items": value,
             }
         )
@@ -345,15 +347,24 @@ def documents(request: Request) -> Response:
     text = request.query_params.get("text")
     category = request.query_params.get("category")
 
+    # TODO(Lev): refactor
+    try:
+        if str(category).upper() == "ARTICLE":
+            category = Category.objects.get(title="Научные статьи")
+        elif str(category).upper() == "RESEARCH":
+            category = Category.objects.get(title="Научно-исследовательские работы")
+    except:
+        pass
+
     db_request = (
         Document
             .objects
-            .filter(category=str(category).upper())
+            .filter(category=category)
             .exclude(is_in_trash=True)
     )
 
     if authors is not None:
-        db_request = db_request.filter(authors__name__in=authors.split(","))
+        db_request = db_request.filter(authors__last_name__in=authors.split(","))  # TODO(Lev): refactor
     if start_date is not None:
         db_request = db_request.filter(publication_date__gte=start_date)
     if end_date is not None:
@@ -407,7 +418,7 @@ def authors(request):
         {
             "code": HTTP_200_OK * 100,
             "data": Author.objects.annotate(
-                value=F("display_name"),
+                value=F("last_name"),  # TODO(Lev): refactor
             ).values(
                 "value", "id",
             ),
@@ -438,7 +449,7 @@ def published_places(request: Request) -> Response:
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def delete_document(
-        request: Request,
+    request: Request,
 ) -> Response:
     document_id = request.query_params.get("id")
     document = Document.objects.get(id=document_id)
@@ -453,154 +464,11 @@ def delete_document(
     )
 
 
-# Return flag and message
-def check_on_conformity(full_name: str) -> (bool, str):
-    data = full_name.split()
-    if len(data) != 3:
-        return False, 'Некорректно переданные ФИО [число слов].'
-    surname, name, patronymic = data
-#     if re.search(r'[^а-яА-ЯёЁ]', surname) is None:
-#         return False, 'Ошибка при форматировании фамилии.'
-#     if re.search(r'[^а-яА-ЯёЁ]', name) is None:
-#         return False, 'Ошибка при форматировании имени.'
-#     if re.search(r'[^а-яА-ЯёЁ]', patronymic) is None:
-#         return False, 'Ошибка при форматировании отчества.'
-    return True, None
-
-
-def display_full_name(full_name: str, ) -> str:
-    full_name = full_name.title()
-    result, message = check_on_conformity(full_name)
-    if not result:
-        raise NameError(message)
-    surname, name, patronymic = full_name.split()
-    return surname + ' ' + name[0] + '. ' + patronymic[0] + '.'
-
-
-def select_name_patronymic(full_name: str, ) -> (str, str):
-    full_name = full_name.title()
-    result, message = check_on_conformity(full_name)
-    if not result:
-        raise NameError(message)
-    _, name, patronymic = full_name.split()
-    return name, patronymic
-
-def create_authors():
-    author_names = ["Кашин Андрей Владимирович", "Никандров Игорь Владимирович",
-                    "Пеляк Виктор Степанович", "Репалов Дмитрий Николаевич",
-                    "Усиков Юрий Витальевич"]
-    for full_name in author_names:
-        author = Author()
-        author.display_name = display_full_name(full_name)
-        author.first_name, author.patronymic = select_name_patronymic(full_name)
-        author.save()
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def fill_with_mock(
-        request: Request
-) -> Response:
-    """
-    Fill database with fake data for testing purposes
-    :param request: empty GET
-    :return: response with status
-    """
-
-    documents_count = Document.objects.all().count()
-    if documents_count > 5:
-        return Response(
-            {
-                "message": f"В БД {documents_count} документов. Добавление не требуется.",
-            },
-            status=HTTP_200_OK,
-        )
-
-    subject = Subject()
-    subject.title = "Военно-тактическая подготовка"
-    subject.abbreviation = "ВТП"
-    subject.save()
-
-    create_authors()
-
-    publisher = Publisher()
-    publisher.name = "М.: НИУ ВШЭ"
-    publisher.save()
-
-    s_names = ["Топографические карты", "Организация ВС РФ", "Управление подразделениями в мирное время"]
-    section_quantity = len(s_names)
-    section_names = [f"Часть {k + 1}: {s_names[k]}" for k in range(section_quantity)]
-    sections = []
-    for i in range(section_quantity):
-        section = Section(subject=subject, title=section_names[i])
-        sections.append(section)
-        section.save()
-
-    relative_names = [" по картам", " по организации", " по управлению"]
-    keyword_list = [
-        ["графика", "ориентирование"],
-        ["структура", "стратификация"],
-        ["дежурство", "боевая подготовка", "мобилизационная работа"]
-    ]
-
-    t_names = ["Введение", "Основная часть", "Заключение"]
-    topic_quantity = len(t_names)
-    topics = []
-    for i in range(section_quantity):
-        topic_names = [t_names[k] + relative_names[i] for k in range(topic_quantity)]
-        for j in range(topic_quantity):
-            topic = Topic(section=sections[i], title=topic_names[j])
-            topics.append(topic)
-            topic.save()
-
-    document_prefixes = ["Вводный документ", "Основной документ", "Заключительный документ"]
-    document_names = []
-
-    for i in range(section_quantity):
-        for j in range(topic_quantity):
-            document_names.append(document_prefixes[j] + relative_names[i])
-
-    for index, name in enumerate(document_names):
-        annotation_name = "Аннотация к документу: " + name
-        document, _ = Document.objects.get_or_create(subject=subject, annotation=annotation_name,
-                                                     title=name, topic=topics[index])
-        document.publishers.add(publisher)
-        document.keywords.add(*keyword_list[index % section_quantity])
-        if index % topic_quantity == 1:
-            document.category = Document.Category.SEMINAR
-        else:
-            document.category = Document.Category.LECTURE
-        document.save()
-
-    return Response(
-        {
-            "message": f"{len(document_names)} объектов успешно добавлено."
-        },
-        status=HTTP_200_OK,
-    )
-
-
-@csrf_exempt
-@api_view(["POST", "GET"])
-@permission_classes((AllowAny,))
-def XEP(request: Request) -> Response:
-    print(request)
-
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": '',
-        },
-        status=HTTP_200_OK,
-    )
-
-
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def get_tags(
-        request: Request,
+    request: Request,
 ) -> Response:
     return Response(
         {
@@ -621,9 +489,9 @@ class SubjectSectionView(APIView):
     @staticmethod
     def convert2dict(doc):
         return {
-            "id": doc.id,
+            "id":    doc.id,
             "title": doc.title,
-            "file": "/api/get_file?id=" + str(doc.id),  # TODO: add mock files
+            "file":  "/api/get_file?id=" + str(doc.id),  # TODO: add mock files
         }
 
     def get(self, request):
@@ -657,26 +525,27 @@ class SubjectSectionView(APIView):
             for topic in topics:
                 if topic.section_title == document.section_title:
                     topic_json_format = {
-                        "id": topic_id,
-                        "title": topic.title,
-                        "lectures": [],
-                        "seminars": [],
-                        "group_classes": [],
+                        "id":               topic_id,
+                        "title":            topic.title,
+                        "lectures":         [],
+                        "seminars":         [],
+                        "group_classes":    [],
                         "practice_classes": [],
                     }
 
+                    # TODO(Lev): refactor
                     lectures = documents_merged.filter(topic_id=topic.id,
                                                        section_title=document.section_title,
-                                                       category=Document.Category.LECTURE)
+                                                       category__title="Лекции")
                     seminars = documents_merged.filter(topic_id=topic.id,
                                                        section_title=document.section_title,
-                                                       category=Document.Category.SEMINAR)
+                                                       category__title="Семинары")
                     group_classes = documents_merged.filter(topic_id=topic.id,
                                                             section_title=document.section_title,
-                                                            category=Document.Category.GROUP_CLASS)
+                                                            category__title="Групповые занятия")
                     practice_classes = documents_merged.filter(topic_id=topic.id,
                                                                section_title=document.section_title,
-                                                               category=Document.Category.PRACTICE_CLASS)
+                                                               category__title="Практические занятия")
 
                     for lec in lectures:
                         topic_json_format["lectures"].append(SubjectSectionView.convert2dict(lec))

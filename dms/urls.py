@@ -7,26 +7,27 @@ from backend.views import (
     authors,
     delete_document,
     documents,
-    fill_with_mock,
     get_file,
     get_tags,
     info,
     login,
     logout,
+    populate,
     published_places,
     subjects,
-    XEP,
 
+    CategoryView,
     SubjectSectionView,
     UploadNirView,
-    CategoryView)
+)
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("fill_with_mock", fill_with_mock),
+    path("populate/", populate),
 
     path("api/authors", authors),
+    path("api/category", CategoryView.as_view()),
     path("api/delete_document", delete_document),
     path("api/documents", documents),
     path("api/get_file", get_file),
@@ -38,6 +39,4 @@ urlpatterns = [
     path("api/user/info", info),
     path("api/user/login", login),
     path("api/user/logout", logout),
-    path("api/category", CategoryView.as_view()),
-    path("api/XEP", XEP),
 ]
