@@ -83,6 +83,17 @@ class CategoryView(APIView):
             status=HTTP_200_OK,
         )
 
+    @csrf_exempt
+    def delete(self, request: Request) -> Response:
+        Category.objects.get(pk=request.query_params.get('title')).delete()
+        return Response(
+            {
+                "code": HTTP_200_OK * 100,
+                "data": data
+            },
+            status=HTTP_200_OK,
+        )
+
 
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
