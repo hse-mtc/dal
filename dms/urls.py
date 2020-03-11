@@ -19,7 +19,7 @@ from backend.views import (
 
     SubjectSectionView,
     UploadNirView,
-)
+    CategoryView)
 
 
 urlpatterns = [
@@ -38,5 +38,6 @@ urlpatterns = [
     path("api/user/info", info),
     path("api/user/login", login),
     path("api/user/logout", logout),
+    path("api/category", CategoryView.as_view()),
     path("api/XEP", XEP),
 ]

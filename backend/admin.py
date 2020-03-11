@@ -8,7 +8,7 @@ from backend.models import (
     Profile,
     Publisher,
     Subject,
-)
+    Category)
 
 
 class ProfileInline(admin.StackedInline):
@@ -28,3 +28,4 @@ admin.site.register(Author)
 admin.site.register(Document)
 admin.site.register(Publisher)
 admin.site.register(Subject)
+admin.site.register(Category)
