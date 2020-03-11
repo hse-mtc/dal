@@ -16,6 +16,7 @@ from django.db.models import (
     F,
 )
 
+import re
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import FileUploadParser
 from rest_framework.permissions import AllowAny
@@ -88,7 +89,8 @@ class UploadNirView(APIView):
             author_name = request.data["authorName"]
             author_last_name = request.data["authorLastName"]
             author_patronymic = request.data["authorPatronymic"]
-            doc.authors.create(name=author_last_name + " " + author_name[0] + '.' + author_patronymic[0] + '.')
+            doc.authors.create(first_name=author_name, patronymic=author_patronymic,
+                               display_name=author_last_name + " " + author_name[0] + '.' + author_patronymic[0] + '.')
 
         if request.data.get("publisherId"):
             publisher = Publisher.objects.get(pk=request.data["publisherId"])
@@ -367,7 +369,7 @@ def authors(request):
         {
             "code": HTTP_200_OK * 100,
             "data": Author.objects.annotate(
-                value=F("name"),
+                value=F("display_name"),
             ).values(
                 "value", "id",
             ),
@@ -413,11 +415,46 @@ def delete_document(
     )
 
 
+# Return flag and message
+def check_on_conformity(full_name: str) -> (bool, str):
+    data = full_name.split()
+    if len(data) != 3:
+        return False, 'Некорректно переданные ФИО [число слов].'
+    surname, name, patronymic = data
+#     if re.search(r'[^а-яА-ЯёЁ]', surname) is None:
+#         return False, 'Ошибка при форматировании фамилии.'
+#     if re.search(r'[^а-яА-ЯёЁ]', name) is None:
+#         return False, 'Ошибка при форматировании имени.'
+#     if re.search(r'[^а-яА-ЯёЁ]', patronymic) is None:
+#         return False, 'Ошибка при форматировании отчества.'
+    return True, None
+
+
+def display_full_name(full_name: str, ) -> str:
+    full_name = full_name.title()
+    result, message = check_on_conformity(full_name)
+    if not result:
+        raise NameError(message)
+    surname, name, patronymic = full_name.split()
+    return surname + ' ' + name[0] + '. ' + patronymic[0] + '.'
+
+
+def select_name_patronymic(full_name: str, ) -> (str, str):
+    full_name = full_name.title()
+    result, message = check_on_conformity(full_name)
+    if not result:
+        raise NameError(message)
+    _, name, patronymic = full_name.split()
+    return name, patronymic
+
 def create_authors():
-    author_names = ["Пеляк В.С.", "Репалов Д.Н.", "Никандров И.В.", "Усиков Ю.В."]
-    for name in author_names:
+    author_names = ["Кашин Андрей Владимирович", "Никандров Игорь Владимирович",
+                    "Пеляк Виктор Степанович", "Репалов Дмитрий Николаевич",
+                    "Усиков Юрий Витальевич"]
+    for full_name in author_names:
         author = Author()
-        author.name = name
+        author.display_name = display_full_name(full_name)
+        author.first_name, author.patronymic = select_name_patronymic(full_name)
         author.save()
 
 
@@ -446,10 +483,6 @@ def fill_with_mock(
     subject.title = "Военно-тактическая подготовка"
     subject.abbreviation = "ВТП"
     subject.save()
-
-    author = Author()
-    author.name = "Кашин А.В."
-    author.save()
 
     create_authors()
 

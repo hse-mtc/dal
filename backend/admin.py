@@ -2,17 +2,11 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 
-from backend.models import (
-    Author,
-    Document,
-    Profile,
-    Publisher,
-    Subject,
-)
+from backend import models
 
 
 class ProfileInline(admin.StackedInline):
-    model = Profile
+    model = models.Profile
 
 
 class UserAdmin(BaseUserAdmin):
@@ -24,7 +18,9 @@ class UserAdmin(BaseUserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
-admin.site.register(Author)
-admin.site.register(Document)
-admin.site.register(Publisher)
-admin.site.register(Subject)
+admin.site.register(models.Author)
+admin.site.register(models.Document)
+admin.site.register(models.Publisher)
+admin.site.register(models.Subject)
+admin.site.register(models.Section)
+admin.site.register(models.Topic)
