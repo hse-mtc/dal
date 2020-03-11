@@ -53,6 +53,7 @@
   import { getAuthors } from '@/api/authors'
   import { getPublishPlaces } from '@/api/published_places'
   import moment from 'moment'
+  import {mapActions} from "vuex";
 
   export default {
     name: '',
@@ -67,6 +68,10 @@
       }
     },
     methods: {
+        ...mapActions({
+            setAuthors: 'documents/setAuthors',
+            setPublishers: 'documents/setPublishers',
+        }),
       advancedClick() {
         const filters = document.querySelector('.filters')
         const array = document.querySelector('.my-advanced-search-arrow')
@@ -354,7 +359,7 @@
         if (this.$store.getters.authors.length === 0) {
             getAuthors().then(response => {
                 this.authors = response.data
-                this.$store.commit('SET_AUTHORS', this.authors);
+                this.setAuthors(this.authors);
             }).catch(() => {
                 console.log('Данные по авторам не указаны')
             })
@@ -366,7 +371,7 @@
         if (this.$store.getters.publishers.length === 0) {
             getPublishPlaces().then(response => {
                 this.placings = response.data
-                this.$store.commit('SET_PUBLISHERS', this.placings);
+                this.setPublishers(this.placings);
             }).catch(() => {
                 console.log('Данные по размещениям не указаны')
             })

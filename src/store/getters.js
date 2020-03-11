@@ -6,5 +6,7 @@ const getters = {
   subjects: state => state.projectData.subjects,
   publishers: state => state.documents.publishers,
   authors: state => state.documents.authors,
+  categories: state => state.documents.categories,
+
 }
 export default getters
