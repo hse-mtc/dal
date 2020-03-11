@@ -49,6 +49,7 @@ from datetime import datetime
 @permission_classes((AllowAny,))
 class CategoryView(APIView):
 
+
     @csrf_exempt
     def put(self, request: Request) -> Response:
         if "title" not in request.data:
@@ -91,6 +92,7 @@ class CategoryView(APIView):
             },
             status=HTTP_200_OK,
         )
+
 
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
