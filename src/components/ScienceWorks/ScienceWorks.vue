@@ -119,7 +119,6 @@ export default {
   mounted() {
     const self = this
     EventBus.$on('UPDATE_CATEGORY', function () {
-      console.log('update')
       self.fetchData()
     })
   },
@@ -165,7 +164,6 @@ export default {
     fetchData() {
       getPaperCategories()
               .then(response => {
-                console.log(response.data)
                 this.setCategories(response.data)
                 this.selectedCategory = response.data[0]
               }).catch(() => {
