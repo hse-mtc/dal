@@ -28,8 +28,13 @@ class Profile(models.Model):
 
 
 class Author(models.Model):
-    # TODO: не выбрасывать полное ФИО
-    name = models.CharField(
+    display_name = models.CharField(
+        max_length=255,
+    )
+    first_name = models.CharField(
+        max_length=255,
+    )
+    patronymic = models.CharField(
         max_length=255,
     )
 
@@ -38,7 +43,7 @@ class Author(models.Model):
         verbose_name_plural = "Authors"
 
     def __str__(self):
-        return self.name
+        return self.display_name
 
 
 class Publisher(models.Model):
