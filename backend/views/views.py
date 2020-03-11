@@ -30,6 +30,7 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
+    HTTP_412_PRECONDITION_FAILED,
 )
 from taggit.models import Tag
 
@@ -85,7 +86,18 @@ class CategoryView(APIView):
 
     @csrf_exempt
     def delete(self, request: Request) -> Response:
-        Category.objects.get(pk=request.query_params.get("id")).delete()
+        category = Category.objects.get(pk=request.query_params.get("id"))
+
+        if Document.objects.filter(category=category).exists():
+            return Response(
+                data={
+                    "code": HTTP_412_PRECONDITION_FAILED * 100
+                },
+                status=HTTP_200_OK,
+            )
+
+        category.delete()
+
         return Response(
             {
                 "code": HTTP_200_OK * 100,
