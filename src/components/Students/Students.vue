@@ -104,6 +104,7 @@
 <script>
 import { getStudents } from '@/api/students'
 import AddModalWindow from "../AddModalWindow/AddModalWindow";
+import axios from 'axios'
 
 export default {
 	name: '',
@@ -148,6 +149,11 @@ export default {
 			})
 		},
 		fetchData(){
+
+			axios
+					.get('http://localhost:8000/api/students')
+					.then(response => (this.studentsData = response));
+
 			getStudents().then(response => {
 				this.studentsData = response.data;
 			}).catch(() => {
