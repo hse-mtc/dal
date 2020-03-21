@@ -18,13 +18,13 @@
 				</div>
 			</el-col>
 		</el-row>
-		<el-row v-if="selectedSection=='students'" class="studentsPage">
+		<el-row>
 			<el-row class="search">
-				<el-col :span="7" class="filter">
-					<el-input placeholder="Введите ФИО" v-model="SfioFilter" v-on:keyup.native.enter="onEnter"></el-input>
+				<el-col :span="10" class="filter">
+					<el-input placeholder="Введите ФИО" v-model="fioFilter" v-on:keyup.native.enter="onEnter"></el-input>
 				</el-col>
-				<el-col :span="9" class="filter">
-					<el-select v-model="SselectedMG" clearable placeholder="Выберите взвод">
+				<el-col :span="6" class="filter" v-if="selectedSection=='students'">
+					<el-select v-model="selectedMG" clearable placeholder="Выберите взвод">
 						<el-option
 						v-for="item in mgs"
 						:key="item"
@@ -33,7 +33,7 @@
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="4" class="filter">
+				<el-col :span="4" class="filter" v-if="selectedSection=='students'">
 					<el-select v-model="selectedStatus" clearable placeholder="Выберите статус">
 						<el-option
 						v-for="item in statuses"
@@ -45,7 +45,7 @@
 				</el-col>
 			</el-row>
 			<el-row class="table">
-				<el-table id="studentsTable" :data="studentsData">
+				<el-table :data="studentsData" v-if="selectedSection=='students'">
 					<el-table-column width="400px"
 						prop="name"
 						label="ФИО">
@@ -71,26 +71,7 @@
 						label="Статус">
 					</el-table-column>
 				</el-table>
-			</el-row>
-		</el-row>
-		<el-row v-if="selectedSection=='teachers'" class="teachersPage">
-			<el-row class="search">
-				<el-col :span="7" class="filter">
-					<el-input placeholder="Введите ФИО" v-model="TfioFilter"></el-input>
-				</el-col>
-				<el-col :span="9" class="filter">
-					<el-select v-model="TselectedMG" clearable placeholder="Выберите прикр. взвод">
-						<el-option
-						v-for="item in mgs"
-						:key="item"
-						:label="item"
-						:value="item">
-						</el-option>
-					</el-select>
-				</el-col>
-			</el-row>
-			<el-row class="table">
-				<el-table :data="teachersData">
+				<el-table :data="teachersData" v-if="selectedSection=='teachers'">
 					<el-table-column width="400px"
 						prop="name"
 						label="ФИО">
@@ -121,6 +102,7 @@
 </template>
 
 <script>
+import { getStudents } from '@/api/students'
 import AddModalWindow from "../AddModalWindow/AddModalWindow";
 
 export default {
@@ -130,25 +112,18 @@ export default {
 	},
 	data() {
 		return {
-			studentsData1: [{"name": "Кацевалов Артем Сергеевич", "mg": "1809", "mf": "ВКС", "pr": "Информатика и вычислительная техника", "bdate": "23.02.2000", "status": "Обучается"},
-						{"name": "Исаков Владислав Евгеньевич", "mg": "1809", "mf": "ВКС", "pr": "Информатика и вычислительная техника", "bdate": "29.08.1999", "status": "Обучается"},
-						{"name": "Хромов Григорий Александрович", "mg": "1809", "mf": "ВКС", "pr": "Информатика и вычислительная техника", "bdate": "04.11.1999", "status": "Обучается"}], studentsData: [],
-			
-			teachersData: [{"name": "Никандров Игорь Владимирович", "mg": "1809", "mf": "ВКС", "rank": "Подполковник", "post": "Преподаватель"},
-						{"name": "Репалов Дмитрий Николаевич", "mg": "1808", "mf": "ВКС", "rank": "Подполковник", "post": "Начальник цикла"},
-						{"name": "Пеляк Виктор Степанович", "mg": null, "mf": "ВКС", "rank": "Полковник", "post": "Преподаватель"}],
+			studentsData: [], teachersData: [],
 			calendarData: undefined,
-			count: undefined,
 			addModal: false,
 			statuses: ["Обучается", "Отчислен", "Завершил"], selectedStatus: '',
-			mgs: ["1807", "1808", "1809"], SselectedMG: '', TselectedMG: '',
+			mgs: ["1807", "1808", "1809"], selectedMG: null,
 			selectedSection: "students",
-			SfioFilter: "", TfioFilter: ""
+			fioFilter: "",
 		}
 	},
 	created() {
-			this.$router.replace({ name: 'Personnel', query: { section: 'students' }})
-			this.studentsData = this.studentsData1
+		this.$router.replace({ name: 'Personnel', query: { section: 'students' }});
+		this.fetchData();
 	},
 	methods: {
 		closeModal() {
@@ -166,12 +141,23 @@ export default {
 			this.selectedSection = event.target.id
 		},
 		onEnter(){
-			this.studentsData = this.studentsData1.filter(x => x["name"].toLowerCase().includes(this.SfioFilter.toLowerCase()));
+			getStudents({name: this.fioFilter, milgroup: this.selectedMG}).then(response => {
+				this.studentsData = response.data;
+			}).catch(() => {
+				console.log('Данные по студентам не указаны')
+			})
+		},
+		fetchData(){
+			getStudents().then(response => {
+				this.studentsData = response.data;
+			}).catch(() => {
+				console.log('Данные по студентам не указаны')
+			})
 		}
-}
+	}
 }
 </script>
 
 <style scoped lang="scss">
-  @import "style"
+	@import "style"
 </style>
