@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
 
     "backend",
+    "mil_lms_backend",
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from backend.views import (
     authors,
@@ -21,6 +21,7 @@ from backend.views import (
     UploadNirView,
 )
 
+from mil_lms_backend.views.populate import lms_populate
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -39,4 +40,7 @@ urlpatterns = [
     path("api/user/info", info),
     path("api/user/login", login),
     path("api/user/logout", logout),
+
+    path('lms_populate', lms_populate),
+    path('api_lms/', include('mil_lms_backend.urls')),
 ]
