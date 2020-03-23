@@ -1,120 +1,77 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+import datetime
 
 
-class Absence(models.Model):
-    date = models.DateField(primary_key=True)
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
-    type = models.CharField(max_length=20)
-    reason = models.CharField(max_length=100, blank=True, null=True)
-    status = models.DecimalField(max_digits=1, decimal_places=0)
-    comment = models.CharField(max_length=100, blank=True, null=True)
+class AbsenceType(models.Model):
+    absenceType = models.CharField(primary_key=True, max_length=100)
 
-    class Meta:
-        db_table = 'absence'
-        unique_together = (('date', 'studentid'),)
-
-
-class Abstype(models.Model):
-    abstype = models.CharField(primary_key=True, max_length=100)
+    def __str__(self):
+        return str(self.absenceType)
 
     class Meta:
-        db_table = 'abstype'
+        db_table = 'absenceType'
+        verbose_name = 'Absence Type'
+        verbose_name_plural = 'Absence Types'
 
 
-class Activity(models.Model):
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
-    year = models.DecimalField(max_digits=4, decimal_places=0)
-    acttype = models.ForeignKey('Acttype', models.DO_NOTHING, db_column='acttype')
-    comment = models.CharField(max_length=200, blank=True, null=True)
+class ActivityType(models.Model):
+    activityType = models.CharField(primary_key=True, max_length=100)
 
-    class Meta:
-        db_table = 'activity'
-
-
-class Acttype(models.Model):
-    acttype = models.CharField(primary_key=True, max_length=100)
+    def __str__(self):
+        return str(self.activityType)
 
     class Meta:
-        db_table = 'acttype'
+        db_table = 'activityType'
+        verbose_name = 'Activity Type'
+        verbose_name_plural = 'Activity Types'
 
 
-class Controlform(models.Model):
-    controlform = models.CharField(primary_key=True, max_length=100)
+class ControlForm(models.Model):
+    controlForm = models.CharField(primary_key=True, max_length=100)
+
+    def __str__(self):
+        return str(self.controlForm)
 
     class Meta:
-        db_table = 'controlform'
+        db_table = 'controlForm'
+        verbose_name = 'Form of Control'
+        verbose_name_plural = 'Forms of Control'
 
 
 class Course(models.Model):
     course = models.CharField(primary_key=True, max_length=100)
 
+    def __str__(self):
+        return str(self.course)
+
     class Meta:
         db_table = 'course'
+        verbose_name = 'Course'
+        verbose_name_plural = 'Courses'
 
 
-class Encouragement(models.Model):
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
-    reason = models.CharField(max_length=200)
-    enctype = models.ForeignKey('Enctype', models.DO_NOTHING, db_column='enctype')
-    date = models.DateField()
-    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherid')
+class EncouragementType(models.Model):
+    encouragementType = models.CharField(primary_key=True, max_length=100)
 
-    class Meta:
-        db_table = 'encouragement'
-
-
-class Enctype(models.Model):
-    enctype = models.CharField(primary_key=True, max_length=100)
+    def __str__(self):
+        return str(self.encouragementType)
 
     class Meta:
-        db_table = 'enctype'
+        db_table = 'encouragementType'
+        verbose_name = 'Encouragement Type'
+        verbose_name_plural = 'Encouragement Types'
 
 
-class Lesson(models.Model):
-    course = models.ForeignKey(Course, models.DO_NOTHING, db_column='course')
-    topic = models.DecimalField(max_digits=2, decimal_places=0)
-    lessonnum = models.DecimalField(max_digits=2, decimal_places=0)
-    lestype = models.ForeignKey('Lestype', models.DO_NOTHING, db_column='lestype')
-    date = models.DateField()
-    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherid')
-    time = models.DecimalField(max_digits=1, decimal_places=0)
-    place = models.ForeignKey('Place', models.DO_NOTHING, db_column='place')
+class LessonType(models.Model):
+    lessonType = models.CharField(primary_key=True, max_length=100)
+
+    def __str__(self):
+        return str(self.lessonType)
 
     class Meta:
-        db_table = 'lesson'
-
-
-class LessonMilgroup(models.Model):
-    lessonid = models.OneToOneField(Lesson, models.DO_NOTHING, db_column='lessonid', primary_key=True)
-    milgroup = models.ForeignKey('Milgroup', models.DO_NOTHING, db_column='milgroup')
-
-    class Meta:
-        db_table = 'lesson-milgroup'
-        unique_together = (('lessonid', 'milgroup'),)
-
-
-class Lestype(models.Model):
-    lestype = models.CharField(primary_key=True, max_length=100)
-
-    class Meta:
-        db_table = 'lestype'
-
-
-class Mark(models.Model):
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
-    mark = models.DecimalField(max_digits=1, decimal_places=0)
-    controlform = models.ForeignKey(Controlform, models.DO_NOTHING, db_column='controlform')
-    lessonid = models.ForeignKey(Lesson, models.DO_NOTHING, db_column='lessonid', blank=True, null=True)
-
-    class Meta:
-        db_table = 'mark'
+        db_table = 'lessonType'
+        verbose_name = 'Lesson Type'
+        verbose_name_plural = 'Lesson Types'
 
 
 class Milfaculty(models.Model):
@@ -125,110 +82,142 @@ class Milfaculty(models.Model):
 
     class Meta:
         db_table = 'milfaculty'
-
-
-class Milgroup(models.Model):
-    milgroup = models.DecimalField(primary_key=True, max_digits=4, decimal_places=0)
-    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING, db_column='milfaculty')
-
-    class Meta:
-        db_table = 'milgroup'
+        verbose_name = 'Military Faculty'
+        verbose_name_plural = 'Military Faculties'
 
 
 class Place(models.Model):
     place = models.CharField(primary_key=True, max_length=100)
 
+    def __str__(self):
+        return str(self.place)
+
     class Meta:
         db_table = 'place'
+        verbose_name = 'Place in Military Educational Centre'
+        verbose_name_plural = 'Places in Military Educational Centre'
+
+
+class PunishmentType(models.Model):
+    punishmentType = models.CharField(primary_key=True, max_length=100)
+
+    def __str__(self):
+        return str(self.punishmentType)
+
+    class Meta:
+        db_table = 'punishmentType'
+        verbose_name = 'Punishment Type'
+        verbose_name_plural = 'Punishment Types'
+
+
+class Rank(models.Model):
+    rank = models.CharField(primary_key=True, max_length=30)
+
+    def __str__(self):
+        return str(self.rank)
+
+    class Meta:
+        db_table = 'rank'
+        verbose_name = 'Military Rank'
+        verbose_name_plural = 'Military Ranks'
+
+
+class Skill(models.Model):
+    skill = models.CharField(primary_key=True, max_length=100)
+
+    def __str__(self):
+        return str(self.skill)
+
+    class Meta:
+        db_table = 'skill'
+        verbose_name = 'Skill'
+        verbose_name_plural = 'Skills'
+
+
+class Status(models.Model):
+    status = models.CharField(primary_key=True, max_length=20)
+
+    def __str__(self):
+        return str(self.status)
+
+    class Meta:
+        db_table = 'status'
+        verbose_name = 'Student Status'
+        verbose_name_plural = 'Student Statuses'
 
 
 class Program(models.Model):
     code = models.CharField(primary_key=True, max_length=8)
     program = models.CharField(max_length=500, blank=True, null=True)
 
+    def __str__(self):
+        return f'({str(self.code)}) {str(self.program)}'
+
     class Meta:
         db_table = 'program'
+        verbose_name = 'Educational Program'
+        verbose_name_plural = 'Educational Programs'
 
 
-class Punishment(models.Model):
-    id = models.DecimalField(primary_key=True, max_digits=6, decimal_places=0)
-    studentid = models.ForeignKey('Student', models.DO_NOTHING, db_column='studentid')
-    reason = models.CharField(max_length=200)
-    puntype = models.ForeignKey('Puntype', models.DO_NOTHING, db_column='puntype')
-    date = models.DateField()
-    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherid')
-    removedate = models.DateField(blank=True, null=True)
+class StudentPost(models.Model):
+    studentPost = models.CharField(primary_key=True, max_length=100)
 
-    class Meta:
-        db_table = 'punishment'
-
-
-class Puntype(models.Model):
-    puntype = models.CharField(primary_key=True, max_length=100)
+    def __str__(self):
+        return str(self.studentPost)
 
     class Meta:
-        db_table = 'puntype'
+        db_table = 'studentPost'
+        verbose_name = 'Student Post'
+        verbose_name_plural = 'Student Posts'
 
 
-class Rank(models.Model):
-    rank = models.CharField(primary_key=True, max_length=30)
+class TeacherPost(models.Model):
+    teacherPost = models.CharField(primary_key=True, max_length=100)
 
-    class Meta:
-        db_table = 'rank'
-
-
-class Skill(models.Model):
-    skill = models.CharField(primary_key=True, max_length=100)
+    def __str__(self):
+        return str(self.teacherPost)
 
     class Meta:
-        db_table = 'skill'
+        db_table = 'teacherPost'
+        verbose_name = 'Teacher Post'
+        verbose_name_plural = 'Teacher Posts'
 
 
-class Status(models.Model):
-    status = models.CharField(primary_key=True, max_length=20)
+class Milgroup(models.Model):
+    milgroup = models.DecimalField(primary_key=True, max_digits=4, decimal_places=0)
+    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING, db_column='milfaculty')
+
+    def __str__(self):
+        return f'{str(self.milgroup)}, {str(self.milfaculty)}'
 
     class Meta:
-        db_table = 'status'
+        db_table = 'milgroup'
+        verbose_name = 'Military Group'
+        verbose_name_plural = 'Military Groups'
 
 
 class Student(models.Model):
     surname = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     patronymic = models.CharField(max_length=100, blank=True, null=True)
-    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING, db_column='milfaculty')
     milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING, db_column='milgroup')
     birthdate = models.DateField()
     program = models.ForeignKey(Program, models.DO_NOTHING, db_column='program')
     status = models.ForeignKey(Status, models.DO_NOTHING, db_column='status')
     photo = models.CharField(max_length=128, blank=True, null=True)
 
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n' \
+               f'Milgroup = {str(self.milgroup)}\n' \
+               f'Birthdate = {str(self.birthdate)}\n' \
+               f'Program = {str(self.program)}\n' \
+               f'Status = {str(self.status)}, Photo = {str(self.photo)}'
+
     class Meta:
         db_table = 'student'
-
-
-class StudentSkill(models.Model):
-    skill = models.ForeignKey(Skill, models.DO_NOTHING, db_column='skill')
-    studentid = models.OneToOneField(Student, models.DO_NOTHING, db_column='studentid', primary_key=True)
-
-    class Meta:
-        db_table = 'student-skill'
-        unique_together = (('studentid', 'skill'),)
-
-
-class StudentStudentpost(models.Model):
-    studentpost = models.ForeignKey('Studentpost', models.DO_NOTHING, db_column='studentpost')
-    studentid = models.OneToOneField(Student, models.DO_NOTHING, db_column='studentid', primary_key=True)
-
-    class Meta:
-        db_table = 'student-studentpost'
-        unique_together = (('studentid', 'studentpost'),)
-
-
-class Studentpost(models.Model):
-    studentpost = models.CharField(primary_key=True, max_length=100)
-
-    class Meta:
-        db_table = 'studentpost'
+        verbose_name = 'Student'
+        verbose_name_plural = 'Students'
 
 
 class Teacher(models.Model):
@@ -237,24 +226,186 @@ class Teacher(models.Model):
     patronymic = models.CharField(max_length=100, blank=True, null=True)
     milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING, db_column='milfaculty')
     rank = models.ForeignKey(Rank, models.DO_NOTHING, db_column='rank')
-    post = models.ForeignKey('Teacherpost', models.DO_NOTHING, db_column='post')
+    post = models.ForeignKey(TeacherPost, models.DO_NOTHING, db_column='post')
     milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING, db_column='milgroup', blank=True, null=True)
+
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n' \
+               f'Milfaculty = {str(self.milfaculty)}\n' \
+               f'Rank = {str(self.rank)}\n' \
+               f'Post = {str(self.post)}\n' \
+               f'Attached milgroup = {str(self.milgroup)}'
 
     class Meta:
         db_table = 'teacher'
+        verbose_name = 'Teacher'
+        verbose_name_plural = 'Teachers'
 
 
-class Teacherpost(models.Model):
-    teacherpost = models.CharField(primary_key=True, max_length=100)
+class Absence(models.Model):
+    date = models.DateField(default=datetime.date.today)
+    studentid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentid')
+    type = models.CharField(max_length=20)
+    reason = models.CharField(max_length=100, blank=True, null=True)
+    status = models.DecimalField(max_digits=1, decimal_places=0)
+    comment = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'Date = {str(self.date)}\n' \
+               f'StudentID = {str(self.studentid)}, Type={str(self.type)}\n' \
+               f'Reason = {str(self.reason)}\n' \
+               f'Status = {str(self.status)}\n' \
+               f'Comment = {str(self.comment)}'
 
     class Meta:
-        db_table = 'teacherpost'
+        db_table = 'absence'
+        unique_together = (('date', 'studentid'),)
+        verbose_name = 'Absence Journal instance'
+        verbose_name_plural = 'Absence Journal instances'
 
 
-class Users(models.Model):
-    name = models.CharField(primary_key=True, max_length=100)
-    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING, db_column='milfaculty', blank=True, null=True)
-    access = models.CharField(max_length=100)
+class Activity(models.Model):
+    studentid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentid')
+    year = models.DecimalField(max_digits=4, decimal_places=0)
+    type = models.ForeignKey(ActivityType, models.DO_NOTHING, db_column='type')
+    comment = models.CharField(max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'StudentID = {str(self.studentid)}\n' \
+               f'Year = {str(self.year)}\n' \
+               f'Type = {str(self.type)}\n' \
+               f'Comment = {str(self.comment)}'
 
     class Meta:
-        db_table = 'users'
+        db_table = 'activity'
+        verbose_name = 'Activity Journal instance'
+        verbose_name_plural = 'Activity Journal instances'
+
+
+class Encouragement(models.Model):
+    studentid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentid')
+    reason = models.CharField(max_length=200)
+    type = models.ForeignKey(EncouragementType, models.DO_NOTHING, db_column='type')
+    date = models.DateField(default=datetime.date.today)
+    teacherid = models.ForeignKey('Teacher', models.DO_NOTHING, db_column='teacherid')
+
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'StudentID = {str(self.studentid)}\n' \
+               f'Reason = {str(self.reason)}\n' \
+               f'Type = {str(self.type)}\n' \
+               f'Date = {str(self.date)}, TeacherID = {str(self.teacherid)}'
+
+    class Meta:
+        db_table = 'encouragement'
+        verbose_name = 'Encouragement Journal instance'
+        verbose_name_plural = 'Encouragement Journal instances'
+
+
+class Lesson(models.Model):
+    course = models.ForeignKey(Course, models.DO_NOTHING, db_column='course')
+    topic = models.DecimalField(max_digits=2, decimal_places=0)
+    lessonnum = models.DecimalField(max_digits=2, decimal_places=0)
+    type = models.ForeignKey(LessonType, models.DO_NOTHING, db_column='type')
+    date = models.DateField(default=datetime.date.today)
+    teacherid = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacherid')
+    time = models.DecimalField(max_digits=1, decimal_places=0)
+    place = models.ForeignKey(Place, models.DO_NOTHING, db_column='place')
+
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'Course = {str(self.course)}, Topic = {str(self.topic)}\n' \
+               f'Lesson Number = {str(self.lessonnum)}, Type = {str(self.type)}\n' \
+               f'Date = {str(self.date)}, Time = {str(self.time)}\n' \
+               f'TeacherID = {str(self.teacherid)}\n' \
+               f'Place = {str(self.place)}'
+
+    class Meta:
+        db_table = 'lesson'
+        verbose_name = 'Lessons Journal instance'
+        verbose_name_plural = 'Lessons Journal instances'
+
+
+class Mark(models.Model):
+    studentid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentid')
+    mark = models.DecimalField(max_digits=1, decimal_places=0)
+    controlform = models.ForeignKey(ControlForm, models.DO_NOTHING, db_column='controlForm')
+    lessonid = models.ForeignKey(Lesson, models.DO_NOTHING, db_column='lessonid', blank=True, null=True)
+
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'StudentID = {str(self.studentid)}, LessonID = {str(self.lessonid)}\n' \
+               f'Mark = {str(self.mark)}, Controlform = {str(self.controlform)}\n'
+
+    class Meta:
+        db_table = 'mark'
+        verbose_name = 'Marks Journal instance'
+        verbose_name_plural = 'Marks Journal instances'
+
+
+class Punishment(models.Model):
+    studentid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentid')
+    reason = models.CharField(max_length=200)
+    type = models.ForeignKey(PunishmentType, models.DO_NOTHING, db_column='type')
+    date = models.DateField(default=datetime.date.today)
+    teacherid = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacherid')
+    removedate = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return f'ID = {str(self.id)}\n' \
+               f'StudentID = {str(self.studentid)}, TeacherID = {str(self.teacherid)}\n' \
+               f'Type = {str(self.type)}\n' \
+               f'Reason = {str(self.reason)}\n' \
+               f'Date = {str(self.date)}, Remove Date = {str(self.removedate)}'
+
+    class Meta:
+        db_table = 'punishment'
+        verbose_name = 'Punishment Journal instance'
+        verbose_name_plural = 'Punishment Journal instances'
+
+
+class LessonMilgroup(models.Model):
+    lessonid = models.OneToOneField(Lesson, models.DO_NOTHING, db_column='lessonid')
+    milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING, db_column='milgroup')
+
+    def __str__(self):
+        return f'LessonId = {str(self.lessonid)} ~ Milgroup = {str(self.milgroup)}'
+
+    class Meta:
+        db_table = 'lesson-milgroup'
+        unique_together = (('lessonid', 'milgroup'),)
+        verbose_name = 'Lesson-Milgroup table instance'
+        verbose_name_plural = 'Lesson-Milgroup table instances'
+
+
+class StudentStudentpost(models.Model):
+    studentPost = models.ForeignKey(StudentPost, models.DO_NOTHING, db_column='studentPost')
+    studentid = models.OneToOneField(Student, models.DO_NOTHING, db_column='studentid')
+
+    def __str__(self):
+        return f'StudentID = {str(self.studentid)} ~ StudentPost = {str(self.studentPost)}'
+
+    class Meta:
+        db_table = 'student-studentpost'
+        unique_together = (('studentid', 'studentPost'),)
+        verbose_name = 'Student-Studentpost table instance'
+        verbose_name_plural = 'Student-Studentpost table instances'
+
+
+class StudentSkill(models.Model):
+    skill = models.ForeignKey(Skill, models.DO_NOTHING, db_column='skill')
+    studentid = models.OneToOneField(Student, models.DO_NOTHING, db_column='studentid')
+
+    def __str__(self):
+        return f'StudentID = {str(self.studentid)} ~ Skill = {str(self.skill)}'
+
+    class Meta:
+        db_table = 'student-skill'
+        unique_together = (('studentid', 'skill'),)
+        verbose_name = 'Student-Skill table instance'
+        verbose_name_plural = 'Student-Skill table instances'
+
+

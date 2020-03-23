@@ -16,22 +16,6 @@ from mil_lms_backend.models import (
 )
 
 
-def create_super_user():
-    """
-    Create super user "vspelyak" with password "qwerty".
-    :return:
-    """
-
-    if User.objects.filter(username="vspelyak").exists():
-        return User.objects.get(username="vspelyak")
-
-    super_user = User.objects.create_superuser(
-        username="vspelyak",
-        password="qwerty",
-    )
-    super_user.save()
-
-
 def create_statuses() -> tp.Dict[str, Status]:
     values = [
         'Завершил', 'Обучается', 'Отчислен'
@@ -218,7 +202,6 @@ def lms_populate(request: Request) -> Response:
     :param request: empty PUT request.
     :return: response indicating whether request was successful (probably was).
     """
-    create_super_user()
 
     statuses = create_statuses()
     programs = create_programs()

@@ -1,19 +1,24 @@
 from rest_framework import serializers
 
-from . import models
+from .models import (
+    Milfaculty,
+    Milgroup,
+    Program,
+    Student
+)
 
 
 class MilgroupSerializer(serializers.ModelSerializer):
     milgroup = serializers.IntegerField()
 
     class Meta:
-        model = models.Milgroup
+        model = Milgroup
         fields = '__all__'
 
 
 class ProgramSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Program
+        model = Program
         fields = '__all__'
         extra_kwargs = {
             'code': {'validators': []}
@@ -25,19 +30,19 @@ class StudentSerializer(serializers.ModelSerializer):
     program = ProgramSerializer(many=False)
 
     class Meta:
-        model = models.Student
+        model = Student
         fields = '__all__'
 
     def create(self, validated_data):
         milgroup_data = validated_data.pop('milgroup')
         milfaculty_data = milgroup_data.pop('milfaculty')
-        milfaculty = models.Milfaculty.objects.get(milfaculty=milfaculty_data)
-        milgroup = models.Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+        milfaculty = Milfaculty.objects.get(milfaculty=milfaculty_data)
+        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
 
         program_data = validated_data.pop('program')
-        program = models.Program.objects.get(**program_data)
+        program = Program.objects.get(**program_data)
 
-        new_student = models.Student.objects.create(
+        new_student = Student.objects.create(
             milgroup=milgroup, program=program,
             **validated_data)
 

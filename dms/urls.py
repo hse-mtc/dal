@@ -41,6 +41,6 @@ urlpatterns = [
     path("api/user/login", login),
     path("api/user/logout", logout),
 
-    path('lms_populate', lms_populate),
-    path('api_lms/', include('mil_lms_backend.urls')),
+    path('lms_populate/', lms_populate),
+    path('api/lms/', include('mil_lms_backend.urls')),
 ]
