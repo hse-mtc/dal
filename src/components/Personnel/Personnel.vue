@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-col :offset="2" :span="20" class="Personnel">
+    <el-col :offset="2" :span="21" class="Personnel">
 		<el-row class="pageTitle">
 			<el-col>
 			Личный состав ВУЦ
@@ -21,10 +21,10 @@
 		<el-row>
 			<el-row class="search">
 				<el-col :span="10" class="filter">
-					<el-input placeholder="Введите ФИО" v-model="fioFilter" v-on:keyup.native.enter="onEnter"></el-input>
+					<el-input placeholder="Введите ФИО" v-model="fioFilter" v-on:keyup.native.enter="onFilter"></el-input>
 				</el-col>
 				<el-col :span="6" class="filter" v-if="selectedSection=='students'">
-					<el-select v-model="selectedMG" clearable placeholder="Выберите взвод">
+					<el-select v-model="selectedMG" clearable placeholder="Выберите взвод" v-on:change="onFilter">
 						<el-option
 						v-for="item in mgs"
 						:key="item"
@@ -34,7 +34,7 @@
 					</el-select>
 				</el-col>
 				<el-col :span="4" class="filter" v-if="selectedSection=='students'">
-					<el-select v-model="selectedStatus" clearable placeholder="Выберите статус">
+					<el-select v-model="selectedStatus" clearable placeholder="Выберите статус" v-on:change="onFilter">
 						<el-option
 						v-for="item in statuses"
 						:key="item"
@@ -45,25 +45,30 @@
 				</el-col>
 			</el-row>
 			<el-row class="table">
-				<el-table :data="studentsData" v-if="selectedSection=='students'">
-					<el-table-column width="400px"
+				<el-table 
+					height="600px"
+					:data="studentsData" 
+					v-if="selectedSection=='students'" 
+					:default-sort = "{prop: 'milgroup', order: 'ascending'}" 
+					stripe>
+					<el-table-column width="400px" sortable
 						prop="name"
 						label="ФИО">
 					</el-table-column>
-					<el-table-column
-						prop="mg"
+					<el-table-column sortable
+						prop="milgroup"
 						label="Взвод">
 					</el-table-column>
 					<el-table-column
-						prop="mf"
+						prop="milfaculty"
 						label="Цикл">
 					</el-table-column>
 					<el-table-column width="400px"
-						prop="pr"
+						prop="program"
 						label="Программа">
 					</el-table-column>
 					<el-table-column
-						prop="bdate"
+						prop="birthdate"
 						label="Дата рождения">
 					</el-table-column>
 					<el-table-column
@@ -102,7 +107,7 @@
 </template>
 
 <script>
-import { getStudents } from '@/api/students'
+import { getStudent } from '@/api/student'
 import AddModalWindow from "../AddModalWindow/AddModalWindow";
 import axios from 'axios'
 
@@ -116,7 +121,7 @@ export default {
 			studentsData: [], teachersData: [],
 			calendarData: undefined,
 			addModal: false,
-			statuses: ["Обучается", "Отчислен", "Завершил"], selectedStatus: '',
+			statuses: ["Обучается", "Отчислен", "Завершил"], selectedStatus: null,
 			mgs: ["1807", "1808", "1809"], selectedMG: null,
 			selectedSection: "students",
 			fioFilter: "",
@@ -141,23 +146,26 @@ export default {
 			this.$router.replace({ name: 'Personnel', query: { section: event.target.id }})
 			this.selectedSection = event.target.id
 		},
-		onEnter(){
-			getStudents({name: this.fioFilter, milgroup: this.selectedMG}).then(response => {
-				this.studentsData = response.data;
-			}).catch(() => {
-				console.log('Данные по студентам не указаны')
-			})
+		onFilter(){
+			axios.get(`http://localhost:8000/api/students/?
+						${this.fioFilter != '' ? `name=${this.fioFilter}` : ''}&
+						${this.selectedMG != null ? `milgroup=${this.selectedMG}` : ''}&
+						${this.selectedStatus != null ? `status=${this.selectedStatus}` : ''}`)
+			.then(response => {
+				this.studentsData = response.data.students;
+			});
 		},
 		fetchData(){
 
-			axios
-					.get('http://localhost:8000/api/students')
-					.then(response => (this.studentsData = response));
+			/* axios.get('http://localhost:8000/api/students/')
+			.then(response => {
+				this.studentsData = response.data.students;
+			}); */
 
-			getStudents().then(response => {
-				this.studentsData = response.data;
-			}).catch(() => {
-				console.log('Данные по студентам не указаны')
+			getStudent().then(response => {
+				this.studentsData = response.data.students;
+			}).catch((err) => {
+                console.log(err)
 			})
 		}
 	}

@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function getStudents(params) {
+export function getStudent(params) {
   return request({
-    url: '/students',
+    url: '/lms/student/',
     method: 'get',
     params
   })

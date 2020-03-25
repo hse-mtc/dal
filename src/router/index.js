@@ -176,7 +176,7 @@ export const constantRoutes = [
     children: [{
       path: 'personnel',
       name: 'Personnel',
-      component: () => import('@/views/Students/index'),
+      component: () => import('@/views/Personnel/index'),
       meta: { title: 'Личный состав ВУЦ', icon: '' }
     }]
   },
