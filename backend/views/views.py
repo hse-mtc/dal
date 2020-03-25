@@ -126,8 +126,9 @@ class UploadNirView(APIView):
 
         doc.title = request.data["title"]
 
-        if request.data.get("category"):
-            doc.category = request.data["category"]
+        category = request.data.get("category")
+        if category:
+            doc.category = Category.objects.get(pk=category)
 
         if request.data.get("annotation"):
             doc.annotation = request.data["annotation"]
