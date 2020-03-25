@@ -52,19 +52,19 @@
 					:default-sort = "{prop: 'milgroup', order: 'ascending'}" 
 					stripe>
 					<el-table-column width="400px" sortable
-						prop="name"
+						prop="fullname"
 						label="ФИО">
 					</el-table-column>
 					<el-table-column sortable
-						prop="milgroup"
+						prop="milgroup.milgroup"
 						label="Взвод">
 					</el-table-column>
 					<el-table-column
-						prop="milfaculty"
+						prop="milgroup.milfaculty"
 						label="Цикл">
 					</el-table-column>
 					<el-table-column width="400px"
-						prop="program"
+						prop="program.program"
 						label="Программа">
 					</el-table-column>
 					<el-table-column
@@ -147,13 +147,23 @@ export default {
 			this.selectedSection = event.target.id
 		},
 		onFilter(){
-			axios.get(`http://localhost:8000/api/students/?
+			let params = {};
+			if (this.fioFilter != '') params['name'] = this.fioFilter;
+			if (this.selectedMG != null) params['milgroup'] = this.selectedMG;
+			if (this.selectedStatus != null) params['status'] = this.selectedStatus;
+			getStudent(params).then(response => {
+				this.studentsData = response.students;
+			}).catch((err) => {
+				console.log(err)
+			})
+
+			/* axios.get(`http://localhost:8000/api/students/?
 						${this.fioFilter != '' ? `name=${this.fioFilter}` : ''}&
 						${this.selectedMG != null ? `milgroup=${this.selectedMG}` : ''}&
 						${this.selectedStatus != null ? `status=${this.selectedStatus}` : ''}`)
 			.then(response => {
 				this.studentsData = response.data.students;
-			});
+			}); */
 		},
 		fetchData(){
 
@@ -163,7 +173,7 @@ export default {
 			}); */
 
 			getStudent().then(response => {
-				this.studentsData = response.data.students;
+				this.studentsData = response.students;
 			}).catch((err) => {
                 console.log(err)
 			})
