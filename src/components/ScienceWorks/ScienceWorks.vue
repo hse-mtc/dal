@@ -114,7 +114,9 @@ export default {
     }
   },
   created() {
+    this.$router.replace({ name: 'Science Articles', query: { section: 1 }})
     this.fetchData()
+
   },
   mounted() {
     const self = this
