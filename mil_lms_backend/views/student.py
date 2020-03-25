@@ -24,7 +24,6 @@ from mil_lms_backend.serializers import StudentSerializer
 from mil_lms_backend.models import Student
 
 
-@csrf_exempt
 @permission_classes((AllowAny,))
 class StudentView(APIView):
     def get(self, request: Request) -> Response:
