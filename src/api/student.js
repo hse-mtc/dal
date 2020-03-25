@@ -7,3 +7,11 @@ export function getStudent(params) {
     params
   })
 }
+
+export function putStudent(st) {
+  return request({
+    url: '/lms/student/',
+    method: 'put',
+    st
+  })
+}
