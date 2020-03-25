@@ -21,7 +21,7 @@
 		<el-row>
 			<el-row class="search">
 				<el-col :span="10" class="filter">
-					<el-input placeholder="Введите ФИО" v-model="fioFilter" v-on:keyup.native.enter="onFilter"></el-input>
+					<el-input clearable placeholder="Введите ФИО" v-model="fioFilter" v-on:clear="onFilter" v-on:keyup.native.enter="onFilter"></el-input>
 				</el-col>
 				<el-col :span="6" class="filter" v-if="selectedSection=='students'">
 					<el-select v-model="selectedMG" clearable placeholder="Выберите взвод" v-on:change="onFilter">
@@ -63,7 +63,7 @@
 						prop="milgroup.milfaculty"
 						label="Цикл">
 					</el-table-column>
-					<el-table-column width="400px"
+					<el-table-column width="300px" show-overflow-tooltip
 						prop="program.program"
 						label="Программа">
 					</el-table-column>
@@ -109,7 +109,6 @@
 <script>
 import { getStudent } from '@/api/student'
 import AddModalWindow from "../AddModalWindow/AddModalWindow";
-import axios from 'axios'
 
 export default {
 	name: '',
