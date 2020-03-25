@@ -1,10 +1,12 @@
-import typing as tp
+# coding=utf-8
 
-from django.contrib.auth.models import User
+import typing as tp
 
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 
 from mil_lms_backend.models import (
@@ -12,7 +14,7 @@ from mil_lms_backend.models import (
     Program,
     Milgroup,
     Milfaculty,
-    Student
+    Student,
 )
 
 
@@ -187,6 +189,7 @@ def create_students(milgroups: tp.Dict[int, Milgroup],
 
 
 @api_view(['PUT'])
+@permission_classes((AllowAny,))
 def lms_populate(request: Request) -> Response:
     """
     Populate database with fake students, users, etc. (including super user).

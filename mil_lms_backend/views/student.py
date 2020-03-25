@@ -1,21 +1,30 @@
+# coding=utf-8
+
 from django.db.models import Value
-from django.db.models.functions import Lower, Concat
+from django.db.models.functions import (
+    Lower,
+    Concat,
+)
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 
 from rest_framework.views import APIView
 
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
-    HTTP_400_BAD_REQUEST
+    HTTP_400_BAD_REQUEST,
 )
 
 from mil_lms_backend.serializers import StudentSerializer
 from mil_lms_backend.models import Student
 
 
+@permission_classes((AllowAny,))
 class StudentView(APIView):
     def get(self, request: Request) -> Response:
         """
