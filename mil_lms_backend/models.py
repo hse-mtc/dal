@@ -208,11 +208,7 @@ class Student(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n' \
-               f'Milgroup = {str(self.milgroup)}\n' \
-               f'Birthdate = {str(self.birthdate)}\n' \
-               f'Program = {str(self.program)}\n' \
-               f'Status = {str(self.status)}, Photo = {str(self.photo)}'
+               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n'
 
     class Meta:
         db_table = 'student'
@@ -231,11 +227,7 @@ class Teacher(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n' \
-               f'Milfaculty = {str(self.milfaculty)}\n' \
-               f'Rank = {str(self.rank)}\n' \
-               f'Post = {str(self.post)}\n' \
-               f'Attached milgroup = {str(self.milgroup)}'
+               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n'
 
     class Meta:
         db_table = 'teacher'
@@ -254,16 +246,13 @@ class Absence(models.Model):
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
                f'Date = {str(self.date)}\n' \
-               f'StudentID = {str(self.studentid)}, Type={str(self.type)}\n' \
-               f'Reason = {str(self.reason)}\n' \
-               f'Status = {str(self.status)}\n' \
-               f'Comment = {str(self.comment)}'
+               f'StudentID = {str(self.studentid)}, Type={str(self.type)}\n'
 
     class Meta:
         db_table = 'absence'
         unique_together = (('date', 'studentid'),)
-        verbose_name = 'Absence Journal instance'
-        verbose_name_plural = 'Absence Journal instances'
+        verbose_name = 'Absence Journal'
+        verbose_name_plural = 'Absence Journal'
 
 
 class Activity(models.Model):
@@ -276,13 +265,12 @@ class Activity(models.Model):
         return f'ID = {str(self.id)}\n' \
                f'StudentID = {str(self.studentid)}\n' \
                f'Year = {str(self.year)}\n' \
-               f'Type = {str(self.type)}\n' \
-               f'Comment = {str(self.comment)}'
+               f'Type = {str(self.type)}\n'
 
     class Meta:
         db_table = 'activity'
-        verbose_name = 'Activity Journal instance'
-        verbose_name_plural = 'Activity Journal instances'
+        verbose_name = 'Activity Journal'
+        verbose_name_plural = 'Activity Journal'
 
 
 class Encouragement(models.Model):
@@ -294,15 +282,14 @@ class Encouragement(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}\n' \
-               f'Reason = {str(self.reason)}\n' \
+               f'StudentID = {str(self.studentid)}, TeacherID = {str(self.teacherid)}\n' \
                f'Type = {str(self.type)}\n' \
-               f'Date = {str(self.date)}, TeacherID = {str(self.teacherid)}'
+               f'Date = {str(self.date)}'
 
     class Meta:
         db_table = 'encouragement'
-        verbose_name = 'Encouragement Journal instance'
-        verbose_name_plural = 'Encouragement Journal instances'
+        verbose_name = 'Encouragement Journal'
+        verbose_name_plural = 'Encouragement Journal'
 
 
 class Lesson(models.Model):
@@ -317,16 +304,13 @@ class Lesson(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'Course = {str(self.course)}, Topic = {str(self.topic)}\n' \
-               f'Lesson Number = {str(self.lessonnum)}, Type = {str(self.type)}\n' \
-               f'Date = {str(self.date)}, Time = {str(self.time)}\n' \
-               f'TeacherID = {str(self.teacherid)}\n' \
-               f'Place = {str(self.place)}'
+               f'Course = {str(self.course)}, Date = {str(self.date)}' \
+               f'TeacherID = {str(self.teacherid)}\n'
 
     class Meta:
         db_table = 'lesson'
-        verbose_name = 'Lessons Journal instance'
-        verbose_name_plural = 'Lessons Journal instances'
+        verbose_name = 'Lessons Journal'
+        verbose_name_plural = 'Lessons Journal'
 
 
 class Mark(models.Model):
@@ -342,8 +326,8 @@ class Mark(models.Model):
 
     class Meta:
         db_table = 'mark'
-        verbose_name = 'Marks Journal instance'
-        verbose_name_plural = 'Marks Journal instances'
+        verbose_name = 'Marks Journal'
+        verbose_name_plural = 'Marks Journal'
 
 
 class Punishment(models.Model):
@@ -358,13 +342,12 @@ class Punishment(models.Model):
         return f'ID = {str(self.id)}\n' \
                f'StudentID = {str(self.studentid)}, TeacherID = {str(self.teacherid)}\n' \
                f'Type = {str(self.type)}\n' \
-               f'Reason = {str(self.reason)}\n' \
                f'Date = {str(self.date)}, Remove Date = {str(self.removedate)}'
 
     class Meta:
         db_table = 'punishment'
-        verbose_name = 'Punishment Journal instance'
-        verbose_name_plural = 'Punishment Journal instances'
+        verbose_name = 'Punishment Journal'
+        verbose_name_plural = 'Punishment Journal'
 
 
 class LessonMilgroup(models.Model):
@@ -377,8 +360,8 @@ class LessonMilgroup(models.Model):
     class Meta:
         db_table = 'lesson-milgroup'
         unique_together = (('lessonid', 'milgroup'),)
-        verbose_name = 'Lesson-Milgroup table instance'
-        verbose_name_plural = 'Lesson-Milgroup table instances'
+        verbose_name = 'Lesson-Milgroup table'
+        verbose_name_plural = 'Lesson-Milgroup table'
 
 
 class StudentStudentpost(models.Model):
@@ -391,8 +374,8 @@ class StudentStudentpost(models.Model):
     class Meta:
         db_table = 'student-studentpost'
         unique_together = (('studentid', 'studentPost'),)
-        verbose_name = 'Student-Studentpost table instance'
-        verbose_name_plural = 'Student-Studentpost table instances'
+        verbose_name = 'Student-Studentpost table'
+        verbose_name_plural = 'Student-Studentpost table'
 
 
 class StudentSkill(models.Model):
@@ -405,7 +388,7 @@ class StudentSkill(models.Model):
     class Meta:
         db_table = 'student-skill'
         unique_together = (('studentid', 'skill'),)
-        verbose_name = 'Student-Skill table instance'
-        verbose_name_plural = 'Student-Skill table instances'
+        verbose_name = 'Student-Skill table'
+        verbose_name_plural = 'Student-Skill table'
 
 
