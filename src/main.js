@@ -3,7 +3,13 @@ import VoerroTagsInput from '@voerro/vue-tagsinput';
 
 Vue.component('tags-input', VoerroTagsInput);
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
-
+import Multiselect from 'vue-multiselect'
+// register globally
+Vue.component('multiselect', Multiselect)
+import VueLodash from 'vue-lodash'
+import lodash from 'lodash'
+// name is optional
+Vue.use(VueLodash, { name: 'custom' , lodash: lodash })
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/ru-RU' // lang i18n
