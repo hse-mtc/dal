@@ -28,10 +28,14 @@ class ProgramSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     milgroup = MilgroupSerializer(many=False)
     program = ProgramSerializer(many=False)
+    fullname = serializers.SerializerMethodField()
 
     class Meta:
-        model = Student
-        fields = '__all__'
+            model = Student
+            fields = '__all__'
+
+    def get_fullname(self, obj):
+        return f'{obj.surname} {obj.name} {obj.patronymic}'
 
     def create(self, validated_data):
         milgroup_data = validated_data.pop('milgroup')
