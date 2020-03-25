@@ -9,29 +9,48 @@
                 <el-input type="textarea" placeholder="Введите текст аннотации" v-model="form.annotation" :autosize="{ minRows: 2}"></el-input>
             </el-form-item>
 
+<!--            <el-form-item label="Автор">-->
+<!--                <el-select clearable v-model="form.author" placeholder="Выберите автора">-->
+<!--                    <el-option-->
+<!--                            v-for="item in authors"-->
+<!--                            :key="item.value"-->
+<!--                            :value="item.id"-->
+<!--                            :label="item.value"-->
+
+<!--                    />-->
+<!--                </el-select>-->
+<!--            </el-form-item>-->
+
             <el-form-item label="Автор">
-                <el-select clearable v-model="form.author" placeholder="Выберите автора">
+                <el-select
+                        v-model="form.selectedAuthors"
+                        multiple
+                        collapse-tags
+                        placeholder="Выберите авторов"
+                        style="width: 300px"
+                >
                     <el-option
                             v-for="item in authors"
-                            :key="item.value"
-                            :value="item.id"
+                            :key="item.id"
                             :label="item.value"
-
-                    />
+                            :value="item.id">
+                    </el-option>
                 </el-select>
             </el-form-item>
 
-            <div v-if="form.author === -1" class="add-author">
-                <el-form-item label="Фамилия">
-                    <el-input v-model="form.newAuthorLastName" placeholder="Введите фамилию"></el-input>
-                </el-form-item>
-                <el-form-item label="Имя">
-                    <el-input v-model="form.newAuthorName" placeholder="Введите имя"></el-input>
-                </el-form-item>
-                <el-form-item label="Отчество">
-                    <el-input v-model="form.newAuthorPatronymic" placeholder="Введите отчество"></el-input>
-                </el-form-item>
-            </div>
+
+
+<!--            <div v-if="form.selectedAuthors.includes(-1)" class="add-author">-->
+<!--                <el-form-item label="Фамилия">-->
+<!--                    <el-input v-model="form.newAuthorLastName" placeholder="Введите фамилию"></el-input>-->
+<!--                </el-form-item>-->
+<!--                <el-form-item label="Имя">-->
+<!--                    <el-input v-model="form.newAuthorName" placeholder="Введите имя"></el-input>-->
+<!--                </el-form-item>-->
+<!--                <el-form-item label="Отчество">-->
+<!--                    <el-input v-model="form.newAuthorPatronymic" placeholder="Введите отчество"></el-input>-->
+<!--                </el-form-item>-->
+<!--            </div>-->
 
             <el-form-item label="Размещение">
                 <el-select clearable v-model="form.publisher" placeholder="Выберите журнал">
@@ -133,6 +152,7 @@
     import {uploadDocs} from "../../api/upload";
     import {mapState} from "vuex";
 
+
     export default {
         name: "AddModalWindow",
         data() {
@@ -140,11 +160,12 @@
                 form: {
                     title: '',
                     author: '',
+                    selectedAuthors: [],
                     annotation: '',
                     publicationDate: '',
-                    newAuthorName: '',
-                    newAuthorLastName: '',
-                    newAuthorPatronymic: '',
+                    // newAuthorName: '',
+                    // newAuthorLastName: '',
+                    // newAuthorPatronymic: '',
                     publisher: '',
                     newPublisher: '',
                     selectedTags: [],
@@ -156,7 +177,6 @@
                     { key: 2, value: 'Тактика' },
                     { key: 3, value: 'Хуяктика' },
                 ],
-                authors: [{value: 'Добавить нового', id: -1}, ...this.$store.getters.authors],
                 publishers: [{value: 'Добавить новое', id: -1}, ...this.$store.getters.publishers],
             }
         },
@@ -169,6 +189,7 @@
         computed: {
             ...mapState({
                 categories: state => state.documents.categories,
+                authors: state => state.documents.authors,
             })
         },
         methods: {
@@ -187,14 +208,8 @@
                     formData.append('title', this.form.title);
                     if (this.form.annotation !== '') formData.append('annotation', this.form.annotation);
 
-                    if (this.form.author !== '') {
-                        if (this.form.author === -1) {
-                            formData.append('authorName', this.form.newAuthorName);
-                            formData.append('authorLastName', this.form.newAuthorLastName);
-                            formData.append('authorPatronymic', this.form.newAuthorPatronymic);
-                        } else {
-                            formData.append('authorId', this.form.author);
-                        }
+                    if (this.form.selectedAuthors.length !== 0) {
+                        formData.append('authorIds',this.form.selectedAuthors);
                     }
 
                     if (this.form.publisher !== '') {
