@@ -182,7 +182,7 @@
             },
             onSubmit() {
                 const self = this
-                if (this.form.title !== '' || this.form.currentCategory !== '') {
+                if (this.form.title !== '' && this.form.currentCategory !== '') {
                     let formData = new FormData();
                     formData.append('title', this.form.title);
                     if (this.form.annotation !== '') formData.append('annotation', this.form.annotation);
