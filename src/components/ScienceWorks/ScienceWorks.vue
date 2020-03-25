@@ -126,7 +126,7 @@ export default {
   },
   computed: {
     ...mapState({
-      categories: state => state.documents.categories
+      categories: state => state.documents.categories,
     })
   },
   methods: {

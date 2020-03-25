@@ -1,7 +1,7 @@
 <template>
     <div class="addModal">
         <el-form ref="form" :model="form" label-width="175px">
-            <el-form-item label="Название документа">
+            <el-form-item label="Название документа*">
                 <el-input v-model="form.title" placeholder="Введите название"></el-input>
             </el-form-item>
 
@@ -57,6 +57,18 @@
                             placeholder="Выберите дату"
                             format="dd.MM.yyyy">
                     </el-date-picker>
+            </el-form-item>
+
+            <el-form-item label="Категория документа*">
+                <el-select clearable v-model="form.currentCategory" placeholder="Выберите категорию">
+                    <el-option
+                            v-for="item in categories"
+                            :key="item.id"
+                            :value="item.id"
+                            :label="item.title"
+
+                    />
+                </el-select>
             </el-form-item>
 
             <el-form-item label="Ключевые слова">
@@ -119,6 +131,7 @@
     import moment from 'moment'
     import EventBus from '../EventBus';
     import {uploadDocs} from "../../api/upload";
+    import {mapState} from "vuex";
 
     export default {
         name: "AddModalWindow",
@@ -135,7 +148,8 @@
                     publisher: '',
                     newPublisher: '',
                     selectedTags: [],
-                    fileList: []
+                    fileList: [],
+                    currentCategory: ''
                 },
                 existingTags: [
                     { key: 1, value: 'Стратегия' },
@@ -152,6 +166,11 @@
         updated() {
             console.log(this.form.fileList)
         },
+        computed: {
+            ...mapState({
+                categories: state => state.documents.categories,
+            })
+        },
         methods: {
             fetchData() {
                 getExistingTags()
@@ -163,11 +182,9 @@
             },
             onSubmit() {
                 const self = this
-                if (this.form.title !== '') {
+                if (this.form.title !== '' || this.form.currentCategory !== '') {
                     let formData = new FormData();
-                    this.$route.query.section === 'scienceArticles' ? formData.append('category', 'Article') : formData.append('category', 'Research')
                     formData.append('title', this.form.title);
-
                     if (this.form.annotation !== '') formData.append('annotation', this.form.annotation);
 
                     if (this.form.author !== '') {
@@ -192,6 +209,8 @@
                         formData.append('date', moment(this.form.publicationDate).format('DD.MM.YYYY'));
                     }
 
+                    formData.append('category', this.form.currentCategory);
+
                     if (this.form.selectedTags.length !== 0) {
                         formData.append('keywords', JSON.stringify( this.form.selectedTags));
                     }
@@ -215,7 +234,7 @@
 
 
                 } else {
-                    this.$message.error(`Заполните название документа`);
+                    this.$message.error(`Заполните поля со звездочкой`);
                 }
             },
             handleRemove(file, fileList) {

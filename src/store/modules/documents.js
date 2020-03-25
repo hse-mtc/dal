@@ -1,7 +1,7 @@
 const state = {
   publishers: [],
   authors: [],
-  categories: []
+  categories: [],
 }
 
 const mutations = {
