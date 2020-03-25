@@ -41,7 +41,7 @@ class StudentView(APIView):
         if 'id' in request.query_params:
             student = students.get(id=request.query_params['id'])
             student = StudentSerializer(student)
-            return Response(student.data, status=HTTP_200_OK)
+            return Response({'code': HTTP_200_OK * 100, 'students': student.data}, status=HTTP_200_OK)
 
         # filter milgroup
         if 'milgroup' in request.query_params:
@@ -57,7 +57,7 @@ class StudentView(APIView):
             students = students.filter(status=request.query_params['status'])
 
         students = StudentSerializer(students, many=True)
-        return Response({'students': students.data}, status=HTTP_200_OK)
+        return Response({'code': HTTP_200_OK * 100, 'students': students.data}, status=HTTP_200_OK)
 
     def post(self, request: Request) -> Response:
         """
@@ -68,7 +68,8 @@ class StudentView(APIView):
         student = StudentSerializer(data=request.data)
         if student.is_valid(raise_exception=True):
             student = student.save()
-            return Response({'message': f'Student with id {student.id} successfully created'},
+            return Response({'code': HTTP_201_CREATED * 100,
+                             'message': f'Student with id {student.id} successfully created'},
                             status=HTTP_201_CREATED)
 
     def delete(self, request: Request) -> Response:
@@ -80,8 +81,10 @@ class StudentView(APIView):
         student_to_delete = Student.objects.filter(id=request.query_params['id'])
         if student_to_delete.exists():
             student_to_delete.delete()
-            return Response({'message': f'Student with id {request.query_params["id"]} successfully deleted'},
+            return Response({'code': HTTP_200_OK * 100,
+                             'message': f'Student with id {request.query_params["id"]} successfully deleted'},
                             status=HTTP_200_OK)
         else:
-            return Response({'message': f'Student with id {request.query_params["id"]} does not exist in this database'},
+            return Response({'code': HTTP_400_BAD_REQUEST * 100,
+                             'message': f'Student with id {request.query_params["id"]} does not exist in this database'},
                             status=HTTP_400_BAD_REQUEST)
