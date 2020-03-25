@@ -170,6 +170,17 @@ export const constantRoutes = [
     }]
   },
 
+  {
+    path: '/mtc_personnel',
+    component: Layout,
+    children: [{
+      path: 'personnel',
+      name: 'Personnel',
+      component: () => import('@/views/Personnel/index'),
+      meta: { title: 'Личный состав ВУЦ', icon: '' }
+    }]
+  },
+
   // {
   //   path: 'external-link',
   //   component: Layout,
@@ -182,6 +193,9 @@ export const constantRoutes = [
   // },
 
   // 404 page must be placed at the end !!!
+
+
+
   { path: '*', redirect: '/404', hidden: true }
 ]
 
