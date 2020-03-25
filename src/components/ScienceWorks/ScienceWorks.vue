@@ -9,7 +9,7 @@
       <div class="categories-block" v-if="categories.length">
         <el-row class="select-work">
           <el-col :span="10" :offset="2">
-            <span class="category-selected" @click="modalCategories = !modalCategories">{{this.selectedCategory.title}}</span>
+            <span class="category-selected" @click="openAllCategories">{{this.selectedCategory.title}}</span>
             <img id="dark-arrow" src="../../assets/scienceWorks/dropdownBlack.svg" alt="" class="ml-2" style="cursor:pointer;" @click="openAllCategories">
           </el-col>
           <el-col :span="7">
@@ -28,7 +28,7 @@
             </el-row>
           </el-col>
           <el-col :span="1" class="cross-col">
-            <img src="../../assets/scienceWorks/cross.svg" alt="" @click="modalCategories = false">
+            <img src="../../assets/scienceWorks/cross.svg" alt="" @click="closeSelectCategory">
           </el-col>
         </el-row>
       </div>
@@ -131,6 +131,10 @@ export default {
     ...mapActions({
       setCategories: 'documents/setCategories',
     }),
+    closeSelectCategory() {
+      this.modalCategories = false
+      this.modalCategories ? document.getElementById('dark-arrow').style.transform = 'rotate(180deg)' : document.getElementById('dark-arrow').style.transform = 'rotate(0deg)'
+    },
     openAllCategories() {
       this.modalCategories = !this.modalCategories
       this.modalCategories ? document.getElementById('dark-arrow').style.transform = 'rotate(180deg)' : document.getElementById('dark-arrow').style.transform = 'rotate(0deg)'
@@ -173,7 +177,6 @@ export default {
     closeModal() {
       this.addModal = false
       this.addNewCategory = false
-
       document.getElementById('main-container').classList.remove('stop-scrolling')
     },
     openModal() {
@@ -187,6 +190,7 @@ export default {
       }
       this.$router.replace({ name: 'Science Articles', query: { section: event.target.id }})
       this.modalCategories = false
+      this.modalCategories ? document.getElementById('dark-arrow').style.transform = 'rotate(180deg)' : document.getElementById('dark-arrow').style.transform = 'rotate(0deg)'
     },
     selectClick(event) {
       Array.from(document.getElementsByClassName(event.target.className)).forEach(item => item.classList.remove('selected'))

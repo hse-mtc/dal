@@ -86,15 +86,13 @@ export default {
   },
   watch: {
     '$route'(to, from) {
-      const temp = this.$route.query.section
-      this.fetchData(temp)
+      this.fetchData()
     }
   },
   created() {
-    const temp = 'scienceArticles'
-    this.fetchData(temp)
   },
   mounted() {
+    this.fetchData()
     const self = this
     EventBus.$on('UPDATE_EVENT', function () {
       console.log('update')
@@ -142,7 +140,7 @@ export default {
       let start_date = this.$route.query.start_date ?  this.$route.query.start_date :  null
       let end_date = this.$route.query.end_date ?  this.$route.query.end_date :  null
       let text = this.$route.query.text ?  this.$route.query.text :  null
-      let category = this.$route.query.section ?  this.$route.query.section :  null
+      let category = this.$route.query.section ?  this.$route.query.section :  1
       getDocuments(category, author, place, start_date, end_date, text).then(response => {
         this.documents = response.data.items
         this.count = response.data.total
