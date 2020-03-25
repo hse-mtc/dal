@@ -86,19 +86,17 @@ export default {
   },
   watch: {
     '$route'(to, from) {
-      const temp = this.$route.query.section
-      this.fetchData(temp)
+      this.fetchData()
     }
   },
   created() {
-    const temp = 'scienceArticles'
-    this.fetchData(temp)
   },
   mounted() {
+    this.fetchData()
     const self = this
     EventBus.$on('UPDATE_EVENT', function () {
       console.log('update')
-      self.fetchData(self.$route.query.section)
+      self.fetchData()
     })
   },
   methods: {
@@ -136,15 +134,13 @@ export default {
 
 
     },
-    fetchData(target) {
+    fetchData() {
       let author = this.$route.query.author ?  this.$route.query.author :  null
       let place = this.$route.query.place ?  this.$route.query.place :  null
       let start_date = this.$route.query.start_date ?  this.$route.query.start_date :  null
       let end_date = this.$route.query.end_date ?  this.$route.query.end_date :  null
       let text = this.$route.query.text ?  this.$route.query.text :  null
-      let category
-      if (target === 'scienceArticles') category = 'article'
-      else if (target === 'scienceWorks') category = 'research'
+      let category = this.$route.query.section ?  this.$route.query.section :  1
       getDocuments(category, author, place, start_date, end_date, text).then(response => {
         this.documents = response.data.items
         this.count = response.data.total

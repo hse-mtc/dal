@@ -200,7 +200,6 @@
                         formData.append('file', this.form.fileList[0].raw);
                         uploadDocs(formData)
                             .then(function(){
-                            console.log('SUCCESS!!');
                             EventBus.$emit('UPDATE_EVENT');
                             self.$emit('closeModal');
                             }).catch(function(){
