@@ -87,12 +87,12 @@ WSGI_APPLICATION = "dms.wsgi.application"  # TODO: does ASGI need the same line?
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "db_name",
-        "USER": "db_user",
+        "ENGINE":   "django.db.backends.postgresql",
+        "NAME":     "db_name",
+        "USER":     "db_user",
         "PASSWORD": "db_user_password",
-        "HOST": "db",
-        "PORT": "5432",
+        "HOST":     "db",
+        "PORT":     "5432",
     }
 }
 
