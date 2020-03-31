@@ -28,6 +28,8 @@ class ProgramSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     milgroup = MilgroupSerializer(many=False)
     program = ProgramSerializer(many=False)
+    birthdate = serializers.DateField(format='%d.%m.%Y')
+
     fullname = serializers.SerializerMethodField()
 
     class Meta:
@@ -46,8 +48,23 @@ class StudentSerializer(serializers.ModelSerializer):
         program_data = validated_data.pop('program')
         program = Program.objects.get(**program_data)
 
-        new_student = Student.objects.create(
+        student_new = Student.objects.create(
             milgroup=milgroup, program=program,
             **validated_data)
 
-        return new_student
+        return student_new
+
+    def update(self, instance, validated_data):
+        milgroup_data = validated_data.pop('milgroup')
+        milfaculty_data = milgroup_data.pop('milfaculty')
+        milfaculty = Milfaculty.objects.get(milfaculty=milfaculty_data)
+        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+
+        program_data = validated_data.pop('program')
+        program = Program.objects.get(**program_data)
+
+        student_modified = instance.update(
+            milgroup=milgroup, program=program,
+            **validated_data)
+
+        return student_modified
