@@ -104,12 +104,12 @@
 							<el-button
 							size="mini"
 							icon="el-icon-edit"
-							@click="openModal"></el-button>
+							@click="openModal()"></el-button>
 							<el-button
 							size="mini"
 							icon="el-icon-delete"
 							type="danger"
-							@click="openModal"></el-button>
+							@click="onDelete(scope.row)"></el-button>
 						</template>
 						</el-table-column>
 				</el-table>
@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import { getStudent } from '@/api/student'
+import { getStudent, deleteStudent } from '@/api/student'
 import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
 
 export default {
@@ -170,11 +170,11 @@ export default {
 	methods: {
 		closeModal() {
 			this.addModal = false
-			document.getElementById('main-container').classList.remove('stop-scrolling')
+			document.getElementById('main-container').classList.remove('stop-scrolling') //@TODO - добавить обновление при создании или изменении
 		},
-		openModal() {
+		openModal(st = null) {
 			this.addModal = true
-			document.getElementById('main-container').classList.add('stop-scrolling')
+			document.getElementById('main-container').classList.add('stop-scrolling') //@TODO - Как передать в модалку студента??
 		},
 		selectClick(event) {
 			Array.from(document.getElementsByClassName(event.target.className)).forEach(item => item.classList.remove('selected'))
@@ -203,19 +203,26 @@ export default {
 				console.log(err)
 			})
 		},
-		
 		fetchData(){
-
-			/* axios.get('http://localhost:8000/api/students/')
-			.then(response => {
-				this.studentsData = response.data.students;
-			}); */
-
 			getStudent().then(response => {
 				this.studentsData = response.students;
 			}).catch((err) => {
                 console.log(err)
 			})
+		},
+		onDelete(row){
+			this.$confirm('Вы уверены, что хотите удалить студента?', 'Подтверждение', {
+				confirmButtonText: 'Да',
+				cancelButtonText: 'Отмена',
+				type: 'warning'
+			}).then(() => {
+				deleteStudent(row.id).then(() => {
+					this.fetchData();
+					this.$message.success('Студент удален.');
+				}).catch(() => {
+					this.$message.error('Ошибка при удалении.');  
+				});
+			});
 		}
 	}
 }
