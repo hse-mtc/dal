@@ -28,7 +28,7 @@ class ProgramSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     milgroup = MilgroupSerializer(many=False)
     program = ProgramSerializer(many=False)
-    birthdate = serializers.DateField(format='%d.%m.%Y')
+    birthdate = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y'])
 
     fullname = serializers.SerializerMethodField()
 
