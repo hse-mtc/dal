@@ -74,7 +74,7 @@ class StudentView(APIView):
                             status=HTTP_200_OK)
         else:
             return Response({'code': HTTP_400_BAD_REQUEST * 100,
-                             'message': 'Something wrong with given data'},
+                             'message': student.errors},
                             status=HTTP_400_BAD_REQUEST)
 
     def post(self, request: Request) -> Response:
@@ -94,7 +94,7 @@ class StudentView(APIView):
                                 status=HTTP_200_OK)
             else:
                 return Response({'code': HTTP_400_BAD_REQUEST * 100,
-                                 'message': 'Something wrong with given data'},
+                                 'message': student_ser.errors},
                                 status=HTTP_400_BAD_REQUEST)
         else:
             return Response({'code': HTTP_400_BAD_REQUEST * 100,
