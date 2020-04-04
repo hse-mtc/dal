@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-col :offset="2" :span="21" class="Personnel">
+    <el-col :offset="1" :span="22" class="Personnel">
 		<el-row class="pageTitle">
 			<el-col>
 			Личный состав ВУЦ
@@ -23,7 +23,7 @@
 				<el-col :span="10" class="filter">
 					<el-input clearable placeholder="Введите ФИО" v-model="fioFilter" v-on:clear="onFilter" v-on:keyup.native.enter="onFilter"></el-input>
 				</el-col>
-				<el-col :span="6" class="filter" v-if="selectedSection=='students'">
+				<el-col :span="3" class="filter" v-if="selectedSection=='students'">
 					<el-select v-model="selectedMG" clearable placeholder="Выберите взвод" v-on:change="onFilter">
 						<el-option
 						v-for="item in mgs"
@@ -33,7 +33,7 @@
 						</el-option>
 					</el-select>
 				</el-col>
-				<el-col :span="4" class="filter" v-if="selectedSection=='students'">
+				<el-col :span="7" class="filter" v-if="selectedSection=='students'">
 					<el-select v-model="selectedStatus" clearable placeholder="Выберите статус" v-on:change="onFilter">
 						<el-option
 						v-for="item in statuses"
@@ -43,19 +43,42 @@
 						</el-option>
 					</el-select>
 				</el-col>
+				<el-col :span="1" class="filter">
+					<el-button type="text" @click="clearFilter">Сбросить</el-button>
+				</el-col>
+			</el-row>
+			<el-row class="addRow">
+				<el-col :span="24">
+					<el-button 
+						class="addBtn" 
+						type="primary" 
+						icon="el-icon-plus" 
+						v-if="selectedSection=='students'"
+						@click="openModal">
+						Новый студент
+					</el-button>
+					<el-button 
+						class="addBtn" 
+						type="primary" 
+						icon="el-icon-plus" 
+						v-if="selectedSection=='teachers'"	
+						@click="openModal">
+						Новый преподаватель
+					</el-button>
+				</el-col>
 			</el-row>
 			<el-row class="table">
-				<el-table 
+				<el-table
 					height="600px"
 					:data="studentsData" 
 					v-if="selectedSection=='students'" 
-					:default-sort = "{prop: 'milgroup', order: 'ascending'}" 
+					:default-sort = "{prop: 'milgroup.milgroup', order: 'ascending'}" 
 					stripe>
-					<el-table-column width="400px" sortable
+					<el-table-column width="350px" sortable show-overflow-tooltip
 						prop="fullname"
 						label="ФИО">
 					</el-table-column>
-					<el-table-column sortable
+					<el-table-column sortable 
 						prop="milgroup.milgroup"
 						label="Взвод">
 					</el-table-column>
@@ -75,6 +98,20 @@
 						prop="status"
 						label="Статус">
 					</el-table-column>
+					<el-table-column
+						label="">
+						<template slot-scope="scope">
+							<el-button
+							size="mini"
+							icon="el-icon-edit"
+							@click="onEdit(scope.row)"></el-button>
+							<el-button
+							size="mini"
+							icon="el-icon-delete"
+							type="danger"
+							@click="onDelete(scope.row.id)"></el-button>
+						</template>
+						</el-table-column>
 				</el-table>
 				<el-table :data="teachersData" v-if="selectedSection=='teachers'">
 					<el-table-column width="400px"
@@ -101,19 +138,19 @@
 			</el-row>
 		</el-row>
     </el-col>
-    <AddModalWindow v-if="addModal" v-on:closeModal="closeModal" />
-    <div v-if="addModal" class="background" @click="closeModal"></div>
+    <AddStudentModalWindow v-if="addModal" v-on:closeModal="closeModal" v-on:submitModal="clearFilter" v-bind:student="editStudent"/>
+    <div v-if="addModal&&selectedSection=='students'" class="background" @click="closeModal"></div>
   </div>
 </template>
 
 <script>
-import { getStudent } from '@/api/student'
-import AddModalWindow from "../AddModalWindow/AddModalWindow";
+import { getStudent, deleteStudent } from '@/api/student'
+import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
 
 export default {
 	name: '',
 	components: {
-		AddModalWindow
+		AddStudentModalWindow
 	},
 	data() {
 		return {
@@ -124,6 +161,7 @@ export default {
 			mgs: ["1807", "1808", "1809"], selectedMG: null,
 			selectedSection: "students",
 			fioFilter: "",
+			editStudent: null
 		}
 	},
 	created() {
@@ -134,6 +172,7 @@ export default {
 		closeModal() {
 			this.addModal = false
 			document.getElementById('main-container').classList.remove('stop-scrolling')
+			this.editStudent = null;
 		},
 		openModal() {
 			this.addModal = true
@@ -155,27 +194,41 @@ export default {
 			}).catch((err) => {
 				console.log(err)
 			})
-
-			/* axios.get(`http://localhost:8000/api/students/?
-						${this.fioFilter != '' ? `name=${this.fioFilter}` : ''}&
-						${this.selectedMG != null ? `milgroup=${this.selectedMG}` : ''}&
-						${this.selectedStatus != null ? `status=${this.selectedStatus}` : ''}`)
-			.then(response => {
-				this.studentsData = response.data.students;
-			}); */
+		},
+		clearFilter(){
+			this.fioFilter = "";
+			this.selectedMG = null;
+			this.selectedStatus = null;
+			getStudent().then(response => {
+				this.studentsData = response.students;
+			}).catch((err) => {
+				console.log(err)
+			})
 		},
 		fetchData(){
-
-			/* axios.get('http://localhost:8000/api/students/')
-			.then(response => {
-				this.studentsData = response.data.students;
-			}); */
-
 			getStudent().then(response => {
 				this.studentsData = response.students;
 			}).catch((err) => {
                 console.log(err)
 			})
+		},
+		onDelete(id){
+			this.$confirm('Вы уверены, что хотите удалить студента?', 'Подтверждение', {
+				confirmButtonText: 'Да',
+				cancelButtonText: 'Отмена',
+				type: 'warning'
+			}).then(() => {
+				deleteStudent(id).then(() => {
+					this.fetchData();
+					this.$message.success('Студент удален.');
+				}).catch(() => {
+					this.$message.error('Ошибка при удалении.');  
+				});
+			});
+		},
+		onEdit(row){
+			this.editStudent = row;
+			this.openModal();
 		}
 	}
 }
