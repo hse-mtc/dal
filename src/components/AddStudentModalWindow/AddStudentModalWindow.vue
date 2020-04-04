@@ -71,10 +71,13 @@
 <script>
     import moment from 'moment'
     import EventBus from '../EventBus';
-import { putStudent } from '../../api/student';
+import { putStudent, postStudent } from '../../api/student';
 
     export default {
         name: "AddStudentModalWindow",
+        props:{
+            student: Object
+        },
         data() {
             return {
                 form: {
@@ -105,17 +108,14 @@ import { putStudent } from '../../api/student';
                     ]
                 },
                 milgroups: [/* ...this.$store.getters.milgroups */{milgroup: 1807, milfaculty: "ВКС"}, {milgroup: 1808, milfaculty: "ВКС"}, {milgroup: 1809, milfaculty: "ВКС"}, {milgroup: 1810, milfaculty: "РВСН"}],
-                programs: [/* ...this.$store.getters.programs */{program: "Информатика и вычислительная техника", code: "09.03.01"}, {program: "Программная инженерия", code: "09.03.04"}, {program: "Машиностроение", code: "05.02.02"}],
+                programs: [/* ...this.$store.getters.programs */{program: "Информатика и вычислительная техника", code: "09.03.01"}, {program: "Программная инженерия", code: "09.03.04"}, {program: "Машиностроение", code: "15.03.01"}],
                 statuses: ["Обучается", "Отчислен", "Завершил"]
             }
         },
         created() {
-            this.fetchData()
+            if (this.student) this.form = this.student;
         },
         methods: {
-            fetchData() {
-                
-            },
             handleAvatarSuccess(res, file) {
                 this.form.foto = URL.createObjectURL(file.raw);
             },
@@ -134,14 +134,31 @@ import { putStudent } from '../../api/student';
             onSubmit() {
                 this.$refs['form'].validate((valid) => {
                     if (valid){
-                        putStudent(this.form)
-                        .then(() => {
-                            this.$message.success('Новый студент успешно добавлен.');
-                            this.closeModal();
-                        })
-                        .catch(() => {
-                            this.$message.error('Ошибка при добавлении студента.');
-                        });
+                        if (this.student){
+                            this.form['id'] = this.student.id;
+                            console.log("onSubmit -> this.form", JSON.stringify(this.form))
+                            postStudent(this.form)
+                            .then(() => {
+                                this.$message.success('Студент успешно изменен.');
+                                this.$emit('submitModal');
+                                this.closeModal();
+                            })
+                            .catch(() => {
+                                this.$message.error('Ошибка при изменении студента.');
+                            });
+                        }
+                        else{
+                            putStudent(this.form)
+                            .then(() => {
+                                this.$message.success('Новый студент успешно добавлен.');
+                                this.$emit('submitModal');
+                                this.closeModal();
+                            })
+                            .catch(() => {
+                                this.$message.error('Ошибка при добавлении студента.');
+                            });
+                        }
+                        
                     }
                 });
             },

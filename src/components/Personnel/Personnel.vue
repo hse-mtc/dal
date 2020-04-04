@@ -104,12 +104,12 @@
 							<el-button
 							size="mini"
 							icon="el-icon-edit"
-							@click="openModal()"></el-button>
+							@click="onEdit(scope.row)"></el-button>
 							<el-button
 							size="mini"
 							icon="el-icon-delete"
 							type="danger"
-							@click="onDelete(scope.row)"></el-button>
+							@click="onDelete(scope.row.id)"></el-button>
 						</template>
 						</el-table-column>
 				</el-table>
@@ -138,7 +138,7 @@
 			</el-row>
 		</el-row>
     </el-col>
-    <AddStudentModalWindow v-if="addModal" v-on:closeModal="closeModal" />
+    <AddStudentModalWindow v-if="addModal" v-on:closeModal="closeModal" v-on:submitModal="clearFilter" v-bind:student="editStudent"/>
     <div v-if="addModal&&selectedSection=='students'" class="background" @click="closeModal"></div>
   </div>
 </template>
@@ -161,6 +161,7 @@ export default {
 			mgs: ["1807", "1808", "1809"], selectedMG: null,
 			selectedSection: "students",
 			fioFilter: "",
+			editStudent: null
 		}
 	},
 	created() {
@@ -170,11 +171,12 @@ export default {
 	methods: {
 		closeModal() {
 			this.addModal = false
-			document.getElementById('main-container').classList.remove('stop-scrolling') //@TODO - добавить обновление при создании или изменении
+			document.getElementById('main-container').classList.remove('stop-scrolling')
+			this.editStudent = null;
 		},
-		openModal(st = null) {
+		openModal() {
 			this.addModal = true
-			document.getElementById('main-container').classList.add('stop-scrolling') //@TODO - Как передать в модалку студента??
+			document.getElementById('main-container').classList.add('stop-scrolling')
 		},
 		selectClick(event) {
 			Array.from(document.getElementsByClassName(event.target.className)).forEach(item => item.classList.remove('selected'))
@@ -210,19 +212,23 @@ export default {
                 console.log(err)
 			})
 		},
-		onDelete(row){
+		onDelete(id){
 			this.$confirm('Вы уверены, что хотите удалить студента?', 'Подтверждение', {
 				confirmButtonText: 'Да',
 				cancelButtonText: 'Отмена',
 				type: 'warning'
 			}).then(() => {
-				deleteStudent(row.id).then(() => {
+				deleteStudent(id).then(() => {
 					this.fetchData();
 					this.$message.success('Студент удален.');
 				}).catch(() => {
 					this.$message.error('Ошибка при удалении.');  
 				});
 			});
+		},
+		onEdit(row){
+			this.editStudent = row;
+			this.openModal();
 		}
 	}
 }

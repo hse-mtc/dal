@@ -16,6 +16,14 @@ export function putStudent(st) {
   })
 }
 
+export function postStudent(st) {
+  return request({
+    url: '/lms/student/',
+    method: 'post',
+    data: { id: st.id, milgroup : st.milgroup, program: st.program, surname: st.surname, name: st.name, patronymic: st.patronymic, birthdate: st.birthdate, photo: st.photo, status: st.status}
+  })
+}
+
 export function deleteStudent(id) {
   return request({
     url: '/lms/student/?id='+id,
