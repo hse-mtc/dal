@@ -15,6 +15,7 @@ from mil_lms_backend.models import (
     Milgroup,
     Milfaculty,
     Student,
+    Rank
 )
 
 
@@ -69,6 +70,22 @@ def create_milfaculties() -> tp.Dict[str, Milfaculty]:
 
     return milfaculties
 
+
+def create_ranks() -> tp.Dict[str, Rank]:
+    values = [
+        'Подполковник', 'Полковник', 'Майор', 'Генерал-майор'
+    ]
+
+    ranks = {}
+
+    for value in values:
+        rank, _ = Rank.objects.get_or_create(
+            rank=value
+        )
+        rank.save()
+        ranks[value] = rank
+    
+    return ranks
 
 def create_milgroups(milfaculties: tp.Dict[str, Milfaculty]) -> tp.Dict[str, Milgroup]:
     values = [
@@ -188,6 +205,68 @@ def create_students(milgroups: tp.Dict[int, Milgroup],
         student.save()
 
 
+def create_teachers(milgroups: tp.Dict[int, Milgroup],
+                    ranks: tp.Dict[str, Rank]):
+    values = [
+        {
+            'surname': 'Никандров',
+            'name': 'Игорь',
+            'patronymic': 'Владимирович',
+            'milfaculty': 'ВКС',
+            'rank': ranks['Подполковник'],
+            'post': 'Преподаватель',
+            'milgroup': milgroups[1809]
+        },
+        {
+            'surname': 'Репалов',
+            'name': 'Дмитрий',
+            'patronymic': 'Николаевич',
+            'milfaculty': 'ВКС',
+            'rank': ranks['Подполковник'],
+            'post': 'Начальник цикла',
+            'milgroup': milgroups[1808]
+        },
+        {
+            'surname': 'Мещеряков',
+            'name': 'Иван',
+            'patronymic': 'Владимирович',
+            'milfaculty': 'Сержанты',
+            'rank': ranks['Майор'],
+            'post': 'Преподаватель',
+            'milgroup': milgroups[1806]
+        },
+        {
+            'surname': 'Ковальчук',
+            'name': 'Игорь',
+            'patronymic': 'Валентинович',
+            'milfaculty': 'Разведка',
+            'rank': ranks['Полковник'],
+            'post': 'Начальник цикла',
+            'milgroup': milgroups[1801]
+        },
+        {
+            'surname': 'Гаврилов',
+            'name': 'Климент',
+            'patronymic': 'Сергеевич',
+            'milfaculty': 'РВСН',
+            'rank': ranks['Генерал-майор'],
+            'post': 'Преподаватель',
+            'milgroup': None
+        },
+    ]
+
+    for value in values:
+        teacher, _ = Teacher.objects.get_or_create(
+            surname=value['surname'],
+            name=value['name'],
+            patronymic=value['patronymic'],
+            milfaculty=value['milfaculty'],
+            rank=value['rank'],
+            post=value['post'],
+            milgroup=value['milgroup']
+        )
+        teacher.save()
+
 @api_view(['PUT'])
 @permission_classes((AllowAny,))
 def lms_populate(request: Request) -> Response:
@@ -201,7 +280,9 @@ def lms_populate(request: Request) -> Response:
     programs = create_programs()
     milfaculties = create_milfaculties()
     milgroups = create_milgroups(milfaculties)
+    ranks = create_ranks()
 
     create_students(milgroups, programs, statuses)
-
+    create_teachers(milgroups, ranks)
+    
     return Response({'message': 'Population successful'}, status=HTTP_201_CREATED)
