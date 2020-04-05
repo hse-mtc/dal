@@ -51,8 +51,7 @@ class TeacherView(APIView):
            teachers =teachers.filter(search_name__contains=request.query_params['name'].lower())
         
         teachers = TeacherSerializer(teachers, many=True)
-        return Response({'code': HTTP_200_OK * 100, 'teachers': teachers.data}, status = HTTP_200_OK)
-    
+        return Response({'code': HTTP_200_OK * 100, 'teachers': teachers.data}, status=HTTP_200_OK)
     
     def put(self, request: Request) -> Response:
         """
@@ -72,7 +71,6 @@ class TeacherView(APIView):
                              'message': teacher.errors},
                             status=HTTP_400_BAD_REQUEST)
 
-
     def post(self, request: Request) -> Response:
         """
         POST function - data is given via 'data' from POST request (not query!)
@@ -89,7 +87,7 @@ class TeacherView(APIView):
                                 status=HTTP_200_OK)
             else:
                 return Response({'code': HTTP_400_BAD_REQUEST * 100,
-                                 'message': student_ser.errors},
+                                 'message': teacher_ser.errors},
                                 status=HTTP_400_BAD_REQUEST)
         else:
             return Response({'code': HTTP_400_BAD_REQUEST * 100,

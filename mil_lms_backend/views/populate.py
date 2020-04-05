@@ -15,6 +15,7 @@ from mil_lms_backend.models import (
     Milgroup,
     Milfaculty,
     Student,
+    Teacher,
     Rank
 )
 
@@ -86,6 +87,7 @@ def create_ranks() -> tp.Dict[str, Rank]:
         ranks[value] = rank
     
     return ranks
+
 
 def create_milgroups(milfaculties: tp.Dict[str, Milfaculty]) -> tp.Dict[str, Milgroup]:
     values = [
@@ -206,13 +208,14 @@ def create_students(milgroups: tp.Dict[int, Milgroup],
 
 
 def create_teachers(milgroups: tp.Dict[int, Milgroup],
+                    milfaculties: tp.Dict[str, Milfaculty],
                     ranks: tp.Dict[str, Rank]):
     values = [
         {
             'surname': 'Никандров',
             'name': 'Игорь',
             'patronymic': 'Владимирович',
-            'milfaculty': 'ВКС',
+            'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
             'post': 'Преподаватель',
             'milgroup': milgroups[1809]
@@ -221,7 +224,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'surname': 'Репалов',
             'name': 'Дмитрий',
             'patronymic': 'Николаевич',
-            'milfaculty': 'ВКС',
+            'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
             'post': 'Начальник цикла',
             'milgroup': milgroups[1808]
@@ -230,7 +233,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'surname': 'Мещеряков',
             'name': 'Иван',
             'patronymic': 'Владимирович',
-            'milfaculty': 'Сержанты',
+            'milfaculty': milfaculties['Сержанты'],
             'rank': ranks['Майор'],
             'post': 'Преподаватель',
             'milgroup': milgroups[1806]
@@ -239,7 +242,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'surname': 'Ковальчук',
             'name': 'Игорь',
             'patronymic': 'Валентинович',
-            'milfaculty': 'Разведка',
+            'milfaculty': milfaculties['Разведка'],
             'rank': ranks['Полковник'],
             'post': 'Начальник цикла',
             'milgroup': milgroups[1801]
@@ -248,7 +251,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'surname': 'Гаврилов',
             'name': 'Климент',
             'patronymic': 'Сергеевич',
-            'milfaculty': 'РВСН',
+            'milfaculty': milfaculties['РВСН'],
             'rank': ranks['Генерал-майор'],
             'post': 'Преподаватель',
             'milgroup': None
@@ -284,5 +287,5 @@ def lms_populate(request: Request) -> Response:
 
     create_students(milgroups, programs, statuses)
     create_teachers(milgroups, ranks)
-    
+
     return Response({'message': 'Population successful'}, status=HTTP_201_CREATED)
