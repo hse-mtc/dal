@@ -4,7 +4,8 @@ from .models import (
     Milfaculty,
     Milgroup,
     Program,
-    Student
+    Student,
+    Teacher
 )
 
 
@@ -28,6 +29,8 @@ class ProgramSerializer(serializers.ModelSerializer):
 class StudentSerializer(serializers.ModelSerializer):
     milgroup = MilgroupSerializer(many=False)
     program = ProgramSerializer(many=False)
+    birthdate = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
+
     fullname = serializers.SerializerMethodField()
 
     class Meta:
@@ -46,8 +49,62 @@ class StudentSerializer(serializers.ModelSerializer):
         program_data = validated_data.pop('program')
         program = Program.objects.get(**program_data)
 
-        new_student = Student.objects.create(
+        student_new = Student.objects.create(
             milgroup=milgroup, program=program,
             **validated_data)
 
-        return new_student
+        return student_new
+
+    def update(self, instance, validated_data):
+        milgroup_data = validated_data.pop('milgroup')
+        milfaculty_data = milgroup_data.pop('milfaculty')
+        milfaculty = Milfaculty.objects.get(milfaculty=milfaculty_data)
+        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+
+        program_data = validated_data.pop('program')
+        program = Program.objects.get(**program_data)
+
+        # Convert from '%d.%m.%Y' format to '%Y-%m-%d' format
+        # because Django doesn't accept russian formats.
+        # Though, it accepts russian format on creating -_-
+        validated_data['birthdate'] = datetime.datetime.strptime(
+            validated_data['birthdate'], '%d.%m.%Y').strftime('%Y-%m-%d')
+        # serializer converts
+        student_modified = instance.update(
+            milgroup=milgroup, program=program,
+            **validated_data)
+
+        return student_modified
+
+
+class TeacherSerializer(serializers.ModelSerializer):
+    milgroup = MilgroupSerializer(many=False)
+    fullname = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Teacher
+        fields = '__all__'
+
+    def get_fullname(self, obj):
+        return f'{obj.surname} {obj.name} {obj.patronymic}'
+    
+    def create(self, validated_data):
+        milgroup_data = validated_data.pop('milgroup')
+        milfaculty_data = validated_data.pop('milfaculty')
+        milfaculty = Milfaculty.objects.get(milfaculty=milfaculty_data)
+        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+
+        new_teacher = Teacher.objects.create(
+            milgroup=milgroup, **validated_data
+        )
+        return new_teacher
+
+    
+    def update(self, instance, validated_data):
+        milgroup_data = validated_data.pop('milgroup')
+        milfaculty_data = validated_data.pop('milfaculty')
+        milfaculty = Milfaculty.objects.get(milfaculty=milfaculty_data)
+        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+
+        teacher_modified = instance.update(milgroup=milgroup, **validated_data)
+        return teacher_modified
