@@ -38,17 +38,15 @@ class TeacherView(APIView):
 
         teachers = Teacher.objects.all()
 
-        # get by id
         if 'id' in request.query_params:
             teacher = teachers.get(id=request.query_params['id'])
             teacher = TeacherSerializer(teacher)
             return Response({'code': HTTP_200_OK * 100, 'teachers': teacher.data}, status=HTTP_200_OK)
         
-        # get by name
         if 'name' in request.query_params:
-           teachers =teachers.annotate(
+           teachers = teachers.annotate(
                 search_name=Lower(Concat('surname', Value(' '), 'name', Value(' '), 'patronymic')))
-           teachers =teachers.filter(search_name__contains=request.query_params['name'].lower())
+           teachers = teachers.filter(search_name__contains=request.query_params['name'].lower())
         
         teachers = TeacherSerializer(teachers, many=True)
         return Response({'code': HTTP_200_OK * 100, 'teachers': teachers.data}, status=HTTP_200_OK)
@@ -78,22 +76,24 @@ class TeacherView(APIView):
         :return:
         """
         teacher = Teacher.objects.filter(id=request.data['id'])
-        if teacher.exists():
-            teacher_ser = TeacherSerializer(data=request.data)
-            if teacher_ser.is_valid():
-                teacher_ser.update(instance=teacher, validated_data=request.data)
-                return Response({'code': HTTP_200_OK * 100,
-                                 'message': f'Teacher with id {request.data["id"]} successfully modified'},
-                                status=HTTP_200_OK)
-            else:
-                return Response({'code': HTTP_400_BAD_REQUEST * 100,
-                                 'message': teacher_ser.errors},
-                                status=HTTP_400_BAD_REQUEST)
-        else:
+        
+        if not teacher.exist():
             return Response({'code': HTTP_400_BAD_REQUEST * 100,
                              'message': f'Teacher with id {request.data["id"]} does not exist in this database'},
                             status=HTTP_400_BAD_REQUEST)
-
+        
+        teacher_ser = TeacherSerializer(data=request.data)
+        
+        if not teacher_ser.is_valid():
+            return Response({'code': HTTP_400_BAD_REQUEST * 100,
+                                 'message': teacher_ser.errors},
+                                status=HTTP_400_BAD_REQUEST)
+        else:
+            teacher_ser.update(instance=teacher, validated_data=request.data)
+            return Response({'code': HTTP_200_OK * 100,
+                                'message': f'Teacher with id {request.data["id"]} successfully modified'},
+                            status=HTTP_200_OK)
+        
     def delete(self, request: Request) -> Response:
         """
         DELETE - function uses id from request 'query'
