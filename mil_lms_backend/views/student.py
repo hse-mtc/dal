@@ -19,7 +19,7 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
-from mil_lms_backend.serializers import StudentSerializer
+from mil_lms_backend.serializers import StudentSerializer, StudentQuerySerializer
 from mil_lms_backend.models import Student
 
 
@@ -36,16 +36,19 @@ class StudentView(APIView):
         :return:
         """
         students = Student.objects.all()
-
+        # check query params
+        query_params = StudentQuerySerializer(data=request.query_params)
+        if not query_params.is_valid():
+            return Response({'code': HTTP_400_BAD_REQUEST * 100, 
+                             'message': query_params.errors},
+                            status=HTTP_400_BAD_REQUEST)
         # get by id
         if 'id' in request.query_params:
-            if not request.query_params['id'].isdigit():
-                return Response({'code': HTTP_400_BAD_REQUEST * 100, 'message': 'Bad type, id should be int'}, status=HTTP_400_BAD_REQUEST)
-            if not students.filter(id=request.query_params['id']).exists():
-                return Response({'code': HTTP_400_BAD_REQUEST * 100, 'message': 'Student with such id does not exist'}, status=HTTP_400_BAD_REQUEST)
             student = students.get(id=request.query_params['id'])
             student = StudentSerializer(student)
-            return Response({'code': HTTP_200_OK * 100, 'students': student.data}, status=HTTP_200_OK)
+            return Response({'code': HTTP_200_OK * 100, 
+                             'students': student.data}, 
+                            status=HTTP_200_OK)
 
         # filter milgroup
         if 'milgroup' in request.query_params:

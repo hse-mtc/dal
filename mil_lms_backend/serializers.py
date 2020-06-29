@@ -26,6 +26,13 @@ class ProgramSerializer(serializers.ModelSerializer):
         }
 
 
+class StudentQuerySerializer(serializers.Serializer):
+    id = serializers.IntegerField(min_value=1,required=False)
+    milgroup = serializers.IntegerField(required=False)
+    name = serializers.CharField(required=False)
+    status = serializers.CharField(required=False)
+
+
 class StudentSerializer(serializers.ModelSerializer):
     milgroup = MilgroupSerializer(many=False)
     program = ProgramSerializer(many=False)
