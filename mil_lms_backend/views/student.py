@@ -39,6 +39,10 @@ class StudentView(APIView):
 
         # get by id
         if 'id' in request.query_params:
+            if not request.query_params['id'].isdigit():
+                return Response({'code': HTTP_400_BAD_REQUEST * 100, 'message': 'Bad type, id should be int'}, status=HTTP_400_BAD_REQUEST)
+            if not students.filter(id=request.query_params['id']).exists():
+                return Response({'code': HTTP_400_BAD_REQUEST * 100, 'message': 'Student with such id does not exist'}, status=HTTP_400_BAD_REQUEST)
             student = students.get(id=request.query_params['id'])
             student = StudentSerializer(student)
             return Response({'code': HTTP_200_OK * 100, 'students': student.data}, status=HTTP_200_OK)
