@@ -70,11 +70,76 @@ class StudentViewTest(TestCase):
         from_api = response.status_code
         
         self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
         
         # test for bad type id
         response = client.get('/api/lms/student/', {'id': 'crazy_input'})
         from_api = response.status_code
         
         self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
         
+        # test for id + some other search query
+        response = client.get('/api/lms/student/', {'id': 2, 'milgroup':2020})
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+        # test for milgroup
+        response = client.get('/api/lms/student/', {'milgroup': 2020})
+        from_api = response.data['students']
+        
+        from_db = StudentSerializer(Student.objects.filter(milgroup=2020), many=True).data
+        
+        self.assertEqual(from_api, from_db)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+        # test for non-existing milgroup
+        response = client.get('/api/lms/student/', {'milgroup': 100})
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+        # test for bad type milgroup
+        response = client.get('/api/lms/student/', {'milgroup': 'crazy_input'})
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+        # test for exisiting names
+        response = client.get('/api/lms/student/', {'name': 'Иван'})
+        from_api = response.data['students']
+        
+        from_db = StudentSerializer(Student.objects.filter(id=1), many=True).data
+        
+        self.assertEqual(from_api, from_db)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+        # test for non-exisiting names
+        response = client.get('/api/lms/student/', {'name': 'crazy_input'})
+        from_api = response.data['students']
+        
+        from_db = []
+        
+        self.assertEqual(from_api, from_db)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+        # test for exisiting status
+        response = client.get('/api/lms/student/', {'status': 'Обучается'})
+        from_api = response.data['students']
+        
+        from_db = StudentSerializer(Student.objects.all(), many=True).data
+        
+        self.assertEqual(from_api, from_db)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+        # test for non-exisiting status
+        response = client.get('/api/lms/student/', {'status': 'crazy_input'})
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
         

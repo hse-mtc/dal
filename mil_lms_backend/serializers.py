@@ -1,23 +1,31 @@
 import datetime
-from rest_framework import serializers
+
+from rest_framework.serializers import (
+    ModelSerializer, Serializer,
+    IntegerField, CharField, DateField, SerializerMethodField
+)
+from rest_framework.serializers import ValidationError
 
 from .models import (
     Milfaculty,
     Milgroup,
     Program,
-    Student
+    Student,
+    Status
 )
 
+from .validators import PresentInDatasetValidator
 
-class MilgroupSerializer(serializers.ModelSerializer):
-    milgroup = serializers.IntegerField()
+
+class MilgroupSerializer(ModelSerializer):
+    milgroup = IntegerField()
 
     class Meta:
         model = Milgroup
         fields = '__all__'
 
 
-class ProgramSerializer(serializers.ModelSerializer):
+class ProgramSerializer(ModelSerializer):
     class Meta:
         model = Program
         fields = '__all__'
@@ -26,19 +34,30 @@ class ProgramSerializer(serializers.ModelSerializer):
         }
 
 
-class StudentQuerySerializer(serializers.Serializer):
-    id = serializers.IntegerField(min_value=1,required=False)
-    milgroup = serializers.IntegerField(required=False)
-    name = serializers.CharField(required=False)
-    status = serializers.CharField(required=False)
+class StudentGetQuerySerializer(Serializer):
+    id = IntegerField(min_value=1, required=False, validators=[
+        PresentInDatasetValidator(Student, 'id')
+    ])
+    milgroup = IntegerField(required=False, validators=[
+        PresentInDatasetValidator(Milgroup, 'milgroup')
+    ])
+    name = CharField(required=False)
+    status = CharField(required=False, validators=[
+        PresentInDatasetValidator(Status, 'status')
+    ])
+    
+    def validate(self, data):
+        if 'id' in data.keys() and len(data.keys()) > 1:
+            raise ValidationError('If id is given, all other searching keys will be ignored and therefore should be deleted')
+        return data
 
 
-class StudentSerializer(serializers.ModelSerializer):
+class StudentSerializer(ModelSerializer):
     milgroup = MilgroupSerializer(many=False)
     program = ProgramSerializer(many=False)
-    birthdate = serializers.DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
+    birthdate = DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
 
-    fullname = serializers.SerializerMethodField()
+    fullname = SerializerMethodField()
 
     class Meta:
             model = Student
