@@ -47,7 +47,7 @@ class StudentGetQuerySerializer(Serializer):
     ])
     
     def validate(self, data):
-        if 'id' in data.keys() and len(data.keys()) > 1:
+        if 'id' in data and len(data) > 1:
             raise ValidationError('If id is given, all other searching keys will be ignored and therefore should be deleted')
         return data
 
