@@ -56,12 +56,14 @@ class StudentViewTest(TestCase):
         self.assertEqual(response.status_code*100, response.data['code'])
         
     def test_get_id(self):
-        response = client.get('/api/lms/student/', {'id': 2})
-        print('!'*75)
-        print(response.data)
+        # Even though there are only two entries in the db (id 1 and 2)
+        # and django resets the db for each test, auto-increment function for id
+        # still works and therefore ids get shifted for each test.
+        # For this test, valid ids are 3 and 4.
+        response = client.get('/api/lms/student/', {'id': 3})
         from_api = response.data['students']
         
-        from_db = StudentSerializer(Student.objects.get(id=2)).data
+        from_db = StudentSerializer(Student.objects.get(id=3)).data
         
         self.assertEqual(from_api, from_db)
         self.assertEqual(response.status_code*100, response.data['code'])
@@ -81,7 +83,8 @@ class StudentViewTest(TestCase):
         self.assertEqual(response.status_code*100, response.data['code'])
         
     def test_get_id_plus_other_query(self):
-        response = client.get('/api/lms/student/', {'id': 2, 'milgroup':2020})
+        # See comment in test_get_for_id() for explanation on using 9 as a valid id.
+        response = client.get('/api/lms/student/', {'id': 9, 'milgroup':2020})
         from_api = response.status_code
         
         self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
@@ -114,7 +117,7 @@ class StudentViewTest(TestCase):
         response = client.get('/api/lms/student/', {'name': 'Иван'})
         from_api = response.data['students']
         
-        from_db = StudentSerializer(Student.objects.filter(id=1), many=True).data
+        from_db = StudentSerializer(Student.objects.filter(name='Иван'), many=True).data
         
         self.assertEqual(from_api, from_db)
         self.assertEqual(response.status_code*100, response.data['code'])
