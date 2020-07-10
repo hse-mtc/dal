@@ -170,11 +170,38 @@ class StudentViewTest(TestCase):
         self.assertEqual(from_api, HTTP_200_OK)
         self.assertEqual(response.status_code*100, response.data['code'])
         
-    def test_put_invalid_structure(self):
+    def test_put_missing_field(self):
         new_student = {
-            'milgroup': {  # error here
+            'milgroup': {  
                 'milgroup': 2020,
                 'milfaculty': 'ВКС'
+            },  # error here, no program given
+            'birthdate': '01.01.1999',
+            'surname': 'Новенький',
+            'name': 'Рекрут',
+            'patronymic': 'Студент',
+            'photo': None,
+            'status': 'Обучается'
+        }
+        response = client.put('/api/lms/student/', new_student, content_type='application/json')
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+    def test_put_empty(self):
+        new_student = {}
+        response = client.put('/api/lms/student/', new_student, content_type='application/json')
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+    def test_put_invalid_milgroup(self):
+        new_student = {
+            'milgroup': {  # error here
+                'milgroup': 10000000000000,
+                'milfaculty': 'не ВКС'
             },
             'program': {
                 'code': '01.01.01',
@@ -185,7 +212,30 @@ class StudentViewTest(TestCase):
             'name': 'Рекрут',
             'patronymic': 'Студент',
             'photo': None,
-            'status': 'crazy_input'
+            'status': 'Обучается' 
+        }
+        response = client.put('/api/lms/student/', new_student, content_type='application/json')
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
+
+    def test_put_invalid_program(self):
+        new_student = {
+            'milgroup': { 
+                'milgroup': 2020,
+                'milfaculty': 'ВКС'
+            },
+            'program': {  # error here
+                'code': '09.09.09',
+                'program': 'Видосы индусов с ютуба'
+            },
+            'birthdate': '01.01.1999',
+            'surname': 'Новенький',
+            'name': 'Рекрут',
+            'patronymic': 'Студент',
+            'photo': None,
+            'status': 'Обучается' 
         }
         response = client.put('/api/lms/student/', new_student, content_type='application/json')
         from_api = response.status_code
@@ -193,18 +243,45 @@ class StudentViewTest(TestCase):
         self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
         self.assertEqual(response.status_code*100, response.data['code'])
         
-    def test_put_missing_field(self):
+    def test_put_invalid_birthdate(self):
         new_student = {
-            'milgroup': {  # error here
+            'milgroup': { 
                 'milgroup': 2020,
                 'milfaculty': 'ВКС'
+            },
+            'program': { 
+                'code': '01.01.01',
+                'program': 'Видосы индусов с ютуба'
+            },
+            'birthdate': 'crazy_input', # error here
+            'surname': 'Новенький',
+            'name': 'Рекрут',
+            'patronymic': 'Студент',
+            'photo': None,
+            'status': 'Обучается' 
+        }
+        response = client.put('/api/lms/student/', new_student, content_type='application/json')
+        from_api = response.status_code
+        
+        self.assertEqual(from_api, HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code*100, response.data['code'])
+        
+    def test_put_invalid_status(self):
+        new_student = {
+            'milgroup': { 
+                'milgroup': 2020,
+                'milfaculty': 'ВКС'
+            },
+            'program': {  
+                'code': '01.01.01',
+                'program': 'Видосы индусов с ютуба'
             },
             'birthdate': '01.01.1999',
             'surname': 'Новенький',
             'name': 'Рекрут',
             'patronymic': 'Студент',
             'photo': None,
-            'status': 'crazy_input'
+            'status': 'crazy_input'  # error here 
         }
         response = client.put('/api/lms/student/', new_student, content_type='application/json')
         from_api = response.status_code
