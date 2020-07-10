@@ -53,8 +53,16 @@ class StudentGetQuerySerializer(Serializer):
 
 
 class StudentSerializer(ModelSerializer):
-    milgroup = MilgroupSerializer(many=False)
-    program = ProgramSerializer(many=False)
+    milgroup = MilgroupSerializer(many=False, validators=[
+        PresentInDatasetValidator(Milgroup)
+    ])
+    program = ProgramSerializer(many=False, validators=[
+        PresentInDatasetValidator(Program)
+    ])
+    status = CharField(validators=[
+        PresentInDatasetValidator(Status, 'status')
+    ])
+    
     birthdate = DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
 
     fullname = SerializerMethodField()
@@ -74,9 +82,12 @@ class StudentSerializer(ModelSerializer):
 
         program_data = validated_data.pop('program')
         program = Program.objects.get(**program_data)
+        
+        status_data = validated_data.pop('status')
+        status = Status.objects.get(status=status_data)
 
         student_new = Student.objects.create(
-            milgroup=milgroup, program=program,
+            milgroup=milgroup, program=program, status=status,
             **validated_data)
 
         return student_new
