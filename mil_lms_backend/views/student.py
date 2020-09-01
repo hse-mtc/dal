@@ -35,8 +35,6 @@ class StudentView(APIView):
         :param request:
         :return:
         """
-        students = Student.objects.all()
-        
         # check query params
         query_params = StudentGetQuerySerializer(data=request.query_params)
         if not query_params.is_valid():
@@ -44,6 +42,8 @@ class StudentView(APIView):
                              'message': query_params.errors},
                             status=HTTP_400_BAD_REQUEST)
             
+        students = Student.objects.all()
+        
         # get by id
         if 'id' in request.query_params:
             student = students.get(id=request.query_params['id'])

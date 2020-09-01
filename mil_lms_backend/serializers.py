@@ -11,7 +11,9 @@ from .models import (
     Milgroup,
     Program,
     Student,
-    Status
+    Status,
+    Absence,
+    AbsenceType,
 )
 
 from .validators import PresentInDatasetValidator
@@ -112,3 +114,46 @@ class StudentSerializer(ModelSerializer):
             **validated_data)
 
         return student_modified
+
+class StudentShortSerializer(ModelSerializer):
+    fullname = SerializerMethodField()
+    
+    def get_fullname(self, obj):
+        return f'{obj.surname} {obj.name} {obj.patronymic}'
+    
+    class Meta:
+        model = Student
+        fields = ['id', 'name', 'surname', 'patronymic', 'fullname']
+
+class AbsenceGetQuerySerializer(Serializer):
+    id = IntegerField(min_value=1, required=False, validators=[
+        PresentInDatasetValidator(Absence, 'id')
+    ])
+    studentid = IntegerField(min_value=1, required=False, validators=[
+        PresentInDatasetValidator(Student, 'id')
+    ])
+    name = CharField(required=False)
+    type = CharField(required=False, validators=[
+        PresentInDatasetValidator(AbsenceType, 'absenceType')
+    ])
+    date = DateField(required=False,
+                     format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
+    
+    def validate(self, data):
+        if 'id' in data and len(data) > 1:
+            raise ValidationError('If id is given, all other searching keys will be ignored and therefore should be deleted')
+        return data
+
+class AbsenceSerializer(ModelSerializer):
+    date = DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
+    
+    type = CharField(validators=[
+        PresentInDatasetValidator(AbsenceType, 'absenceType')
+    ])
+    studentid = StudentShortSerializer(validators=[
+        PresentInDatasetValidator(Student, 'id')
+    ])
+    
+    class Meta:
+        model = Absence
+        fields = '__all__'

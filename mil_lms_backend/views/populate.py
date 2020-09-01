@@ -189,14 +189,14 @@ def create_students(milgroups: tp.Dict[int, Milgroup],
             photo=value['photo']
         )
         student.save()
-        students['surname'] = student
+        students[value['surname']] = student
     return students
 
 
 def create_absence_types():
-    values = ['Отсутствует по ув. причине', 
+    values = ['Уважительная', 
               'Опоздание', 
-              'Отсутствует по неув. причине']
+              'Неуважительная']
     
     types = {}
     for value in values:
@@ -213,16 +213,16 @@ def create_absences(types: tp.Dict[str, AbsenceType],
     values = [
         {
             'date': '2019-09-01',
-            'studentid': students['Хромов'],
-            'type': types['Отсутствует по ув. причине'],
+            'studentid': students['Кацевалов'],
+            'type': types['Уважительная'],
             'reason': 'Заболел',
             'status': 1,
             'comment': 'Болеть будет недолго'
         },
         {
             'date': '2019-09-08',
-            'studentid': students['Кацевалов'],
-            'type': types['Опоздал'],
+            'studentid': students['Хромов'],
+            'type': types['Опоздание'],
             'reason': 'Электричка опоздала',
             'status': 1,
             'comment': ''
@@ -230,7 +230,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
         {
             'date': '2019-09-08',
             'studentid': students['Исаков'],
-            'type': types['Отсутствует по неув. причине'],
+            'type': types['Неуважительная'],
             'reason': 'Прогул',
             'status': 1,
             'comment': 'Лежал дома на диване'
