@@ -238,7 +238,7 @@ class Teacher(models.Model):
 class Absence(models.Model):
     date = models.DateField(default=datetime.date.today)
     studentid = models.ForeignKey(Student, models.DO_NOTHING, db_column='studentid')
-    type = models.CharField(max_length=20)
+    type = models.ForeignKey(AbsenceType, models.DO_NOTHING, db_column='type')
     reason = models.CharField(max_length=100, blank=True, null=True)
     status = models.DecimalField(max_digits=1, decimal_places=0)
     comment = models.CharField(max_length=100, blank=True, null=True)
