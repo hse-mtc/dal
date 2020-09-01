@@ -14,6 +14,7 @@ whitenoise = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
 psycopg2 = "*"
+pytest-django = "*"
 
 [requires]
 python_version = "3.8"
