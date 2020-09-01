@@ -90,7 +90,7 @@ Note that if Docker is unavailable, you will have to manually configure `Postgre
 
 #### Steps
 
-1. Complete all steps from the [terminal](#terminal-text-editor-vim-emacs) section.
+1. Complete all steps from the [terminal](#terminal--text-editor-vim-emacs-) section.
 1. Make sure `python --version` yields `3.8.5` and get path to `python` binary:
    ```shell script
    $ which python
