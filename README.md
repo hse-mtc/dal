@@ -1,4 +1,13 @@
-# DMS back-end
+# DMS back end
+
+## Development
+
+### Setting up
+
+For ease of development, it is recommended to set up the IDE environment 
+by following the detailed instructions [here](docs/ide.md).
+
+## Deployment
 
 ## Using Docker
 
