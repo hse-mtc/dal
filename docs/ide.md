@@ -1,5 +1,20 @@
 # Development environment
 
+## Table of contents
+
+- [Development environment](#development-environment)
+  - [Terminal + Text Editor (Vim, Emacs, ...)](#terminal--text-editor-vim-emacs-)
+      - [Requirements](#requirements)
+      - [Steps](#steps)
+  - [PyCharm](#pycharm)
+    - [With Docker _(highly recommended)_](#with-docker-highly-recommended)
+      - [Requirements](#requirements)
+      - [Steps](#steps)
+    - [Local Machine _(somewhat discouraged)_](#local-machine-somewhat-discouraged)
+      - [Requirements](#requirements)
+      - [Steps](#steps)
+
+
 ## Terminal + Text Editor (Vim, Emacs, ...)
 
 #### Requirements
