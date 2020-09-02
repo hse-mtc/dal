@@ -133,7 +133,7 @@ class AbsenceGetQuerySerializer(Serializer):
         PresentInDatasetValidator(Student, 'id')
     ])
     name = CharField(required=False)
-    type = CharField(required=False, validators=[
+    absenceType = CharField(required=False, validators=[
         PresentInDatasetValidator(AbsenceType, 'absenceType')
     ])
     date = DateField(required=False,
@@ -147,13 +147,26 @@ class AbsenceGetQuerySerializer(Serializer):
 class AbsenceSerializer(ModelSerializer):
     date = DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
     
-    type = CharField(validators=[
+    absenceType = CharField(validators=[
         PresentInDatasetValidator(AbsenceType, 'absenceType')
     ])
     studentid = StudentShortSerializer(validators=[
-        PresentInDatasetValidator(Student, 'id')
+        PresentInDatasetValidator(Student)
     ])
     
     class Meta:
         model = Absence
         fields = '__all__'
+
+    def create(self, validated_data):
+        type_data = validated_data.pop('absenceType')
+        absenceType = AbsenceType.objects.get(absenceType=type_data)
+        
+        student_data = validated_data.pop('studentid')
+        student = Student.objects.get(**student_data)
+        
+        absence_new = Absence.objects.create(
+            absenceType=absenceType, studentid=student,
+            **validated_data)
+        
+        return absence_new
