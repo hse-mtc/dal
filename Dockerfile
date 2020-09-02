@@ -1,19 +1,20 @@
-# pull official base image
-FROM python
+# Pull official base image
+FROM python:3.8.5
 RUN pip install pipenv
 
-# set environment variables
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# set work directory
-WORKDIR /code
+# Set working directory
+WORKDIR /dms
 
-# install dependencies using cache for faster build
-COPY Pipfile Pipfile
-COPY Pipfile.lock Pipfile.lock
+# Install dependencies using cache for faster build
+COPY Pipfile Pipfile.lock ./
 RUN pipenv install --system --deploy
 
-# copy everything else
+# Copy everything else
 ADD . .
 
+# Overwrite local settings by example
+RUN mv .env.example .env

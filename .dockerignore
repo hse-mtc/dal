@@ -1,0 +1,16 @@
+### Project
+# Directories
+.git
+.idea
+docs
+wait-for-it
+
+# Files
+!wait-for-it/wait-for-it.sh
+.dockerignore
+.gitignore
+.gitmodules
+Dockerfile
+docker-compose.yml
+heroku.yml
+readme.md
