@@ -4,16 +4,9 @@
 
 - [Development environment](#development-environment)
   - [Terminal + Text Editor (Vim, Emacs, ...)](#terminal--text-editor-vim-emacs-)
-      - [Requirements](#requirements-0)
-      - [Steps: Python](#steps-python)
-      - [Steps: PostgreSQL](#steps-postgresql)
   - [PyCharm](#pycharm)
     - [With Docker _(highly recommended)_](#with-docker-highly-recommended)
-      - [Requirements](#requirements-1)
-      - [Steps](#steps-0)
     - [Local Machine _(somewhat discouraged)_](#local-machine-somewhat-discouraged)
-      - [Requirements](#requirements-2)
-      - [Steps](#steps-1)
 
 ## Terminal + Text Editor (Vim, Emacs, ...)
 
