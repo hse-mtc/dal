@@ -11,25 +11,30 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+
+import environ
 import dj_database_url
+
+from pathlib import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Read `ROOT/.env` file to `os.environ`
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "@o*+53d$c0v_5usu*b)^i)!0(t!9iulyy*-+hce0$)=_apw4_s"
+SECRET_KEY = os.environ["DMS_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ["DMS_DEBUG"].lower() == "true"
 
 ALLOWED_HOSTS = [
     "*"
 ]
-
 
 # Application definition
 
@@ -88,11 +93,11 @@ WSGI_APPLICATION = "dms.wsgi.application"  # TODO: does ASGI need the same line?
 DATABASES = {
     "default": {
         "ENGINE":   "django.db.backends.postgresql",
-        "NAME":     "db_name",
-        "USER":     "db_user",
-        "PASSWORD": "db_user_password",
-        "HOST":     "db",
-        "PORT":     "5432",
+        "HOST":     os.environ["POSTGRES_HOST"],
+        "PORT":     os.environ["POSTGRES_PORT"],
+        "NAME":     os.environ["POSTGRES_DB"],
+        "USER":     os.environ["POSTGRES_USER"],
+        "PASSWORD": os.environ["POSTGRES_PASSWORD"],
     }
 }
 
