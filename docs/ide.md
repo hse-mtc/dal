@@ -4,28 +4,26 @@
 
 - [Development environment](#development-environment)
   - [Terminal + Text Editor (Vim, Emacs, ...)](#terminal--text-editor-vim-emacs-)
-      - [Requirements](#requirements)
-      - [Steps](#steps)
+      - [Requirements](#requirements-1)
+      - [Steps: Python](#steps-python)
+      - [Steps: PostgreSQL](#steps-postgresql)
   - [PyCharm](#pycharm)
     - [With Docker _(highly recommended)_](#with-docker-highly-recommended)
-      - [Requirements](#requirements)
-      - [Steps](#steps)
+      - [Requirements](#requirements-2)
+      - [Steps](#steps-1)
     - [Local Machine _(somewhat discouraged)_](#local-machine-somewhat-discouraged)
-      - [Requirements](#requirements)
-      - [Steps](#steps)
-
+      - [Requirements](#requirements-3)
+      - [Steps](#steps-2)
 
 ## Terminal + Text Editor (Vim, Emacs, ...)
 
-#### Requirements
+### Requirements
 
 * `pyenv`
 * `pipenv`
-* `psql`
+* `postqresql`
 
-#### Steps
-
-##### Python
+### Steps: Python
 
 1. First things first, make sure that `pyenv` and `pipenv` are installed and working:
    ```shell script
@@ -52,7 +50,7 @@
    pipenv shell
    ```
 
-##### PostgreSQL
+### Steps: PostgreSQL
 
 1. Install [`postgresql`](https://www.postgresql.org/download/).
 1. From the project's root, export variables from `.env` file:
@@ -99,9 +97,7 @@ Note that if Docker is unavailable, you will have to manually configure `Postgre
 
 #### Requirements
 
-* `pyenv`
-* `pipenv`
-* `postgres`
+* Same as for [terminal](#terminal--text-editor-vim-emacs-)
 
 #### Steps
 
