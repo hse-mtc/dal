@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest-django = "*"
 
 [packages]
 django = "*"
@@ -14,7 +15,6 @@ whitenoise = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
 psycopg2 = "*"
-pytest-django = "*"
 
 [requires]
 python_version = "3.8"
