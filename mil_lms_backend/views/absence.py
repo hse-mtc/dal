@@ -1,5 +1,11 @@
 # coding=utf-8
 
+from django.db.models import Value
+from django.db.models.functions import (
+    Lower,
+    Concat,
+)
+
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.request import Request
@@ -47,6 +53,17 @@ class AbsenceView(APIView):
             return Response({'code': HTTP_200_OK * 100, 
                              'students': absence.data}, 
                             status=HTTP_200_OK)
+        
+        # filter by studentid
+        if 'studentid' in request.query_params:
+            absences = absences.filter(studentid=request.query_params['studentid'])
+        
+        # filter by name
+        if 'name' in request.query_params:
+            absences = absences.annotate(
+                search_name=Lower(Concat('studentid__surname', Value(' '), 'studentid__name', Value(' '), 'studentid__patronymic'))
+            )
+            absences = absences.filter(search_name__contains=request.query_params['name'].lower())
         
         # filter by date
         if 'date' in request.query_params:
