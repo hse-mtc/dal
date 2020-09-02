@@ -1,6 +1,6 @@
-# Date formats
+# Date Formats
 
-In this program, two date formats are used:
+In this project, two date formats are used:
 
 1. `YY-mm-dd` - standard ISO 8601 format. Prefered **input** format. Use this style in your `PUT` and `POST` requests.
 
