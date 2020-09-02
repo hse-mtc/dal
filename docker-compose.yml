@@ -5,7 +5,7 @@ services:
     image: postgres:12.4-alpine
     restart: always
     env_file:
-      - .env.example
+      - .env
 
   dms:
     build: .
