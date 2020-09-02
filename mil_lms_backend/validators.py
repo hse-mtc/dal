@@ -5,7 +5,7 @@ from django.db.models import Model
 from rest_framework.serializers import ValidationError
 
 
-class PresentInDatasetValidator(object):
+class PresentInDatasetValidator:
     def __init__(self, model_class: Model, model_param: tp.Optional[str] = None):
         self.model_class = model_class
         self.model_param = model_param
