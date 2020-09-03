@@ -14,6 +14,8 @@ Simply run:
 docker-compose up --build
 ```
 
+Note that your `.env` file will be overwritten by `.env.example`.
+
 ## Manual
 
 Make database migrations:

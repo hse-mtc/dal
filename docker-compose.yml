@@ -9,15 +9,19 @@ services:
 
   dms:
     build: .
+    env_file:
+      - .env
     depends_on:
       - postgres
+    ports:
+      - $DMS_PORT:$DMS_PORT
     command: >
       sh -c "wait-for-it/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
              python manage.py makemigrations &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$DMS_PORT"
-    ports:
-      - $DMS_PORT:$DMS_PORT
+
+    # Map directories with code for hot reloading
     volumes:
       - ./backend:/dms/backend
       - ./dms:/dms/dms
