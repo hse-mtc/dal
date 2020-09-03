@@ -15,6 +15,3 @@ RUN pipenv install --system --deploy
 
 # Copy everything else
 ADD . .
-
-# Overwrite local settings by example
-RUN mv .env.example .env
