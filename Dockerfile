@@ -5,6 +5,7 @@ RUN pip install pipenv
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV DOCKER 1
 
 # Set working directory
 WORKDIR /dms
