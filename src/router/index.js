@@ -172,12 +172,25 @@ export const constantRoutes = [
 
   {
     path: '/mtc_personnel',
+    redirect: '/personnel',
     component: Layout,
     children: [{
       path: 'personnel',
       name: 'Personnel',
       component: () => import('@/views/Personnel/index'),
       meta: { title: 'Личный состав ВУЦ', icon: '' }
+    }]
+  },
+
+  {
+    path: '/mtc_absence',
+    redirect: '/mtc_absence',
+    component: Layout,
+    children: [{
+      path: 'absence',
+      name: 'Absence',
+      component: () => import('@/views/Absence/index'),
+      meta: { title: 'Посещаемость', icon: '' }
     }]
   },
 
