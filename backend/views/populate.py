@@ -5,7 +5,8 @@ import random
 import typing as tp
 
 from django.core.files import File
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.request import Request
@@ -29,33 +30,32 @@ from backend.models import (
 )
 
 
-def create_super_user(
-) -> tp.Tuple[User, Profile]:
+def create_super_user() -> tp.Tuple[AbstractUser, Profile]:
     """
     Create super user "vspelyak" with password "qwerty".
     :return: User and Profile model instances.
     """
 
-    if User.objects.filter(username="vspelyak").exists():
-        return User.objects.get(username="vspelyak"), Profile.objects.get(name="Пеляк В.С.")
+    user_model = get_user_model()
 
-    super_user = User.objects.create_superuser(
+    if user_model.objects.filter(username="vspelyak").exists():
+        return (user_model.objects.get(username="vspelyak"),
+                Profile.objects.get(name="Пеляк В.С."))
+
+    super_user = user_model.objects.create_superuser(
         username="vspelyak",
         password="qwerty",
     )
     super_user.save()
 
-    profile, _ = Profile.objects.get_or_create(
-        name="Пеляк В.С.",
-        user=super_user
-    )
+    profile, _ = Profile.objects.get_or_create(name="Пеляк В.С.",
+                                               user=super_user)
     profile.save()
 
     return super_user, profile
 
 
-def create_authors(
-) -> tp.List[Author]:
+def create_authors() -> tp.List[Author]:
     """
     Create authors with names from "authors_name".
     :return: list of created authors.
@@ -83,8 +83,7 @@ def create_authors(
     return authors
 
 
-def create_subjects(
-) -> tp.List[Subject]:
+def create_subjects() -> tp.List[Subject]:
     """
     Create subjects with titles from "subject_titles".
     :return: list of created subjects.
@@ -113,8 +112,7 @@ def create_subjects(
     return subjects
 
 
-def create_publishers(
-) -> tp.List[Publisher]:
+def create_publishers() -> tp.List[Publisher]:
     """
     Create publishers with names from "publisher_names".
     :return: list of created publishers.
@@ -129,17 +127,14 @@ def create_publishers(
     ]
 
     for name in publisher_names:
-        publisher, _ = Publisher.objects.get_or_create(
-            name=name,
-        )
+        publisher, _ = Publisher.objects.get_or_create(name=name,)
         publisher.save()
         publishers.append(publisher)
 
     return publishers
 
 
-def create_categories(
-) -> tp.List[Category]:
+def create_categories() -> tp.List[Category]:
     """
     Create categories with titles from "category_titles".
     :return: list of created categories.
@@ -157,18 +152,14 @@ def create_categories(
     ]
 
     for title in category_titles:
-        category, _ = Category.objects.get_or_create(
-            title=title,
-        )
+        category, _ = Category.objects.get_or_create(title=title,)
         category.save()
         categories.append(category)
 
     return categories
 
 
-def create_sections(
-    subject: Subject,
-) -> tp.List[Section]:
+def create_sections(subject: Subject) -> tp.List[Section]:
     """
     Create sections for particular subject.
     :param subject: Subject model (preferably from "create_subjects").
@@ -196,9 +187,7 @@ def create_sections(
     return sections
 
 
-def create_topics(
-    section: Section,
-) -> tp.List[Topic]:
+def create_topics(section: Section,) -> tp.List[Topic]:
     """
     Create topics for particular section.
     :param section: Section model (preferably from "create_sections").
@@ -288,16 +277,14 @@ def create_documents(
 @csrf_exempt
 @api_view(["PUT"])
 @permission_classes((AllowAny,))
-def populate(
-    request: Request,
-) -> Response:
+def populate(request: Request,) -> Response:
     """
     Populate database with fake documents, users, etc. (including super user).
     :param request: empty PUT request.
     :return: response indicating whether request was successful (probably was).
     """
 
-    super_user, profile = create_super_user()
+    create_super_user()
 
     authors = create_authors()
     categories = create_categories()
@@ -307,7 +294,7 @@ def populate(
     sections = create_sections(subjects[0])
     topics = create_topics(sections[0])
 
-    documents = create_documents(
+    create_documents(
         authors=authors,
         categories=categories,
         publishers=publishers,
@@ -315,6 +302,4 @@ def populate(
         topics=topics,
     )
 
-    return Response(
-        status=HTTP_200_OK,
-    )
+    return Response(status=HTTP_200_OK)

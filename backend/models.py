@@ -3,7 +3,7 @@
 import datetime
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from taggit.managers import TaggableManager
 
@@ -13,31 +13,21 @@ def get_upload_path():
 
 
 class Profile(models.Model):
-    name = models.CharField(
-        max_length=255,
-    )
+    name = models.CharField(max_length=255)
     user = models.OneToOneField(
-        to=User,
-        on_delete=models.CASCADE,  # TODO: change to something meaningful
+        to=get_user_model(),
+        on_delete=models.CASCADE,
     )
-    photo = models.URLField(
-        blank=True,
-    )
+    photo = models.URLField(blank=True)
 
     def __str__(self):
         return self.name
 
 
 class Author(models.Model):
-    last_name = models.CharField(
-        max_length=255,
-    )
-    first_name = models.CharField(
-        max_length=255,
-    )
-    patronymic = models.CharField(
-        max_length=255,
-    )
+    last_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    patronymic = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = "Author"
@@ -48,9 +38,7 @@ class Author(models.Model):
 
 
 class Publisher(models.Model):
-    name = models.CharField(
-        max_length=255,
-    )
+    name = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = "Publisher"
@@ -61,12 +49,8 @@ class Publisher(models.Model):
 
 
 class Subject(models.Model):
-    title = models.CharField(
-        max_length=255,
-    )
-    abbreviation = models.CharField(
-        max_length=16,
-    )
+    title = models.CharField(max_length=255)
+    abbreviation = models.CharField(max_length=16)
 
     class Meta:
         verbose_name = "Subject"
@@ -77,9 +61,7 @@ class Subject(models.Model):
 
 
 class Section(models.Model):
-    title = models.CharField(
-        max_length=255,
-    )
+    title = models.CharField(max_length=255)
     subject = models.ForeignKey(
         to=Subject,
         on_delete=models.DO_NOTHING,
@@ -94,34 +76,26 @@ class Section(models.Model):
 
 
 class Topic(models.Model):
-    title = models.CharField(
-        max_length=255,
-    )
+    title = models.CharField(max_length=255)
     section = models.ForeignKey(
         to=Section,
         on_delete=models.DO_NOTHING,
     )
 
-
     class Meta:
         verbose_name = "Topic"
         verbose_name_plural = "Topics"
-
 
     def __str__(self):
         return self.title
 
 
 class Category(models.Model):
-    title = models.CharField(
-        max_length=255,
-    )
-
+    title = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
-
 
     def __str__(self):
         return self.title
@@ -133,19 +107,13 @@ class Document(models.Model):
         to=Author,
         blank=True,
     )
-    annotation = models.TextField(
-        blank=True,
-    )
-    keywords = TaggableManager(
-        blank=True,
-    )
+    annotation = models.TextField(blank=True)
+    keywords = TaggableManager(blank=True)
     category = models.ForeignKey(
         to=Category,
         on_delete=models.DO_NOTHING,
     )
-    publication_date = models.DateField(
-        default=datetime.date.today,
-    )
+    publication_date = models.DateField(default=datetime.date.today)
     publishers = models.ManyToManyField(
         to=Publisher,
         blank=True,
@@ -166,9 +134,7 @@ class Document(models.Model):
         upload_to=get_upload_path(),
         blank=True,
     )
-    is_in_trash = models.BooleanField(
-        default=False,
-    )
+    is_in_trash = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Document"

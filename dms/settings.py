@@ -15,8 +15,6 @@ import os
 import environ
 import dj_database_url
 
-from pathlib import Path
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -32,9 +30,7 @@ SECRET_KEY = os.environ["DMS_SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ["DMS_DEBUG"].lower() == "true"
 
-ALLOWED_HOSTS = [
-    "*"
-]
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -45,12 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "taggit",
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
-
     "backend",
     "mil_lms_backend",
 ]
@@ -85,18 +79,17 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "dms.wsgi.application"  # TODO: does ASGI need the same line?
-
+WSGI_APPLICATION = "dms.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {
     "default": {
-        "ENGINE":   "django.db.backends.postgresql",
-        "HOST":     os.environ["POSTGRES_HOST"],
-        "PORT":     os.environ["POSTGRES_PORT"],
-        "NAME":     os.environ["POSTGRES_DB"],
-        "USER":     os.environ["POSTGRES_USER"],
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": os.environ["POSTGRES_HOST"],
+        "PORT": os.environ["POSTGRES_PORT"],
+        "NAME": os.environ["POSTGRES_DB"],
+        "USER": os.environ["POSTGRES_USER"],
         "PASSWORD": os.environ["POSTGRES_PASSWORD"],
     }
 }
@@ -104,25 +97,27 @@ DATABASES = {
 if os.environ.get("USE_HEROKU_DATABASE") is not None:
     DATABASES["default"] = dj_database_url.config(conn_max_age=500)
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME":
+            "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -137,17 +132,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Rest configurations
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "backend.auth.TokenAuthSupportQueryString",
-    ),
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES":
+        ("backend.auth.TokenAuthSupportQueryString",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",
+                                  ),
 }
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -157,7 +148,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 #  Add configuration for static files storage using whitenoise
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 
 # CORS configuration
 CORS_ORIGIN_ALLOW_ALL = True
@@ -169,7 +159,6 @@ CORS_ALLOW_METHODS = [
     "POST",
     "PUT",
 ]
-
 
 # TAGGIT configuration
 TAGGIT_CASE_INSENSITIVE = True

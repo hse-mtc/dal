@@ -14,18 +14,17 @@ def get_authorization_header(request):
 
 
 class TokenAuthSupportQueryString(TokenAuthentication):
+
     def authenticate(self, request):
         key = "token"
 
-        if (
-            key in request.query_params
-            and "HTTP_AUTHORIZATION" not in request.META
-            and "HTTP_X_TOKEN" not in request.META
-        ):
+        if (key in request.query_params and
+                "HTTP_AUTHORIZATION" not in request.META and
+                "HTTP_X_TOKEN" not in request.META):
             return self.authenticate_credentials(request.query_params.get(key))
 
         if "HTTP_X_TOKEN" not in request.META:
-            return super(TokenAuthSupportQueryString, self).authenticate(request)
+            return super().authenticate(request)
 
         auth = get_authorization_header(request).split()
 
@@ -42,9 +41,8 @@ class TokenAuthSupportQueryString(TokenAuthentication):
 
         try:
             token = auth[1].decode()
-        except UnicodeError:
+        except UnicodeError as e:
             msg = _("Invalid token header. Token string should not contain invalid characters.")
-            raise exceptions.AuthenticationFailed(msg)
+            raise exceptions.AuthenticationFailed(msg) from e
 
         return self.authenticate_credentials(token)
-
