@@ -11,10 +11,10 @@ cd dms-back
 
 Simply run:
 ```shell script
-docker-compose up --build
+docker-compose --env-file=.env.docker up --build
 ```
 
-Note that your `.env` file will be overwritten by `.env.example`.
+Note that settings will be taken from [`.env.docker`](../.env.docker).
 
 ## Manual
 
