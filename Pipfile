@@ -19,13 +19,10 @@ dj-database-url = "*"
 psycopg2 = "*"
 uvicorn = "*"
 whitenoise = "*"
-<<<<<<< HEAD
-=======
 djangorestframework = "*"
 django-cors-headers = "*"
 psycopg2 = "*"
 pytest-django = "*"
->>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
 
 [requires]
 python_version = "3.8.5"

@@ -11,23 +11,12 @@ from .models import (
     Milgroup,
     Program,
     Student,
-<<<<<<< HEAD
-    Status,
-    Absence,
-    AbsenceType,
-)
-
-from .validators import PresentInDatasetValidator
-
-
-=======
     Status
 )
 
 from .validators import PresentInDatasetValidator
 
 
->>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
 class MilgroupSerializer(ModelSerializer):
     milgroup = IntegerField()
 

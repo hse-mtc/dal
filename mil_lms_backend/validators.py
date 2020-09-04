@@ -5,11 +5,7 @@ from django.db.models import Model
 from rest_framework.serializers import ValidationError
 
 
-<<<<<<< HEAD
-class PresentInDatasetValidator:
-=======
 class PresentInDatasetValidator(object):
->>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
     def __init__(self, model_class: Model, model_param: tp.Optional[str] = None):
         self.model_class = model_class
         self.model_param = model_param

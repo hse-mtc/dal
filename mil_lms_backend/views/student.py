@@ -44,8 +44,6 @@ class StudentView(APIView):
             
         students = Student.objects.all()
         
-<<<<<<< HEAD
-=======
         # check query params
         query_params = StudentGetQuerySerializer(data=request.query_params)
         if not query_params.is_valid():
@@ -53,7 +51,6 @@ class StudentView(APIView):
                              'message': query_params.errors},
                             status=HTTP_400_BAD_REQUEST)
             
->>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
         # get by id
         if 'id' in request.query_params:
             student = students.get(id=request.query_params['id'])

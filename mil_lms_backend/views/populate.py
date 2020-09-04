@@ -15,13 +15,8 @@ from mil_lms_backend.models import (
     Milgroup,
     Milfaculty,
     Student,
-<<<<<<< HEAD
     Teacher,
     Rank
-=======
-    AbsenceType,
-    Absence
->>>>>>> master
 )
 
 
@@ -76,22 +71,6 @@ def create_milfaculties() -> tp.Dict[str, Milfaculty]:
 
     return milfaculties
 
-
-def create_ranks() -> tp.Dict[str, Rank]:
-    values = [
-        'Подполковник', 'Полковник', 'Майор', 'Генерал-майор'
-    ]
-
-    ranks = {}
-
-    for value in values:
-        rank, _ = Rank.objects.get_or_create(
-            rank=value
-        )
-        rank.save()
-        ranks[value] = rank
-    
-    return ranks
 
 
 def create_milgroups(milfaculties: tp.Dict[str, Milfaculty]) -> tp.Dict[str, Milgroup]:
@@ -197,8 +176,7 @@ def create_students(milgroups: tp.Dict[int, Milgroup],
             'photo': None
         }
     ]
-    
-    students = {}
+
     for value in values:
         student, _ = Student.objects.get_or_create(
             surname=value['surname'],
@@ -211,128 +189,9 @@ def create_students(milgroups: tp.Dict[int, Milgroup],
             photo=value['photo']
         )
         student.save()
-        students[value['surname']] = student
-    return students
 
 
-def create_absence_types():
-    values = ['Уважительная', 
-              'Опоздание', 
-              'Неуважительная']
-    
-    types = {}
-    for value in values:
-        typ, _ = AbsenceType.objects.get_or_create(
-            absenceType=value
-        )
-        typ.save()
-        types[value] = typ
-    return types
 
-
-def create_absences(types: tp.Dict[str, AbsenceType],
-                    students: tp.Dict[str, Student]):
-    values = [
-        {
-            'date': '2019-09-01',
-            'studentid': students['Кацевалов'],
-            'absenceType': types['Уважительная'],
-            'reason': 'Заболел',
-            'status': 1,
-            'comment': 'Болеть будет недолго'
-        },
-        {
-            'date': '2019-09-08',
-            'studentid': students['Хромов'],
-            'absenceType': types['Опоздание'],
-            'reason': 'Электричка опоздала',
-            'status': 1,
-            'comment': ''
-        },
-        {
-            'date': '2019-09-08',
-            'studentid': students['Исаков'],
-            'absenceType': types['Неуважительная'],
-            'reason': 'Прогул',
-            'status': 1,
-            'comment': 'Лежал дома на диване'
-        },
-    ]
-    
-    for value in values:
-        absence, _ = Absence.objects.get_or_create(
-            date=value['date'],
-            studentid=value['studentid'],
-            absenceType=value['absenceType'],
-            reason=value['reason'],
-            status=value['status'],
-            comment=value['comment']
-        )
-        absence.save()
-
-
-def create_teachers(milgroups: tp.Dict[int, Milgroup],
-                    milfaculties: tp.Dict[str, Milfaculty],
-                    ranks: tp.Dict[str, Rank]):
-    values = [
-        {
-            'surname': 'Никандров',
-            'name': 'Игорь',
-            'patronymic': 'Владимирович',
-            'milfaculty': milfaculties['ВКС'],
-            'rank': ranks['Подполковник'],
-            'post': 'Преподаватель',
-            'milgroup': milgroups[1809]
-        },
-        {
-            'surname': 'Репалов',
-            'name': 'Дмитрий',
-            'patronymic': 'Николаевич',
-            'milfaculty': milfaculties['ВКС'],
-            'rank': ranks['Подполковник'],
-            'post': 'Начальник цикла',
-            'milgroup': milgroups[1808]
-        },
-        {
-            'surname': 'Мещеряков',
-            'name': 'Иван',
-            'patronymic': 'Владимирович',
-            'milfaculty': milfaculties['Сержанты'],
-            'rank': ranks['Майор'],
-            'post': 'Преподаватель',
-            'milgroup': milgroups[1806]
-        },
-        {
-            'surname': 'Ковальчук',
-            'name': 'Игорь',
-            'patronymic': 'Валентинович',
-            'milfaculty': milfaculties['Разведка'],
-            'rank': ranks['Полковник'],
-            'post': 'Начальник цикла',
-            'milgroup': milgroups[1801]
-        },
-        {
-            'surname': 'Гаврилов',
-            'name': 'Климент',
-            'patronymic': 'Сергеевич',
-            'milfaculty': milfaculties['РВСН'],
-            'rank': ranks['Генерал-майор'],
-            'post': 'Преподаватель',
-            'milgroup': None
-        },
-    ]
-
-    for value in values:
-        teacher, _ = Teacher.objects.get_or_create(
-            surname=value['surname'],
-            name=value['name'],
-            patronymic=value['patronymic'],
-            milfaculty=value['milfaculty'],
-            rank=value['rank'],
-            post=value['post'],
-            milgroup=value['milgroup']
-        )
-        teacher.save()
 
 @api_view(['PUT'])
 @permission_classes((AllowAny,))
@@ -349,16 +208,7 @@ def lms_populate(request: Request) -> Response:
     milgroups = create_milgroups(milfaculties)
     ranks = create_ranks()
 
-<<<<<<< HEAD
     create_students(milgroups, programs, statuses)
     create_teachers(milgroups, ranks)
 
-=======
-    students = create_students(milgroups, programs, statuses)
-    
-    absence_types = create_absence_types()
-    
-    create_absences(absence_types, students)
-    
->>>>>>> master
     return Response({'message': 'Population successful'}, status=HTTP_201_CREATED)
