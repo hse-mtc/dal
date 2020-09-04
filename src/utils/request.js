@@ -7,8 +7,8 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // baseURL: "http://192.168.0.112:12345/api", // url = base url + request url
-  baseURL: process.env.VUE_APP_LOCAL_DEPLOYMENT === "true"
-           ? "http://localhost:8000/api"
+  baseURL: process.env.VUE_APP_MODE === "local"
+           ? "http://0.0.0.0:8064/api"
            : "https://military-dms-back.herokuapp.com/api",
   // baseURL: process.env.VUE_APP_LOCAL_DEPLOYMENT === "true"
   //          ? "http://localhost:8000/api"
@@ -61,7 +61,7 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
 
-      
+
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code === 50008 || res.code === 50012 || res.code === 50014) {

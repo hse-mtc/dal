@@ -7,7 +7,8 @@
   "scripts": {
     "build:prod": "vue-cli-service build",
     "deploy": "git subtree push --prefix dist origin gh-pages",
-    "dev": "vue-cli-service serve",
+    "dev:local": "vue-cli-service serve --mode local",
+    "dev:prod": "vue-cli-service serve --mode prod",
     "preview": "node build/index.js --preview",
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
     "test:ci": "npm run lint && npm run test:unit",
@@ -27,7 +28,7 @@
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
-    "vue": "^2.6.10",
+    "vue": "2.6.11",
     "vue-functional-calendar": "^2.6.7",
     "vue-lodash": "^2.1.2",
     "vue-multiselect": "^2.1.6",
