@@ -12,7 +12,7 @@ WORKDIR /dms
 
 # Install dependencies using cache for faster build
 COPY Pipfile Pipfile.lock ./
-RUN pipenv install --system --deploy
+RUN pipenv install --system --deploy --dev
 
 # Copy everything else
 ADD . .
