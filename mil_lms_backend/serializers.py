@@ -11,6 +11,7 @@ from .models import (
     Milgroup,
     Program,
     Student,
+<<<<<<< HEAD
     Status,
     Absence,
     AbsenceType,
@@ -19,6 +20,14 @@ from .models import (
 from .validators import PresentInDatasetValidator
 
 
+=======
+    Status
+)
+
+from .validators import PresentInDatasetValidator
+
+
+>>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
 class MilgroupSerializer(ModelSerializer):
     milgroup = IntegerField()
 
@@ -37,6 +46,7 @@ class ProgramSerializer(ModelSerializer):
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 class StudentSerializer(serializers.ModelSerializer):
     milgroup = MilgroupSerializer(many=False)
     program = ProgramSerializer(many=False)
@@ -44,6 +54,8 @@ class StudentSerializer(serializers.ModelSerializer):
 
     fullname = serializers.SerializerMethodField()
 =======
+=======
+>>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
 class StudentGetQuerySerializer(Serializer):
     id = IntegerField(min_value=1, required=False, validators=[
         PresentInDatasetValidator(Student, 'id')
@@ -76,7 +88,10 @@ class StudentSerializer(ModelSerializer):
     birthdate = DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
 
     fullname = SerializerMethodField()
+<<<<<<< HEAD
 >>>>>>> master
+=======
+>>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
 
     class Meta:
             model = Student
@@ -99,6 +114,7 @@ class StudentSerializer(ModelSerializer):
 
         student_new = Student.objects.create(
             milgroup=milgroup, program=program, status=status,
+<<<<<<< HEAD
             **validated_data)
 
         return student_new
@@ -115,6 +131,8 @@ class StudentSerializer(ModelSerializer):
 <<<<<<< HEAD
         student_new = Student.objects.create(
             milgroup=milgroup, program=program,
+=======
+>>>>>>> 5793edcdc9906c9f7fdc4a00b445b08a5b2963ec
             **validated_data)
 
         return student_new
