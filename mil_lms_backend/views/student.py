@@ -16,11 +16,10 @@ from rest_framework.views import APIView
 
 from rest_framework.status import (
     HTTP_200_OK,
-    HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
 )
 
-from mil_lms_backend.serializers import StudentSerializer
+from mil_lms_backend.serializers import StudentSerializer, StudentGetQuerySerializer
 from mil_lms_backend.models import Student
 
 
@@ -28,20 +27,30 @@ from mil_lms_backend.models import Student
 class StudentView(APIView):
     def get(self, request: Request) -> Response:
         """
+        Get student or students
         GET syntax examples:
-        .../students/
-        .../students/?id=3
-        .../students/?milgroup=1234&name=Ivan
+        .../student/
+        .../student/?id=3
+        .../student/?milgroup=1234&name=Ivan
         :param request:
         :return:
         """
+        # check query params
+        query_params = StudentGetQuerySerializer(data=request.query_params)
+        if not query_params.is_valid():
+            return Response({'code': HTTP_400_BAD_REQUEST * 100, 
+                             'message': query_params.errors},
+                            status=HTTP_400_BAD_REQUEST)
+            
         students = Student.objects.all()
-
+        
         # get by id
         if 'id' in request.query_params:
             student = students.get(id=request.query_params['id'])
             student = StudentSerializer(student)
-            return Response({'code': HTTP_200_OK * 100, 'students': student.data}, status=HTTP_200_OK)
+            return Response({'code': HTTP_200_OK * 100, 
+                             'students': student.data}, 
+                            status=HTTP_200_OK)
 
         # filter milgroup
         if 'milgroup' in request.query_params:
@@ -59,18 +68,47 @@ class StudentView(APIView):
         students = StudentSerializer(students, many=True)
         return Response({'code': HTTP_200_OK * 100, 'students': students.data}, status=HTTP_200_OK)
 
-    def post(self, request: Request) -> Response:
+    def put(self, request: Request) -> Response:
         """
-        POST function - data is given via 'data' from POST request (not query!)
+        Create new student
+        PUT function - data is given via 'data' from PUT request (not query!)
         :param request:
         :return:
         """
         student = StudentSerializer(data=request.data)
-        if student.is_valid(raise_exception=True):
+        if student.is_valid():
             student = student.save()
-            return Response({'code': HTTP_201_CREATED * 100,
+            return Response({'code': HTTP_200_OK * 100,
                              'message': f'Student with id {student.id} successfully created'},
-                            status=HTTP_201_CREATED)
+                            status=HTTP_200_OK)
+        else:
+            return Response({'code': HTTP_400_BAD_REQUEST * 100,
+                             'message': student.errors},
+                            status=HTTP_400_BAD_REQUEST)
+
+    def post(self, request: Request) -> Response:
+        """
+        Modify existing student
+        POST function - data is given via 'data' from POST request (not query!)
+        :param request:
+        :return:
+        """
+        existing_student = Student.objects.filter(id=request.data['id'])
+        if existing_student.exists():
+            student_ser = StudentSerializer(data=request.data)
+            if student_ser.is_valid():
+                student_ser.update(instance=existing_student, validated_data=request.data)
+                return Response({'code': HTTP_200_OK * 100,
+                                 'message': f'Student with id {request.data["id"]} successfully modified'},
+                                status=HTTP_200_OK)
+            else:
+                return Response({'code': HTTP_400_BAD_REQUEST * 100,
+                                 'message': student_ser.errors},
+                                status=HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'code': HTTP_400_BAD_REQUEST * 100,
+                             'message': f'Student with id {request.data["id"]} does not exist in this database'},
+                            status=HTTP_400_BAD_REQUEST)
 
     def delete(self, request: Request) -> Response:
         """

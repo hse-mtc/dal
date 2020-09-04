@@ -1,14 +1,18 @@
-# pull official base image
-FROM python
+# Pull official base image
+FROM python:3.8.5
+RUN pip install pipenv
 
-# set environment variables
+# Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV DOCKER 1
 
-# set work directory
-COPY . /code
-WORKDIR /code
+# Set working directory
+WORKDIR /dms
 
-# install dependencies
-RUN pip install pipenv
-RUN pipenv install --system --deploy --ignore-pipfile
+# Install dependencies using cache for faster build
+COPY Pipfile Pipfile.lock ./
+RUN pipenv install --system --deploy
+
+# Copy everything else
+ADD . .
