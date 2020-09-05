@@ -1,5 +1,3 @@
-# coding=utf-8
-
 from django.db import IntegrityError
 from django.db.models import Value
 from django.db.models.functions import (

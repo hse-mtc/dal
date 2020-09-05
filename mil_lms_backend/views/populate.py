@@ -1,5 +1,3 @@
-# coding=utf-8
-
 import typing as tp
 
 from rest_framework.request import Request
