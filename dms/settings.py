@@ -19,8 +19,8 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Read `ROOT/.env` file to `os.environ`
-if not os.environ.get("DOCKER"):
-    environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+ENV_FILE = ".env" if not os.environ.get("DOCKER") else ".env.docker"
+environ.Env.read_env(os.path.join(BASE_DIR, ENV_FILE))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
