@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function getPublishPlaces(params) {
   return request({
-    url: '/published_places',
+    url: '/publishers/',
     method: 'get',
     params
   })
