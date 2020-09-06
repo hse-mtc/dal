@@ -202,8 +202,11 @@ def get_file(request: Request) -> HttpResponse:
     """
 
     doc = Document.objects.all()
+    print(f"{doc.get(id=request.query_params.get('id')) = }")
     f = doc.get(pk=request.query_params.get("id")).file
+    print(f"{f = }")
     filename = f.name.split("/")[-1]
+    print(f"{filename = }")
 
     with open(f.name, "rb") as content:
         response = HttpResponse(content, content_type="text/plain")
@@ -425,10 +428,15 @@ def authors(request):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def publishers(request: Request) -> Response:
-    return Response({
-        "code": HTTP_200_OK * 100,
-        "data": Publisher.objects.annotate(value=F("name")).values("value", "id"),
-    }, status=HTTP_200_OK)
+    return Response(
+        {
+            "code":
+                HTTP_200_OK * 100,
+            "data":
+                Publisher.objects.annotate(value=F("name")).values(
+                    "value", "id"),
+        },
+        status=HTTP_200_OK)
 
 
 @csrf_exempt
