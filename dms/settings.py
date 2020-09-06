@@ -137,8 +137,10 @@ USE_TZ = True
 
 # Rest configurations
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("backend.auth.TokenAuthSupportQueryString",),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("backend.auth."
+                                       "TokenAuthSupportQueryString",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions."
+                                   "IsAuthenticated",),
 }
 
 # Static files (CSS, JavaScript, Images)
