@@ -12,7 +12,6 @@ yapf = "*"
 [packages]
 django = "*"
 django-cors-headers = "*"
-django-environ = "*"
 django-taggit = "*"
 djangorestframework = "*"
 dj-database-url = "*"

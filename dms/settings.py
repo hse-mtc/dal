@@ -12,18 +12,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 
-import environ
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Read `ROOT/.env` file to `os.environ`
-ENV_FILE = ".env" if not os.environ.get("DOCKER") else ".env.docker"
-environ.Env.read_env(os.path.join(BASE_DIR, ENV_FILE))
-
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ["DMS_SECRET_KEY"]
@@ -36,16 +31,23 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    # Django default apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # Addons
     "taggit",
     "corsheaders",
+
+    # REST framework
     "rest_framework",
     "rest_framework.authtoken",
+
+    # DMS apps
     "backend",
     "mil_lms_backend",
 ]
@@ -84,8 +86,12 @@ WSGI_APPLICATION = "dms.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DATABASES = {
-    "default": {
+DATABASES = {}
+
+if os.environ.get("USE_HEROKU_DATABASE") is not None:
+    DATABASES["default"] = dj_database_url.config(conn_max_age=500)
+else:
+    DATABASES["default"] = {
         "ENGINE": "django.db.backends.postgresql",
         "HOST": os.environ["POSTGRES_HOST"],
         "PORT": os.environ["POSTGRES_PORT"],
@@ -93,30 +99,26 @@ DATABASES = {
         "USER": os.environ["POSTGRES_USER"],
         "PASSWORD": os.environ["POSTGRES_PASSWORD"],
     }
-}
-
-if os.environ.get("USE_HEROKU_DATABASE") is not None:
-    DATABASES["default"] = dj_database_url.config(conn_max_age=500)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME":
-            "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation."
+                "UserAttributeSimilarityValidator",
     },
     {
-        "NAME":
-            "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation."
+                "MinimumLengthValidator",
     },
     {
-        "NAME":
-            "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation."
+                "CommonPasswordValidator",
     },
     {
-        "NAME":
-            "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation."
+                "NumericPasswordValidator",
     },
 ]
 
@@ -135,10 +137,8 @@ USE_TZ = True
 
 # Rest configurations
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES":
-        ("backend.auth.TokenAuthSupportQueryString",),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",
-                                  ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("backend.auth.TokenAuthSupportQueryString",),
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
 # Static files (CSS, JavaScript, Images)
