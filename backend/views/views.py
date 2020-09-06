@@ -424,19 +424,11 @@ def authors(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def published_places(request: Request) -> Response:
-    return Response(
-        {
-            "code":
-                HTTP_200_OK * 100,
-            "data":
-                Publisher.objects.annotate(value=F("name"),).values(
-                    "value",
-                    "id",
-                ),
-        },
-        status=HTTP_200_OK,
-    )
+def publishers(request: Request) -> Response:
+    return Response({
+        "code": HTTP_200_OK * 100,
+        "data": Publisher.objects.annotate(value=F("name")).values("value", "id"),
+    }, status=HTTP_200_OK)
 
 
 @csrf_exempt
