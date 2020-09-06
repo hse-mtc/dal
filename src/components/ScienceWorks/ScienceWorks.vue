@@ -74,7 +74,7 @@
   import Documents from '../Documents/Documents'
   import { FunctionalCalendar } from 'vue-functional-calendar'
   import AddModalWindow from "../AddModalWindow/AddModalWindow";
-  import {getPaperCategories, deletePaperCategories} from "../../api/paper_сategories";
+  import {getPaperCategories, deletePaperCategories} from "../../api/paper_categories";
   import AddCategoryModalWindow from "../AddCategoryModalWindow/AddCategoryModalWindow";
   import EventBus from "../EventBus";
 

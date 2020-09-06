@@ -14,7 +14,7 @@
 
 <script>
     import EventBus from '../EventBus';
-    import {addPaperCategories} from "../../api/paper_сategories";
+    import {addPaperCategories} from "../../api/paper_categories";
 
     export default {
         name: "AddCategoryModalWindow",
