@@ -2,7 +2,7 @@ import random
 
 import typing as tp
 
-from django.core.files import File
+from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.views.decorators.csrf import csrf_exempt
@@ -246,11 +246,11 @@ def create_documents(
 
     random.seed(11)
 
-    for _ in range(25):
+    for i in range(25):
         document, is_created = Document.objects.get_or_create(
             title=random.choice(document_titles),
             category=random.choice(categories),
-            file=File(open(__file__)),
+            file=ContentFile("some content here", name=f"document_id_{i}.txt"),
         )
 
         if not is_created:
