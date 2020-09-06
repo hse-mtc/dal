@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     # Addons
     "taggit",
     "corsheaders",
+    "drf_yasg",
 
     # REST framework
     "rest_framework",
