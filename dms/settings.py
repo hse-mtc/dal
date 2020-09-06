@@ -166,3 +166,7 @@ CORS_ALLOW_METHODS = [
 
 # TAGGIT configuration
 TAGGIT_CASE_INSENSITIVE = True
+
+# Heroku Swagger redirection for requests ferching
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
