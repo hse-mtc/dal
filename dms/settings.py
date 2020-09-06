@@ -167,6 +167,9 @@ CORS_ALLOW_METHODS = [
 # TAGGIT configuration
 TAGGIT_CASE_INSENSITIVE = True
 
-# Heroku Swagger redirection for requests ferching
+# Heroku Swagger redirection for requests fetching
+# FIXME(Lev): Swagger UI on Heroku sends requests to API via `http` protocol,
+#             but app is running on `https`. Google says that settings below
+#             will fix it, although I have no idea how it works.
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
