@@ -37,12 +37,14 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
 
     # Addons
     "taggit",
     "corsheaders",
     "drf_yasg",
+    "debug_toolbar",
 
     # REST framework
     "rest_framework",
@@ -63,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "dms.urls"
@@ -70,7 +73,7 @@ ROOT_URLCONF = "dms.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["dist"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -145,12 +148,11 @@ REST_FRAMEWORK = {
 }
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
+# https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-
-#  Add configuration for static files storage using whitenoise
+STATIC_ROOT = os.path.join(BASE_DIR, "dist", "static")
+STATICFILES_DIRS = []
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # CORS configuration
@@ -168,8 +170,14 @@ CORS_ALLOW_METHODS = [
 TAGGIT_CASE_INSENSITIVE = True
 
 # Heroku Swagger redirection for requests fetching
+# pylint: disable=fixme
 # FIXME(Lev): Swagger UI on Heroku sends requests to API via `http` protocol,
 #             but app is running on `https`. Google says that settings below
 #             will fix it, although I have no idea how it works.
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Debug Toolbar settings
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
