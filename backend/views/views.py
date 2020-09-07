@@ -44,7 +44,8 @@ from backend.models import (
 class CategoryView(APIView):
 
     @csrf_exempt
-    def put(self, request: Request) -> Response:  # pylint: disable=no-self-use
+    def put(self, request: Request) -> Response:
+        # pylint: disable=no-self-use
         if "title" not in request.data:
             return Response({"error": "No title provided"},
                             status=HTTP_400_BAD_REQUEST)
@@ -61,7 +62,7 @@ class CategoryView(APIView):
         )
 
     @csrf_exempt
-    def get(self, request: Request) -> Response:  # pylint: disable=no-self-use
+    def get(self, request: Request) -> Response:
         data = Category.objects.values("id", "title")
 
         return Response(
@@ -73,7 +74,8 @@ class CategoryView(APIView):
         )
 
     @csrf_exempt
-    def delete(self, request: Request) -> Response:  # pylint: disable=no-self-use
+    def delete(self, request: Request) -> Response:
+        # pylint: disable=no-self-use
         category = Category.objects.get(pk=request.query_params.get("id"))
 
         if Document.objects.filter(category=category).exists():
