@@ -1,0 +1,68 @@
+.topics {
+  font-size: 18px;
+  font-weight: lighter;
+  .topic {
+    padding-top: 20px;
+    &-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    &-download-all {
+      font-size: 14px;
+      color: #0C4B9A;
+      cursor: pointer;
+    }
+    &-content {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    &-files {
+      width: 100%;
+      .files {
+        display: flex;
+        width: 100%;
+        flex-wrap: wrap;
+        .file {
+          min-width: 49%;
+          margin: 10px 16px 10px 0;
+          border: 1px solid #E5E5E5;
+          border-radius: 12px;
+          position: relative;
+          display: flex;
+          align-items: center;
+          &-icon {
+            margin: 30px 15px;
+          }
+          &-title {
+
+          }
+          &-kebab{
+            position: absolute;
+            top: 14px;
+            right: 14px;
+          }
+          &:nth-child(2n) {
+            margin-right: 0;
+          }
+        }
+      }
+      margin-bottom: 20px;
+      .file-section {
+        &-title {
+          cursor: pointer;
+          font-size: 14px;
+          color: #0C4B9A;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 5px;
+          border-bottom: 1px solid #E5E5E5;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+}
+
+

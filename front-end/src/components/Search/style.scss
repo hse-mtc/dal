@@ -1,0 +1,32 @@
+.mysearch {
+  border-bottom: 1px solid #A7A7AB;
+  align-items: center;
+  .words-search {
+    width: 100%;
+    background-color: inherit;
+    border:none;
+    padding-bottom: 10px;
+   &:focus {
+     outline: none;
+   }
+  }
+  .search-icon {
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    margin-bottom: 10px;
+  }
+  .delete-cross {
+    display: none;
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
+  &:hover {
+    .delete-cross {
+      display: flex;
+    }
+  }
+}

@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - VUE_APP_LOCAL_DEPLOYMENT=true
+    command: npm run start
+    ports:
+      - "8080:8080"

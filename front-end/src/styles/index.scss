@@ -1,0 +1,141 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import url('https://cdn.jsdelivr.net/npm/@voerro/vue-tagsinput@2.0.2/dist/style.css');
+
+@font-face {
+  font-family: "ProximaNovaRegular";
+  src: url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.eot");
+  src: url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.eot?#iefix")format("embedded-opentype"),
+  url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.woff") format("woff"),
+  url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* font-family: "ProximaNovaBold"; */
+@font-face {
+  font-family: "ProximaNovaBold";
+  src: url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.eot");
+  src: url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.eot?#iefix")format("embedded-opentype"),
+  url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.woff") format("woff"),
+  url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* font-family: "ProximaNovaBlack"; */
+@font-face {
+  font-family: "ProximaNovaBlack";
+  src: url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.eot");
+  src: url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.eot?#iefix")format("embedded-opentype"),
+  url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.woff") format("woff"),
+  url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.ttf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+.el-menu-item.is-active {
+  color: white !important;
+  font-size: 14px !important;
+  background-color: $menuHover !important;
+}
+
+.menu-wrapper a{
+  text-decoration: none !important;
+}
+
+.router-link-exact-active .router-link-active li{
+  background-color: #384250 !important;
+}
+
+// main-container global css
+.app-container {
+  //padding: 20px;
+}
+
+.vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day span.vfc-span-day.vfc-marked {
+  background-color: #0050B2 !important;
+}
+//
+//.vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day .vfc-base-start, .vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day .vfc-base-end {
+//  background: #6074FB !important;
+//}
+//
+//.vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day span.vfc-span-day.vfc-marked:before:not(.vfc-base-start) {
+//  background-color: #6074FB !important;
+//}
+//
+//.vfc-span-day vfc-marked vfc-hover:before {
+//  background-color: #6074FB !important;
+
+.vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day span.vfc-span-day.vfc-marked:before {
+  background-color: #6074FB;
+}
+
+.vfc-styles-conditional-class .vfc-main-container {
+  box-shadow: none !important;
+  webkit-box-shadow: none !important;
+}
+
+.semibold {
+  font-family: "ProximaNovaBold";
+}
