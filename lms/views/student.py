@@ -17,8 +17,8 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
-from mil_lms_backend.serializers import StudentSerializer, StudentGetQuerySerializer
-from mil_lms_backend.models import Student
+from lms.serializers import StudentSerializer, StudentGetQuerySerializer
+from lms.models import Student
 
 
 @permission_classes((AllowAny,))

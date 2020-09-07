@@ -27,7 +27,7 @@ Make a copy of [`.env.example`](../.env.example) and save it to `.env`.
 
 1. Navigate to the project root:
    ```shell script
-   cd dms-back
+   cd backend
    ```
 
 1. Install Python 3.8.5:
@@ -60,11 +60,10 @@ Make a copy of [`.env.example`](../.env.example) and save it to `.env`.
    ...
    ```
 
-1. From the project's root, export variables from `.env` file:
+1. From the project's root, reload `pipenv` shell:
    ```shell script
-   set -o allexport
-   source .env
-   set +o allexport
+   exit
+   pipenv shell
    ```
 
 1. Create database:

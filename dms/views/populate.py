@@ -16,7 +16,7 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from backend.models import (
+from dms.models import (
     Author,
     Category,
     Document,

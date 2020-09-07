@@ -5,7 +5,7 @@ for setting up the environment have been followed.
 
 Navigate to the project root:
 ```shell script
-cd dms-back
+cd backend
 ```
 
 ## Docker
@@ -44,5 +44,5 @@ python manage.py migrate
 
 Run the server:
 ```shell script
-python manage.py runserver localhost:$DMS_PORT
+python manage.py runserver localhost:$DAL_PORT
 ```

@@ -19,11 +19,11 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
-from mil_lms_backend.serializers import (
+from lms.serializers import (
     AbsenceSerializer,
     AbsenceGetQuerySerializer,
 )
-from mil_lms_backend.models import Absence
+from lms.models import Absence
 
 
 @permission_classes((AllowAny,))

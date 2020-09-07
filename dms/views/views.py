@@ -30,7 +30,7 @@ from rest_framework.status import (
     HTTP_412_PRECONDITION_FAILED,
 )
 
-from backend.models import (
+from dms.models import (
     Author,
     Document,
     Publisher,

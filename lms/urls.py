@@ -1,6 +1,6 @@
 from django.urls import path
-from mil_lms_backend.views.student import StudentView
-from mil_lms_backend.views.absence import AbsenceView
+from lms.views.student import StudentView
+from lms.views.absence import AbsenceView
 
 urlpatterns = [
     path('student/', StudentView.as_view()),

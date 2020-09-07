@@ -8,7 +8,7 @@ ENV PYTHONUNBUFFERED 1
 ENV DOCKER 1
 
 # Set working directory
-WORKDIR /dms
+WORKDIR /dal
 
 # Install dependencies using cache for faster build
 COPY Pipfile Pipfile.lock ./
