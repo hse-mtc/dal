@@ -7,24 +7,31 @@ jobs:
     name: Code style checks
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - run: cd back-end
-      - run: scripts/run-yapf.sh
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install packages
+        run: pip install pipenv && pipenv install --system --deploy --dev
+      - name: Check code style
+        run: cd back-end && scripts/run-yapf.sh
 
   lint:
     name: Linter checks
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - run: cd back-end
-      - run: scripts/run-pylint.sh
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install packages
+        run: pip install pipenv && pipenv install --system --deploy --dev
+      - name: Lint code
+        run: cd back-end && scripts/run-pylint.sh
 
   tests:
     name: Run tests
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - run: cd back-end
-      - run: pip install pipenv
-      - run: pipenv install --system --deploy --dev
-      - run: pytest
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install packages
+        run: pip install pipenv && pipenv install --system --deploy --dev
+      - name: Run pytest tests
+        run: cd back-end && pytest
