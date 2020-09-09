@@ -3,19 +3,17 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+const baseURL = (() => {
+  let host = process.env.VUE_APP_BACK_END_HOST || "localhost"
+  let port = process.env.VUE_APP_BACK_END_PORT || "9090"
+  return "http://" + host + ":" + port + "/api"
+})();
+
 // create an axios instance
 const service = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // baseURL: "http://192.168.0.112:12345/api", // url = base url + request url
-  baseURL: process.env.VUE_APP_MODE === "local"
-           ? "http://0.0.0.0:8064/api"
-           : "https://military-dms-back.herokuapp.com/api",
-  // baseURL: process.env.VUE_APP_LOCAL_DEPLOYMENT === "true"
-  //          ? "http://localhost:8000/api"
-  //          : "http://172.20.10.3:8000/api",
-
+  baseURL: baseURL,
+  timeout: 10000, // request timeout
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 10000 // request timeout
 })
 
 // request interceptor
