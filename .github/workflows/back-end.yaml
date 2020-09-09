@@ -16,9 +16,9 @@ jobs:
       - name: Install pipenv
         uses: dschep/install-pipenv-action@v1
       - name: Install packages
-        run:  pipenv install --system --deploy --dev
+        run:  cd back-end && pipenv install --system --deploy --dev
       - name: Check code style
-        run: cd back-end && scripts/run-yapf.sh
+        run:  cd back-end && scripts/run-yapf.sh
 
   lint:
     name: Linter checks
@@ -33,9 +33,9 @@ jobs:
       - name: Install pipenv
         uses: dschep/install-pipenv-action@v1
       - name: Install packages
-        run:  pipenv install --system --deploy --dev
+        run:  cd back-end && pipenv install --system --deploy --dev
       - name: Lint code
-        run: cd back-end && scripts/run-pylint.sh
+        run:  cd back-end && scripts/run-pylint.sh
 
   tests:
     name: Run tests
@@ -50,6 +50,6 @@ jobs:
       - name: Install pipenv
         uses: dschep/install-pipenv-action@v1
       - name: Install packages
-        run:  pipenv install --system --deploy --dev
+        run:  cd back-end && pipenv install --system --deploy --dev
       - name: Run pytest tests
-        run: cd back-end && pytest
+        run:  cd back-end && pytest
