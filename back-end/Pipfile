@@ -11,7 +11,6 @@ pytest-django = "*"
 yapf = "*"
 
 [packages]
-dj-database-url = "*"
 django = "*"
 django-cors-headers = "*"
 django-taggit = "*"

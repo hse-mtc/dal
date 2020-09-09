@@ -9,10 +9,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
+import sys
 
 from pathlib import Path
-
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,9 +87,7 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 DATABASES = {}
 
-if os.environ.get("USE_HEROKU_DATABASE") is not None:
-    DATABASES["default"] = dj_database_url.config(conn_max_age=500)
-else:
+if os.environ.get("POSTGRES_HOST"):
     DATABASES["default"] = {
         "ENGINE": "django.db.backends.postgresql",
         "HOST": os.environ["POSTGRES_HOST"],
@@ -98,6 +95,12 @@ else:
         "NAME": os.environ["POSTGRES_DB"],
         "USER": os.environ["POSTGRES_USER"],
         "PASSWORD": os.environ["POSTGRES_PASSWORD"],
+    }
+else:
+    print("Using SQLite3 database instead of PostgreSQL", file=sys.stderr)
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 
 # Password validation
