@@ -13,8 +13,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.8.5"
-      - name: Install packages
+      - name: Install pipenv
         uses: dschep/install-pipenv-action@v1
+      - name: Install packages
         run:  pipenv install --system --deploy --dev
       - name: Check code style
         run: cd back-end && scripts/run-yapf.sh
@@ -29,8 +30,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.8.5"
-      - name: Install packages
+      - name: Install pipenv
         uses: dschep/install-pipenv-action@v1
+      - name: Install packages
         run:  pipenv install --system --deploy --dev
       - name: Lint code
         run: cd back-end && scripts/run-pylint.sh
@@ -45,8 +47,9 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.8.5"
-      - name: Install packages
+      - name: Install pipenv
         uses: dschep/install-pipenv-action@v1
+      - name: Install packages
         run:  pipenv install --system --deploy --dev
       - name: Run pytest tests
         run: cd back-end && pytest
