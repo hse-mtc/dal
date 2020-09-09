@@ -18,7 +18,7 @@ jobs:
       - name: Install packages
         run:  cd back-end && pipenv install --system --deploy --dev
       - name: Print Python version
-        run: pipenv shell && python --version
+        run:  cd back-end && pipenv shell && python --version
       - name: Check code style
         run:  cd back-end && scripts/run-yapf.sh
 
