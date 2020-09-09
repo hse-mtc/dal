@@ -1,22 +1,42 @@
-FROM node:lts-alpine
+### Step 1.
+## Build front-end app.
 
-ARG VUE_APP_LOCAL_DEPLOYMENT
-ENV VUE_APP_LOCAL_DEPLOYMENT $VUE_APP_LOCAL_DEPLOYMENT
+# Latest Node image
+FROM node:14.9.0-alpine AS builder
 
-# install simple http server for serving static content
-RUN npm install -g express
+# Set working directory
+WORKDIR /front-end
 
-# make the 'app' folder the current working directory
-WORKDIR /code
+# Copy package[-lock].json
+COPY front-end/package*.json ./
 
-# copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
+# Install packages
+RUN npm install --loglevel=error
 
-# install project dependencies
-RUN npm install
+# Copy everything else
+ADD front-end .
 
-# copy project files and folders to the current working directory
-COPY . .
+# Reference build arguments
+ARG VUE_APP_BACK_END_HOST
+ARG VUE_APP_BACK_END_PORT
 
-# build app for production with minification
-RUN npm run build:prod
+# Build front-end in directory `/front-end/dist`
+RUN npm run build:production --loglevel=error
+
+### Step 2.
+## Serve build.
+
+# Latest Nginx image
+FROM nginx:stable-alpine
+
+# Install bash for tools
+RUN apk add --no-cache bash
+
+# Copy tools
+COPY tools tools
+
+# Copy built front-end app
+COPY --from=builder /front-end/dist /usr/share/nginx/html
+
+# Expose port
+EXPOSE 80
