@@ -8,12 +8,13 @@ services:
       - .env
 
   back-end:
+    container_name: back-end
     build:
       context: .
-      dockerfile: back-end/Dockerfile
+      dockerfile: back-end/docker/Dockerfile
     env_file:
       - .env
-      - back-end/.env
+      - back-end/docker/.env
     depends_on:
       - postgres
     ports:
@@ -26,7 +27,7 @@ services:
     restart: always
     # Map directories with code for hot reloading
     volumes:
-      - ./back-end/dal:/back-end/dal
+      - ./back-end/conf:/back-end/conf
       - ./back-end/dms:/back-end/dms
       - ./back-end/lms:/back-end/lms
 
