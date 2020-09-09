@@ -6,10 +6,9 @@ from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
-from dal.settings import DEBUG
+from conf import settings
 from dms.views import populate
 from lms.views.populate import lms_populate
-
 
 SchemaView = get_schema_view(
     openapi.Info(
@@ -36,6 +35,6 @@ urlpatterns = [
     path("lms_populate/", lms_populate),
 ]
 
-if DEBUG:
+if settings.DEBUG:
     import debug_toolbar
     urlpatterns.append(path("__debug__/", include(debug_toolbar.urls)))

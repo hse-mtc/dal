@@ -34,7 +34,7 @@ local environments are highly discouraged and will not be supported.
 1. Open command palette and choose `Attach to running container`:
    ![attach](images/attach.png)
    
-1. Select `dal_back-end` container.
+1. Select `back-end` container.
 
 ## PyCharm
 

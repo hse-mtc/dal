@@ -2,4 +2,4 @@
 
 pylint \
   --verbose \
-  dal dms mil_lms_backend
+  conf dms lms

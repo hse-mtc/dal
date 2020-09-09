@@ -19,4 +19,4 @@ yapf \
   --exclude="*migrations*" \
   --verbose \
   ${inplace:- "--diff"} \
-  dal dms mil_lms_backend
+  conf dms lms

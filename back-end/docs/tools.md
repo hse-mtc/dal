@@ -22,7 +22,7 @@ Code linter.
 Lint code for entire project using [`scripts/run-pylint.sh`](../scripts/run-pylint.sh)
 or manually specify directories and modules/files:
 ```shell script
-pylint dal dms/models.py
+pylint conf dms/models.py
 ```
 
 In order to display a help message for the given message id pass it to `--help-msg` option:
