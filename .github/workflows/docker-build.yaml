@@ -1,0 +1,11 @@
+name: Docker Build
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docker-compose services
+        run: docker-compose build
