@@ -10,7 +10,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Install packages
-        run: pip install pipenv && pipenv install --system --deploy --dev
+        run: |
+          sudo apt-get -y install python3
+          pip3 install pipenv && pipenv install --system --deploy --dev
       - name: Check code style
         run: cd back-end && scripts/run-yapf.sh
 
@@ -21,7 +23,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Install packages
-        run: pip install pipenv && pipenv install --system --deploy --dev
+        run: |
+          sudo apt-get -y install python3
+          pip3 install pipenv && pipenv install --system --deploy --dev
       - name: Lint code
         run: cd back-end && scripts/run-pylint.sh
 
@@ -32,6 +36,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Install packages
-        run: pip install pipenv && pipenv install --system --deploy --dev
+        run: |
+          sudo apt-get -y install python3
+          pip3 install pipenv && pipenv install --system --deploy --dev
       - name: Run pytest tests
         run: cd back-end && pytest
