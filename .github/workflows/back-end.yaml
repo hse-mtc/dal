@@ -54,4 +54,4 @@ jobs:
       - name: Install packages
         run:  cd back-end && pipenv install --system --deploy --dev
       - name: Run pytest tests
-        run:  cd back-end && pytest
+        run:  cd back-end && pipenv run pytest
