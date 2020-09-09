@@ -1,0 +1,31 @@
+name: Back end
+
+on: [push]
+
+jobs:
+  code-style:
+    name: Code style checks
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd back-end
+      - run: scripts/run-yapf.sh
+
+  lint:
+    name: Linter checks
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd back-end
+      - run: scripts/run-pylint.sh
+
+  tests:
+    name: Run tests
+    runs-on: ubuntu-20.04
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      - run: cd back-end
+      - run: pip install pipenv
+      - run: pipenv install --system --deploy --dev
+      - run: pytest
