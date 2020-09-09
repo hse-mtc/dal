@@ -1,0 +1,25 @@
+### Project ###
+## Directories
+.git
+*.idea
+
+## Files
+.dockerignore
+.gitignore
+docker-compose.yml
+
+### Back end ###
+## Directories
+back-end/docs
+
+## Files
+back-end/readme.md
+back-end/Dockerfile
+
+### Front end ###
+## Directories
+front-end/dist
+front-end/node_modules
+
+## Files
+front-end/Dockerfile
