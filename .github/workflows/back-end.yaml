@@ -22,7 +22,6 @@ jobs:
   tests:
     name: Run tests
     runs-on: ubuntu-20.04
-    needs: build
     steps:
       - uses: actions/checkout@v2
       - run: cd back-end
