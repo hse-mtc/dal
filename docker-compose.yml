@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:12.4-alpine
+    restart: always
+    env_file:
+      - .env
+
+  back-end:
+    build:
+      context: .
+      dockerfile: back-end/Dockerfile
+    env_file:
+      - .env
+      - back-end/.env
+    depends_on:
+      - postgres
+    ports:
+      - $BACK_END_PORT:$BACK_END_PORT
+    command: sh -c "
+        tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:$BACK_END_PORT
+      "
+    restart: always
+    # Map directories with code for hot reloading
+    volumes:
+      - ./back-end/dal:/back-end/dal
+      - ./back-end/dms:/back-end/dms
+      - ./back-end/lms:/back-end/lms
+
+  front-end:
+    build:
+      context: .
+      dockerfile: front-end/Dockerfile
+      args:
+        - VUE_APP_BACK_END_HOST=$BACK_END_HOST
+        - VUE_APP_BACK_END_PORT=$BACK_END_PORT
+    env_file:
+      - .env
+    depends_on:
+      - back-end
+    ports:
+      - $FRONT_END_PORT:80
+    command: sh -c "
+        tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
+        nginx -g \"daemon off;\"
+      "
+    restart: always
