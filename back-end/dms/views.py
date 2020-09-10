@@ -10,22 +10,27 @@ from taggit.models import Tag
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Max
-from django.db.models import Q, F
-from django.db.models.functions import ExtractYear
 from django.db.models.deletion import RestrictedError
+from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import (
+    Max,
+    Q,
+    F,
+)
 
-from rest_framework import viewsets
 from rest_framework import permissions
-
+from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+)
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
@@ -34,7 +39,10 @@ from rest_framework.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from dms.serializers import (AuthorSerializer, CategorySerializer)
+from dms.serializers import (
+    AuthorSerializer,
+    CategorySerializer,
+)
 from dms.models import (
     Author,
     Document,
