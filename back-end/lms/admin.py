@@ -2,19 +2,37 @@ from django.contrib import admin
 
 from .models import (
     # Reference models
-    AbsenceType, ActivityType, ControlForm, Course, EncouragementType,
-    LessonType, Milfaculty, Place, PunishmentType,
-    Rank, Skill, Status, Program, StudentPost, TeacherPost,
+    AbsenceType,
+    ActivityType,
+    ControlForm,
+    Course,
+    EncouragementType,
+    LessonType,
+    Milfaculty,
+    Place,
+    PunishmentType,
+    Rank,
+    Skill,
+    Status,
+    Program,
+    StudentPost,
+    TeacherPost,
 
     # Other models
     Milgroup,
-    Student, Teacher,
-    Absence, Activity, Encouragement, Lesson,
-    Mark, Punishment,
+    Student,
+    Teacher,
+    Absence,
+    Activity,
+    Encouragement,
+    Lesson,
+    Mark,
+    Punishment,
 
     # Models used for ManyToMany Relationships
-    LessonMilgroup, StudentStudentpost, StudentSkill
-)
+    LessonMilgroup,
+    StudentStudentpost,
+    StudentSkill)
 
 # Registering reference models
 admin.site.register(AbsenceType)
