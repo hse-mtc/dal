@@ -461,7 +461,7 @@ def delete_document(request: Request,) -> Response:
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def get_tags(request: Request,) -> Response:
+def tags(request: Request,) -> Response:
     return Response(
         {
             "code": HTTP_200_OK * 100,

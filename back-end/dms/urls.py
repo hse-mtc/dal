@@ -5,7 +5,7 @@ from dms.views import (
     delete_document,
     documents,
     get_file,
-    get_tags,
+    tags,
     info,
     login,
     logout,
@@ -18,11 +18,11 @@ from dms.views import (
 
 urlpatterns = [
     path("authors/", authors),
-    path("category/", CategoryView.as_view()),
+    path("categories/", CategoryView.as_view()),
     path("delete_document/", delete_document),
     path("documents/", documents),
     path("get_file/", get_file),
-    path("get_tags/", get_tags),
+    path("tags/", tags),
     path("publishers/", publishers),
     path("subject/", SubjectSectionView.as_view()),
     path("subjects/", subjects),
