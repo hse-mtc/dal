@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   main:
-    name: "Back end main jobs"
+    name: "Build, tests, style, lint"
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
