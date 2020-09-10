@@ -1,7 +1,9 @@
-from django.urls import path
+from django.urls import path, include
 
+from rest_framework import routers
+
+from dms import views
 from dms.views import (
-    authors,
     delete_document,
     documents,
     get_file,
@@ -11,14 +13,19 @@ from dms.views import (
     logout,
     publishers,
     subjects,
-    CategoryView,
     SubjectSectionView,
     UploadNirView,
 )
 
+router = routers.DefaultRouter()
+router.register(r"authors", views.AuthorViewSet)
+router.register(r"categories", views.CategoryViewSet)
+
 urlpatterns = [
-    path("authors/", authors),
-    path("categories/", CategoryView.as_view()),
+    # REST router
+    path("", include(router.urls)),
+
+    # Manual urls
     path("delete_document/", delete_document),
     path("documents/", documents),
     path("get_file/", get_file),
