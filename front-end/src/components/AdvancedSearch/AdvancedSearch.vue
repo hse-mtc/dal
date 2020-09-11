@@ -15,7 +15,8 @@
                         <el-option
                                 v-for="item in authors"
                                 :key="item.id"
-                                :value="`${item.last_name} ${item.first_name[0]}. ${item.patronymic[0]}`"
+                                :value="item.id"
+                                :label="`${item.last_name} ${item.first_name[0]}. ${item.patronymic[0]}`"
                         />
                     </el-select>
                 </el-col>
@@ -26,7 +27,8 @@
                         <el-option
                                 v-for="item in placings"
                                 :key="item.id"
-                                :value="item.name"
+                                :value="item.id"
+                                :label="item.name"
                         />
                     </el-select>
                 </el-col>

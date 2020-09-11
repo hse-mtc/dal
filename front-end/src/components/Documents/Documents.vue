@@ -27,7 +27,7 @@
                 {{ item.publication_date | moment }}
               </div>
               <div class="ml-5" style="color: #76767A">
-                <span v-for="(publisher, index) in item.publishers" :key="index">{{ publisher }}</span>
+                <span v-for="(publisher, index) in item.publishers" :key="index">{{ publisher }} </span>
               </div>
             </div>
             <div class="document-card-title">{{ item.title }}</div>
