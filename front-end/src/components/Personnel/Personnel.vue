@@ -4,7 +4,7 @@
 		<el-row class="pageTitle">
 			<h1>{{this.$route.meta.title}}</h1>
 		</el-row>
-		<el-tabs v-model="selectedSection" stretch>
+		<el-tabs v-model="selectedSection" @tab-click="onFilter" stretch>
 			<el-tab-pane name="students" label="Студенты">
 				<el-row class="filterRow" :gutter="20" style="margin-bottom: 15px">
 					<el-col :span="8">
@@ -50,11 +50,11 @@
 				</el-row>
 				<el-row class="table">
 					<el-table
-						height="600px"
+						max-height="600px"
 						:data="studentsData" 
 						:default-sort = "{prop: 'milgroup.milgroup', order: 'ascending'}" 
 						stripe>
-						<el-table-column width="350px" sortable show-overflow-tooltip
+						<el-table-column width="300px" sortable show-overflow-tooltip
 							prop="fullname"
 							label="ФИО">
 						</el-table-column>
@@ -91,7 +91,7 @@
 								type="danger"
 								@click="onDelete(scope.row.id)"></el-button>
 							</template>
-							</el-table-column>
+						</el-table-column>
 						</el-table>
 					</el-row>
 				</el-tab-pane>
@@ -127,13 +127,17 @@
 					</el-col>
 				</el-row>
 				<el-row class="table">
-					<el-table :data="teachersData">
+					<el-table 
+						max-height="600px"
+						:data="teachersData" 
+						:default-sort = "{prop: 'milgroup.milgroup', order: 'ascending'}" 
+						stripe>
 						<el-table-column width="400px"
-							prop="name"
+							prop="fullname"
 							label="ФИО">
 						</el-table-column>
 						<el-table-column
-							prop="mf"
+							prop="milfaculty"
 							label="Цикл">
 						</el-table-column>
 						<el-table-column
@@ -145,8 +149,22 @@
 							label="Должность">
 						</el-table-column>
 						<el-table-column
-							prop="mg"
+							prop="milgroup.milgroup"
 							label="Прикр. взвод">
+						</el-table-column>
+						<el-table-column
+							label="">
+							<template slot-scope="scope">
+								<el-button
+								size="mini"
+								icon="el-icon-edit"
+								@click="onEdit(scope.row)"></el-button>
+								<el-button
+								size="mini"
+								icon="el-icon-delete"
+								type="danger"
+								@click="onDelete(scope.row.id)"></el-button>
+							</template>
 						</el-table-column>
 					</el-table>
 				</el-row>
@@ -160,6 +178,7 @@
 
 <script>
 import { getStudent, deleteStudent } from '@/api/student'
+import { getTeacher, deleteTeacher } from '@/api/teacher'
 import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
 import { Message } from 'element-ui';
 
@@ -220,15 +239,27 @@ export default {
 			document.getElementById('main-container').classList.add('stop-scrolling')
 		},
 		onFilter(){
-			getStudent({ 
-				name: this.filterS.search, 
-				milgroup: this.filterS.milgroup,
-				status: this.filterS.status,
-			}).then(response => {
-				this.studentsData = response.students;
-			}).catch(() => {
-				Message('Ошибка получения списка студентов!');
-			})
+			if (this.selectedSection == 'students'){
+				getStudent({ 
+					name: this.filterS.search, 
+					milgroup: this.filterS.milgroup,
+					status: this.filterS.status,
+				}).then(response => {
+					this.studentsData = response.data.students;
+				}).catch(() => {
+					Message('Ошибка получения списка студентов!');
+				})
+			}
+			else if (this.selectedSection == 'teachers'){
+				getTeacher({ 
+					name: this.filterT.search, 
+					milfaculty: this.filterT.milfaculty,
+				}).then(response => {
+					this.teachersData = response.data.teachers;
+				}).catch(() => {
+					Message('Ошибка получения списка преподавателей!');
+				})
+			}
 		},
 		clearFilter(){
 			if (this.selectedSection == 'students'){
@@ -243,18 +274,34 @@ export default {
 			this.onFilter();
 		},
 		onDelete(id){
-			this.$confirm('Вы уверены, что хотите удалить студента?', 'Подтверждение', {
-				confirmButtonText: 'Да',
-				cancelButtonText: 'Отмена',
-				type: 'warning'
-			}).then(() => {
-				deleteStudent(id).then(() => {
-					this.fetchData();
-					this.$message.success('Студент удален.');
-				}).catch(() => {
-					this.$message.error('Ошибка при удалении.');  
+			if (this.selectedSection == 'students'){
+				this.$confirm('Вы уверены, что хотите удалить студента?', 'Подтверждение', {
+					confirmButtonText: 'Да',
+					cancelButtonText: 'Отмена',
+					type: 'warning'
+				}).then(() => {
+					deleteStudent(id).then(() => {
+						this.onFilter();
+						this.$message.success('Студент удален.');
+					}).catch(() => {
+						this.$message.error('Ошибка при удалении.');  
+					});
 				});
-			});
+			}
+			else if (this.selectedSection == 'teachers'){
+				this.$confirm('Вы уверены, что хотите удалить преподавателя?', 'Подтверждение', {
+					confirmButtonText: 'Да',
+					cancelButtonText: 'Отмена',
+					type: 'warning'
+				}).then(() => {
+					deleteTeacher(id).then(() => {
+						this.onFilter();
+						this.$message.success('Преподаватель удален.');
+					}).catch(() => {
+						this.$message.error('Ошибка при удалении.');  
+					});
+				});
+			}
 		},
 		onEdit(row){
 			this.editStudent = row;

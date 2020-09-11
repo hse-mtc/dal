@@ -88,7 +88,7 @@
                             show-overflow-tooltip
                             label="ФИО"/>
                             <el-table-column
-                            prop="milgroup.milgroup"
+                            prop="studentid.milgroup.milgroup"
                             sortable
                             label="Взвод"/>
                             <el-table-column
@@ -451,7 +451,8 @@ export default {
                 name: this.filter.search,
                 milgroup: this.filter.mg
             }).then(response => {
-                this.absences = response.absences;
+                this.absences = response.data.absences;
+                console.log(this.absences);
             }).catch(() => {
                 Message('Ошибка получения пропусков!');
             });

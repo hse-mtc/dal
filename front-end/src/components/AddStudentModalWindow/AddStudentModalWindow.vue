@@ -26,7 +26,8 @@
             </el-form-item>
             
             <el-form-item label="Взвод" prop="milgroup">
-                <el-select v-model="form.milgroup" value-key="milgroup" placeholder="Выберите взвод">
+                <el-select v-model="form.milgroup" value-key="milgroup" placeholder="Выберите взвод"
+                style="display: block;">
                     <el-option
                         v-for="item in milgroups"
                         :key="item.milgroup"
@@ -38,7 +39,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="Образовательная программа" prop="program">
-                <el-select v-model="form.program" value-key="code" placeholder="Выберите программу">
+                <el-select v-model="form.program" value-key="code" placeholder="Выберите программу"
+                style="display: block;">
                     <el-option
                         v-for="item in programs"
                         :key="item.code"
@@ -69,8 +71,6 @@
 </template>
 
 <script>
-    import moment from 'moment'
-    import EventBus from '../EventBus';
 import { putStudent, postStudent } from '../../api/student';
 
     export default {
@@ -136,7 +136,6 @@ import { putStudent, postStudent } from '../../api/student';
                     if (valid){
                         if (this.student){
                             this.form['id'] = this.student.id;
-                            console.log("onSubmit -> this.form", JSON.stringify(this.form))
                             postStudent(this.form)
                             .then(() => {
                                 this.$message.success('Студент успешно изменен.');
