@@ -55,10 +55,24 @@ class AbsenceView(APIView):
             absence = AbsenceSerializer(absence)
             return Response({'students': absence.data}, status=HTTP_200_OK)
 
+        # filter by date
+        if 'date_from' in request.query_params:
+            absences = absences.filter(
+                date__gte=request.query_params['date_from'])
+
+        if 'date_to' in request.query_params:
+            absences = absences.filter(
+                date__lte=request.query_params['date_to'])
+
         # filter by studentid
         if 'studentid' in request.query_params:
             absences = absences.filter(
                 studentid=request.query_params['studentid'])
+
+        # filter by milgroup
+        if 'milgroup' in request.query_params:
+            absences = absences.filter(
+                studentid__milgroup__milgroup=request.query_params['milgroup'])
 
         # filter by name
         if 'name' in request.query_params:
@@ -68,14 +82,15 @@ class AbsenceView(APIView):
             absences = absences.filter(
                 search_name__contains=request.query_params['name'].lower())
 
-        # filter by date
-        if 'date' in request.query_params:
-            absences = absences.filter(date=request.query_params['date'])
-
         # filter by type
         if 'absenceType' in request.query_params:
             absences = absences.filter(
                 absenceType=request.query_params['absenceType'])
+
+        # filter by status
+        if 'absenceStatus' in request.query_params:
+            absences = absences.filter(
+                absenceStatus=request.query_params['absenceStatus'])
 
         absences = AbsenceSerializer(absences, many=True)
         return Response({'absences': absences.data}, status=HTTP_200_OK)
@@ -95,7 +110,7 @@ class AbsenceView(APIView):
                 "surname": "Кацевалов"
             },
             "reason": "Заболел",
-            "status": "1",
+            "absenceStatus": "Закрыт",
             "comment": "Болеть будет недолго"
         }
         :param request:
@@ -120,3 +135,25 @@ class AbsenceView(APIView):
                                'already exists. Please, modify existing record.'
                 },
                 status=HTTP_400_BAD_REQUEST)
+
+
+@permission_classes((AllowAny,))
+class AbsenceJournal(APIView):
+
+    @csrf_exempt
+    def get(self, request: Request) -> Response:
+        """
+        Get absent records in the form of journal
+        GET syntax example:
+        .../absence_journal/?milgroup=1809
+        :param request:
+        :return:
+        """
+        if 'milgroup' not in request.query_params:
+            return Response(
+                {'message': 'Please, insert milgroup as a query parameter.'},
+                status=HTTP_400_BAD_REQUEST)
+
+        absences = Absence.objects.filter(
+            studentid__milgroup__milgroup=request.query_params['milgroup'])
+        return Response({'absences': absences.data}, status=HTTP_200_OK)

@@ -14,6 +14,7 @@ from .models import (
     Status,
     Absence,
     AbsenceType,
+    AbsenceStatus,
 )
 
 from .validators import PresentInDatasetValidator
@@ -122,6 +123,10 @@ class StudentSerializer(ModelSerializer):
 
 class StudentShortSerializer(ModelSerializer):
     fullname = SerializerMethodField()
+    milgroup = MilgroupSerializer(
+        many=False,
+        required=False,
+        validators=[PresentInDatasetValidator(Milgroup)])
 
     # pylint: disable=no-self-use
     def get_fullname(self, obj):
@@ -129,7 +134,7 @@ class StudentShortSerializer(ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['id', 'name', 'surname', 'patronymic', 'fullname']
+        fields = ['id', 'name', 'surname', 'patronymic', 'fullname', 'milgroup']
 
     def create(self, validated_data):
         pass
@@ -150,9 +155,18 @@ class AbsenceGetQuerySerializer(Serializer):
     absenceType = CharField(
         required=False,
         validators=[PresentInDatasetValidator(AbsenceType, 'absenceType')])
-    date = DateField(required=False,
-                     format='%d.%m.%Y',
-                     input_formats=['%d.%m.%Y', 'iso-8601'])
+    date_from = DateField(required=False,
+                          format='%d.%m.%Y',
+                          input_formats=['%d.%m.%Y', 'iso-8601'])
+    date_to = DateField(required=False,
+                        format='%d.%m.%Y',
+                        input_formats=['%d.%m.%Y', 'iso-8601'])
+    absenceStatus = CharField(
+        required=False,
+        validators=[PresentInDatasetValidator(AbsenceStatus, 'absenceStatus')])
+    milgroup = IntegerField(
+        required=False,
+        validators=[PresentInDatasetValidator(Milgroup, 'milgroup')])
 
     def validate(self, attrs):
         if 'id' in attrs and len(attrs) > 1:
@@ -173,6 +187,8 @@ class AbsenceSerializer(ModelSerializer):
 
     absenceType = CharField(
         validators=[PresentInDatasetValidator(AbsenceType, 'absenceType')])
+    absenceStatus = CharField(
+        validators=[PresentInDatasetValidator(AbsenceStatus, 'absenceStatus')])
     studentid = StudentShortSerializer(
         validators=[PresentInDatasetValidator(Student)])
 
@@ -183,9 +199,13 @@ class AbsenceSerializer(ModelSerializer):
     def create(self, validated_data):
         absence_type = AbsenceType.objects.get(
             absenceType=validated_data.pop('absenceType'))
+        absence_status = AbsenceStatus.objects.get(
+            absenceStatus=validated_data.pop('absenceStatus'))
+
         student = Student.objects.get(**validated_data.pop('studentid'))
 
         absence_new = Absence.objects.create(absenceType=absence_type,
+                                             absenceStatus=absence_status,
                                              studentid=student,
                                              **validated_data)
 
