@@ -110,6 +110,7 @@ def create_milgroups(
     return milgroups
 
 
+# pylint: disable=too-many-locals
 def create_students(milgroups: tp.Dict[int, Milgroup],
                     programs: tp.Dict[str, Program], statuses: tp.Dict[str,
                                                                        Status]):

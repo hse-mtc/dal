@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 from django.db.models import Value
 from django.db.models.functions import (
     Lower,
@@ -24,6 +25,7 @@ from lms.models import Student
 @permission_classes((AllowAny,))
 class StudentView(APIView):
 
+    @csrf_exempt
     def get(self, request: Request) -> Response:
         """
         Get student or students
@@ -80,6 +82,8 @@ class StudentView(APIView):
         },
                         status=HTTP_200_OK)
 
+    # pylint: disable=no-self-use
+    @csrf_exempt
     def put(self, request: Request) -> Response:
         """
         Create new student
@@ -98,14 +102,14 @@ class StudentView(APIView):
                         f'Student with id {student.id} successfully created'
                 },
                 status=HTTP_200_OK)
-        else:
-            return Response(
-                {
-                    'code': HTTP_400_BAD_REQUEST * 100,
-                    'message': student.errors
-                },
-                status=HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                'code': HTTP_400_BAD_REQUEST * 100,
+                'message': student.errors
+            },
+            status=HTTP_400_BAD_REQUEST)
 
+    @csrf_exempt
     def post(self, request: Request) -> Response:
         """
         Modify existing student
@@ -124,26 +128,28 @@ class StudentView(APIView):
                         'code':
                             HTTP_200_OK * 100,
                         'message':
-                            f'Student with id {request.data["id"]} successfully modified'
+                            f'Student with id {request.data["id"]} '
+                            f'successfully modified'
                     },
                     status=HTTP_200_OK)
-            else:
-                return Response(
-                    {
-                        'code': HTTP_400_BAD_REQUEST * 100,
-                        'message': student_ser.errors
-                    },
-                    status=HTTP_400_BAD_REQUEST)
-        else:
             return Response(
                 {
-                    'code':
-                        HTTP_400_BAD_REQUEST * 100,
-                    'message':
-                        f'Student with id {request.data["id"]} does not exist in this database'
+                    'code': HTTP_400_BAD_REQUEST * 100,
+                    'message': student_ser.errors
                 },
                 status=HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                'code':
+                    HTTP_400_BAD_REQUEST * 100,
+                'message':
+                    f'Student with id {request.data["id"]} '
+                    f'does not exist in this database'
+            },
+            status=HTTP_400_BAD_REQUEST)
 
+    # pylint: disable=no-self-use
+    @csrf_exempt
     def delete(self, request: Request) -> Response:
         """
         DELETE - function uses id from request 'query'
@@ -159,15 +165,16 @@ class StudentView(APIView):
                     'code':
                         HTTP_200_OK * 100,
                     'message':
-                        f'Student with id {request.query_params["id"]} successfully deleted'
+                        f'Student with id {request.query_params["id"]} '
+                        f'successfully deleted'
                 },
                 status=HTTP_200_OK)
-        else:
-            return Response(
-                {
-                    'code':
-                        HTTP_400_BAD_REQUEST * 100,
-                    'message':
-                        f'Student with id {request.query_params["id"]} does not exist in this database'
-                },
-                status=HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                'code':
+                    HTTP_400_BAD_REQUEST * 100,
+                'message':
+                    f'Student with id {request.query_params["id"]} '
+                    f'does not exist in this database'
+            },
+            status=HTTP_400_BAD_REQUEST)

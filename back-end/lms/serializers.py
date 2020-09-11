@@ -45,13 +45,12 @@ class StudentGetQuerySerializer(Serializer):
     status = CharField(required=False,
                        validators=[PresentInDatasetValidator(Status, 'status')])
 
-    def validate(self, validated_data):
-        if 'id' in validated_data and len(validated_data) > 1:
+    def validate(self, attrs):
+        if 'id' in attrs and len(attrs) > 1:
             raise ValidationError(
-                'If id is given, all other searching keys will be ignored ' 
-                'and therefore should be deleted'
-            )
-        return validated_data
+                'If id is given, all other searching keys will be ignored '
+                'and therefore should be deleted')
+        return attrs
 
     def create(self, validated_data):
         pass
@@ -76,20 +75,20 @@ class StudentSerializer(ModelSerializer):
         model = Student
         fields = '__all__'
 
+    # pylint: disable=no-self-use
     def get_fullname(self, obj):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
+    # pylint: disable=too-many-locals
     def create(self, validated_data):
         milgroup_data = validated_data.pop('milgroup')
-        milfaculty_data = milgroup_data.pop('milfaculty')
-        milfaculty = Milfaculty.objects.get(milfaculty=milfaculty_data)
+        milfaculty = Milfaculty.objects.get(
+            milfaculty=milgroup_data.pop('milfaculty'))
         milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
 
-        program_data = validated_data.pop('program')
-        program = Program.objects.get(**program_data)
+        program = Program.objects.get(**validated_data.pop('program'))
 
-        status_data = validated_data.pop('status')
-        status = Status.objects.get(status=status_data)
+        status = Status.objects.get(status=validated_data.pop('status'))
 
         student_new = Student.objects.create(milgroup=milgroup,
                                              program=program,
@@ -98,14 +97,14 @@ class StudentSerializer(ModelSerializer):
 
         return student_new
 
+    # pylint: disable=too-many-locals
     def update(self, instance, validated_data):
         milgroup_data = validated_data.pop('milgroup')
-        milfaculty_data = milgroup_data.pop('milfaculty')
-        milfaculty = Milfaculty.objects.get(milfaculty=milfaculty_data)
+        milfaculty = Milfaculty.objects.get(
+            milfaculty=milgroup_data.pop('milfaculty'))
         milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
 
-        program_data = validated_data.pop('program')
-        program = Program.objects.get(**program_data)
+        program = Program.objects.get(**validated_data.pop('program'))
 
         # Convert from '%d.%m.%Y' format to '%Y-%m-%d' format
         # because Django doesn't accept russian formats.
@@ -123,6 +122,7 @@ class StudentSerializer(ModelSerializer):
 class StudentShortSerializer(ModelSerializer):
     fullname = SerializerMethodField()
 
+    # pylint: disable=no-self-use
     def get_fullname(self, obj):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
@@ -153,13 +153,12 @@ class AbsenceGetQuerySerializer(Serializer):
                      format='%d.%m.%Y',
                      input_formats=['%d.%m.%Y', 'iso-8601'])
 
-    def validate(self, data):
-        if 'id' in data and len(data) > 1:
+    def validate(self, attrs):
+        if 'id' in attrs and len(attrs) > 1:
             raise ValidationError(
-                'If id is given, all other searching keys will be ignored ' 
-                'and therefore should be deleted'
-            )
-        return data
+                'If id is given, all other searching keys will be ignored '
+                'and therefore should be deleted')
+        return attrs
 
     def create(self, validated_data):
         pass
@@ -181,13 +180,11 @@ class AbsenceSerializer(ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        type_data = validated_data.pop('absenceType')
-        absenceType = AbsenceType.objects.get(absenceType=type_data)
+        absence_type = AbsenceType.objects.get(
+            absenceType=validated_data.pop('absenceType'))
+        student = Student.objects.get(**validated_data.pop('studentid'))
 
-        student_data = validated_data.pop('studentid')
-        student = Student.objects.get(**student_data)
-
-        absence_new = Absence.objects.create(absenceType=absenceType,
+        absence_new = Absence.objects.create(absenceType=absence_type,
                                              studentid=student,
                                              **validated_data)
 
