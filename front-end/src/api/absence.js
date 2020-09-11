@@ -7,3 +7,11 @@ export function getAbsence(params) {
     params
   })
 }
+
+export function getAbsenceJournal(params) {
+  return request({
+    url: '/lms/absence_journal/',
+    method: 'get',
+    params
+  })
+}
