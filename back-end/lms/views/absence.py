@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 from django.db import IntegrityError
 from django.db.models import Value
 from django.db.models.functions import (
@@ -29,6 +30,7 @@ from lms.models import Absence
 @permission_classes((AllowAny,))
 class AbsenceView(APIView):
 
+    @csrf_exempt
     def get(self, request: Request) -> Response:
         """
         Get absent record or records
@@ -91,11 +93,12 @@ class AbsenceView(APIView):
         },
                         status=HTTP_200_OK)
 
+    # pylint: disable=no-self-use
+    @csrf_exempt
     def put(self, request: Request) -> Response:
         """
         Create new absence record.
         PUT function - data is given via 'data' from PUT request (not query!)
-        
         Payload example:
         {
             "date": "21.01.2020",
@@ -120,22 +123,23 @@ class AbsenceView(APIView):
                         'code':
                             HTTP_200_OK * 100,
                         'message':
-                            f'Absence record with id {absence.id} successfuly created'
+                            f'Absence record with id {absence.id} '
+                            f'successfuly created'
                     },
                     status=HTTP_200_OK)
-            else:
-                return Response(
-                    {
-                        'code': HTTP_400_BAD_REQUEST * 100,
-                        'message': absence.errors
-                    },
-                    status=HTTP_400_BAD_REQUEST)
-        except IntegrityError as e:
+            return Response(
+                {
+                    'code': HTTP_400_BAD_REQUEST * 100,
+                    'message': absence.errors
+                },
+                status=HTTP_400_BAD_REQUEST)
+        except IntegrityError:
             return Response(
                 {
                     'code':
                         HTTP_400_BAD_REQUEST * 100,
                     'message':
-                        'A record with this student and this date already exists. Please, modify existing record.'
+                        'A record with this student and this date '
+                        'already exists. Please, modify existing record.'
                 },
                 status=HTTP_400_BAD_REQUEST)
