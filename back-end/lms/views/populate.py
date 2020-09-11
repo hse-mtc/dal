@@ -136,6 +136,7 @@ def create_posts() -> tp.Dict[str, TeacherPost]:
     return posts
 
 
+# pylint: disable=(too-many-locals)
 def create_students(milgroups: tp.Dict[int, Milgroup],
                     programs: tp.Dict[str, Program], statuses: tp.Dict[str,
                                                                        Status]):
@@ -271,6 +272,8 @@ def create_absences(types: tp.Dict[str, AbsenceType],
         absence.save()
 
 
+# pylint: disable=(too-many-locals)
+# pylint: disable=(too-many-arguments)
 def create_teachers(milgroups: tp.Dict[int, Milgroup],
                     milfaculties: tp.Dict[str, Milfaculty],
                     ranks: tp.Dict[str, Rank], posts: tp.Dict[str,
@@ -335,6 +338,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
         teacher.save()
 
 
+# pylint: disable=(too-many-locals)
 @api_view(['PUT'])
 @permission_classes((AllowAny,))
 def lms_populate(request: Request) -> Response:
@@ -353,7 +357,7 @@ def lms_populate(request: Request) -> Response:
 
     students = create_students(milgroups, programs, statuses)
 
-    teachers = create_teachers(milgroups, milfaculties, ranks, posts)
+    create_teachers(milgroups, milfaculties, ranks, posts)
 
     absence_types = create_absence_types()
 
