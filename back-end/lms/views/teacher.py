@@ -89,9 +89,8 @@ class TeacherView(APIView):
         if not teacher.exists():
             return Response(
                 {
-                    'message':
-                        f'Teacher with id {request.data["id"]} '
-                        f'does not exist in this database'
+                    'message': f'Teacher with id {request.data["id"]} '
+                               f'does not exist in this database'
                 },
                 status=HTTP_400_BAD_REQUEST)
 
@@ -104,9 +103,8 @@ class TeacherView(APIView):
         teacher_ser.update(instance=teacher, validated_data=request.data)
         return Response(
             {
-                'message':
-                    f'Teacher with id {request.data["id"]} '
-                    f'successfully modified'
+                'message': f'Teacher with id {request.data["id"]} '
+                           f'successfully modified'
             },
             status=HTTP_200_OK)
 
@@ -123,16 +121,14 @@ class TeacherView(APIView):
             teacher_to_delete.delete()
             return Response(
                 {
-                    'message':
-                        f'Teacher with id {request.query_params["id"]} '
-                        f'successfully deleted'
+                    'message': f'Teacher with id {request.query_params["id"]} '
+                               f'successfully deleted'
                 },
                 status=HTTP_201_CREATED)
 
         return Response(
             {
-                'message':
-                    f'Teacher with id {request.query_params["id"]} '
-                    f'does not exist in this database'
+                'message': f'Teacher with id {request.query_params["id"]} '
+                           f'does not exist in this database'
             },
             status=HTTP_400_BAD_REQUEST)
