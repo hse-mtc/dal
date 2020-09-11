@@ -10,26 +10,39 @@ from taggit.models import Tag
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Max
-from django.db.models import Q, F
+from django.db.models.deletion import RestrictedError
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import (
+    Max,
+    Q,
+    F,
+)
 
+from rest_framework import permissions
+from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+)
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
-    HTTP_412_PRECONDITION_FAILED,
+    HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
+from dms.serializers import (
+    AuthorSerializer,
+    CategorySerializer,
+)
 from dms.models import (
     Author,
     Document,
@@ -40,56 +53,38 @@ from dms.models import (
 )
 
 
-@permission_classes((AllowAny,))
-class CategoryView(APIView):
+class AuthorViewSet(viewsets.ModelViewSet):
+    """
+    API for CRUD operations on Author model.
+    """
 
-    @csrf_exempt
-    def put(self, request: Request) -> Response:
-        # pylint: disable=no-self-use
-        if "title" not in request.data:
-            return Response({"error": "No title provided"},
-                            status=HTTP_400_BAD_REQUEST)
+    queryset = Author.objects.all()
+    serializer_class = AuthorSerializer
+    permission_classes = [permissions.AllowAny]
 
-        category = Category()
-        category.title = request.data.get("title")
-        category.save()
 
-        return Response(
-            {
-                "code": HTTP_200_OK * 100,
-            },
-            status=HTTP_200_OK,
-        )
+class CategoryViewSet(viewsets.ModelViewSet):
+    """
+    API for CRUD operations on Category model.
+    """
 
-    @csrf_exempt
-    def get(self, request: Request) -> Response:
-        data = Category.objects.values("id", "title")
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.AllowAny]
 
-        return Response(
-            {
-                "code": HTTP_200_OK * 100,
-                "data": data
-            },
-            status=HTTP_200_OK,
-        )
+    def destroy(self, request, *args, **kwargs):
+        """
+        Deletes Category from database based on primary key (currently, id).
+        If category has documents, no deletion is performed and 422 is returned.
+        """
 
-    @csrf_exempt
-    def delete(self, request: Request) -> Response:
-        # pylint: disable=no-self-use
-        category = Category.objects.get(pk=request.query_params.get("id"))
-
-        if Document.objects.filter(category=category).exists():
+        try:
+            # pylint: disable=no-member
+            return super().destroy(request, *args, **kwargs)
+        except RestrictedError:
             return Response(
-                {
-                    "code": HTTP_412_PRECONDITION_FAILED * 100,
-                    "message": "Категорию нельзя удалить, "
-                               "пока в ней есть хотя бы один документ."
-                },
-                status=HTTP_200_OK)
-
-        category.delete()
-
-        return Response({"code": HTTP_200_OK * 100}, status=HTTP_200_OK)
+                {"message": "Category has documents and can not be deleted."},
+                status=HTTP_422_UNPROCESSABLE_ENTITY)
 
 
 @permission_classes((AllowAny,))
@@ -414,21 +409,6 @@ def subjects(request):
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def authors(request):
-    return Response(
-        {
-            "code":
-                HTTP_200_OK * 100,
-            "data":
-                Author.objects.annotate(value=F("last_name")).values(
-                    "value", "id"),
-        },
-        status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
 def publishers(request: Request) -> Response:
     return Response(
         {
@@ -461,7 +441,7 @@ def delete_document(request: Request,) -> Response:
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def get_tags(request: Request,) -> Response:
+def tags(request: Request,) -> Response:
     return Response(
         {
             "code": HTTP_200_OK * 100,

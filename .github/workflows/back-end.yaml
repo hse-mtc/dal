@@ -3,53 +3,16 @@ name: "Back end"
 on: [push]
 
 jobs:
-  code-style:
-    name: Code style checks
+  main:
+    name: "Build, tests, style, lint"
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up Python 3.8.5
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8.5"
-      - name: Install pipenv
-        uses: dschep/install-pipenv-action@v1
-      - name: Install packages
-        run:  cd back-end && pipenv install --system --deploy --dev
-      - name: Check code style
-        run:  cd back-end && scripts/run-yapf.sh
-
-  lint:
-    name: Linter checks
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up Python 3.8.5
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8.5"
-      - name: Install pipenv
-        uses: dschep/install-pipenv-action@v1
-      - name: Install packages
-        run:  cd back-end && pipenv install --system --deploy --dev
-      - name: Lint code
-        run:  cd back-end && scripts/run-pylint.sh
-
-  tests:
-    name: Run tests
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      - name: Set up Python 3.8.5
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.8.5"
-      - name: Install pipenv
-        uses: dschep/install-pipenv-action@v1
-      - name: Install packages
-        run:  cd back-end && pipenv install --system --deploy --dev
-      - name: Run pytest tests
-        run:  cd back-end && pipenv run pytest
+      - uses: actions/checkout@v2
+      - name: "Build back end Docker container"
+        run:  docker-compose build back-end
+      - name: "Run tests"
+        run:  docker-compose run back-end pytest
+      - name: "Check code style"
+        run:  docker-compose run back-end scripts/run-yapf.sh
+      - name: "Lint code"
+        run:  docker-compose run back-end scripts/run-pylint.sh

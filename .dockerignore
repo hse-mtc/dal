@@ -10,11 +10,12 @@ docker-compose.yml
 
 ### Back end ###
 ## Directories
+back-end/docker
 back-end/docs
+back-end/documents
 
 ## Files
 back-end/readme.md
-back-end/Dockerfile
 
 ### Front end ###
 ## Directories

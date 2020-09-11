@@ -1,0 +1,12 @@
+name: "Front end"
+
+on: [push]
+
+jobs:
+  main:
+    name: "Build"
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Build front end Docker container"
+        run:  docker-compose build front-end

@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
-import sys
 
 from pathlib import Path
 
@@ -85,10 +84,8 @@ TEMPLATES = [
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-DATABASES = {}
-
-if os.environ.get("POSTGRES_HOST"):
-    DATABASES["default"] = {
+DATABASES = {
+    "default": {
         "ENGINE": "django.db.backends.postgresql",
         "HOST": os.environ["POSTGRES_HOST"],
         "PORT": os.environ["POSTGRES_PORT"],
@@ -96,12 +93,7 @@ if os.environ.get("POSTGRES_HOST"):
         "USER": os.environ["POSTGRES_USER"],
         "PASSWORD": os.environ["POSTGRES_PASSWORD"],
     }
-else:
-    print("Using SQLite3 database instead of PostgreSQL", file=sys.stderr)
-    DATABASES["default"] = {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

@@ -7,7 +7,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 
 from conf import settings
-from dms.views import populate
+from dms.populate import populate as dms_populate
 from lms.views.populate import lms_populate
 
 SchemaView = get_schema_view(
@@ -26,12 +26,12 @@ urlpatterns = [
          name="schema-swagger-ui"),
 
     # Public API
-    path("api/", include("dms.urls")),
+    path("api/dms/", include("dms.urls")),
     path("api/lms/", include("lms.urls")),
 
     # Internal
     path("admin/", admin.site.urls),
-    path("populate/", populate),
+    path("dms_populate/", dms_populate),
     path("lms_populate/", lms_populate),
 ]
 
