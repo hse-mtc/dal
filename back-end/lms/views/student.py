@@ -39,12 +39,8 @@ class StudentView(APIView):
         # check query params
         query_params = StudentGetQuerySerializer(data=request.query_params)
         if not query_params.is_valid():
-            return Response(
-                {
-                    'code': HTTP_400_BAD_REQUEST * 100,
-                    'message': query_params.errors
-                },
-                status=HTTP_400_BAD_REQUEST)
+            return Response({'message': query_params.errors},
+                            status=HTTP_400_BAD_REQUEST)
 
         students = Student.objects.all()
 
@@ -52,12 +48,7 @@ class StudentView(APIView):
         if 'id' in request.query_params:
             student = students.get(id=request.query_params['id'])
             student = StudentSerializer(student)
-            return Response(
-                {
-                    'code': HTTP_200_OK * 100,
-                    'students': student.data
-                },
-                status=HTTP_200_OK)
+            return Response({'students': student.data}, status=HTTP_200_OK)
 
         # filter milgroup
         if 'milgroup' in request.query_params:
@@ -76,11 +67,7 @@ class StudentView(APIView):
             students = students.filter(status=request.query_params['status'])
 
         students = StudentSerializer(students, many=True)
-        return Response({
-            'code': HTTP_200_OK * 100,
-            'students': students.data
-        },
-                        status=HTTP_200_OK)
+        return Response({'students': students.data}, status=HTTP_200_OK)
 
     # pylint: disable=no-self-use
     @csrf_exempt
@@ -96,18 +83,12 @@ class StudentView(APIView):
             student = student.save()
             return Response(
                 {
-                    'code':
-                        HTTP_200_OK * 100,
                     'message':
                         f'Student with id {student.id} successfully created'
                 },
                 status=HTTP_200_OK)
-        return Response(
-            {
-                'code': HTTP_400_BAD_REQUEST * 100,
-                'message': student.errors
-            },
-            status=HTTP_400_BAD_REQUEST)
+        return Response({'message': student.errors},
+                        status=HTTP_400_BAD_REQUEST)
 
     @csrf_exempt
     def post(self, request: Request) -> Response:
@@ -125,26 +106,16 @@ class StudentView(APIView):
                                    validated_data=request.data)
                 return Response(
                     {
-                        'code':
-                            HTTP_200_OK * 100,
-                        'message':
-                            f'Student with id {request.data["id"]} '
-                            f'successfully modified'
+                        'message': f'Student with id {request.data["id"]} '
+                                   f'successfully modified'
                     },
                     status=HTTP_200_OK)
-            return Response(
-                {
-                    'code': HTTP_400_BAD_REQUEST * 100,
-                    'message': student_ser.errors
-                },
-                status=HTTP_400_BAD_REQUEST)
+            return Response({'message': student_ser.errors},
+                            status=HTTP_400_BAD_REQUEST)
         return Response(
             {
-                'code':
-                    HTTP_400_BAD_REQUEST * 100,
-                'message':
-                    f'Student with id {request.data["id"]} '
-                    f'does not exist in this database'
+                'message': f'Student with id {request.data["id"]} '
+                           f'does not exist in this database'
             },
             status=HTTP_400_BAD_REQUEST)
 
@@ -162,19 +133,13 @@ class StudentView(APIView):
             student_to_delete.delete()
             return Response(
                 {
-                    'code':
-                        HTTP_200_OK * 100,
-                    'message':
-                        f'Student with id {request.query_params["id"]} '
-                        f'successfully deleted'
+                    'message': f'Student with id {request.query_params["id"]} '
+                               f'successfully deleted'
                 },
                 status=HTTP_200_OK)
         return Response(
             {
-                'code':
-                    HTTP_400_BAD_REQUEST * 100,
-                'message':
-                    f'Student with id {request.query_params["id"]} '
-                    f'does not exist in this database'
+                'message': f'Student with id {request.query_params["id"]} '
+                           f'does not exist in this database'
             },
             status=HTTP_400_BAD_REQUEST)
