@@ -14,8 +14,8 @@
                                @change="changeAuthors">
                         <el-option
                                 v-for="item in authors"
-                                :key="item.value"
-                                :value="item.value"
+                                :key="item.id"
+                                :value="`${item.last_name} ${item.first_name[0]}. ${item.patronymic[0]}`"
                         />
                     </el-select>
                 </el-col>
@@ -25,8 +25,8 @@
                                @change="changePlacing">
                         <el-option
                                 v-for="item in placings"
-                                :key="item.value"
-                                :value="item.value"
+                                :key="item.id"
+                                :value="item.name"
                         />
                     </el-select>
                 </el-col>

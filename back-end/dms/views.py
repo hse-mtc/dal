@@ -144,18 +144,10 @@ class UploadNirView(APIView):
             if len(keywords_list) > 0:
                 doc.keywords.add(*keywords_list)
 
-        if request.data.get("authorId"):
-            author = Author.objects.get(pk=request.data["authorId"])
-            doc.authors.add(author)
-        elif request.data.get("authorName"):
-            author_name = request.data["authorName"]
-            author_last_name = request.data["authorLastName"]
-            author_patronymic = request.data["authorPatronymic"]
-            doc.authors.create(
-                last_name=author_last_name,
-                first_name=author_name,
-                patronymic=author_patronymic,
-            )
+        if request.data.get("authorIds"):
+            doc.authors.add(*Author.objects.filter(
+                id__in=list(map(int,
+                                request.data.get("authorIds").split(',')))))
 
         if request.data.get("publisherId"):
             publisher = Publisher.objects.get(pk=request.data["publisherId"])
