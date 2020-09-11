@@ -34,6 +34,7 @@ from rest_framework.decorators import (
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
+    HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_422_UNPROCESSABLE_ENTITY,
@@ -42,6 +43,8 @@ from rest_framework.status import (
 from dms.serializers import (
     AuthorSerializer,
     CategorySerializer,
+    PublisherSerializer,
+    SubjectSerializer,
 )
 from dms.models import (
     Author,
@@ -87,17 +90,33 @@ class CategoryViewSet(viewsets.ModelViewSet):
                 status=HTTP_422_UNPROCESSABLE_ENTITY)
 
 
+class PublisherViewSet(viewsets.ModelViewSet):
+    """
+    API for CRUD operations on Publisher model.
+    """
+
+    queryset = Publisher.objects.all()
+    serializer_class = PublisherSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class SubjectViewSet(viewsets.ModelViewSet):
+    """
+    API for CRUD operations on Subject model.
+    """
+
+    queryset = Subject.objects.all()
+    serializer_class = SubjectSerializer
+    permission_classes = [permissions.AllowAny]
+
+
 @permission_classes((AllowAny,))
 class UploadNirView(APIView):
 
     def post(self, request: Request) -> Response:
         if "file" not in request.data:
-            return Response(
-                {
-                    "error": "No file provided",
-                },
-                status=HTTP_400_BAD_REQUEST,
-            )
+            return Response({"message": "No file provided."},
+                            status=HTTP_400_BAD_REQUEST)
 
         f = request.data["file"]
 
@@ -149,12 +168,8 @@ class UploadNirView(APIView):
             content=f,
         )
 
-        return Response(
-            {
-                "code": HTTP_200_OK * 100,
-            },
-            status=HTTP_200_OK,
-        )
+        return Response({"message": "Document created successfully."},
+                        status=HTTP_201_CREATED)
 
     def put(self, request: Request) -> Response:  # pylint: disable=no-self-use
         """
@@ -165,12 +180,8 @@ class UploadNirView(APIView):
         """
 
         if "file" not in request.data:
-            return Response(
-                {
-                    "error": "No file provided",
-                },
-                status=HTTP_400_BAD_REQUEST,
-            )
+            return Response({"message": "No file provided."},
+                            status=HTTP_400_BAD_REQUEST)
 
         doc = Document.objects.all()
         f = request.data["file"]
@@ -180,12 +191,8 @@ class UploadNirView(APIView):
             save=True,
         )
 
-        return Response(
-            {
-                "code": HTTP_201_CREATED * 100,
-            },
-            status=HTTP_201_CREATED,
-        )
+        return Response({"message": "File for document uploaded successfully."},
+                        status=HTTP_201_CREATED)
 
 
 @csrf_exempt
@@ -218,32 +225,20 @@ def login(request: Request) -> Response:
     username = request.data.get("username")
     password = request.data.get("password")
     if not username or not password:
-        return Response(
-            {"error": "Please provide both username and password"},
-            status=HTTP_400_BAD_REQUEST,
-        )
+        return Response({"message": "Username and password are required."},
+                        status=HTTP_400_BAD_REQUEST)
 
     user = authenticate(
         username=username,
         password=password,
     )
     if not user:
-        return Response(
-            {"error": "Invalid Credentials"},
-            status=HTTP_404_NOT_FOUND,
-        )
+        return Response({"message": "Invalid credentials."},
+                        status=HTTP_404_NOT_FOUND)
 
     token, _ = Token.objects.get_or_create(user=user)
 
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": {
-                "token": token.key,
-            },
-        },
-        status=HTTP_200_OK,
-    )
+    return Response({"token": token.key}, status=HTTP_200_OK)
 
 
 @csrf_exempt
@@ -255,13 +250,7 @@ def info(request: Request) -> Response:
         "name": request.user.profile.name,
     }
 
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": data
-        },
-        status=HTTP_200_OK,
-    )
+    return Response(data, status=HTTP_200_OK)
 
 
 @csrf_exempt
@@ -273,13 +262,8 @@ def logout(request: Request) -> Response:
     except (AttributeError, ObjectDoesNotExist):
         pass
 
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": "success"
-        },
-        status=HTTP_200_OK,
-    )
+    return Response({"message": "User logged out successfully."},
+                    status=HTTP_200_OK)
 
 
 def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
@@ -385,70 +369,27 @@ def documents(request: Request) -> Response:
 
     data = extract_documents_by_year_from_queryset(db_request)
 
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": data
-        },
-        status=HTTP_200_OK,
-    )
+    return Response(data, status=HTTP_200_OK)
 
 
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def subjects(request):
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": Subject.objects.values("id", "title"),
-        },
-        status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def publishers(request: Request) -> Response:
-    return Response(
-        {
-            "code":
-                HTTP_200_OK * 100,
-            "data":
-                Publisher.objects.annotate(value=F("name")).values(
-                    "value", "id"),
-        },
-        status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def delete_document(request: Request,) -> Response:
+def delete_document(request: Request) -> Response:
     document_id = request.query_params.get("id")
     document = Document.objects.get(id=document_id)
     document.is_in_trash = True
     document.save()
 
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-        },
-        status=HTTP_200_OK,
-    )
+    return Response({"message": "Document is now in trash."},
+                    status=HTTP_204_NO_CONTENT)
 
 
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes((AllowAny,))
-def tags(request: Request,) -> Response:
-    return Response(
-        {
-            "code": HTTP_200_OK * 100,
-            "data": Tag.objects.values(key=F("id"), value=F("name"))
-        },
-        status=HTTP_200_OK,
-    )
+def tags(request: Request) -> Response:
+    return Response(Tag.objects.values(), status=HTTP_200_OK)
 
 
 @permission_classes((AllowAny,))
@@ -463,7 +404,7 @@ class SubjectSectionView(APIView):
         return {
             "id": doc.id,
             "title": doc.title,
-            "file": "/api/get_file?id=" + str(doc.id),
+            "file": "/api/dms/get_file?id=" + str(doc.id),
         }
 
     def get(self, request):
@@ -546,10 +487,4 @@ class SubjectSectionView(APIView):
             data["parts"].append(section)
             section_id += 1
 
-        return Response(
-            {
-                "data": data,
-                "code": HTTP_200_OK * 100,
-            },
-            status=HTTP_201_CREATED,
-        )
+        return Response(data, status=HTTP_200_OK)

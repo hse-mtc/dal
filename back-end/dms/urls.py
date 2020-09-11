@@ -11,8 +11,6 @@ from dms.views import (
     info,
     login,
     logout,
-    publishers,
-    subjects,
     SubjectSectionView,
     UploadNirView,
 )
@@ -20,6 +18,8 @@ from dms.views import (
 router = routers.DefaultRouter()
 router.register(r"authors", views.AuthorViewSet)
 router.register(r"categories", views.CategoryViewSet)
+router.register(r"publishers", views.PublisherViewSet)
+router.register(r"subjects", views.SubjectViewSet)
 
 urlpatterns = [
     # REST router
@@ -29,10 +29,8 @@ urlpatterns = [
     path("delete_document/", delete_document),
     path("documents/", documents),
     path("get_file/", get_file),
-    path("tags/", tags),
-    path("publishers/", publishers),
     path("subject/", SubjectSectionView.as_view()),
-    path("subjects/", subjects),
+    path("tags/", tags),
     path("upload/", UploadNirView.as_view()),
     path("user/info/", info),
     path("user/login/", login),
