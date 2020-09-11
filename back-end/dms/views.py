@@ -145,9 +145,9 @@ class UploadNirView(APIView):
                 doc.keywords.add(*keywords_list)
 
         if request.data.get("authorIds"):
-            doc.authors.add(*Author.objects.filter(id__in=list(
-                map(int, request.data.get("authorIds").split(','))))
-            )
+            doc.authors.add(*Author.objects.filter(
+                id__in=list(map(int,
+                                request.data.get("authorIds").split(',')))))
 
         if request.data.get("publisherId"):
             publisher = Publisher.objects.get(pk=request.data["publisherId"])
