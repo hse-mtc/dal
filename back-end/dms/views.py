@@ -8,6 +8,7 @@ from functools import reduce
 
 from taggit.models import Tag
 
+from django.utils.encoding import escape_uri_path
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.deletion import RestrictedError
@@ -206,7 +207,8 @@ def get_file(request: Request) -> HttpResponse:
 
     with open(f.name, "rb") as content:
         response = HttpResponse(content, content_type="text/plain")
-        response["Content-Disposition"] = f"attachment; filename={filename}"
+        response["Content-Disposition"] = f"attachment; " \
+            f"filename={escape_uri_path(filename)}"
         return response
 
 
