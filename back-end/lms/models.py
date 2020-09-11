@@ -1,5 +1,6 @@
-from django.db import models
 import datetime
+
+from django.db import models
 
 
 class AbsenceType(models.Model):
@@ -214,7 +215,8 @@ class Student(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n'
+               f'Full name = {str(self.surname)} ' \
+               f'{str(self.name)} {str(self.patronymic)}\n'
 
     class Meta:
         db_table = 'student'
@@ -239,7 +241,8 @@ class Teacher(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'Full name = {str(self.surname)} {str(self.name)} {str(self.patronymic)}\n'
+               f'Full name = {str(self.surname)} ' \
+               f'{str(self.name)} {str(self.patronymic)}\n'
 
     class Meta:
         db_table = 'teacher'
@@ -262,7 +265,8 @@ class Absence(models.Model):
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
                f'Date = {str(self.date)}\n' \
-               f'StudentID = {str(self.studentid)}, Absence type={str(self.absenceType)}\n'
+               f'StudentID = {str(self.studentid)}, ' \
+               f'Absence type={str(self.absenceType)}\n'
 
     class Meta:
         db_table = 'absence'
@@ -306,7 +310,8 @@ class Encouragement(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}, TeacherID = {str(self.teacherid)}\n' \
+               f'StudentID = {str(self.studentid)}, ' \
+               f'TeacherID = {str(self.teacherid)}\n' \
                f'Type = {str(self.type)}\n' \
                f'Date = {str(self.date)}'
 
@@ -355,8 +360,10 @@ class Mark(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}, LessonID = {str(self.lessonid)}\n' \
-               f'Mark = {str(self.mark)}, Controlform = {str(self.controlform)}\n'
+               f'StudentID = {str(self.studentid)}, '\
+               f'LessonID = {str(self.lessonid)}\n' \
+               f'Mark = {str(self.mark)}, '\
+               f'Controlform = {str(self.controlform)}\n'
 
     class Meta:
         db_table = 'mark'
@@ -380,9 +387,11 @@ class Punishment(models.Model):
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}, TeacherID = {str(self.teacherid)}\n' \
+               f'StudentID = {str(self.studentid)}, ' \
+               f'TeacherID = {str(self.teacherid)}\n' \
                f'Type = {str(self.type)}\n' \
-               f'Date = {str(self.date)}, Remove Date = {str(self.removedate)}'
+               f'Date = {str(self.date)}, ' \
+               f'Remove Date = {str(self.removedate)}'
 
     class Meta:
         db_table = 'punishment'
@@ -399,7 +408,8 @@ class LessonMilgroup(models.Model):
                                  db_column='milgroup')
 
     def __str__(self):
-        return f'LessonId = {str(self.lessonid)} ~ Milgroup = {str(self.milgroup)}'
+        return f'LessonId = {str(self.lessonid)} ~ ' \
+               f'Milgroup = {str(self.milgroup)}'
 
     class Meta:
         db_table = 'lesson-milgroup'
@@ -417,7 +427,8 @@ class StudentStudentpost(models.Model):
                                      db_column='studentid')
 
     def __str__(self):
-        return f'StudentID = {str(self.studentid)} ~ StudentPost = {str(self.studentPost)}'
+        return f'StudentID = {str(self.studentid)} ~ ' \
+               f'StudentPost = {str(self.studentPost)}'
 
     class Meta:
         db_table = 'student-studentpost'

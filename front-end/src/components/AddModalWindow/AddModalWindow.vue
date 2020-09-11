@@ -32,7 +32,7 @@
                     <el-option
                             v-for="item in authors"
                             :key="item.id"
-                            :label="item.value"
+                            :label="`${item.last_name} ${item.first_name[0]}. ${item.patronymic[0]}`"
                             :value="item.id">
                     </el-option>
                 </el-select>
@@ -56,9 +56,9 @@
                 <el-select clearable v-model="form.publisher" placeholder="Выберите журнал">
                     <el-option
                             v-for="item in publishers"
-                            :key="item.value"
+                            :key="item.id"
                             :value="item.id"
-                            :label="item.value"
+                            :label="item.name"
                     />
                 </el-select>
             </el-form-item>
@@ -163,9 +163,9 @@
                     selectedAuthors: [],
                     annotation: '',
                     publicationDate: '',
-                    // newAuthorName: '',
-                    // newAuthorLastName: '',
-                    // newAuthorPatronymic: '',
+                    newAuthorName: '',
+                    newAuthorLastName: '',
+                    newAuthorPatronymic: '',
                     publisher: '',
                     newPublisher: '',
                     selectedTags: [],
@@ -177,7 +177,7 @@
                     { key: 2, value: 'Тактика' },
                     { key: 3, value: 'Хуяктика' },
                 ],
-                publishers: [{value: 'Добавить новое', id: -1}, ...this.$store.getters.publishers],
+                publishers: [{name: 'Добавить новое', id: -1}, ...this.$store.getters.publishers],
             }
         },
         created() {
