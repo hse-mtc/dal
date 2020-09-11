@@ -323,29 +323,19 @@ def documents(request: Request) -> Response:
     text = request.query_params.get("text")
     category = request.query_params.get("category")
 
-    try:
-        if str(category).upper() == "ARTICLE":
-            category = Category.objects.get(title="Научные статьи")
-        elif str(category).upper() == "RESEARCH":
-            category = Category.objects.get(
-                title="Научно-исследовательские работы")
-    except:
-        pass
+    db_request = Document.objects.filter(is_in_trash=False)
 
-    db_request = (Document.objects.filter(category=category).exclude(
-        is_in_trash=True))
-
-    if authors is not None:
-        db_request = db_request.filter(
-            authors__last_name__in=authors.split(","))
-    if start_date is not None:
+    if category:
+        db_request = db_request.filter(category__pk=category)
+    if authors:
+        db_request = db_request.filter(authors__pk__in=authors.split(","))
+    if start_date:
         db_request = db_request.filter(publication_date__gte=start_date)
-    if end_date is not None:
+    if end_date:
         db_request = db_request.filter(publication_date__lte=end_date)
-    if publishers is not None:
-        db_request = db_request.filter(
-            publishers__name__in=publishers.split(","))
-    if text is not None:
+    if publishers:
+        db_request = db_request.filter(publishers__pk__in=publishers.split(","))
+    if text:
         db_request = db_request.filter(
             reduce(operator.and_,
                    [Q(title__icontains=word) for word in text.split()]) |
@@ -355,9 +345,7 @@ def documents(request: Request) -> Response:
                    [Q(keywords__name__icontains=word)
                     for word in text.split()]))
 
-    db_request = db_request.order_by("-publication_date")
-
-    db_request = db_request.distinct()
+    db_request = db_request.order_by("-publication_date").distinct()
 
     data = extract_documents_by_year_from_queryset(db_request)
 
