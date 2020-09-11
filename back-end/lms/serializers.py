@@ -10,6 +10,7 @@ from .models import (
     Milgroup,
     Program,
     Student,
+    Teacher,
     Status,
     Absence,
     AbsenceType,
@@ -209,3 +210,36 @@ class AbsenceSerializer(ModelSerializer):
                                              **validated_data)
 
         return absence_new
+
+
+class TeacherSerializer(ModelSerializer):
+    milgroup = MilgroupSerializer(many=False)
+    fullname = SerializerMethodField()
+
+    class Meta:
+        model = Teacher
+        fields = '__all__'
+
+    # pylint: disable=(no-self-use)
+    def get_fullname(self, obj):
+        return f'{obj.surname} {obj.name} {obj.patronymic}'
+
+    # pylint: disable=(no-self-use)
+    def create(self, validated_data):
+        milgroup_data = validated_data.pop('milgroup')
+        milfaculty = Milfaculty.objects.get(
+            milfaculty=validated_data.pop('milgroup'))
+        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+
+        new_teacher = Teacher.objects.create(milgroup=milgroup,
+                                             **validated_data)
+        return new_teacher
+
+    def update(self, instance, validated_data):
+        milgroup_data = validated_data.pop('milgroup')
+        milfaculty = Milfaculty.objects.get(
+            milfaculty=milgroup_data.pop('milfaculty'))
+        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+
+        teacher_modified = instance.update(milgroup=milgroup, **validated_data)
+        return teacher_modified
