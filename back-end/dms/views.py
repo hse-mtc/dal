@@ -148,6 +148,7 @@ class UploadNirView(APIView):
             doc.authors.add(*Author.objects.filter(id__in=list(
                 map(int, request.data.get("authorIds").split(','))))
             )
+
         elif request.data.get("authorName"):
             author_name = request.data["authorName"]
             author_last_name = request.data["authorLastName"]
@@ -268,7 +269,6 @@ def logout(request: Request) -> Response:
 
 
 def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
-    print(documents_queryset[4].authors.all())
     return list(
         map(
             lambda item: {
@@ -344,7 +344,6 @@ def documents(request: Request) -> Response:
 
     db_request = (Document.objects.filter(category=category).exclude(
         is_in_trash=True))
-
 
     if authors is not None:
         db_request = db_request.filter(
