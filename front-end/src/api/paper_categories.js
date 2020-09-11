@@ -11,7 +11,7 @@ export function getPaperCategories(params) {
 export function addPaperCategories(params) {
   return request({
     url: '/dms/categories/',
-    method: 'put',
+    method: 'post',
     data: {title: params}
   })
 }
