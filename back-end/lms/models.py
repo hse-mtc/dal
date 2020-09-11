@@ -15,6 +15,18 @@ class AbsenceType(models.Model):
         verbose_name_plural = 'Absence Types'
 
 
+class AbsenceStatus(models.Model):
+    absenceStatus = models.CharField(primary_key=True, max_length=100)
+
+    def __str__(self):
+        return str(self.absenceStatus)
+
+    class Meta:
+        db_table = 'absenceStatus'
+        verbose_name = 'Absence Status'
+        verbose_name_plural = 'Absence Statuses'
+
+
 class ActivityType(models.Model):
     activityType = models.CharField(primary_key=True, max_length=100)
 
@@ -258,8 +270,10 @@ class Absence(models.Model):
     absenceType = models.ForeignKey(AbsenceType,
                                     models.DO_NOTHING,
                                     db_column='absenceType')
+    absenceStatus = models.ForeignKey(AbsenceStatus,
+                                      models.DO_NOTHING,
+                                      db_column='absenceStatus')
     reason = models.CharField(max_length=100, blank=True, null=True)
-    status = models.DecimalField(max_digits=1, decimal_places=0)
     comment = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
