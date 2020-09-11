@@ -3,7 +3,7 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
-const baseURL = (() => {
+export const baseURL = (() => {
   let host = process.env.VUE_APP_BACK_END_HOST || "localhost"
   let port = process.env.VUE_APP_BACK_END_PORT || "9090"
   return "http://" + host + ":" + port + "/api"

@@ -27,7 +27,7 @@
                 {{ item.publication_date | moment }}
               </div>
               <div class="ml-5" style="color: #76767A">
-                <span v-for="(publisher, index) in item.publishers" :key="index">{{ publisher }}</span>
+                <span v-for="(publisher, index) in item.publishers" :key="index">{{ publisher }} </span>
               </div>
             </div>
             <div class="document-card-title">{{ item.title }}</div>
@@ -41,7 +41,7 @@
             >
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
                 <div style="cursor:pointer;">
-                  <form action="https://military-dms-back.herokuapp.com/api/get_file" method="get">
+                  <form :action="download" method="get">
                     <input :value="item.id" type="hidden" name="id">
                     <button class="download-kebab-button">Скачать</button>
                   </form>
@@ -67,7 +67,7 @@
 import { getDocuments } from '@/api/documents'
 import { deleteDocument } from '@/api/delete'
 import EventBus from '../EventBus';
-
+import {baseURL} from '@/utils/request';
 import moment from 'moment'
 
 export default {
@@ -98,6 +98,11 @@ export default {
       console.log('update')
       self.fetchData()
     })
+  },
+  computed: {
+    download() {
+      return `${baseURL}/dms/get_file`
+    }
   },
   methods: {
     deleteArticle(id) {

@@ -7,8 +7,9 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 
-from lms.models import (Status, Program, Milgroup, Milfaculty, Student,
-                        AbsenceType, Absence)
+from lms.models import (Status, Program, Milgroup, Milfaculty, Rank,
+                        TeacherPost, Student, Teacher, AbsenceType, 
+                        AbsenceStatus, Absence)
 
 
 def create_statuses() -> tp.Dict[str, Status]:
@@ -110,7 +111,33 @@ def create_milgroups(
     return milgroups
 
 
-# pylint: disable=too-many-locals
+def create_ranks() -> tp.Dict[str, Rank]:
+    values = ['Подполковник', 'Полковник', 'Майор', 'Генерал-майор']
+
+    ranks = {}
+
+    for value in values:
+        rank, _ = Rank.objects.get_or_create(rank=value)
+        rank.save()
+        ranks[value] = rank
+
+    return ranks
+
+
+def create_posts() -> tp.Dict[str, TeacherPost]:
+    values = ['Начальник цикла', 'Преподаватель', 'Профессор', 'Начальник ВУЦ']
+
+    posts = {}
+
+    for value in values:
+        post, _ = TeacherPost.objects.get_or_create(teacherPost=value)
+        post.save()
+        posts[value] = post
+
+    return posts
+
+
+# pylint: disable=(too-many-locals)
 def create_students(milgroups: tp.Dict[int, Milgroup],
                     programs: tp.Dict[str, Program], statuses: tp.Dict[str,
                                                                        Status]):
@@ -206,7 +233,20 @@ def create_absence_types():
     return types
 
 
+def create_absence_statuses():
+    values = ['Открыт', 'Закрыт']
+
+    types = {}
+    for value in values:
+        typ, _ = AbsenceStatus.objects.get_or_create(absenceStatus=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+# pylint: disable=(too-many-locals)
 def create_absences(types: tp.Dict[str, AbsenceType],
+                    statuses: tp.Dict[str, AbsenceStatus],
                     students: tp.Dict[str, Student]):
     values = [
         {
@@ -214,7 +254,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             'studentid': students['Кацевалов'],
             'absenceType': types['Уважительная'],
             'reason': 'Заболел',
-            'status': 1,
+            'absenceStatus': statuses['Закрыт'],
             'comment': 'Болеть будет недолго'
         },
         {
@@ -222,7 +262,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             'studentid': students['Хромов'],
             'absenceType': types['Опоздание'],
             'reason': 'Электричка опоздала',
-            'status': 1,
+            'absenceStatus': statuses['Закрыт'],
             'comment': ''
         },
         {
@@ -230,7 +270,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             'studentid': students['Исаков'],
             'absenceType': types['Неуважительная'],
             'reason': 'Прогул',
-            'status': 1,
+            'absenceStatus': statuses['Открыт'],
             'comment': 'Лежал дома на диване'
         },
     ]
@@ -241,11 +281,78 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             studentid=value['studentid'],
             absenceType=value['absenceType'],
             reason=value['reason'],
-            status=value['status'],
+            absenceStatus=value['absenceStatus'],
             comment=value['comment'])
         absence.save()
 
 
+# pylint: disable=(too-many-locals)
+# pylint: disable=(too-many-arguments)
+def create_teachers(milgroups: tp.Dict[int, Milgroup],
+                    milfaculties: tp.Dict[str, Milfaculty],
+                    ranks: tp.Dict[str, Rank], posts: tp.Dict[str,
+                                                              TeacherPost]):
+    values = [
+        {
+            'surname': 'Никандров',
+            'name': 'Игорь',
+            'patronymic': 'Владимирович',
+            'milfaculty': milfaculties['ВКС'],
+            'rank': ranks['Подполковник'],
+            'post': posts['Преподаватель'],
+            'milgroup': milgroups[1809]
+        },
+        {
+            'surname': 'Репалов',
+            'name': 'Дмитрий',
+            'patronymic': 'Николаевич',
+            'milfaculty': milfaculties['ВКС'],
+            'rank': ranks['Подполковник'],
+            'post': posts['Начальник цикла'],
+            'milgroup': milgroups[1808]
+        },
+        {
+            'surname': 'Мещеряков',
+            'name': 'Иван',
+            'patronymic': 'Владимирович',
+            'milfaculty': milfaculties['Сержанты'],
+            'rank': ranks['Майор'],
+            'post': posts['Преподаватель'],
+            'milgroup': milgroups[1806]
+        },
+        {
+            'surname': 'Ковальчук',
+            'name': 'Игорь',
+            'patronymic': 'Валентинович',
+            'milfaculty': milfaculties['Разведка'],
+            'rank': ranks['Полковник'],
+            'post': posts['Начальник цикла'],
+            'milgroup': milgroups[1801]
+        },
+        {
+            'surname': 'Гаврилов',
+            'name': 'Климент',
+            'patronymic': 'Сергеевич',
+            'milfaculty': milfaculties['РВСН'],
+            'rank': ranks['Генерал-майор'],
+            'post': posts['Преподаватель'],
+            'milgroup': None
+        },
+    ]
+
+    for value in values:
+        teacher, _ = Teacher.objects.get_or_create(
+            surname=value['surname'],
+            name=value['name'],
+            patronymic=value['patronymic'],
+            milfaculty=value['milfaculty'],
+            rank=value['rank'],
+            post=value['post'],
+            milgroup=value['milgroup'])
+        teacher.save()
+
+
+# pylint: disable=(too-many-locals)
 @api_view(['PUT'])
 @permission_classes((AllowAny,))
 def lms_populate(request: Request) -> Response:
@@ -259,12 +366,17 @@ def lms_populate(request: Request) -> Response:
     programs = create_programs()
     milfaculties = create_milfaculties()
     milgroups = create_milgroups(milfaculties)
+    ranks = create_ranks()
+    posts = create_posts()
 
     students = create_students(milgroups, programs, statuses)
 
-    absence_types = create_absence_types()
+    create_teachers(milgroups, milfaculties, ranks, posts)
 
-    create_absences(absence_types, students)
+    absence_types = create_absence_types()
+    absence_statuses = create_absence_statuses()
+
+    create_absences(absence_types, absence_statuses, students)
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)
