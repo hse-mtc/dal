@@ -389,7 +389,8 @@ def delete_document(request: Request) -> Response:
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def tags(request: Request) -> Response:
-    return Response(Tag.objects.values(), status=HTTP_200_OK)
+    return Response(Tag.objects.values(key=F("id"), value=F("name")),
+                    status=HTTP_200_OK)
 
 
 @permission_classes((AllowAny,))
