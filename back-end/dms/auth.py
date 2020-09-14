@@ -1,5 +1,3 @@
-from django.utils.translation import gettext_lazy as _
-
 from rest_framework import HTTP_HEADER_ENCODING, exceptions
 from rest_framework.authentication import TokenAuthentication
 
@@ -32,17 +30,17 @@ class TokenAuthSupportQueryString(TokenAuthentication):
             return None
 
         if len(auth) == 1:
-            msg = _("Invalid token header. No credentials provided.")
+            msg = "No credentials provided."
             raise exceptions.AuthenticationFailed(msg)
 
         if len(auth) > 2:
-            msg = _("Invalid token header. Token string should not contain spaces.")
+            msg = "Token string should not contain spaces."
             raise exceptions.AuthenticationFailed(msg)
 
         try:
             token = auth[1].decode()
-        except UnicodeError as e:
-            msg = _("Invalid token header. Token string should not contain invalid characters.")
-            raise exceptions.AuthenticationFailed(msg) from e
+        except UnicodeError as exc:
+            msg = "Token string should not contain invalid characters."
+            raise exceptions.AuthenticationFailed(msg) from exc
 
         return self.authenticate_credentials(token)

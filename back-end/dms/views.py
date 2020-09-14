@@ -115,11 +115,13 @@ class SubjectViewSet(viewsets.ModelViewSet):
 class UploadNirView(APIView):
 
     def post(self, request: Request) -> Response:
+        # pylint: disable=too-many-locals
+
         if "file" not in request.data:
             return Response({"message": "No file provided."},
                             status=HTTP_400_BAD_REQUEST)
 
-        f = request.data["file"]
+        file = request.data["file"]
 
         doc = Document()
 
@@ -148,7 +150,7 @@ class UploadNirView(APIView):
         if request.data.get("authorIds"):
             doc.authors.add(*Author.objects.filter(
                 id__in=list(map(int,
-                                request.data.get("authorIds").split(',')))))
+                                request.data.get("authorIds").split(",")))))
 
         if request.data.get("publisherId"):
             publisher = Publisher.objects.get(pk=request.data["publisherId"])
@@ -157,8 +159,8 @@ class UploadNirView(APIView):
             doc.publishers.create(name=request.data["newPublisher"])
 
         doc.file.save(
-            name=f.name,
-            content=f,
+            name=file.name,
+            content=file,
         )
 
         return Response({"message": "Document created successfully."},
@@ -167,7 +169,8 @@ class UploadNirView(APIView):
     def put(self, request: Request) -> Response:  # pylint: disable=no-self-use
         """
         Usage PUT request to api/upload?type=nir&id=21
-        curl -X PUT -H 'Content-Disposition: attachment; filename=ptu.png' 'http://127.0.0.1:8000/api/upload?id=1' --upload-file some_file.png
+        curl -X PUT -H 'Content-Disposition: attachment; filename=ptu.png' \
+        'http://127.0.0.1:8000/api/upload?id=1' --upload-file some_file.png
         :param request:
         :return:
         """
@@ -177,10 +180,10 @@ class UploadNirView(APIView):
                             status=HTTP_400_BAD_REQUEST)
 
         doc = Document.objects.all()
-        f = request.data["file"]
+        file = request.data["file"]
         doc.get(pk=request.query_params.get("id")).file.save(
-            name=f.name,
-            content=f,
+            name=file.name,
+            content=file,
             save=True,
         )
 
@@ -199,13 +202,10 @@ def get_file(request: Request) -> HttpResponse:
     """
 
     doc = Document.objects.all()
-    print(f"{doc.get(id=request.query_params.get('id')) = }")
-    f = doc.get(pk=request.query_params.get("id")).file
-    print(f"{f = }")
-    filename = f.name.split("/")[-1]
-    print(f"{filename = }")
+    file = doc.get(pk=request.query_params.get("id")).file
+    filename = file.name.split("/")[-1]
 
-    with open(f.name, "rb") as content:
+    with open(file.name, "rb") as content:
         response = HttpResponse(content, content_type="text/plain")
         response["Content-Disposition"] = f"attachment; " \
             f"filename={escape_uri_path(filename)}"
@@ -318,6 +318,8 @@ def extract_documents_by_year_from_queryset(documents_queryset):
 @api_view(["GET"])
 @permission_classes((AllowAny,))
 def documents(request: Request) -> Response:
+    # pylint: disable=too-many-locals
+
     authors = request.query_params.get("authors")
     start_date = request.query_params.get("start_date")
     end_date = request.query_params.get("end_date")
@@ -391,6 +393,8 @@ class SubjectSectionView(APIView):
         }
 
     def get(self, request):
+        # pylint: disable=too-many-locals
+
         searching_id = request.query_params.get("id")
         searching_title = Subject.objects.filter(id=searching_id)[0].title
 

@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 
 from lms.models import (Status, Program, Milgroup, Milfaculty, Rank,
-                        TeacherPost, Student, Teacher, AbsenceType, 
+                        TeacherPost, Student, Teacher, AbsenceType,
                         AbsenceStatus, Absence)
 
 
