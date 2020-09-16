@@ -1,9 +1,7 @@
 import operator
-import json
 
 import typing as tp
 
-from datetime import datetime
 from functools import reduce
 
 from taggit.models import Tag
@@ -34,8 +32,6 @@ from rest_framework.decorators import (
 )
 from rest_framework.status import (
     HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_422_UNPROCESSABLE_ENTITY,
@@ -44,6 +40,7 @@ from rest_framework.status import (
 from dms.serializers import (
     AuthorSerializer,
     CategorySerializer,
+    DocumentSerializer,
     PublisherSerializer,
     SubjectSerializer,
 )
@@ -58,9 +55,7 @@ from dms.models import (
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Author model.
-    """
+    """API for CRUD operations on Author model."""
 
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
@@ -68,9 +63,7 @@ class AuthorViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Category model.
-    """
+    """API for CRUD operations on Category model."""
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -92,9 +85,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class PublisherViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Publisher model.
-    """
+    """API for CRUD operations on Publisher model."""
 
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
@@ -102,93 +93,11 @@ class PublisherViewSet(viewsets.ModelViewSet):
 
 
 class SubjectViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Subject model.
-    """
+    """API for CRUD operations on Subject model."""
 
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
     permission_classes = [permissions.AllowAny]
-
-
-@permission_classes((AllowAny,))
-class UploadNirView(APIView):
-
-    def post(self, request: Request) -> Response:
-        # pylint: disable=too-many-locals
-
-        if "file" not in request.data:
-            return Response({"message": "No file provided."},
-                            status=HTTP_400_BAD_REQUEST)
-
-        file = request.data["file"]
-
-        doc = Document()
-
-        doc.title = request.data["title"]
-
-        category = request.data.get("category")
-        if category:
-            doc.category = Category.objects.get(pk=category)
-
-        if request.data.get("annotation"):
-            doc.annotation = request.data["annotation"]
-
-        date = request.data.get("date")
-        if date and date != "Invalid date":
-            doc.publication_date = datetime.strptime(date, "%d.%m.%Y")
-
-        doc.save()
-
-        if request.data.get("keywords"):
-            keywords_list = list(
-                map(lambda x: x["value"], json.loads(request.data["keywords"])))
-
-            if len(keywords_list) > 0:
-                doc.keywords.add(*keywords_list)
-
-        if request.data.get("authorIds"):
-            doc.authors.add(*Author.objects.filter(
-                id__in=list(map(int,
-                                request.data.get("authorIds").split(",")))))
-
-        if request.data.get("publisherId"):
-            publisher = Publisher.objects.get(pk=request.data["publisherId"])
-            doc.publishers.add(publisher)
-        elif request.data.get("newPublisher"):
-            doc.publishers.create(name=request.data["newPublisher"])
-
-        doc.file.save(
-            name=file.name,
-            content=file,
-        )
-
-        return Response({"message": "Document created successfully."},
-                        status=HTTP_201_CREATED)
-
-    def put(self, request: Request) -> Response:  # pylint: disable=no-self-use
-        """
-        Usage PUT request to api/upload?type=nir&id=21
-        curl -X PUT -H 'Content-Disposition: attachment; filename=ptu.png' \
-        'http://127.0.0.1:8000/api/upload?id=1' --upload-file some_file.png
-        :param request:
-        :return:
-        """
-
-        if "file" not in request.data:
-            return Response({"message": "No file provided."},
-                            status=HTTP_400_BAD_REQUEST)
-
-        doc = Document.objects.all()
-        file = request.data["file"]
-        doc.get(pk=request.query_params.get("id")).file.save(
-            name=file.name,
-            content=file,
-            save=True,
-        )
-
-        return Response({"message": "File for document uploaded successfully."},
-                        status=HTTP_201_CREATED)
 
 
 @csrf_exempt
@@ -273,8 +182,8 @@ def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
                     )),
                 "id":
                     item.id,
-                "keywords":
-                    list(item.keywords.names()),
+                "tags":
+                    list(item.tags.names()),
                 "publication_date":
                     item.publication_date.isoformat(),
                 "publishers":
@@ -314,9 +223,6 @@ def extract_documents_by_year_from_queryset(documents_queryset):
     return data
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
 def documents(request: Request) -> Response:
     # pylint: disable=too-many-locals
 
@@ -346,8 +252,7 @@ def documents(request: Request) -> Response:
             reduce(operator.and_,
                    [Q(annotation__icontains=word) for word in text.split()]) |
             reduce(operator.and_,
-                   [Q(keywords__name__icontains=word)
-                    for word in text.split()]))
+                   [Q(tags__name__icontains=word) for word in text.split()]))
 
     db_request = db_request.order_by("-publication_date").distinct()
 
@@ -356,17 +261,20 @@ def documents(request: Request) -> Response:
     return Response(data, status=HTTP_200_OK)
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def delete_document(request: Request) -> Response:
-    document_id = request.query_params.get("id")
-    document = Document.objects.get(id=document_id)
-    document.is_in_trash = True
-    document.save()
+class DocumentViewSet(viewsets.ModelViewSet):
+    """API for CRUD operations on Document model."""
 
-    return Response({"message": "Document is now in trash."},
-                    status=HTTP_204_NO_CONTENT)
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        # pylint: disable=unused-argument
+        return documents(request)
+
+    def perform_destroy(self, instance):
+        instance.is_in_trash = True
+        instance.save()
 
 
 @csrf_exempt
