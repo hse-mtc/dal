@@ -217,7 +217,7 @@
                     }
 
                     if (this.form.publicationDate !== '') {
-                        formData.append('date', moment(this.form.publicationDate).format('DD.MM.YYYY'));
+                        formData.append('publication_date', moment(this.form.publicationDate).format('YYYY-MM-DD'));
                     }
 
                     formData.append('category', this.form.currentCategory);
