@@ -68,5 +68,5 @@ class DocumentSerializer(serializers.ModelSerializer):
         tags = validated_data.pop("tags", None)
         instance = super().update(instance, validated_data)
         if tags:
-            instance.tags.set(*tags)
+            instance.tags.set(*tags, clear=True)
         return instance
