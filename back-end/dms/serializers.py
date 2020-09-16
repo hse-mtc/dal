@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from taggit.models import Tag
+
 from dms.models import (
     Author,
     Document,
@@ -39,6 +41,17 @@ class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = "__all__"
+
+
+class TagSerializer(serializers.ModelSerializer):
+    """Serializes Tag model."""
+
+    class Meta:
+        model = Tag
+        fields = ["name"]
+
+    def to_representation(self, instance):
+        return instance.name
 
 
 class TagListField(serializers.ListField):
