@@ -195,10 +195,10 @@
         methods: {
             fetchData() {
                 getExistingTags()
-                    .then(response => {
-                        this.existingTags = response.data
+                    .then(tags => {
+                        this.existingTags = tags
                     }).catch(() => {
-                    console.log('Данные по тегам не указаны')
+                        console.log('Данные по тегам не указаны')
                     })
             },
             onSubmit() {
