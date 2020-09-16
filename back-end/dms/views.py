@@ -16,7 +16,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import (
     Max,
     Q,
-    F,
 )
 
 from rest_framework import permissions
