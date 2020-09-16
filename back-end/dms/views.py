@@ -26,6 +26,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -42,6 +43,7 @@ from dms.serializers import (
     CategorySerializer,
     DocumentSerializer,
     PublisherSerializer,
+    TagSerializer,
     SubjectSerializer,
 )
 from dms.models import (
@@ -97,6 +99,14 @@ class SubjectViewSet(viewsets.ModelViewSet):
 
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+class TagListAPIView(ListAPIView):
+    """List all tags."""
+
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
     permission_classes = [permissions.AllowAny]
 
 
@@ -275,14 +285,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
     def perform_destroy(self, instance):
         instance.is_in_trash = True
         instance.save()
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def tags(request: Request) -> Response:
-    return Response(Tag.objects.values(key=F("id"), value=F("name")),
-                    status=HTTP_200_OK)
 
 
 @permission_classes((AllowAny,))

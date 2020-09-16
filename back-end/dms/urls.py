@@ -9,11 +9,11 @@ from dms.views import (
     PublisherViewSet,
     SubjectSectionView,
     SubjectViewSet,
+    TagListAPIView,
     get_file,
     info,
     login,
     logout,
-    tags,
 )
 
 router = routers.DefaultRouter()
@@ -30,7 +30,7 @@ urlpatterns = [
     # Manual urls
     path("get_file/", get_file),
     path("subject/", SubjectSectionView.as_view()),
-    path("tags/", tags),
+    path("tags/", TagListAPIView.as_view()),
     path("user/info/", info),
     path("user/login/", login),
     path("user/logout/", logout),
