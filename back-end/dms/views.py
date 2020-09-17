@@ -1,31 +1,20 @@
-import operator
-
-import typing as tp
-
-from functools import reduce
-
-from taggit.models import Tag
-
-from django.utils.encoding import escape_uri_path
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Max
 from django.db.models.deletion import RestrictedError
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
+from django.utils.encoding import escape_uri_path
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import (
-    Max,
-    Q,
-)
 
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
 from rest_framework.decorators import (
     api_view,
     permission_classes,
@@ -37,10 +26,13 @@ from rest_framework.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
+from taggit.models import Tag
+
 from dms.serializers import (
     AuthorSerializer,
     CategorySerializer,
     DocumentSerializer,
+    DocumentListSerializer,
     PublisherSerializer,
     TagSerializer,
     SubjectSerializer,
@@ -107,6 +99,42 @@ class TagListAPIView(ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [permissions.AllowAny]
+
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    """API for CRUD operations on Document model."""
+
+    queryset = Document.objects.filter(is_in_trash=False)
+    serializer_class = DocumentSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def list(self, request, *args, **kwargs):
+        # pylint: disable=too-many-locals,unused-argument
+
+        groups = []
+        queryset = self.filter_queryset(self.get_queryset())
+        years = queryset.annotate(year=ExtractYear("publication_date")) \
+                        .values_list("year", flat=True) \
+                        .distinct()
+
+        for year in sorted(years, reverse=True):
+            documents = queryset.filter(publication_date__year=year)
+            serializer = DocumentListSerializer(documents, many=True)
+            groups.append({
+                "year": year,
+                "documents": serializer.data,
+            })
+
+        return Response(
+            {
+                "count": Document.objects.all().count(),
+                "groups": groups,
+            },
+            status=HTTP_200_OK)
+
+    def perform_destroy(self, instance):
+        instance.is_in_trash = True
+        instance.save()
 
 
 @csrf_exempt
@@ -176,101 +204,6 @@ def logout(request: Request) -> Response:
 
     return Response({"message": "User logged out successfully."},
                     status=HTTP_200_OK)
-
-
-def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
-    return list(
-        map(
-            lambda item: {
-                "annotation": item.annotation,
-                "authors": item.authors.values_list("last_name", flat=True),
-                "id": item.id,
-                "tags": item.tags.names(),
-                "publication_date": item.publication_date,
-                "publishers": item.publishers.values_list("name", flat=True),
-                "title": item.title,
-            },
-            documents_queryset,
-        ))
-
-
-def extract_documents_by_year_from_queryset(documents_queryset):
-    t_dict = {}
-    total = 0
-    data = {
-        "items": [],
-    }
-
-    for year in documents_queryset.annotate(
-            year=ExtractYear("publication_date")).values_list(
-                "year", flat=True).distinct():
-        t_dict[year] = extract_documents_from_queryset(
-            documents_queryset.filter(publication_date__year=year))
-
-    for key, value in t_dict.items():
-        data["items"].append({
-            "year": key,
-            "items": value,
-        })
-        total += len(value)
-
-    data["total"] = total
-
-    return data
-
-
-def documents(request: Request) -> Response:
-    # pylint: disable=too-many-locals
-
-    authors = request.query_params.get("authors")
-    start_date = request.query_params.get("start_date")
-    end_date = request.query_params.get("end_date")
-    publishers = request.query_params.get("publishers")
-    text = request.query_params.get("text")
-    category = request.query_params.get("category")
-
-    db_request = Document.objects.filter(is_in_trash=False)
-
-    if category:
-        db_request = db_request.filter(category__pk=category)
-    if authors:
-        db_request = db_request.filter(authors__pk__in=authors.split(","))
-    if start_date:
-        db_request = db_request.filter(publication_date__gte=start_date)
-    if end_date:
-        db_request = db_request.filter(publication_date__lte=end_date)
-    if publishers:
-        db_request = db_request.filter(publishers__pk__in=publishers.split(","))
-    if text:
-        db_request = db_request.filter(
-            reduce(operator.and_,
-                   [Q(title__icontains=word) for word in text.split()]) |
-            reduce(operator.and_,
-                   [Q(annotation__icontains=word) for word in text.split()]) |
-            reduce(operator.and_,
-                   [Q(tags__name__icontains=word) for word in text.split()]))
-
-    db_request = db_request.order_by("-publication_date").distinct()
-
-    data = extract_documents_by_year_from_queryset(db_request)
-
-    return Response(data, status=HTTP_200_OK)
-
-
-class DocumentViewSet(viewsets.ModelViewSet):
-    """API for CRUD operations on Document model."""
-
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def list(self, request, *args, **kwargs):
-        # pylint: disable=unused-argument
-        return documents(request)
-
-    def perform_destroy(self, instance):
-        instance.is_in_trash = True
-        instance.save()
 
 
 @permission_classes((AllowAny,))
