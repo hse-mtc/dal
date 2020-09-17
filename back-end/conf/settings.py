@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
     "debug_toolbar",
+    "django_filters",
+    "silk",
 
     # REST framework
     "rest_framework",
@@ -61,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "silk.middleware.SilkyMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
