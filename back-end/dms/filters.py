@@ -11,4 +11,4 @@ class DocumentFilter(filters.FilterSet):
 
     class Meta:
         model = Document
-        fields = ["category", "publication_date", "authors", "publishers"]
+        fields = ["authors", "category", "publishers"]
