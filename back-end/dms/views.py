@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
@@ -26,7 +27,7 @@ from rest_framework.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from django_filters import rest_framework as filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from taggit.models import Tag
 
@@ -110,8 +111,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.filter(is_in_trash=False)
     serializer_class = DocumentSerializer
     permission_classes = [permissions.AllowAny]
-    filter_backends = [filters.DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = DocumentFilter
+    search_fields = ["title", "annotation", "tags__name"]
 
     def list(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals,unused-argument
