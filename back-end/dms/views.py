@@ -26,6 +26,8 @@ from rest_framework.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
+from django_filters import rest_framework as filters
+
 from taggit.models import Tag
 
 from dms.serializers import (
@@ -45,6 +47,7 @@ from dms.models import (
     Topic,
     Category,
 )
+from dms.filters import DocumentFilter
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -107,6 +110,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.filter(is_in_trash=False)
     serializer_class = DocumentSerializer
     permission_classes = [permissions.AllowAny]
+    filter_backends = [filters.DjangoFilterBackend]
+    filterset_class = DocumentFilter
 
     def list(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals,unused-argument
@@ -125,12 +130,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 "documents": serializer.data,
             })
 
-        return Response(
-            {
-                "count": Document.objects.all().count(),
-                "groups": groups,
-            },
-            status=HTTP_200_OK)
+        data = {
+            "count": queryset.count(),
+            "groups": groups,
+        }
+
+        return Response(data, status=HTTP_200_OK)
 
     def perform_destroy(self, instance):
         instance.is_in_trash = True
