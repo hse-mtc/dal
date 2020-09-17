@@ -106,7 +106,7 @@ class Document(models.Model):
         blank=True,
     )
     annotation = models.TextField(blank=True)
-    keywords = TaggableManager(blank=True)
+    tags = TaggableManager(blank=True)
     category = models.ForeignKey(
         to=Category,
         on_delete=models.RESTRICT,

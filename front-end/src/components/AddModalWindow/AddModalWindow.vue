@@ -195,10 +195,10 @@
         methods: {
             fetchData() {
                 getExistingTags()
-                    .then(response => {
-                        this.existingTags = response.data
+                    .then(tags => {
+                        this.existingTags = tags
                     }).catch(() => {
-                    console.log('Данные по тегам не указаны')
+                        console.log('Данные по тегам не указаны')
                     })
             },
             onSubmit() {
@@ -208,26 +208,22 @@
                     formData.append('title', this.form.title);
                     if (this.form.annotation !== '') formData.append('annotation', this.form.annotation);
 
-                    if (this.form.selectedAuthors.length !== 0) {
-                        formData.append('authorIds',this.form.selectedAuthors);
+                    for (const id of this.form.selectedAuthors) {
+                        formData.append("authors", id);
                     }
 
                     if (this.form.publisher !== '') {
-                        if (this.form.publisher === -1) {
-                            formData.append('newPublisher', this.form.newPublisher);
-                        } else {
-                            formData.append('publisherId', this.form.publisher);
-                        }
+                        formData.append('publishers', this.form.publisher);
                     }
 
                     if (this.form.publicationDate !== '') {
-                        formData.append('date', moment(this.form.publicationDate).format('DD.MM.YYYY'));
+                        formData.append('publication_date', moment(this.form.publicationDate).format('YYYY-MM-DD'));
                     }
 
                     formData.append('category', this.form.currentCategory);
 
-                    if (this.form.selectedTags.length !== 0) {
-                        formData.append('keywords', JSON.stringify( this.form.selectedTags));
+                    for (const tag of this.form.selectedTags.map(tag => tag.value)) {
+                      formData.append('tags', tag);
                     }
 
                     if (this.form.fileList.length !== 0) {

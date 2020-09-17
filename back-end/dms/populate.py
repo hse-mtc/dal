@@ -229,6 +229,8 @@ def create_documents(
     :return: list of created documents.
     """
 
+    # pylint: disable=too-many-arguments,too-many-locals
+
     documents = []
 
     document_titles = [

@@ -5,5 +5,10 @@ export function getExistingTags(params) {
     url: '/dms/tags/',
     method: 'get',
     params
+  }).then(response => {
+      return response.data.map(tag => ({
+          key: tag,
+          value: tag,
+      }))
   })
 }

@@ -11,28 +11,30 @@
         {{ count }} документ
       </div>
 
-      <div v-for="year in documents" :key="year.year">
+      <div v-for="group in documents" :key="group.year">
         <div class="cool-hr d-flex align-items-center">
           <hr class="mr-3">
-          {{year.year}}
+          {{ group.year }}
           <hr class="ml-3">
         </div>
-        <el-row v-for="(item, index) in year.items" :key="item.id" class="document-card mt-3 mb-4">
+        <el-row v-for="(document, index) in group.documents" :key="document.id" class="document-card mt-3 mb-4">
           <el-col :span="2" style="font-size: 22px" class="mt-4">
             № {{ index+1 }}
           </el-col>
           <el-col :span="21">
             <div class="d-flex">
               <div>
-                {{ item.publication_date | moment }}
+                {{ document.publication_date | moment }}
               </div>
               <div class="ml-5" style="color: #76767A">
-                <span v-for="(publisher, index) in item.publishers" :key="index">{{ publisher }} </span>
+                <span v-for="(publisher, index) in document.publishers" :key="index">{{ publisher.name }} </span>
               </div>
             </div>
-            <div class="document-card-title">{{ item.title }}</div>
-            <div v-for="(author, index) in item.authors" :key="index" class="document-card-authors">{{ author }}</div>
-            <div class="document-card-annotation">{{ item.annotation }}</div>
+            <div class="document-card-title">{{ document.title }}</div>
+            <div v-for="(author, index) in document.authors" :key="index" class="document-card-authors">
+              {{ `${author.last_name} ${author.first_name[0]}. ${author.patronymic[0]}.` }}
+            </div>
+            <div class="document-card-annotation">{{ document.annotation }}</div>
           </el-col>
           <el-col :span="1" class="d-flex justify-content-end mt-4" >
             <el-popover
@@ -42,11 +44,11 @@
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
                 <div style="cursor:pointer;">
                   <form :action="download" method="get">
-                    <input :value="item.id" type="hidden" name="id">
+                    <input :value="document.id" type="hidden" name="id">
                     <button class="download-kebab-button">Скачать</button>
                   </form>
                 </div>
-                <div style="cursor:pointer;" @click="deleteArticle(item.id)">Удалить</div>
+                <div style="cursor:pointer;" @click="deleteArticle(document.id)">Удалить</div>
               </div>
               <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
                 <img src="../../assets/scienceWorks/popover.svg" alt="">
@@ -116,13 +118,13 @@ export default {
       })
               .then(() => {
                 deleteDocument(deletedId).then(response => {
-                  this.documents.forEach(item => {
-                    item.items = item.items.filter(i => {
+                  this.documents.forEach(group => {
+                    group.documents = group.documents.filter(i => {
                       return i.id !== id
                     })
                   })
-                  this.documents = this.documents.filter(item => {
-                    return item.items.length !== 0
+                  this.documents = this.documents.filter(group => {
+                    return group.documents.length !== 0
                   })
                   console.log('файл удален')
                   this.count = this.count - 1
@@ -147,8 +149,8 @@ export default {
       let text = this.$route.query.text ?  this.$route.query.text :  null
       let category = this.$route.query.section ?  this.$route.query.section :  null
       getDocuments(category, author, place, start_date, end_date, text).then(response => {
-        this.documents = response.data.items
-        this.count = response.data.total
+        this.documents = response.data.groups
+        this.count = response.data.count
       }).catch(() => {
         console.log('Данные по документам не указаны')
       })
