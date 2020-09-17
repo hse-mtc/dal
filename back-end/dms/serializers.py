@@ -68,7 +68,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Document
-        fields = "__all__"
+        exclude = ["is_in_trash"]
 
     def create(self, validated_data):
         tags = validated_data.pop("tags", None)
@@ -83,3 +83,15 @@ class DocumentSerializer(serializers.ModelSerializer):
         if tags:
             instance.tags.set(*tags, clear=True)
         return instance
+
+
+class DocumentListSerializer(serializers.ModelSerializer):
+    """Serializes a list of Document models."""
+
+    authors = AuthorSerializer(many=True, read_only=True)
+    publishers = PublisherSerializer(many=True, read_only=True)
+    tags = TagListField(required=False, read_only=True)
+
+    class Meta:
+        model = Document
+        exclude = ["is_in_trash", "subject", "topic", "file"]
