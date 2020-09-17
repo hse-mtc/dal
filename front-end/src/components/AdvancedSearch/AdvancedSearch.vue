@@ -16,7 +16,7 @@
                                 v-for="item in authors"
                                 :key="item.id"
                                 :value="item.id"
-                                :label="`${item.last_name} ${item.first_name[0]}. ${item.patronymic[0]}`"
+                                :label="`${item.last_name} ${item.first_name[0]}. ${item.patronymic[0]}.`"
                         />
                     </el-select>
                 </el-col>
