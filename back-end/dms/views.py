@@ -182,28 +182,15 @@ def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
     return list(
         map(
             lambda item: {
-                "annotation":
-                    item.annotation,
-                "authors":
-                    list(item.authors.values_list(
-                        "last_name",
-                        flat=True,
-                    )),
-                "id":
-                    item.id,
-                "tags":
-                    list(item.tags.names()),
-                "publication_date":
-                    item.publication_date.isoformat(),
-                "publishers":
-                    item.publishers.values_list(
-                        "name",
-                        flat=True,
-                    ),
-                "title":
-                    item.title,
+                "annotation": item.annotation,
+                "authors": item.authors.values_list("last_name", flat=True),
+                "id": item.id,
+                "tags": item.tags.names(),
+                "publication_date": item.publication_date,
+                "publishers": item.publishers.values_list("name", flat=True),
+                "title": item.title,
             },
-            list(documents_queryset),
+            documents_queryset,
         ))
 
 
