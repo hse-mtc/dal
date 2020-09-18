@@ -29,6 +29,7 @@ services:
       - ./back-end/conf:/back-end/conf
       - ./back-end/dms:/back-end/dms
       - ./back-end/lms:/back-end/lms
+      - ./back-end/scripts:/back-end/scripts
 
   front-end:
     build:
