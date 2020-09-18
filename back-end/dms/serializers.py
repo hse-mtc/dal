@@ -66,13 +66,13 @@ class FileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = File
-        exclude = ['content']
+        exclude = ["content"]
 
-    extension = serializers.CharField(source='get_file_extension',
+    extension = serializers.CharField(source="get_file_extension",
                                       required=False,
                                       read_only=True)
 
-    name = serializers.CharField(source='get_file_name',
+    name = serializers.CharField(source="get_file_name",
                                  required=False,
                                  read_only=True)
 
