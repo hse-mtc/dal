@@ -283,6 +283,7 @@ def create_documents(
 @api_view(["PUT"])
 @permission_classes((AllowAny,))
 def populate(request: Request,) -> Response:
+    # pylint: disable=too-many-locals
     """
     Populate database with fake documents, users, etc. (including super user).
     :param request: empty PUT request.
