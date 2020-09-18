@@ -22,7 +22,8 @@ from .validators import PresentInDatasetValidator
 
 class MilgroupSerializer(ModelSerializer):
     milgroup = IntegerField()
-
+    weekday = IntegerField()
+    
     class Meta:
         model = Milgroup
         fields = '__all__'
