@@ -8,6 +8,7 @@ from dms.models import (
     Category,
     Publisher,
     Subject,
+    File,
 )
 
 
@@ -61,13 +62,26 @@ class TagListField(serializers.ListField):
         return data.values_list("name", flat=True)
 
 
+class FileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = File
+        exclude = ['content']
+
+    extension = serializers.CharField(source='get_file_extension',
+                                      required=False,
+                                      read_only=True)
+
+    name = serializers.CharField(source='get_file_name',
+                                 required=False,
+                                 read_only=True)
+
+
 class DocumentSerializer(serializers.ModelSerializer):
     """Serializes Document model."""
 
     tags = TagListField(required=False)
-    file_extension = serializers.CharField(source='get_file_extension',
-                                           required=False,
-                                           read_only=True)
+    file = FileSerializer()
 
     class Meta:
         model = Document
@@ -94,10 +108,8 @@ class DocumentListSerializer(serializers.ModelSerializer):
     authors = AuthorSerializer(many=True, read_only=True)
     publishers = PublisherSerializer(many=True, read_only=True)
     tags = TagListField(required=False, read_only=True)
-    file_extension = serializers.CharField(source='get_file_extension',
-                                           required=False,
-                                           read_only=True)
+    file = FileSerializer()
 
     class Meta:
         model = Document
-        exclude = ["is_in_trash", "subject", "topic", "file"]
+        exclude = ["is_in_trash", "subject", "topic"]
