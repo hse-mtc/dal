@@ -265,7 +265,7 @@ class Teacher(models.Model):
 class Absence(models.Model):
     date = models.DateField(default=datetime.date.today)
     studentid = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
+                                  models.CASCADE,
                                   db_column='studentid')
     absenceType = models.ForeignKey(AbsenceType,
                                     models.DO_NOTHING,

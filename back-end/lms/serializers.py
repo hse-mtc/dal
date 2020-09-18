@@ -104,21 +104,21 @@ class StudentSerializer(ModelSerializer):
         milgroup_data = validated_data.pop('milgroup')
         milfaculty = Milfaculty.objects.get(
             milfaculty=milgroup_data.pop('milfaculty'))
+
         milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
 
         program = Program.objects.get(**validated_data.pop('program'))
-
-        # Convert from '%d.%m.%Y' format to '%Y-%m-%d' format
-        # because Django doesn't accept russian formats.
-        # Though, it accepts russian format on creating -_-
-        validated_data['birthdate'] = datetime.datetime.strptime(
-            validated_data['birthdate'], '%d.%m.%Y').strftime('%Y-%m-%d')
-        # serializer converts
-        student_modified = instance.update(milgroup=milgroup,
-                                           program=program,
-                                           **validated_data)
-
-        return student_modified
+        
+        status = Status.objects.get(status=validated_data.pop('status'))
+        
+        instance.milgroup = milgroup
+        instance.program = program
+        
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+                                            
+        return instance
 
 
 class StudentShortSerializer(ModelSerializer):
