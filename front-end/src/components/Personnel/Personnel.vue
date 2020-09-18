@@ -79,16 +79,20 @@
 							label="Статус">
 						</el-table-column>
 						<el-table-column
-							label="">
+							label=""
+							width="115px">
 							<template slot-scope="scope">
 								<el-button
 								size="mini"
 								icon="el-icon-edit"
+								type="info"
+								circle
 								@click="onEdit(scope.row)"></el-button>
 								<el-button
 								size="mini"
 								icon="el-icon-delete"
 								type="danger"
+								circle
 								@click="onDelete(scope.row.id)"></el-button>
 							</template>
 						</el-table-column>
@@ -153,16 +157,20 @@
 							label="Прикр. взвод">
 						</el-table-column>
 						<el-table-column
-							label="">
+							label=""
+							width="115px">
 							<template slot-scope="scope">
 								<el-button
 								size="mini"
 								icon="el-icon-edit"
+								type="info"
+								circle
 								@click="onEdit(scope.row)"></el-button>
 								<el-button
 								size="mini"
 								icon="el-icon-delete"
 								type="danger"
+								circle
 								@click="onDelete(scope.row.id)"></el-button>
 							</template>
 						</el-table-column>

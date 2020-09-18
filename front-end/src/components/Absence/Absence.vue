@@ -11,6 +11,19 @@
                             <el-input clearable placeholder="Поиск..." v-model="filter.search" v-on:clear="onFilter" v-on:keyup.native.enter="onFilter"></el-input>
                         </el-col>
                         <el-col :span="4">
+                            <el-select v-model="filter.mg" value-key="milgroup" clearable placeholder="Выберите взвод" v-on:change="onFilter"
+                            style="display: block">
+                                <el-option
+                                    v-for="item in milgroups"
+                                    :key="item.milgroup"
+                                    :label="item.milgroup"
+                                    :value="item">
+                                    <span style="float: left">{{ item.milgroup }}</span>
+                                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.milfaculty }}</span>
+                                </el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :span="4">
                             <el-select v-model="filter.type" clearable placeholder="Выберите тип причины" v-on:change="onFilter"
                             style="display: block">
                                 <el-option
@@ -26,22 +39,9 @@
                             style="display: block">
                                 <el-option
                                 v-for="item in statuses"
-                                :key="item.id"
-                                :label="item.name"
-                                :value="item.id">
-                                </el-option>
-                            </el-select>
-                        </el-col>
-                        <el-col :span="4">
-                            <el-select v-model="filter.mg" value-key="milgroup" clearable placeholder="Выберите взвод" v-on:change="onFilter"
-                            style="display: block">
-                                <el-option
-                                    v-for="item in milgroups"
-                                    :key="item.milgroup"
-                                    :label="item.milgroup"
-                                    :value="item">
-                                    <span style="float: left">{{ item.milgroup }}</span>
-                                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.milfaculty }}</span>
+                                :key="item"
+                                :label="item"
+                                :value="item">
                                 </el-option>
                             </el-select>
                         </el-col>
@@ -73,6 +73,15 @@
                             sortable
                             label="Дата"/>
                             <el-table-column
+                            prop="studentid.fullname"
+                            sortable
+                            show-overflow-tooltip
+                            label="ФИО"/>
+                            <el-table-column
+                            prop="studentid.milgroup.milgroup"
+                            sortable
+                            label="Взвод"/>
+                            <el-table-column
                             sortable
                             label="Тип причины"> 
                                 <template slot-scope="scope">
@@ -83,14 +92,15 @@
                                 </template>
                             </el-table-column>
                             <el-table-column
-                            prop="studentid.fullname"
                             sortable
-                            show-overflow-tooltip
-                            label="ФИО"/>
-                            <el-table-column
-                            prop="studentid.milgroup.milgroup"
-                            sortable
-                            label="Взвод"/>
+                            label="Статус">
+                                <template slot-scope="scope">
+                                    <i slot="reference"
+                                    :class="scope.row.absenceStatus === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
+                                    :style="scope.row.absenceStatus === 'Открыт' ? 'color: red' : 'color: green'"/>
+                                    {{scope.row.absenceStatus}}
+                                </template>
+                            </el-table-column>
                             <el-table-column
                             prop="reason"
                             sortable
@@ -98,65 +108,164 @@
                             <el-table-column
                             prop="comment"
                             label="Комментарий"/>
+                            <el-table-column
+                            width="115px">
+                                <template slot-scope="scope">
+                                    <el-button
+                                    size="mini"
+                                    icon="el-icon-edit"
+                                    type="info"
+                                    circle
+                                    @click="onEdit(scope.row, scope.row.studentid.fullname)"/>
+                                    <el-button
+                                    size="mini"
+                                    icon="el-icon-delete"
+                                    type="danger"
+                                    circle
+                                    @click="handleDelete(scope.row.id)"/>
+                                </template>
+                            </el-table-column>
                         </el-table>
                     </el-row>
                 </el-tab-pane>
                 <el-tab-pane label="Журнал">
-                    <el-table
-                    :data="journal.students"
-                    style="width: 100%"
-                    max-height="680"
-                    stripe
-                    border>
-                        <el-table-column
-                        width="250"
-                        prop="fullname"
-                        label="ФИО"
-                        show-overflow-tooltip
-                        fixed/>
-                        <el-table-column
-                        v-for="d in dates"
-                        :key="d"
-                        :label="d"
-                        align="center">
-                        <template slot-scope="scope">
-                            <el-popover
-                                v-if="scope.row.absences[d] !== undefined" 
-                                placement="top"
-                                width="400"
-                                trigger="hover">
-                                <el-form label-position="right" label-width="150px" size="mini" :model="scope.row.absences[d]">
-                                    <el-form-item label="Тип причины: ">
-                                        <el-tag
-                                        :type="scope.row.absences[d].absenceType === 'Неуважительная' ? 'danger' : 
-                                        (scope.row.absences[d].absenceType === 'Опоздание' ? 'warning' : 'success')"
-                                        disable-transitions>
-                                            {{scope.row.absences[d].absenceType}}
-                                        </el-tag>
-                                    </el-form-item>
-                                    <el-form-item label="Причина: ">
-                                        {{scope.row.absences[d].reason}}
-                                    </el-form-item>
-                                    <el-form-item label="Комментарий: ">
-                                        {{scope.row.absences[d].comment}}
-                                    </el-form-item>
-                                </el-form>
-                                <i slot="reference"
-                                :class="scope.row.absences[d].status === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
-                                :style="scope.row.absences[d].status === 'Открыт' ? 'color: red' : 'color: green'" />
-                            </el-popover>
-                        </template>
-                        </el-table-column>
-                    </el-table>
+                    <el-row class="filterRow" style="margin-bottom: 15px;">
+                        <el-col :offset="17" :span="5">
+                            <el-date-picker
+                                v-model="filterJ.dateRange"
+                                type="daterange"
+                                align="right"
+                                unlink-panels
+                                :clearable="false"
+                                range-separator="по"
+                                start-placeholder="Начальная дата"
+                                end-placeholder="Конечная дата"
+                                :picker-options="pickerOptions"
+                                v-on:change="onJournal"
+                                format="dd.MM.yyyy"
+                                value-format="dd.MM.yyyy">
+                            </el-date-picker>
+                        </el-col>
+                    </el-row>
+                    <el-tabs tab-position="left" v-model="filterJ.mg" @tab-click="onJournal()">
+                        <el-tab-pane
+                        v-for="mg in milgroups"
+                        :key="mg.milgroup"
+                        :label="mg.milgroup"
+                        :name="mg.milgroup">
+                            <el-table
+                            :data="journal.students"
+                            style="width: 100%"
+                            max-height="680"
+                            stripe
+                            border>
+                                <el-table-column
+                                width="250"
+                                prop="fullname"
+                                label="ФИО"
+                                show-overflow-tooltip
+                                fixed/>
+                                <el-table-column
+                                v-for="d in journal.dates"
+                                :key="d"
+                                :label="d"
+                                align="center">
+                                <template slot-scope="scope">
+                                    <el-popover
+                                        v-if="scope.row.absences[d] !== undefined" 
+                                        placement="top"
+                                        width="400"
+                                        trigger="hover">
+                                        <el-form label-position="right" label-width="150px" size="mini" :model="scope.row.absences[d]">
+                                            <el-form-item label="Тип причины: ">
+                                                <el-tag
+                                                :type="scope.row.absences[d].absenceType === 'Неуважительная' ? 'danger' : 
+                                                (scope.row.absences[d].absenceType === 'Опоздание' ? 'warning' : 'success')"
+                                                disable-transitions>
+                                                    {{scope.row.absences[d].absenceType}}
+                                                </el-tag>
+                                            </el-form-item>
+                                            <el-form-item label="Причина: ">
+                                                {{scope.row.absences[d].reason}}
+                                            </el-form-item>
+                                            <el-form-item label="Комментарий: ">
+                                                {{scope.row.absences[d].comment}}
+                                            </el-form-item>
+                                            <el-form-item>
+                                                <el-button
+                                                size="mini"
+                                                icon="el-icon-edit"
+                                                type="info"
+                                                circle
+                                                @click="onEdit(scope.row.absences[d], scope.row.fullname)"/>
+                                                <el-button
+                                                size="mini"
+                                                icon="el-icon-delete"
+                                                type="danger"
+                                                circle
+                                                @click="handleDelete(scope.row.absences[d].id)"/>
+                                            </el-form-item>
+                                        </el-form>
+                                        <i slot="reference"
+                                        :class="scope.row.absences[d].absenceStatus === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
+                                        :style="scope.row.absences[d].absenceStatus === 'Открыт' ? 'color: red' : 'color: green'" />
+                                    </el-popover>
+                                </template>
+                                </el-table-column>
+                            </el-table>
+                        </el-tab-pane>
+                    </el-tabs>
                 </el-tab-pane>
             </el-tabs>
         </el-col>
+        <el-dialog
+        :title="editAbsenceFullname"
+        :visible.sync="dialogVisible"
+        width="30%"
+        :before-close="handleClose">
+            <el-form label-position="right" label-width="150px" size="mini" :model="editAbsence">
+                <el-form-item label="Тип причины: ">
+                    <el-select
+                    v-model="editAbsence.absenceType" placeholder="Выберите тип причины"
+                    style="display: block">
+                        <el-option
+                        v-for="item in types"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="Статус: ">
+                    <el-switch
+                    :value="editAbsence.absenceStatus == 'Закрыт'"
+                    active-text="Закрыт"
+                    inactive-text="Открыт"
+                    @change="editAbsence.absenceStatus = editAbsence.absenceStatus == 'Закрыт' ? 'Открыт' : 'Закрыт'">
+                    </el-switch>
+                </el-form-item>
+                <el-form-item label="Причина: ">
+                    <el-input v-model="editAbsence.reason"
+                    placeholder="Введите причину"/>
+                </el-form-item>
+                <el-form-item label="Комментарий: ">
+                    <el-input 
+                    v-model="editAbsence.comment"
+                    type="textarea"
+                    :rows="2"
+                    placeholder="Введите комментарий"/>
+                </el-form-item>
+            </el-form>
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible=false">Отмена</el-button>
+            <el-button type="primary" @click="handleAccept()">Применить</el-button>
+        </span>
+        </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAbsence } from '@/api/absence'
-import { Message } from 'element-ui';
+import { getAbsence, getAbsenceJournal, postAbsence, deleteAbsence } from '@/api/absence'
 import moment from 'moment'
 
 export default {
@@ -166,12 +275,37 @@ export default {
     },
     data() {
         return {
+            dialogVisible: false,
+            editAbsence: {
+                id: 1,
+                date: '',
+                absenceType: '',
+                absenceStatus: '',
+                studentid: {
+                    id: '',
+                    name: '',
+                    surname: '',
+                    patronymic: '',
+                    fullname: '',
+                    milgroup: {
+                        milgroup: '',
+                        milfaculty: ''
+                    }
+                },
+                reason: '',
+                comment: ''
+            },
+            editAbsenceFullname: '',
             filter: {
                 type: null,
                 status: null,
                 dateRange: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')],
                 search: null,
                 mg: null
+            },
+            filterJ: {
+                mg: null,
+                dateRange: [moment().add(-3, 'months').format('DD.MM.yyyy'), moment().format('DD.MM.yyyy')]
             },
             absences: [],
             types: [
@@ -180,14 +314,8 @@ export default {
                 'Опоздание',
             ],
             statuses: [
-                {
-                    id: 0,
-                    name: 'Закрыт'
-                },
-                {
-                    id: 1,
-                    name: 'Открыт'
-                }
+                'Закрыт',
+                'Открыт'
             ],
             milgroups: [
                 {
@@ -230,212 +358,7 @@ export default {
                     }
                 }]
             },
-
-            dates: [
-                '04.09.20',
-                '11.09.20',
-                '18.09.20',
-                '25.09.20',
-                '01.10.20',
-                '08.10.20',
-                '15.10.20',
-                '22.10.20',
-                '29.10.20',
-                '05.11.20',
-                '12.11.20',
-                '19.11.20',
-                '26.11.20',
-                '03.12.20',
-                '10.12.20',
-            ],
-            journal: {
-                milgroup: {
-                    milgroup: '1809',
-                    milfaculty: 'ВКС',
-                },
-                students: [
-                    {
-                        id: 1,
-                        fullname: 'Хромов Григорий Александрович',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: 'Не захотел'
-                            }
-                        }
-                    },
-                    {
-                        id: 2,
-                        fullname: 'Кацевалов Артем Сергеевич',
-                        absences: {
-                            '11.09.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Коронавирус'
-                            },
-                            '15.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 3,
-                        fullname: 'Кацевалов Григорий Александрович',
-                        absences: {
-                            '11.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 4,
-                        fullname: 'Иванов Иван Иванович',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 5,
-                        fullname: 'Исаков Владислав Евгеньевич',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '11.09.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 6,
-                        fullname: 'Хромов Григорий Александрович',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 7,
-                        fullname: 'Хромов Григорий Александрович',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 8,
-                        fullname: 'Хромов Григорий Александрович',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 9,
-                        fullname: 'Хромов Григорий Александрович',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                    {
-                        id: 10,
-                        fullname: 'Хромов Григорий Александрович',
-                        absences: {
-                            '04.09.20': {
-                                absenceType: 'Неуважительная',
-                                status: 'Закрыт',
-                                reason: 'Болезнь',
-                                comment: 'Немножко приболел'
-                            },
-                            '22.10.20': {
-                                absenceType: 'Уважительная',
-                                status: 'Открыт',
-                                reason: 'Прогул',
-                                comment: ''
-                            }
-                        }
-                    },
-                ],
-            }
+            journal: {},
         }
     },
     created() {
@@ -444,19 +367,69 @@ export default {
     methods: {
         onFilter(){
             getAbsence({
-                date_from: this.filter.dateRange[0], 
-                date_to: this.filter.dateRange[1], 
+                date_from: this.filter.dateRange !== null ? this.filter.dateRange[0] : null, 
+                date_to: this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
                 absenceType: this.filter.type, 
-                status: this.filter.status,
+                absenceStatus: this.filter.status,
                 name: this.filter.search,
-                milgroup: this.filter.mg
+                milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
             }).then(response => {
                 this.absences = response.data.absences;
-                console.log(this.absences);
             }).catch(() => {
-                Message('Ошибка получения пропусков!');
+                this.$message( { message: 'Ошибка получения пропусков!', type: 'error' } );
             });
         },
+        onEdit(row, fn){
+            this.editAbsence = { ...row };
+            this.editAbsenceFullname = fn;
+			this.dialogVisible = true;
+        },
+        handleClose(){
+            this.$confirm('Вы уверены, что хотите закрыть окно редактирования?')
+            .then(() => {
+                this.dialogVisible = false; 
+            })
+            .catch(() => {});
+        },
+        handleAccept(){
+            postAbsence(this.editAbsence)
+            .then(() => {
+                this.$message({ message: 'Пропуск успешно редактирован', type: 'success' });
+                this.dialogVisible = false;
+                this.onFilter();
+            })
+            .catch(() => {
+                this.$message({ message: 'Ошибка при редактировании пропуска!', type: 'error' });
+            });
+        },
+        handleDelete(id){
+            this.$confirm('Вы уверены, что хотите удалить пропуск?')
+            .then(() => {
+                deleteAbsence({ id })
+                .then(() => {
+                    this.$message({ message: 'Пропуск успешно удален', type: 'success' });
+                    this.onFilter();
+                })
+                .catch(() => {
+                    this.$message({ message: 'Ошибка при удалении пропуска!', type: 'error' });
+                })
+            })
+            .catch(() => {});
+        },
+
+        onJournal(){
+            getAbsenceJournal({
+                milgroup: this.filterJ.mg,
+                date_from: this.filterJ.dateRange[0],
+                date_to: this.filterJ.dateRange[1],
+            })
+            .then((response) => {
+                this. journal = response.data.absences;
+            })
+            .catch(() => {
+                this.$message({ message: 'Ошибка получения журнала!', type: 'error' });
+            });
+        }
     },
 }
 </script>
