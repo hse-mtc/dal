@@ -65,6 +65,7 @@ class DocumentSerializer(serializers.ModelSerializer):
     """Serializes Document model."""
 
     tags = TagListField(required=False)
+    file_extension = serializers.CharField(source='get_file_extension', required=False, read_only=True)
 
     class Meta:
         model = Document
@@ -91,6 +92,7 @@ class DocumentListSerializer(serializers.ModelSerializer):
     authors = AuthorSerializer(many=True, read_only=True)
     publishers = PublisherSerializer(many=True, read_only=True)
     tags = TagListField(required=False, read_only=True)
+    file_extension = serializers.CharField(source='get_file_extension', required=False, read_only=True)
 
     class Meta:
         model = Document
