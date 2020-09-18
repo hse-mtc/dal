@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -140,3 +141,7 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_file_extension(self):
+        name, extension = os.path.splitext(self.file.name)
+        return extension
