@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
-from django.db.models.deletion import RestrictedError
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
 from django.utils.encoding import escape_uri_path
@@ -80,13 +79,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
         422: SwaggerResponse("Category has documents and can not be deleted."),
     })
     def destroy(self, request, *args, **kwargs):
-        try:
-            # pylint: disable=no-member
-            return super().destroy(request, *args, **kwargs)
-        except RestrictedError:
+        # pylint: disable=no-member
+
+        category = self.get_object()
+        available_documents = Document.objects.filter(is_in_trash=False)
+        if available_documents.filter(category=category).exists():
             return Response(
                 {"message": "Category has documents and can not be deleted."},
                 status=HTTP_422_UNPROCESSABLE_ENTITY)
+
+        return super().destroy(request, *args, **kwargs)
 
 
 class PublisherViewSet(viewsets.ModelViewSet):

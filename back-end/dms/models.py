@@ -109,7 +109,7 @@ class Document(models.Model):
     tags = TaggableManager(blank=True)
     category = models.ForeignKey(
         to=Category,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
     )
     publication_date = models.DateField(default=datetime.date.today)
     publishers = models.ManyToManyField(
