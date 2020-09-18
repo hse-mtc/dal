@@ -221,7 +221,7 @@ class AbsenceJournalView(APIView):
         :param request:
         :return:
         """
-        required_params = ['milgroup', 'datefrom', 'dateto']
+        required_params = ['milgroup', 'date_from', 'date_to']
         for req_param in required_params:
             if req_param not in request.query_params:
                 return Response(
@@ -240,8 +240,8 @@ class AbsenceJournalView(APIView):
         data['milgroup'] = milgroup
 
         # calculate dates
-        date_from = datetime.strptime(request.query_params['datefrom'], '%d.%m.%Y')
-        date_to = datetime.strptime(request.query_params['dateto'], '%d.%m.%Y')
+        date_from = datetime.strptime(request.query_params['date_from'], '%d.%m.%Y')
+        date_to = datetime.strptime(request.query_params['date_to'], '%d.%m.%Y')
 
         if date_to < date_from:
             return Response({'message': 'date_from should be greater or equal to date_to.'}, 
