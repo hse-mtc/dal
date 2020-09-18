@@ -165,6 +165,31 @@ class AbsenceView(APIView):
                            f'does not exist in this database'
             },
             status=HTTP_400_BAD_REQUEST)
+    
+    # pylint: disable=no-self-use
+    @csrf_exempt
+    def delete(self, request: Request) -> Response:
+        """
+        DELETE - function uses id from request 'query'
+        :param request:
+        :return:
+        """
+        absence_to_delete = Absence.objects.filter(
+            id=request.query_params['id'])
+        if absence_to_delete.exists():
+            absence_to_delete.delete()
+            return Response(
+                {
+                    'message': f'Absence with id {request.query_params["id"]} '
+                               f'successfully deleted'
+                },
+                status=HTTP_200_OK)
+        return Response(
+            {
+                'message': f'Absence with id {request.query_params["id"]} '
+                           f'does not exist in this database'
+            },
+            status=HTTP_400_BAD_REQUEST)
 
 
 @permission_classes((AllowAny,))
