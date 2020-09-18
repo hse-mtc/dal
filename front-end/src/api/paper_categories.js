@@ -18,8 +18,7 @@ export function addPaperCategories(params) {
 
 export function deletePaperCategories(params) {
   return request({
-    url: '/dms/categories/',
-    method: 'delete',
-    params
+    url: `/dms/categories/${params.id}`,
+    method: 'delete'
   })
 }
