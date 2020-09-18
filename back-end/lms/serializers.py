@@ -210,6 +210,28 @@ class AbsenceSerializer(ModelSerializer):
                                              **validated_data)
 
         return absence_new
+    
+    # pylint: disable=too-many-locals
+    def update(self, instance, validated_data):
+        absence_type = AbsenceType.objects.get(
+            absenceType=validated_data.pop('absenceType'))
+        absence_status = AbsenceStatus.objects.get(
+            absenceStatus=validated_data.pop('absenceStatus'))
+        
+        student = Student.objects.get(**validated_data.pop('studentid'))
+
+        # Convert from '%d.%m.%Y' format to '%Y-%m-%d' format
+        # because Django doesn't accept russian formats.
+        # Though, it accepts russian format on creating -_-
+        validated_data['date'] = datetime.datetime.strptime(
+            validated_data['date'], '%d.%m.%Y').strftime('%Y-%m-%d')
+        # serializer converts
+        absence_modified = instance.update(absenceType=absence_type,
+                                           absenceStatus=absence_status,
+                                           studentid=student,
+                                           **validated_data)
+
+        return absence_modified 
 
 
 class TeacherSerializer(ModelSerializer):

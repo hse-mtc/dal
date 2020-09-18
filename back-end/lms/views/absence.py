@@ -101,18 +101,6 @@ class AbsenceView(APIView):
         """
         Create new absence record.
         PUT function - data is given via 'data' from PUT request (not query!)
-        Payload example:
-        {
-            "date": "21.01.2020",
-            "absenceType": "Уважительная",
-            "studentid": {
-                "name": "Артем",
-                "surname": "Кацевалов"
-            },
-            "reason": "Заболел",
-            "absenceStatus": "Закрыт",
-            "comment": "Болеть будет недолго"
-        }
         :param request:
         :return:
         """
@@ -135,6 +123,73 @@ class AbsenceView(APIView):
                                'already exists. Please, modify existing record.'
                 },
                 status=HTTP_400_BAD_REQUEST)
+    
+    # pylint: disable=no-self-use
+    @csrf_exempt
+    def post(self, request: Request) -> Response:
+        """
+        Modify absence record.
+        POST function - data is given via 'data' from POST request (not query!)
+        Payload example:
+        {
+            "date": "21.01.2020",
+            "absenceType": "Уважительная",
+            "studentid": {
+                "name": "Артем",
+                "surname": "Кацевалов"
+            },
+            "reason": "Заболел",
+            "absenceStatus": "Закрыт",
+            "comment": "Болеть будет недолго"
+        }
+        :param request:
+        :return:
+        """
+        existing_absence = Absence.objects.filter(id=request.data['id'])
+        if existing_absence.exists():
+            absence_ser = AbsenceSerializer(data=request.data)
+            if absence_ser.is_valid():
+                absence_ser.update(instance=existing_absence,
+                                   validated_data=request.data)
+                return Response(
+                    {
+                        'message': f'Absence with id {request.data["id"]} '
+                                   f'successfully modified'
+                    },
+                    status=HTTP_200_OK)
+            return Response({'message': absence_ser.errors},
+                            status=HTTP_400_BAD_REQUEST)
+        return Response(
+            {
+                'message': f'Absence with id {request.data["id"]} '
+                           f'does not exist in this database'
+            },
+            status=HTTP_400_BAD_REQUEST)
+    
+    # pylint: disable=no-self-use
+    @csrf_exempt
+    def delete(self, request: Request) -> Response:
+        """
+        DELETE - function uses id from request 'query'
+        :param request:
+        :return:
+        """
+        absence_to_delete = Absence.objects.filter(
+            id=request.query_params['id'])
+        if absence_to_delete.exists():
+            absence_to_delete.delete()
+            return Response(
+                {
+                    'message': f'Absence with id {request.query_params["id"]} '
+                               f'successfully deleted'
+                },
+                status=HTTP_200_OK)
+        return Response(
+            {
+                'message': f'Absence with id {request.query_params["id"]} '
+                           f'does not exist in this database'
+            },
+            status=HTTP_400_BAD_REQUEST)
 
 
 @permission_classes((AllowAny,))

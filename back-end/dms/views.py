@@ -27,6 +27,16 @@ from rest_framework.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.openapi import (
+    IN_QUERY,
+    TYPE_ARRAY,
+    TYPE_INTEGER,
+    Items,
+    Parameter,
+    Response as SwaggerResponse,
+)
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from taggit.models import Tag
@@ -66,12 +76,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(responses={
+        422: SwaggerResponse("Category has documents and can not be deleted."),
+    })
     def destroy(self, request, *args, **kwargs):
-        """
-        Deletes Category from database based on primary key (currently, id).
-        If category has documents, no deletion is performed and 422 is returned.
-        """
-
         try:
             # pylint: disable=no-member
             return super().destroy(request, *args, **kwargs)
@@ -115,6 +123,13 @@ class DocumentViewSet(viewsets.ModelViewSet):
     filterset_class = DocumentFilter
     search_fields = ["title", "annotation", "tags__name"]
 
+    @swagger_auto_schema(manual_parameters=[
+        Parameter("authors",
+                  IN_QUERY,
+                  type=TYPE_ARRAY,
+                  items=Items(type=TYPE_INTEGER),
+                  collection_format="multi"),
+    ])
     def list(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals,unused-argument
 
