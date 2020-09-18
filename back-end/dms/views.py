@@ -172,7 +172,7 @@ def get_file(request: Request) -> HttpResponse:
     """
 
     doc = Document.objects.all()
-    file = doc.get(pk=request.query_params.get("id")).file
+    file = doc.get(pk=request.query_params.get("id")).file.content
     filename = file.name.split("/")[-1]
 
     with open(file.name, "rb") as content:

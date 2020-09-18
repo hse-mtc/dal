@@ -16,16 +16,8 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from dms.models import (
-    Author,
-    Category,
-    Document,
-    Profile,
-    Publisher,
-    Section,
-    Subject,
-    Topic,
-)
+from dms.models import (Author, Category, Document, Profile, Publisher, Section,
+                        Subject, Topic, File)
 
 
 def create_super_user() -> tp.Tuple[AbstractUser, Profile]:
@@ -212,12 +204,25 @@ def create_topics(section: Section,) -> tp.List[Topic]:
     return topics
 
 
+def create_files() -> tp.List[File]:
+    files = []
+
+    for i in range(25):
+        file = File.objects.create(content=ContentFile(
+            "some content here", name=f"document_id_{i}.txt"))
+        file.save()
+        files.append(file)
+
+    return files
+
+
 def create_documents(
     authors: tp.List[Author],
     categories: tp.List[Category],
     publishers: tp.List[Publisher],
     subject: Subject,
     topics: tp.List[Topic],
+    files: tp.List[File],
 ) -> tp.List[Document]:
     """
     Create a bunch of documents for every category.
@@ -252,7 +257,7 @@ def create_documents(
         document, is_created = Document.objects.get_or_create(
             title=random.choice(document_titles),
             category=random.choice(categories),
-            file=ContentFile("some content here", name=f"document_id_{i}.txt"),
+            file=files[i],
         )
 
         if not is_created:
@@ -290,6 +295,7 @@ def populate(request: Request,) -> Response:
     categories = create_categories()
     publishers = create_publishers()
     subjects = create_subjects()
+    files = create_files()
 
     sections = create_sections(subjects[0])
     topics = create_topics(sections[0])
@@ -300,6 +306,7 @@ def populate(request: Request,) -> Response:
         publishers=publishers,
         subject=subjects[0],
         topics=topics,
+        files=files,
     )
 
     return Response(status=HTTP_200_OK)

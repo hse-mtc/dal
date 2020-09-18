@@ -100,6 +100,20 @@ class Category(models.Model):
         return self.title
 
 
+class File(models.Model):
+    content = models.FileField(
+        upload_to=get_upload_path(),
+        blank=True,
+    )
+
+    def get_file_extension(self):
+        _, extension = os.path.splitext(self.content.name)
+        return extension
+
+    def get_file_name(self):
+        return self.content.name
+
+
 class Document(models.Model):
     title = models.TextField()
     authors = models.ManyToManyField(
@@ -129,19 +143,5 @@ class Document(models.Model):
         null=True,
         blank=True,
     )
-    file = models.FileField(
-        upload_to=get_upload_path(),
-        blank=True,
-    )
+    file = models.ForeignKey(File, on_delete=models.CASCADE)
     is_in_trash = models.BooleanField(default=False)
-
-    class Meta:
-        verbose_name = "Document"
-        verbose_name_plural = "Documents"
-
-    def __str__(self):
-        return self.title
-
-    def get_file_extension(self):
-        name, extension = os.path.splitext(self.file.name)
-        return extension
