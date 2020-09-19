@@ -106,6 +106,13 @@ class File(models.Model):
         blank=True,
     )
 
+    class Meta:
+        verbose_name = "File"
+        verbose_name_plural = "Files"
+
+    def __str__(self):
+        return self.get_file_name()
+
     def get_file_extension(self):
         _, extension = os.path.splitext(self.content.name)
         return extension
