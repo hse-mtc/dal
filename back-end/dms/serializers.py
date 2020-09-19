@@ -79,25 +79,39 @@ class FileSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     """Serializes Document model."""
 
+    content = serializers.FileField(write_only=True)
     tags = TagListField(required=False)
-    file = FileSerializer()
 
     class Meta:
         model = Document
-        exclude = ["is_in_trash"]
+        exclude = ["is_in_trash", "file"]
 
     def create(self, validated_data):
         tags = validated_data.pop("tags", None)
+
+        content = validated_data.pop("content")
+        file = File.objects.create(content=content)
+        validated_data["file"] = file
+
         instance = super().create(validated_data)
+
         if tags:
             instance.tags.set(*tags)
+
         return instance
 
     def update(self, instance, validated_data):
         tags = validated_data.pop("tags", None)
+
+        file = File.objects.get(id=instance.file.id)
+        file.content = validated_data.pop("content")
+        file.save()
+
         instance = super().update(instance, validated_data)
+
         if tags:
             instance.tags.set(*tags, clear=True)
+
         return instance
 
 
@@ -107,7 +121,7 @@ class DocumentListSerializer(serializers.ModelSerializer):
     authors = AuthorSerializer(many=True, read_only=True)
     publishers = PublisherSerializer(many=True, read_only=True)
     tags = TagListField(required=False, read_only=True)
-    file = FileSerializer()
+    file = FileSerializer(read_only=True)
 
     class Meta:
         model = Document
