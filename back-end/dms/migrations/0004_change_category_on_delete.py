@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dms', '0003_auto_20200916_2033'),
+        ('dms', '0003_rename_keywords_to_tags'),
     ]
 
     operations = [
