@@ -145,3 +145,10 @@ class Document(models.Model):
     )
     file = models.ForeignKey(File, on_delete=models.CASCADE)
     is_in_trash = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Document"
+        verbose_name_plural = "Documents"
+
+    def __str__(self):
+        return self.title
