@@ -63,11 +63,6 @@ class TagListField(serializers.ListField):
 
 
 class FileSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = File
-        exclude = ["content"]
-
     extension = serializers.CharField(source="get_file_extension",
                                       required=False,
                                       read_only=True)
@@ -75,6 +70,10 @@ class FileSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="get_file_name",
                                  required=False,
                                  read_only=True)
+
+    class Meta:
+        model = File
+        exclude = ["content"]
 
 
 class DocumentSerializer(serializers.ModelSerializer):
