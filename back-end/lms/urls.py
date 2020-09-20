@@ -22,6 +22,6 @@ urlpatterns = [
     path('teacher/', TeacherView.as_view()),
     path('absence/', AbsenceView.as_view()),
     path('student2/', StudentViewSet.as_view(list_view_map)),
-    path('student2/?id=<int:pk>/', StudentViewSet.as_view(detail_view_map))
+    path('student2/<int:pk>', StudentViewSet.as_view(detail_view_map))
 ]
 

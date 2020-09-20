@@ -20,7 +20,7 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
-from lms.serializers import (
+from lms.serializers.absence import (
     AbsenceSerializer,
     AbsenceGetQuerySerializer,
 )

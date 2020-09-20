@@ -19,7 +19,7 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
-from lms.serializers import TeacherSerializer
+from lms.serializers.teacher import TeacherSerializer
 from lms.models import Teacher
 
 

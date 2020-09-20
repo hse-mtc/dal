@@ -5,7 +5,7 @@ from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from lms.views.viewsets import GetPutPostDeleteModelViewSet, filter_names
 from lms.models import Student
-from lms.serializers import (
+from lms.serializers.student import (
     StudentSerializer, StudentGetQuerySerializer
 )
 

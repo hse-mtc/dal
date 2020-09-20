@@ -18,7 +18,7 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
-from lms.serializers import StudentSerializer, StudentGetQuerySerializer
+from lms.serializers.student import StudentSerializer, StudentGetQuerySerializer
 from lms.models import Student
 
 
