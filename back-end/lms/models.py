@@ -244,7 +244,7 @@ class Teacher(models.Model):
                                    models.DO_NOTHING,
                                    db_column='milfaculty')
     rank = models.ForeignKey(Rank, models.DO_NOTHING, db_column='rank')
-    post = models.ForeignKey(TeacherPost, models.DO_NOTHING, db_column='post')
+    teacherPost = models.ForeignKey(TeacherPost, models.DO_NOTHING, db_column='teacherPost')
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  db_column='milgroup',

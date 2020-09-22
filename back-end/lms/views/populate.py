@@ -299,7 +299,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Владимирович',
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
-            'post': posts['Преподаватель'],
+            'teacherPost': posts['Преподаватель'],
             'milgroup': milgroups[1809]
         },
         {
@@ -308,7 +308,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Николаевич',
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
-            'post': posts['Начальник цикла'],
+            'teacherPost': posts['Начальник цикла'],
             'milgroup': milgroups[1808]
         },
         {
@@ -317,7 +317,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Владимирович',
             'milfaculty': milfaculties['Сержанты'],
             'rank': ranks['Майор'],
-            'post': posts['Преподаватель'],
+            'teacherPost': posts['Преподаватель'],
             'milgroup': milgroups[1806]
         },
         {
@@ -326,7 +326,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Валентинович',
             'milfaculty': milfaculties['Разведка'],
             'rank': ranks['Полковник'],
-            'post': posts['Начальник цикла'],
+            'teacherPost': posts['Начальник цикла'],
             'milgroup': milgroups[1801]
         },
         {
@@ -335,7 +335,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Сергеевич',
             'milfaculty': milfaculties['РВСН'],
             'rank': ranks['Генерал-майор'],
-            'post': posts['Преподаватель'],
+            'teacherPost': posts['Преподаватель'],
             'milgroup': None
         },
     ]
@@ -347,7 +347,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             patronymic=value['patronymic'],
             milfaculty=value['milfaculty'],
             rank=value['rank'],
-            post=value['post'],
+            teacherPost=value['teacherPost'],
             milgroup=value['milgroup'])
         teacher.save()
 

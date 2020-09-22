@@ -52,6 +52,8 @@ class StudentSerializer(ModelSerializer):
                           input_formats=['%d.%m.%Y', 'iso-8601'])
 
     name = CharField(required=False)
+    surname = CharField(required=False)
+    patronymic = CharField(required=False)
     fullname = SerializerMethodField(required=False)
 
     class Meta:
@@ -64,13 +66,8 @@ class StudentSerializer(ModelSerializer):
 
     # pylint: disable=too-many-locals
     def create(self, validated_data):
-        milgroup_data = validated_data.pop('milgroup')
-        milfaculty = Milfaculty.objects.get(
-            milfaculty=milgroup_data.pop('milfaculty'))
-        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
-
+        milgroup = Milgroup.objects.get(**validated_data.pop('milgroup'))
         program = Program.objects.get(**validated_data.pop('program'))
-
         status = Status.objects.get(status=validated_data.pop('status'))
 
         return Student.objects.create(milgroup=milgroup,
@@ -81,17 +78,23 @@ class StudentSerializer(ModelSerializer):
 
     # pylint: disable=too-many-locals
     def update(self, instance, validated_data):
-        milgroup_data = validated_data.pop('milgroup')
-        milfaculty = Milfaculty.objects.get(
-            milfaculty=milgroup_data.pop('milfaculty'))
-        milgroup = Milgroup.objects.get(milfaculty=milfaculty, **milgroup_data)
+        if 'milgroup' in validated_data:
+            milgroup = Milgroup.objects.get(**validated_data.pop('milgroup'))
+            instance.milgroup = milgroup
 
-        program = Program.objects.get(**validated_data.pop('program'))
+        if 'program' in validated_data:
+            program = Program.objects.get(**validated_data.pop('program'))
+            instance.program = program
 
-        # serializer converts
-        return instance.update(milgroup=milgroup,
-                                           program=program,
-                                           **validated_data)
+        if 'status' in validated_data:
+            status = Status.objects.get(status=validated_data.pop('status'))
+            instance.status = status
+        
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+                                            
+        return instance
 
 
 class StudentShortSerializer(ModelSerializer):

@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer, IntegerField
+from rest_framework.serializers import (ModelSerializer, IntegerField, 
+                                        CharField)
 
 from lms.models import (
     Milgroup,
@@ -8,6 +9,7 @@ from lms.models import (
 
 class MilgroupSerializer(ModelSerializer):
     milgroup = IntegerField()
+    milfaculty = CharField(required=False)
 
     class Meta:
         model = Milgroup

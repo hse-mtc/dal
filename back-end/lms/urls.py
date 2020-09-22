@@ -1,10 +1,9 @@
 from django.urls import path, include
 
-from lms.views.student import StudentView
-from lms.views.teacher import TeacherView
 from lms.views.absence import AbsenceView
 
-from lms.views.student2 import StudentViewSet
+from lms.views.student import StudentViewSet
+from lms.views.teacher import TeacherViewSet
 
 
 list_view_map = {
@@ -18,9 +17,9 @@ detail_view_map = {
 }
 
 urlpatterns = [
-    path('student/', StudentView.as_view()),
-    path('teacher/', TeacherView.as_view()),
+    path('student/', StudentViewSet.as_view(list_view_map)),
+    path('student/<int:pk>', StudentViewSet.as_view(detail_view_map)),
+    path('teacher/', TeacherViewSet.as_view(list_view_map)),
+    path('teacher/<int:pk>', TeacherViewSet.as_view(detail_view_map)),
     path('absence/', AbsenceView.as_view()),
-    path('student2/', StudentViewSet.as_view(list_view_map)),
-    path('student2/<int:pk>', StudentViewSet.as_view(detail_view_map)),
 ]

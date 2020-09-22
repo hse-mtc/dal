@@ -53,8 +53,8 @@ class GetPutPostDeleteModelViewSet(ModelViewSet):
         item.delete()
         return Response(
                 {
-                    'message': f'Student with id {pk} '
-                               f'successfully deleted'
+                    'message': f'{self.queryset.model.__name__} '
+                               f'with id {pk} successfully deleted'
                 },
                 status=HTTP_200_OK)
         
