@@ -12,7 +12,8 @@ from lms.models import (
 )
 
 from lms.validators import PresentInDatasetValidator
-from lms.serializers.serializers import MilgroupSerializer, ProgramSerializer
+from lms.serializers.serializers import (
+    NestedModelSerializer, MilgroupSerializer, ProgramSerializer)
 
 
 class StudentGetQuerySerializer(Serializer):
@@ -40,7 +41,7 @@ class StudentGetQuerySerializer(Serializer):
         pass
 
 
-class StudentSerializer(ModelSerializer):
+class StudentSerializer(NestedModelSerializer):
     milgroup = MilgroupSerializer(required=False,
         many=False, validators=[PresentInDatasetValidator(Milgroup)])
     program = ProgramSerializer(required=False, many=False,
@@ -64,37 +65,11 @@ class StudentSerializer(ModelSerializer):
     def get_fullname(self, obj):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
-    # pylint: disable=too-many-locals
-    def create(self, validated_data):
-        milgroup = Milgroup.objects.get(**validated_data.pop('milgroup'))
-        program = Program.objects.get(**validated_data.pop('program'))
-        status = Status.objects.get(status=validated_data.pop('status'))
-
-        return Student.objects.create(milgroup=milgroup,
-                                             program=program,
-                                             status=status,
-                                             **validated_data)
-
-
-    # pylint: disable=too-many-locals
-    def update(self, instance, validated_data):
-        if 'milgroup' in validated_data:
-            milgroup = Milgroup.objects.get(**validated_data.pop('milgroup'))
-            instance.milgroup = milgroup
-
-        if 'program' in validated_data:
-            program = Program.objects.get(**validated_data.pop('program'))
-            instance.program = program
-
-        if 'status' in validated_data:
-            status = Status.objects.get(status=validated_data.pop('status'))
-            instance.status = status
-        
-        for k, v in validated_data.items():
-            setattr(instance, k, v)
-        instance.save()
-                                            
-        return instance
+    nested_fields = [
+        ['milgroup', Milgroup],
+        ['program', Program],
+        ['status', Status, 'status'],
+    ]
 
 
 class StudentShortSerializer(ModelSerializer):
