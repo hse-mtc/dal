@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 django-debug-toolbar = "*"
+django-silk = "*"
 pylint = "*"
 pylint-django = "*"
 pytest-django = "*"
@@ -13,6 +14,7 @@ yapf = "*"
 [packages]
 django = "*"
 django-cors-headers = "*"
+django-filter = "*"
 django-taggit = "*"
 djangorestframework = "*"
 drf-yasg = "*"

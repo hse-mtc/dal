@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
     "debug_toolbar",
+    "django_filters",
+    "silk",
 
     # REST framework
     "rest_framework",
@@ -61,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "silk.middleware.SilkyMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -84,6 +87,7 @@ TEMPLATES = [
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -130,7 +134,8 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Rest configurations
+# REST framework settings
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("dms.auth."
                                        "TokenAuthSupportQueryString",),
@@ -145,6 +150,7 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static"
 
 # CORS configuration
+
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -155,16 +161,8 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-# TAGGIT configuration
+# taggit configuration
 TAGGIT_CASE_INSENSITIVE = True
-
-# Heroku Swagger redirection for requests fetching
-# pylint: disable=fixme
-# FIXME(Lev): Swagger UI on Heroku sends requests to API via `http` protocol,
-#             but app is running on `https`. Google says that settings below
-#             will fix it, although I have no idea how it works.
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Debug Toolbar settings
 INTERNAL_IPS = [

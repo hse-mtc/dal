@@ -10,7 +10,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_200_OK
 from rest_framework.decorators import action
 
 
@@ -30,16 +30,11 @@ class GetPutPostDeleteModelViewSet(ModelViewSet):
             return Response(query_params.errors,
                             status=HTTP_400_BAD_REQUEST)
 
-        # get by id
-        # if self.get_by_id and 'id' in request.query_params:
-            # item = items.get(id=request.query_params['id'])
-            # return Response(self.serializer_class(item).data)
-
         # filter by filters
         for filt in self.get_filters:
             if filt in request.query_params:
                 items = items.filter(**{filt: request.query_params[filt]})
-        
+   
         # filter by special filters
         for filt in self.special_get_filters:
             if filt in request.query_params:
@@ -47,9 +42,22 @@ class GetPutPostDeleteModelViewSet(ModelViewSet):
 
         return Response(self.serializer_class(items, many=True).data)
 
+
     def retrieve(self, request: Request, pk: int) -> Response:
         item = get_object_or_404(self.queryset, pk=pk)
         return Response(self.serializer_class(item).data)
+
+
+    def destroy(self, request: Request, pk: int) -> Response:
+        item = get_object_or_404(self.queryset, pk=pk)
+        item.delete()
+        return Response(
+                {
+                    'message': f'Student with id {pk} '
+                               f'successfully deleted'
+                },
+                status=HTTP_200_OK)
+        
 
 
 def filter_names(items: QuerySet, request: Request) -> QuerySet:

@@ -1,29 +1,17 @@
-import operator
-import json
-
-import typing as tp
-
-from datetime import datetime
-from functools import reduce
-
-from taggit.models import Tag
-
-from django.utils.encoding import escape_uri_path
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Max
 from django.db.models.deletion import RestrictedError
 from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
+from django.utils.encoding import escape_uri_path
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import (
-    Max,
-    Q,
-    F,
-)
 
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
+from rest_framework.filters import SearchFilter
+from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -34,17 +22,32 @@ from rest_framework.decorators import (
 )
 from rest_framework.status import (
     HTTP_200_OK,
-    HTTP_201_CREATED,
-    HTTP_204_NO_CONTENT,
     HTTP_400_BAD_REQUEST,
     HTTP_404_NOT_FOUND,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.openapi import (
+    IN_QUERY,
+    TYPE_ARRAY,
+    TYPE_INTEGER,
+    Items,
+    Parameter,
+    Response as SwaggerResponse,
+)
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+from taggit.models import Tag
+
 from dms.serializers import (
     AuthorSerializer,
     CategorySerializer,
+    DocumentSerializer,
+    DocumentListSerializer,
     PublisherSerializer,
+    TagSerializer,
     SubjectSerializer,
 )
 from dms.models import (
@@ -55,12 +58,11 @@ from dms.models import (
     Topic,
     Category,
 )
+from dms.filters import DocumentFilter
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Author model.
-    """
+    """API for CRUD operations on Author model."""
 
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
@@ -68,20 +70,16 @@ class AuthorViewSet(viewsets.ModelViewSet):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Category model.
-    """
+    """API for CRUD operations on Category model."""
 
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
 
+    @swagger_auto_schema(responses={
+        422: SwaggerResponse("Category has documents and can not be deleted."),
+    })
     def destroy(self, request, *args, **kwargs):
-        """
-        Deletes Category from database based on primary key (currently, id).
-        If category has documents, no deletion is performed and 422 is returned.
-        """
-
         try:
             # pylint: disable=no-member
             return super().destroy(request, *args, **kwargs)
@@ -92,9 +90,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class PublisherViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Publisher model.
-    """
+    """API for CRUD operations on Publisher model."""
 
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
@@ -102,93 +98,65 @@ class PublisherViewSet(viewsets.ModelViewSet):
 
 
 class SubjectViewSet(viewsets.ModelViewSet):
-    """
-    API for CRUD operations on Subject model.
-    """
+    """API for CRUD operations on Subject model."""
 
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
     permission_classes = [permissions.AllowAny]
 
 
-@permission_classes((AllowAny,))
-class UploadNirView(APIView):
+class TagListAPIView(ListAPIView):
+    """List all tags."""
 
-    def post(self, request: Request) -> Response:
-        # pylint: disable=too-many-locals
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [permissions.AllowAny]
 
-        if "file" not in request.data:
-            return Response({"message": "No file provided."},
-                            status=HTTP_400_BAD_REQUEST)
 
-        file = request.data["file"]
+class DocumentViewSet(viewsets.ModelViewSet):
+    """API for CRUD operations on Document model."""
 
-        doc = Document()
+    queryset = Document.objects.filter(is_in_trash=False)
+    serializer_class = DocumentSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = DocumentFilter
+    search_fields = ["title", "annotation", "tags__name"]
 
-        doc.title = request.data["title"]
+    @swagger_auto_schema(manual_parameters=[
+        Parameter("authors",
+                  IN_QUERY,
+                  type=TYPE_ARRAY,
+                  items=Items(type=TYPE_INTEGER),
+                  collection_format="multi"),
+    ])
+    def list(self, request, *args, **kwargs):
+        # pylint: disable=too-many-locals,unused-argument
 
-        category = request.data.get("category")
-        if category:
-            doc.category = Category.objects.get(pk=category)
+        groups = []
+        queryset = self.filter_queryset(self.get_queryset())
+        years = queryset.annotate(year=ExtractYear("publication_date")) \
+                        .values_list("year", flat=True) \
+                        .distinct()
 
-        if request.data.get("annotation"):
-            doc.annotation = request.data["annotation"]
+        for year in sorted(years, reverse=True):
+            documents = queryset.filter(publication_date__year=year)
+            serializer = DocumentListSerializer(documents, many=True)
+            groups.append({
+                "year": year,
+                "documents": serializer.data,
+            })
 
-        date = request.data.get("date")
-        if date and date != "Invalid date":
-            doc.publication_date = datetime.strptime(date, "%d.%m.%Y")
+        data = {
+            "count": queryset.count(),
+            "groups": groups,
+        }
 
-        doc.save()
+        return Response(data, status=HTTP_200_OK)
 
-        if request.data.get("keywords"):
-            keywords_list = list(
-                map(lambda x: x["value"], json.loads(request.data["keywords"])))
-
-            if len(keywords_list) > 0:
-                doc.keywords.add(*keywords_list)
-
-        if request.data.get("authorIds"):
-            doc.authors.add(*Author.objects.filter(
-                id__in=list(map(int,
-                                request.data.get("authorIds").split(",")))))
-
-        if request.data.get("publisherId"):
-            publisher = Publisher.objects.get(pk=request.data["publisherId"])
-            doc.publishers.add(publisher)
-        elif request.data.get("newPublisher"):
-            doc.publishers.create(name=request.data["newPublisher"])
-
-        doc.file.save(
-            name=file.name,
-            content=file,
-        )
-
-        return Response({"message": "Document created successfully."},
-                        status=HTTP_201_CREATED)
-
-    def put(self, request: Request) -> Response:  # pylint: disable=no-self-use
-        """
-        Usage PUT request to api/upload?type=nir&id=21
-        curl -X PUT -H 'Content-Disposition: attachment; filename=ptu.png' \
-        'http://127.0.0.1:8000/api/upload?id=1' --upload-file some_file.png
-        :param request:
-        :return:
-        """
-
-        if "file" not in request.data:
-            return Response({"message": "No file provided."},
-                            status=HTTP_400_BAD_REQUEST)
-
-        doc = Document.objects.all()
-        file = request.data["file"]
-        doc.get(pk=request.query_params.get("id")).file.save(
-            name=file.name,
-            content=file,
-            save=True,
-        )
-
-        return Response({"message": "File for document uploaded successfully."},
-                        status=HTTP_201_CREATED)
+    def perform_destroy(self, instance):
+        instance.is_in_trash = True
+        instance.save()
 
 
 @csrf_exempt
@@ -257,123 +225,6 @@ def logout(request: Request) -> Response:
         pass
 
     return Response({"message": "User logged out successfully."},
-                    status=HTTP_200_OK)
-
-
-def extract_documents_from_queryset(documents_queryset) -> tp.List[tp.Dict]:
-    return list(
-        map(
-            lambda item: {
-                "annotation":
-                    item.annotation,
-                "authors":
-                    list(item.authors.values_list(
-                        "last_name",
-                        flat=True,
-                    )),
-                "id":
-                    item.id,
-                "keywords":
-                    list(item.keywords.names()),
-                "publication_date":
-                    item.publication_date.isoformat(),
-                "publishers":
-                    item.publishers.values_list(
-                        "name",
-                        flat=True,
-                    ),
-                "title":
-                    item.title,
-            },
-            list(documents_queryset),
-        ))
-
-
-def extract_documents_by_year_from_queryset(documents_queryset):
-    t_dict = {}
-    total = 0
-    data = {
-        "items": [],
-    }
-
-    for year in documents_queryset.annotate(
-            year=ExtractYear("publication_date")).values_list(
-                "year", flat=True).distinct():
-        t_dict[year] = extract_documents_from_queryset(
-            documents_queryset.filter(publication_date__year=year))
-
-    for key, value in t_dict.items():
-        data["items"].append({
-            "year": key,
-            "items": value,
-        })
-        total += len(value)
-
-    data["total"] = total
-
-    return data
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def documents(request: Request) -> Response:
-    # pylint: disable=too-many-locals
-
-    authors = request.query_params.get("authors")
-    start_date = request.query_params.get("start_date")
-    end_date = request.query_params.get("end_date")
-    publishers = request.query_params.get("publishers")
-    text = request.query_params.get("text")
-    category = request.query_params.get("category")
-
-    db_request = Document.objects.filter(is_in_trash=False)
-
-    if category:
-        db_request = db_request.filter(category__pk=category)
-    if authors:
-        db_request = db_request.filter(authors__pk__in=authors.split(","))
-    if start_date:
-        db_request = db_request.filter(publication_date__gte=start_date)
-    if end_date:
-        db_request = db_request.filter(publication_date__lte=end_date)
-    if publishers:
-        db_request = db_request.filter(publishers__pk__in=publishers.split(","))
-    if text:
-        db_request = db_request.filter(
-            reduce(operator.and_,
-                   [Q(title__icontains=word) for word in text.split()]) |
-            reduce(operator.and_,
-                   [Q(annotation__icontains=word) for word in text.split()]) |
-            reduce(operator.and_,
-                   [Q(keywords__name__icontains=word)
-                    for word in text.split()]))
-
-    db_request = db_request.order_by("-publication_date").distinct()
-
-    data = extract_documents_by_year_from_queryset(db_request)
-
-    return Response(data, status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def delete_document(request: Request) -> Response:
-    document_id = request.query_params.get("id")
-    document = Document.objects.get(id=document_id)
-    document.is_in_trash = True
-    document.save()
-
-    return Response({"message": "Document is now in trash."},
-                    status=HTTP_204_NO_CONTENT)
-
-
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def tags(request: Request) -> Response:
-    return Response(Tag.objects.values(key=F("id"), value=F("name")),
                     status=HTTP_200_OK)
 
 
