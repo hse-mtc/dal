@@ -1,5 +1,5 @@
-from rest_framework.serializers import (ModelSerializer, Serializer,
-                                        IntegerField, CharField, DateField)
+from rest_framework.serializers import (Serializer, IntegerField, 
+                                        CharField, DateField)
 from rest_framework.serializers import ValidationError
 
 from lms.models import (
@@ -12,6 +12,7 @@ from lms.models import (
 
 from lms.validators import PresentInDatasetValidator
 from lms.serializers.student import StudentShortSerializer
+from lms.serializers.serializers import NestedModelSerializer
 
 
 class AbsenceGetQuerySerializer(Serializer):
@@ -53,29 +54,23 @@ class AbsenceGetQuerySerializer(Serializer):
         pass
 
 
-class AbsenceSerializer(ModelSerializer):
-    date = DateField(format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
+class AbsenceSerializer(NestedModelSerializer):
+    date = DateField(required=False,
+                format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
 
-    absenceType = CharField(
+    absenceType = CharField(required=False,
         validators=[PresentInDatasetValidator(AbsenceType, 'absenceType')])
-    absenceStatus = CharField(
+    absenceStatus = CharField(required=False,
         validators=[PresentInDatasetValidator(AbsenceStatus, 'absenceStatus')])
-    studentid = StudentShortSerializer(
+    studentid = StudentShortSerializer(required=False,
         validators=[PresentInDatasetValidator(Student)])
 
     class Meta:
         model = Absence
         fields = '__all__'
 
-    def create(self, validated_data):
-        absence_type = AbsenceType.objects.get(
-            absenceType=validated_data.pop('absenceType'))
-        absence_status = AbsenceStatus.objects.get(
-            absenceStatus=validated_data.pop('absenceStatus'))
-
-        student = Student.objects.get(**validated_data.pop('studentid'))
-
-        return Absence.objects.create(absenceType=absence_type,
-                                             absenceStatus=absence_status,
-                                             studentid=student,
-                                             **validated_data)
+    nested_fields = [
+        ['absenceType', AbsenceType, 'absenceType'],
+        ['absenceStatus', AbsenceStatus, 'absenceStatus'],
+        ['studentid', Student],
+    ]

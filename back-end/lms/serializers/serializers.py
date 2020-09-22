@@ -8,6 +8,37 @@ from lms.models import (
 
 
 class NestedModelSerializer(ModelSerializer):
+    """
+    This serializer gets nested objects when the parent object
+    is created or modified.
+
+    Nested fields could be dicts. If it true, then only the name of the model
+    and the field has to be given.
+    Example:
+    nested_fields = [
+        ['milgroup', Milgroup]
+    ]
+    Results in:
+    def create():
+        new_data = Milgroup.objects.get(**validated_data['milgroup'])
+        ParentModel.objects.create(milgroup=new_data)
+    def update():
+        new_data = Milgroup.objects.get(**validated_data['milgroup'])
+        instance.milgroup = new_data
+
+    If the field is not a dict, model name parameter should be given. 
+    Example:
+    nested_fields = [
+        ['milfaculty', Milfaculty, 'milfaculty1']
+    ]
+    Results in:
+    def create():
+        new_data = Milfaculty.objects.get(milfaculty1=validated_data['milfaculty'])
+        ParentModel.objects.create(milfaculty=new_data)
+    def update():
+        new_data = Milgroup.objects.get(milfaculty1=validated_data['milfaculty'])
+        instance.milfaculty = new_data
+    """
     nested_fields = []
 
     def create(self, validated_data):
