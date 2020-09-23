@@ -118,12 +118,18 @@ class TagListAPIView(ListAPIView):
 class DocumentViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on Document model."""
 
-    queryset = Document.objects.filter(is_in_trash=False)
+    queryset = Document.objects.filter(is_in_trash=False) \
+                               .order_by("-publication_date")
     serializer_class = DocumentSerializer
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = DocumentFilter
     search_fields = ["title", "annotation", "tags__name"]
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return DocumentListSerializer
+        return DocumentSerializer
 
     @swagger_auto_schema(manual_parameters=[
         Parameter("authors",
@@ -133,28 +139,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                   collection_format="multi"),
     ])
     def list(self, request, *args, **kwargs):
-        # pylint: disable=too-many-locals,unused-argument
-
-        groups = []
-        queryset = self.filter_queryset(self.get_queryset())
-        years = queryset.annotate(year=ExtractYear("publication_date")) \
-                        .values_list("year", flat=True) \
-                        .distinct()
-
-        for year in sorted(years, reverse=True):
-            documents = queryset.filter(publication_date__year=year)
-            serializer = DocumentListSerializer(documents, many=True)
-            groups.append({
-                "year": year,
-                "documents": serializer.data,
-            })
-
-        data = {
-            "count": queryset.count(),
-            "groups": groups,
-        }
-
-        return Response(data, status=HTTP_200_OK)
+        return super().list(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
         instance.is_in_trash = True
