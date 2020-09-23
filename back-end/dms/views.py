@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
-from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
 from django.utils.encoding import escape_uri_path
 from django.views.decorators.csrf import csrf_exempt
@@ -139,6 +138,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
                   collection_format="multi"),
     ])
     def list(self, request, *args, **kwargs):
+        # pylint: disable=no-member
         return super().list(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
