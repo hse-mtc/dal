@@ -264,7 +264,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
                     students: tp.Dict[str, Student]):
     values = [
         {
-            'date': '2019-09-01',
+            'date': '2020-09-04',
             'studentid': students['Кацевалов'],
             'absenceType': types['Уважительная'],
             'reason': 'Заболел',
@@ -272,7 +272,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             'comment': 'Болеть будет недолго'
         },
         {
-            'date': '2019-09-08',
+            'date': '2020-09-11',
             'studentid': students['Хромов'],
             'absenceType': types['Опоздание'],
             'reason': 'Электричка опоздала',
@@ -280,8 +280,8 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             'comment': ''
         },
         {
-            'date': '2019-09-08',
-            'studentid': students['Исаков'],
+            'date': '2020-09-18',
+            'studentid': students['Хромов'],
             'absenceType': types['Неуважительная'],
             'reason': 'Прогул',
             'absenceStatus': statuses['Открыт'],

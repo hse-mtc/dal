@@ -100,14 +100,15 @@ class AbsenceJournalView(APIView):
                 # parse each absence
                 for absence in absences:
                     studentid = absence['studentid']['id']
-                    students[studentid]['absences'] = {
+                    students[studentid]['absences'].append({
                         date: {
+                            'id': absence['id'],
                             'absenceType': absence['absenceType'],
                             'absenceStatus': absence['absenceStatus'],
                             'reason': absence['reason'],
                             'comment': absence['comment']
                         }
-                    }
+                    })
 
         data['dates'] = date_ranges
         data['students'] = list(students.values())
