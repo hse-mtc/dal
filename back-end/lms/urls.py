@@ -1,9 +1,8 @@
-from django.urls import path, include
+from django.urls import path
 
 from lms.views.student import StudentViewSet
 from lms.views.teacher import TeacherViewSet
 from lms.views.absence import AbsenceViewSet, AbsenceJournalView
-
 
 list_view_map = {
     'get': 'list',

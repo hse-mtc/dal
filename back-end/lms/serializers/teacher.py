@@ -1,4 +1,4 @@
-from rest_framework.serializers import (Serializer, SerializerMethodField, 
+from rest_framework.serializers import (Serializer, SerializerMethodField,
                                         CharField, IntegerField)
 
 from lms.models import (
@@ -10,8 +10,8 @@ from lms.models import (
 )
 
 from lms.validators import PresentInDatasetValidator
-from lms.serializers.serializers import (
-    MilgroupSerializer, NestedModelSerializer)
+from lms.serializers.serializers import (MilgroupSerializer,
+                                         NestedModelSerializer)
 
 
 class TeacherGetQuerySerializer(Serializer):
@@ -25,18 +25,25 @@ class TeacherGetQuerySerializer(Serializer):
     milfaculty = CharField(
         required=False,
         validators=[PresentInDatasetValidator(Milfaculty, 'milfaculty')])
-    rank = CharField(
-        required=False,
-        validators=[PresentInDatasetValidator(Rank, 'rank')])
+    rank = CharField(required=False,
+                     validators=[PresentInDatasetValidator(Rank, 'rank')])
     teacherPost = CharField(
         required=False,
         validators=[PresentInDatasetValidator(TeacherPost, 'teacherPost')])
 
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
 
 class TeacherSerializer(NestedModelSerializer):
-    milgroup = MilgroupSerializer(required=False,
-        many=False, validators=[PresentInDatasetValidator(Milgroup)])
-    
+    milgroup = MilgroupSerializer(
+        required=False,
+        many=False,
+        validators=[PresentInDatasetValidator(Milgroup)])
+
     name = CharField(required=False)
     surname = CharField(required=False)
     patronymic = CharField(required=False)
@@ -45,9 +52,8 @@ class TeacherSerializer(NestedModelSerializer):
     milfaculty = CharField(
         required=False,
         validators=[PresentInDatasetValidator(Milfaculty, 'milfaculty')])
-    rank = CharField(
-        required=False,
-        validators=[PresentInDatasetValidator(Rank, 'rank')])
+    rank = CharField(required=False,
+                     validators=[PresentInDatasetValidator(Rank, 'rank')])
     teacherPost = CharField(
         required=False,
         validators=[PresentInDatasetValidator(TeacherPost, 'teacherPost')])

@@ -1,5 +1,5 @@
-from rest_framework.serializers import (Serializer, IntegerField, 
-                                        CharField, DateField)
+from rest_framework.serializers import (Serializer, IntegerField, CharField,
+                                        DateField)
 from rest_framework.serializers import ValidationError
 
 from lms.models import (
@@ -56,14 +56,17 @@ class AbsenceGetQuerySerializer(Serializer):
 
 class AbsenceSerializer(NestedModelSerializer):
     date = DateField(required=False,
-                format='%d.%m.%Y', input_formats=['%d.%m.%Y', 'iso-8601'])
+                     format='%d.%m.%Y',
+                     input_formats=['%d.%m.%Y', 'iso-8601'])
 
-    absenceType = CharField(required=False,
+    absenceType = CharField(
+        required=False,
         validators=[PresentInDatasetValidator(AbsenceType, 'absenceType')])
-    absenceStatus = CharField(required=False,
+    absenceStatus = CharField(
+        required=False,
         validators=[PresentInDatasetValidator(AbsenceStatus, 'absenceStatus')])
-    studentid = StudentShortSerializer(required=False,
-        validators=[PresentInDatasetValidator(Student)])
+    studentid = StudentShortSerializer(
+        required=False, validators=[PresentInDatasetValidator(Student)])
 
     class Meta:
         model = Absence
@@ -77,11 +80,18 @@ class AbsenceSerializer(NestedModelSerializer):
 
 
 class AbsenceJournalGetQuerySerializer(Serializer):
-    milgroup = IntegerField(required=True,
-                validators=[PresentInDatasetValidator(Milgroup, 'milgroup')])
+    milgroup = IntegerField(
+        required=True,
+        validators=[PresentInDatasetValidator(Milgroup, 'milgroup')])
     date_from = DateField(required=True,
                           format='%d.%m.%Y',
                           input_formats=['%d.%m.%Y'])
     date_to = DateField(required=True,
-                          format='%d.%m.%Y',
-                          input_formats=['%d.%m.%Y'])
+                        format='%d.%m.%Y',
+                        input_formats=['%d.%m.%Y'])
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass

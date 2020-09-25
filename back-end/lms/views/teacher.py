@@ -1,9 +1,10 @@
 from rest_framework.permissions import AllowAny
 
-from lms.views.viewsets import GetPutPostDeleteModelViewSet, filter_names
+from lms.views.viewsets import GetPutPostDeleteModelViewSet
 from lms.models import Teacher
-from lms.serializers.teacher import (
-    TeacherSerializer, TeacherGetQuerySerializer)
+from lms.serializers.teacher import (TeacherSerializer,
+                                     TeacherGetQuerySerializer)
+from lms.filters import TeacherFilterSet
 
 
 class TeacherViewSet(GetPutPostDeleteModelViewSet):
@@ -13,5 +14,5 @@ class TeacherViewSet(GetPutPostDeleteModelViewSet):
 
     permission_classes = [AllowAny]
 
-    get_filters = ['milgroup', 'milfaculty', 'rank', 'teacherPost']
-    special_get_filters = {'name': filter_names}
+    filterset_class = TeacherFilterSet
+    search_fields = ['surname', 'name', 'patronymic']

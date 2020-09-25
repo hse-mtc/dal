@@ -1,4 +1,4 @@
-from rest_framework.serializers import (ModelSerializer, IntegerField, 
+from rest_framework.serializers import (ModelSerializer, IntegerField,
                                         CharField)
 
 from lms.models import (
@@ -26,20 +26,25 @@ class NestedModelSerializer(ModelSerializer):
         new_data = Milgroup.objects.get(**validated_data['milgroup'])
         instance.milgroup = new_data
 
-    If the field is not a dict, model name parameter should be given. 
+    If the field is not a dict, model name parameter should be given.
     Example:
     nested_fields = [
         ['milfaculty', Milfaculty, 'milfaculty1']
     ]
     Results in:
     def create():
-        new_data = Milfaculty.objects.get(milfaculty1=validated_data['milfaculty'])
+        new_data = Milfaculty.objects.get(
+            milfaculty1=validated_data['milfaculty'])
         ParentModel.objects.create(milfaculty=new_data)
     def update():
-        new_data = Milgroup.objects.get(milfaculty1=validated_data['milfaculty'])
+        new_data = Milgroup.objects.get(
+            milfaculty1=validated_data['milfaculty'])
         instance.milfaculty = new_data
     """
     nested_fields = []
+
+    class Meta:
+        model = None
 
     def create(self, validated_data):
         nested_data = {}
@@ -47,15 +52,17 @@ class NestedModelSerializer(ModelSerializer):
             # for fields like milgroup, which are a dict themselves
             if len(field_data) == 2:
                 field, model = field_data
-                nested_data[field] = model.objects.get(**validated_data.pop(field))
-            # for fields like rank, which is just a field. Therefore a param for model
-            # has to be specified
+                nested_data[field] = model.objects.get(
+                    **validated_data.pop(field))
+            # for fields like rank, which is just a field.
+            # Therefore a param for model has to be specified
             else:
                 field, model, param = field_data
-                nested_data[field] = model.objects.get(**{
-                    param: validated_data.pop(field)})
+                nested_data[field] = model.objects.get(
+                    **{param: validated_data.pop(field)})
         return self.Meta.model.objects.create(**nested_data, **validated_data)
-    
+
+    # pylint: disable=too-many-locals
     def update(self, instance, validated_data):
         for field_data in self.nested_fields:
             if field_data[0] in validated_data:
@@ -63,18 +70,18 @@ class NestedModelSerializer(ModelSerializer):
                 if len(field_data) == 2:
                     field, model = field_data
                     new_data = model.objects.get(**validated_data.pop(field))
-                # for fields like rank, which is just a field. Therefore a param for model
-                # has to be specified
+                # for fields like rank, which is just a field.
+                # Therefore a param for model has to be specified
                 else:
                     field, model, param = field_data
-                    new_data = model.objects.get(**{
-                        param: validated_data.pop(field)})
+                    new_data = model.objects.get(
+                        **{param: validated_data.pop(field)})
                 # set instance attribute
                 setattr(instance, field, new_data)
-        
+
         # set attributes for other keys in validated data
-        for k, v in validated_data.items():
-            setattr(instance, k, v)
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
         instance.save()
 
         return instance

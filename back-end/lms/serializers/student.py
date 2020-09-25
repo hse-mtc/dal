@@ -4,7 +4,6 @@ from rest_framework.serializers import (ModelSerializer, Serializer,
 from rest_framework.serializers import ValidationError
 
 from lms.models import (
-    Milfaculty,
     Milgroup,
     Status,
     Program,
@@ -12,8 +11,8 @@ from lms.models import (
 )
 
 from lms.validators import PresentInDatasetValidator
-from lms.serializers.serializers import (
-    NestedModelSerializer, MilgroupSerializer, ProgramSerializer)
+from lms.serializers.serializers import (NestedModelSerializer,
+                                         MilgroupSerializer, ProgramSerializer)
 
 
 class StudentGetQuerySerializer(Serializer):
@@ -42,14 +41,18 @@ class StudentGetQuerySerializer(Serializer):
 
 
 class StudentSerializer(NestedModelSerializer):
-    milgroup = MilgroupSerializer(required=False,
-        many=False, validators=[PresentInDatasetValidator(Milgroup)])
-    program = ProgramSerializer(required=False, many=False,
+    milgroup = MilgroupSerializer(
+        required=False,
+        many=False,
+        validators=[PresentInDatasetValidator(Milgroup)])
+    program = ProgramSerializer(required=False,
+                                many=False,
                                 validators=[PresentInDatasetValidator(Program)])
-    status = CharField(required=False, 
+    status = CharField(required=False,
                        validators=[PresentInDatasetValidator(Status, 'status')])
 
-    birthdate = DateField(required=False, format='%d.%m.%Y',
+    birthdate = DateField(required=False,
+                          format='%d.%m.%Y',
                           input_formats=['%d.%m.%Y', 'iso-8601'])
 
     name = CharField(required=False)

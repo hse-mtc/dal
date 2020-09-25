@@ -116,7 +116,8 @@ def create_milgroups(
 
     for value in values:
         milgroup, _ = Milgroup.objects.get_or_create(
-            milgroup=value['milgroup'], milfaculty=value['milfaculty'],
+            milgroup=value['milgroup'],
+            milfaculty=value['milfaculty'],
             weekday=value['weekday'])
         milgroup.save()
         milgroups[value['milgroup']] = milgroup
