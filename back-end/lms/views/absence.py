@@ -58,18 +58,63 @@ class AbsenceJournalView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request: Request) -> Response:
-        """
-        Get absent records in the form of journal
-        GET syntax example:
-        .../absence_journal/?milgroup=1809
-        :param request:
-        :return:
-        """
-        if 'milgroup' not in request.query_params:
-            return Response(
-                {'message': 'Please, insert milgroup as a query parameter.'},
-                status=HTTP_400_BAD_REQUEST)
+        required_params = ['milgroup', 'date_from', 'date_to']
+        for req_param in required_params:
+            if req_param not in request.query_params:
+                return Response(
+                    {'message': f'Please, insert {req_param} as a query parameter.'},
+                    status=HTTP_400_BAD_REQUEST)
+        
 
         absences = Absence.objects.filter(
             studentid__milgroup__milgroup=request.query_params['milgroup'])
-        return Response({'absences': absences.data}, status=HTTP_200_OK)
+        
+        data = {}
+
+        # add milgroup data
+        milgroup = MilgroupSerializer(Milgroup.objects.get(
+            milgroup=request.query_params['milgroup'])).data
+        data['milgroup'] = milgroup
+
+        # calculate dates
+        date_from = datetime.strptime(request.query_params['date_from'], '%d.%m.%Y')
+        date_to = datetime.strptime(request.query_params['date_to'], '%d.%m.%Y')
+
+        if date_to < date_from:
+            return Response({'message': 'date_from should be greater or equal to date_to.'}, 
+                            status=HTTP_400_BAD_REQUEST)
+        
+        date_ranges = get_date_range(date_from, date_to, milgroup['weekday'])
+        
+
+        # get absences
+        students = {}
+        for date in date_ranges:
+            date_f = datetime.strptime(date, '%d.%m.%Y').strftime('%Y-%m-%d')
+            # absences for today
+            absence = Absence.objects.filter(date=date_f)
+            if absence.count() > 0:
+                absences = AbsenceSerializer(absence, many=True).data
+                # parse each absence
+                for absence in absences:
+                    studentid = absence['studentid']['id']
+                    if studentid not in students:
+                        students[studentid] = {
+                            'id': studentid,
+                            'fullname': absence['studentid']['fullname'],
+                            'absences': []
+                        }
+                    students[studentid]['absences'] = {
+                        date: {
+                            'absenceType': absence['absenceType'],
+                            'absenceStatus': absence['absenceStatus'],
+                            'reason': absence['reason'],
+                            'comment': absence['comment']
+                        }
+                    }
+
+
+        data['dates'] = date_ranges
+        data['students'] = list(students.values())
+
+        return Response({'absences': data}, status=HTTP_200_OK)
