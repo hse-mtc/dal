@@ -11,7 +11,6 @@ from dms.views import (
     SubjectViewSet,
     TagListAPIView,
     get_file,
-    info,
     login,
     logout,
 )
@@ -31,7 +30,6 @@ urlpatterns = [
     path("get_file/", get_file),
     path("subject/", SubjectSectionView.as_view()),
     path("tags/", TagListAPIView.as_view()),
-    path("user/info/", info),
     path("user/login/", login),
     path("user/logout/", logout),
 ]
