@@ -203,6 +203,8 @@ class Milgroup(models.Model):
     milfaculty = models.ForeignKey(Milfaculty,
                                    models.DO_NOTHING,
                                    db_column='milfaculty')
+    weekday = models.DecimalField(max_digits=1,
+                                  decimal_places=0)
 
     def __str__(self):
         return f'{str(self.milgroup)}, {str(self.milfaculty)}'

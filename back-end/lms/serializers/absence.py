@@ -74,3 +74,14 @@ class AbsenceSerializer(NestedModelSerializer):
         ['absenceStatus', AbsenceStatus, 'absenceStatus'],
         ['studentid', Student],
     ]
+
+
+class AbsenceJournalGetQuerySerializer(Serializer):
+    milgroup = IntegerField(required=True,
+                validators=[PresentInDatasetValidator(Milgroup, 'milgroup')])
+    date_from = DateField(required=True,
+                          format='%d.%m.%Y',
+                          input_formats=['%d.%m.%Y'])
+    date_to = DateField(required=True,
+                          format='%d.%m.%Y',
+                          input_formats=['%d.%m.%Y'])

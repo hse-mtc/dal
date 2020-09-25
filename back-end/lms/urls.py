@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from lms.views.student import StudentViewSet
 from lms.views.teacher import TeacherViewSet
-from lms.views.absence import AbsenceViewSet
+from lms.views.absence import AbsenceViewSet, AbsenceJournalView
 
 
 list_view_map = {
@@ -22,4 +22,5 @@ urlpatterns = [
     path('teacher/<int:pk>', TeacherViewSet.as_view(detail_view_map)),
     path('absence/', AbsenceViewSet.as_view(list_view_map)),
     path('absence/<int:pk>', AbsenceViewSet.as_view(detail_view_map)),
+    path('absence_journal/', AbsenceJournalView.as_view()),
 ]

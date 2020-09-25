@@ -65,46 +65,59 @@ def create_milgroups(
         milfaculties: tp.Dict[str, Milfaculty]) -> tp.Dict[str, Milgroup]:
     values = [{
         'milgroup': 1801,
+        'weekday': 4,
         'milfaculty': milfaculties['Разведка']
     }, {
         'milgroup': 1802,
+        'weekday': 4,
         'milfaculty': milfaculties['Разведка']
     }, {
         'milgroup': 1803,
+        'weekday': 4,
         'milfaculty': milfaculties['Разведка']
     }, {
         'milgroup': 1804,
+        'weekday': 4,
         'milfaculty': milfaculties['Сержанты']
     }, {
         'milgroup': 1805,
+        'weekday': 4,
         'milfaculty': milfaculties['Сержанты']
     }, {
         'milgroup': 1806,
+        'weekday': 4,
         'milfaculty': milfaculties['Сержанты']
     }, {
         'milgroup': 1807,
+        'weekday': 4,
         'milfaculty': milfaculties['ВКС']
     }, {
         'milgroup': 1808,
+        'weekday': 4,
         'milfaculty': milfaculties['ВКС']
     }, {
         'milgroup': 1809,
+        'weekday': 4,
         'milfaculty': milfaculties['ВКС']
     }, {
         'milgroup': 1810,
+        'weekday': 4,
         'milfaculty': milfaculties['РВСН']
     }, {
         'milgroup': 1811,
+        'weekday': 4,
         'milfaculty': milfaculties['РВСН']
     }, {
         'milgroup': 1812,
+        'weekday': 4,
         'milfaculty': milfaculties['РВСН']
     }]
     milgroups = {}
 
     for value in values:
         milgroup, _ = Milgroup.objects.get_or_create(
-            milgroup=value['milgroup'], milfaculty=value['milfaculty'])
+            milgroup=value['milgroup'], milfaculty=value['milfaculty'],
+            weekday=value['weekday'])
         milgroup.save()
         milgroups[value['milgroup']] = milgroup
 

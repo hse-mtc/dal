@@ -83,6 +83,7 @@ class NestedModelSerializer(ModelSerializer):
 class MilgroupSerializer(ModelSerializer):
     milgroup = IntegerField()
     milfaculty = CharField(required=False)
+    weekday = IntegerField(required=False)
 
     class Meta:
         model = Milgroup

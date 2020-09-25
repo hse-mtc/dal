@@ -1,3 +1,5 @@
+from datetime import timedelta, datetime
+
 from django.db.models.query import QuerySet
 from django.db.models import Value
 from django.db.models.functions import (
@@ -17,11 +19,14 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
+from lms.serializers.serializers import MilgroupSerializer
+from lms.serializers.student import StudentShortSerializer
 from lms.serializers.absence import (
     AbsenceSerializer,
     AbsenceGetQuerySerializer,
+    AbsenceJournalGetQuerySerializer
 )
-from lms.models import Absence
+from lms.models import Absence, Milgroup, Student
 from lms.views.viewsets import GetPutPostDeleteModelViewSet
 
 
@@ -32,6 +37,19 @@ def filter_names_studentid(items: QuerySet, request: Request) -> QuerySet:
     items = items.filter(
         search_name__contains=request.query_params['name'].lower())
     return items
+
+
+def get_date_range(date_from, date_to, weekday):
+    start_date = date_from + timedelta((weekday - date_from.weekday() + 7) % 7)
+
+    dates = []
+    cur_date = start_date
+    
+    while cur_date <= date_to:
+        dates.append(cur_date.strftime('%d.%m.%Y'))
+        cur_date += timedelta(7)
+
+    return dates
 
 
 class AbsenceViewSet(GetPutPostDeleteModelViewSet):
@@ -58,13 +76,10 @@ class AbsenceJournalView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request: Request) -> Response:
-        required_params = ['milgroup', 'date_from', 'date_to']
-        for req_param in required_params:
-            if req_param not in request.query_params:
-                return Response(
-                    {'message': f'Please, insert {req_param} as a query parameter.'},
-                    status=HTTP_400_BAD_REQUEST)
-        
+        query_params = AbsenceJournalGetQuerySerializer(data=request.query_params)
+        if not query_params.is_valid():
+            return Response(query_params.errors,
+                            status=HTTP_400_BAD_REQUEST)
 
         absences = Absence.objects.filter(
             studentid__milgroup__milgroup=request.query_params['milgroup'])
@@ -87,8 +102,16 @@ class AbsenceJournalView(APIView):
         date_ranges = get_date_range(date_from, date_to, milgroup['weekday'])
         
 
-        # get absences
+        # get students
         students = {}
+        students_lst = StudentShortSerializer(Student.objects.filter(
+            milgroup__milgroup=request.query_params['milgroup']),
+            many=True).data
+        for student in students_lst:
+            students[student['id']] = student
+            students[student['id']]['absences'] = []
+
+        # get absences
         for date in date_ranges:
             date_f = datetime.strptime(date, '%d.%m.%Y').strftime('%Y-%m-%d')
             # absences for today
@@ -98,12 +121,6 @@ class AbsenceJournalView(APIView):
                 # parse each absence
                 for absence in absences:
                     studentid = absence['studentid']['id']
-                    if studentid not in students:
-                        students[studentid] = {
-                            'id': studentid,
-                            'fullname': absence['studentid']['fullname'],
-                            'absences': []
-                        }
                     students[studentid]['absences'] = {
                         date: {
                             'absenceType': absence['absenceType'],
