@@ -26,6 +26,7 @@ urlpatterns = [
          name="schema-swagger-ui"),
 
     # Public API
+    path("api/auth/", include("auth.urls")),
     path("api/dms/", include("dms.urls")),
     path("api/lms/", include("lms.urls")),
 

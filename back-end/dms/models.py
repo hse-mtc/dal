@@ -2,25 +2,12 @@ import datetime
 import os
 
 from django.db import models
-from django.contrib.auth import get_user_model
 
 from taggit.managers import TaggableManager
 
 
 def get_upload_path():
     return "documents/"
-
-
-class Profile(models.Model):
-    name = models.CharField(max_length=255)
-    user = models.OneToOneField(
-        to=get_user_model(),
-        on_delete=models.CASCADE,
-    )
-    photo = models.URLField(blank=True)
-
-    def __str__(self):
-        return self.name
 
 
 class Author(models.Model):

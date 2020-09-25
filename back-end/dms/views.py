@@ -191,18 +191,6 @@ def login(request: Request) -> Response:
 
 
 @csrf_exempt
-@api_view(["GET"])
-def info(request: Request) -> Response:
-    data = {
-        "roles": ["admin"],
-        "avatar": request.user.profile.photo,
-        "name": request.user.profile.name,
-    }
-
-    return Response(data, status=HTTP_200_OK)
-
-
-@csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
 def logout(request: Request) -> Response:
