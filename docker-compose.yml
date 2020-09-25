@@ -26,9 +26,7 @@ services:
     restart: always
     # Map directories with code for hot reloading
     volumes:
-      - ./back-end/conf:/back-end/conf
-      - ./back-end/dms:/back-end/dms
-      - ./back-end/lms:/back-end/lms
+      - ./back-end:/back-end
 
   front-end:
     build:
