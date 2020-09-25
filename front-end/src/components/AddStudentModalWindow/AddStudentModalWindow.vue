@@ -107,7 +107,7 @@ import { putStudent, postStudent } from '../../api/student';
                         { type: 'string', required: true, message: 'Пожалуйста, выберите дату рождения', trigger: 'change' }
                     ]
                 },
-                milgroups: [/* ...this.$store.getters.milgroups */{milgroup: 1807, milfaculty: "ВКС"}, {milgroup: 1808, milfaculty: "ВКС"}, {milgroup: 1809, milfaculty: "ВКС"}, {milgroup: 1810, milfaculty: "РВСН"}],
+                milgroups: [/* ...this.$store.getters.milgroups */{milgroup: 1807, milfaculty: "ВКС", weekday: 4}, {milgroup: 1808, milfaculty: "ВКС", weekday: 4}, {milgroup: 1809, milfaculty: "ВКС", weekday: 4}, {milgroup: 1810, milfaculty: "РВСН", weekday: 4}],
                 programs: [/* ...this.$store.getters.programs */{program: "Информатика и вычислительная техника", code: "09.03.01"}, {program: "Программная инженерия", code: "09.03.04"}, {program: "Машиностроение", code: "15.03.01"}],
                 statuses: ["Обучается", "Отчислен", "Завершил"]
             }

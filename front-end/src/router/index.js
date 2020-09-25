@@ -194,6 +194,18 @@ export const constantRoutes = [
     }]
   },
 
+  {
+    path: '/mtc_referencebook',
+    redirect: '/mtc_referencebook',
+    component: Layout,
+    children: [{
+      path: 'referencebook',
+      name: 'ReferenceBook',
+      component: () => import('@/views/ReferenceBook/index'),
+      meta: { title: 'Справочники', icon: '' }
+    }]
+  },
+
   // {
   //   path: 'external-link',
   //   component: Layout,
