@@ -12,7 +12,6 @@ from rest_framework.status import (
 )
 
 from lms.serializers.serializers import MilgroupSerializer
-from lms.serializers.student import StudentShortSerializer
 from lms.serializers.absence import (AbsenceSerializer,
                                      AbsenceGetQuerySerializer,
                                      AbsenceJournalSerializer,
@@ -51,8 +50,6 @@ class AbsenceViewSet(GetPutPostDeleteModelViewSet):
 
 
 class AbsenceJournalView(GenericAPIView):
-    serializer_class = AbsenceJournalSerializer
-
     permission_classes = [AllowAny]
 
     # pylint: disable=too-many-locals
@@ -61,9 +58,6 @@ class AbsenceJournalView(GenericAPIView):
             data=request.query_params)
         if not query_params.is_valid():
             return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
-
-        absences = Absence.objects.filter(
-            studentid__milgroup__milgroup=request.query_params['milgroup'])
 
         # final json
         data = {}
@@ -84,14 +78,17 @@ class AbsenceJournalView(GenericAPIView):
                 {'message': 'date_from should be greater or equal to date_to.'},
                 status=HTTP_400_BAD_REQUEST)
 
-        date_range_iso, date_range = \
-                            get_date_range(date_from, date_to, milgroup['weekday'])
+        date_range_iso, date_range = get_date_range(date_from, date_to,
+                                                    milgroup['weekday'])
         # add dates and absneces
         data['dates'] = date_range
-        data['students'] = AbsenceJournalSerializer(Student.objects.filter(milgroup__milgroup=request.query_params['milgroup']),
-        context={
-            "request": request,
-            "date_range": date_range_iso,
-        }, many=True).data
+        data['students'] = AbsenceJournalSerializer(
+            Student.objects.filter(
+                milgroup__milgroup=request.query_params['milgroup']),
+            context={
+                'request': request,
+                'date_range': date_range_iso,
+            },
+            many=True).data
 
         return Response(data, status=HTTP_200_OK)

@@ -1,6 +1,5 @@
-from rest_framework.serializers import (ModelSerializer, Serializer,
-                                        IntegerField, CharField, DateField,
-                                        SerializerMethodField)
+from rest_framework.serializers import (Serializer, IntegerField, CharField,
+                                        DateField, SerializerMethodField)
 from rest_framework.serializers import ValidationError
 
 from lms.models import (
@@ -75,8 +74,9 @@ class StudentSerializer(NestedModelSerializer):
     ]
 
 
-class StudentShortSerializer(ModelSerializer):
-    fullname = SerializerMethodField()
+class StudentShortSerializer(NestedModelSerializer):
+    id = IntegerField(required=True)
+    fullname = SerializerMethodField(required=False)
     milgroup = MilgroupSerializer(
         many=False,
         required=False,
@@ -90,8 +90,4 @@ class StudentShortSerializer(ModelSerializer):
         model = Student
         fields = ['id', 'fullname', 'milgroup']
 
-    def create(self, validated_data):
-        pass
-
-    def update(self, instance, validated_data):
-        pass
+    nested_fields = [['milgroup', Milgroup]]

@@ -1,6 +1,6 @@
-from rest_framework.serializers import (Serializer, ModelSerializer, 
-                                        IntegerField, CharField,
-                                        DateField, SerializerMethodField)
+from rest_framework.serializers import (Serializer, ModelSerializer,
+                                        IntegerField, CharField, DateField,
+                                        SerializerMethodField)
 from rest_framework.serializers import ValidationError
 
 from lms.models import (
@@ -13,8 +13,7 @@ from lms.models import (
 
 from lms.validators import PresentInDatasetValidator
 from lms.serializers.student import StudentShortSerializer
-from lms.serializers.serializers import (NestedModelSerializer, 
-                                         MilgroupSerializer)
+from lms.serializers.serializers import NestedModelSerializer
 
 
 class AbsenceGetQuerySerializer(Serializer):
@@ -106,22 +105,22 @@ class AbsenceShortSerializer(ModelSerializer):
 
     class Meta:
         model = Absence
-        fields = ['date', 'absenceType', 'absenceStatus',
-                  'reason', 'comment']
+        fields = ['date', 'absenceType', 'absenceStatus', 'reason', 'comment']
 
 
 class AbsenceJournalSerializer(ModelSerializer):
     id = IntegerField(read_only=True)
     fullname = SerializerMethodField(read_only=True)
     absences = SerializerMethodField(read_only=True)
-    
+
     class Meta:
         model = Student
         fields = ['id', 'fullname', 'absences']
-    
+
+    # pylint: disable=no-self-use
     def get_fullname(self, obj):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
-    
+
     def get_absences(self, obj):
         absences = obj.absence_set.filter(date__in=self.context['date_range'])
         return AbsenceShortSerializer(absences, many=True).data
