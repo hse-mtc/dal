@@ -1,13 +1,11 @@
-from django.contrib.auth import authenticate
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
 from django.utils.encoding import escape_uri_path
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import permissions
 from rest_framework import viewsets
-from rest_framework.authtoken.models import Token
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
@@ -20,25 +18,17 @@ from rest_framework.decorators import (
 )
 from rest_framework.status import (
     HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg.openapi import (
-    IN_QUERY,
-    TYPE_ARRAY,
-    TYPE_INTEGER,
-    Items,
-    Parameter,
-    Response as SwaggerResponse,
-)
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from taggit.models import Tag
 
+from dms.filters import DocumentFilter
+from dms.swagger import author_array
 from dms.serializers import (
     AuthorSerializer,
     CategorySerializer,
@@ -56,9 +46,9 @@ from dms.models import (
     Topic,
     Category,
 )
-from dms.filters import DocumentFilter
 
 
+@method_decorator(name="list", decorator=swagger_auto_schema(tags=["Authors"]))
 class AuthorViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on Author model."""
 
@@ -74,9 +64,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
 
-    @swagger_auto_schema(responses={
-        422: SwaggerResponse("Category has documents and can not be deleted."),
-    })
     def destroy(self, request, *args, **kwargs):
         # pylint: disable=no-member
 
@@ -130,13 +117,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
             return DocumentListSerializer
         return DocumentSerializer
 
-    @swagger_auto_schema(manual_parameters=[
-        Parameter("authors",
-                  IN_QUERY,
-                  type=TYPE_ARRAY,
-                  items=Items(type=TYPE_INTEGER),
-                  collection_format="multi"),
-    ])
+    @swagger_auto_schema(manual_parameters=[author_array])
     def list(self, request, *args, **kwargs):
         # pylint: disable=no-member
         return super().list(request, *args, **kwargs)
@@ -165,42 +146,6 @@ def get_file(request: Request) -> HttpResponse:
         response["Content-Disposition"] = f"attachment; " \
             f"filename={escape_uri_path(filename)}"
         return response
-
-
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes((AllowAny,))
-def login(request: Request) -> Response:
-    username = request.data.get("username")
-    password = request.data.get("password")
-    if not username or not password:
-        return Response({"message": "Username and password are required."},
-                        status=HTTP_400_BAD_REQUEST)
-
-    user = authenticate(
-        username=username,
-        password=password,
-    )
-    if not user:
-        return Response({"message": "Invalid credentials."},
-                        status=HTTP_404_NOT_FOUND)
-
-    token, _ = Token.objects.get_or_create(user=user)
-
-    return Response({"token": token.key}, status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes((AllowAny,))
-def logout(request: Request) -> Response:
-    try:
-        request.user.auth_token.delete()
-    except (AttributeError, ObjectDoesNotExist):
-        pass
-
-    return Response({"message": "User logged out successfully."},
-                    status=HTTP_200_OK)
 
 
 @permission_classes((AllowAny,))
