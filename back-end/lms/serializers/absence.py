@@ -116,6 +116,13 @@ class AbsenceJournalSerializer(ModelSerializer):
     absences = AbsenceShortSerializer(read_only=True,
                                       many=True,
                                       source='absence_set')
+    
+    def __init__(self, *args, **kwargs):
+        date_range = kwargs.pop('date_range')
+        super().__init__(*args, **kwargs)
+        query_params = self.context['request'].query_params
+        self.fields['absences'].queryset = Absence.objects.filter(date__in=date_range)
+
     class Meta:
         model = Student
         fields = ['id', 'fullname', 'absences']
