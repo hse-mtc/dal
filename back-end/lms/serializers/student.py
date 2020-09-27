@@ -88,7 +88,7 @@ class StudentShortSerializer(ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['id', 'name', 'surname', 'patronymic', 'fullname', 'milgroup']
+        fields = ['id', 'fullname', 'milgroup']
 
     def create(self, validated_data):
         pass

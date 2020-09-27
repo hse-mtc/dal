@@ -25,14 +25,16 @@ from lms.filters import AbsenceFilterSet
 def get_date_range(date_from, date_to, weekday):
     start_date = date_from + timedelta((weekday - date_from.weekday() + 7) % 7)
 
+    dates_iso = []
     dates = []
     cur_date = start_date
 
     while cur_date <= date_to:
-        dates.append(cur_date.strftime('%Y-%m-%d'))#'%d.%m.%Y'))
+        dates_iso.append(cur_date.strftime('%Y-%m-%d'))
+        dates.append(cur_date.strftime('%d.%m.%Y'))
         cur_date += timedelta(7)
 
-    return dates
+    return dates_iso, dates
 
 
 class AbsenceViewSet(GetPutPostDeleteModelViewSet):
@@ -82,43 +84,14 @@ class AbsenceJournalView(GenericAPIView):
                 {'message': 'date_from should be greater or equal to date_to.'},
                 status=HTTP_400_BAD_REQUEST)
 
-        date_range = get_date_range(date_from, date_to, milgroup['weekday'])
-
-        # get students
-        students = {}
-        students_lst = StudentShortSerializer(Student.objects.filter(
-            milgroup__milgroup=request.query_params['milgroup']),
-                                              many=True).data
-        for student in students_lst:
-            students[student['id']] = student
-            students[student['id']]['absences'] = []
-
-        # get absences
-        for date in date_range:
-            # date_f = datetime.strptime(date, '%d.%m.%Y').strftime('%Y-%m-%d')
-            # absences for today
-            absence = Absence.objects.filter(date=date)
-            if absence.count() > 0:
-                absences = AbsenceSerializer(absence, many=True).data
-                # parse each absence
-                for absence in absences:
-                    studentid = absence['studentid']['id']
-                    students[studentid]['absences'].append({
-                        date: {
-                            'id': absence['id'],
-                            'absenceType': absence['absenceType'],
-                            'absenceStatus': absence['absenceStatus'],
-                            'reason': absence['reason'],
-                            'comment': absence['comment']
-                        }
-                    })
-
+        date_range_iso, date_range = \
+                            get_date_range(date_from, date_to, milgroup['weekday'])
+        # add dates and absneces
         data['dates'] = date_range
-        data['students'] = list(students.values())
-        serializer = self.get_serializer(data=Student.objects.all(), many=True, date_range=date_range)
-        if serializer.is_valid():
-            data['kek'] = serializer.data
-        else:
-            data['kek'] = serializer.errors
+        data['students'] = AbsenceJournalSerializer(Student.objects.filter(milgroup__milgroup=request.query_params['milgroup']),
+        context={
+            "request": request,
+            "date_range": date_range_iso,
+        }, many=True).data
 
         return Response(data, status=HTTP_200_OK)
