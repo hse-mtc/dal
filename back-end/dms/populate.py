@@ -16,10 +16,18 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from dms.models import (Author, Category, Document, Publisher, Section,
-                        Subject, Topic, File)
-
 from auth.models import Profile
+
+from dms.models import (
+    Author,
+    Category,
+    Document,
+    Publisher,
+    Section,
+    Subject,
+    Topic,
+    File,
+)
 
 
 def create_super_user() -> tp.Tuple[AbstractUser, Profile]:
