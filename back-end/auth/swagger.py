@@ -4,10 +4,12 @@ from drf_yasg.openapi import (
     Parameter,
 )
 
+from conf.settings import SIMPLE_JWT
+
 token_auth_header = Parameter(
     "Authorization",
     IN_HEADER,
     type=TYPE_STRING,
     required=True,
-    default="Token ",
+    default=SIMPLE_JWT["AUTH_HEADER_TYPES"][0] + " ",
 )
