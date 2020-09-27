@@ -5,10 +5,14 @@ from rest_framework_simplejwt.views import (
     token_refresh,
 )
 
-from auth.views import info
+from auth.views import (
+    info,
+    logout,
+)
 
 urlpatterns = [
-    path("token/", token_obtain_pair),
-    path("token/refresh/", token_refresh),
-    path("info/", info),
+    path("users/login/", token_obtain_pair),
+    path("users/refresh/", token_refresh),
+    path("users/info/", info),
+    path("user/logout/", logout),
 ]
