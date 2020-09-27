@@ -15,6 +15,7 @@ from lms.serializers.serializers import MilgroupSerializer
 from lms.serializers.student import StudentShortSerializer
 from lms.serializers.absence import (AbsenceSerializer,
                                      AbsenceGetQuerySerializer,
+                                     AbsenceJournalSerializer,
                                      AbsenceJournalGetQuerySerializer)
 from lms.models import Absence, Milgroup, Student
 from lms.views.viewsets import GetPutPostDeleteModelViewSet
@@ -112,5 +113,8 @@ class AbsenceJournalView(APIView):
 
         data['dates'] = date_ranges
         data['students'] = list(students.values())
+
+        data['kek'] = AbsenceJournalSerializer(Student.objects.filter(absence__date=date_f), 
+                                                                      many=True).data
 
         return Response(data, status=HTTP_200_OK)
