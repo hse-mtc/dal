@@ -99,13 +99,16 @@ class AbsenceJournalGetQuerySerializer(Serializer):
 
 
 class AbsenceShortSerializer(ModelSerializer):
+    id = IntegerField(read_only=True)
     absenceType = CharField(read_only=True)
     absenceStatus = CharField(read_only=True)
     date = DateField(read_only=True, format='%d.%m.%Y')
 
     class Meta:
         model = Absence
-        fields = ['date', 'absenceType', 'absenceStatus', 'reason', 'comment']
+        fields = [
+            'id', 'date', 'absenceType', 'absenceStatus', 'reason', 'comment'
+        ]
 
 
 class AbsenceJournalSerializer(ModelSerializer):

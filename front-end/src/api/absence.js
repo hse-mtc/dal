@@ -10,37 +10,25 @@ export function getAbsence(params) {
 
 export function getAbsenceJournal(params) {
   return request({
-    url: '/lms/absence_journal/',
+    url: '/lms/absence-journal/',
     method: 'get',
     params
   })
 }
 
-export function postAbsence(params) {
+export function postAbsence(data) {
+  if (data.studentid !== undefined)
+    data.studentid = { id: data.studentid.id };
   return request({
-    url: '/lms/absence/',
+    url: '/lms/absence/'+data.id,
     method: 'post',
-    data: {
-      id: params.id,
-      date: params.date,
-      absenceType: params.absenceType,
-      absenceStatus: params.absenceStatus,
-      studentid: {
-        id: params.studentid.id,
-        name: params.studentid.name,
-        surname: params.studentid.surname,
-        patronymic: params.studentid.patronymic,
-      },
-      reason: params.reason,
-      comment: params.comment
-    }
+    data
   })
 }
 
 export function deleteAbsence(params) {
   return request({
-    url: '/lms/absence/',
-    method: 'delete',
-    params
+    url: '/lms/absence/'+params.id,
+    method: 'delete'
   })
 }

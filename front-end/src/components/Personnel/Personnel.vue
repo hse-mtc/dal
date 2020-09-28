@@ -249,21 +249,21 @@ export default {
 		onFilter(){
 			if (this.selectedSection == 'students'){
 				getStudent({ 
-					name: this.filterS.search, 
+					search: this.filterS.search, 
 					milgroup: this.filterS.milgroup,
 					status: this.filterS.status,
 				}).then(response => {
-					this.studentsData = response.data.students;
+					this.studentsData = response.data;
 				}).catch(() => {
 					Message('Ошибка получения списка студентов!');
 				})
 			}
 			else if (this.selectedSection == 'teachers'){
 				getTeacher({ 
-					name: this.filterT.search, 
+					search: this.filterT.search, 
 					milfaculty: this.filterT.milfaculty,
 				}).then(response => {
-					this.teachersData = response.data.teachers;
+					this.teachersData = response.data;
 				}).catch(() => {
 					Message('Ошибка получения списка преподавателей!');
 				})
@@ -287,7 +287,8 @@ export default {
 					confirmButtonText: 'Да',
 					cancelButtonText: 'Отмена',
 					type: 'warning'
-				}).then(() => {
+				})
+				.then(() => {
 					deleteStudent(id).then(() => {
 						this.onFilter();
 						this.$message.success('Студент удален.');

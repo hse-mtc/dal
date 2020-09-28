@@ -135,7 +135,7 @@ import { putStudent, postStudent } from '../../api/student';
                 this.$refs['form'].validate((valid) => {
                     if (valid){
                         if (this.student){
-                            this.form['id'] = this.student.id;
+                            this.form.id = this.student.id;
                             postStudent(this.form)
                             .then(() => {
                                 this.$message.success('Студент успешно изменен.');

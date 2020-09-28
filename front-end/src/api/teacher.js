@@ -8,25 +8,25 @@ export function getTeacher(params) {
   })
 }
 
-export function putTeacher(st) {
+export function putTeacher(data) {
   return request({
     url: '/lms/teacher/',
     method: 'put',
-    data: { milgroup : st.milgroup, program: st.program, surname: st.surname, name: st.name, patronymic: st.patronymic, birthdate: st.birthdate, photo: st.photo, status: st.status}
+    data
   })
 }
 
-export function postTeacher(st) {
+export function postTeacher(data) {
   return request({
-    url: '/lms/teacher/',
+    url: '/lms/teacher/'+data.id,
     method: 'post',
-    data: { id: st.id, milgroup : st.milgroup, program: st.program, surname: st.surname, name: st.name, patronymic: st.patronymic, birthdate: st.birthdate, photo: st.photo, status: st.status}
+    data
   })
 }
 
 export function deleteTeacher(id) {
   return request({
-    url: '/lms/teacher/?id='+id,
+    url: '/lms/teacher/'+id,
     method: 'delete'
   })
 }

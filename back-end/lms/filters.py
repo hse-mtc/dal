@@ -14,9 +14,12 @@ class StudentFilterSet(FilterSet):
 
 
 class AbsenceFilterSet(FilterSet):
-    student_id = ModelChoiceFilter(queryset=Student.objects.all())
-    absence_type = ModelChoiceFilter(queryset=AbsenceType.objects.all())
-    absence_status = ModelChoiceFilter(queryset=AbsenceStatus.objects.all())
+    student_id = ModelChoiceFilter(field_name='studentid',
+                                   queryset=Student.objects.all())
+    absence_type = ModelChoiceFilter(field_name='absenceType',
+                                     queryset=AbsenceType.objects.all())
+    absence_status = ModelChoiceFilter(field_name='absenceStatus',
+                                       queryset=AbsenceStatus.objects.all())
 
     milgroup = NumberFilter(field_name='studentid__milgroup__milgroup')
 

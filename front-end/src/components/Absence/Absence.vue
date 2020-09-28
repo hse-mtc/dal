@@ -65,6 +65,7 @@
                     <el-row>
                         <el-table
                         :data="absences"
+                        :default-sort = "{prop: 'date', order: 'descending'}"
                         style="width: 100%"
                         max-height="680"
                         stripe>
@@ -169,27 +170,28 @@
                                 v-for="d in journal.dates"
                                 :key="d"
                                 :label="d"
-                                align="center">
+                                align="center"
+                                min-width="100">
                                 <template slot-scope="scope">
                                     <el-popover
-                                        v-if="scope.row.absences[d] !== undefined" 
+                                        v-if="scope.row.absences.some(x => x.date == d)" 
                                         placement="top"
                                         width="400"
                                         trigger="hover">
-                                        <el-form label-position="right" label-width="150px" size="mini" :model="scope.row.absences[d]">
+                                        <el-form label-position="right" label-width="150px" size="mini" :model="scope.row.absences.find(x => x.date == d)">
                                             <el-form-item label="Тип причины: ">
                                                 <el-tag
-                                                :type="scope.row.absences[d].absenceType === 'Неуважительная' ? 'danger' : 
-                                                (scope.row.absences[d].absenceType === 'Опоздание' ? 'warning' : 'success')"
+                                                :type="scope.row.absences.find(x => x.date == d).absenceType === 'Неуважительная' ? 'danger' : 
+                                                (scope.row.absences.find(x => x.date == d).absenceType === 'Опоздание' ? 'warning' : 'success')"
                                                 disable-transitions>
-                                                    {{scope.row.absences[d].absenceType}}
+                                                    {{scope.row.absences.find(x => x.date == d).absenceType}}
                                                 </el-tag>
                                             </el-form-item>
                                             <el-form-item label="Причина: ">
-                                                {{scope.row.absences[d].reason}}
+                                                {{scope.row.absences.find(x => x.date == d).reason}}
                                             </el-form-item>
                                             <el-form-item label="Комментарий: ">
-                                                {{scope.row.absences[d].comment}}
+                                                {{scope.row.absences.find(x => x.date == d).comment}}
                                             </el-form-item>
                                             <el-form-item>
                                                 <el-button
@@ -197,18 +199,18 @@
                                                 icon="el-icon-edit"
                                                 type="info"
                                                 circle
-                                                @click="onEdit(scope.row.absences[d], scope.row.fullname)"/>
+                                                @click="onEdit(scope.row.absences.find(x => x.date == d), scope.row.fullname)"/>
                                                 <el-button
                                                 size="mini"
                                                 icon="el-icon-delete"
                                                 type="danger"
                                                 circle
-                                                @click="handleDelete(scope.row.absences[d].id)"/>
+                                                @click="handleDelete(scope.row.absences.find(x => x.date == d).id)"/>
                                             </el-form-item>
                                         </el-form>
                                         <i slot="reference"
-                                        :class="scope.row.absences[d].absenceStatus === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
-                                        :style="scope.row.absences[d].absenceStatus === 'Открыт' ? 'color: red' : 'color: green'" />
+                                        :class="scope.row.absences.find(x => x.date == d).absenceStatus === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
+                                        :style="scope.row.absences.find(x => x.date == d).absenceStatus === 'Открыт' ? 'color: red' : 'color: green'" />
                                     </el-popover>
                                 </template>
                                 </el-table-column>
@@ -363,18 +365,19 @@ export default {
     },
     created() {
         this.onFilter();
+        if (this.filterJ.mg) this.onJournal();
     },
     methods: {
         onFilter(){
             getAbsence({
                 date_from: this.filter.dateRange !== null ? this.filter.dateRange[0] : null, 
                 date_to: this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
-                absenceType: this.filter.type, 
-                absenceStatus: this.filter.status,
-                name: this.filter.search,
+                absence_type: this.filter.type, 
+                absence_status: this.filter.status,
+                search: this.filter.search,
                 milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
             }).then(response => {
-                this.absences = response.data.absences;
+                this.absences = response.data;
             }).catch(() => {
                 this.$message( { message: 'Ошибка получения пропусков!', type: 'error' } );
             });
@@ -385,7 +388,11 @@ export default {
 			this.dialogVisible = true;
         },
         handleClose(){
-            this.$confirm('Вы уверены, что хотите закрыть окно редактирования?')
+            this.$confirm('Вы уверены, что хотите закрыть окно редактирования?', 'Подтверждение', {
+					confirmButtonText: 'Да',
+					cancelButtonText: 'Отмена',
+                    type: 'warning'
+            })
             .then(() => {
                 this.dialogVisible = false; 
             })
@@ -397,26 +404,30 @@ export default {
                 this.$message({ message: 'Пропуск успешно редактирован', type: 'success' });
                 this.dialogVisible = false;
                 this.onFilter();
+                if (this.filterJ.mg) this.onJournal();
             })
             .catch(() => {
                 this.$message({ message: 'Ошибка при редактировании пропуска!', type: 'error' });
             });
         },
         handleDelete(id){
-            this.$confirm('Вы уверены, что хотите удалить пропуск?')
+            this.$confirm('Вы уверены, что хотите удалить пропуск?', 'Подтверждение', {
+					confirmButtonText: 'Да',
+					cancelButtonText: 'Отмена',
+                    type: 'warning'
+            })
             .then(() => {
                 deleteAbsence({ id })
                 .then(() => {
                     this.$message({ message: 'Пропуск успешно удален', type: 'success' });
                     this.onFilter();
+                    if (this.filterJ.mg) this.onJournal();
                 })
                 .catch(() => {
                     this.$message({ message: 'Ошибка при удалении пропуска!', type: 'error' });
                 })
-            })
-            .catch(() => {});
+            });
         },
-
         onJournal(){
             getAbsenceJournal({
                 milgroup: this.filterJ.mg,
@@ -424,7 +435,7 @@ export default {
                 date_to: this.filterJ.dateRange[1],
             })
             .then((response) => {
-                this. journal = response.data.absences;
+                this. journal = response.data;
             })
             .catch(() => {
                 this.$message({ message: 'Ошибка получения журнала!', type: 'error' });
