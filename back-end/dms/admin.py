@@ -9,6 +9,7 @@ from dms.models import (
     Profile,
     Publisher,
     Subject,
+    File,
 )
 
 
@@ -30,3 +31,4 @@ admin.site.register(Category)
 admin.site.register(Document)
 admin.site.register(Publisher)
 admin.site.register(Subject)
+admin.site.register(File)

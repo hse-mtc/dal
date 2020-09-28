@@ -227,7 +227,7 @@
                     }
 
                     if (this.form.fileList.length !== 0) {
-                        formData.append('file', this.form.fileList[0].raw);
+                        formData.append('content', this.form.fileList[0].raw);
                         uploadDocs(formData)
                             .then(function(){
                             EventBus.$emit('UPDATE_EVENT');

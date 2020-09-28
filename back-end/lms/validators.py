@@ -23,8 +23,8 @@ class PresentInDatasetValidator:
         if not self.model_class.objects.filter(**query_filter).exists():
             if self.model_param is not None:
                 raise ValidationError(
-                    f'There are no objects with {self.model_param} = {value} \
-                      in model {self.model_class.__name__}')
+                    f'There are no objects with {self.model_param} = {value} '
+                    f'in model {self.model_class.__name__}')
             raise ValidationError(
-                f'There are no objects like {str(query_filter)} \
-                  in model {self.model_class.__name__}')
+                f'There are no objects like {str(query_filter)} '
+                f'in model {self.model_class.__name__}')

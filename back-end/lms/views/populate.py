@@ -65,57 +65,60 @@ def create_milgroups(
         milfaculties: tp.Dict[str, Milfaculty]) -> tp.Dict[str, Milgroup]:
     values = [{
         'milgroup': 1801,
-        'milfaculty': milfaculties['Разведка'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['Разведка']
     }, {
         'milgroup': 1802,
-        'milfaculty': milfaculties['Разведка'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['Разведка']
     }, {
         'milgroup': 1803,
-        'milfaculty': milfaculties['Разведка'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['Разведка']
     }, {
         'milgroup': 1804,
-        'milfaculty': milfaculties['Сержанты'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['Сержанты']
     }, {
         'milgroup': 1805,
-        'milfaculty': milfaculties['Сержанты'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['Сержанты']
     }, {
         'milgroup': 1806,
-        'milfaculty': milfaculties['Сержанты'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['Сержанты']
     }, {
         'milgroup': 1807,
-        'milfaculty': milfaculties['ВКС'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['ВКС']
     }, {
         'milgroup': 1808,
-        'milfaculty': milfaculties['ВКС'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['ВКС']
     }, {
         'milgroup': 1809,
-        'milfaculty': milfaculties['ВКС'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['ВКС']
     }, {
         'milgroup': 1810,
-        'milfaculty': milfaculties['РВСН'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['РВСН']
     }, {
         'milgroup': 1811,
-        'milfaculty': milfaculties['РВСН'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['РВСН']
     }, {
         'milgroup': 1812,
-        'milfaculty': milfaculties['РВСН'],
-        'weekday': 4
+        'weekday': 4,
+        'milfaculty': milfaculties['РВСН']
     }]
     milgroups = {}
 
     for value in values:
-        milgroup, _ = Milgroup.objects.get_or_create(**value)
+        milgroup, _ = Milgroup.objects.get_or_create(
+            milgroup=value['milgroup'],
+            milfaculty=value['milfaculty'],
+            weekday=value['weekday'])
         milgroup.save()
         milgroups[value['milgroup']] = milgroup
 
@@ -261,7 +264,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
                     students: tp.Dict[str, Student]):
     values = [
         {
-            'date': '2019-09-01',
+            'date': '2020-09-04',
             'studentid': students['Кацевалов'],
             'absenceType': types['Уважительная'],
             'reason': 'Заболел',
@@ -269,7 +272,7 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             'comment': 'Болеть будет недолго'
         },
         {
-            'date': '2019-09-08',
+            'date': '2020-09-11',
             'studentid': students['Хромов'],
             'absenceType': types['Опоздание'],
             'reason': 'Электричка опоздала',
@@ -277,8 +280,8 @@ def create_absences(types: tp.Dict[str, AbsenceType],
             'comment': ''
         },
         {
-            'date': '2019-09-08',
-            'studentid': students['Исаков'],
+            'date': '2020-09-18',
+            'studentid': students['Хромов'],
             'absenceType': types['Неуважительная'],
             'reason': 'Прогул',
             'absenceStatus': statuses['Открыт'],
@@ -310,7 +313,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Владимирович',
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
-            'post': posts['Преподаватель'],
+            'teacherPost': posts['Преподаватель'],
             'milgroup': milgroups[1809]
         },
         {
@@ -319,7 +322,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Николаевич',
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
-            'post': posts['Начальник цикла'],
+            'teacherPost': posts['Начальник цикла'],
             'milgroup': milgroups[1808]
         },
         {
@@ -328,7 +331,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Владимирович',
             'milfaculty': milfaculties['Сержанты'],
             'rank': ranks['Майор'],
-            'post': posts['Преподаватель'],
+            'teacherPost': posts['Преподаватель'],
             'milgroup': milgroups[1806]
         },
         {
@@ -337,7 +340,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Валентинович',
             'milfaculty': milfaculties['Разведка'],
             'rank': ranks['Полковник'],
-            'post': posts['Начальник цикла'],
+            'teacherPost': posts['Начальник цикла'],
             'milgroup': milgroups[1801]
         },
         {
@@ -346,7 +349,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Сергеевич',
             'milfaculty': milfaculties['РВСН'],
             'rank': ranks['Генерал-майор'],
-            'post': posts['Преподаватель'],
+            'teacherPost': posts['Преподаватель'],
             'milgroup': None
         },
     ]
@@ -358,7 +361,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             patronymic=value['patronymic'],
             milfaculty=value['milfaculty'],
             rank=value['rank'],
-            post=value['post'],
+            teacherPost=value['teacherPost'],
             milgroup=value['milgroup'])
         teacher.save()
 

@@ -8,6 +8,7 @@ from dms.models import (
     Category,
     Publisher,
     Subject,
+    File,
 )
 
 
@@ -61,27 +62,56 @@ class TagListField(serializers.ListField):
         return data.values_list("name", flat=True)
 
 
+class FileSerializer(serializers.ModelSerializer):
+    extension = serializers.CharField(source="get_file_extension",
+                                      required=False,
+                                      read_only=True)
+
+    name = serializers.CharField(source="get_file_name",
+                                 required=False,
+                                 read_only=True)
+
+    class Meta:
+        model = File
+        exclude = ["content"]
+
+
 class DocumentSerializer(serializers.ModelSerializer):
     """Serializes Document model."""
 
+    content = serializers.FileField(write_only=True)
     tags = TagListField(required=False)
 
     class Meta:
         model = Document
-        exclude = ["is_in_trash"]
+        exclude = ["is_in_trash", "file"]
 
     def create(self, validated_data):
         tags = validated_data.pop("tags", None)
+
+        content = validated_data.pop("content")
+        file = File.objects.create(content=content)
+        validated_data["file"] = file
+
         instance = super().create(validated_data)
+
         if tags:
             instance.tags.set(*tags)
+
         return instance
 
     def update(self, instance, validated_data):
         tags = validated_data.pop("tags", None)
+
+        file = File.objects.get(id=instance.file.id)
+        file.content = validated_data.pop("content")
+        file.save()
+
         instance = super().update(instance, validated_data)
+
         if tags:
             instance.tags.set(*tags, clear=True)
+
         return instance
 
 
@@ -91,7 +121,8 @@ class DocumentListSerializer(serializers.ModelSerializer):
     authors = AuthorSerializer(many=True, read_only=True)
     publishers = PublisherSerializer(many=True, read_only=True)
     tags = TagListField(required=False, read_only=True)
+    file = FileSerializer(read_only=True)
 
     class Meta:
         model = Document
-        exclude = ["is_in_trash", "subject", "topic", "file"]
+        exclude = ["is_in_trash", "subject", "topic"]

@@ -1,8 +1,6 @@
 from django.contrib.auth import authenticate
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
-from django.db.models.deletion import RestrictedError
-from django.db.models.functions import ExtractYear
 from django.http import HttpResponse
 from django.utils.encoding import escape_uri_path
 from django.views.decorators.csrf import csrf_exempt
@@ -80,13 +78,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
         422: SwaggerResponse("Category has documents and can not be deleted."),
     })
     def destroy(self, request, *args, **kwargs):
-        try:
-            # pylint: disable=no-member
-            return super().destroy(request, *args, **kwargs)
-        except RestrictedError:
+        # pylint: disable=no-member
+
+        category = self.get_object()
+        available_documents = Document.objects.filter(is_in_trash=False)
+        if available_documents.filter(category=category).exists():
             return Response(
                 {"message": "Category has documents and can not be deleted."},
                 status=HTTP_422_UNPROCESSABLE_ENTITY)
+
+        return super().destroy(request, *args, **kwargs)
 
 
 class PublisherViewSet(viewsets.ModelViewSet):
@@ -116,12 +117,18 @@ class TagListAPIView(ListAPIView):
 class DocumentViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on Document model."""
 
-    queryset = Document.objects.filter(is_in_trash=False)
+    queryset = Document.objects.filter(is_in_trash=False) \
+                               .order_by("-publication_date")
     serializer_class = DocumentSerializer
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = DocumentFilter
     search_fields = ["title", "annotation", "tags__name"]
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return DocumentListSerializer
+        return DocumentSerializer
 
     @swagger_auto_schema(manual_parameters=[
         Parameter("authors",
@@ -131,28 +138,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
                   collection_format="multi"),
     ])
     def list(self, request, *args, **kwargs):
-        # pylint: disable=too-many-locals,unused-argument
-
-        groups = []
-        queryset = self.filter_queryset(self.get_queryset())
-        years = queryset.annotate(year=ExtractYear("publication_date")) \
-                        .values_list("year", flat=True) \
-                        .distinct()
-
-        for year in sorted(years, reverse=True):
-            documents = queryset.filter(publication_date__year=year)
-            serializer = DocumentListSerializer(documents, many=True)
-            groups.append({
-                "year": year,
-                "documents": serializer.data,
-            })
-
-        data = {
-            "count": queryset.count(),
-            "groups": groups,
-        }
-
-        return Response(data, status=HTTP_200_OK)
+        # pylint: disable=no-member
+        return super().list(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
         instance.is_in_trash = True
@@ -170,7 +157,7 @@ def get_file(request: Request) -> HttpResponse:
     """
 
     doc = Document.objects.all()
-    file = doc.get(pk=request.query_params.get("id")).file
+    file = doc.get(pk=request.query_params.get("id")).file.content
     filename = file.name.split("/")[-1]
 
     with open(file.name, "rb") as content:

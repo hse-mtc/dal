@@ -203,9 +203,7 @@ class Milgroup(models.Model):
     milfaculty = models.ForeignKey(Milfaculty,
                                    models.DO_NOTHING,
                                    db_column='milfaculty')
-    
-    weekday = models.DecimalField(max_digits=1,
-                                  decimal_places=0)
+    weekday = models.DecimalField(max_digits=1, decimal_places=0)
 
     def __str__(self):
         return f'{str(self.milgroup)}, {str(self.milfaculty)}'
@@ -247,7 +245,9 @@ class Teacher(models.Model):
                                    models.DO_NOTHING,
                                    db_column='milfaculty')
     rank = models.ForeignKey(Rank, models.DO_NOTHING, db_column='rank')
-    post = models.ForeignKey(TeacherPost, models.DO_NOTHING, db_column='post')
+    teacherPost = models.ForeignKey(TeacherPost,
+                                    models.DO_NOTHING,
+                                    db_column='teacherPost')
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  db_column='milgroup',
@@ -268,7 +268,7 @@ class Teacher(models.Model):
 class Absence(models.Model):
     date = models.DateField(default=datetime.date.today)
     studentid = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
+                                  models.CASCADE,
                                   db_column='studentid')
     absenceType = models.ForeignKey(AbsenceType,
                                     models.DO_NOTHING,

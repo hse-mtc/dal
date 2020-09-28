@@ -27,6 +27,7 @@ services:
     # Map directories with code for hot reloading
     volumes:
       - ./back-end/conf:/back-end/conf
+      - ./back-end/auth:/back-end/auth
       - ./back-end/dms:/back-end/dms
       - ./back-end/lms:/back-end/lms
 
