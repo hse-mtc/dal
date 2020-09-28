@@ -1,4 +1,5 @@
 import datetime
+import os
 
 from django.db import models
 from django.contrib.auth import get_user_model
@@ -99,6 +100,27 @@ class Category(models.Model):
         return self.title
 
 
+class File(models.Model):
+    content = models.FileField(
+        upload_to=get_upload_path(),
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "File"
+        verbose_name_plural = "Files"
+
+    def __str__(self):
+        return self.get_file_name()
+
+    def get_file_extension(self):
+        _, extension = os.path.splitext(self.content.name)
+        return extension
+
+    def get_file_name(self):
+        return self.content.name
+
+
 class Document(models.Model):
     title = models.TextField()
     authors = models.ManyToManyField(
@@ -109,7 +131,7 @@ class Document(models.Model):
     tags = TaggableManager(blank=True)
     category = models.ForeignKey(
         to=Category,
-        on_delete=models.RESTRICT,
+        on_delete=models.CASCADE,
     )
     publication_date = models.DateField(default=datetime.date.today)
     publishers = models.ManyToManyField(
@@ -128,10 +150,7 @@ class Document(models.Model):
         null=True,
         blank=True,
     )
-    file = models.FileField(
-        upload_to=get_upload_path(),
-        blank=True,
-    )
+    file = models.ForeignKey(File, on_delete=models.CASCADE)
     is_in_trash = models.BooleanField(default=False)
 
     class Meta:

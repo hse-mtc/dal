@@ -71,6 +71,8 @@ import { deleteDocument } from '@/api/delete'
 import EventBus from '../EventBus';
 import {baseURL} from '@/utils/request';
 import moment from 'moment'
+import groupBy from 'lodash/groupBy';
+import keys from 'lodash/keys';
 
 export default {
   name: '',
@@ -149,8 +151,14 @@ export default {
       let text = this.$route.query.text ?  this.$route.query.text :  null
       let category = this.$route.query.section ?  this.$route.query.section :  null
       getDocuments(category, author, place, start_date, end_date, text).then(response => {
-        this.documents = response.data.groups
-        this.count = response.data.count
+        let groupsByYear = groupBy(response.data, function (document) {
+          return moment(document.publication_date).year()
+        })
+        this.documents = keys(groupsByYear).sort().reverse().map(year => ({
+          year: year,
+          documents: groupsByYear[year],
+        }))
+        this.count = response.data.length
       }).catch(() => {
         console.log('Данные по документам не указаны')
       })
