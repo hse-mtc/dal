@@ -26,8 +26,8 @@ from auth.swagger import token_auth_header
 def info(request: Request) -> Response:
     data = {
         "roles": ["admin"],
-        "avatar": request.user.profile.photo,
-        "name": request.user.profile.name,
+        "avatar": "mock",
+        "name": "Mock M. M.",
     }
 
     return Response(data, status=HTTP_200_OK)
