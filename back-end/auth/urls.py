@@ -14,5 +14,5 @@ urlpatterns = [
     path("users/login/", token_obtain_pair),
     path("users/refresh/", token_refresh),
     path("users/info/", info),
-    path("user/logout/", logout),
+    path("users/logout/", logout),
 ]
