@@ -11,8 +11,8 @@ from auth.views import (
 )
 
 urlpatterns = [
-    path("users/login/", token_obtain_pair),
-    path("users/refresh/", token_refresh),
     path("users/info/", info),
+    path("users/login/", token_obtain_pair),
     path("users/logout/", logout),
+    path("tokens/refresh/", token_refresh),
 ]
