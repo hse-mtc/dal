@@ -7,7 +7,7 @@ from taggit.managers import TaggableManager
 
 
 def get_upload_path():
-    return "documents/"
+    return "files/"
 
 
 class Author(models.Model):
