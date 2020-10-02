@@ -26,7 +26,8 @@
             </el-form-item>
             
             <el-form-item label="Взвод" prop="milgroup">
-                <el-select v-model="form.milgroup" value-key="milgroup" placeholder="Выберите взвод">
+                <el-select v-model="form.milgroup" value-key="milgroup" placeholder="Выберите взвод"
+                style="display: block;">
                     <el-option
                         v-for="item in milgroups"
                         :key="item.milgroup"
@@ -38,7 +39,8 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="Образовательная программа" prop="program">
-                <el-select v-model="form.program" value-key="code" placeholder="Выберите программу">
+                <el-select v-model="form.program" value-key="code" placeholder="Выберите программу"
+                style="display: block;">
                     <el-option
                         v-for="item in programs"
                         :key="item.code"
@@ -69,9 +71,7 @@
 </template>
 
 <script>
-    import moment from 'moment'
-    import EventBus from '../EventBus';
-import { putStudent, postStudent } from '../../api/student';
+import { postStudent, patchStudent } from '../../api/student';
 
     export default {
         name: "AddStudentModalWindow",
@@ -107,7 +107,7 @@ import { putStudent, postStudent } from '../../api/student';
                         { type: 'string', required: true, message: 'Пожалуйста, выберите дату рождения', trigger: 'change' }
                     ]
                 },
-                milgroups: [/* ...this.$store.getters.milgroups */{milgroup: 1807, milfaculty: "ВКС"}, {milgroup: 1808, milfaculty: "ВКС"}, {milgroup: 1809, milfaculty: "ВКС"}, {milgroup: 1810, milfaculty: "РВСН"}],
+                milgroups: [/* ...this.$store.getters.milgroups */{milgroup: 1807, milfaculty: "ВКС", weekday: 4}, {milgroup: 1808, milfaculty: "ВКС", weekday: 4}, {milgroup: 1809, milfaculty: "ВКС", weekday: 4}, {milgroup: 1810, milfaculty: "РВСН", weekday: 4}],
                 programs: [/* ...this.$store.getters.programs */{program: "Информатика и вычислительная техника", code: "09.03.01"}, {program: "Программная инженерия", code: "09.03.04"}, {program: "Машиностроение", code: "15.03.01"}],
                 statuses: ["Обучается", "Отчислен", "Завершил"]
             }
@@ -135,9 +135,8 @@ import { putStudent, postStudent } from '../../api/student';
                 this.$refs['form'].validate((valid) => {
                     if (valid){
                         if (this.student){
-                            this.form['id'] = this.student.id;
-                            console.log("onSubmit -> this.form", JSON.stringify(this.form))
-                            postStudent(this.form)
+                            this.form.id = this.student.id;
+                            patchStudent(this.form)
                             .then(() => {
                                 this.$message.success('Студент успешно изменен.');
                                 this.$emit('submitModal');
@@ -148,7 +147,7 @@ import { putStudent, postStudent } from '../../api/student';
                             });
                         }
                         else{
-                            putStudent(this.form)
+                            postStudent(this.form)
                             .then(() => {
                                 this.$message.success('Новый студент успешно добавлен.');
                                 this.$emit('submitModal');

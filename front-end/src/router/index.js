@@ -184,7 +184,7 @@ export const constantRoutes = [
 
   {
     path: '/mtc_absence',
-    redirect: '/mtc_absence',
+    redirect: '/absence',
     component: Layout,
     children: [{
       path: 'absence',
@@ -193,6 +193,18 @@ export const constantRoutes = [
       meta: { title: 'Посещаемость', icon: '' }
     }]
   },
+
+  // {
+  //   path: '/mtc_referencebook',
+  //   redirect: '/referencebook',
+  //   component: Layout,
+  //   children: [{
+  //     path: 'referencebook',
+  //     name: 'ReferenceBook',
+  //     component: () => import('@/views/ReferenceBook/index'),
+  //     meta: { title: 'Справочники', icon: '' }
+  //   }]
+  // },
 
   // {
   //   path: 'external-link',
