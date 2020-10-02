@@ -18,7 +18,7 @@ export function postStudent(data) {
 
 export function patchStudent(data) {
   return request({
-    url: `/lms/student/${data.id}`,
+    url: `/lms/student/${data.id}/`,
     method: 'patch',
     data
   })
@@ -26,7 +26,7 @@ export function patchStudent(data) {
 
 export function deleteStudent(id) {
   return request({
-    url: `/lms/student/${id}`,
+    url: `/lms/student/${id}/`,
     method: 'delete'
   })
 }

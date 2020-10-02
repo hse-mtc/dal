@@ -20,7 +20,7 @@ export function patchAbsence(data) {
   if (data.studentid !== undefined)
     data.studentid = { id: data.studentid.id };
   return request({
-    url: `/lms/absence/${data.id}`,
+    url: `/lms/absence/${data.id}/`,
     method: 'patch',
     data
   })
@@ -28,7 +28,7 @@ export function patchAbsence(data) {
 
 export function deleteAbsence(params) {
   return request({
-    url: `/lms/absence/${params.id}`,
+    url: `/lms/absence/${params.id}/`,
     method: 'delete'
   })
 }

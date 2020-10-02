@@ -74,12 +74,12 @@
                             sortable
                             label="Дата"/>
                             <el-table-column
-                            prop="studentid.fullname"
+                            prop="student.fullname"
                             sortable
                             show-overflow-tooltip
                             label="ФИО"/>
                             <el-table-column
-                            prop="studentid.milgroup.milgroup"
+                            prop="student.milgroup.milgroup"
                             sortable
                             label="Взвод"/>
                             <el-table-column
@@ -87,9 +87,9 @@
                             label="Тип причины"> 
                                 <template slot-scope="scope">
                                     <el-tag
-                                    :type="scope.row.absenceType === 'Неуважительная' ? 'danger' : 
-                                        (scope.row.absenceType === 'Опоздание' ? 'warning' : 'success')"
-                                    disable-transitions>{{scope.row.absenceType}}</el-tag>
+                                    :type="scope.row.absence_type === 'Неуважительная' ? 'danger' : 
+                                        (scope.row.absence_type === 'Опоздание' ? 'warning' : 'success')"
+                                    disable-transitions>{{scope.row.absence_type}}</el-tag>
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -97,9 +97,9 @@
                             label="Статус">
                                 <template slot-scope="scope">
                                     <i slot="reference"
-                                    :class="scope.row.absenceStatus === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
-                                    :style="scope.row.absenceStatus === 'Открыт' ? 'color: red' : 'color: green'"/>
-                                    {{scope.row.absenceStatus}}
+                                    :class="scope.row.absence_status === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
+                                    :style="scope.row.absence_status === 'Открыт' ? 'color: red' : 'color: green'"/>
+                                    {{scope.row.absence_status}}
                                 </template>
                             </el-table-column>
                             <el-table-column
@@ -117,7 +117,7 @@
                                     icon="el-icon-edit"
                                     type="info"
                                     circle
-                                    @click="onEdit(scope.row, scope.row.studentid.fullname)"/>
+                                    @click="onEdit(scope.row, scope.row.student.fullname)"/>
                                     <el-button
                                     size="mini"
                                     icon="el-icon-delete"
@@ -181,10 +181,10 @@
                                         <el-form label-position="right" label-width="150px" size="mini" :model="scope.row.absences.find(x => x.date == d)">
                                             <el-form-item label="Тип причины: ">
                                                 <el-tag
-                                                :type="scope.row.absences.find(x => x.date == d).absenceType === 'Неуважительная' ? 'danger' : 
-                                                (scope.row.absences.find(x => x.date == d).absenceType === 'Опоздание' ? 'warning' : 'success')"
+                                                :type="scope.row.absences.find(x => x.date == d).absence_type === 'Неуважительная' ? 'danger' : 
+                                                (scope.row.absences.find(x => x.date == d).absence_type === 'Опоздание' ? 'warning' : 'success')"
                                                 disable-transitions>
-                                                    {{scope.row.absences.find(x => x.date == d).absenceType}}
+                                                    {{scope.row.absences.find(x => x.date == d).absence_type}}
                                                 </el-tag>
                                             </el-form-item>
                                             <el-form-item label="Причина: ">
@@ -209,8 +209,8 @@
                                             </el-form-item>
                                         </el-form>
                                         <i slot="reference"
-                                        :class="scope.row.absences.find(x => x.date == d).absenceStatus === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
-                                        :style="scope.row.absences.find(x => x.date == d).absenceStatus === 'Открыт' ? 'color: red' : 'color: green'" />
+                                        :class="scope.row.absences.find(x => x.date == d).absence_status === 'Открыт' ? 'el-icon-circle-close' : 'el-icon-circle-check'" 
+                                        :style="scope.row.absences.find(x => x.date == d).absence_status === 'Открыт' ? 'color: red' : 'color: green'" />
                                     </el-popover>
                                 </template>
                                 </el-table-column>
@@ -228,7 +228,7 @@
             <el-form label-position="right" label-width="150px" size="mini" :model="editAbsence">
                 <el-form-item label="Тип причины: ">
                     <el-select
-                    v-model="editAbsence.absenceType" placeholder="Выберите тип причины"
+                    v-model="editAbsence.absence_type" placeholder="Выберите тип причины"
                     style="display: block">
                         <el-option
                         v-for="item in types"
@@ -240,10 +240,10 @@
                 </el-form-item>
                 <el-form-item label="Статус: ">
                     <el-switch
-                    :value="editAbsence.absenceStatus == 'Закрыт'"
+                    :value="editAbsence.absence_status == 'Закрыт'"
                     active-text="Закрыт"
                     inactive-text="Открыт"
-                    @change="editAbsence.absenceStatus = editAbsence.absenceStatus == 'Закрыт' ? 'Открыт' : 'Закрыт'">
+                    @change="editAbsence.absence_status = editAbsence.absence_status == 'Закрыт' ? 'Открыт' : 'Закрыт'">
                     </el-switch>
                 </el-form-item>
                 <el-form-item label="Причина: ">
@@ -281,9 +281,9 @@ export default {
             editAbsence: {
                 id: 1,
                 date: '',
-                absenceType: '',
-                absenceStatus: '',
-                studentid: {
+                absence_type: '',
+                absence_status: '',
+                student: {
                     id: '',
                     name: '',
                     surname: '',

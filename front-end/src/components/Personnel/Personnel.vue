@@ -189,6 +189,7 @@ import { getStudent, deleteStudent } from '@/api/student'
 import { getTeacher, deleteTeacher } from '@/api/teacher'
 import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
 import { Message } from 'element-ui';
+import moment from 'moment'
 
 export default {
 	name: '',
@@ -254,8 +255,11 @@ export default {
 					status: this.filterS.status,
 				}).then(response => {
 					this.studentsData = response.data;
+					this.studentsData.forEach(x => {
+						x.birthdate = moment(x.birthdate).format('DD.MM.yyyy');
+					});
 				}).catch(() => {
-					Message('Ошибка получения списка студентов!');
+					this.$message.error('Ошибка получения списка студентов!');
 				})
 			}
 			else if (this.selectedSection == 'teachers'){
@@ -265,7 +269,7 @@ export default {
 				}).then(response => {
 					this.teachersData = response.data;
 				}).catch(() => {
-					Message('Ошибка получения списка преподавателей!');
+					this.$message.error('Ошибка получения списка преподавателей!');
 				})
 			}
 		},
