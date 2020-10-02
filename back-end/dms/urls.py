@@ -11,17 +11,14 @@ from dms.views import (
     SubjectViewSet,
     TagListAPIView,
     get_file,
-    info,
-    login,
-    logout,
 )
 
 router = routers.DefaultRouter()
-router.register(r"authors", AuthorViewSet)
-router.register(r"categories", CategoryViewSet)
-router.register(r"publishers", PublisherViewSet)
-router.register(r"subjects", SubjectViewSet)
-router.register(r"documents", DocumentViewSet)
+router.register("authors", AuthorViewSet)
+router.register("categories", CategoryViewSet)
+router.register("documents", DocumentViewSet)
+router.register("publishers", PublisherViewSet)
+router.register("subjects", SubjectViewSet)
 
 urlpatterns = [
     # REST router
@@ -31,7 +28,4 @@ urlpatterns = [
     path("get_file/", get_file),
     path("subject/", SubjectSectionView.as_view()),
     path("tags/", TagListAPIView.as_view()),
-    path("user/info/", info),
-    path("user/login/", login),
-    path("user/logout/", logout),
 ]

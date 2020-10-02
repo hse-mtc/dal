@@ -2,4 +2,4 @@
 
 pylint \
   --verbose \
-  conf dms lms
+  conf auth dms lms
