@@ -15,7 +15,7 @@ class StudentFilterSet(FilterSet):
 
 class AbsenceFilterSet(FilterSet):
     student = ModelChoiceFilter(field_name='student',
-                                   queryset=Student.objects.all())
+                                queryset=Student.objects.all())
     absence_type = ModelChoiceFilter(field_name='absence_type',
                                      queryset=AbsenceType.objects.all())
     absence_status = ModelChoiceFilter(field_name='absence_status',

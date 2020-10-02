@@ -19,9 +19,11 @@ class AbsenceSerializer(NestedModelSerializer):
     absence_type = CharField(
         required=False,
         validators=[PresentInDatabaseValidator(AbsenceType, 'absence_type')])
-    absence_status = CharField(
-        required=False,
-        validators=[PresentInDatabaseValidator(AbsenceStatus, 'absence_status')])
+    absence_status = CharField(required=False,
+                               validators=[
+                                   PresentInDatabaseValidator(
+                                       AbsenceStatus, 'absence_status')
+                               ])
     student = StudentShortSerializer(
         required=False, validators=[PresentInDatabaseValidator(Student)])
 

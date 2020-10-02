@@ -176,7 +176,7 @@ class StudentPost(models.Model):
     student_post = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.studentPost)
+        return str(self.student_post)
 
     class Meta:
         db_table = 'student_post'
@@ -246,8 +246,8 @@ class Teacher(models.Model):
                                    db_column='milfaculty')
     rank = models.ForeignKey(Rank, models.DO_NOTHING, db_column='rank')
     teacher_post = models.ForeignKey(TeacherPost,
-                                    models.DO_NOTHING,
-                                    db_column='teacher_post')
+                                     models.DO_NOTHING,
+                                     db_column='teacher_post')
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  db_column='milgroup',
@@ -267,15 +267,13 @@ class Teacher(models.Model):
 
 class Absence(models.Model):
     date = models.DateField(default=datetime.date.today)
-    student = models.ForeignKey(Student,
-                                  models.CASCADE,
-                                  db_column='student')
+    student = models.ForeignKey(Student, models.CASCADE, db_column='student')
     absence_type = models.ForeignKey(AbsenceType,
-                                    models.DO_NOTHING,
-                                    db_column='absence_type')
+                                     models.DO_NOTHING,
+                                     db_column='absence_type')
     absence_status = models.ForeignKey(AbsenceStatus,
-                                      models.DO_NOTHING,
-                                      db_column='absence_status')
+                                       models.DO_NOTHING,
+                                       db_column='absence_status')
     reason = models.CharField(max_length=100, blank=True, null=True)
     comment = models.CharField(max_length=100, blank=True, null=True)
 
@@ -293,11 +291,11 @@ class Absence(models.Model):
 
 
 class Activity(models.Model):
-    student = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='student')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     year = models.DecimalField(max_digits=4, decimal_places=0)
-    activity_type = models.ForeignKey(ActivityType, models.DO_NOTHING, db_column='activity_type')
+    activity_type = models.ForeignKey(ActivityType,
+                                      models.DO_NOTHING,
+                                      db_column='activity_type')
     comment = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
@@ -313,23 +311,21 @@ class Activity(models.Model):
 
 
 class Encouragement(models.Model):
-    student = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='student')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     reason = models.CharField(max_length=200)
     encouragement_type = models.ForeignKey(EncouragementType,
-                             models.DO_NOTHING,
-                             db_column='encouragement_type')
+                                           models.DO_NOTHING,
+                                           db_column='encouragement_type')
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey('Teacher',
-                                  models.DO_NOTHING,
-                                  db_column='teacher')
+                                models.DO_NOTHING,
+                                db_column='teacher')
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
                f'StudentID = {str(self.student)}, ' \
                f'TeacherID = {str(self.teacher)}\n' \
-               f'Type = {str(self.type)}\n' \
+               f'Type = {str(self.encouragement_type)}\n' \
                f'Date = {str(self.date)}'
 
     class Meta:
@@ -342,11 +338,11 @@ class Lesson(models.Model):
     course = models.ForeignKey(Course, models.DO_NOTHING, db_column='course')
     topic = models.DecimalField(max_digits=2, decimal_places=0)
     lesson_num = models.DecimalField(max_digits=2, decimal_places=0)
-    lesson_type = models.ForeignKey(LessonType, models.DO_NOTHING, db_column='type')
+    lesson_type = models.ForeignKey(LessonType,
+                                    models.DO_NOTHING,
+                                    db_column='type')
     date = models.DateField(default=datetime.date.today)
-    teacher = models.ForeignKey(Teacher,
-                                  models.DO_NOTHING,
-                                  db_column='teacher')
+    teacher = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacher')
     time = models.DecimalField(max_digits=1, decimal_places=0)
     place = models.ForeignKey(Place, models.DO_NOTHING, db_column='place')
 
@@ -362,18 +358,16 @@ class Lesson(models.Model):
 
 
 class Mark(models.Model):
-    student = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='student')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     mark = models.DecimalField(max_digits=1, decimal_places=0)
     control_form = models.ForeignKey(ControlForm,
-                                    models.DO_NOTHING,
-                                    db_column='control_form')
+                                     models.DO_NOTHING,
+                                     db_column='control_form')
     lesson = models.ForeignKey(Lesson,
-                                 models.DO_NOTHING,
-                                 db_column='lesson',
-                                 blank=True,
-                                 null=True)
+                               models.DO_NOTHING,
+                               db_column='lesson',
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
@@ -389,17 +383,13 @@ class Mark(models.Model):
 
 
 class Punishment(models.Model):
-    student = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='student')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     reason = models.CharField(max_length=200)
     punishment_type = models.ForeignKey(PunishmentType,
-                             models.DO_NOTHING,
-                             db_column='punishment_type')
+                                        models.DO_NOTHING,
+                                        db_column='punishment_type')
     date = models.DateField(default=datetime.date.today)
-    teacher = models.ForeignKey(Teacher,
-                                  models.DO_NOTHING,
-                                  db_column='teacher')
+    teacher = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacher')
     remove_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
@@ -417,9 +407,7 @@ class Punishment(models.Model):
 
 
 class LessonMilgroup(models.Model):
-    lesson = models.OneToOneField(Lesson,
-                                    models.DO_NOTHING,
-                                    db_column='lesson')
+    lesson = models.OneToOneField(Lesson, models.DO_NOTHING, db_column='lesson')
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  db_column='milgroup')
@@ -437,11 +425,11 @@ class LessonMilgroup(models.Model):
 
 class StudentStudentpost(models.Model):
     student_post = models.ForeignKey(StudentPost,
-                                    models.DO_NOTHING,
-                                    db_column='student_post')
-    student = models.OneToOneField(Student,
                                      models.DO_NOTHING,
-                                     db_column='student')
+                                     db_column='student_post')
+    student = models.OneToOneField(Student,
+                                   models.DO_NOTHING,
+                                   db_column='student')
 
     def __str__(self):
         return f'StudentID = {str(self.student)} ~ ' \
@@ -457,8 +445,8 @@ class StudentStudentpost(models.Model):
 class StudentSkill(models.Model):
     skill = models.ForeignKey(Skill, models.DO_NOTHING, db_column='skill')
     student = models.OneToOneField(Student,
-                                     models.DO_NOTHING,
-                                     db_column='student')
+                                   models.DO_NOTHING,
+                                   db_column='student')
 
     def __str__(self):
         return f'StudentID = {str(self.student)} ~ Skill = {str(self.skill)}'
