@@ -1,6 +1,7 @@
 from rest_framework.serializers import (Serializer, ModelSerializer,
-                                        IntegerField, CharField,
+                                        IntegerField, CharField, DateField,
                                         SerializerMethodField)
+from rest_framework.serializers import ValidationError
 
 from lms.models import (
     Absence,
@@ -42,6 +43,14 @@ class AbsenceJournalGetQuerySerializer(Serializer):
     milgroup = IntegerField(
         required=True,
         validators=[PresentInDatabaseValidator(Milgroup, 'milgroup')])
+    date_from = DateField(required=False)
+    date_to = DateField(required=False)
+
+    def validate(self, attrs):
+        if attrs['date_from'] > attrs['date_to']:
+            raise ValidationError(
+                'date_from should be greater or equal to date_to')
+        return attrs
 
     def create(self, validated_data):
         pass
