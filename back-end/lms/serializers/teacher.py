@@ -23,9 +23,9 @@ class TeacherSerializer(NestedModelSerializer):
         validators=[PresentInDatabaseValidator(Milfaculty, 'milfaculty')])
     rank = CharField(required=False,
                      validators=[PresentInDatabaseValidator(Rank, 'rank')])
-    teacherPost = CharField(
+    teacher_post = CharField(
         required=False,
-        validators=[PresentInDatabaseValidator(TeacherPost, 'teacherPost')])
+        validators=[PresentInDatabaseValidator(TeacherPost, 'teacher_post')])
 
     fullname = SerializerMethodField(required=False)
 
@@ -41,5 +41,5 @@ class TeacherSerializer(NestedModelSerializer):
         ['milgroup', Milgroup],
         ['milfaculty', Milfaculty, 'milfaculty'],
         ['rank', Rank, 'rank'],
-        ['teacherPost', TeacherPost, 'teacherPost'],
+        ['teacher_post', TeacherPost, 'teacher_post'],
     ]

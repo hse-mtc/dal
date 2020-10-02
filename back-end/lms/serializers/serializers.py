@@ -44,6 +44,7 @@ class NestedModelSerializer(ModelSerializer):
     nested_fields = []
 
     class Meta:
+        abstract = True
         model = None
 
     def create(self, validated_data):

@@ -1,4 +1,4 @@
-from rest_framework.serializers import CharField, SerializerMethodField
+from rest_framework.serializers import CharField, IntegerField, SerializerMethodField
 
 from lms.models import (
     Milgroup,
@@ -38,14 +38,15 @@ class StudentSerializer(NestedModelSerializer):
 
 
 class StudentShortSerializer(NestedModelSerializer):
+    id = IntegerField(required=False)
     fullname = SerializerMethodField(required=False)
     milgroup = MilgroupSerializer(
         many=False,
         required=False,
         validators=[PresentInDatabaseValidator(Milgroup)])
-
-    # pylint: disable=no-self-use
+    
     def get_fullname(self, obj):
+        # pylint: disable=no-self-use
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
     class Meta:

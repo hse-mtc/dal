@@ -14,14 +14,14 @@ class StudentFilterSet(FilterSet):
 
 
 class AbsenceFilterSet(FilterSet):
-    student_id = ModelChoiceFilter(field_name='studentid',
+    student = ModelChoiceFilter(field_name='student',
                                    queryset=Student.objects.all())
-    absence_type = ModelChoiceFilter(field_name='absenceType',
+    absence_type = ModelChoiceFilter(field_name='absence_type',
                                      queryset=AbsenceType.objects.all())
-    absence_status = ModelChoiceFilter(field_name='absenceStatus',
+    absence_status = ModelChoiceFilter(field_name='absence_status',
                                        queryset=AbsenceStatus.objects.all())
 
-    milgroup = NumberFilter(field_name='studentid__milgroup__milgroup')
+    milgroup = NumberFilter(field_name='student__milgroup__milgroup')
 
     date_from = DateFilter(field_name='date', lookup_expr='gte')
     date_to = DateFilter(field_name='date', lookup_expr='lte')

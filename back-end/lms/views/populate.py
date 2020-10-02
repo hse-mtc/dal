@@ -144,7 +144,7 @@ def create_posts() -> tp.Dict[str, TeacherPost]:
     posts = {}
 
     for value in values:
-        post, _ = TeacherPost.objects.get_or_create(teacherPost=value)
+        post, _ = TeacherPost.objects.get_or_create(teacher_post=value)
         post.save()
         posts[value] = post
 
@@ -241,7 +241,7 @@ def create_absence_types():
 
     types = {}
     for value in values:
-        typ, _ = AbsenceType.objects.get_or_create(absenceType=value)
+        typ, _ = AbsenceType.objects.get_or_create(absence_type=value)
         typ.save()
         types[value] = typ
     return types
@@ -252,7 +252,7 @@ def create_absence_statuses():
 
     types = {}
     for value in values:
-        typ, _ = AbsenceStatus.objects.get_or_create(absenceStatus=value)
+        typ, _ = AbsenceStatus.objects.get_or_create(absence_status=value)
         typ.save()
         types[value] = typ
     return types
@@ -265,26 +265,26 @@ def create_absences(types: tp.Dict[str, AbsenceType],
     values = [
         {
             'date': '2020-09-04',
-            'studentid': students['Кацевалов'],
-            'absenceType': types['Уважительная'],
+            'student': students['Кацевалов'],
+            'absence_type': types['Уважительная'],
             'reason': 'Заболел',
-            'absenceStatus': statuses['Закрыт'],
+            'absence_status': statuses['Закрыт'],
             'comment': 'Болеть будет недолго'
         },
         {
             'date': '2020-09-11',
-            'studentid': students['Хромов'],
-            'absenceType': types['Опоздание'],
+            'student': students['Хромов'],
+            'absence_type': types['Опоздание'],
             'reason': 'Электричка опоздала',
-            'absenceStatus': statuses['Закрыт'],
+            'absence_status': statuses['Закрыт'],
             'comment': ''
         },
         {
             'date': '2020-09-18',
-            'studentid': students['Хромов'],
-            'absenceType': types['Неуважительная'],
+            'student': students['Хромов'],
+            'absence_type': types['Неуважительная'],
             'reason': 'Прогул',
-            'absenceStatus': statuses['Открыт'],
+            'absence_status': statuses['Открыт'],
             'comment': 'Лежал дома на диване'
         },
     ]
@@ -292,10 +292,10 @@ def create_absences(types: tp.Dict[str, AbsenceType],
     for value in values:
         absence, _ = Absence.objects.get_or_create(
             date=value['date'],
-            studentid=value['studentid'],
-            absenceType=value['absenceType'],
+            student=value['student'],
+            absence_type=value['absence_type'],
             reason=value['reason'],
-            absenceStatus=value['absenceStatus'],
+            absence_status=value['absence_status'],
             comment=value['comment'])
         absence.save()
 
@@ -313,7 +313,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Владимирович',
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
-            'teacherPost': posts['Преподаватель'],
+            'teacher_post': posts['Преподаватель'],
             'milgroup': milgroups[1809]
         },
         {
@@ -322,7 +322,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Николаевич',
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
-            'teacherPost': posts['Начальник цикла'],
+            'teacher_post': posts['Начальник цикла'],
             'milgroup': milgroups[1808]
         },
         {
@@ -331,7 +331,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Владимирович',
             'milfaculty': milfaculties['Сержанты'],
             'rank': ranks['Майор'],
-            'teacherPost': posts['Преподаватель'],
+            'teacher_post': posts['Преподаватель'],
             'milgroup': milgroups[1806]
         },
         {
@@ -340,7 +340,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Валентинович',
             'milfaculty': milfaculties['Разведка'],
             'rank': ranks['Полковник'],
-            'teacherPost': posts['Начальник цикла'],
+            'teacher_post': posts['Начальник цикла'],
             'milgroup': milgroups[1801]
         },
         {
@@ -349,7 +349,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             'patronymic': 'Сергеевич',
             'milfaculty': milfaculties['РВСН'],
             'rank': ranks['Генерал-майор'],
-            'teacherPost': posts['Преподаватель'],
+            'teacher_post': posts['Преподаватель'],
             'milgroup': None
         },
     ]
@@ -361,7 +361,7 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             patronymic=value['patronymic'],
             milfaculty=value['milfaculty'],
             rank=value['rank'],
-            teacherPost=value['teacherPost'],
+            teacher_post=value['teacher_post'],
             milgroup=value['milgroup'])
         teacher.save()
 

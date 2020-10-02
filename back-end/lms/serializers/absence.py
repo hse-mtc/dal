@@ -16,13 +16,13 @@ from lms.serializers.serializers import NestedModelSerializer
 
 
 class AbsenceSerializer(NestedModelSerializer):
-    absenceType = CharField(
+    absence_type = CharField(
         required=False,
-        validators=[PresentInDatabaseValidator(AbsenceType, 'absenceType')])
-    absenceStatus = CharField(
+        validators=[PresentInDatabaseValidator(AbsenceType, 'absence_type')])
+    absence_status = CharField(
         required=False,
-        validators=[PresentInDatabaseValidator(AbsenceStatus, 'absenceStatus')])
-    studentid = StudentShortSerializer(
+        validators=[PresentInDatabaseValidator(AbsenceStatus, 'absence_status')])
+    student = StudentShortSerializer(
         required=False, validators=[PresentInDatabaseValidator(Student)])
 
     class Meta:
@@ -30,9 +30,9 @@ class AbsenceSerializer(NestedModelSerializer):
         fields = '__all__'
 
     nested_fields = [
-        ['absenceType', AbsenceType, 'absenceType'],
-        ['absenceStatus', AbsenceStatus, 'absenceStatus'],
-        ['studentid', Student],
+        ['absence_type', AbsenceType, 'absence_type'],
+        ['absence_status', AbsenceStatus, 'absence_status'],
+        ['student', Student],
     ]
 
 
@@ -53,7 +53,7 @@ class AbsenceShortSerializer(ModelSerializer):
     class Meta:
         model = Absence
         fields = [
-            'id', 'date', 'absenceType', 'absenceStatus', 'reason', 'comment'
+            'id', 'date', 'absence_type', 'absence_status', 'reason', 'comment'
         ]
 
 

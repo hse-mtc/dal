@@ -45,8 +45,8 @@ class AbsenceViewSet(ModelViewSet):
 
     filterset_class = AbsenceFilterSet
     search_fields = [
-        'studentid__surname', 'studentid__name', 'studentid__patronymic'
-    ]
+        'student__surname', 'student__name', 'student__patronymic'
+    ] 
 
 
 class AbsenceJournalView(GenericAPIView):
