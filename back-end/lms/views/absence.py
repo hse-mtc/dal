@@ -4,6 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 
 from rest_framework.status import (
@@ -11,37 +12,36 @@ from rest_framework.status import (
     HTTP_400_BAD_REQUEST,
 )
 
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
 from lms.serializers.serializers import MilgroupSerializer
 from lms.serializers.absence import (AbsenceSerializer,
-                                     AbsenceGetQuerySerializer,
                                      AbsenceJournalSerializer,
                                      AbsenceJournalGetQuerySerializer)
 from lms.models import Absence, Milgroup, Student
-from lms.views.viewsets import GetPutPostDeleteModelViewSet
 from lms.filters import AbsenceFilterSet
 
 
 def get_date_range(date_from, date_to, weekday):
     start_date = date_from + timedelta((weekday - date_from.weekday() + 7) % 7)
 
-    dates_iso = []
     dates = []
     cur_date = start_date
 
     while cur_date <= date_to:
-        dates_iso.append(cur_date.strftime('%Y-%m-%d'))
-        dates.append(cur_date.strftime('%d.%m.%Y'))
+        dates.append(cur_date.strftime('%Y-%m-%d'))
         cur_date += timedelta(7)
 
-    return dates_iso, dates
+    return dates
 
 
-class AbsenceViewSet(GetPutPostDeleteModelViewSet):
+class AbsenceViewSet(ModelViewSet):
     serializer_class = AbsenceSerializer
-    query_params_serializer_class = AbsenceGetQuerySerializer
     queryset = Absence.objects.all()
 
     permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = AbsenceFilterSet
     search_fields = [
@@ -78,7 +78,7 @@ class AbsenceJournalView(GenericAPIView):
                 {'message': 'date_from should be greater or equal to date_to.'},
                 status=HTTP_400_BAD_REQUEST)
 
-        date_range_iso, date_range = get_date_range(date_from, date_to,
+        date_range = get_date_range(date_from, date_to,
                                                     milgroup['weekday'])
         # add dates and absneces
         data['dates'] = date_range
@@ -87,7 +87,7 @@ class AbsenceJournalView(GenericAPIView):
                 milgroup__milgroup=request.query_params['milgroup']),
             context={
                 'request': request,
-                'date_range': date_range_iso,
+                'date_range': date_range,
             },
             many=True).data
 

@@ -11,63 +11,20 @@ from lms.models import (
     Milgroup,
 )
 
-from lms.validators import PresentInDatasetValidator
+from lms.validators import PresentInDatabaseValidator
 from lms.serializers.student import StudentShortSerializer
 from lms.serializers.serializers import NestedModelSerializer
 
 
-class AbsenceGetQuerySerializer(Serializer):
-    id = IntegerField(min_value=1,
-                      required=False,
-                      validators=[PresentInDatasetValidator(Absence, 'id')])
-    studentid = IntegerField(
-        min_value=1,
-        required=False,
-        validators=[PresentInDatasetValidator(Student, 'id')])
-    name = CharField(required=False)
-    absenceType = CharField(
-        required=False,
-        validators=[PresentInDatasetValidator(AbsenceType, 'absenceType')])
-    date_from = DateField(required=False,
-                          format='%d.%m.%Y',
-                          input_formats=['%d.%m.%Y', 'iso-8601'])
-    date_to = DateField(required=False,
-                        format='%d.%m.%Y',
-                        input_formats=['%d.%m.%Y', 'iso-8601'])
-    absenceStatus = CharField(
-        required=False,
-        validators=[PresentInDatasetValidator(AbsenceStatus, 'absenceStatus')])
-    milgroup = IntegerField(
-        required=False,
-        validators=[PresentInDatasetValidator(Milgroup, 'milgroup')])
-
-    def validate(self, attrs):
-        if 'id' in attrs and len(attrs) > 1:
-            raise ValidationError(
-                'If id is given, all other searching keys will be ignored '
-                'and therefore should be deleted')
-        return attrs
-
-    def create(self, validated_data):
-        pass
-
-    def update(self, instance, validated_data):
-        pass
-
-
 class AbsenceSerializer(NestedModelSerializer):
-    date = DateField(required=False,
-                     format='%d.%m.%Y',
-                     input_formats=['%d.%m.%Y', 'iso-8601'])
-
     absenceType = CharField(
         required=False,
-        validators=[PresentInDatasetValidator(AbsenceType, 'absenceType')])
+        validators=[PresentInDatabaseValidator(AbsenceType, 'absenceType')])
     absenceStatus = CharField(
         required=False,
-        validators=[PresentInDatasetValidator(AbsenceStatus, 'absenceStatus')])
+        validators=[PresentInDatabaseValidator(AbsenceStatus, 'absenceStatus')])
     studentid = StudentShortSerializer(
-        required=False, validators=[PresentInDatasetValidator(Student)])
+        required=False, validators=[PresentInDatabaseValidator(Student)])
 
     class Meta:
         model = Absence
@@ -83,13 +40,7 @@ class AbsenceSerializer(NestedModelSerializer):
 class AbsenceJournalGetQuerySerializer(Serializer):
     milgroup = IntegerField(
         required=True,
-        validators=[PresentInDatasetValidator(Milgroup, 'milgroup')])
-    date_from = DateField(required=True,
-                          format='%d.%m.%Y',
-                          input_formats=['%d.%m.%Y'])
-    date_to = DateField(required=True,
-                        format='%d.%m.%Y',
-                        input_formats=['%d.%m.%Y'])
+        validators=[PresentInDatabaseValidator(Milgroup, 'milgroup')])
 
     def create(self, validated_data):
         pass
@@ -99,10 +50,6 @@ class AbsenceJournalGetQuerySerializer(Serializer):
 
 
 class AbsenceShortSerializer(ModelSerializer):
-    id = IntegerField(read_only=True)
-    absenceType = CharField(read_only=True)
-    absenceStatus = CharField(read_only=True)
-    date = DateField(read_only=True, format='%d.%m.%Y')
 
     class Meta:
         model = Absence
@@ -112,7 +59,6 @@ class AbsenceShortSerializer(ModelSerializer):
 
 
 class AbsenceJournalSerializer(ModelSerializer):
-    id = IntegerField(read_only=True)
     fullname = SerializerMethodField(read_only=True)
     absences = SerializerMethodField(read_only=True)
 
@@ -120,8 +66,8 @@ class AbsenceJournalSerializer(ModelSerializer):
         model = Student
         fields = ['id', 'fullname', 'absences']
 
-    # pylint: disable=no-self-use
     def get_fullname(self, obj):
+        # pylint: disable=no-self-use
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
     def get_absences(self, obj):
