@@ -16,4 +16,3 @@ urlpatterns = [
     path("tokens/obtain/", token_obtain_pair),
     path("tokens/refresh/", token_refresh),
 ]
-
