@@ -8,25 +8,25 @@ export function getTeacher(params) {
   })
 }
 
-export function putTeacher(data) {
+export function postTeacher(data) {
   return request({
     url: '/lms/teacher/',
-    method: 'put',
+    method: 'post',
     data
   })
 }
 
-export function postTeacher(data) {
+export function patchTeacher(data) {
   return request({
-    url: '/lms/teacher/'+data.id,
-    method: 'post',
+    url: `/lms/teacher/${data.id}`,
+    method: 'patch',
     data
   })
 }
 
 export function deleteTeacher(id) {
   return request({
-    url: '/lms/teacher/'+id,
+    url: `/lms/teacher/${id}`,
     method: 'delete'
   })
 }

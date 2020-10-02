@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { putStudent, postStudent } from '../../api/student';
+import { postStudent, patchStudent } from '../../api/student';
 
     export default {
         name: "AddStudentModalWindow",
@@ -136,7 +136,7 @@ import { putStudent, postStudent } from '../../api/student';
                     if (valid){
                         if (this.student){
                             this.form.id = this.student.id;
-                            postStudent(this.form)
+                            patchStudent(this.form)
                             .then(() => {
                                 this.$message.success('Студент успешно изменен.');
                                 this.$emit('submitModal');
@@ -147,7 +147,7 @@ import { putStudent, postStudent } from '../../api/student';
                             });
                         }
                         else{
-                            putStudent(this.form)
+                            postStudent(this.form)
                             .then(() => {
                                 this.$message.success('Новый студент успешно добавлен.');
                                 this.$emit('submitModal');

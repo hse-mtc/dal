@@ -1,7 +1,4 @@
-from rest_framework.serializers import (Serializer, IntegerField, CharField,
-                                        DateField, SerializerMethodField)
-from rest_framework.serializers import ValidationError
-
+from rest_framework.serializers import CharField, SerializerMethodField
 
 from lms.models import (
     Milgroup,
@@ -15,12 +12,13 @@ from lms.serializers.serializers import (NestedModelSerializer,
 
 
 class StudentSerializer(NestedModelSerializer):
-    milgroup = MilgroupSerializer(required=False,
-            validators=[PresentInDatabaseValidator(Milgroup)])
-    program = ProgramSerializer(required=False,
-            validators=[PresentInDatabaseValidator(Program)])
-    status = CharField(required=False,
-            validators=[PresentInDatabaseValidator(Status, 'status')])
+    milgroup = MilgroupSerializer(
+        required=False, validators=[PresentInDatabaseValidator(Milgroup)])
+    program = ProgramSerializer(
+        required=False, validators=[PresentInDatabaseValidator(Program)])
+    status = CharField(
+        required=False,
+        validators=[PresentInDatabaseValidator(Status, 'status')])
 
     fullname = SerializerMethodField(required=False)
 
@@ -41,8 +39,10 @@ class StudentSerializer(NestedModelSerializer):
 
 class StudentShortSerializer(NestedModelSerializer):
     fullname = SerializerMethodField(required=False)
-    milgroup = MilgroupSerializer(many=False, required=False,
-            validators=[PresentInDatabaseValidator(Milgroup)])
+    milgroup = MilgroupSerializer(
+        many=False,
+        required=False,
+        validators=[PresentInDatabaseValidator(Milgroup)])
 
     # pylint: disable=no-self-use
     def get_fullname(self, obj):

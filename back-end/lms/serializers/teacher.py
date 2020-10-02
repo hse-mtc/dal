@@ -1,5 +1,4 @@
-from rest_framework.serializers import (Serializer, SerializerMethodField,
-                                        CharField, IntegerField)
+from rest_framework.serializers import SerializerMethodField, CharField
 
 from lms.models import (
     Milfaculty,
@@ -29,7 +28,7 @@ class TeacherSerializer(NestedModelSerializer):
         validators=[PresentInDatabaseValidator(TeacherPost, 'teacherPost')])
 
     fullname = SerializerMethodField(required=False)
-    
+
     class Meta:
         model = Teacher
         fields = '__all__'

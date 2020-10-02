@@ -7,9 +7,7 @@ from rest_framework.serializers import ValidationError
 
 class PresentInDatabaseValidator:
 
-    def __init__(self,
-                 model: Model,
-                 field: tp.Optional[str] = None):
+    def __init__(self, model: Model, field: tp.Optional[str] = None):
         self.model = model
         self.field = field
 

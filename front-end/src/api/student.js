@@ -8,25 +8,25 @@ export function getStudent(params) {
   })
 }
 
-export function putStudent(data) {
+export function postStudent(data) {
   return request({
     url: '/lms/student/',
-    method: 'put',
+    method: 'post',
     data
   })
 }
 
-export function postStudent(data) {
+export function patchStudent(data) {
   return request({
-    url: '/lms/student/'+data.id,
-    method: 'post',
+    url: `/lms/student/${data.id}`,
+    method: 'patch',
     data
   })
 }
 
 export function deleteStudent(id) {
   return request({
-    url: '/lms/student/'+id,
+    url: `/lms/student/${id}`,
     method: 'delete'
   })
 }

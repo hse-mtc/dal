@@ -21,7 +21,6 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['surname', 'name', 'patronymic']
 
 
-
 class TeacherViewSet(ModelViewSet):
     serializer_class = TeacherSerializer
     queryset = Teacher.objects.all()

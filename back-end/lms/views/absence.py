@@ -70,16 +70,15 @@ class AbsenceJournalView(GenericAPIView):
 
         # calculate dates
         date_from = datetime.strptime(request.query_params['date_from'],
-                                      '%d.%m.%Y')
-        date_to = datetime.strptime(request.query_params['date_to'], '%d.%m.%Y')
+                                      '%Y-%m-%d')
+        date_to = datetime.strptime(request.query_params['date_to'], '%Y-%m-%d')
 
         if date_to < date_from:
             return Response(
                 {'message': 'date_from should be greater or equal to date_to.'},
                 status=HTTP_400_BAD_REQUEST)
 
-        date_range = get_date_range(date_from, date_to,
-                                                    milgroup['weekday'])
+        date_range = get_date_range(date_from, date_to, milgroup['weekday'])
         # add dates and absneces
         data['dates'] = date_range
         data['students'] = AbsenceJournalSerializer(

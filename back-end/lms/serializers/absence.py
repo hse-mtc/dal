@@ -1,7 +1,6 @@
 from rest_framework.serializers import (Serializer, ModelSerializer,
-                                        IntegerField, CharField, DateField,
+                                        IntegerField, CharField,
                                         SerializerMethodField)
-from rest_framework.serializers import ValidationError
 
 from lms.models import (
     Absence,

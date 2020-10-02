@@ -144,7 +144,7 @@
                                 :picker-options="pickerOptions"
                                 v-on:change="onJournal"
                                 format="dd.MM.yyyy"
-                                value-format="dd.MM.yyyy">
+                                value-format="yyyy-MM-dd">
                             </el-date-picker>
                         </el-col>
                     </el-row>
@@ -169,7 +169,7 @@
                                 <el-table-column
                                 v-for="d in journal.dates"
                                 :key="d"
-                                :label="d"
+                                :label="formatDate(d)"
                                 align="center"
                                 min-width="100">
                                 <template slot-scope="scope">
@@ -267,7 +267,7 @@
 </template>
 
 <script>
-import { getAbsence, getAbsenceJournal, postAbsence, deleteAbsence } from '@/api/absence'
+import { getAbsence, getAbsenceJournal, patchAbsence, deleteAbsence } from '@/api/absence'
 import moment from 'moment'
 
 export default {
@@ -307,7 +307,7 @@ export default {
             },
             filterJ: {
                 mg: null,
-                dateRange: [moment().add(-3, 'months').format('DD.MM.yyyy'), moment().format('DD.MM.yyyy')]
+                dateRange: [moment().add(-3, 'months').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
             },
             absences: [],
             types: [
@@ -368,6 +368,7 @@ export default {
         if (this.filterJ.mg) this.onJournal();
     },
     methods: {
+        formatDate: (d) =>  moment(d).format('DD.MM.YY'),
         onFilter(){
             getAbsence({
                 date_from: this.filter.dateRange !== null ? this.filter.dateRange[0] : null, 
@@ -399,7 +400,7 @@ export default {
             .catch(() => {});
         },
         handleAccept(){
-            postAbsence(this.editAbsence)
+            patchAbsence(this.editAbsence)
             .then(() => {
                 this.$message({ message: 'Пропуск успешно редактирован', type: 'success' });
                 this.dialogVisible = false;
