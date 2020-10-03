@@ -10,7 +10,6 @@ from dms.views import (
     SubjectSectionView,
     SubjectViewSet,
     TagListAPIView,
-    get_file,
 )
 
 router = routers.DefaultRouter()
@@ -25,7 +24,6 @@ urlpatterns = [
     path("", include(router.urls)),
 
     # Manual urls
-    path("get_file/", get_file),
     path("subject/", SubjectSectionView.as_view()),
     path("tags/", TagListAPIView.as_view()),
 ]
