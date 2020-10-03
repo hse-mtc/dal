@@ -1,21 +1,12 @@
 from django.db.models import Max
-from django.http import HttpResponse
 from django.utils.decorators import method_decorator
-from django.utils.encoding import escape_uri_path
-from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import (
-    api_view,
-    permission_classes,
-)
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_422_UNPROCESSABLE_ENTITY,
@@ -48,7 +39,6 @@ from dms.models import (
 )
 
 
-@method_decorator(name="list", decorator=swagger_auto_schema(tags=["Authors"]))
 class AuthorViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on Author model."""
 
@@ -124,33 +114,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         instance.save()
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def get_file(request: Request) -> HttpResponse:
-    """
-    Usage: api/get_file?id=3
-    :param request:
-    :return:
-    """
-
-    doc = Document.objects.all()
-    file = doc.get(pk=request.query_params.get("id")).file.content
-    filename = file.name.split("/")[-1]
-
-    with open(file.name, "rb") as content:
-        response = HttpResponse(content, content_type="text/plain")
-        response["Content-Disposition"] = f"attachment; " \
-            f"filename={escape_uri_path(filename)}"
-        return response
-
-
-@permission_classes((AllowAny,))
 class SubjectSectionView(APIView):
-    """
-    Describes a relationship with SubjectFilterSerializer
-    in order to return Subject Page
-    """
+    permission_classes = [permissions.AllowAny]
 
     @staticmethod
     def convert2dict(doc):
