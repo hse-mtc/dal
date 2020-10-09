@@ -10,6 +10,18 @@ class ReferenceBookView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
+        """GET method for reference book information
+        Usage:
+        GET /reference-book/
+        Return:
+            {
+                'milgroups': [...],
+                'ranks': [...],
+                'skils': [...],
+                'teacher_posts': [...],
+                'student_posts': [...]
+            }
+        """
         resp = ReferenceBookSerializer(data={})
         resp.is_valid()
         return Response(resp.data)
