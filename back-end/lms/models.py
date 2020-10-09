@@ -4,49 +4,49 @@ from django.db import models
 
 
 class AbsenceType(models.Model):
-    absenceType = models.CharField(primary_key=True, max_length=100)
+    absence_type = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.absenceType)
+        return str(self.absence_type)
 
     class Meta:
-        db_table = 'absenceType'
+        db_table = 'absence_type'
         verbose_name = 'Absence Type'
         verbose_name_plural = 'Absence Types'
 
 
 class AbsenceStatus(models.Model):
-    absenceStatus = models.CharField(primary_key=True, max_length=100)
+    absence_status = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.absenceStatus)
+        return str(self.absence_status)
 
     class Meta:
-        db_table = 'absenceStatus'
+        db_table = 'absence_status'
         verbose_name = 'Absence Status'
         verbose_name_plural = 'Absence Statuses'
 
 
 class ActivityType(models.Model):
-    activityType = models.CharField(primary_key=True, max_length=100)
+    activity_type = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.activityType)
+        return str(self.activity_type)
 
     class Meta:
-        db_table = 'activityType'
+        db_table = 'activity_type'
         verbose_name = 'Activity Type'
         verbose_name_plural = 'Activity Types'
 
 
 class ControlForm(models.Model):
-    controlForm = models.CharField(primary_key=True, max_length=100)
+    control_form = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.controlForm)
+        return str(self.control_form)
 
     class Meta:
-        db_table = 'controlForm'
+        db_table = 'control_form'
         verbose_name = 'Form of Control'
         verbose_name_plural = 'Forms of Control'
 
@@ -64,25 +64,25 @@ class Course(models.Model):
 
 
 class EncouragementType(models.Model):
-    encouragementType = models.CharField(primary_key=True, max_length=100)
+    encouragement_type = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.encouragementType)
+        return str(self.encouragement_type)
 
     class Meta:
-        db_table = 'encouragementType'
+        db_table = 'encouragement_type'
         verbose_name = 'Encouragement Type'
         verbose_name_plural = 'Encouragement Types'
 
 
 class LessonType(models.Model):
-    lessonType = models.CharField(primary_key=True, max_length=100)
+    lesson_type = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.lessonType)
+        return str(self.lesson_type)
 
     class Meta:
-        db_table = 'lessonType'
+        db_table = 'lesson_type'
         verbose_name = 'Lesson Type'
         verbose_name_plural = 'Lesson Types'
 
@@ -112,13 +112,13 @@ class Place(models.Model):
 
 
 class PunishmentType(models.Model):
-    punishmentType = models.CharField(primary_key=True, max_length=100)
+    punishment_type = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.punishmentType)
+        return str(self.punishment_type)
 
     class Meta:
-        db_table = 'punishmentType'
+        db_table = 'punishment_type'
         verbose_name = 'Punishment Type'
         verbose_name_plural = 'Punishment Types'
 
@@ -173,25 +173,25 @@ class Program(models.Model):
 
 
 class StudentPost(models.Model):
-    studentPost = models.CharField(primary_key=True, max_length=100)
+    student_post = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.studentPost)
+        return str(self.student_post)
 
     class Meta:
-        db_table = 'studentPost'
+        db_table = 'student_post'
         verbose_name = 'Student Post'
         verbose_name_plural = 'Student Posts'
 
 
 class TeacherPost(models.Model):
-    teacherPost = models.CharField(primary_key=True, max_length=100)
+    teacher_post = models.CharField(primary_key=True, max_length=100)
 
     def __str__(self):
-        return str(self.teacherPost)
+        return str(self.teacher_post)
 
     class Meta:
-        db_table = 'teacherPost'
+        db_table = 'teacher_post'
         verbose_name = 'Teacher Post'
         verbose_name_plural = 'Teacher Posts'
 
@@ -203,6 +203,7 @@ class Milgroup(models.Model):
     milfaculty = models.ForeignKey(Milfaculty,
                                    models.DO_NOTHING,
                                    db_column='milfaculty')
+    weekday = models.DecimalField(max_digits=1, decimal_places=0)
 
     def __str__(self):
         return f'{str(self.milgroup)}, {str(self.milfaculty)}'
@@ -244,7 +245,9 @@ class Teacher(models.Model):
                                    models.DO_NOTHING,
                                    db_column='milfaculty')
     rank = models.ForeignKey(Rank, models.DO_NOTHING, db_column='rank')
-    post = models.ForeignKey(TeacherPost, models.DO_NOTHING, db_column='post')
+    teacher_post = models.ForeignKey(TeacherPost,
+                                     models.DO_NOTHING,
+                                     db_column='teacher_post')
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  db_column='milgroup',
@@ -264,44 +267,42 @@ class Teacher(models.Model):
 
 class Absence(models.Model):
     date = models.DateField(default=datetime.date.today)
-    studentid = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='studentid')
-    absenceType = models.ForeignKey(AbsenceType,
-                                    models.DO_NOTHING,
-                                    db_column='absenceType')
-    absenceStatus = models.ForeignKey(AbsenceStatus,
-                                      models.DO_NOTHING,
-                                      db_column='absenceStatus')
+    student = models.ForeignKey(Student, models.CASCADE, db_column='student')
+    absence_type = models.ForeignKey(AbsenceType,
+                                     models.DO_NOTHING,
+                                     db_column='absence_type')
+    absence_status = models.ForeignKey(AbsenceStatus,
+                                       models.DO_NOTHING,
+                                       db_column='absence_status')
     reason = models.CharField(max_length=100, blank=True, null=True)
     comment = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
                f'Date = {str(self.date)}\n' \
-               f'StudentID = {str(self.studentid)}, ' \
-               f'Absence type={str(self.absenceType)}\n'
+               f'StudentID = {str(self.student)}, ' \
+               f'Absence type={str(self.absence_type)}\n'
 
     class Meta:
         db_table = 'absence'
-        unique_together = (('date', 'studentid'),)
+        unique_together = (('date', 'student'),)
         verbose_name = 'Absence Journal'
         verbose_name_plural = 'Absence Journal'
 
 
 class Activity(models.Model):
-    studentid = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='studentid')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     year = models.DecimalField(max_digits=4, decimal_places=0)
-    type = models.ForeignKey(ActivityType, models.DO_NOTHING, db_column='type')
+    activity_type = models.ForeignKey(ActivityType,
+                                      models.DO_NOTHING,
+                                      db_column='activity_type')
     comment = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}\n' \
+               f'StudentID = {str(self.student)}\n' \
                f'Year = {str(self.year)}\n' \
-               f'Type = {str(self.type)}\n'
+               f'Type = {str(self.activity_type)}\n'
 
     class Meta:
         db_table = 'activity'
@@ -310,23 +311,21 @@ class Activity(models.Model):
 
 
 class Encouragement(models.Model):
-    studentid = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='studentid')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     reason = models.CharField(max_length=200)
-    type = models.ForeignKey(EncouragementType,
-                             models.DO_NOTHING,
-                             db_column='type')
+    encouragement_type = models.ForeignKey(EncouragementType,
+                                           models.DO_NOTHING,
+                                           db_column='encouragement_type')
     date = models.DateField(default=datetime.date.today)
-    teacherid = models.ForeignKey('Teacher',
-                                  models.DO_NOTHING,
-                                  db_column='teacherid')
+    teacher = models.ForeignKey('Teacher',
+                                models.DO_NOTHING,
+                                db_column='teacher')
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}, ' \
-               f'TeacherID = {str(self.teacherid)}\n' \
-               f'Type = {str(self.type)}\n' \
+               f'StudentID = {str(self.student)}, ' \
+               f'TeacherID = {str(self.teacher)}\n' \
+               f'Type = {str(self.encouragement_type)}\n' \
                f'Date = {str(self.date)}'
 
     class Meta:
@@ -338,19 +337,19 @@ class Encouragement(models.Model):
 class Lesson(models.Model):
     course = models.ForeignKey(Course, models.DO_NOTHING, db_column='course')
     topic = models.DecimalField(max_digits=2, decimal_places=0)
-    lessonnum = models.DecimalField(max_digits=2, decimal_places=0)
-    type = models.ForeignKey(LessonType, models.DO_NOTHING, db_column='type')
+    lesson_num = models.DecimalField(max_digits=2, decimal_places=0)
+    lesson_type = models.ForeignKey(LessonType,
+                                    models.DO_NOTHING,
+                                    db_column='type')
     date = models.DateField(default=datetime.date.today)
-    teacherid = models.ForeignKey(Teacher,
-                                  models.DO_NOTHING,
-                                  db_column='teacherid')
+    teacher = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacher')
     time = models.DecimalField(max_digits=1, decimal_places=0)
     place = models.ForeignKey(Place, models.DO_NOTHING, db_column='place')
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
                f'Course = {str(self.course)}, Date = {str(self.date)}' \
-               f'TeacherID = {str(self.teacherid)}\n'
+               f'TeacherID = {str(self.teacher)}\n'
 
     class Meta:
         db_table = 'lesson'
@@ -359,25 +358,23 @@ class Lesson(models.Model):
 
 
 class Mark(models.Model):
-    studentid = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='studentid')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     mark = models.DecimalField(max_digits=1, decimal_places=0)
-    controlform = models.ForeignKey(ControlForm,
-                                    models.DO_NOTHING,
-                                    db_column='controlForm')
-    lessonid = models.ForeignKey(Lesson,
-                                 models.DO_NOTHING,
-                                 db_column='lessonid',
-                                 blank=True,
-                                 null=True)
+    control_form = models.ForeignKey(ControlForm,
+                                     models.DO_NOTHING,
+                                     db_column='control_form')
+    lesson = models.ForeignKey(Lesson,
+                               models.DO_NOTHING,
+                               db_column='lesson',
+                               blank=True,
+                               null=True)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}, '\
-               f'LessonID = {str(self.lessonid)}\n' \
+               f'StudentID = {str(self.student)}, '\
+               f'LessonID = {str(self.lesson)}\n' \
                f'Mark = {str(self.mark)}, '\
-               f'Controlform = {str(self.controlform)}\n'
+               f'Controlform = {str(self.control_form)}\n'
 
     class Meta:
         db_table = 'mark'
@@ -386,26 +383,22 @@ class Mark(models.Model):
 
 
 class Punishment(models.Model):
-    studentid = models.ForeignKey(Student,
-                                  models.DO_NOTHING,
-                                  db_column='studentid')
+    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
     reason = models.CharField(max_length=200)
-    type = models.ForeignKey(PunishmentType,
-                             models.DO_NOTHING,
-                             db_column='type')
+    punishment_type = models.ForeignKey(PunishmentType,
+                                        models.DO_NOTHING,
+                                        db_column='punishment_type')
     date = models.DateField(default=datetime.date.today)
-    teacherid = models.ForeignKey(Teacher,
-                                  models.DO_NOTHING,
-                                  db_column='teacherid')
-    removedate = models.DateField(blank=True, null=True)
+    teacher = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacher')
+    remove_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
-               f'StudentID = {str(self.studentid)}, ' \
-               f'TeacherID = {str(self.teacherid)}\n' \
-               f'Type = {str(self.type)}\n' \
+               f'StudentID = {str(self.student)}, ' \
+               f'TeacherID = {str(self.teacher)}\n' \
+               f'Type = {str(self.punishment_type)}\n' \
                f'Date = {str(self.date)}, ' \
-               f'Remove Date = {str(self.removedate)}'
+               f'Remove Date = {str(self.remove_date)}'
 
     class Meta:
         db_table = 'punishment'
@@ -414,54 +407,52 @@ class Punishment(models.Model):
 
 
 class LessonMilgroup(models.Model):
-    lessonid = models.OneToOneField(Lesson,
-                                    models.DO_NOTHING,
-                                    db_column='lessonid')
+    lesson = models.OneToOneField(Lesson, models.DO_NOTHING, db_column='lesson')
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  db_column='milgroup')
 
     def __str__(self):
-        return f'LessonId = {str(self.lessonid)} ~ ' \
+        return f'LessonId = {str(self.lesson)} ~ ' \
                f'Milgroup = {str(self.milgroup)}'
 
     class Meta:
         db_table = 'lesson-milgroup'
-        unique_together = (('lessonid', 'milgroup'),)
+        unique_together = (('lesson', 'milgroup'),)
         verbose_name = 'Lesson-Milgroup table'
         verbose_name_plural = 'Lesson-Milgroup table'
 
 
 class StudentStudentpost(models.Model):
-    studentPost = models.ForeignKey(StudentPost,
-                                    models.DO_NOTHING,
-                                    db_column='studentPost')
-    studentid = models.OneToOneField(Student,
+    student_post = models.ForeignKey(StudentPost,
                                      models.DO_NOTHING,
-                                     db_column='studentid')
+                                     db_column='student_post')
+    student = models.OneToOneField(Student,
+                                   models.DO_NOTHING,
+                                   db_column='student')
 
     def __str__(self):
-        return f'StudentID = {str(self.studentid)} ~ ' \
-               f'StudentPost = {str(self.studentPost)}'
+        return f'StudentID = {str(self.student)} ~ ' \
+               f'StudentPost = {str(self.student_post)}'
 
     class Meta:
         db_table = 'student-studentpost'
-        unique_together = (('studentid', 'studentPost'),)
+        unique_together = (('student', 'student_post'),)
         verbose_name = 'Student-Studentpost table'
         verbose_name_plural = 'Student-Studentpost table'
 
 
 class StudentSkill(models.Model):
     skill = models.ForeignKey(Skill, models.DO_NOTHING, db_column='skill')
-    studentid = models.OneToOneField(Student,
-                                     models.DO_NOTHING,
-                                     db_column='studentid')
+    student = models.OneToOneField(Student,
+                                   models.DO_NOTHING,
+                                   db_column='student')
 
     def __str__(self):
-        return f'StudentID = {str(self.studentid)} ~ Skill = {str(self.skill)}'
+        return f'StudentID = {str(self.student)} ~ Skill = {str(self.skill)}'
 
     class Meta:
         db_table = 'student-skill'
-        unique_together = (('studentid', 'skill'),)
+        unique_together = (('student', 'skill'),)
         verbose_name = 'Student-Skill table'
         verbose_name_plural = 'Student-Skill table'

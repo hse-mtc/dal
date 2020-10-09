@@ -5,26 +5,24 @@ from django.db.models import Model
 from rest_framework.serializers import ValidationError
 
 
-class PresentInDatasetValidator:
+class PresentInDatabaseValidator:
 
-    def __init__(self,
-                 model_class: Model,
-                 model_param: tp.Optional[str] = None):
-        self.model_class = model_class
-        self.model_param = model_param
+    def __init__(self, model: Model, field: tp.Optional[str] = None):
+        self.model = model
+        self.field = field
 
     def __call__(self, value):
-        if self.model_param is not None:
+        if self.field is not None:
             # check if objects with model_param=value exist
-            query_filter = {self.model_param: value}
+            query_filter = {self.field: value}
         else:
             # check not by field, but by the whole data
             query_filter = value
-        if not self.model_class.objects.filter(**query_filter).exists():
-            if self.model_param is not None:
+        if not self.model.objects.filter(**query_filter).exists():
+            if self.field is not None:
                 raise ValidationError(
-                    f'There are no objects with {self.model_param} = {value} \
-                      in model {self.model_class.__name__}')
+                    f'There are no objects with {self.field} = {value} '
+                    f'in model {self.model.__name__}')
             raise ValidationError(
-                f'There are no objects like {str(query_filter)} \
-                  in model {self.model_class.__name__}')
+                f'There are no objects like {str(query_filter)} '
+                f'in model {self.model.__name__}')

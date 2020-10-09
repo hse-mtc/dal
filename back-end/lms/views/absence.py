@@ -1,159 +1,86 @@
-# pylint: disable=duplicate-code
-from django.db import IntegrityError
-from django.db.models import Value
-from django.db.models.functions import (
-    Lower,
-    Concat,
-)
-
-from django.views.decorators.csrf import csrf_exempt
+from datetime import timedelta, datetime
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 
-from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import GenericAPIView
 
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST,
 )
 
-from lms.serializers import (
-    AbsenceSerializer,
-    AbsenceGetQuerySerializer,
-)
-from lms.models import Absence
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
+from lms.serializers.serializers import MilgroupSerializer
+from lms.serializers.absence import (AbsenceSerializer,
+                                     AbsenceJournalSerializer,
+                                     AbsenceJournalGetQuerySerializer)
+from lms.models import Absence, Milgroup, Student
+from lms.filters import AbsenceFilterSet
 
 
-@permission_classes((AllowAny,))
-class AbsenceView(APIView):
+def get_date_range(date_from, date_to, weekday):
+    start_date = date_from + timedelta((weekday - date_from.weekday() + 7) % 7)
 
-    @csrf_exempt
+    dates = []
+    cur_date = start_date
+
+    while cur_date <= date_to:
+        dates.append(cur_date.strftime('%Y-%m-%d'))
+        cur_date += timedelta(7)
+
+    return dates
+
+
+class AbsenceViewSet(ModelViewSet):
+    serializer_class = AbsenceSerializer
+    queryset = Absence.objects.all()
+
+    permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+
+    filterset_class = AbsenceFilterSet
+    search_fields = ['student__surname', 'student__name', 'student__patronymic']
+
+
+class AbsenceJournalView(GenericAPIView):
+    permission_classes = [AllowAny]
+
+    # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
-        """
-        Get absent record or records
-        GET syntax examples:
-        .../absence/
-        .../absence/?id=2
-        .../absence/?studentid=3&date=...
-        :param request:
-        :return:
-        """
-        # check query params
-        query_params = AbsenceGetQuerySerializer(data=request.query_params)
+        query_params = AbsenceJournalGetQuerySerializer(
+            data=request.query_params)
         if not query_params.is_valid():
-            return Response({'message': query_params.errors},
-                            status=HTTP_400_BAD_REQUEST)
+            return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
 
-        absences = Absence.objects.all()
+        # final json
+        data = {}
 
-        # get by id
-        if 'id' in request.query_params:
-            absence = absences.get(id=request.query_params['id'])
-            absence = AbsenceSerializer(absence)
-            return Response({'students': absence.data}, status=HTTP_200_OK)
+        # add milgroup data
+        milgroup = MilgroupSerializer(
+            Milgroup.objects.get(
+                milgroup=request.query_params['milgroup'])).data
+        data['milgroup'] = milgroup
 
-        # filter by date
-        if 'date_from' in request.query_params:
-            absences = absences.filter(
-                date__gte=request.query_params['date_from'])
+        # calculate dates
+        date_from = datetime.fromisoformat(query_params.data['date_from'])
+        date_to = datetime.fromisoformat(query_params.data['date_to'])
 
-        if 'date_to' in request.query_params:
-            absences = absences.filter(
-                date__lte=request.query_params['date_to'])
+        date_range = get_date_range(date_from, date_to, milgroup['weekday'])
 
-        # filter by studentid
-        if 'studentid' in request.query_params:
-            absences = absences.filter(
-                studentid=request.query_params['studentid'])
-
-        # filter by milgroup
-        if 'milgroup' in request.query_params:
-            absences = absences.filter(
-                studentid__milgroup__milgroup=request.query_params['milgroup'])
-
-        # filter by name
-        if 'name' in request.query_params:
-            absences = absences.annotate(search_name=Lower(
-                Concat('studentid__surname', Value(' '), 'studentid__name',
-                       Value(' '), 'studentid__patronymic')))
-            absences = absences.filter(
-                search_name__contains=request.query_params['name'].lower())
-
-        # filter by type
-        if 'absenceType' in request.query_params:
-            absences = absences.filter(
-                absenceType=request.query_params['absenceType'])
-
-        # filter by status
-        if 'absenceStatus' in request.query_params:
-            absences = absences.filter(
-                absenceStatus=request.query_params['absenceStatus'])
-
-        absences = AbsenceSerializer(absences, many=True)
-        return Response({'absences': absences.data}, status=HTTP_200_OK)
-
-    # pylint: disable=no-self-use
-    @csrf_exempt
-    def put(self, request: Request) -> Response:
-        """
-        Create new absence record.
-        PUT function - data is given via 'data' from PUT request (not query!)
-        Payload example:
-        {
-            "date": "21.01.2020",
-            "absenceType": "Уважительная",
-            "studentid": {
-                "name": "Артем",
-                "surname": "Кацевалов"
+        # add dates and absences
+        data['dates'] = date_range
+        data['students'] = AbsenceJournalSerializer(
+            Student.objects.filter(
+                milgroup__milgroup=request.query_params['milgroup']),
+            context={
+                'request': request,
+                'date_range': date_range,
             },
-            "reason": "Заболел",
-            "absenceStatus": "Закрыт",
-            "comment": "Болеть будет недолго"
-        }
-        :param request:
-        :return:
-        """
-        absence = AbsenceSerializer(data=request.data)
-        try:
-            if absence.is_valid():
-                absence = absence.save()
-                return Response(
-                    {
-                        'message': f'Absence record with id {absence.id} '
-                                   f'successfuly created'
-                    },
-                    status=HTTP_200_OK)
-            return Response({'message': absence.errors},
-                            status=HTTP_400_BAD_REQUEST)
-        except IntegrityError:
-            return Response(
-                {
-                    'message': 'A record with this student and this date '
-                               'already exists. Please, modify existing record.'
-                },
-                status=HTTP_400_BAD_REQUEST)
+            many=True).data
 
-
-@permission_classes((AllowAny,))
-class AbsenceJournal(APIView):
-
-    @csrf_exempt
-    def get(self, request: Request) -> Response:
-        """
-        Get absent records in the form of journal
-        GET syntax example:
-        .../absence_journal/?milgroup=1809
-        :param request:
-        :return:
-        """
-        if 'milgroup' not in request.query_params:
-            return Response(
-                {'message': 'Please, insert milgroup as a query parameter.'},
-                status=HTTP_400_BAD_REQUEST)
-
-        absences = Absence.objects.filter(
-            studentid__milgroup__milgroup=request.query_params['milgroup'])
-        return Response({'absences': absences.data}, status=HTTP_200_OK)
+        return Response(data, status=HTTP_200_OK)

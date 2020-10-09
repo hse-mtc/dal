@@ -8,25 +8,25 @@ export function getStudent(params) {
   })
 }
 
-export function putStudent(st) {
-  return request({
-    url: '/lms/student/',
-    method: 'put',
-    data: { milgroup : st.milgroup, program: st.program, surname: st.surname, name: st.name, patronymic: st.patronymic, birthdate: st.birthdate, photo: st.photo, status: st.status}
-  })
-}
-
-export function postStudent(st) {
+export function postStudent(data) {
   return request({
     url: '/lms/student/',
     method: 'post',
-    data: { id: st.id, milgroup : st.milgroup, program: st.program, surname: st.surname, name: st.name, patronymic: st.patronymic, birthdate: st.birthdate, photo: st.photo, status: st.status}
+    data
+  })
+}
+
+export function patchStudent(data) {
+  return request({
+    url: `/lms/student/${data.id}/`,
+    method: 'patch',
+    data
   })
 }
 
 export function deleteStudent(id) {
   return request({
-    url: '/lms/student/?id='+id,
+    url: `/lms/student/${id}/`,
     method: 'delete'
   })
 }

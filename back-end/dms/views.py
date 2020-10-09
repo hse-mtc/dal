@@ -1,49 +1,30 @@
-from django.contrib.auth import authenticate
-from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Max
-from django.http import HttpResponse
-from django.utils.encoding import escape_uri_path
-from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from rest_framework import permissions
 from rest_framework import viewsets
-from rest_framework.authtoken.models import Token
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import (
-    api_view,
-    permission_classes,
-)
 from rest_framework.status import (
     HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-    HTTP_404_NOT_FOUND,
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
 from drf_yasg.utils import swagger_auto_schema
-from drf_yasg.openapi import (
-    IN_QUERY,
-    TYPE_ARRAY,
-    TYPE_INTEGER,
-    Items,
-    Parameter,
-    Response as SwaggerResponse,
-)
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from taggit.models import Tag
 
+from dms.filters import DocumentFilter
+from dms.swagger import author_array
 from dms.serializers import (
     AuthorSerializer,
     CategorySerializer,
     DocumentSerializer,
-    DocumentListSerializer,
+    DocumentCreateUpdateSerializer,
     PublisherSerializer,
     TagSerializer,
     SubjectSerializer,
@@ -56,7 +37,6 @@ from dms.models import (
     Topic,
     Category,
 )
-from dms.filters import DocumentFilter
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -74,9 +54,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
 
-    @swagger_auto_schema(responses={
-        422: SwaggerResponse("Category has documents and can not be deleted."),
-    })
     def destroy(self, request, *args, **kwargs):
         # pylint: disable=no-member
 
@@ -114,113 +91,31 @@ class TagListAPIView(ListAPIView):
     permission_classes = [permissions.AllowAny]
 
 
+@method_decorator(
+    name="list",
+    decorator=swagger_auto_schema(manual_parameters=[author_array]))
 class DocumentViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on Document model."""
 
     queryset = Document.objects.filter(is_in_trash=False) \
                                .order_by("-publication_date")
-    serializer_class = DocumentSerializer
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = DocumentFilter
     search_fields = ["title", "annotation", "tags__name"]
 
     def get_serializer_class(self):
-        if self.action == "list":
-            return DocumentListSerializer
+        if self.action in ["create", "update"]:
+            return DocumentCreateUpdateSerializer
         return DocumentSerializer
-
-    @swagger_auto_schema(manual_parameters=[
-        Parameter("authors",
-                  IN_QUERY,
-                  type=TYPE_ARRAY,
-                  items=Items(type=TYPE_INTEGER),
-                  collection_format="multi"),
-    ])
-    def list(self, request, *args, **kwargs):
-        # pylint: disable=no-member
-        return super().list(request, *args, **kwargs)
 
     def perform_destroy(self, instance):
         instance.is_in_trash = True
         instance.save()
 
 
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes((AllowAny,))
-def get_file(request: Request) -> HttpResponse:
-    """
-    Usage: api/get_file?id=3
-    :param request:
-    :return:
-    """
-
-    doc = Document.objects.all()
-    file = doc.get(pk=request.query_params.get("id")).file.content
-    filename = file.name.split("/")[-1]
-
-    with open(file.name, "rb") as content:
-        response = HttpResponse(content, content_type="text/plain")
-        response["Content-Disposition"] = f"attachment; " \
-            f"filename={escape_uri_path(filename)}"
-        return response
-
-
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes((AllowAny,))
-def login(request: Request) -> Response:
-    username = request.data.get("username")
-    password = request.data.get("password")
-    if not username or not password:
-        return Response({"message": "Username and password are required."},
-                        status=HTTP_400_BAD_REQUEST)
-
-    user = authenticate(
-        username=username,
-        password=password,
-    )
-    if not user:
-        return Response({"message": "Invalid credentials."},
-                        status=HTTP_404_NOT_FOUND)
-
-    token, _ = Token.objects.get_or_create(user=user)
-
-    return Response({"token": token.key}, status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["GET"])
-def info(request: Request) -> Response:
-    data = {
-        "roles": ["admin"],
-        "avatar": request.user.profile.photo,
-        "name": request.user.profile.name,
-    }
-
-    return Response(data, status=HTTP_200_OK)
-
-
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes((AllowAny,))
-def logout(request: Request) -> Response:
-    try:
-        request.user.auth_token.delete()
-    except (AttributeError, ObjectDoesNotExist):
-        pass
-
-    return Response({"message": "User logged out successfully."},
-                    status=HTTP_200_OK)
-
-
-@permission_classes((AllowAny,))
 class SubjectSectionView(APIView):
-    """
-    Describes a relationship with SubjectFilterSerializer
-    in order to return Subject Page
-    """
+    permission_classes = [permissions.AllowAny]
 
     @staticmethod
     def convert2dict(doc):

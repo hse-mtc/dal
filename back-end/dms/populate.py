@@ -16,8 +16,18 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from dms.models import (Author, Category, Document, Profile, Publisher, Section,
-                        Subject, Topic, File)
+from auth.models import Profile
+
+from dms.models import (
+    Author,
+    Category,
+    Document,
+    Publisher,
+    Section,
+    Subject,
+    Topic,
+    File,
+)
 
 
 def create_super_user() -> tp.Tuple[AbstractUser, Profile]:
@@ -208,8 +218,9 @@ def create_files() -> tp.List[File]:
     files = []
 
     for i in range(25):
-        file = File.objects.create(content=ContentFile(
-            "some content here", name=f"document_id_{i}.txt"))
+        name = f"document_id_{i}.txt"
+        content = ContentFile("some content here", name=name)
+        file = File.objects.create(content=content, name=name)
         file.save()
         files.append(file)
 

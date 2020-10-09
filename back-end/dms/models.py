@@ -1,26 +1,14 @@
 import datetime
-import os
+import uuid
 
 from django.db import models
-from django.contrib.auth import get_user_model
 
 from taggit.managers import TaggableManager
 
 
-def get_upload_path():
-    return "documents/"
-
-
-class Profile(models.Model):
-    name = models.CharField(max_length=255)
-    user = models.OneToOneField(
-        to=get_user_model(),
-        on_delete=models.CASCADE,
-    )
-    photo = models.URLField(blank=True)
-
-    def __str__(self):
-        return self.name
+def upload_to(instance, filename):
+    # pylint: disable=unused-argument
+    return f"files/{instance.id}/"
 
 
 class Author(models.Model):
@@ -101,24 +89,19 @@ class Category(models.Model):
 
 
 class File(models.Model):
-    content = models.FileField(
-        upload_to=get_upload_path(),
-        blank=True,
-    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    content = models.FileField(upload_to=upload_to, blank=True)
+    name = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = "File"
         verbose_name_plural = "Files"
 
     def __str__(self):
-        return self.get_file_name()
+        return self.name
 
-    def get_file_extension(self):
-        _, extension = os.path.splitext(self.content.name)
-        return extension
-
-    def get_file_name(self):
-        return self.content.name
+    def get_extension(self):
+        return self.name.split(".")[-1]
 
 
 class Document(models.Model):

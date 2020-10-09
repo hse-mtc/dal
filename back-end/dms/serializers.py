@@ -63,20 +63,16 @@ class TagListField(serializers.ListField):
 
 
 class FileSerializer(serializers.ModelSerializer):
-    extension = serializers.CharField(source="get_file_extension",
+    extension = serializers.CharField(source="get_extension",
                                       required=False,
                                       read_only=True)
 
-    name = serializers.CharField(source="get_file_name",
-                                 required=False,
-                                 read_only=True)
-
     class Meta:
         model = File
-        exclude = ["content"]
+        exclude = ["id"]
 
 
-class DocumentSerializer(serializers.ModelSerializer):
+class DocumentCreateUpdateSerializer(serializers.ModelSerializer):
     """Serializes Document model."""
 
     content = serializers.FileField(write_only=True)
@@ -90,7 +86,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         tags = validated_data.pop("tags", None)
 
         content = validated_data.pop("content")
-        file = File.objects.create(content=content)
+        file = File.objects.create(content=content, name=content.name)
         validated_data["file"] = file
 
         instance = super().create(validated_data)
@@ -115,13 +111,13 @@ class DocumentSerializer(serializers.ModelSerializer):
         return instance
 
 
-class DocumentListSerializer(serializers.ModelSerializer):
+class DocumentSerializer(serializers.ModelSerializer):
     """Serializes a list of Document models."""
 
     authors = AuthorSerializer(many=True, read_only=True)
+    file = FileSerializer(read_only=True)
     publishers = PublisherSerializer(many=True, read_only=True)
     tags = TagListField(required=False, read_only=True)
-    file = FileSerializer(read_only=True)
 
     class Meta:
         model = Document
