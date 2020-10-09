@@ -1,7 +1,9 @@
-from rest_framework.serializers import (Serializer, ModelSerializer, IntegerField,
-                                        CharField, SerializerMethodField)
+from rest_framework.serializers import (ModelSerializer, IntegerField,
+                                        CharField)
 
 from lms.models import (
+    StudentPost,
+    TeacherPost,
     Milgroup,
     Program,
     Skill,
@@ -27,27 +29,29 @@ class ProgramSerializer(ModelSerializer):
         extra_kwargs = {'code': {'validators': []}}
 
 
-
 class RankSerializer(ModelSerializer):
-    
+
     class Meta:
         model = Rank
         fields = '__all__'
 
 
-class ReferenceBookSerializer(Serializer):
-    milgroups = SerializerMethodField(read_only=True)
-    programs = SerializerMethodField(read_only=True)
-    ranks = SerializerMethodField(read_only=True)
+class SkillSerializer(ModelSerializer):
 
-    def get_milgroups(self):
-        qs = Milgroup.objects.all()
-        return MilgroupSerializer(qs, many=True).data
+    class Meta:
+        model = Skill
+        fields = '__all__'
 
-    def get_programs(self):
-        qs = Program.objects.all()
-        return ProgramSerializer(qs, many=True).data
 
-    def get_ranks(self):
-        qs = Rank.objects.all()
-        return RankSerializer(qs, many=True).data
+class StudentPostSerializer(ModelSerializer):
+
+    class Meta:
+        model = StudentPost
+        fields = '__all__'
+
+
+class TeacherPostSerializer(ModelSerializer):
+
+    class Meta:
+        model = TeacherPost
+        fields = '__all__'

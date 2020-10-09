@@ -2,7 +2,8 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from lms.views.viewsets import StudentViewSet, TeacherViewSet, ReferenceBookView
+from lms.views.viewsets import StudentViewSet, TeacherViewSet
+from lms.views.views import ReferenceBookView
 from lms.views.absence import AbsenceViewSet, AbsenceJournalView
 
 routers = DefaultRouter()
@@ -13,5 +14,5 @@ routers.register('absence', AbsenceViewSet)
 urlpatterns = [
     path('', include(routers.urls)),
     path('absence-journal/', AbsenceJournalView.as_view()),
-    path('reference_book/', ReferenceBookView.as_view())
+    path('reference-book/', ReferenceBookView.as_view())
 ]
