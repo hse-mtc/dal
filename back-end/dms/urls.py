@@ -5,9 +5,8 @@ from rest_framework import routers
 from dms.views import (
     AuthorViewSet,
     CategoryViewSet,
-    DocumentViewSet,
+    PaperViewSet,
     PublisherViewSet,
-    SubjectSectionView,
     SubjectViewSet,
     TagListAPIView,
 )
@@ -15,7 +14,7 @@ from dms.views import (
 router = routers.DefaultRouter()
 router.register("authors", AuthorViewSet)
 router.register("categories", CategoryViewSet)
-router.register("documents", DocumentViewSet)
+router.register("papers", PaperViewSet)
 router.register("publishers", PublisherViewSet)
 router.register("subjects", SubjectViewSet)
 
@@ -24,6 +23,5 @@ urlpatterns = [
     path("", include(router.urls)),
 
     # Manual urls
-    path("subject/", SubjectSectionView.as_view()),
     path("tags/", TagListAPIView.as_view()),
 ]
