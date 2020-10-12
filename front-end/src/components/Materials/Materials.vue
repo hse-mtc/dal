@@ -113,7 +113,7 @@ export default {
         if (item.id == this.subjectId) {
           this.subject = item.title
           getSubject({id: item.id}).then(response => {
-            this.subjectInfo = response.data.parts
+            this.subjectInfo = response.data.sections
           }).catch(() => {
             // eslint-disable-next-line no-console
             console.log('Данные по предмету не указаны')
