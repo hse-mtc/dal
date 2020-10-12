@@ -2,8 +2,8 @@
     <div class="topics" style="display: none">
         <div v-for="({
             title,
-            class_materials: {lectures, seminars, groups, practices}},
-        index) in data" :key="index" class="topic">
+            class_materials: {lectures, seminars, groups, practices}
+        }, index) in data" :key="index" class="topic">
             <div class="topic-title">
                 <div>Тема №{{index + 1}}</div>
                 <div class="topic-download-all">Скачать все материалы архивом</div>
