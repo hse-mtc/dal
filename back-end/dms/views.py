@@ -1,4 +1,3 @@
-from django.db.models import Max
 from django.utils.decorators import method_decorator
 
 from rest_framework import permissions
@@ -6,11 +5,7 @@ from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_422_UNPROCESSABLE_ENTITY,
-)
+from rest_framework.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 from drf_yasg.utils import swagger_auto_schema
 
@@ -18,23 +13,23 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from taggit.models import Tag
 
-from dms.filters import DocumentFilter
+from dms.filters import PaperFilter
 from dms.swagger import author_array
 from dms.serializers import (
     AuthorSerializer,
     CategorySerializer,
-    DocumentSerializer,
-    DocumentCreateUpdateSerializer,
+    PaperSerializer,
+    PaperCreateUpdateSerializer,
     PublisherSerializer,
     TagSerializer,
     SubjectSerializer,
+    SubjectRetrieveSerializer,
 )
 from dms.models import (
     Author,
-    Document,
+    Paper,
     Publisher,
     Subject,
-    Topic,
     Category,
 )
 
@@ -58,8 +53,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
         # pylint: disable=no-member
 
         category = self.get_object()
-        available_documents = Document.objects.filter(is_in_trash=False)
-        if available_documents.filter(category=category).exists():
+        if Paper.objects.filter(category=category).exists():
             return Response(
                 {"message": "Category has documents and can not be deleted."},
                 status=HTTP_422_UNPROCESSABLE_ENTITY)
@@ -79,8 +73,12 @@ class SubjectViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on Subject model."""
 
     queryset = Subject.objects.all()
-    serializer_class = SubjectSerializer
     permission_classes = [permissions.AllowAny]
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return SubjectRetrieveSerializer
+        return SubjectSerializer
 
 
 class TagListAPIView(ListAPIView):
@@ -94,117 +92,16 @@ class TagListAPIView(ListAPIView):
 @method_decorator(
     name="list",
     decorator=swagger_auto_schema(manual_parameters=[author_array]))
-class DocumentViewSet(viewsets.ModelViewSet):
-    """API for CRUD operations on Document model."""
+class PaperViewSet(viewsets.ModelViewSet):
+    """API for CRUD operations on Paper model."""
 
-    queryset = Document.objects.filter(is_in_trash=False) \
-                               .order_by("-publication_date")
+    queryset = Paper.objects.order_by("-publication_date")
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_class = DocumentFilter
+    filterset_class = PaperFilter
     search_fields = ["title", "annotation", "tags__name"]
 
     def get_serializer_class(self):
         if self.action in ["create", "update"]:
-            return DocumentCreateUpdateSerializer
-        return DocumentSerializer
-
-    def perform_destroy(self, instance):
-        instance.is_in_trash = True
-        instance.save()
-
-
-class SubjectSectionView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    @staticmethod
-    def convert2dict(doc):
-        return {
-            "id": doc.id,
-            "title": doc.title,
-            "file": "/api/dms/get_file?id=" + str(doc.id),
-        }
-
-    def get(self, request):
-        # pylint: disable=too-many-locals
-
-        searching_id = request.query_params.get("id")
-        searching_title = Subject.objects.filter(id=searching_id)[0].title
-
-        source_documents = Document.objects.filter(
-            subject__title=searching_title)
-        section_title_documents = source_documents.annotate(
-            section_title=Max("topic__section__title"))
-        section_id_documents = section_title_documents.annotate(
-            section_id=Max("topic__section__id"))
-        documents_merged = section_id_documents.annotate(
-            topic_title=Max("topic__title"))
-
-        source_topics = Topic.objects.filter(
-            section__subject__title=searching_title)
-        topics = source_topics.annotate(section_title=Max("section__title"))
-
-        data = {
-            "title": searching_title,
-            "parts": [],
-        }
-
-        section_set = set()
-        section_id = 0
-        for document in documents_merged:
-            if document.section_title in section_set:
-                continue
-            section_set.add(document.section_title)
-            section = dict()
-            section["title"] = document.section_title
-            section["id"] = section_id
-            topic_list = []
-            topic_id = 0
-            for topic in topics:
-                if topic.section_title == document.section_title:
-                    topic_json_format = {
-                        "id": topic_id,
-                        "title": topic.title,
-                        "lectures": [],
-                        "seminars": [],
-                        "group_classes": [],
-                        "practice_classes": [],
-                    }
-
-                    lectures = documents_merged.filter(
-                        topic_id=topic.id,
-                        section_title=document.section_title,
-                        category__title="Лекции")
-                    seminars = documents_merged.filter(
-                        topic_id=topic.id,
-                        section_title=document.section_title,
-                        category__title="Семинары")
-                    group_classes = documents_merged.filter(
-                        topic_id=topic.id,
-                        section_title=document.section_title,
-                        category__title="Групповые занятия")
-                    practice_classes = documents_merged.filter(
-                        topic_id=topic.id,
-                        section_title=document.section_title,
-                        category__title="Практические занятия")
-
-                    for lec in lectures:
-                        topic_json_format["lectures"].append(
-                            SubjectSectionView.convert2dict(lec))
-                    for sem in seminars:
-                        topic_json_format["seminars"].append(
-                            SubjectSectionView.convert2dict(sem))
-                    for group in group_classes:
-                        topic_json_format["group_classes"].append(
-                            SubjectSectionView.convert2dict(group))
-                    for practice in practice_classes:
-                        topic_json_format["practice_classes"].append(
-                            SubjectSectionView.convert2dict(practice))
-
-                    topic_list.append(topic_json_format)
-                    topic_id += 1
-            section["topics"] = topic_list
-            data["parts"].append(section)
-            section_id += 1
-
-        return Response(data, status=HTTP_200_OK)
+            return PaperCreateUpdateSerializer
+        return PaperSerializer
