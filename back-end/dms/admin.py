@@ -3,7 +3,7 @@ from django.contrib import admin
 from dms.models import (
     Author,
     Category,
-    Document,
+    Paper,
     Publisher,
     Subject,
     File,
@@ -11,7 +11,7 @@ from dms.models import (
 
 admin.site.register(Author)
 admin.site.register(Category)
-admin.site.register(Document)
+admin.site.register(Paper)
 admin.site.register(Publisher)
 admin.site.register(Subject)
 admin.site.register(File)
