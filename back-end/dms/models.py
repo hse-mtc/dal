@@ -130,6 +130,10 @@ class Paper(Document):
     publishers = models.ManyToManyField(to=Publisher, blank=True)
     tags = TaggableManager(blank=True)
 
+    class Meta:
+        verbose_name = "Paper"
+        verbose_name_plural = "Papers"
+
 
 class ClassMaterial(Document):
 
@@ -141,3 +145,7 @@ class ClassMaterial(Document):
 
     type = models.CharField(max_length=2, choices=Type.choices)
     topic = models.ForeignKey(to=Topic, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Class Material"
+        verbose_name_plural = "Class Materials"
