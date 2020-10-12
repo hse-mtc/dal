@@ -105,40 +105,39 @@ class File(models.Model):
 
 
 class Document(models.Model):
+    """Document represents abstract document of any type.
+
+    It holds fields necessary for all inherited document models.
+    """
+
     title = models.TextField()
-    authors = models.ManyToManyField(
-        to=Author,
-        blank=True,
-    )
     annotation = models.TextField(blank=True)
-    tags = TaggableManager(blank=True)
-    category = models.ForeignKey(
-        to=Category,
-        on_delete=models.CASCADE,
-    )
-    publication_date = models.DateField(default=datetime.date.today)
-    publishers = models.ManyToManyField(
-        to=Publisher,
-        blank=True,
-    )
-    topic = models.ForeignKey(
-        to=Topic,
-        on_delete=models.DO_NOTHING,
-        null=True,
-        blank=True,
-    )
-    subject = models.ForeignKey(
-        to=Subject,
-        on_delete=models.DO_NOTHING,
-        null=True,
-        blank=True,
-    )
-    file = models.ForeignKey(File, on_delete=models.CASCADE)
-    is_in_trash = models.BooleanField(default=False)
+    file = models.ForeignKey(to=File, on_delete=models.CASCADE)
 
     class Meta:
+        abstract = True
         verbose_name = "Document"
         verbose_name_plural = "Documents"
 
     def __str__(self):
         return self.title
+
+
+class Paper(Document):
+    authors = models.ManyToManyField(to=Author, blank=True)
+    category = models.ForeignKey(to=Category, on_delete=models.CASCADE)
+    publication_date = models.DateField(default=datetime.date.today)
+    publishers = models.ManyToManyField(to=Publisher, blank=True)
+    tags = TaggableManager(blank=True)
+
+
+class ClassMaterial(Document):
+
+    class Type(models.TextChoices):
+        LECTURES = "LE", "lectures"
+        SEMINARS = "SE", "seminars"
+        GROUPS = "GR", "groups"
+        PRACTICES = "PR", "practices"
+
+    type = models.CharField(max_length=2, choices=Type.choices)
+    topic = models.ForeignKey(to=Topic, on_delete=models.CASCADE)
