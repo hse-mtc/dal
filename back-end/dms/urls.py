@@ -4,6 +4,7 @@ from rest_framework import routers
 
 from dms.views import (
     AuthorViewSet,
+    BookViewSet,
     CategoryViewSet,
     PaperViewSet,
     PublisherViewSet,
@@ -13,6 +14,7 @@ from dms.views import (
 
 router = routers.DefaultRouter()
 router.register("authors", AuthorViewSet)
+router.register("books", BookViewSet)
 router.register("categories", CategoryViewSet)
 router.register("papers", PaperViewSet)
 router.register("publishers", PublisherViewSet)

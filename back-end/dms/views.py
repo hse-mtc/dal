@@ -17,6 +17,8 @@ from dms.filters import PaperFilter
 from dms.swagger import author_array
 from dms.serializers import (
     AuthorSerializer,
+    BookSerializer,
+    BookCreateUpdateSerializer,
     CategorySerializer,
     PaperSerializer,
     PaperCreateUpdateSerializer,
@@ -27,6 +29,7 @@ from dms.serializers import (
 )
 from dms.models import (
     Author,
+    Book,
     Paper,
     Publisher,
     Subject,
@@ -105,3 +108,13 @@ class PaperViewSet(viewsets.ModelViewSet):
         if self.action in ["create", "update"]:
             return PaperCreateUpdateSerializer
         return PaperSerializer
+
+
+class BookViewSet(viewsets.ModelViewSet):
+    queryset = Book.objects.all()
+    permission_classes = [permissions.AllowAny]
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update"]:
+            return BookCreateUpdateSerializer
+        return BookSerializer
