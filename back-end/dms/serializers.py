@@ -4,6 +4,7 @@ from taggit.models import Tag
 
 from dms.models import (
     Author,
+    Book,
     Category,
     ClassMaterial,
     File,
@@ -170,3 +171,36 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ["id", "title", "abbreviation", "sections"]
+
+
+class BookSerializer(serializers.ModelSerializer):
+    authors = AuthorSerializer(many=True, read_only=True)
+    file = FileSerializer(read_only=True)
+    publishers = PublisherSerializer(many=True, read_only=True)
+    subjects = SubjectSerializer(many=True, read_only=True)
+    publication_year = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Book
+        exclude = ["publication_date"]
+
+
+class BookCreateUpdateSerializer(serializers.ModelSerializer):
+    content = serializers.FileField(write_only=True)
+    publication_year = serializers.DateField(format="%Y", input_formats=["%Y"])
+
+    class Meta:
+        model = Book
+        exclude = ["file", "publication_date"]
+
+    def create(self, validated_data):
+        content = validated_data.pop("content")
+        file = File.objects.create(content=content, name=content.name)
+        validated_data["file"] = file
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        file = File.objects.get(id=instance.file.id)
+        file.content = validated_data.pop("content")
+        file.save()
+        return super().update(instance, validated_data)
