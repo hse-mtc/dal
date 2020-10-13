@@ -176,9 +176,9 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
 class BookSerializer(serializers.ModelSerializer):
     authors = AuthorSerializer(many=True, read_only=True)
     file = FileSerializer(read_only=True)
+    publication_year = serializers.ReadOnlyField()
     publishers = PublisherSerializer(many=True, read_only=True)
     subjects = SubjectSerializer(many=True, read_only=True)
-    publication_year = serializers.ReadOnlyField()
 
     class Meta:
         model = Book
