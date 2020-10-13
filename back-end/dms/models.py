@@ -149,3 +149,18 @@ class ClassMaterial(Document):
     class Meta:
         verbose_name = "Class Material"
         verbose_name_plural = "Class Materials"
+
+
+class Book(Document):
+    authors = models.ManyToManyField(to=Author, blank=True)
+    publication_date = models.DateField(default=datetime.date.today)
+    publishers = models.ManyToManyField(to=Publisher, blank=True)
+    subjects = models.ManyToManyField(to=Subject, blank=True)
+
+    @property
+    def publication_year(self):
+        return self.publication_date.year
+
+    class Meta:
+        verbose_name = "Book"
+        verbose_name_plural = "Books"
