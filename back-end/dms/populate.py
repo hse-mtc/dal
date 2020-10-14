@@ -20,6 +20,7 @@ from auth.models import Profile
 
 from dms.models import (
     Author,
+    Book,
     Category,
     ClassMaterial,
     File,
@@ -309,6 +310,44 @@ def create_class_materials(files, topics):
     return materials
 
 
+def create_books(authors, files, publishers, subjects):
+    # pylint: disable=too-many-arguments,too-many-locals
+
+    books = []
+
+    titles = [
+        "Учебник по ТСП",
+        "Физика для ракетчиков",
+        "Сферическая геометрия",
+        "Пособие по танкам",
+        "Тактическая подготовка",
+        "Рукопашный бой под водой",
+    ]
+
+    for file in files:
+        book, is_created = Book.objects.get_or_create(
+            title=random.choice(titles),
+            file=file,
+        )
+
+        if not is_created:
+            continue
+
+        for _ in range(random.randint(1, 2)):
+            book.authors.add(random.choice(authors))
+
+        for _ in range(random.randint(1, 2)):
+            book.publishers.add(random.choice(publishers))
+
+        for _ in range(random.randint(1, 2)):
+            book.subjects.add(random.choice(subjects))
+
+        book.save()
+        books.append(book)
+
+    return books
+
+
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
@@ -335,6 +374,12 @@ def populate(request: Request) -> Response:
     create_class_materials(
         files=files,
         topics=topics,
+    )
+    create_books(
+        authors=authors,
+        files=files,
+        publishers=publishers,
+        subjects=subjects,
     )
 
     return Response(status=HTTP_200_OK)
