@@ -2,7 +2,7 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import permissions
 from rest_framework import viewsets
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_422_UNPROCESSABLE_ENTITY
@@ -113,6 +113,8 @@ class PaperViewSet(viewsets.ModelViewSet):
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     permission_classes = [permissions.AllowAny]
+    filter_backends = [OrderingFilter]
+    ordering_fields = ["title", "publication_year"]
 
     def get_serializer_class(self):
         if self.action in ["create", "update"]:
