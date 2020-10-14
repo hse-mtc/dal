@@ -187,20 +187,29 @@ class BookSerializer(serializers.ModelSerializer):
 
 class BookCreateUpdateSerializer(serializers.ModelSerializer):
     content = serializers.FileField(write_only=True)
-    publication_year = serializers.DateField(format="%Y", input_formats=["%Y"])
+    publication_year = serializers.DateField(input_formats=["%Y"],
+                                             write_only=True)
 
     class Meta:
         model = Book
         exclude = ["file", "publication_date"]
 
     def create(self, validated_data):
+        date = validated_data.pop("publication_year")
+        validated_data["publication_date"] = date
+
         content = validated_data.pop("content")
         file = File.objects.create(content=content, name=content.name)
         validated_data["file"] = file
+
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
+        date = validated_data.pop("publication_year")
+        validated_data["publication_date"] = date
+
         file = File.objects.get(id=instance.file.id)
         file.content = validated_data.pop("content")
         file.save()
+
         return super().update(instance, validated_data)
