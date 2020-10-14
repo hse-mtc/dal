@@ -11,6 +11,10 @@ def upload_to(instance, filename):
     return f"files/{instance.id}/"
 
 
+def current_year():
+    return datetime.date.today().year
+
+
 class Author(models.Model):
     last_name = models.CharField(max_length=255)
     first_name = models.CharField(max_length=255)
@@ -153,13 +157,9 @@ class ClassMaterial(Document):
 
 class Book(Document):
     authors = models.ManyToManyField(to=Author, blank=True)
-    publication_date = models.DateField(default=datetime.date.today)
+    publication_year = models.PositiveSmallIntegerField(default=current_year)
     publishers = models.ManyToManyField(to=Publisher, blank=True)
     subjects = models.ManyToManyField(to=Subject, blank=True)
-
-    @property
-    def publication_year(self):
-        return self.publication_date.year
 
     class Meta:
         verbose_name = "Book"

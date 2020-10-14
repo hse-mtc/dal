@@ -176,40 +176,29 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
 class BookSerializer(serializers.ModelSerializer):
     authors = AuthorSerializer(many=True, read_only=True)
     file = FileSerializer(read_only=True)
-    publication_year = serializers.ReadOnlyField()
     publishers = PublisherSerializer(many=True, read_only=True)
     subjects = SubjectSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
-        exclude = ["publication_date"]
+        fields = "__all__"
 
 
 class BookCreateUpdateSerializer(serializers.ModelSerializer):
     content = serializers.FileField(write_only=True)
-    publication_year = serializers.DateField(input_formats=["%Y"],
-                                             write_only=True)
 
     class Meta:
         model = Book
-        exclude = ["file", "publication_date"]
+        exclude = ["file"]
 
     def create(self, validated_data):
-        date = validated_data.pop("publication_year")
-        validated_data["publication_date"] = date
-
         content = validated_data.pop("content")
         file = File.objects.create(content=content, name=content.name)
         validated_data["file"] = file
-
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        date = validated_data.pop("publication_year")
-        validated_data["publication_date"] = date
-
         file = File.objects.get(id=instance.file.id)
         file.content = validated_data.pop("content")
         file.save()
-
         return super().update(instance, validated_data)
