@@ -8,8 +8,10 @@ from dms.views import (
     CategoryViewSet,
     PaperViewSet,
     PublisherViewSet,
+    SectionViewSet,
     SubjectViewSet,
     TagListAPIView,
+    TopicViewSet,
 )
 
 router = routers.DefaultRouter()
@@ -18,7 +20,9 @@ router.register("books", BookViewSet)
 router.register("categories", CategoryViewSet)
 router.register("papers", PaperViewSet)
 router.register("publishers", PublisherViewSet)
+router.register("sections", SectionViewSet)
 router.register("subjects", SubjectViewSet)
+router.register("topics", TopicViewSet)
 
 urlpatterns = [
     # REST router

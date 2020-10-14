@@ -48,6 +48,20 @@ class SubjectSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class SectionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Section
+        fields = "__all__"
+
+
+class TopicSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Topic
+        fields = "__all__"
+
+
 class TagSerializer(serializers.ModelSerializer):
     """Serializes Tag model."""
 

@@ -24,15 +24,19 @@ from dms.serializers import (
     PaperCreateUpdateSerializer,
     PublisherSerializer,
     TagSerializer,
+    SectionSerializer,
     SubjectSerializer,
     SubjectRetrieveSerializer,
+    TopicSerializer,
 )
 from dms.models import (
     Author,
     Book,
     Paper,
     Publisher,
+    Section,
     Subject,
+    Topic,
     Category,
 )
 
@@ -82,6 +86,18 @@ class SubjectViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return SubjectRetrieveSerializer
         return SubjectSerializer
+
+
+class SectionViewSet(viewsets.ModelViewSet):
+    queryset = Section.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = SectionSerializer
+
+
+class TopicViewSet(viewsets.ModelViewSet):
+    queryset = Topic.objects.all()
+    permission_classes = [permissions.AllowAny]
+    serializer_class = TopicSerializer
 
 
 class TagListAPIView(ListAPIView):
