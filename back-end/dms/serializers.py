@@ -90,7 +90,18 @@ class FileSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
-class PaperCreateUpdateSerializer(serializers.ModelSerializer):
+class DocumentSerializer(serializers.ModelSerializer):
+    """ Document abstract serializer """
+
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        abstract = True
+
+
+class PaperCreateUpdateSerializer(DocumentSerializer):
     """Create or update existing Paper model."""
 
     content = serializers.FileField(write_only=True)
@@ -131,7 +142,7 @@ class PaperCreateUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class PaperSerializer(serializers.ModelSerializer):
+class PaperSerializer(DocumentSerializer):
     """Serializes Paper model."""
 
     authors = AuthorSerializer(many=True, read_only=True)
@@ -144,7 +155,7 @@ class PaperSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ClassMaterialSerializer(serializers.ModelSerializer):
+class ClassMaterialSerializer(DocumentSerializer):
     file = FileSerializer(read_only=True)
 
     class Meta:
@@ -189,7 +200,7 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "abbreviation", "sections"]
 
 
-class BookSerializer(serializers.ModelSerializer):
+class BookSerializer(DocumentSerializer):
     authors = AuthorSerializer(many=True, read_only=True)
     file = FileSerializer(read_only=True)
     publishers = PublisherSerializer(many=True, read_only=True)
@@ -200,7 +211,7 @@ class BookSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BookCreateUpdateSerializer(serializers.ModelSerializer):
+class BookCreateUpdateSerializer(DocumentSerializer):
     content = serializers.FileField(write_only=True)
 
     class Meta:
