@@ -2,11 +2,11 @@
   <div class="addModal">
     <el-form ref="form" :model="document" label-width="175px">
       <el-form-item label="Название документа*">
-        <el-input v-model="document.title" placeholder="Введите название"></el-input>
+        <el-input v-model="form.title" placeholder="Введите название"></el-input>
       </el-form-item>
 
       <el-form-item label="Аннотация">
-        <el-input type="textarea" placeholder="Введите текст аннотации" v-model="document.annotation"
+        <el-input type="textarea" placeholder="Введите текст аннотации" v-model="form.annotation"
                   :autosize="{ minRows: 2}"></el-input>
       </el-form-item>
 
@@ -24,7 +24,7 @@
 
       <el-form-item label="Автор">
         <el-select
-            v-model="document.authors"
+            v-model="form.selectedAuthors"
             multiple
             collapse-tags
             placeholder="Выберите авторов"
@@ -53,7 +53,7 @@
       <!--            </div>-->
 
       <el-form-item label="Размещение">
-        <el-select clearable v-model="document.publisher" placeholder="Выберите журнал">
+        <el-select clearable v-model="form.publisher" placeholder="Выберите журнал">
           <el-option
               v-for="item in publishers"
               :key="item.id"
@@ -71,7 +71,7 @@
 
       <el-form-item label="Дата публикации">
         <el-date-picker
-            v-model="document.publicationDate"
+            v-model="form.publicationDate"
             type="date"
             placeholder="Выберите дату"
             format="dd.MM.yyyy">
@@ -79,7 +79,7 @@
       </el-form-item>
 
       <el-form-item label="Категория документа*">
-        <el-select clearable v-model="document.currentCategory" placeholder="Выберите категорию">
+        <el-select clearable v-model="form.currentCategory" placeholder="Выберите категорию">
           <el-option
               v-for="item in categories"
               :key="item.id"
@@ -92,7 +92,7 @@
 
       <el-form-item label="Ключевые слова">
         <tags-input element-id="tags"
-                    v-model="document.selectedTags"
+                    v-model="form.selectedTags"
                     :existing-tags="existingTags"
                     :typeahead="true"
                     placeholder="Добавить ключевое слово"
@@ -130,9 +130,9 @@
             ref="upload"
             :limit="1"
             :on-exceed="handleExceed"
-            :file-list="document.fileList"
+            :file-list="form.fileList"
             :auto-upload="false">
-          <el-button size="small" type="primary" style="outline: none">Добавить файл</el-button>
+          <el-button size="small" type="primary" style="outline: none" :disabled="form.fileList.length > 0">Добавить файл</el-button>
           <div slot="tip" class="el-upload__tip"></div>
         </el-upload>
       </el-form-item>
@@ -149,7 +149,7 @@ import {getExistingTags} from "../../api/existingTags";
 import axios from "axios";
 import moment from 'moment'
 import EventBus from '../EventBus';
-import {uploadDocs} from "../../api/upload";
+import {updateDocs} from "../../api/upload";
 import {mapState} from "vuex";
 
 
@@ -172,6 +172,7 @@ export default {
         fileList: [],
         currentCategory: ''
       },
+      ifFileChanged: false,
       existingTags: [
         {key: 1, value: 'Стратегия'},
         {key: 2, value: 'Тактика'},
@@ -193,6 +194,27 @@ export default {
   },
   mounted() {
     console.log(this.document, '--------')
+    this.form = {
+      title: this.document.title,
+      author: '',
+      selectedAuthors: this.document.authors.map(item => item.id),
+      annotation: this.document.annotation,
+      publicationDate: this.document.publication_date,
+      newAuthorName: '',
+      newAuthorLastName: '',
+      newAuthorPatronymic: '',
+      publisher: this.document.publishers[0],
+      newPublisher: '',
+      selectedTags: this.document.tags.map(item => {
+        return {key: item, value: item}
+      }),
+      fileList: [this.document.file],
+      currentCategory: this.categories.find(item => {
+        console.log(item.id)
+        return item.id == this.document.category
+      }).id
+    }
+    console.log(this.form, '=========')
   },
   computed: {
     ...mapState({
@@ -235,8 +257,10 @@ export default {
         }
 
         if (this.form.fileList.length !== 0) {
-          formData.append('content', this.form.fileList[0].raw);
-          uploadDocs(formData)
+          if (this.ifFileChanged) {
+            formData.append('content', this.form.fileList[0].raw);
+          }
+          updateDocs(formData)
               .then(function () {
                 EventBus.$emit('UPDATE_EVENT');
                 self.$emit('closeModal');
@@ -265,6 +289,7 @@ export default {
     },
     addFile(file, fileList) {
       console.log(file, 'add')
+      this.ifFileChanged = true
       this.form.fileList.push(file)
     },
     handleExceed(files, fileList) {

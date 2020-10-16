@@ -55,7 +55,7 @@ export const constantRoutes = [
   },
 
   {
-    path: '/msw',
+    path: '/',
     component: Layout,
     redirect: '/msw/science-articles',
     name: 'Military scientific work',

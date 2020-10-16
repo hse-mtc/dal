@@ -39,17 +39,19 @@
           <el-col :span="1" class="d-flex justify-content-end mt-4">
             <el-popover
                 placement="bottom"
-                trigger="click"
+                trigger="hover"
             >
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
                 <div style="cursor:pointer;">
-                  <form :action="download" method="get">
-                    <input :value="document.id" type="hidden" name="id">
+                  <form :action="document.file.content" method="get">
+                    <input :value="document.file.name" type="hidden" name="name">
                     <button class="download-kebab-button">Скачать</button>
                   </form>
                 </div>
                 <div style="cursor:pointer;" @click="editDocument(document.id)">Редактировать</div>
                 <div style="cursor:pointer;" @click="deleteArticle(document.id)">Удалить</div>
+                <div style="cursor:pointer;" @click="downloadFile(document)">Скачать 2</div>
+                <div style="cursor:pointer;"><a :href="document.file.content" :download="document.file.name">Скачать 3</a></div>
               </div>
               <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
                 <img src="../../assets/scienceWorks/popover.svg" alt="">
@@ -75,6 +77,7 @@ import moment from 'moment'
 import groupBy from 'lodash/groupBy';
 import keys from 'lodash/keys';
 import EditDocumentModalWindow from "@/components/EditDocumentModalWindow/EditDocumentModalWindow";
+import axios from "axios";
 
 export default {
   name: '',
@@ -103,6 +106,7 @@ export default {
     }
   },
   created() {
+    this.downloadFile1()
   },
   mounted() {
     this.fetchData()
@@ -117,6 +121,23 @@ export default {
     }
   },
   methods: {
+    downloadFile1() {
+    },
+    downloadFile(document) {
+      axios({
+        url: document.file.content,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then((response) => {
+        console.log(response)
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.pdf');
+        document.body.appendChild(link);
+        link.click();
+      });
+    },
     openModal() {
       this.$emit('openEditModal');
     },
