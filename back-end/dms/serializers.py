@@ -4,11 +4,15 @@ from taggit.models import Tag
 
 from dms.models import (
     Author,
-    Document,
+    Book,
     Category,
-    Publisher,
-    Subject,
+    ClassMaterial,
     File,
+    Paper,
+    Publisher,
+    Section,
+    Subject,
+    Topic,
 )
 
 
@@ -44,6 +48,20 @@ class SubjectSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class SectionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Section
+        fields = "__all__"
+
+
+class TopicSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Topic
+        fields = "__all__"
+
+
 class TagSerializer(serializers.ModelSerializer):
     """Serializes Tag model."""
 
@@ -72,15 +90,15 @@ class FileSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
-class DocumentCreateUpdateSerializer(serializers.ModelSerializer):
-    """Serializes Document model."""
+class PaperCreateUpdateSerializer(serializers.ModelSerializer):
+    """Create or update existing Paper model."""
 
     content = serializers.FileField(write_only=True)
     tags = TagListField(required=False)
 
     class Meta:
-        model = Document
-        exclude = ["is_in_trash", "file"]
+        model = Paper
+        exclude = ["file"]
 
     def create(self, validated_data):
         tags = validated_data.pop("tags", None)
@@ -111,8 +129,8 @@ class DocumentCreateUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class DocumentSerializer(serializers.ModelSerializer):
-    """Serializes a list of Document models."""
+class PaperSerializer(serializers.ModelSerializer):
+    """Serializes Paper model."""
 
     authors = AuthorSerializer(many=True, read_only=True)
     file = FileSerializer(read_only=True)
@@ -120,5 +138,81 @@ class DocumentSerializer(serializers.ModelSerializer):
     tags = TagListField(required=False, read_only=True)
 
     class Meta:
-        model = Document
-        exclude = ["is_in_trash", "subject", "topic"]
+        model = Paper
+        fields = "__all__"
+
+
+class ClassMaterialSerializer(serializers.ModelSerializer):
+    file = FileSerializer(read_only=True)
+
+    class Meta:
+        model = ClassMaterial
+        fields = ["id", "title", "file"]
+
+
+class TopicRetrieveSerializer(serializers.ModelSerializer):
+    class_materials = serializers.SerializerMethodField(read_only=True)
+
+    def get_class_materials(self, obj: Topic):
+        # pylint: disable=no-self-use
+
+        data = {}
+        for value, label in ClassMaterial.Type.choices:
+            materials = obj.classmaterial_set.filter(type=value)
+            data[label] = ClassMaterialSerializer(materials, many=True).data
+        return data
+
+    class Meta:
+        model = Topic
+        fields = ["id", "title", "class_materials"]
+
+
+class SectionRetrieveSerializer(serializers.ModelSerializer):
+    topics = TopicRetrieveSerializer(many=True,
+                                     read_only=True,
+                                     source="topic_set")
+
+    class Meta:
+        model = Section
+        fields = ["id", "title", "topics"]
+
+
+class SubjectRetrieveSerializer(serializers.ModelSerializer):
+    sections = SectionRetrieveSerializer(many=True,
+                                         read_only=True,
+                                         source="section_set")
+
+    class Meta:
+        model = Subject
+        fields = ["id", "title", "abbreviation", "sections"]
+
+
+class BookSerializer(serializers.ModelSerializer):
+    authors = AuthorSerializer(many=True, read_only=True)
+    file = FileSerializer(read_only=True)
+    publishers = PublisherSerializer(many=True, read_only=True)
+    subjects = SubjectSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Book
+        fields = "__all__"
+
+
+class BookCreateUpdateSerializer(serializers.ModelSerializer):
+    content = serializers.FileField(write_only=True)
+
+    class Meta:
+        model = Book
+        exclude = ["file"]
+
+    def create(self, validated_data):
+        content = validated_data.pop("content")
+        file = File.objects.create(content=content, name=content.name)
+        validated_data["file"] = file
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        file = File.objects.get(id=instance.file.id)
+        file.content = validated_data.pop("content")
+        file.save()
+        return super().update(instance, validated_data)

@@ -1,25 +1,20 @@
-from rest_framework.serializers import (CharField, IntegerField,
-                                        SerializerMethodField)
+from rest_framework.serializers import IntegerField, SerializerMethodField
+from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from lms.models import (
     Milgroup,
-    Status,
     Program,
     Student,
 )
 from lms.validators import PresentInDatabaseValidator
-from lms.serializers.serializers import (NestedModelSerializer,
-                                         MilgroupSerializer, ProgramSerializer)
+from lms.serializers.serializers import MilgroupSerializer, ProgramSerializer
 
 
-class StudentSerializer(NestedModelSerializer):
+class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer(
         required=False, validators=[PresentInDatabaseValidator(Milgroup)])
     program = ProgramSerializer(
         required=False, validators=[PresentInDatabaseValidator(Program)])
-    status = CharField(
-        required=False,
-        validators=[PresentInDatabaseValidator(Status, 'status')])
 
     fullname = SerializerMethodField(required=False)
 
@@ -31,14 +26,8 @@ class StudentSerializer(NestedModelSerializer):
         # pylint: disable=no-self-use
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
-    nested_fields = [
-        ['milgroup', Milgroup],
-        ['program', Program],
-        ['status', Status, 'status'],
-    ]
 
-
-class StudentShortSerializer(NestedModelSerializer):
+class StudentShortSerializer(WritableNestedModelSerializer):
     id = IntegerField(required=False)
     fullname = SerializerMethodField(required=False)
     milgroup = MilgroupSerializer(
@@ -53,5 +42,3 @@ class StudentShortSerializer(NestedModelSerializer):
     class Meta:
         model = Student
         fields = ['id', 'fullname', 'milgroup']
-
-    nested_fields = [['milgroup', Milgroup]]

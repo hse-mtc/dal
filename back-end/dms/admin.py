@@ -3,15 +3,17 @@ from django.contrib import admin
 from dms.models import (
     Author,
     Category,
-    Document,
+    ClassMaterial,
+    File,
+    Paper,
     Publisher,
     Subject,
-    File,
 )
 
 admin.site.register(Author)
 admin.site.register(Category)
-admin.site.register(Document)
+admin.site.register(ClassMaterial)
+admin.site.register(File)
+admin.site.register(Paper)
 admin.site.register(Publisher)
 admin.site.register(Subject)
-admin.site.register(File)

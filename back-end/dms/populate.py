@@ -20,13 +20,15 @@ from auth.models import Profile
 
 from dms.models import (
     Author,
+    Book,
     Category,
-    Document,
+    ClassMaterial,
+    File,
+    Paper,
     Publisher,
     Section,
     Subject,
     Topic,
-    File,
 )
 
 
@@ -145,10 +147,7 @@ def create_categories() -> tp.List[Category]:
     category_titles = [
         "Научные статьи",
         "Научно-исследовательские работы",
-        "Лекции",
-        "Семинары",
-        "Практические занятия",
-        "Групповые занятия",
+        "Приказы Министерства образования",
     ]
 
     for title in category_titles:
@@ -227,29 +226,26 @@ def create_files() -> tp.List[File]:
     return files
 
 
-def create_documents(
+def create_papers(
     authors: tp.List[Author],
     categories: tp.List[Category],
     publishers: tp.List[Publisher],
-    subject: Subject,
-    topics: tp.List[Topic],
     files: tp.List[File],
-) -> tp.List[Document]:
+) -> tp.List[Paper]:
     """
     Create a bunch of documents for every category.
     :param authors: list of available authors.
     :param categories: list of available categories.
     :param publishers: list of available publishers.
-    :param subject: subject to add document to.
-    :param topics: list of available topics for document to add to.
-    :return: list of created documents.
+    :param files: list of uploaded files.
+    :return: list of created papers.
     """
 
     # pylint: disable=too-many-arguments,too-many-locals
 
-    documents = []
+    papers = []
 
-    document_titles = [
+    titles = [
         "Техники обеспечения",
         "Управление войсками",
         "Виды угроз",
@@ -264,42 +260,99 @@ def create_documents(
 
     random.seed(11)
 
-    for i in range(25):
-        document, is_created = Document.objects.get_or_create(
-            title=random.choice(document_titles),
+    for file in files:
+        paper, is_created = Paper.objects.get_or_create(
+            title=random.choice(titles),
             category=random.choice(categories),
-            file=files[i],
+            file=file,
         )
 
         if not is_created:
             continue
 
         for _ in range(random.randint(1, 2)):
-            document.authors.add(random.choice(authors))
+            paper.authors.add(random.choice(authors))
 
         for _ in range(random.randint(1, 2)):
-            document.publishers.add(random.choice(publishers))
+            paper.publishers.add(random.choice(publishers))
 
-        if document.category in categories[2:]:  # educational
-            document.subject = subject
-            document.topic = random.choice(topics)
+        paper.save()
+        papers.append(paper)
 
-        document.save()
-        documents.append(document)
+    return papers
 
-    return documents
+
+def create_class_materials(files, topics):
+    materials = []
+
+    titles = [
+        "Контрольная работа",
+        "Новый материал",
+        "Исследовательский проект",
+        "Научные методы",
+        "Управление персоналом",
+    ]
+
+    for file in files:
+        material, is_created = ClassMaterial.objects.get_or_create(
+            title=random.choice(titles),
+            file=file,
+            type=random.choice(ClassMaterial.Type.values),
+            topic=random.choice(topics),
+        )
+
+        if not is_created:
+            continue
+
+        material.save()
+        materials.append(material)
+
+    return materials
+
+
+def create_books(authors, files, publishers, subjects):
+    # pylint: disable=too-many-arguments,too-many-locals
+
+    books = []
+
+    titles = [
+        "Учебник по ТСП",
+        "Физика для ракетчиков",
+        "Сферическая геометрия",
+        "Пособие по танкам",
+        "Тактическая подготовка",
+        "Рукопашный бой под водой",
+    ]
+
+    for file in files:
+        book, is_created = Book.objects.get_or_create(
+            title=random.choice(titles),
+            file=file,
+        )
+
+        if not is_created:
+            continue
+
+        for _ in range(random.randint(1, 2)):
+            book.authors.add(random.choice(authors))
+
+        for _ in range(random.randint(1, 2)):
+            book.publishers.add(random.choice(publishers))
+
+        for _ in range(random.randint(1, 2)):
+            book.subjects.add(random.choice(subjects))
+
+        book.save()
+        books.append(book)
+
+    return books
 
 
 @csrf_exempt
-@api_view(["PUT"])
+@api_view(["POST"])
 @permission_classes((AllowAny,))
-def populate(request: Request,) -> Response:
+def populate(request: Request) -> Response:
     # pylint: disable=too-many-locals
-    """
-    Populate database with fake documents, users, etc. (including super user).
-    :param request: empty PUT request.
-    :return: response indicating whether request was successful (probably was).
-    """
 
     create_super_user()
 
@@ -312,13 +365,21 @@ def populate(request: Request,) -> Response:
     sections = create_sections(subjects[0])
     topics = create_topics(sections[0])
 
-    create_documents(
+    create_papers(
         authors=authors,
         categories=categories,
         publishers=publishers,
-        subject=subjects[0],
-        topics=topics,
         files=files,
+    )
+    create_class_materials(
+        files=files,
+        topics=topics,
+    )
+    create_books(
+        authors=authors,
+        files=files,
+        publishers=publishers,
+        subjects=subjects,
     )
 
     return Response(status=HTTP_200_OK)

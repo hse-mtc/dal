@@ -2,8 +2,7 @@ import request from '@/utils/request'
 
 export function getSubject(params) {
   return request({
-    url: '/dms/subject/',
+    url: `/dms/subjects/${params.id}/`,
     method: 'get',
-    params
   })
 }
