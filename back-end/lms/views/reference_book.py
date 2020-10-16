@@ -34,9 +34,6 @@ class ReferenceBookView(ListAPIView):
         response = {}
         for title in self.model_serializer:
             model, serializer = self.model_serializer[title]
-            response_to_add = {
-                title: serializer(model.objects.all(), many=True).data
-            }
-            response.update(response_to_add)
+            response[title] = serializer(model.objects.all(), many=True).data
 
         return Response(response)
