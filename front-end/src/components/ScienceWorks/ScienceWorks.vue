@@ -136,12 +136,10 @@ export default {
     }),
     openEditModal() {
       this.editModal = true
-      console.log('openEditModal')
       document.getElementById('main-container').classList.add('stop-scrolling')
     },
     closeEditModal() {
       this.editModal = false
-      console.log('closeEditModal')
       document.getElementById('main-container').classList.remove('stop-scrolling')
     },
     closeSelectCategory() {

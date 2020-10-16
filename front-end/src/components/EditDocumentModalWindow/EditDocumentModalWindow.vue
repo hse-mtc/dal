@@ -190,10 +190,9 @@ export default {
     this.fetchData()
   },
   updated() {
-    console.log(this.form.fileList)
+    // console.log(this.form.fileList)
   },
   mounted() {
-    console.log(this.document, '--------')
     this.form = {
       title: this.document.title,
       author: '',
@@ -203,18 +202,16 @@ export default {
       newAuthorName: '',
       newAuthorLastName: '',
       newAuthorPatronymic: '',
-      publisher: this.document.publishers[0],
+      publisher: this.document.publishers[0].id,
       newPublisher: '',
       selectedTags: this.document.tags.map(item => {
         return {key: item, value: item}
       }),
       fileList: [this.document.file],
       currentCategory: this.categories.find(item => {
-        console.log(item.id)
         return item.id == this.document.category
       }).id
     }
-    console.log(this.form, '=========')
   },
   computed: {
     ...mapState({
@@ -271,9 +268,9 @@ export default {
           this.$message.error(`Приложите файл`);
         }
 
-        for (var key of formData.entries()) {
-          console.log(key[0] + ', ' + key[1])
-        }
+        // for (var key of formData.entries()) {
+        //   console.log(key[0] + ', ' + key[1])
+        // }
 
 
       } else {
@@ -281,14 +278,12 @@ export default {
       }
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
       this.form.fileList = this.form.fileList.filter(item => item.uid !== file.uid)
     },
     handlePreview(file) {
-      console.log(file);
+      // console.log(file);
     },
     addFile(file, fileList) {
-      console.log(file, 'add')
       this.ifFileChanged = true
       this.form.fileList.push(file)
     },
