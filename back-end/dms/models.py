@@ -2,7 +2,7 @@ import datetime
 import uuid
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from taggit.managers import TaggableManager
 
@@ -122,7 +122,7 @@ class Document(models.Model):
     title = models.TextField()
     annotation = models.TextField(blank=True)
     file = models.ForeignKey(to=File, on_delete=models.CASCADE)
-    user = models.ForeignKey(to=User,
+    user = models.ForeignKey(to=get_user_model(),
                              on_delete=models.SET_DEFAULT,
                              default=super_user_id())
 
