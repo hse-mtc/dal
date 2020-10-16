@@ -2,6 +2,7 @@ import datetime
 import uuid
 
 from django.db import models
+from django.contrib.auth.models import User
 
 from taggit.managers import TaggableManager
 
@@ -13,6 +14,10 @@ def upload_to(instance, filename):
 
 def current_year():
     return datetime.date.today().year
+
+
+def super_user_id():
+    return 1
 
 
 class Author(models.Model):
@@ -117,6 +122,7 @@ class Document(models.Model):
     title = models.TextField()
     annotation = models.TextField(blank=True)
     file = models.ForeignKey(to=File, on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, on_delete=models.SET_DEFAULT, default=super_user_id())
 
     class Meta:
         abstract = True
