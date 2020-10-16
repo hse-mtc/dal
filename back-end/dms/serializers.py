@@ -117,9 +117,11 @@ class PaperCreateUpdateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         tags = validated_data.pop("tags", None)
 
-        file = File.objects.get(id=instance.file.id)
-        file.content = validated_data.pop("content")
-        file.save()
+        if content := validated_data.pop("content"):
+            file = File.objects.get(id=instance.file.id)
+            file.content = content
+            file.name = content.name
+            file.save()
 
         instance = super().update(instance, validated_data)
 
