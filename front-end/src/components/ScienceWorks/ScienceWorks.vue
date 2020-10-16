@@ -49,7 +49,7 @@
           <Search placeholder="Введите ключевые слова" />
 <!--          <div class="add-document" @click="openModal">+ <span>Добавить публикацию</span></div>-->
           <AdvancedSearch class="advanced-search" />
-          <Documents class="documents" />
+          <Documents class="documents" :editModal="editModal" v-on:openEditModal="openEditModal" v-on:closeEditModal="closeEditModal"/>
         </el-col>
         <el-col :offset="1" :span="8">
           <FunctionalCalendar
@@ -61,9 +61,9 @@
         </el-col>
       </el-row>
     </el-col>
-    <AddCategoryModalWindow v-if="addNewCategory" v-on:closeModal="closeModal" />
+    <AddCategoryModalWindow v-if="addNewCategory"/>
     <AddModalWindow v-if="addModal" v-on:closeModal="closeModal" />
-    <div v-if="addModal || addNewCategory" class="background" @click="closeModal"></div>
+    <div v-if="addModal || addNewCategory || editModal" class="background" @click="closeModal"></div>
   </div>
 </template>
 
@@ -94,6 +94,7 @@ export default {
       documents: [],
       count: undefined,
       addModal: false,
+      editModal: false,
       selectedCategory: {},
       modalCategories: false,
       addNewCategory: false,
@@ -133,6 +134,14 @@ export default {
     ...mapActions({
       setCategories: 'documents/setCategories',
     }),
+    openEditModal() {
+      this.editModal = true
+      document.getElementById('main-container').classList.add('stop-scrolling')
+    },
+    closeEditModal() {
+      this.editModal = false
+      document.getElementById('main-container').classList.remove('stop-scrolling')
+    },
     closeSelectCategory() {
       this.modalCategories = false
       this.modalCategories ? document.getElementById('dark-arrow').style.transform = 'rotate(180deg)' : document.getElementById('dark-arrow').style.transform = 'rotate(0deg)'
@@ -179,6 +188,7 @@ export default {
     closeModal() {
       this.addModal = false
       this.addNewCategory = false
+      this.editModal = false
       document.getElementById('main-container').classList.remove('stop-scrolling')
     },
     openModal() {

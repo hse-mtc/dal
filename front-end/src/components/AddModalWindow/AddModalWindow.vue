@@ -184,7 +184,7 @@
             this.fetchData()
         },
         updated() {
-            console.log(this.form.fileList)
+            // console.log(this.form.fileList)
         },
         computed: {
             ...mapState({
@@ -239,9 +239,9 @@
                         this.$message.error(`Приложите файл`);
                     }
 
-                    for (var key of formData.entries()) {
-                        console.log(key[0] + ', ' + key[1])
-                    }
+                    // for (var key of formData.entries()) {
+                    //     console.log(key[0] + ', ' + key[1])
+                    // }
 
 
                 } else {
@@ -249,14 +249,12 @@
                 }
             },
             handleRemove(file, fileList) {
-                console.log(file, fileList);
                 this.form.fileList = this.form.fileList.filter(item => item.uid !== file.uid)
             },
             handlePreview(file) {
-                console.log(file);
+                // console.log(file);
             },
             addFile(file, fileList) {
-                console.log(file, 'add')
                 this.form.fileList.push(file)
             },
             handleExceed(files, fileList) {

@@ -121,7 +121,7 @@ class PaperViewSet(viewsets.ModelViewSet):
     search_fields = ["title", "annotation", "tags__name"]
 
     def get_serializer_class(self):
-        if self.action in ["create", "update"]:
+        if self.action in ["create", "update", "partial_update"]:
             return PaperCreateUpdateSerializer
         return PaperSerializer
 

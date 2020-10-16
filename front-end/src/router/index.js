@@ -44,11 +44,10 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: '/my-materials/',
     component: Layout,
-    redirect: '/msw',
     children: [{
-      path: 'my-materials',
+      path: '',
       name: 'Мои материалы',
       component: () => import('@/views/myMaterials/index'),
       meta: { title: 'Мои материалы', icon: '' }
@@ -56,7 +55,7 @@ export const constantRoutes = [
   },
 
   {
-    path: '/msw',
+    path: '/',
     component: Layout,
     redirect: '/msw/science-articles',
     name: 'Military scientific work',
@@ -69,101 +68,23 @@ export const constantRoutes = [
       },
     ]
   },
-  //
-  // {
-  //   path: '/form',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       name: 'Form',
-  //       component: () => import('@/views/form/index'),
-  //       meta: { title: 'Form', icon: '' }
-  //     }
-  //   ]
-  // },
-
-  // {
-  //   path: '/nested',
-  //   component: Layout,
-  //   redirect: '/nested/menu1',
-  //   name: 'Nested',
-  //   meta: {
-  //     title: 'Учебнометодический материал',
-  //     icon: ''
-  //   },
-  //   children: [
-  //     {
-  //       path: 'menu1',
-  //       component: () => import('@/views/nested/menu1/index'), // Parent router-view
-  //       name: 'Menu1',
-  //       meta: { title: 'Menu1' },
-  //       children: [
-  //         {
-  //           path: 'menu1-1',
-  //           component: () => import('@/views/nested/menu1/menu1-1'),
-  //           name: 'Menu1-1',
-  //           meta: { title: 'Menu1-1' }
-  //         },
-  //         {
-  //           path: 'menu1-2',
-  //           component: () => import('@/views/nested/menu1/menu1-2'),
-  //           name: 'Menu1-2',
-  //           meta: { title: 'Menu1-2' },
-  //           children: [
-  //             {
-  //               path: 'menu1-2-1',
-  //               component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-  //               name: 'Menu1-2-1',
-  //               meta: { title: 'Menu1-2-1' }
-  //             },
-  //             {
-  //               path: 'menu1-2-2',
-  //               component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-  //               name: 'Menu1-2-2',
-  //               meta: { title: 'Menu1-2-2' }
-  //             }
-  //           ]
-  //         },
-  //         {
-  //           path: 'menu1-3',
-  //           component: () => import('@/views/nested/menu1/menu1-3'),
-  //           name: 'Menu1-3',
-  //           meta: { title: 'Menu1-3' }
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       path: 'menu2',
-  //       component: () => import('@/views/nested/menu2/index'),
-  //       meta: { title: 'menu2' }
-  //     }
-  //   ]
-  // },
   {
-    path: '/teachingmaterials',
+    path: '/teachingmaterials/',
     component: Layout,
-    redirect: '/materials',
     children: [
       {
-        path: 'materials',
+        path: '',
         name: 'Teaching Materials',
         component: () => import('@/views/Materials/index'),
         meta: { title: 'Учебно-методические материалы', icon: '' }
       },
-      // {
-      //   path: 'subject',
-      //   name: 'Subject',
-      //   component: () => import('@/views/Materials/index'),
-      //   meta: { title: 'Предмет', icon: '' }
-      // }
     ]
   },
   {
-    path: '',
+    path: '/library/',
     component: Layout,
     children: [{
-      path: 'library',
+      path: '',
       name: 'Library',
       component: () => import('@/views/myMaterials/index'),
       meta: { title: 'Электронная библиотека', icon: '' }

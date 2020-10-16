@@ -19,7 +19,7 @@
         </div>
         <el-row v-for="(document, index) in group.documents" :key="document.id" class="document-card mt-3 mb-4">
           <el-col :span="2" style="font-size: 22px" class="mt-4">
-            № {{ index+1 }}
+            № {{ index + 1 }}
           </el-col>
           <el-col :span="21">
             <div class="d-flex">
@@ -36,18 +36,19 @@
             </div>
             <div class="document-card-annotation">{{ document.annotation }}</div>
           </el-col>
-          <el-col :span="1" class="d-flex justify-content-end mt-4" >
+          <el-col :span="1" class="d-flex justify-content-end mt-4">
             <el-popover
-                    placement="bottom"
-                    trigger="click"
+                placement="bottom"
+                trigger="hover"
             >
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
                 <div style="cursor:pointer;">
-                  <form :action="download" method="get">
-                    <input :value="document.id" type="hidden" name="id">
+                  <form :action="document.file.content" method="get">
+                    <input :value="document.file.name" type="hidden" name="name">
                     <button class="download-kebab-button">Скачать</button>
                   </form>
                 </div>
+                <div style="cursor:pointer;" @click="editDocument(document.id)">Редактировать</div>
                 <div style="cursor:pointer;" @click="deleteArticle(document.id)">Удалить</div>
               </div>
               <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
@@ -57,28 +58,30 @@
           </el-col>
         </el-row>
       </div>
-
     </div>
     <div v-else class="my-document">
       Документы не найдены
     </div>
+    <EditDocumentModalWindow v-if="editModal" v-on:closeModal="closeModal" :document="currentEditDocument"/>
   </div>
 </template>
 
 <script>
-import { getDocuments } from '@/api/documents'
-import { deleteDocument } from '@/api/delete'
+import {getDocuments} from '@/api/documents'
+import {deleteDocument} from '@/api/delete'
 import EventBus from '../EventBus';
 import {baseURL} from '@/utils/request';
 import moment from 'moment'
 import groupBy from 'lodash/groupBy';
 import keys from 'lodash/keys';
+import EditDocumentModalWindow from "@/components/EditDocumentModalWindow/EditDocumentModalWindow";
+import axios from "axios";
 
 export default {
   name: '',
-  components: {},
+  components: {EditDocumentModalWindow},
   filters: {
-    moment: function(date) {
+    moment: function (date) {
       return moment(date).format('DD MMMM YYYY')
     }
   },
@@ -86,11 +89,18 @@ export default {
     return {
       documents: [],
       count: undefined,
+      currentEditDocument: {},
     }
   },
   watch: {
     '$route'(to, from) {
       this.fetchData()
+    }
+  },
+  props: {
+    editModal: {
+      type: Boolean,
+      required: true
     }
   },
   created() {
@@ -99,7 +109,6 @@ export default {
     this.fetchData()
     const self = this
     EventBus.$on('UPDATE_EVENT', function () {
-      console.log('update')
       self.fetchData()
     })
   },
@@ -109,6 +118,32 @@ export default {
     }
   },
   methods: {
+    downloadFile(document) {
+      axios({
+        url: document.file.content,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'file.pdf');
+        document.body.appendChild(link);
+        link.click();
+      });
+    },
+    openModal() {
+      this.$emit('openEditModal');
+    },
+    closeModal() {
+      this.$emit('closeEditModal');
+    },
+    editDocument(id) {
+      let allDocs = []
+      this.documents.forEach(item => allDocs = [...allDocs, ...item.documents]);
+      this.currentEditDocument = allDocs.find(item => item.id === id)
+      this.openModal()
+    },
     deleteArticle(id) {
       const deletedId = {
         'id': id
@@ -118,38 +153,38 @@ export default {
         cancelButtonText: 'Отменить',
         type: 'warning'
       })
-              .then(() => {
-                deleteDocument(deletedId).then(response => {
-                  this.documents.forEach(group => {
-                    group.documents = group.documents.filter(i => {
-                      return i.id !== id
-                    })
-                  })
-                  this.documents = this.documents.filter(group => {
-                    return group.documents.length !== 0
-                  })
-                  console.log('файл удален')
-                  this.count = this.count - 1
-                }).catch(() => {
-                  console.log('Ошибка удаления файла')
-                })
-                this.$message({
-                  type: 'success',
-                  message: 'Удаление завершено'
+          .then(() => {
+            deleteDocument(deletedId).then(response => {
+              this.documents.forEach(group => {
+                group.documents = group.documents.filter(i => {
+                  return i.id !== id
                 })
               })
-              .catch(() => { })
-
+              this.documents = this.documents.filter(group => {
+                return group.documents.length !== 0
+              })
+              console.log('файл удален')
+              this.count = this.count - 1
+            }).catch(() => {
+              console.log('Ошибка удаления файла')
+            })
+            this.$message({
+              type: 'success',
+              message: 'Удаление завершено'
+            })
+          })
+          .catch(() => {
+          })
 
 
     },
     fetchData() {
-      let author = this.$route.query.author ?  this.$route.query.author :  null
-      let place = this.$route.query.place ?  this.$route.query.place :  null
-      let start_date = this.$route.query.start_date ?  this.$route.query.start_date :  null
-      let end_date = this.$route.query.end_date ?  this.$route.query.end_date :  null
-      let text = this.$route.query.text ?  this.$route.query.text :  null
-      let category = this.$route.query.section ?  this.$route.query.section :  null
+      let author = this.$route.query.author ? this.$route.query.author : null
+      let place = this.$route.query.place ? this.$route.query.place : null
+      let start_date = this.$route.query.start_date ? this.$route.query.start_date : null
+      let end_date = this.$route.query.end_date ? this.$route.query.end_date : null
+      let text = this.$route.query.text ? this.$route.query.text : null
+      let category = this.$route.query.section ? this.$route.query.section : null
       getDocuments(category, author, place, start_date, end_date, text).then(response => {
         let groupsByYear = groupBy(response.data, function (document) {
           return moment(document.publication_date).year()
@@ -163,7 +198,7 @@ export default {
         console.log('Данные по документам не указаны')
       })
     },
-    moment: function() {
+    moment: function () {
       return moment()
     }
   },
@@ -172,5 +207,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "style";
+@import "style";
 </style>
