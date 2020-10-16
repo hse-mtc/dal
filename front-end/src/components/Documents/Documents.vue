@@ -50,8 +50,6 @@
                 </div>
                 <div style="cursor:pointer;" @click="editDocument(document.id)">Редактировать</div>
                 <div style="cursor:pointer;" @click="deleteArticle(document.id)">Удалить</div>
-                <div style="cursor:pointer;" @click="downloadFile(document)">Скачать 2</div>
-                <div style="cursor:pointer;"><a :href="document.file.content" :download="document.file.name">Скачать 3</a></div>
               </div>
               <div slot="reference" class="d-flex justify-content-center" style="width: 10px; cursor: pointer">
                 <img src="../../assets/scienceWorks/popover.svg" alt="">
@@ -106,7 +104,6 @@ export default {
     }
   },
   created() {
-    this.downloadFile1()
   },
   mounted() {
     this.fetchData()
@@ -121,8 +118,6 @@ export default {
     }
   },
   methods: {
-    downloadFile1() {
-    },
     downloadFile(document) {
       axios({
         url: document.file.content,
