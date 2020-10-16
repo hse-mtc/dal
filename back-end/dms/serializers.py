@@ -93,9 +93,7 @@ class FileSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     """ Document abstract serializer """
 
-    user = serializers.HiddenField(
-        default=serializers.CurrentUserDefault()
-    )
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         abstract = True
