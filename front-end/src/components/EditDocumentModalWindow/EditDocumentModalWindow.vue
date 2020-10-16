@@ -260,7 +260,7 @@ export default {
           if (this.ifFileChanged) {
             formData.append('content', this.form.fileList[0].raw);
           }
-          updateDocs(formData)
+          updateDocs(formData, this.document.id)
               .then(function () {
                 EventBus.$emit('UPDATE_EVENT');
                 self.$emit('closeModal');

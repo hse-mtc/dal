@@ -11,9 +11,9 @@ export function uploadDocs(data) {
   })
 }
 
-export function updateDocs(data) {
+export function updateDocs(data, id) {
   return request({
-    url: '/dms/documents/',
+    url: `/dms/papers/${id}/`,
     method: 'patch',
     headers: {
       'Content-Type': 'multipart/form-data'
