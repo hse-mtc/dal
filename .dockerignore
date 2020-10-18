@@ -10,9 +10,9 @@ docker-compose.yml
 
 ### Back end ###
 ## Directories
+back-end/.pytest_cache
 back-end/docker
 back-end/docs
-back-end/documents
 
 ## Files
 back-end/readme.md
