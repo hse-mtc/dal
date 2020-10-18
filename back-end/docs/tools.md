@@ -43,3 +43,12 @@ $ pylint --help-msg=E5142
 ```
 
 Lint settings can be found in [`.pylintrc`](../.pylintrc).
+
+## PyTest
+
+Test framework.
+
+Run tests for entire project using [`scripts/tests.sh`](../scripts/tests.sh).
+
+We use default [`pytest`](https://docs.pytest.org/en/stable/) 
+and Django-specific addon [`pytest-django`](https://pytest-django.readthedocs.io/en/latest/).
