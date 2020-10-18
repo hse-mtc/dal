@@ -40,11 +40,13 @@ def test_post_authors_creates_new_author(client, author_data):
 def test_get_authors_returns_list(client, author_data):
     # pylint: disable=too-many-locals
 
-    for _ in range(3):
+    count = 3
+    for _ in range(count):
         Author.objects.create(**author_data)
 
     response = client.get("/api/dms/authors/")
     assert response.status_code == 200
+    assert len(response.data) == count
 
     id_getter = itemgetter("id")
     response.data.sort(key=id_getter)
