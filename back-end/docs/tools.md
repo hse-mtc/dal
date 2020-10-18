@@ -4,7 +4,7 @@
 
 Code formatter.
 
-Check code style for entire project using [`scripts/run-yapf.sh`](../scripts/run-yapf.sh). 
+Check code style for entire project using [`scripts/yapf.sh`](../scripts/yapf.sh). 
 Pass flag `-i | --in-place` to reformat code in-place.
 
 If you use `PyCharm`, be sure to turn off auto formatter:
@@ -19,7 +19,7 @@ Style settings can be found in [`.style.yapf`](../.style.yapf).
 
 Code linter.
 
-Lint code for entire project using [`scripts/run-pylint.sh`](../scripts/run-pylint.sh)
+Lint code for entire project using [`scripts/pylint.sh`](../scripts/pylint.sh)
 or manually specify directories and modules/files:
 ```shell script
 pylint conf dms/models.py
@@ -32,7 +32,7 @@ pylint --help-msg=<id>
 
 For example:
 ```shell script
-$ scripts/run-pylint.sh
+$ scripts/pylint.sh
 dms/admin.py:3:0: E5142: User model imported from django.contrib.auth.models (imported-auth-user)
 
 $ pylint --help-msg=E5142

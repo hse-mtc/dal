@@ -11,8 +11,8 @@ jobs:
       - name: "Build back end Docker container"
         run:  docker-compose build back-end
       - name: "Run tests"
-        run:  docker-compose run back-end pytest
+        run:  docker-compose run back-end scripts/tests.sh
       - name: "Check code style"
-        run:  docker-compose run back-end scripts/run-yapf.sh
+        run:  docker-compose run back-end scripts/yapf.sh
       - name: "Lint code"
-        run:  docker-compose run back-end scripts/run-pylint.sh
+        run:  docker-compose run back-end scripts/pylint.sh
