@@ -10,7 +10,7 @@ for setting up the environment have been followed.
 
 1. If models have changed, generate migrations:
    ```shell script
-   docker-compose run back-end python manage.py makemigrations
+   docker-compose run back-end python manage.py makemigrations --name some_meaningful_name
    ```
    
 1. Simply run (note that `front-end` is optional):
