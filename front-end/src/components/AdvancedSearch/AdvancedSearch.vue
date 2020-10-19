@@ -11,7 +11,7 @@
                 <el-col :span="10" :offset="1">
                     <div class="filters-title pl-1">Автор</div>
                     <el-select clearable v-model="author" placeholder="Все авторы" class="filters-select"
-                               @change="changeAuthors">
+                               @change="updateQuery">
                         <el-option
                                 v-for="item in authors"
                                 :key="item.id"
@@ -23,7 +23,7 @@
                 <el-col :span="10" :offset="1">
                     <div class="filters-title pl-1">Размещение</div>
                     <el-select clearable v-model="placing" placeholder="Все размещения" class="filters-select"
-                               @change="changePlacing">
+                               @change="updateQuery">
                         <el-option
                                 v-for="item in placings"
                                 :key="item.id"
@@ -43,7 +43,7 @@
                             unlink-panels
                             start-placeholder="Начало"
                             end-placeholder="Конец"
-                            @change="changeDate"
+                            @change="updateQuery"
                     />
                 </el-col>
             </el-row>
@@ -86,277 +86,23 @@
         }
       },
 
-      renderQuery(item) {
-        let temp = { section: this.$route.query.section }
-        if (this.$route.query.place) {
-          temp.place = this.$route.query.place
+      updateQuery() {
+        let query = {
+          author: this.author,
+          category: this.$route.query.category,
+          place: this.placing,
+          text: this.$route.query.text,
         }
-        if (this.$route.query.author) {
-          temp.author = this.$route.query.author
-        }
-        if (this.$route.query.start_date) {
-          temp.start_date = this.$route.query.start_date
-          temp.end_date = this.$route.query.end_date
-        }
-        temp[item] = this[temp]
-      },
 
-      changeAuthors() {
         if (this.valueDate) {
-          let start_date = this.$route.query.start_date
-          let end_date = this.$route.query.end_date
-
-          if (this.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                author: this.author,
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (this.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                section: this.$route.query.section,
-                author: this.author,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                start_date: start_date,
-                end_date: end_date,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          }
-
-        } else {
-
-          if (this.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                author: this.author,
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (this.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                author: this.author,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          }
-
+          query.start_date = moment(this.valueDate[0]).format('YYYY-MM-DD')
+          query.end_date = moment(this.valueDate[1]).format('YYYY-MM-DD')
         }
+
+        this.$router.push({query})
       },
-
-      changePlacing() {
-        if (this.valueDate) {
-          let start_date = this.$route.query.start_date
-          let end_date = this.$route.query.end_date
-
-          if (this.$route.query.author && this.placing) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                author: this.$route.query.author,
-                section: this.$route.query.section,
-                place: this.placing,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && this.placing) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                section: this.$route.query.section,
-                place: this.placing,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (this.$route.query.author && !this.placing) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                section: this.$route.query.section,
-                author: this.$route.query.author,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && !this.placing) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                start_date: start_date,
-                end_date: end_date,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          }
-
-        } else {
-          if (this.$route.query.author && this.placing) {
-            this.$router.push({
-              query: {
-                author: this.$route.query.author,
-                section: this.$route.query.section,
-                place: this.placing,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && this.placing) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                place: this.placing,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (this.$route.query.author && !this.placing) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                author: this.$route.query.author,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && !this.placing) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          }
-
-        }
-      },
-
-      changeDate() {
-        if (this.valueDate) {
-          let start_date = moment(this.valueDate[0]).format('YYYY-MM-DD')
-          let end_date = moment(this.valueDate[1]).format('YYYY-MM-DD')
-
-          if (this.$route.query.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                author: this.$route.query.author,
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (this.$route.query.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                start_date: start_date,
-                end_date: end_date,
-                section: this.$route.query.section,
-                author: this.$route.query.author,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                start_date: start_date,
-                end_date: end_date,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          }
-
-        } else {
-          if (this.$route.query.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                author: this.$route.query.author,
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                place: this.$route.query.place,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (this.$route.query.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                author: this.$route.query.author,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          } else if (!this.$route.query.author && !this.$route.query.place) {
-            this.$router.push({
-              query: {
-                section: this.$route.query.section,
-                text: this.$route.query.text ? this.$route.query.text : null,
-              }
-            })
-          }
-
-        }
-      }
     },
+
     mounted() {
         if (this.$store.getters.authors.length === 0) {
             getAuthors().then(response => {
