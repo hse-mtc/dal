@@ -23,5 +23,4 @@ class TeacherSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
     def get_fullname(self, obj):
-        # pylint: disable=(no-self-use)
         return f'{obj.surname} {obj.name} {obj.patronymic}'

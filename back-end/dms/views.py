@@ -57,9 +57,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     def destroy(self, request, *args, **kwargs):
-        # pylint: disable=no-member
-
         category = self.get_object()
+
         if Paper.objects.filter(category=category).exists():
             return Response(
                 {"message": "Category has documents and can not be deleted."},

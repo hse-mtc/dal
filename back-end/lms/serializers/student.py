@@ -23,7 +23,6 @@ class StudentSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
     def get_fullname(self, obj):
-        # pylint: disable=no-self-use
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
 
@@ -36,7 +35,6 @@ class StudentShortSerializer(WritableNestedModelSerializer):
         validators=[PresentInDatabaseValidator(Milgroup)])
 
     def get_fullname(self, obj):
-        # pylint: disable=no-self-use
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
     class Meta:

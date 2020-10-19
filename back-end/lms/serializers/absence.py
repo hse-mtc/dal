@@ -61,7 +61,6 @@ class AbsenceJournalSerializer(ModelSerializer):
         fields = ['id', 'fullname', 'absences']
 
     def get_fullname(self, obj):
-        # pylint: disable=no-self-use
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
     def get_absences(self, obj):

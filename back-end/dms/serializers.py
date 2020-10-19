@@ -165,8 +165,6 @@ class TopicRetrieveSerializer(serializers.ModelSerializer):
     class_materials = serializers.SerializerMethodField(read_only=True)
 
     def get_class_materials(self, obj: Topic):
-        # pylint: disable=no-self-use
-
         data = {}
         for value, label in ClassMaterial.Type.choices:
             materials = obj.classmaterial_set.filter(type=value)
