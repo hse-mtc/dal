@@ -115,7 +115,7 @@ export default {
     }
   },
   created() {
-    this.$router.replace({ name: 'Science Articles', query: { section: 1 }})
+    this.$router.replace({ name: 'Science Articles', query: { category: "1" }})
     this.fetchData()
 
   },
@@ -200,14 +200,14 @@ export default {
         title: this.categories.filter(item => item.id == event.target.id)[0].title,
         id: event.target.id
       }
-      this.$router.replace({ name: 'Science Articles', query: { section: event.target.id }})
+      this.$router.replace({ name: 'Science Articles', query: { category: event.target.id.toString() }})
       this.modalCategories = false
       this.modalCategories ? document.getElementById('dark-arrow').style.transform = 'rotate(180deg)' : document.getElementById('dark-arrow').style.transform = 'rotate(0deg)'
     },
     selectClick(event) {
       Array.from(document.getElementsByClassName(event.target.className)).forEach(item => item.classList.remove('selected'))
       event.target.classList.add('selected')
-      this.$router.replace({ name: 'Science Articles', query: { section: event.target.id }})
+      this.$router.replace({ name: 'Science Articles', query: { category: event.target.id.toString() }})
     }
   }
 }

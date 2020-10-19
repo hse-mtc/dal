@@ -16,7 +16,7 @@ export default {
       this.$router.push({
         query: {
           text: this.$refs.searchInput.value,
-          section: this.$route.query.section,
+          category: this.$route.query.category,
           place: this.$route.query.place,
           author: this.$route.query.author,
           start_date: this.$route.query.start_date,
@@ -28,7 +28,7 @@ export default {
       this.$refs.searchInput.value = ''
       this.$router.push({
         query: {
-          section: this.$route.query.section,
+          category: this.$route.query.category,
           place: this.$route.query.place,
           author: this.$route.query.author,
           start_date: this.$route.query.start_date,
