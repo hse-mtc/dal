@@ -42,12 +42,7 @@
                 trigger="hover"
             >
               <div style="text-align: center; margin: 0; padding: 0; font-size: 15px;">
-                <div style="cursor:pointer;">
-                  <form :action="document.file.content" method="get">
-                    <input :value="document.file.name" type="hidden" name="name">
-                    <button class="download-kebab-button">Скачать</button>
-                  </form>
-                </div>
+                <div style="cursor:pointer;" @click.prevent="downloadFile(document.file)">Скачать</div>
                 <div style="cursor:pointer;" @click="editDocument(document.id)">Редактировать</div>
                 <div style="cursor:pointer;" @click="deleteArticle(document.id)">Удалить</div>
               </div>
@@ -118,19 +113,21 @@ export default {
     }
   },
   methods: {
-    downloadFile(document) {
-      axios({
-        url: document.file.content,
-        method: 'GET',
-        responseType: 'blob', // important
-      }).then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'file.pdf');
-        document.body.appendChild(link);
-        link.click();
-      });
+    downloadFile(file) {
+      axios.get(
+        file.content,
+        {responseType: 'blob'},
+      ).then(response => {
+        let create = document.createElement.bind(document)
+        const link = create('a')
+
+        const blob = new Blob([response.data])
+        link.href = URL.createObjectURL(blob)
+        link.download = file.name
+
+        link.click()
+        URL.revokeObjectURL(link.href)
+      }).catch(console.error)
     },
     openModal() {
       this.$emit('openEditModal');
