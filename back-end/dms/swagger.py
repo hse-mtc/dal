@@ -1,4 +1,4 @@
-from drf_yasg.openapi import (
+from drf_yasg2.openapi import (
     Items,
     Parameter,
     IN_QUERY,

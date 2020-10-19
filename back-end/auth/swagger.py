@@ -1,4 +1,4 @@
-from drf_yasg.openapi import (
+from drf_yasg2.openapi import (
     IN_HEADER,
     TYPE_STRING,
     Parameter,

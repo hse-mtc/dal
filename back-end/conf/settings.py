@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # Addons
     "taggit",
     "corsheaders",
-    "drf_yasg",
+    "drf_yasg2",
     "debug_toolbar",
     "django_filters",
     "silk",

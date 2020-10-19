@@ -10,7 +10,7 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg2.utils import swagger_auto_schema
 
 from auth.swagger import token_auth_header
 
