@@ -181,7 +181,7 @@ export default {
       let start_date = this.$route.query.start_date ? this.$route.query.start_date : null
       let end_date = this.$route.query.end_date ? this.$route.query.end_date : null
       let text = this.$route.query.text ? this.$route.query.text : null
-      let category = this.$route.query.section ? this.$route.query.section : null
+      let category = this.$route.query.category ? this.$route.query.category : null
       getDocuments(category, author, place, start_date, end_date, text).then(response => {
         let groupsByYear = groupBy(response.data, function (document) {
           return moment(document.publication_date).year()
