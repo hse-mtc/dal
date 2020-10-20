@@ -65,3 +65,44 @@ def test_get_author_by_id_returns_single_author(client, author_data):
     response = client.get(f"/api/dms/authors/{id_}/")
     assert response.status_code == 200
     assert response.data == author_data
+
+
+@pytest.mark.django_db
+def test_patch_author_accepts_some_fields(client, author_data):
+    id_ = Author.objects.create(**author_data).id
+
+    data = {"last_name": "second"}
+    response = client.patch(
+        f"/api/dms/authors/{id_}/",
+        data,
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    author = Author.objects.get(id=id_)
+    assert response.data["last_name"] == author.last_name
+
+
+@pytest.mark.django_db
+def test_put_author_requires_all_fields(client, author_data):
+    id_ = Author.objects.create(**author_data).id
+
+    data = {"last_name": "second"}
+    response = client.put(
+        f"/api/dms/authors/{id_}/",
+        data,
+        content_type="application/json",
+    )
+    assert response.status_code == 400
+
+    data = dict(author_data)
+    data["last_name"] = "second"
+    response = client.put(
+        f"/api/dms/authors/{id_}/",
+        data,
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+
+    response.data.pop("id")
+    assert response.data == data
