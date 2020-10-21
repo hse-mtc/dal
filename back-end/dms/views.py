@@ -39,7 +39,10 @@ from dms.models import (
     Topic,
     Category,
 )
-from dms.permissions import (IsOwnerOrReadOnly)
+from dms.permissions import (
+    ReadOnly,
+    IsOwner,
+)
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -115,7 +118,7 @@ class PaperViewSet(viewsets.ModelViewSet):
     """API for CRUD operations on Paper model."""
 
     queryset = Paper.objects.order_by("-publication_date")
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [ReadOnly | IsOwner]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = PaperFilter
     search_fields = ["title", "annotation", "tags__name"]
@@ -128,7 +131,7 @@ class PaperViewSet(viewsets.ModelViewSet):
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [ReadOnly | IsOwner]
     filter_backends = [OrderingFilter]
     ordering_fields = ["title", "publication_year"]
 
