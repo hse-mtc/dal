@@ -1,6 +1,8 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
+import LocalStorageService from "../../utils/LocalStorageService";
+const localStorageService = LocalStorageService.getService();
 
 const state = {
   token: getToken(),
@@ -25,6 +27,7 @@ const actions = {
         const { data } = response
         commit('SET_TOKEN', data.access)
         setToken(data.access)
+        localStorageService.setToken(data);
         resolve()
       }).catch(error => {
         reject(error)
