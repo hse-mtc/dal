@@ -1,8 +1,11 @@
 import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
+import { updateAccess} from "@/api/tokens";
 import store from '@/store'
 import { getToken } from '@/utils/auth'
-
+import LocalStorageService from "./LocalStorageService";
+// LocalstorageService
+const localStorageService = LocalStorageService.getService();
 export const baseURL = (() => {
   let host = process.env.VUE_APP_BACK_END_HOST || "localhost"
   let port = process.env.VUE_APP_BACK_END_PORT || "9090"
@@ -21,13 +24,19 @@ service.interceptors.request.use(
   config => {
     // do something before request is sent
 
-    if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['Authorization'] = 'Bearer ' + getToken()
+    // if (store.getters.token) {
+    //   // let each request carry token
+    //   // ['X-Token'] is a custom headers key
+    //   // please modify it according to the actual situation
+    //   config.headers['Authorization'] = 'Bearer ' + getToken()
+    // }
+    const token = localStorageService.getAccessToken();
+    console.log(token, 'access token')
+    if (token) {
+      config.headers['Authorization'] = 'Bearer ' + token;
     }
-    return config
+    // config.headers['Content-Type'] = 'application/json';
+    return config;
   },
   error => {
     // do something with request error
@@ -78,6 +87,31 @@ service.interceptors.response.use(
   },
   error => {
     console.log('err' + error) // for debug
+
+    const originalRequest = error.config;
+
+    // if (error.response.status === 401) {
+    //   this.$router.push('/login');
+    //   return Promise.reject(error);
+    // }
+
+    if (error.response.status === 401 && !originalRequest._retry) {
+
+      originalRequest._retry = true;
+      const refreshToken = localStorageService.getRefreshToken();
+      updateAccess(
+          {
+            "refresh": refreshToken
+          }
+      ).then(res => {
+        if (res.status === 200) {
+          localStorageService.setToken(res.data);
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorageService.getAccessToken();
+          return axios(originalRequest);
+        }
+      })
+    }
+
     Message({
       message: error.message,
       type: 'error',
