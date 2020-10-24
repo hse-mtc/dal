@@ -126,7 +126,7 @@ class PaperCreateUpdateSerializer(DocumentSerializer):
     def update(self, instance, validated_data):
         tags = validated_data.pop("tags", None)
 
-        if content := validated_data.pop("content"):
+        if content := validated_data.pop("content", None):
             file = File.objects.get(id=instance.file.id)
             file.content = content
             file.name = content.name
