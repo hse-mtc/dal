@@ -46,16 +46,12 @@ from dms.permissions import (
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
-    """API for CRUD operations on Author model."""
-
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     permission_classes = [permissions.AllowAny]
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    """API for CRUD operations on Category model."""
-
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [permissions.AllowAny]
@@ -72,16 +68,12 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 
 class PublisherViewSet(viewsets.ModelViewSet):
-    """API for CRUD operations on Publisher model."""
-
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
     permission_classes = [permissions.AllowAny]
 
 
 class SubjectViewSet(viewsets.ModelViewSet):
-    """API for CRUD operations on Subject model."""
-
     queryset = Subject.objects.all()
     permission_classes = [permissions.AllowAny]
 
@@ -104,8 +96,6 @@ class TopicViewSet(viewsets.ModelViewSet):
 
 
 class TagListAPIView(ListAPIView):
-    """List all tags."""
-
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [permissions.AllowAny]
@@ -115,8 +105,6 @@ class TagListAPIView(ListAPIView):
     name="list",
     decorator=swagger_auto_schema(manual_parameters=[author_array]))
 class PaperViewSet(viewsets.ModelViewSet):
-    """API for CRUD operations on Paper model."""
-
     queryset = Paper.objects.order_by("-publication_date")
     permission_classes = [ReadOnly | IsOwner]
     filter_backends = [DjangoFilterBackend, SearchFilter]

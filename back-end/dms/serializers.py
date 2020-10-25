@@ -17,7 +17,6 @@ from dms.models import (
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-    """Serializes Author model."""
 
     class Meta:
         model = Author
@@ -25,7 +24,6 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Serializes Category model."""
 
     class Meta:
         model = Category
@@ -33,7 +31,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class PublisherSerializer(serializers.ModelSerializer):
-    """Serializes Publisher model."""
 
     class Meta:
         model = Publisher
@@ -41,7 +38,6 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
-    """Serializes Subject model."""
 
     class Meta:
         model = Subject
@@ -63,7 +59,6 @@ class TopicSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
-    """Serializes Tag model."""
 
     class Meta:
         model = Tag
@@ -91,8 +86,6 @@ class FileSerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
-    """ Document abstract serializer """
-
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -100,8 +93,6 @@ class DocumentSerializer(serializers.ModelSerializer):
 
 
 class PaperCreateUpdateSerializer(DocumentSerializer):
-    """Create or update existing Paper model."""
-
     content = serializers.FileField(write_only=True)
     tags = TagListField(required=False)
 
@@ -141,8 +132,6 @@ class PaperCreateUpdateSerializer(DocumentSerializer):
 
 
 class PaperSerializer(DocumentSerializer):
-    """Serializes Paper model."""
-
     authors = AuthorSerializer(many=True, read_only=True)
     file = FileSerializer(read_only=True)
     publishers = PublisherSerializer(many=True, read_only=True)
