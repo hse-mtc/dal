@@ -22,7 +22,6 @@ drf-writable-nested = "*"
 drf-yasg = "*"
 psycopg2-binary = "*"
 uvicorn = "*"
-whitenoise = "*"
 
 [requires]
 python_version = "3.8.5"
