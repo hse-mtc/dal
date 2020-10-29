@@ -221,9 +221,7 @@ export default {
 
         formData.append('category', this.form.currentCategory);
 
-        for (const tag of this.$refs.tagsInput.selected) {
-          formData.append('tags', tag);
-        }
+        this.$refs.tagsInput.selected.forEach(tag => formData.append('tags', tag));
 
         if (this.form.fileList.length !== 0) {
           if (this.ifFileChanged) {
