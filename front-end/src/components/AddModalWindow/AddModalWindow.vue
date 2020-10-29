@@ -90,16 +90,7 @@
                 </el-select>
             </el-form-item>
 
-            <el-form-item label="Ключевые слова">
-                <tags-input element-id="tags"
-                            v-model="form.selectedTags"
-                            :existing-tags="existingTags"
-                            :typeahead="true"
-                            placeholder="Добавить ключевое слово"
-                            :typeahead-hide-discard="true"
-                            class="add-tags">
-                </tags-input>
-            </el-form-item>
+            <TagsInput ref="tagsInput" label="Ключевые слова" />
 
 <!--            <el-form-item>-->
 <!--                <div class="add-files">-->
@@ -145,16 +136,15 @@
 </template>
 
 <script>
-    import {getExistingTags} from "../../api/existingTags";
-    import axios from "axios";
     import moment from 'moment'
     import EventBus from '../EventBus';
-    import {uploadDocs} from "../../api/upload";
+    import {uploadDocs} from "@/api/upload";
     import {mapState} from "vuex";
-
+    import TagsInput from "@/components/Tags/TagsInput";
 
     export default {
         name: "AddModalWindow",
+        components: {TagsInput},
         data() {
             return {
                 form: {
@@ -168,20 +158,11 @@
                     newAuthorPatronymic: '',
                     publisher: '',
                     newPublisher: '',
-                    selectedTags: [],
                     fileList: [],
                     currentCategory: ''
                 },
-                existingTags: [
-                    { key: 1, value: 'Стратегия' },
-                    { key: 2, value: 'Тактика' },
-                    { key: 3, value: 'Хуяктика' },
-                ],
                 publishers: [{name: 'Добавить новое', id: -1}, ...this.$store.getters.publishers],
             }
-        },
-        created() {
-            this.fetchData()
         },
         updated() {
             // console.log(this.form.fileList)
@@ -193,14 +174,6 @@
             })
         },
         methods: {
-            fetchData() {
-                getExistingTags()
-                    .then(tags => {
-                        this.existingTags = tags
-                    }).catch(() => {
-                        console.log('Данные по тегам не указаны')
-                    })
-            },
             onSubmit() {
                 const self = this
                 if (this.form.title !== '' && this.form.currentCategory !== '') {
@@ -222,7 +195,7 @@
 
                     formData.append('category', this.form.currentCategory);
 
-                    for (const tag of this.form.selectedTags.map(tag => tag.value)) {
+                    for (const tag of this.$refs.tagsInput.selected) {
                       formData.append('tags', tag);
                     }
 
@@ -271,21 +244,5 @@
 </script>
 
 <style scoped lang="scss">
-    @import "style.scss";
-
-    .el-tag + .el-tag {
-        margin-left: 10px;
-    }
-    .button-new-tag {
-        margin-left: 10px;
-        height: 32px;
-        line-height: 30px;
-        padding-top: 0;
-        padding-bottom: 0;
-    }
-    .input-new-tag {
-        width: 90px;
-        margin-left: 10px;
-        vertical-align: bottom;
-    }
+@import "style.scss";
 </style>
