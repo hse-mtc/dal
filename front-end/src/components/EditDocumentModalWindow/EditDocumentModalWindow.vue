@@ -90,16 +90,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="Ключевые слова">
-        <tags-input element-id="tags"
-                    v-model="form.selectedTags"
-                    :existing-tags="existingTags"
-                    :typeahead="true"
-                    placeholder="Добавить ключевое слово"
-                    :typeahead-hide-discard="true"
-                    class="add-tags">
-        </tags-input>
-      </el-form-item>
+      <TagsInput ref="tagsInput" label="Ключевые слова" :selected="document.tags" />
 
       <!--            <el-form-item>-->
       <!--                <div class="add-files">-->
@@ -145,16 +136,16 @@
 </template>
 
 <script>
-import {getExistingTags} from "../../api/existingTags";
-import axios from "axios";
 import moment from 'moment'
 import EventBus from '../EventBus';
 import {updateDocs} from "../../api/upload";
 import {mapState} from "vuex";
+import TagsInput from "@/components/Tags/TagsInput";
 
 
 export default {
   name: "EditDocumentModalWindow",
+  components: {TagsInput},
   data() {
     return {
       form: {
@@ -168,15 +159,10 @@ export default {
         newAuthorPatronymic: '',
         publisher: '',
         newPublisher: '',
-        selectedTags: [],
         fileList: [],
         currentCategory: ''
       },
       ifFileChanged: false,
-      existingTags: [
-        {key: 1, value: 'Стратегия'},
-        {key: 2, value: 'Тактика'},
-      ],
       publishers: [{name: 'Добавить новое', id: -1}, ...this.$store.getters.publishers],
     }
   },
@@ -185,9 +171,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-  created() {
-    this.fetchData()
   },
   updated() {
     // console.log(this.form.fileList)
@@ -204,9 +187,6 @@ export default {
       newAuthorPatronymic: '',
       publisher: this.document.publishers[0].id,
       newPublisher: '',
-      selectedTags: this.document.tags.map(item => {
-        return {key: item, value: item}
-      }),
       fileList: [this.document.file],
       currentCategory: this.categories.find(item => {
         return item.id == this.document.category
@@ -220,14 +200,6 @@ export default {
     })
   },
   methods: {
-    fetchData() {
-      getExistingTags()
-          .then(tags => {
-            this.existingTags = tags
-          }).catch(() => {
-        console.log('Данные по тегам не указаны')
-      })
-    },
     onSubmit() {
       const self = this
       if (this.form.title !== '' && this.form.currentCategory !== '') {
@@ -249,7 +221,7 @@ export default {
 
         formData.append('category', this.form.currentCategory);
 
-        for (const tag of this.form.selectedTags.map(tag => tag.value)) {
+        for (const tag of this.$refs.tagsInput.selected) {
           formData.append('tags', tag);
         }
 
