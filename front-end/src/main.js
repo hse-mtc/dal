@@ -1,7 +1,5 @@
 import Vue from 'vue'
-import VoerroTagsInput from '@voerro/vue-tagsinput';
 
-Vue.component('tags-input', VoerroTagsInput);
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 import Multiselect from 'vue-multiselect'
 // register globally
