@@ -18,11 +18,11 @@ django-filter = "*"
 django-taggit = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
-drf-yasg2 = "*"
+drf-writable-nested = "*"
+drf-yasg = "*"
 psycopg2-binary = "*"
 uvicorn = "*"
 whitenoise = "*"
-drf-writable-nested = "*"
 
 [requires]
 python_version = "3.8.5"

@@ -7,14 +7,14 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_422_UNPROCESSABLE_ENTITY
 
-from drf_yasg2.utils import swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from taggit.models import Tag
 
 from dms.filters import PaperFilter
-from dms.swagger import author_array
+from dms.swagger import AUTHOR_ARRAY
 from dms.serializers import (
     AuthorSerializer,
     BookSerializer,
@@ -103,7 +103,7 @@ class TagListAPIView(ListAPIView):
 
 @method_decorator(
     name="list",
-    decorator=swagger_auto_schema(manual_parameters=[author_array]))
+    decorator=swagger_auto_schema(manual_parameters=[AUTHOR_ARRAY]))
 class PaperViewSet(viewsets.ModelViewSet):
     queryset = Paper.objects.order_by("-publication_date")
     permission_classes = [ReadOnly | IsOwner]

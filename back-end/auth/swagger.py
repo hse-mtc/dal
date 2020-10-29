@@ -1,4 +1,4 @@
-from drf_yasg2.openapi import (
+from drf_yasg.openapi import (
     IN_HEADER,
     TYPE_STRING,
     Parameter,
@@ -6,7 +6,7 @@ from drf_yasg2.openapi import (
 
 from conf.settings import SIMPLE_JWT
 
-token_auth_header = Parameter(
+TOKEN_AUTH_HEADER = Parameter(
     "Authorization",
     IN_HEADER,
     type=TYPE_STRING,

@@ -10,12 +10,12 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from drf_yasg2.utils import swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema
 
-from auth.swagger import token_auth_header
+from auth.swagger import TOKEN_AUTH_HEADER
 
 
-@swagger_auto_schema(method="GET", manual_parameters=[token_auth_header])
+@swagger_auto_schema(method="GET", manual_parameters=[TOKEN_AUTH_HEADER])
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes([permissions.AllowAny])

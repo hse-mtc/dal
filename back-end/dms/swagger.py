@@ -1,4 +1,4 @@
-from drf_yasg2.openapi import (
+from drf_yasg.openapi import (
     Items,
     Parameter,
     IN_QUERY,
@@ -6,7 +6,7 @@ from drf_yasg2.openapi import (
     TYPE_INTEGER,
 )
 
-author_array = Parameter(
+AUTHOR_ARRAY = Parameter(
     name="authors",
     in_=IN_QUERY,
     type=TYPE_ARRAY,

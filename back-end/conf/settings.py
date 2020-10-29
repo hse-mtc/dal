@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     # Addons
     "taggit",
     "corsheaders",
-    "drf_yasg2",
+    "drf_yasg",
     "debug_toolbar",
     "django_filters",
     "silk",
@@ -181,7 +181,7 @@ INTERNAL_IPS = [
 # JWT authentication settings
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
