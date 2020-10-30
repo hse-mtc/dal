@@ -10,7 +10,7 @@ const LocalStorageService = (function () {
     }
 
     function _setToken(tokenObj) {
-        console.log(tokenObj, 'tokenObj')
+        console.log(tokenObj.access, '_setToken access')
         localStorage.setItem('access_token', tokenObj.access);
         localStorage.setItem('refresh_token', tokenObj.refresh);
     }
