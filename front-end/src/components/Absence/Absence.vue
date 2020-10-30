@@ -68,6 +68,7 @@
                         :default-sort = "{prop: 'date', order: 'descending'}"
                         style="width: 100%"
                         max-height="680"
+                        @sort-change="onSort"
                         stripe>
                             <el-table-column
                             prop="date"
@@ -117,7 +118,7 @@
                                     icon="el-icon-edit"
                                     type="info"
                                     circle
-                                    @click="onEdit(scope.row, scope.row.student.fullname)"/>
+                                    @click="onEdit(scope.row, scope.row.student)"/>
                                     <el-button
                                     size="mini"
                                     icon="el-icon-delete"
@@ -201,7 +202,7 @@
                                                     icon="el-icon-edit"
                                                     type="info"
                                                     circle
-                                                    @click="onEdit(scope.row.absences.find(x => x.date == d), scope.row.fullname)"/>
+                                                    @click="onEdit(scope.row.absences.find(x => x.date == d), scope.row)"/>
                                                     <el-button
                                                     size="mini"
                                                     icon="el-icon-delete"
@@ -276,13 +277,9 @@
 </template>
 
 <script>
-import {
-  getAbsence,
-  getAbsenceJournal,
-  patchAbsence,
-  deleteAbsence,
-} from "@/api/absence";
-import moment from "moment";
+import { getAbsence, getAbsenceJournal, patchAbsence, postAbsence, deleteAbsence } from '@/api/absence'
+import moment from 'moment'
+import sortBy from 'lodash/sortBy'
 
 export default {
   name: "Absence",
