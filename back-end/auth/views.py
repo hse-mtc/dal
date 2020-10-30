@@ -45,16 +45,3 @@ class ProfileRetrieveAPIView(RetrieveAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
-
-
-@csrf_exempt
-@api_view(["POST"])
-@permission_classes([permissions.AllowAny])
-def logout(request: Request) -> Response:
-    try:
-        request.user.auth_token.delete()
-    except (AttributeError, ObjectDoesNotExist):
-        pass
-
-    return Response({"message": "User logged out successfully."},
-                    status=HTTP_200_OK)

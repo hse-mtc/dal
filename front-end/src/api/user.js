@@ -14,10 +14,3 @@ export function getInfo(token) {
     method: 'get',
   })
 }
-
-export function logout() {
-  return request({
-    url: '/auth/users/logout/',
-    method: 'post'
-  })
-}
