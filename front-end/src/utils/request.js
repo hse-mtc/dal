@@ -31,7 +31,6 @@ service.interceptors.request.use(
     //   config.headers['Authorization'] = 'Bearer ' + getToken()
     // }
     const token = localStorageService.getAccessToken();
-    console.log(token, 'access token')
     if (token) {
       config.headers['Authorization'] = 'Bearer ' + token;
     }
@@ -84,30 +83,28 @@ service.interceptors.response.use(
       //   })
       // }
       // return Promise.reject(new Error(res.message || 'Error'))
-  },
-  error => {
+  }, error => {
     console.log('err' + error) // for debug
 
     const originalRequest = error.config;
-
-    // if (error.response.status === 401) {
-    //   this.$router.push('/login');
-    //   return Promise.reject(error);
-    // }
-
     if (error.response.status === 401 && !originalRequest._retry) {
 
       originalRequest._retry = true;
       const refreshToken = localStorageService.getRefreshToken();
-      updateAccess(
+      return updateAccess(
           {
             "refresh": refreshToken
           }
       ).then(res => {
         if (res.status === 200) {
           localStorageService.setToken(res.data);
-          axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorageService.getAccessToken();
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.access;
+          originalRequest.headers['Authorization'] = 'Bearer ' + res.data.access;
           return axios(originalRequest);
+        }
+        if (error.response.status === 401) {
+          this.$router.push('/login');
+          return Promise.reject(error);
         }
       })
     }
