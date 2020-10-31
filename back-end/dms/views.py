@@ -18,10 +18,10 @@ from dms.swagger import AUTHOR_ARRAY
 from dms.serializers import (
     AuthorSerializer,
     BookSerializer,
-    BookCreateUpdateSerializer,
+    BookMutateSerializer,
     CategorySerializer,
     PaperSerializer,
-    PaperCreateUpdateSerializer,
+    PaperMutateSerializer,
     PublisherSerializer,
     TagSerializer,
     SectionSerializer,
@@ -43,6 +43,8 @@ from dms.permissions import (
     ReadOnly,
     IsOwner,
 )
+
+MUTATE_ACTIONS = ["create", "update", "partial_update"]
 
 
 class AuthorViewSet(viewsets.ModelViewSet):
@@ -105,15 +107,15 @@ class TagListAPIView(ListAPIView):
     name="list",
     decorator=swagger_auto_schema(manual_parameters=[AUTHOR_ARRAY]))
 class PaperViewSet(viewsets.ModelViewSet):
-    queryset = Paper.objects.order_by("-publication_date")
+    queryset = Paper.objects.order_by("-publication_date", "title")
     permission_classes = [ReadOnly | IsOwner]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = PaperFilter
     search_fields = ["title", "annotation", "tags__name"]
 
     def get_serializer_class(self):
-        if self.action in ["create", "update", "partial_update"]:
-            return PaperCreateUpdateSerializer
+        if self.action in MUTATE_ACTIONS:
+            return PaperMutateSerializer
         return PaperSerializer
 
 
@@ -124,6 +126,6 @@ class BookViewSet(viewsets.ModelViewSet):
     ordering_fields = ["title", "publication_year"]
 
     def get_serializer_class(self):
-        if self.action in ["create", "update"]:
-            return BookCreateUpdateSerializer
+        if self.action in MUTATE_ACTIONS:
+            return BookMutateSerializer
         return BookSerializer
