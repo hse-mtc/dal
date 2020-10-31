@@ -2,10 +2,14 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import permissions
 from rest_framework import viewsets
-from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.generics import ListAPIView
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.status import HTTP_422_UNPROCESSABLE_ENTITY
+from rest_framework.filters import (
+    SearchFilter,
+    OrderingFilter,
+)
 
 from drf_yasg.utils import swagger_auto_schema
 
@@ -14,6 +18,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from taggit.models import Tag
 
 from dms.filters import PaperFilter
+from dms.parsers import MultiPartWithJSONParser
 from dms.swagger import AUTHOR_ARRAY
 from dms.serializers import (
     AuthorSerializer,
@@ -112,6 +117,7 @@ class PaperViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = PaperFilter
     search_fields = ["title", "annotation", "tags__name"]
+    parser_classes = [MultiPartWithJSONParser, JSONParser]
 
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
@@ -124,6 +130,7 @@ class BookViewSet(viewsets.ModelViewSet):
     permission_classes = [ReadOnly | IsOwner]
     filter_backends = [OrderingFilter]
     ordering_fields = ["title", "publication_year"]
+    parser_classes = [MultiPartWithJSONParser, JSONParser]
 
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
