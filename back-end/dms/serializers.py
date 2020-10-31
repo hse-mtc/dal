@@ -92,43 +92,31 @@ class DocumentSerializer(serializers.ModelSerializer):
         abstract = True
 
 
-class PaperCreateUpdateSerializer(DocumentSerializer):
+class DocumentMutateSerializer(DocumentSerializer):
     content = serializers.FileField(write_only=True)
-    tags = TagListField(required=False)
 
     class Meta:
-        model = Paper
-        exclude = ["file"]
+        abstract = True
 
-    def create(self, validated_data):
-        tags = validated_data.pop("tags", None)
-
+    def create_file(self, validated_data):
         content = validated_data.pop("content")
         file = File.objects.create(content=content, name=content.name)
         validated_data["file"] = file
 
-        instance = super().create(validated_data)
+    def create(self, validated_data):
+        self.create_file(validated_data)
+        return super().create(validated_data)
 
-        if tags:
-            instance.tags.set(*tags)
-
-        return instance
-
-    def update(self, instance, validated_data):
-        tags = validated_data.pop("tags", None)
-
+    def update_file(self, instance, validated_data):
         if content := validated_data.pop("content", None):
             file = File.objects.get(id=instance.file.id)
             file.content = content
             file.name = content.name
             file.save()
 
-        instance = super().update(instance, validated_data)
-
-        if tags:
-            instance.tags.set(*tags, clear=True)
-
-        return instance
+    def update(self, instance, validated_data):
+        self.update_file(instance, validated_data)
+        return super().update(instance, validated_data)
 
 
 class PaperSerializer(DocumentSerializer):
@@ -142,12 +130,41 @@ class PaperSerializer(DocumentSerializer):
         fields = "__all__"
 
 
+class PaperMutateSerializer(DocumentMutateSerializer):
+    tags = TagListField(required=False)
+
+    class Meta:
+        model = Paper
+        exclude = ["file"]
+
+    def create(self, validated_data):
+        tags = validated_data.pop("tags", None)
+        instance = super().create(validated_data)
+        if tags:
+            instance.tags.set(*tags)
+        return instance
+
+    def update(self, instance, validated_data):
+        tags = validated_data.pop("tags", None)
+        instance = super().update(instance, validated_data)
+        if tags:
+            instance.tags.set(*tags, clear=True)
+        return instance
+
+
 class ClassMaterialSerializer(DocumentSerializer):
     file = FileSerializer(read_only=True)
 
     class Meta:
         model = ClassMaterial
         fields = ["id", "title", "file"]
+
+
+class ClassMaterialMutateSerializer(DocumentMutateSerializer):
+
+    class Meta:
+        model = ClassMaterial
+        exclude = ["file"]
 
 
 class TopicRetrieveSerializer(serializers.ModelSerializer):
@@ -196,21 +213,8 @@ class BookSerializer(DocumentSerializer):
         fields = "__all__"
 
 
-class BookCreateUpdateSerializer(DocumentSerializer):
-    content = serializers.FileField(write_only=True)
+class BookMutateSerializer(DocumentMutateSerializer):
 
     class Meta:
         model = Book
         exclude = ["file"]
-
-    def create(self, validated_data):
-        content = validated_data.pop("content")
-        file = File.objects.create(content=content, name=content.name)
-        validated_data["file"] = file
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        file = File.objects.get(id=instance.file.id)
-        file.content = validated_data.pop("content")
-        file.save()
-        return super().update(instance, validated_data)
