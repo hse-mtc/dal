@@ -8,17 +8,17 @@ export function getPaperCategories(params) {
   })
 }
 
-export function addPaperCategories(params) {
+export function addPaperCategories(data) {
   return request({
     url: '/dms/categories/',
     method: 'post',
-    data: {title: params}
+    data
   })
 }
 
-export function deletePaperCategories(params) {
+export function deletePaperCategory(id) {
   return request({
-    url: `/dms/categories/${params.id}/`,
+    url: `/dms/categories/${id}/`,
     method: 'delete'
   })
 }
