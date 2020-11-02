@@ -1,12 +1,14 @@
 import axios from 'axios'
-import {MessageBox, Message} from 'element-ui'
+import {Message} from 'element-ui'
 import {updateAccess} from "@/api/tokens";
 import LocalStorageService from "./LocalStorageService";
 
 const localStorageService = LocalStorageService.getService();
 export const baseURL = (() => {
-    let host = process.env.VUE_APP_BACK_END_HOST || "localhost"
-    let port = process.env.VUE_APP_BACK_END_PORT || "9090"
+    // eslint-disable-next-line
+    const host = process.env.VUE_APP_BACK_END_HOST || "localhost"
+    // eslint-disable-next-line
+    const port = process.env.VUE_APP_BACK_END_PORT || "9090"
     return "http://" + host + ":" + port + "/api"
 })();
 
