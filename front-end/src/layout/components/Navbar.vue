@@ -47,11 +47,11 @@ export default {
     toggleSideBar() {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
+    logout() {
       const localStorageService = LocalStorageService.getService();
       localStorageService.clearToken()
       this.$router.push(`/login`)
-    }
+    },
   }
 }
 </script>
