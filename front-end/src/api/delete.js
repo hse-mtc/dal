@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-export function deleteDocument(params) {
+export function deleteDocument(id) {
   return request({
-    url: `/dms/papers/${params.id}/`,
+    url: `/dms/papers/${id}/`,
     method: 'delete',
   })
 }
