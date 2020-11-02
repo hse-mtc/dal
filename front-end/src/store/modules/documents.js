@@ -18,10 +18,7 @@ const mutations = {
 
 const actions = {
   setCategories({ commit }, categories) {
-    return new Promise(resolve => {
-      commit('SET_CATEGORIES', categories)
-      resolve()
-    })
+    commit('SET_CATEGORIES', categories)
   },
   setAuthors({ commit }, authors) {
     return new Promise(resolve => {
