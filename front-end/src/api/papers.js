@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function uploadDocs(data) {
+export function postPaper(data) {
   return request({
     url: '/dms/papers/',
     method: 'post',
@@ -11,7 +11,7 @@ export function uploadDocs(data) {
   })
 }
 
-export function updateDocs(data, id) {
+export function patchPaper(id, data) {
   return request({
     url: `/dms/papers/${id}/`,
     method: 'patch',
