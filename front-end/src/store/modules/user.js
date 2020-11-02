@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 import LocalStorageService from "../../utils/LocalStorageService";
@@ -56,18 +56,11 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_NAME', '')
-        removeToken()
-        resetRouter()
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+  logout({ commit }) {
+    commit('SET_TOKEN', '')
+    commit('SET_NAME', '')
+    removeToken()
+    resetRouter()
   },
 
   // remove token
