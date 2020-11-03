@@ -2,7 +2,13 @@
   <div>
     <div v-if="documents.length !== 0" class="my-document">
       <div class="count">
-        {{ count }} {{ "документ" + (count > 5 ? "ов" : count > 1 ? "а" : "") }}
+        {{ count }} {{
+          `документ${
+              (count > 4 && 'ов')
+              || (count > 1 && 'а')
+              || ''
+          }`
+        }}
       </div>
 
       <div v-for="group in documents" :key="group.year">
