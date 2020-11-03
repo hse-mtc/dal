@@ -63,9 +63,9 @@
     data() {
       return {
         authors: [],
-        author: '',
+        author: null,
         placings: [],
-        placing: '',
+        placing: null,
         valueDate: '',
       }
     },
@@ -87,7 +87,7 @@
       },
 
       updateQuery() {
-        let query = {
+        const query = {
           author: this.author,
           category: this.$route.query.category,
           place: this.placing,
