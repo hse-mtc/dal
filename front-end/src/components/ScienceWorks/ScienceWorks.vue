@@ -11,8 +11,14 @@
         <el-row class="select-work">
           <el-col :span="10" :offset="2">
             <span class="category-selected" @click="openAllCategories">{{ category.title }}</span>
-            <img id="dark-arrow" src="../../assets/scienceWorks/dropdownBlack.svg" alt="" class="ml-2"
-                 style="cursor:pointer;" @click="openAllCategories">
+            <img
+                id="dark-arrow"
+                src="../../assets/scienceWorks/dropdownBlack.svg"
+                alt="Открыть список категорий"
+                class="ml-2"
+                style="cursor:pointer;"
+                @click="openAllCategories"
+            >
           </el-col>
 
           <el-col :span="7">
@@ -25,15 +31,23 @@
         <el-row v-if="modalCategories" class="categories-selector">
           <el-col :offset="2" :span="20" class="categories-title">
             <el-row style="width: 100%">
-              <el-col :span="12" v-for="category in categories" :key="category.id" class="category-title">
+              <el-col
+                  v-for="{id, title} in categories"
+                  :key="id"
+                  :span="12"
+                  class="category-title"
+              >
                 <div>
-                  <span style="cursor:pointer;" :id="category.id"
-                        @click="selectCategory(category.id)">
-                    {{ category.title }}
+                  <span style="cursor:pointer;" :id="id"
+                        @click="selectCategory(id)">
+                    {{ title }}
                   </span>
-                  <img @click="deleteCategory(category.id)"
-                       class="category-delete ml-2" height="10px"
-                       src="../../assets/scienceWorks/close.svg" alt=""
+                  <img
+                      @click="deleteCategory(id)"
+                      class="category-delete ml-2"
+                      height="10px"
+                      src="../../assets/scienceWorks/close.svg"
+                      alt="Удалить категорию"
                   />
                 </div>
               </el-col>
