@@ -50,7 +50,7 @@ export default class PaperForm {
 
   split(action) {
     if (!["add", "edit"].includes(action)) {
-      throw TypeError("PaperForm: unknown action")
+      throw new TypeError("PaperForm: unknown action")
     }
 
     return {
