@@ -39,10 +39,10 @@
             style="width: 300px"
         >
           <ElOption
-              v-for="publisher in publishers"
-              :key="publisher.id"
-              :value="publisher.id"
-              :label="publisher.name"
+              v-for="{id, name} in publishers"
+              :key="id"
+              :value="id"
+              :label="name"
           />
         </ElSelect>
       </ElFormItem>
@@ -58,10 +58,10 @@
       <ElFormItem label="Категория документа" prop="category">
         <ElSelect placeholder="Выберите категорию" v-model.number="paperForm.category" clearable>
           <ElOption
-              v-for="category in categories"
-              :key="category.id"
-              :value="category.id"
-              :label="category.title"
+              v-for="{id, title} in categories"
+              :key="id"
+              :value="id"
+              :label="title"
           />
         </ElSelect>
       </ElFormItem>
