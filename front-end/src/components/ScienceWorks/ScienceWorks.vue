@@ -96,7 +96,7 @@
         v-on:closeModal="closeModal"
     />
 
-    <div v-if="paperAction || addNewCategory" class="background" @click="closeModal"></div>
+    <div v-if="paperAction || addNewCategory" class="background" @click="closeModal"/>
   </div>
 </template>
 
