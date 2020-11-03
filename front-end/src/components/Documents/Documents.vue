@@ -102,9 +102,8 @@ export default {
 
   async mounted() {
     await this.fetchData()
-    const self = this
     EventBus.$on('UPDATE_EVENT', () => {
-      self.fetchData()
+      this.fetchData()
     })
   },
 
