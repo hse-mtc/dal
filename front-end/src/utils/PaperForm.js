@@ -40,8 +40,8 @@ export default class PaperForm {
       title: this.title.trim(),
     }
 
-    const date = this.publication_date || ""
-    if (date !== "") {
+    const date = this.publication_date
+    if (date) {
       data.publication_date = moment(date).format("YYYY-MM-DD")
     }
 
