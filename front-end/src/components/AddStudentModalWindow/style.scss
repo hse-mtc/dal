@@ -1,38 +1,37 @@
 .addModal {
-    margin-top: 50px;
-    position: fixed;
-    top: 50%;
-    left: calc(50%);
-    transform: translate(calc(-0%), -50%);
-    z-index: 11;
-    width: 50vw;
-    height: 100%;
-    background-color: white;
-    padding: 32px 23px;
-    border: 1px solid #ccc;
-    z-index: 203;
-    overflow-y: scroll;
-  
-    .avatar-uploader .el-upload {
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-    .avatar-uploader-icon {
-      font-size: 40px;
-      color: #909399;
-      width: 178px;
-      height: 178px;
-      line-height: 178px;
-      text-align: center;
-    }
-    .avatar-uploader-icon:hover {
-      color: #409EFF;
-    }
-    .avatar {
-      width: 178px;
-      height: 178px;
-      display: block;
-    }
+  margin-top: 50px;
+  position: fixed;
+  top: 50%;
+  left: calc(50%);
+  transform: translate(calc(-0%), -50%);
+  z-index: 11;
+  width: 50vw;
+  height: 100%;
+  background-color: white;
+  padding: 32px 23px;
+  border: 1px solid #ccc;
+  z-index: 203;
+  overflow-y: scroll;
+
+  .avatar-uploader .el-upload {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
-  
+  .avatar-uploader-icon {
+    font-size: 40px;
+    color: #909399;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar-uploader-icon:hover {
+    color: #409eff;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+}

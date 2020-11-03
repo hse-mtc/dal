@@ -1,23 +1,23 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
 export function postPaper(data) {
   return request({
-    url: '/dms/papers/',
-    method: 'post',
+    url: "/dms/papers/",
+    method: "post",
     headers: {
-      'Content-Type': 'multipart/form-data'
+      "Content-Type": "multipart/form-data",
     },
-    data
-  })
+    data,
+  });
 }
 
 export function patchPaper(id, data) {
   return request({
     url: `/dms/papers/${id}/`,
-    method: 'patch',
+    method: "patch",
     headers: {
-      'Content-Type': 'multipart/form-data'
+      "Content-Type": "multipart/form-data",
     },
-    data
-  })
+    data,
+  });
 }

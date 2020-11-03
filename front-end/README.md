@@ -4,7 +4,7 @@
 
 With Docker running execute this command:
 
-``` bash
+```bash
 docker-compose up
 ```
 

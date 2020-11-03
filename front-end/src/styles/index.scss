@@ -1,15 +1,18 @@
-@import './variables.scss';
-@import './mixin.scss';
-@import './transition.scss';
-@import './element-ui.scss';
-@import './sidebar.scss';
+@import "./variables.scss";
+@import "./mixin.scss";
+@import "./transition.scss";
+@import "./element-ui.scss";
+@import "./sidebar.scss";
 
 @font-face {
   font-family: "ProximaNovaRegular";
   src: url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.eot");
-  src: url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.eot?#iefix")format("embedded-opentype"),
-  url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.woff") format("woff"),
-  url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.ttf") format("truetype");
+  src: url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.eot?#iefix")
+      format("embedded-opentype"),
+    url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.woff")
+      format("woff"),
+    url("../assets/fonts/ProximaNovaRegular/ProximaNovaRegular.ttf")
+      format("truetype");
   font-style: normal;
   font-weight: normal;
 }
@@ -18,9 +21,11 @@
 @font-face {
   font-family: "ProximaNovaBold";
   src: url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.eot");
-  src: url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.eot?#iefix")format("embedded-opentype"),
-  url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.woff") format("woff"),
-  url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.ttf") format("truetype");
+  src: url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.eot?#iefix")
+      format("embedded-opentype"),
+    url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.woff") format("woff"),
+    url("../assets/fonts/ProximaNovaBold/ProximaNovaBold.ttf")
+      format("truetype");
   font-style: normal;
   font-weight: normal;
 }
@@ -29,20 +34,22 @@
 @font-face {
   font-family: "ProximaNovaBlack";
   src: url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.eot");
-  src: url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.eot?#iefix")format("embedded-opentype"),
-  url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.woff") format("woff"),
-  url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.ttf") format("truetype");
+  src: url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.eot?#iefix")
+      format("embedded-opentype"),
+    url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.woff") format("woff"),
+    url("../assets/fonts/ProximaNovaBlack/ProximaNovaBlack.ttf")
+      format("truetype");
   font-style: normal;
   font-weight: normal;
 }
-
 
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,
+    Microsoft YaHei, Arial, sans-serif;
 }
 
 label {
@@ -98,11 +105,11 @@ div:focus {
   background-color: $menuHover !important;
 }
 
-.menu-wrapper a{
+.menu-wrapper a {
   text-decoration: none !important;
 }
 
-.router-link-exact-active .router-link-active li{
+.router-link-exact-active .router-link-active li {
   background-color: #384250 !important;
 }
 
@@ -111,8 +118,16 @@ div:focus {
   //padding: 20px;
 }
 
-.vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day span.vfc-span-day.vfc-marked {
-  background-color: #0050B2 !important;
+.vfc-styles-conditional-class
+  .vfc-main-container
+  .vfc-calendars-container
+  .vfc-calendars
+  .vfc-calendar
+  div.vfc-content
+  .vfc-week
+  div.vfc-day
+  span.vfc-span-day.vfc-marked {
+  background-color: #0050b2 !important;
 }
 //
 //.vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day .vfc-base-start, .vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day .vfc-base-end {
@@ -126,8 +141,16 @@ div:focus {
 //.vfc-span-day vfc-marked vfc-hover:before {
 //  background-color: #6074FB !important;
 
-.vfc-styles-conditional-class .vfc-main-container .vfc-calendars-container .vfc-calendars .vfc-calendar div.vfc-content .vfc-week div.vfc-day span.vfc-span-day.vfc-marked:before {
-  background-color: #6074FB;
+.vfc-styles-conditional-class
+  .vfc-main-container
+  .vfc-calendars-container
+  .vfc-calendars
+  .vfc-calendar
+  div.vfc-content
+  .vfc-week
+  div.vfc-day
+  span.vfc-span-day.vfc-marked:before {
+  background-color: #6074fb;
 }
 
 .vfc-styles-conditional-class .vfc-main-container {

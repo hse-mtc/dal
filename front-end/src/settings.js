@@ -1,6 +1,5 @@
 module.exports = {
-
-  title: 'ВУЦ ВШЭ',
+  title: "ВУЦ ВШЭ",
 
   /**
    * @type {boolean} true | false
@@ -12,5 +11,5 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: false
-}
+  sidebarLogo: false,
+};

@@ -5,22 +5,20 @@
 </template>
 
 <script>
-import Absence from '../../components/Absence/Absence'
+import Absence from "../../components/Absence/Absence";
 
 export default {
   components: {
-    Absence
+    Absence,
   },
   data() {
-    return {
-    }
+    return {};
   },
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
-    fetchData() {
-    }
-  }
-}
+    fetchData() {},
+  },
+};
 </script>

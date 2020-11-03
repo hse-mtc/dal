@@ -1,27 +1,27 @@
 <template>
   <ElFormItem :label="label">
     <ElTag
-        v-for="tag in selected"
-        :key="tag"
-        closable
-        @close="handleClose(tag)"
-        class="mr-2"
+      v-for="tag in selected"
+      :key="tag"
+      closable
+      @close="handleClose(tag)"
+      class="mr-2"
     >
       {{ tag }}
     </ElTag>
 
     <ElAutocomplete
-        v-model="tag"
-        :fetch-suggestions="suggestions"
-        @select="handleSelect"
-        @keyup.enter.native="handleSelect"
-        class="inline-input"
+      v-model="tag"
+      :fetch-suggestions="suggestions"
+      @select="handleSelect"
+      @keyup.enter.native="handleSelect"
+      class="inline-input"
     />
   </ElFormItem>
 </template>
 
 <script>
-import {getExistingTags} from "@/api/existingTags";
+import { getExistingTags } from "@/api/existingTags";
 
 export default {
   name: "TagsInput",
@@ -33,7 +33,7 @@ export default {
   props: {
     label: {
       type: String,
-      default: "Ключевые слова"
+      default: "Ключевые слова",
     },
     selected: {
       type: Array,
@@ -43,41 +43,41 @@ export default {
 
   data() {
     return {
-      tag: '',
+      tag: "",
       all: [],
-    }
+    };
   },
 
   async created() {
     try {
-      this.all = (await getExistingTags()).data
+      this.all = (await getExistingTags()).data;
     } catch (error) {
-      console.log("Failed to fetch Tags: ", error)
+      console.log("Failed to fetch Tags: ", error);
     }
   },
 
   methods: {
     updateModel() {
-      this.$emit("change", this.selected)
+      this.$emit("change", this.selected);
     },
 
     handleSelect() {
-      const tag = this.tag.trim().toLowerCase()
+      const tag = this.tag.trim().toLowerCase();
       if (this.tag && !this.selected.includes(tag)) {
-        this.selected.push(tag)
+        this.selected.push(tag);
       }
-      this.tag = ''
+      this.tag = "";
 
-      this.updateModel()
+      this.updateModel();
     },
 
     handleClose(tag) {
-      const index = this.selected.indexOf(tag)
+      const index = this.selected.indexOf(tag);
       if (index > -1) {
-        this.selected.splice(index, 1)
+        this.selected.splice(index, 1);
       }
 
-      this.updateModel()
+      this.updateModel();
     },
 
     suggestions(text, cb) {
@@ -85,11 +85,14 @@ export default {
       //   1. Filter tags that are not selected yet.
       //   2. Leave the ones that contain tag as substring.
       const asValues = this.all
-        .filter(tag => !this.selected.includes(tag) && tag.indexOf(text.toLowerCase()) > -1)
-        .map(tag => ({value: tag}))
+        .filter(
+          (tag) =>
+            !this.selected.includes(tag) && tag.indexOf(text.toLowerCase()) > -1
+        )
+        .map((tag) => ({ value: tag }));
 
-      cb(asValues)
+      cb(asValues);
     },
-  }
-}
+  },
+};
 </script>

@@ -5,22 +5,20 @@
 </template>
 
 <script>
-import Students from '../../components/Personnel/Personnel'
+import Students from "../../components/Personnel/Personnel";
 
 export default {
   components: {
-    Students
+    Students,
   },
   data() {
-    return {
-    }
+    return {};
   },
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
-    fetchData() {
-    }
-  }
-}
+    fetchData() {},
+  },
+};
 </script>

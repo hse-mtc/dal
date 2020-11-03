@@ -1,24 +1,26 @@
 <template>
   <div class="mynavbar">
-    <hamburger :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper m-0" style="font-size: 19px">
-<!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-          {{name}}
+          <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
+          {{ name }}
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
-            <el-dropdown-item>
-              Домой
-            </el-dropdown-item>
+            <el-dropdown-item> Домой </el-dropdown-item>
           </router-link>
           <el-dropdown-item divided>
-            <span style="display:block;" @click="logout">Выход</span>
+            <span style="display: block" @click="logout">Выход</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -27,33 +29,30 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
+import { mapGetters } from "vuex";
+import Breadcrumb from "@/components/Breadcrumb";
+import Hamburger from "@/components/Hamburger";
 import LocalStorageService from "@/utils/LocalStorageService";
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
   },
   computed: {
-    ...mapGetters([
-      'sidebar',
-      'name'
-    ])
+    ...mapGetters(["sidebar", "name"]),
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+      this.$store.dispatch("app/toggleSideBar");
     },
     logout() {
       const localStorageService = LocalStorageService.getService();
-      localStorageService.clearToken()
-      this.$router.push(`/login`)
+      localStorageService.clearToken();
+      this.$router.push(`/login`);
     },
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -62,10 +61,9 @@ export default {
   overflow: hidden;
   position: relative;
   /*background: #fff;*/
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
-  background-color: #2D3746;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  background-color: #2d3746;
   color: #fff !important;
-
 
   .hamburger-container {
     margin-left: 20px;
@@ -73,11 +71,11 @@ export default {
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -85,7 +83,6 @@ export default {
     float: left;
     color: #fff;
     color: #fff !important;
-
   }
 
   .right-menu {
@@ -108,10 +105,10 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }

@@ -5,22 +5,20 @@
 </template>
 
 <script>
-import ReferenceBook from '../../components/ReferenceBook/ReferenceBook'
+import ReferenceBook from "../../components/ReferenceBook/ReferenceBook";
 
 export default {
   components: {
-    ReferenceBook
+    ReferenceBook,
   },
   data() {
-    return {
-    }
+    return {};
   },
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
-    fetchData() {
-    }
-  }
-}
+    fetchData() {},
+  },
+};
 </script>
