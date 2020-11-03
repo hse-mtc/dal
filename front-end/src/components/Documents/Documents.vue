@@ -163,16 +163,16 @@ export default {
     },
 
     async fetchData() {
-      let author = this.$route.query.author ? this.$route.query.author : null
-      let place = this.$route.query.place ? this.$route.query.place : null
-      let start_date = this.$route.query.start_date ? this.$route.query.start_date : null
-      let end_date = this.$route.query.end_date ? this.$route.query.end_date : null
-      let text = this.$route.query.text ? this.$route.query.text : null
-      let category = this.$route.query.category ? this.$route.query.category : null
+      const author = this.$route.query.author
+      const place = this.$route.query.place
+      const start_date = this.$route.query.start_date
+      const end_date = this.$route.query.end_date
+      const text = this.$route.query.text
+      const category = this.$route.query.category
 
       let papers
       try {
-        papers = (await getDocuments(category, author, place, start_date, end_date, text)).data
+        ({data: papers} = await getDocuments(category, author, place, start_date, end_date, text))
       } catch (error) {
         console.log("Failed to fetch Papers: ", error)
         return
