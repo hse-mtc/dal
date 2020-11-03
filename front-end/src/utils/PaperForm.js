@@ -49,7 +49,7 @@ export default class PaperForm {
   }
 
   split(action) {
-    if (["add", "edit"].indexOf(action) === -1) {
+    if (!["add", "edit"].includes(action)) {
       throw TypeError("PaperForm: unknown action")
     }
 
