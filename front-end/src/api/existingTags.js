@@ -1,9 +1,9 @@
-import request from '@/utils/request'
+import request from "@/utils/request";
 
 export function getExistingTags(params) {
   return request({
-    url: '/dms/tags/',
-    method: 'get',
-    params
-  })
+    url: "/dms/tags/",
+    method: "get",
+    params,
+  });
 }

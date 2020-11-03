@@ -8,7 +8,7 @@
 }
 
 .select-work {
-  background-color: #F5F5F7;
+  background-color: #f5f5f7;
   padding-top: 17px;
   padding-bottom: 17px;
 
@@ -64,12 +64,12 @@
   text-align: center;
 
   .selected {
-    border-bottom: 1px solid #0061D9;
+    border-bottom: 1px solid #0061d9;
     padding-bottom: 5px;
   }
 
   &-item:hover {
-    border-bottom: 1px solid #0061D9;
+    border-bottom: 1px solid #0061d9;
     padding-bottom: 5px;
   }
 }
@@ -101,7 +101,7 @@
   span {
     text-decoration: underline;
   }
-  color: #0050B2;
+  color: #0050b2;
   cursor: pointer;
   margin-top: 20px;
   margin-bottom: -43px;
@@ -111,5 +111,3 @@
 .add-document-top {
   cursor: pointer;
 }
-
-

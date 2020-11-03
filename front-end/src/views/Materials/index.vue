@@ -5,22 +5,20 @@
 </template>
 
 <script>
-import Materials from '../../components/Materials/Materials'
+import Materials from "../../components/Materials/Materials";
 
 export default {
   components: {
-    Materials
+    Materials,
   },
   data() {
-    return {
-    }
+    return {};
   },
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
-    fetchData() {
-    }
-  }
-}
+    fetchData() {},
+  },
+};
 </script>

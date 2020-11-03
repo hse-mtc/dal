@@ -5,22 +5,20 @@
 </template>
 
 <script>
-import ScienceWorks from '../../components/ScienceWorks/ScienceWorks'
+import ScienceWorks from "../../components/ScienceWorks/ScienceWorks";
 
 export default {
   components: {
-    ScienceWorks
+    ScienceWorks,
   },
   data() {
-    return {
-    }
+    return {};
   },
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
-    fetchData() {
-    }
-  }
-}
+    fetchData() {},
+  },
+};
 </script>

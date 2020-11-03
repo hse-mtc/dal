@@ -28,28 +28,31 @@
   }
 
   .add-tags {
-    ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    ::placeholder {
+      /* Chrome, Firefox, Opera, Safari 10.1+ */
       color: #c8cbd1;
       opacity: 1; /* Firefox */
     }
 
-    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    :-ms-input-placeholder {
+      /* Internet Explorer 10-11 */
       color: #c8cbd1;
     }
 
-    ::-ms-input-placeholder { /* Microsoft Edge */
+    ::-ms-input-placeholder {
+      /* Microsoft Edge */
       color: #c8cbd1;
     }
   }
 
   .add-files {
-    input[type="file"]{
-      display: none
+    input[type="file"] {
+      display: none;
     }
-    div.file-listing{
+    div.file-listing {
       width: 200px;
     }
-    span.remove-file{
+    span.remove-file {
       color: red;
       cursor: pointer;
       float: right;
@@ -66,12 +69,12 @@
       font-size: 12px;
       line-height: 21px;
       letter-spacing: 0.04em;
-      color: #76767A;
+      color: #76767a;
     }
     &-container {
       width: 300px;
       margin-top: 10px;
-      border: 1px solid #A7A7AB;
+      border: 1px solid #a7a7ab;
       border-radius: 4px;
     }
   }

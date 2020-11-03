@@ -2,7 +2,7 @@
   <div class="addModal">
     <el-form ref="form" :model="form" label-width="175px">
       <el-form-item label="Название категории">
-        <el-input placeholder="Введите название" v-model="form.title"/>
+        <el-input placeholder="Введите название" v-model="form.title" />
       </el-form-item>
 
       <el-form-item>
@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import {addPaperCategories} from "@/api/paper_categories"
+import { addPaperCategories } from "@/api/paper_categories";
 
-import EventBus from '../EventBus'
+import EventBus from "../EventBus";
 
 export default {
   name: "AddCategoryModalWindow",
@@ -24,32 +24,32 @@ export default {
   data() {
     return {
       form: {
-        title: ''
-      }
-    }
+        title: "",
+      },
+    };
   },
 
   methods: {
     async onSubmit() {
-      const title = this.form.title.trim()
+      const title = this.form.title.trim();
       if (title === "") {
-        return
+        return;
       }
 
       try {
-        await addPaperCategories({title})
-        EventBus.$emit('UPDATE_CATEGORY')
-        this.closeModal()
+        await addPaperCategories({ title });
+        EventBus.$emit("UPDATE_CATEGORY");
+        this.closeModal();
       } catch (error) {
-        console.log("Failed to add Category: ", error)
+        console.log("Failed to add Category: ", error);
       }
     },
 
     closeModal() {
-      this.$emit("closeModal")
-    }
-  }
-}
+      this.$emit("closeModal");
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

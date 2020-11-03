@@ -1,13 +1,13 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import getters from './getters'
-import app from './modules/app'
-import settings from './modules/settings'
-import user from './modules/user'
-import projectData from './modules/projectData'
-import documents from './modules/documents'
+import Vue from "vue";
+import Vuex from "vuex";
+import getters from "./getters";
+import app from "./modules/app";
+import settings from "./modules/settings";
+import user from "./modules/user";
+import projectData from "./modules/projectData";
+import documents from "./modules/documents";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   modules: {
@@ -15,9 +15,9 @@ const store = new Vuex.Store({
     settings,
     user,
     projectData,
-    documents
+    documents,
   },
-  getters
-})
+  getters,
+});
 
-export default store
+export default store;
