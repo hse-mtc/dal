@@ -113,7 +113,7 @@ export default {
     async downloadFile(file) {
       let data
       try {
-        data = (await axios.get(file.content, {responseType: 'blob'})).data
+        ({data} = await axios.get(file.content, {responseType: 'blob'}))
       } catch (error) {
         console.log("Failed to download Paper.file: ", error)
         return
