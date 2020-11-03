@@ -197,8 +197,7 @@ export default {
       this.$message.warning("Вы можете приложить только один файл")
     },
 
-    // eslint-disable-next-line
-    beforeRemove(file, _) {
+    beforeRemove(file) {
       return this.$confirm(`Удалить ${file.name}?`)
     },
     handleRemove(_, fileList) {
