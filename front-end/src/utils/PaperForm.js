@@ -3,14 +3,14 @@ import has from "lodash/has"
 
 export default class PaperForm {
   constructor(
-      annotation = '',
+      annotation = "",
       authors = [],
-      category = '',
+      category = "",
       files = [],
-      publication_date = '',
+      publication_date = "",
       publishers = [],
       tags = [],
-      title = '',
+      title = "",
   ) {
     this.annotation = annotation
     this.authors = authors
