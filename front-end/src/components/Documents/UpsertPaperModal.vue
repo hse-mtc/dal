@@ -10,7 +10,7 @@
             placeholder="Введите текст аннотации"
             v-model="paperForm.annotation"
             type="textarea"
-            :autosize="{ minRows: 2}"/>
+            :autosize="{ minRows: 2 }"/>
       </ElFormItem>
 
       <ElFormItem label="Авторы">
