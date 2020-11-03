@@ -85,8 +85,8 @@ export default {
       //   1. Filter tags that are not selected yet.
       //   2. Leave the ones that contain tag as substring.
       const asValues = this.all
-      .filter(tag => !this.selected.includes(tag) && tag.indexOf(text.toLowerCase()) > -1)
-      .map(tag => ({value: tag}))
+        .filter(tag => !this.selected.includes(tag) && tag.indexOf(text.toLowerCase()) > -1)
+        .map(tag => ({value: tag}))
 
       cb(asValues)
     },
