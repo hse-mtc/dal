@@ -126,17 +126,20 @@ export default {
   },
 
   data() {
-    const empty = isEmpty(this.paper)
-    const paperForm = new PaperForm(
-        empty ? "" : this.paper.annotation,
-        empty ? [] : this.paper.authors.map(a => a.id),
-        empty ? "" : this.paper.category,
-        empty ? [] : [this.paper.file],
-        empty ? "" : this.paper.publication_date,
-        empty ? [] : this.paper.publishers.map(p => p.id),
-        empty ? [] : this.paper.tags,
-        empty ? "" : this.paper.title,
-    )
+    const paper = this.paper
+    const empty = isEmpty(paper)
+    const paperForm = empty ?
+        new PaperForm() :
+        new PaperForm(
+            paper.annotation,
+            paper.authors.map(a => a.id),
+            paper.category,
+            [paper.file],
+            paper.publication_date,
+            paper.publishers.map(p => p.id),
+            paper.tags,
+            paper.title,
+        )
 
     const required = {required: true, message: "Обязательное поле"}
 
