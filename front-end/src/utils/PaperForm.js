@@ -7,7 +7,7 @@ export default class PaperForm {
       authors = [],
       category = "",
       files = [],
-      publication_date = "",
+      publicationDate = "",
       publishers = [],
       tags = [],
       title = "",
@@ -16,7 +16,7 @@ export default class PaperForm {
     this.authors = authors
     this.category = category
     this.files = files
-    this.publication_date = publication_date
+    this.publicationDate = publicationDate
     this.publishers = publishers
     this.tags = tags
     this.title = title
@@ -40,7 +40,7 @@ export default class PaperForm {
       title: this.title.trim(),
     }
 
-    const date = this.publication_date
+    const date = this.publicationDate
     if (date) {
       data.publication_date = moment(date).format("YYYY-MM-DD")
     }
