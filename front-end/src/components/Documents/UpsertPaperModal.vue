@@ -49,7 +49,7 @@
 
       <ElFormItem label="Дата публикации">
         <ElDatePicker
-            v-model="paperForm.publication_date"
+            v-model="paperForm.publicationDate"
             type="date"
             :placeholder="today"
             :format="dateFormat"/>
