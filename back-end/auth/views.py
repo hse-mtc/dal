@@ -19,7 +19,6 @@ from auth.models import Profile
 from auth.serializers import ProfileSerializer
 
 
-@swagger_auto_schema(method="GET", manual_parameters=[TOKEN_AUTH_HEADER])
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes([permissions.AllowAny])
