@@ -73,6 +73,7 @@ service.interceptors.response.use(
           }
         })
         .catch(() => {
+          localStorageService.clearToken()
           location.reload();
         });
     }
