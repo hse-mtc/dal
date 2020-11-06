@@ -64,10 +64,7 @@ class Subject(models.Model):
 
 class Section(models.Model):
     title = models.CharField(max_length=255)
-    subject = models.ForeignKey(
-        to=Subject,
-        on_delete=models.DO_NOTHING,
-    )
+    subject = models.ForeignKey(to=Subject, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Section"
@@ -79,10 +76,7 @@ class Section(models.Model):
 
 class Topic(models.Model):
     title = models.CharField(max_length=255)
-    section = models.ForeignKey(
-        to=Section,
-        on_delete=models.DO_NOTHING,
-    )
+    section = models.ForeignKey(to=Section, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Topic"
