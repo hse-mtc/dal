@@ -137,7 +137,7 @@ class Document(models.Model):
 
 class Paper(Document):
     authors = models.ManyToManyField(to=Author, blank=True)
-    category = models.ForeignKey(to=Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(to=Category, on_delete=models.RESTRICT)
     publication_date = models.DateField(default=datetime.date.today)
     publishers = models.ManyToManyField(to=Publisher, blank=True)
     tags = TaggableManager(blank=True)
