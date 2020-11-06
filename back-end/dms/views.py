@@ -83,6 +83,8 @@ class PublisherViewSet(viewsets.ModelViewSet):
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     permission_classes = [permissions.AllowAny]
+    filter_backends = [SearchFilter]
+    search_fields = ["title", "annotation"]
 
     def get_serializer_class(self):
         if self.action == "retrieve":
