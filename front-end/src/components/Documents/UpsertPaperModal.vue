@@ -132,7 +132,7 @@ export default {
   props: {
     paper: {
       type: Object,
-      default: () => {},
+      default: () => ({})
     },
     action: {
       type: String,
