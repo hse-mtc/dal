@@ -2,11 +2,9 @@ from rest_framework.serializers import (ModelSerializer, IntegerField,
                                         CharField)
 
 from lms.models import (
-    StudentPost,
     TeacherPost,
     Milgroup,
     Program,
-    Skill,
     Rank,
 )
 
@@ -33,20 +31,6 @@ class RankSerializer(ModelSerializer):
 
     class Meta:
         model = Rank
-        fields = '__all__'
-
-
-class SkillSerializer(ModelSerializer):
-
-    class Meta:
-        model = Skill
-        fields = '__all__'
-
-
-class StudentPostSerializer(ModelSerializer):
-
-    class Meta:
-        model = StudentPost
         fields = '__all__'
 
 
