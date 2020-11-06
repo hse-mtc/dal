@@ -199,7 +199,7 @@ class SubjectRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subject
-        fields = ["id", "title", "abbreviation", "sections"]
+        fields = "__all__"
 
 
 class BookSerializer(DocumentSerializer):
