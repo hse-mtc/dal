@@ -5,6 +5,7 @@
       type="text"
       class="words-search"
       :placeholder="placeholder"
+      @keyup.enter="search"
     />
     <img
       src="../../assets/delete-cross.svg"
@@ -25,6 +26,10 @@ export default {
   name: "",
   components: {},
   props: ["placeholder"],
+  mounted() {
+    const query = this.$route.query.subjectsSearch
+    this.$refs.searchInput.value = query ? query : ""
+  },
   methods: {
     search() {
       this.$router.push({

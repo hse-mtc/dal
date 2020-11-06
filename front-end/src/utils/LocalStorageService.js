@@ -1,3 +1,6 @@
+import jwt_decode from "jwt-decode";
+import store from '../store'
+
 const LocalStorageService = (function () {
   let _service;
 
@@ -14,7 +17,12 @@ const LocalStorageService = (function () {
   }
 
   function _getAccessToken() {
-    return localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      const decoded = jwt_decode(token);
+      store.dispatch('app/setUserId', decoded.user_id)
+    }
+    return token
   }
 
   function _getRefreshToken() {
