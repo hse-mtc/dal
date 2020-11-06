@@ -71,13 +71,20 @@ export const constantRoutes = [
     ],
   },
   {
-    path: "/teachingmaterials/",
+    path: "/subjects/",
     component: Layout,
     children: [
       {
         path: "",
-        name: "Teaching Materials",
-        component: () => import("@/views/Materials/index"),
+        name: "Subjects",
+        component: () => import("@/views/Subjects/index"),
+        meta: { title: "Учебно-методические материалы", icon: "" },
+      },
+      {
+        path: "/subjects/:subjectId/",
+        hidden: true,
+        name: "Subject",
+        component: () => import("@/views/Subject/index"),
         meta: { title: "Учебно-методические материалы", icon: "" },
       },
     ],

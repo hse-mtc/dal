@@ -8,6 +8,7 @@ const state = {
     withoutAnimation: false,
   },
   device: "desktop",
+  userId: ""
 };
 
 const mutations = {
@@ -28,9 +29,15 @@ const mutations = {
   TOGGLE_DEVICE: (state, device) => {
     state.device = device;
   },
+  SET_USER_ID: (state, payload) => {
+    state.userId = payload;
+  },
 };
 
 const actions = {
+  setUserId({ commit }, userId) {
+    commit("SET_USER_ID", userId);
+  },
   toggleSideBar({ commit }) {
     commit("TOGGLE_SIDEBAR");
   },

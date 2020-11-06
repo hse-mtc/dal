@@ -7,34 +7,7 @@
   margin-top: 30px;
 }
 
-.selectWork {
-  cursor: pointer;
-  margin-top: 20px;
-  padding-left: 5px;
-  font-size: 18px;
-  text-transform: uppercase;
-  text-align: center;
-
-  .selected {
-    border-bottom: 1px solid #0061d9;
-    padding-bottom: 5px;
-  }
-
-  &-item:hover {
-    border-bottom: 1px solid #0061d9;
-    padding-bottom: 5px;
-  }
-}
-
 .search {
-  margin-top: 20px;
-}
-
-.advanced-search {
-  margin-top: 20px;
-}
-
-.documents {
   margin-top: 20px;
 }
 
@@ -61,9 +34,7 @@
 }
 
 .main-parts {
-  //height: 78vh;
   font-size: 20px;
-  //overflow-y: scroll;
   .main-part {
     margin-top: 10px;
     &-title {
@@ -75,4 +46,3 @@
     }
   }
 }
-//.main-parts::-webkit-scrollbar { width: 0 !important }
