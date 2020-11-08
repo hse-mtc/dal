@@ -4,7 +4,6 @@ import typing as tp
 
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AbstractUser
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.request import Request
@@ -32,29 +31,53 @@ from dms.models import (
 )
 
 
-def create_super_user() -> tp.Tuple[AbstractUser, Profile]:
-    """
-    Create super user "vspelyak" with password "qwerty".
-    :return: User and Profile model instances.
-    """
+User = get_user_model()
 
-    user_model = get_user_model()
 
-    if user_model.objects.filter(username="vspelyak").exists():
-        return (user_model.objects.get(username="vspelyak"),
-                Profile.objects.get(name="Пеляк В.С."))
+def create_super_user():
+    if User.objects.filter(username="vspelyak").exists():
+        return
 
-    super_user = user_model.objects.create_superuser(
+    super_user = User.objects.create_superuser(
         username="vspelyak",
         password="qwerty",
     )
     super_user.save()
 
-    profile, _ = Profile.objects.get_or_create(name="Пеляк В.С.",
-                                               user=super_user)
+    profile, _ = Profile.objects.get_or_create(
+        name="Пеляк В.С.",
+        user=super_user,
+    )
     profile.save()
 
-    return super_user, profile
+
+def create_test_user():
+    if User.objects.filter(username="test").exists():
+        return
+
+    test_user = User.objects.create_user(
+        username="test",
+        password="test",
+        is_staff=True,
+    )
+    test_user.save()
+
+    profile, _ = Profile.objects.get_or_create(
+        name="Тестировщик",
+        user=test_user,
+    )
+    profile.save()
+
+
+def create_users():
+    """Create some mock users.
+
+    Create super user "vspelyak" with password "qwerty"
+    and regular user "test" with password "test".
+    """
+
+    create_super_user()
+    create_test_user()
 
 
 def create_authors() -> tp.List[Author]:
@@ -107,6 +130,7 @@ def create_subjects() -> tp.List[Subject]:
         subject, _ = Subject.objects.get_or_create(
             title=title,
             abbreviation=abbreviation,
+            annotation=f"Пример аннотации для {title.lower()}",
         )
         subject.save()
         subjects.append(subject)
@@ -354,7 +378,7 @@ def create_books(authors, files, publishers, subjects):
 def populate(request: Request) -> Response:
     # pylint: disable=too-many-locals
 
-    create_super_user()
+    create_users()
 
     authors = create_authors()
     categories = create_categories()
