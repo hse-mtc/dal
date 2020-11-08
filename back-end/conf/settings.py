@@ -52,6 +52,7 @@ INSTALLED_APPS = [
 
     # DAL apps
     "auth",
+    "common",
     "dms",
     "lms",
 ]
