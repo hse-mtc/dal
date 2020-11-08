@@ -1,14 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from common.models import Person
 
-class Profile(models.Model):
-    name = models.CharField(max_length=255)
-    user = models.OneToOneField(
-        to=get_user_model(),
-        on_delete=models.CASCADE,
-    )
+
+class Profile(Person):
+    user = models.OneToOneField(to=get_user_model(), on_delete=models.CASCADE)
     photo = models.URLField(blank=True)
 
-    def __str__(self):
-        return self.name
+    class Meta:
+        verbose_name = "Profile"
+        verbose_name_plural = "Profiles"
