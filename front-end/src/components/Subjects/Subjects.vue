@@ -22,13 +22,13 @@
           >
             <el-col>
               <SubjectCard
-                  :id="item.id"
-                  :annotation="item.annotation"
-                  :title="item.title"
-                  :isMySubject="userId === item.user.id"
-                  owner="Тест Тестов Тестович"
-                  @deleted="deletedSubject"
-                  @edit="editSubject"
+                :id="item.id"
+                :annotation="item.annotation"
+                :title="item.title"
+                :isMySubject="userId === item.profile.user.id"
+                :owner="`${item.profile.surname} ${item.profile.name} ${item.profile.patronymic}`"
+                @deleted="deletedSubject"
+                @edit="editSubject"
               />
             </el-col>
           </el-col>
