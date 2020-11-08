@@ -4,11 +4,11 @@
       <el-col>
         <div class="d-flex align-items-center">
           <img
-              src="../../assets/scienceWorks/previous.svg"
-              @click="backToSubjects"
-              style="position: absolute; left: -40px; cursor: pointer"
-              height="22px"
-              alt="назад"
+            src="../../assets/scienceWorks/previous.svg"
+            @click="backToSubjects"
+            style="position: absolute; left: -40px; cursor: pointer"
+            height="22px"
+            alt="назад"
           />
           {{ subject }}
         </div>
@@ -19,55 +19,55 @@
         <div class="parts">
           <div class="parts-all">Все разделы</div>
           <div
-              v-for="(part, index) in subjectInfo"
-              :key="index"
-              class="part"
-              @click="selectPart"
-              :id="index + 1"
+            v-for="(part, index) in subjectInfo"
+            :key="index"
+            class="part"
+            @click="selectPart"
+            :id="index + 1"
           >
             {{ part.title }}
           </div>
         </div>
       </el-col>
       <el-col :span="17" :offset="1">
-        <SearchForMaterials placeholder="Введите название темы или документа"/>
+        <SearchForMaterials placeholder="Введите название темы или документа" />
         <div class="main-parts">
           <div
-              v-for="(mainPart, index) in subjectInfo"
-              :key="index"
-              class="main-part"
-              :id="'part-' + (index + 1)"
+            v-for="(mainPart, index) in subjectInfo"
+            :key="index"
+            class="main-part"
+            :id="'part-' + (index + 1)"
           >
             <div class="main-part-title" @click="togglePart">
               <div>{{ mainPart.title }}</div>
               <div class="">
                 <el-popover placement="bottom" trigger="click">
                   <div
-                      style="
-                        text-align: center;
-                        margin: 0;
-                        padding: 0;
-                        font-size: 15px;
-                      "
+                    style="
+                      text-align: center;
+                      margin: 0;
+                      padding: 0;
+                      font-size: 15px;
+                    "
                   >
                     <div style="cursor: pointer">Действие 1</div>
                     <div style="cursor: pointer">Действие 2</div>
                   </div>
                   <div
-                      slot="reference"
-                      class="d-flex justify-content-center"
-                      style="width: 10px; cursor: pointer"
+                    slot="reference"
+                    class="d-flex justify-content-center"
+                    style="width: 10px; cursor: pointer"
                   >
                     <img
-                        src="../../assets/scienceWorks/popover.svg"
-                        alt=""
-                        class="kebab"
+                      src="../../assets/scienceWorks/popover.svg"
+                      alt=""
+                      class="kebab"
                     />
                   </div>
                 </el-popover>
               </div>
             </div>
-            <SubjectTopic :data="mainPart.topics"/>
+            <SubjectTopic :data="mainPart.topics" />
           </div>
         </div>
       </el-col>
@@ -78,14 +78,14 @@
 <script>
 import SearchForMaterials from "@/components/Search/SearchForMaterials";
 import SubjectTopic from "@/components/SubjectTopic/SubjectTopic";
-import {getSubject} from "@/api/subject";
-import {getSubjects} from "@/api/subjects";
-import {mapActions, mapState} from "vuex";
+import { getSubject } from "@/api/subject";
+import { getSubjects } from "@/api/subjects";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Subject",
   mounted() {
-    console.log(this.$route.params.subjectId)
+    console.log(this.$route.params.subjectId);
     this.setSubject(this.$route.params.subjectId);
   },
   data() {
@@ -111,19 +111,19 @@ export default {
     togglePart(event) {
       if (event.target.className !== "kebab") {
         if (
-            event.target.closest(".main-part").children[1].style.display !==
-            "none"
+          event.target.closest(".main-part").children[1].style.display !==
+          "none"
         ) {
           event.target.closest(".main-part").children[1].style.display = "none";
         } else {
           event.target.closest(".main-part").children[1].style.display =
-              "block";
+            "block";
         }
       }
     },
     selectPart(event) {
       document.getElementById(
-          "part-" + event.target.id
+        "part-" + event.target.id
       ).children[1].style.display = "block";
       document.getElementById("part-" + event.target.id).scrollIntoView(true);
     },
@@ -132,13 +132,13 @@ export default {
         if (item.id == this.subjectId) {
           this.subject = item.title;
           getSubject({ id: item.id })
-              .then((response) => {
-                this.subjectInfo = response.data.sections;
-              })
-              .catch(() => {
-                // eslint-disable-next-line no-console
-                console.log("Данные по предмету не указаны");
-              });
+            .then((response) => {
+              this.subjectInfo = response.data.sections;
+            })
+            .catch(() => {
+              // eslint-disable-next-line no-console
+              console.log("Данные по предмету не указаны");
+            });
         }
       });
     },
@@ -146,25 +146,25 @@ export default {
       this.subjectId = subjectId;
       if (this.subjects.length === 0) {
         getSubjects()
-            .then((response) => {
-              this.setSubjects(response.data)
-              this.findSubjectInSubjects(response.data);
-            })
-            .catch(() => {
-              // eslint-disable-next-line no-console
-              console.log("Данные по предметам не указаны");
-            });
+          .then((response) => {
+            this.setSubjects(response.data);
+            this.findSubjectInSubjects(response.data);
+          })
+          .catch(() => {
+            // eslint-disable-next-line no-console
+            console.log("Данные по предметам не указаны");
+          });
       } else {
         this.findSubjectInSubjects(this.subjects);
       }
     },
     backToSubjects() {
-      this.$router.push({ path: `/subjects/`})
+      this.$router.push({ path: `/subjects/` });
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
- @import "style";
+@import "style";
 </style>

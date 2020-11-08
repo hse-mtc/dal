@@ -1,5 +1,5 @@
 <template>
-  <div :class="variant" :style="{color: color, ...customStyle}">
+  <div :class="variant" :style="{ color: color, ...customStyle }">
     <slot></slot>
   </div>
 </template>
@@ -14,40 +14,40 @@ export default {
     },
     color: {
       type: String,
-      default: 'black'
+      default: "black",
     },
     customStyle: {
       type: Object,
       default: () => {
-        return {}
-      }
-    }
-  }
-}
+        return {};
+      },
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
-  .header {
-    font-family: ProximaNovaRegular;
-    font-style: normal;
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 27px;
-  }
+.header {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 27px;
+}
 
-  .sub-header {
-    font-family: ProximaNovaRegular;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 19px;
-    line-height: 23px;
-  }
+.sub-header {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 19px;
+  line-height: 23px;
+}
 
-  .paragraph {
-    font-family: ProximaNovaRegular;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 18px;
-    line-height: 24px;
-  }
+.paragraph {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 24px;
+}
 </style>

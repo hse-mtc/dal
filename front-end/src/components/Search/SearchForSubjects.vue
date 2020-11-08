@@ -27,8 +27,8 @@ export default {
   components: {},
   props: ["placeholder"],
   mounted() {
-    const query = this.$route.query.subjectsSearch
-    this.$refs.searchInput.value = query ? query : ""
+    const query = this.$route.query.subjectsSearch;
+    this.$refs.searchInput.value = query ? query : "";
   },
   methods: {
     search() {

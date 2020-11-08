@@ -1,13 +1,9 @@
-<template>
-
-</template>
+<template></template>
 
 <script>
 export default {
-  name: "SubjectModalWindow"
-}
+  name: "SubjectModalWindow",
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

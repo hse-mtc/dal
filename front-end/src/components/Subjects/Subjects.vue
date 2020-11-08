@@ -4,7 +4,10 @@
       <el-col :span="23">
         <div class="d-flex align-items-center justify-content-between">
           Учебно-методические материалы
-          <CustomText variant="paragraph" :custom-style="{color: '#0C4B9A', cursor: 'pointer'}">
+          <CustomText
+            variant="paragraph"
+            :custom-style="{ color: '#0C4B9A', cursor: 'pointer' }"
+          >
             <div @click="windowModal = true">+Добавить дисциплину</div>
           </CustomText>
         </div>
@@ -12,13 +15,17 @@
     </el-row>
     <el-row class="search">
       <el-col :span="23">
-        <SearchForSubjects placeholder="Введите название предмета"/>
-        <el-row v-if="filteredSubjects.length !== 0" class="subjects" :gutter="20">
+        <SearchForSubjects placeholder="Введите название предмета" />
+        <el-row
+          v-if="filteredSubjects.length !== 0"
+          class="subjects"
+          :gutter="20"
+        >
           <el-col
-              :span="12"
-              v-for="(item, index) in filteredSubjects"
-              :key="index"
-              class="subjects-wrapper mt-5"
+            :span="12"
+            v-for="(item, index) in filteredSubjects"
+            :key="index"
+            class="subjects-wrapper mt-5"
           >
             <el-col>
               <SubjectCard
@@ -38,28 +45,32 @@
     </el-row>
 
     <ModalWindow :opened="windowModal" @closeModal="closeModal">
-      <CustomText :customStyle="{'font-weight': 'normal'}" variant="header">Добавление дисциплины</CustomText>
+      <CustomText :customStyle="{ 'font-weight': 'normal' }" variant="header"
+        >Добавление дисциплины
+      </CustomText>
       <ElForm
-          class="subject-form"
-          ref="subjectForm"
-          :rules="rules"
-          :model="subjectForm"
-          label-width="180px"
+        class="subject-form"
+        ref="subjectForm"
+        :rules="rules"
+        :model="subjectForm"
+        label-width="180px"
       >
         <ElFormItem label="Название дисциплины" prop="title">
-          <ElInput placeholder="Введите название" v-model="subjectForm.title"/>
+          <ElInput placeholder="Введите название" v-model="subjectForm.title" />
         </ElFormItem>
 
         <ElFormItem label="Аннотация" prop="annotation">
           <ElInput
-              placeholder="Введите текст аннотации"
-              v-model="subjectForm.annotation"
-              type="textarea"
-              :autosize="{ minRows: 2 }"
+            placeholder="Введите текст аннотации"
+            v-model="subjectForm.annotation"
+            type="textarea"
+            :autosize="{ minRows: 2 }"
           />
         </ElFormItem>
         <ElFormItem>
-          <ElButton type="primary" @click="submitForm('subjectForm')">Отправить</ElButton>
+          <ElButton type="primary" @click="submitForm('subjectForm')"
+            >Отправить
+          </ElButton>
           <ElButton @click="closeModal">Отменить</ElButton>
         </ElFormItem>
       </ElForm>
@@ -68,13 +79,13 @@
 </template>
 
 <script>
-import {getSubjects} from "@/api/subjects";
+import { getSubjects } from "@/api/subjects";
 import SubjectCard from "@/components/SubjectCard/SubjectCard";
-import {mapState, mapActions} from "vuex";
+import { mapState, mapActions } from "vuex";
 import SearchForSubjects from "@/components/Search/SearchForSubjects";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
-import {upsertSubject} from "@/api/subject";
+import { upsertSubject } from "@/api/subject";
 
 export default {
   name: "",
@@ -93,8 +104,8 @@ export default {
         annotation: "",
       },
       rules: {
-        title: [{required: true, message: "Обязательное поле"}],
-        annotation: [{required: true, message: "Обязательное поле"}],
+        title: [{ required: true, message: "Обязательное поле" }],
+        annotation: [{ required: true, message: "Обязательное поле" }],
       },
     };
   },
@@ -108,7 +119,7 @@ export default {
         const subjectsSearch = this.$route.query.subjectsSearch;
         if (subjectsSearch.trim()) {
           return this.subjects.filter((item) =>
-              item.title.toUpperCase().includes(subjectsSearch.toUpperCase())
+            item.title.toUpperCase().includes(subjectsSearch.toUpperCase())
           );
         } else {
           return this.subjects;
@@ -116,7 +127,7 @@ export default {
       } else {
         return this.subjects;
       }
-    }
+    },
   },
   created() {
     this.fetchData();
@@ -125,22 +136,26 @@ export default {
     ...mapActions({
       setSubjects: "subjects/setSubjects",
       deleteSubject: "subjects/deleteSubject",
-      upsertSubject: "subjects/upsertSubject"
+      upsertSubject: "subjects/upsertSubject",
     }),
     submitForm(name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
-          upsertSubject(this.subjectForm).then((res) => {
-            this.upsertSubject(res.data)
-            this.closeModal()
-          }).catch(() => {
-            console.log("Ошибка отправки формы")
-          })
+          upsertSubject(this.subjectForm)
+            .then((res) => {
+              this.upsertSubject(res.data);
+              this.closeModal();
+            })
+            .catch(() => {
+              console.log("Ошибка отправки формы");
+            });
         }
       });
     },
     editSubject(id) {
-      const { title, annotation } = this.subjects.find(subject => subject.id === id);
+      const { title, annotation } = this.subjects.find(
+        (subject) => subject.id === id
+      );
       this.subjectForm = { id, title, annotation };
       this.windowModal = true;
     },
@@ -149,23 +164,23 @@ export default {
         id: null,
         title: "",
         annotation: "",
-      }
-      this.windowModal = false
+      };
+      this.windowModal = false;
     },
     fetchData() {
       if (this.subjects.length === 0) {
         getSubjects()
-            .then((response) => {
-              this.setSubjects(response.data)
-            })
-            .catch(() => {
-              console.log("Данные по предметам не указаны");
-            });
+          .then((response) => {
+            this.setSubjects(response.data);
+          })
+          .catch(() => {
+            console.log("Данные по предметам не указаны");
+          });
       }
     },
     deletedSubject(id) {
-      this.deleteSubject(id)
-    }
+      this.deleteSubject(id);
+    },
   },
 };
 </script>
