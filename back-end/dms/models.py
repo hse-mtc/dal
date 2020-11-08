@@ -42,7 +42,6 @@ class Publisher(models.Model):
 
 class Subject(models.Model):
     title = models.CharField(max_length=255)
-    abbreviation = models.CharField(max_length=16)
     annotation = models.TextField(blank=True)
 
     # TODO(TmLev): merge migrations, remove default
