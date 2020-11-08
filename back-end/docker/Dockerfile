@@ -18,7 +18,7 @@ COPY back-end/Pipfile* ./
 RUN pipenv install --system --deploy --dev
 
 # Copy everything else
-ADD back-end .
+COPY back-end .
 
 # Copy tools
-COPY tools tools
+COPY tools /tools
