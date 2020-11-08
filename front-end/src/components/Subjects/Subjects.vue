@@ -58,7 +58,6 @@
               :autosize="{ minRows: 2 }"
           />
         </ElFormItem>
-        <TagsInput label="Ключевые слова" v-model="subjectForm.tags"/>
         <ElFormItem>
           <ElButton type="primary" @click="submitForm('subjectForm')">Отправить</ElButton>
           <ElButton @click="closeModal">Отменить</ElButton>
@@ -75,7 +74,6 @@ import {mapState, mapActions} from "vuex";
 import SearchForSubjects from "@/components/Search/SearchForSubjects";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
-import TagsInput from "@/components/Tags/TagsInput";
 import {upsertSubject} from "@/api/subject";
 
 export default {
@@ -85,7 +83,6 @@ export default {
     ModalWindow,
     SubjectCard,
     SearchForSubjects,
-    TagsInput
   },
   data() {
     return {
@@ -94,7 +91,6 @@ export default {
         id: null,
         title: "",
         annotation: "",
-        tags: []
       },
       rules: {
         title: [{required: true, message: "Обязательное поле"}],
@@ -144,16 +140,15 @@ export default {
       });
     },
     editSubject(id) {
-      const {title, annotation, tags} = this.subjects.find(subject => subject.id === id)
-      this.subjectForm = {id, title, annotation, tags}
-      this.windowModal = true
+      const { title, annotation } = this.subjects.find(subject => subject.id === id);
+      this.subjectForm = { id, title, annotation };
+      this.windowModal = true;
     },
     closeModal() {
       this.subjectForm = {
         id: null,
         title: "",
         annotation: "",
-        tags: []
       }
       this.windowModal = false
     },
