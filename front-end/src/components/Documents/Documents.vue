@@ -45,7 +45,7 @@
               class="document-card-authors"
             >
               {{
-                `${author.last_name} ${author.first_name[0]}. ${author.patronymic[0]}.`
+                `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
               }}
             </div>
 

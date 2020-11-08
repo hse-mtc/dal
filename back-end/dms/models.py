@@ -6,6 +6,8 @@ from django.contrib.auth import get_user_model
 
 from taggit.managers import TaggableManager
 
+from common.models import Person
+
 
 def upload_to(instance, filename):
     # pylint: disable=unused-argument
@@ -20,17 +22,11 @@ def super_user_id():
     return 1
 
 
-class Author(models.Model):
-    last_name = models.CharField(max_length=255)
-    first_name = models.CharField(max_length=255)
-    patronymic = models.CharField(max_length=255)
+class Author(Person):
 
     class Meta:
         verbose_name = "Author"
         verbose_name_plural = "Authors"
-
-    def __str__(self):
-        return " ".join([self.last_name, self.first_name, self.patronymic])
 
 
 class Publisher(models.Model):

@@ -30,7 +30,7 @@
           <ElOption
             v-for="author in authors"
             :key="author.id"
-            :label="`${author.last_name} ${author.first_name[0]}. ${author.patronymic[0]}`"
+            :label="`${author.surname} ${author.name[0]}. ${author.patronymic[0]}`"
             :value="author.id"
           />
         </ElSelect>
