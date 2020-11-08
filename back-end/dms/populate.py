@@ -96,10 +96,10 @@ def create_authors() -> tp.List[Author]:
         ("Усиков", "Юрий", "Витальевич"),
     ]
 
-    for last_name, first_name, patronymic in author_names:
+    for surname, name, patronymic in author_names:
         author, _ = Author.objects.get_or_create(
-            last_name=last_name,
-            first_name=first_name,
+            surname=surname,
+            name=name,
             patronymic=patronymic,
         )
         author.save()

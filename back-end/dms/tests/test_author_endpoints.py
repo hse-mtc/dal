@@ -10,8 +10,8 @@ from dms.models import Author
 @pytest.fixture(scope="function")
 def author_data():
     return {
-        "last_name": "last",
-        "first_name": "first",
+        "surname": "last",
+        "name": "first",
         "patronymic": "patronymic",
     }
 
@@ -71,7 +71,7 @@ def test_get_author_by_id_returns_single_author(client, author_data):
 def test_patch_author_accepts_some_fields(client, author_data):
     id_ = Author.objects.create(**author_data).id
 
-    data = {"last_name": "second"}
+    data = {"surname": "second"}
     response = client.patch(
         f"/api/dms/authors/{id_}/",
         data,
@@ -80,14 +80,14 @@ def test_patch_author_accepts_some_fields(client, author_data):
     assert response.status_code == 200
 
     author = Author.objects.get(id=id_)
-    assert response.data["last_name"] == author.last_name
+    assert response.data["surname"] == author.surname
 
 
 @pytest.mark.django_db
 def test_put_author_requires_all_fields(client, author_data):
     id_ = Author.objects.create(**author_data).id
 
-    data = {"last_name": "second"}
+    data = {"surname": "second"}
     response = client.put(
         f"/api/dms/authors/{id_}/",
         data,
@@ -96,7 +96,7 @@ def test_put_author_requires_all_fields(client, author_data):
     assert response.status_code == 400
 
     data = dict(author_data)
-    data["last_name"] = "second"
+    data["surname"] = "second"
     response = client.put(
         f"/api/dms/authors/{id_}/",
         data,
