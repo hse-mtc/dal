@@ -22,9 +22,6 @@ export default {
       required: true
     }
   },
-  mounted() {
-    // this.stopScrolling()
-  },
   methods: {
     stopScrolling() {
       document.getElementById("main-container").classList.add("stop-scrolling");
@@ -36,12 +33,15 @@ export default {
     },
     closeModal() {
       this.$emit("closeModal");
-      this.startScrolling()
     },
   },
   watch: {
     opened(val) {
-     if (val) this.stopScrolling()
+      if (val) {
+        this.stopScrolling();
+      } else {
+        this.startScrolling();
+      }
     },
   },
 }
