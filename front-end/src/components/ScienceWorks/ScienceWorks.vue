@@ -8,9 +8,9 @@
       <div class="categories-block" v-if="categories.length">
         <el-row class="select-work">
           <el-col :span="10" :offset="2">
-            <span class="category-selected" @click="openAllCategories">{{
-              category.title
-            }}</span>
+            <span class="category-selected" @click="openAllCategories">
+              {{ category.title }}
+            </span>
             <img
               id="dark-arrow"
               src="../../assets/scienceWorks/dropdownBlack.svg"

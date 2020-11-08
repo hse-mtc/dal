@@ -1,12 +1,6 @@
 <template>
   <div class="root">
-    <div
-      style="
-         {
-          position: relative;
-        }
-      "
-    >
+    <div style="position: relative">
       <div class="addModal" v-if="opened" v-on:closeModal="closeModal">
         <slot></slot>
       </div>

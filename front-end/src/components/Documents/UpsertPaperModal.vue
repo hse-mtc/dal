@@ -104,9 +104,9 @@
       </ElFormItem>
 
       <ElFormItem>
-        <ElButton type="primary" @click="submitForm('paperForm')"
-          >Отправить</ElButton
-        >
+        <ElButton type="primary" @click="submitForm('paperForm')">
+          Отправить
+        </ElButton>
         <ElButton @click="closeModal">Отменить</ElButton>
       </ElFormItem>
     </ElForm>
