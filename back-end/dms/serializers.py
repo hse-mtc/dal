@@ -2,7 +2,11 @@ from rest_framework import serializers
 
 from taggit.models import Tag
 
-from auth.serializers import UserSerializer
+from auth.serializers import (
+    ProfileSerializer,
+    UserSerializer,
+)
+
 
 from dms.models import (
     Author,
@@ -40,7 +44,8 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
-    user = UserSerializer(default=serializers.CurrentUserDefault)
+    profile = ProfileSerializer(read_only=True, source="user.profile")
+    user = UserSerializer(write_only=True, default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Subject
@@ -196,7 +201,7 @@ class SectionRetrieveSerializer(serializers.ModelSerializer):
 
 
 class SubjectRetrieveSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    profile = ProfileSerializer(read_only=True, source="user.profile")
     sections = SectionRetrieveSerializer(many=True,
                                          read_only=True,
                                          source="section_set")
