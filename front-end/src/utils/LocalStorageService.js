@@ -1,5 +1,5 @@
 import jwt_decode from "jwt-decode";
-import store from '../store'
+import store from "../store";
 
 const LocalStorageService = (function () {
   let _service;
@@ -20,9 +20,9 @@ const LocalStorageService = (function () {
     const token = localStorage.getItem("access_token");
     if (token) {
       const decoded = jwt_decode(token);
-      store.dispatch('app/setUserId', decoded.user_id)
+      store.dispatch("app/setUserId", decoded.user_id);
     }
-    return token
+    return token;
   }
 
   function _getRefreshToken() {
