@@ -7,7 +7,6 @@ from auth.serializers import (
     UserSerializer,
 )
 
-
 from dms.models import (
     Author,
     Book,
@@ -45,7 +44,8 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 class SubjectSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True, source="user.profile")
-    user = UserSerializer(write_only=True, default=serializers.CurrentUserDefault())
+    user = UserSerializer(write_only=True,
+                          default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Subject
