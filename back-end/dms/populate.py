@@ -45,7 +45,9 @@ def create_super_user():
     super_user.save()
 
     profile, _ = Profile.objects.get_or_create(
-        name="Пеляк В.С.",
+        surname="Пеляк",
+        name="Виктор",
+        patronymic="Степанович",
         user=super_user,
     )
     profile.save()
@@ -63,7 +65,9 @@ def create_test_user():
     test_user.save()
 
     profile, _ = Profile.objects.get_or_create(
-        name="Тестировщик",
+        surname="Фамилия",
+        name="Имя",
+        patronymic="Отчество",
         user=test_user,
     )
     profile.save()
