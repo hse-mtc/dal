@@ -59,7 +59,7 @@ def create_test_user():
 
     test_user = User.objects.create_user(
         username="test",
-        password="test",
+        password="qwerty",
         is_staff=True,
     )
     test_user.save()
