@@ -30,7 +30,6 @@ from dms.models import (
     Topic,
 )
 
-
 User = get_user_model()
 
 
