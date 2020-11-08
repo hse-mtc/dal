@@ -8,11 +8,12 @@
             variant="paragraph"
             :custom-style="{ color: '#0C4B9A', cursor: 'pointer' }"
           >
-            <div @click="windowModal = true">+Добавить дисциплину</div>
+            <div @click="windowModal = true">+ Добавить дисциплину</div>
           </CustomText>
         </div>
       </el-col>
     </el-row>
+
     <el-row class="search">
       <el-col :span="23">
         <SearchForSubjects placeholder="Введите название предмета" />
@@ -45,8 +46,8 @@
     </el-row>
 
     <ModalWindow :opened="windowModal" @closeModal="closeModal">
-      <CustomText :customStyle="{ 'font-weight': 'normal' }" variant="header"
-        >Добавление дисциплины
+      <CustomText :customStyle="{ 'font-weight': 'normal' }" variant="header">
+        Добавление дисциплины
       </CustomText>
       <ElForm
         class="subject-form"
@@ -68,8 +69,8 @@
           />
         </ElFormItem>
         <ElFormItem>
-          <ElButton type="primary" @click="submitForm('subjectForm')"
-            >Отправить
+          <ElButton type="primary" @click="submitForm('subjectForm')">
+            Отправить
           </ElButton>
           <ElButton @click="closeModal">Отменить</ElButton>
         </ElFormItem>
