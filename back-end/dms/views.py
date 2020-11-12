@@ -22,27 +22,30 @@ from dms.parsers import MultiPartWithJSONParser
 from dms.swagger import AUTHOR_ARRAY
 from dms.serializers import (
     AuthorSerializer,
-    BookSerializer,
     BookMutateSerializer,
+    BookSerializer,
     CategorySerializer,
-    PaperSerializer,
+    ClassMaterialMutateSerializer,
+    ClassMaterialSerializer,
     PaperMutateSerializer,
+    PaperSerializer,
     PublisherSerializer,
-    TagSerializer,
     SectionSerializer,
-    SubjectSerializer,
     SubjectRetrieveSerializer,
+    SubjectSerializer,
+    TagSerializer,
     TopicSerializer,
 )
 from dms.models import (
     Author,
     Book,
+    Category,
+    ClassMaterial,
     Paper,
     Publisher,
     Section,
     Subject,
     Topic,
-    Category,
 )
 from dms.permissions import (
     ReadOnly,
@@ -138,3 +141,14 @@ class BookViewSet(viewsets.ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return BookMutateSerializer
         return BookSerializer
+
+
+class ClassMaterialViewSet(viewsets.ModelViewSet):
+    queryset = ClassMaterial.objects.all()
+    permission_classes = [ReadOnly | IsOwner]
+    parser_classes = [MultiPartWithJSONParser, JSONParser]
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return ClassMaterialMutateSerializer
+        return ClassMaterialSerializer

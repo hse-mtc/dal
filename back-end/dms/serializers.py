@@ -165,7 +165,7 @@ class ClassMaterialSerializer(DocumentSerializer):
 
     class Meta:
         model = ClassMaterial
-        fields = ["id", "title", "file"]
+        fields = "__all__"
 
 
 class ClassMaterialMutateSerializer(DocumentMutateSerializer):

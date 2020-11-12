@@ -6,6 +6,7 @@ from dms.views import (
     AuthorViewSet,
     BookViewSet,
     CategoryViewSet,
+    ClassMaterialViewSet,
     PaperViewSet,
     PublisherViewSet,
     SectionViewSet,
@@ -18,6 +19,7 @@ router = routers.DefaultRouter()
 router.register("authors", AuthorViewSet)
 router.register("books", BookViewSet)
 router.register("categories", CategoryViewSet)
+router.register("class-materials", ClassMaterialViewSet)
 router.register("papers", PaperViewSet)
 router.register("publishers", PublisherViewSet)
 router.register("sections", SectionViewSet)
