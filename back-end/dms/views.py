@@ -2,7 +2,8 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import permissions
 from rest_framework import viewsets
-from rest_framework.generics import ListAPIView
+from rest_framework import mixins
+from rest_framework import generics
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.status import HTTP_422_UNPROCESSABLE_ENTITY
@@ -33,6 +34,7 @@ from dms.serializers import (
     SectionRetrieveSerializer,
     SectionSerializer,
     SubjectRetrieveSerializer,
+    OrderUpdateSerializer,
     SubjectSerializer,
     TagSerializer,
     TopicSerializer,
@@ -107,6 +109,19 @@ class SectionViewSet(viewsets.ModelViewSet):
         return SectionSerializer
 
 
+class OrderUpdateAPIView(generics.GenericAPIView, mixins.UpdateModelMixin):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = OrderUpdateSerializer
+    lookup_field = "id"
+
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+
+class SectionOrderUpdateAPIView(OrderUpdateAPIView):
+    queryset = Section.objects.all()
+
+
 class TopicViewSet(viewsets.ModelViewSet):
     queryset = Topic.objects.all()
     permission_classes = [permissions.AllowAny]
@@ -117,7 +132,11 @@ class TopicViewSet(viewsets.ModelViewSet):
         return TopicSerializer
 
 
-class TagListAPIView(ListAPIView):
+class TopicOrderUpdateAPIView(OrderUpdateAPIView):
+    queryset = Topic.objects.all()
+
+
+class TagListAPIView(generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [permissions.AllowAny]
