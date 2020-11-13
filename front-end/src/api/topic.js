@@ -2,7 +2,7 @@ import request from "@/utils/request";
 
 export function getTopics(id) {
   return request({
-    url: `/dms/sections/${id}`,
+    url: `/dms/sections/${id}/`,
     method: "get",
   });
 }
