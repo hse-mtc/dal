@@ -11,10 +11,6 @@ from lms.models import (
     Punishment
 )
 
-from lms.validators import PresentInDatabaseValidator
-from lms.serializers.student import StudentShortSerializer
-from lms.serializers.teacher import TeacherShortSerializer
-
 
 class MilgroupSerializer(ModelSerializer):
     milgroup = IntegerField()

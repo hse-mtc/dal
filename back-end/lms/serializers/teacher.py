@@ -1,4 +1,4 @@
-from rest_framework.serializers import SerializerMethodField
+from rest_framework.serializers import IntegerField, SerializerMethodField
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from lms.models import (
