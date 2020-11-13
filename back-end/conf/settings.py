@@ -179,6 +179,12 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+# Fixtures to store backups
+
+FIXTURE_DIRS = [
+   BASE_DIR / "fixtures",
+]
+
 # JWT authentication settings
 
 BEARER_AUTH_HEADER_TYPE = "Bearer"
