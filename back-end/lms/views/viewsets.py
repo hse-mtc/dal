@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from lms.models import Student, Teacher, Punishment
 from lms.serializers.student import StudentSerializer
 from lms.serializers.teacher import TeacherSerializer
-from lms.serializers.serializers import PunishmentSerializer
+from lms.serializers.punishment import PunishmentSerializer
 from lms.filters import StudentFilterSet, TeacherFilterSet, PunishmentFilterSet
 
 
