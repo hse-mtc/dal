@@ -279,7 +279,7 @@
 <script>
 import { getAbsence, getAbsenceJournal, patchAbsence, postAbsence, deleteAbsence } from '@/api/absence'
 import moment from 'moment'
-import sortBy from 'lodash/sortBy'
+import { firstBy } from "thenby";
 
 export default {
   name: "Absence",
