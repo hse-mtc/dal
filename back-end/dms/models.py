@@ -64,7 +64,7 @@ class Section(OrderedModel):
     subject = models.ForeignKey(to=Subject, on_delete=models.CASCADE)
     order_with_respect_to = "subject"
 
-    class Meta:
+    class Meta(OrderedModel.Meta):
         verbose_name = "Section"
         verbose_name_plural = "Sections"
 
@@ -78,7 +78,7 @@ class Topic(OrderedModel):
     section = models.ForeignKey(to=Section, on_delete=models.CASCADE)
     order_with_respect_to = "section"
 
-    class Meta:
+    class Meta(OrderedModel.Meta):
         verbose_name = "Topic"
         verbose_name_plural = "Topics"
 
