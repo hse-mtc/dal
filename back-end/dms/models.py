@@ -71,6 +71,7 @@ class Section(models.Model):
 
 class Topic(models.Model):
     title = models.CharField(max_length=255)
+    annotation = models.TextField(blank=True)
     section = models.ForeignKey(to=Section, on_delete=models.CASCADE)
 
     class Meta:
