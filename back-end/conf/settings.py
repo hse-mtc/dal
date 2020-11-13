@@ -181,6 +181,8 @@ INTERNAL_IPS = [
 
 # JWT authentication settings
 
+BEARER_AUTH_HEADER_TYPE = "Bearer"
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=50),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
@@ -191,10 +193,10 @@ SIMPLE_JWT = {
     "VERIFYING_KEY": None,
     "AUDIENCE": None,
     "ISSUER": None,
-    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_TYPES": [BEARER_AUTH_HEADER_TYPE],
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "AUTH_TOKEN_CLASSES": ["rest_framework_simplejwt.tokens.AccessToken"],
     "TOKEN_TYPE_CLAIM": "token_type",
     "JTI_CLAIM": "jti",
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
@@ -204,3 +206,16 @@ SIMPLE_JWT = {
 
 # File max size
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 8  # 80MiB
+
+# Swagger settings for drf-yasg
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        BEARER_AUTH_HEADER_TYPE: {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        }
+    },
+    "JSON_EDITOR": True,
+}

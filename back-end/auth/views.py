@@ -1,4 +1,3 @@
-from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 
@@ -12,14 +11,10 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
-from drf_yasg.utils import swagger_auto_schema
-
-from auth.swagger import TOKEN_AUTH_HEADER
 from auth.models import Profile
 from auth.serializers import ProfileSerializer
 
 
-@swagger_auto_schema(method="GET", manual_parameters=[TOKEN_AUTH_HEADER])
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes([permissions.AllowAny])
@@ -33,9 +28,6 @@ def info(request: Request) -> Response:
     return Response(data, status=HTTP_200_OK)
 
 
-@method_decorator(
-    name="get",
-    decorator=swagger_auto_schema(manual_parameters=[TOKEN_AUTH_HEADER]))
 class ProfileRetrieveAPIView(RetrieveAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
