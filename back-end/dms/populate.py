@@ -177,7 +177,7 @@ def create_categories() -> tp.List[Category]:
     ]
 
     for title in category_titles:
-        category, _ = Category.objects.get_or_create(title=title,)
+        category, _ = Category.objects.get_or_create(title=title)
         category.save()
         categories.append(category)
 
@@ -231,6 +231,7 @@ def create_topics(section: Section,) -> tp.List[Topic]:
     for title in topic_titles:
         topic, _ = Topic.objects.get_or_create(
             title=title,
+            annotation=f"Пример аннотации для {title}",
             section=section,
         )
         topic.save()
