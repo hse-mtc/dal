@@ -11,7 +11,7 @@ export function addTopics(data) {
   return request({
     url: `/dms/topics/`,
     method: "post",
-    data: data
+    data: data,
   });
 }
 
@@ -26,7 +26,6 @@ export function editTopics(id, data) {
   return request({
     url: `/dms/topics/${id}/`,
     method: "patch",
-    data: data
+    data: data,
   });
 }
-

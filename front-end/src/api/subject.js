@@ -35,7 +35,7 @@ export function editSectionTitle(id, data) {
   return request({
     url: `/dms/sections/${id}/`,
     method: "patch",
-    data: data
+    data: data,
   });
 }
 
@@ -43,7 +43,7 @@ export function addSection(data) {
   return request({
     url: `/dms/sections/`,
     method: "post",
-    data: data
+    data: data,
   });
 }
 
