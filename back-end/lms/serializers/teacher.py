@@ -25,7 +25,6 @@ class TeacherSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-
 class TeacherShortSerializer(WritableNestedModelSerializer):
     id = IntegerField(required=False)
     fullname = SerializerMethodField(required=False)

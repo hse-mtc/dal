@@ -1,15 +1,7 @@
 from rest_framework.serializers import (ModelSerializer, IntegerField,
                                         CharField)
-from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.models import (
-    TeacherPost,
-    Milgroup,
-    Program,
-    Rank,
-    Student,
-    Punishment
-)
+from lms.models import (TeacherPost, Milgroup, Program, Rank)
 
 
 class MilgroupSerializer(ModelSerializer):
