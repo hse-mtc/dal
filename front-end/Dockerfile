@@ -10,6 +10,9 @@ WORKDIR /front-end
 # Copy package[-lock].json
 COPY front-end/package*.json ./
 
+# Install python and stuff (for some reason, on ARM, node docker image does not have python)
+RUN apk add --no-cache g++ gcc libgcc libstdc++ linux-headers make python
+
 # Install packages
 RUN npm install --loglevel=error
 
