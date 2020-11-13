@@ -25,6 +25,16 @@ export function patchAbsence(data) {
   });
 }
 
+export function postAbsence(data) {
+  if (data.studentid !== undefined) data.studentid = { id: data.studentid.id };
+  console.log(data);
+  return request({
+    url: `/lms/absence/`,
+    method: "post",
+    data,
+  });
+}
+
 export function deleteAbsence(params) {
   return request({
     url: `/lms/absence/${params.id}/`,
