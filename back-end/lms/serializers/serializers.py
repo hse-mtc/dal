@@ -46,14 +46,3 @@ class TeacherPostSerializer(ModelSerializer):
     class Meta:
         model = TeacherPost
         fields = '__all__'
-
-
-class PunishmentSerializer(WritableNestedModelSerializer):
-    student = StudentShortSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Student)])
-    teacher = TeacherShortSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Teacher)])
-
-    class Meta:
-        model = Punishment
-        fields = '__all__'
