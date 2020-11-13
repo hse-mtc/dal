@@ -23,6 +23,7 @@ drf-spectacular = "*"
 drf-writable-nested = "*"
 psycopg2-binary = "*"
 uvicorn = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.8.5"

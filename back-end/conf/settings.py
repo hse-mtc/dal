@@ -184,7 +184,7 @@ INTERNAL_IPS = [
 # Fixtures to store backups
 
 FIXTURE_DIRS = [
-   BASE_DIR / "fixtures",
+    BASE_DIR / "fixtures",
 ]
 
 # JWT authentication settings
