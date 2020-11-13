@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "django_filters",
     "silk",
+    "django_extensions",
 
     # REST framework
     "rest_framework",
