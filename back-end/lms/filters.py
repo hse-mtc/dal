@@ -3,7 +3,7 @@ from django_filters.rest_framework import (FilterSet, ModelChoiceFilter,
 
 from lms.models import (Student, Milgroup, Milfaculty, Absence, AbsenceType,
                         AbsenceStatus, Teacher, Rank, TeacherPost, Punishment,
-                        PunishmentType, Teacher)
+                        PunishmentType)
 
 
 class StudentFilterSet(FilterSet):

@@ -41,5 +41,4 @@ class PunishmentViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = PunishmentFilterSet
-    search_fields = ['student__surname', 'student__name', 'student__patronymic',
-                     'teacher__surname', 'teacher__name', 'teacher__patronymic']
+    search_fields = ['student__surname', 'student__name', 'student__patronymic']

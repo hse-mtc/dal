@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 
 from lms.models import (Status, Program, Milgroup, Milfaculty, Rank,
                         TeacherPost, Student, Teacher, AbsenceType,
-                        AbsenceStatus, Absence)
+                        AbsenceStatus, Absence, PunishmentType, Punishment)
 
 
 def create_statuses() -> tp.Dict[str, Status]:
@@ -354,6 +354,8 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
         },
     ]
 
+    teachers = {}
+
     for value in values:
         teacher, _ = Teacher.objects.get_or_create(
             surname=value['surname'],
@@ -364,10 +366,50 @@ def create_teachers(milgroups: tp.Dict[int, Milgroup],
             teacher_post=value['teacher_post'],
             milgroup=value['milgroup'])
         teacher.save()
+        teachers[value['surname']] = teacher
+    return teachers
+
+
+def create_punishment_types():
+    values = ['Взыскание', 'Выговор', 'Отчисление']
+
+    types = {}
+    for value in values:
+        typ, _ = PunishmentType.objects.get_or_create(punishment_type=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_punishments(punishment_types: tp.Dict[str, PunishmentType],
+                       students: tp.Dict[str, Student],
+                       teachers: tp.Dict[str, Teacher]):
+    values = [
+        {
+            'student': students['Хромов'],
+            'reason': 'Не пришел на пары',
+            'punishment_type': punishment_types['Взыскание'],
+            'date': '2020-11-10',
+            'teacher': teachers['Никандров'],
+            'remove_date': '2020-11-13',
+        },
+        {
+            'student': students['Исаков'],
+            'reason': 'Сломал парту',
+            'punishment_type': punishment_types['Выговор'],
+            'date': '2020-11-12',
+            'teacher': teachers['Репалов'],
+            'remove_date': None,
+        },
+    ]
+
+    for value in values:
+        punishment, _ = Punishment.objects.get_or_create(**value)
+        punishment.save()
 
 
 # pylint: disable=(too-many-locals)
-@api_view(['PUT'])
+@api_view(['POST'])
 @permission_classes((AllowAny,))
 def lms_populate(request: Request) -> Response:
     """
@@ -385,12 +427,15 @@ def lms_populate(request: Request) -> Response:
 
     students = create_students(milgroups, programs, statuses)
 
-    create_teachers(milgroups, milfaculties, ranks, posts)
+    teachers = create_teachers(milgroups, milfaculties, ranks, posts)
 
     absence_types = create_absence_types()
     absence_statuses = create_absence_statuses()
 
     create_absences(absence_types, absence_statuses, students)
+
+    punishment_types = create_punishment_types()
+    create_punishments(punishment_types, students, teachers)
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)
