@@ -202,9 +202,9 @@ class SectionRetrieveSerializer(serializers.ModelSerializer):
 
 class SubjectRetrieveSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True, source="user.profile")
-    sections = SectionRetrieveSerializer(many=True,
-                                         read_only=True,
-                                         source="section_set")
+    sections = SectionSerializer(many=True,
+                                 read_only=True,
+                                 source="section_set")
 
     class Meta:
         model = Subject
