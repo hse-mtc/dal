@@ -30,6 +30,7 @@ from dms.serializers import (
     PaperMutateSerializer,
     PaperSerializer,
     PublisherSerializer,
+    SectionRetrieveSerializer,
     SectionSerializer,
     SubjectRetrieveSerializer,
     SubjectSerializer,
@@ -99,6 +100,11 @@ class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = SectionSerializer
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return SectionRetrieveSerializer
+        return SectionSerializer
 
 
 class TopicViewSet(viewsets.ModelViewSet):
