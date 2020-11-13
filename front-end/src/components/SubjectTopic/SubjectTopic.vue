@@ -1,28 +1,77 @@
 <template>
   <div class="topics" style="display: none">
-    <div
-      v-for="({
-        title,
-        class_materials: { lectures, seminars, groups, practices },
-      },
-      index) in data"
+    <el-button v-if="isOwner" @click="addTopic" class="add-theme"><CustomText variant="paragraph" color="#FFF" :custom-style="{fontWeight: 600}">Добавить тему</CustomText></el-button>
+    <div v-if="topics.length === 0" class="pt-2 pl-2">
+      <CustomText v-if="!isOwner" variant="paragraph">Этот раздел пока пуст</CustomText>
+    </div>    <div
+      v-for="(item,
+      index) in topics"
       :key="index"
       class="topic"
     >
       <div class="topic-title">
         <div>Тема №{{ index + 1 }}</div>
-        <div class="topic-download-all">Скачать все материалы архивом</div>
+        <div class="buttons" v-if="isOwner">
+          <img
+              v-if="editTopicId === item.id"
+              @click="acceptNewTopic(item.id)"
+              class="grow"
+              src="../../assets/subject/accept.svg"
+              alt=""
+          />
+          <img
+              v-if="editTopicId === null"
+              @click="editTopic(item.id)"
+              class="grow"
+              src="../../assets/subject/edit.svg"
+              alt=""
+          />
+          <img
+              v-if="editTopicId === null"
+              @click="deleteTopic(item.id)"
+              class="grow"
+              src="../../assets/subject/close.svg"
+              alt=""
+          />
+          <img
+              v-if="editTopicId === null"
+              @click="downloadTopic(item.id)"
+              class="grow"
+              src="../../assets/subject/download.svg"
+              alt=""
+          />
+        </div>
       </div>
 
-      <div class="topic-content">
-        {{ title }}
+      <div v-if="editTopicId !== item.id">
+        <CustomText variant="header" class="topic-content">
+          {{ item.title }}
+        </CustomText>
+      </div>
+      <div v-if="editTopicId === item.id" style="width: 90%">
+        <el-input class="title-input" v-model="item.title" clearable/>
+      </div>
+
+      <div v-if="editTopicId !== item.id">
+        <CustomText variant="paragraph">
+          {{ item.annotation }}
+        </CustomText>
+      </div>
+      <div v-if="editTopicId === item.id" style="width: 90%; margin-top: 10px">
+        <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            class="title-input"
+            v-model="item.annotation"
+            clearable
+        />
       </div>
 
       <div class="topic-files">
-        <ClassMaterials title="Лекции" :materials="lectures" />
-        <ClassMaterials title="Семинары" :materials="seminars" />
-        <ClassMaterials title="Групповые занятия" :materials="groups" />
-        <ClassMaterials title="Практические занятия" :materials="practices" />
+        <ClassMaterials :isOwner="isOwner" title="Лекции" :materials="item.class_materials && item.class_materials.lectures || []" />
+        <ClassMaterials :isOwner="isOwner" title="Семинары" :materials="item.class_materials && item.class_materials.seminars || []" />
+        <ClassMaterials :isOwner="isOwner" title="Групповые занятия" :materials="item.class_materials && item.class_materials.groups || []" />
+        <ClassMaterials :isOwner="isOwner" title="Практические занятия" :materials="item.class_materials && item.class_materials.practices || []" />
       </div>
     </div>
   </div>
@@ -30,14 +79,89 @@
 
 <script>
 import ClassMaterials from "./ClassMaterials";
+import CustomText from "@/common/CustomText";
+import {addTopics, deleteTopics, editTopics, getTopics} from "@/api/topic";
+import {mapState} from "vuex";
 
 export default {
   name: "",
-  components: { ClassMaterials },
-  props: ["data"],
+  components: {CustomText, ClassMaterials },
+  props: ["sectionId", "isOwner"],
   data() {
-    return {};
+    return {
+      topics: [],
+      editTopicId: null
+    };
   },
+  computed: {
+    ...mapState({
+      userId: (state) => state.app.userId,
+    }),
+  },
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    fetchData() {
+      getTopics(this.sectionId).then((res) => {
+        this.topics = res.data.topics
+      })
+    },
+    editTopic(id) {
+      this.editTopicId = id
+    },
+    acceptNewTopic(id) {
+      let title
+      let annotation
+
+      if (this.topics.find(item => item.id === id).title) {
+       title =  this.topics.find(item => item.id === id).title
+      } else {
+        this.$message.warning('Пожалуйста, заполните название темы')
+        return
+      }
+
+      if (this.topics.find(item => item.id === id).annotation) {
+        annotation =  this.topics.find(item => item.id === id).annotation
+      } else {
+        this.$message.warning('Пожалуйста, заполните аннотацию для темы')
+        return
+      }
+
+      const dataToSend = {
+        title: title,
+        annotation: annotation,
+        section: this.sectionId
+      }
+      editTopics(id, dataToSend)
+      this.editTopicId = null
+    },
+    deleteTopic(id) {
+      this.$confirm(
+          "Вы уверены, что хотите удалить раздел? Это действие не обратимо.",
+          "Подтверждение",
+          {
+            confirmButtonText: "Да",
+            cancelButtonText: "Отмена",
+            type: "warning",
+          }
+      ).then(() => {
+        deleteTopics(id).then(() => {
+          this.topics = this.topics.filter(item => item.id !== id)
+        })
+      });
+    },
+    addTopic() {
+      const dataToSend = {
+        title: "Новая тема",
+        section: this.sectionId,
+        annotation: "Введите аннотацию"
+      }
+      addTopics(dataToSend).then((res) => {
+        this.topics.push(res.data)
+      })
+    }
+  }
 };
 </script>
 

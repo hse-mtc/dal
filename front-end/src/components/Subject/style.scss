@@ -1,3 +1,6 @@
+@import "@/styles/variables.scss";
+
+
 .scienceWork {
   font-family: "ProximaNovaRegular";
 }
@@ -42,7 +45,42 @@
       border-bottom: 1px solid #0c4b9a;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 10px 10px 10px 0;
+    }
+  }
+}
+
+.title-input {
+  width: 100%;
+  border: none !important;
+  height: 30px !important;
+  font-size: 20px;
+  padding-left: 0 !important;
+  line-height: 30px !important;
+}
+
+/deep/.el-input__inner {
+  color: $black;
+  height: 30px !important;
+  line-height: 30px !important;
+  padding-left: 0 !important;
+}
+
+.buttons {
+  z-index: 4;
+  align-items: center;
+  justify-content: center;
+  img {
+    cursor: pointer;
+    margin-left: $s;
+
+    &.grow {
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        transform: scale(1.2);
+      }
     }
   }
 }
