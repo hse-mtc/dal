@@ -509,8 +509,14 @@ export default {
           });
         });
     },
+    onCreate(student, date) {
+      this.editAbsence = { absence_status: "Открыт", student, date };
+      this.editAbsenceFullname = student.fullname;
+      this.dialogVisible = true;
+    },
     onEdit(row, fn) {
       this.editAbsence = { ...row };
+      this.editAbsence.student = undefined;
       this.editAbsenceFullname = fn;
       this.dialogVisible = true;
     },
@@ -530,22 +536,42 @@ export default {
         .catch(() => {});
     },
     handleAccept() {
-      patchAbsence(this.editAbsence)
-        .then(() => {
-          this.$message({
-            message: "Пропуск успешно редактирован",
-            type: "success",
+      if (this.editAbsence.id) {
+        patchAbsence(this.editAbsence)
+          .then(() => {
+            this.$message({
+              message: "Пропуск успешно редактирован",
+              type: "success",
+            });
+            this.dialogVisible = false;
+            this.onFilter();
+            if (this.filterJ.mg) this.onJournal();
+          })
+          .catch(() => {
+            this.$message({
+              message: "Ошибка при редактировании пропуска!",
+              type: "error",
+            });
           });
-          this.dialogVisible = false;
-          this.onFilter();
-          if (this.filterJ.mg) this.onJournal();
-        })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка при редактировании пропуска!",
-            type: "error",
+      }
+      else {
+        postAbsence(this.editAbsence)
+          .then(() => {
+            this.$message({
+              message: "Пропуск успешно создан",
+              type: "success",
+            });
+            this.dialogVisible = false;
+            this.onFilter();
+            if (this.filterJ.mg) this.onJournal();
+          })
+          .catch(() => {
+            this.$message({
+              message: "Ошибка при создании пропуска!",
+              type: "error",
+            });
           });
-        });
+      }
     },
     handleDelete(id) {
       this.$confirm(
