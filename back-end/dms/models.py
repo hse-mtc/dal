@@ -4,6 +4,8 @@ import uuid
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from ordered_model.models import OrderedModel
+
 from taggit.managers import TaggableManager
 
 from common.models import Person
@@ -57,9 +59,10 @@ class Subject(models.Model):
         return self.title
 
 
-class Section(models.Model):
+class Section(OrderedModel):
     title = models.CharField(max_length=255)
     subject = models.ForeignKey(to=Subject, on_delete=models.CASCADE)
+    order_with_respect_to = "subject"
 
     class Meta:
         verbose_name = "Section"
@@ -69,10 +72,11 @@ class Section(models.Model):
         return self.title
 
 
-class Topic(models.Model):
+class Topic(OrderedModel):
     title = models.CharField(max_length=255)
     annotation = models.TextField(blank=True)
     section = models.ForeignKey(to=Section, on_delete=models.CASCADE)
+    order_with_respect_to = "section"
 
     class Meta:
         verbose_name = "Topic"
