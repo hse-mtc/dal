@@ -9,9 +9,10 @@ pylint = "*"
 pylint-django = "*"
 pytest-django = "*"
 yapf = "*"
+django-debug-toolbar = "*"
 
 [packages]
-Django = "*"
+django = "*"
 django-cors-headers = "*"
 django-filter = "*"
 django-taggit = "*"
@@ -22,7 +23,6 @@ drf-yasg = "*"
 psycopg2-binary = "*"
 uvicorn = "*"
 django-extensions = "*"
-pylint-django = "*"
 
 [requires]
 python_version = "3.8.5"
