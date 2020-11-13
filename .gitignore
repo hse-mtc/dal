@@ -20,3 +20,7 @@ front-end/dist
 front-end/node_modules
 
 ## Files
+
+
+## Database's storage
+back-end/dms/fixtures
