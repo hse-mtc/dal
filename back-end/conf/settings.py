@@ -39,12 +39,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # Addons
-    "taggit",
     "corsheaders",
-    "drf_yasg",
     "debug_toolbar",
     "django_filters",
+    "drf_yasg",
+    "ordered_model",
     "silk",
+    "taggit",
 
     # REST framework
     "rest_framework",
