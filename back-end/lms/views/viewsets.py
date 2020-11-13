@@ -4,10 +4,11 @@ from rest_framework.permissions import AllowAny
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from lms.models import Student, Teacher
+from lms.models import Student, Teacher, Punishment
 from lms.serializers.student import StudentSerializer
 from lms.serializers.teacher import TeacherSerializer
-from lms.filters import StudentFilterSet, TeacherFilterSet
+from lms.serializers.serializers import PunishmentSerializer
+from lms.filters import StudentFilterSet, TeacherFilterSet, PunishmentFilterSet
 
 
 class StudentViewSet(ModelViewSet):
@@ -30,3 +31,15 @@ class TeacherViewSet(ModelViewSet):
 
     filterset_class = TeacherFilterSet
     search_fields = ['surname', 'name', 'patronymic']
+
+
+class PunishmentViewSet(ModelViewSet):
+    serializer_class = PunishmentSerializer
+    queryset = Punishment.objects.all()
+
+    permission_classes = [AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+
+    filterset_class = PunishmentFilterSet
+    search_fields = ['student__surname', 'student__name', 'student__patronymic',
+                     'teacher__surname', 'teacher__name', 'teacher__patronymic']
