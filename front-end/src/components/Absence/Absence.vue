@@ -221,7 +221,12 @@
                         >
                           <el-form-item label="Тип причины: ">
                             <el-tag
-                              :type="tagByAbsenceType(scope.row.absences.find((x) => x.date == d).absence_type)"
+                              :type="
+                                tagByAbsenceType(
+                                  scope.row.absences.find((x) => x.date == d)
+                                    .absence_type
+                                )
+                              "
                               disable-transitions
                             >
                               {{
@@ -269,8 +274,18 @@
                         </el-form>
                         <i
                           slot="reference"
-                          :class="iconByAbsenceStatus(scope.row.absences.find((x) => x.date == d).absence_status)"
-                          :style="colorByAbsenceStatus(scope.row.absences.find((x) => x.date == d).absence_status)"
+                          :class="
+                            iconByAbsenceStatus(
+                              scope.row.absences.find((x) => x.date == d)
+                                .absence_status
+                            )
+                          "
+                          :style="
+                            colorByAbsenceStatus(
+                              scope.row.absences.find((x) => x.date == d)
+                                .absence_status
+                            )
+                          "
                         />
                       </el-popover>
                       <el-button
@@ -459,32 +474,33 @@ export default {
   },
   methods: {
     changeAbsenceStatus(absence) {
-      absence.absence_status = absence.absence_status == 'Закрыт' ? 'Открыт' : 'Закрыт';
+      absence.absence_status =
+        absence.absence_status == "Закрыт" ? "Открыт" : "Закрыт";
     },
     tagByAbsenceType(type) {
       switch (type) {
-        case 'Неуважительная':
-          return 'danger';
-        case 'Опоздание':
-          return 'warning';
+        case "Неуважительная":
+          return "danger";
+        case "Опоздание":
+          return "warning";
         default:
-          return 'success';
+          return "success";
       }
     },
     iconByAbsenceStatus(status) {
       switch (status) {
-        case 'Открыт':
-          return 'el-icon-circle-close';
+        case "Открыт":
+          return "el-icon-circle-close";
         default:
-          return 'el-icon-circle-check';
+          return "el-icon-circle-check";
       }
     },
     colorByAbsenceStatus(status) {
       switch (status) {
-        case 'Открыт':
-          return 'color: red;';
+        case "Открыт":
+          return "color: red;";
         default:
-          return 'color: green;';
+          return "color: green;";
       }
     },
     formatDate: (d) => moment(d).format("DD.MM.YY"),
@@ -553,8 +569,7 @@ export default {
               type: "error",
             });
           });
-      }
-      else {
+      } else {
         postAbsence(this.editAbsence)
           .then(() => {
             this.$message({
