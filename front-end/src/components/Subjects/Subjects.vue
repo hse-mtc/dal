@@ -1,7 +1,7 @@
 <template>
   <el-col :offset="2" :span="20" class="scienceWork">
     <el-row class="pageTitle">
-      <el-col :span="23">
+      <el-col :span="24">
         <div class="d-flex align-items-center justify-content-between">
           Учебно-методические материалы
           <CustomText
@@ -15,7 +15,7 @@
     </el-row>
 
     <el-row class="search">
-      <el-col :span="23">
+      <el-col :span="24">
         <SearchForSubjects placeholder="Введите название предмета" />
         <el-row
           v-if="filteredSubjects.length !== 0"

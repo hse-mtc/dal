@@ -55,7 +55,7 @@ service.interceptors.response.use(
     if (
       error.response.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url.includes("tokens/refresh")
+      !originalRequest.url.includes("tokens/refresh") && !originalRequest.url.includes("tokens/obtain")
     ) {
       originalRequest._retry = true;
       const refreshToken = localStorageService.getRefreshToken();
@@ -78,11 +78,20 @@ service.interceptors.response.use(
         });
     }
 
-    Message({
-      message: error.message,
-      type: "error",
-      duration: 5 * 1000,
-    });
+    if (error.response.status === 401 && originalRequest.url.includes("tokens/obtain")) {
+      Message({
+        message: 'Логин или пароль введены неверно, попробуйте еще раз',
+        type: "error",
+        duration: 5 * 1000,
+      });
+    } else {
+      Message({
+        message: error.message,
+        type: "error",
+        duration: 5 * 1000,
+      });
+    }
+
     return Promise.reject(error);
   }
 );

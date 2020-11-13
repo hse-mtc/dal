@@ -30,3 +30,26 @@ export function upsertSubject(data) {
     });
   }
 }
+
+export function editSectionTitle(id, data) {
+  return request({
+    url: `/dms/sections/${id}/`,
+    method: "patch",
+    data: data
+  });
+}
+
+export function addSection(data) {
+  return request({
+    url: `/dms/sections/`,
+    method: "post",
+    data: data
+  });
+}
+
+export function deleteSection(id) {
+  return request({
+    url: `/dms/sections/${id}/`,
+    method: "delete",
+  });
+}
