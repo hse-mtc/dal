@@ -59,6 +59,18 @@ class SectionSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class OrderUpdateSerializer(serializers.Serializer):
+    to = serializers.IntegerField()
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        instance.to(validated_data["to"])
+        instance.save()
+        return validated_data
+
+
 class TopicSerializer(serializers.ModelSerializer):
 
     class Meta:
