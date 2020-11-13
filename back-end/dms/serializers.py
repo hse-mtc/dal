@@ -187,7 +187,7 @@ class TopicRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Topic
-        fields = ["id", "title", "class_materials"]
+        fields = "__all__"
 
 
 class SectionRetrieveSerializer(serializers.ModelSerializer):

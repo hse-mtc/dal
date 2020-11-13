@@ -36,6 +36,7 @@ from dms.serializers import (
     SubjectSerializer,
     TagSerializer,
     TopicSerializer,
+    TopicRetrieveSerializer,
 )
 from dms.models import (
     Author,
@@ -99,7 +100,6 @@ class SubjectViewSet(viewsets.ModelViewSet):
 class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
     permission_classes = [permissions.AllowAny]
-    serializer_class = SectionSerializer
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -110,7 +110,11 @@ class SectionViewSet(viewsets.ModelViewSet):
 class TopicViewSet(viewsets.ModelViewSet):
     queryset = Topic.objects.all()
     permission_classes = [permissions.AllowAny]
-    serializer_class = TopicSerializer
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return TopicRetrieveSerializer
+        return TopicSerializer
 
 
 class TagListAPIView(ListAPIView):
