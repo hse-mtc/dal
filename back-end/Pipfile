@@ -24,6 +24,8 @@ drf-writable-nested = "*"
 psycopg2-binary = "*"
 uvicorn = "*"
 django-extensions = "*"
+pylint-django = "*"
+django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.8.5"
