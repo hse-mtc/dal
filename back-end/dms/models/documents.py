@@ -40,7 +40,7 @@ class Document(models.Model):
     file = models.ForeignKey(to=File, on_delete=models.CASCADE)
     user = models.ForeignKey(to=User,
                              on_delete=models.SET_DEFAULT,
-                             default=super_user_id())
+                             default=super_user_id)
 
     class Meta:
         abstract = True
