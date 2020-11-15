@@ -37,11 +37,14 @@ class DocumentMutateSerializer(DocumentSerializer):
         return super().create(validated_data)
 
     def update_file(self, instance, validated_data):
-        if content := validated_data.pop("content", None):
-            file = File.objects.get(id=instance.file.id)
-            file.content = content
-            file.name = content.name
-            file.save()
+        content = validated_data.pop("content", None)
+        if content is None:
+            return
+        
+        file = File.objects.get(id=instance.file.id)
+        file.content = content
+        file.name = content.name
+        file.save()
 
     def update(self, instance, validated_data):
         self.update_file(instance, validated_data)
