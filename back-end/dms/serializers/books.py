@@ -24,4 +24,4 @@ class BookMutateSerializer(DocumentMutateSerializer):
 
     class Meta:
         model = Book
-        exclude = ["file"]
+        fields = "__all__"
