@@ -17,17 +17,21 @@ from rest_framework.decorators import (
 
 from auth.models import Profile
 
-from dms.models import (
-    Author,
-    Book,
+from dms.models.books import Book
+from dms.models.documents import File
+from dms.models.papers import (
     Category,
-    ClassMaterial,
-    File,
     Paper,
-    Publisher,
+)
+from dms.models.class_materials import (
+    ClassMaterial,
     Section,
-    Subject,
     Topic,
+)
+from dms.models.common import (
+    Author,
+    Publisher,
+    Subject,
 )
 
 User = get_user_model()

@@ -1,19 +1,27 @@
 from django.contrib import admin
 
-from dms.models import (
-    Author,
+from dms.models.books import Book
+from dms.models.papers import (
     Category,
-    ClassMaterial,
-    File,
     Paper,
+)
+from dms.models.class_materials import (
+    ClassMaterial,
+    Section,
+    Topic,
+)
+from dms.models.common import (
+    Author,
     Publisher,
     Subject,
 )
 
 admin.site.register(Author)
+admin.site.register(Book)
 admin.site.register(Category)
 admin.site.register(ClassMaterial)
-admin.site.register(File)
 admin.site.register(Paper)
 admin.site.register(Publisher)
+admin.site.register(Section)
 admin.site.register(Subject)
+admin.site.register(Topic)

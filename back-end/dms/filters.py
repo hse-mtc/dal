@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from dms.models import Paper
+from dms.models.papers import Paper
 
 
 class PaperFilter(filters.FilterSet):
