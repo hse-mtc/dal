@@ -55,7 +55,7 @@ class PaperMutateSerializer(DocumentMutateSerializer):
 
     class Meta:
         model = Paper
-        exclude = ["file"]
+        fields = "__all__"
 
     def create(self, validated_data):
         tags = validated_data.pop("tags", None)
