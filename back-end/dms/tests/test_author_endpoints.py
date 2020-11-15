@@ -4,7 +4,7 @@ from operator import itemgetter
 
 import pytest
 
-from dms.models import Author
+from dms.models.common import Author
 
 
 @pytest.fixture(scope="function")

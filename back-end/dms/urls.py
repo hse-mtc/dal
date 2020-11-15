@@ -1,20 +1,27 @@
-from django.urls import path, include
+from django.urls import (
+    path,
+    include,
+)
 
 from rest_framework import routers
 
-from dms.views import (
-    AuthorViewSet,
-    BookViewSet,
-    CategoryViewSet,
-    ClassMaterialViewSet,
+from dms.views.books import BookViewSet
+from dms.views.papers import (
     PaperViewSet,
-    PublisherViewSet,
-    SectionOrderUpdateAPIView,
-    SectionViewSet,
-    SubjectViewSet,
+    CategoryViewSet,
     TagListAPIView,
-    TopicOrderUpdateAPIView,
+)
+from dms.views.class_materials import (
+    SectionViewSet,
+    SectionOrderUpdateAPIView,
     TopicViewSet,
+    TopicOrderUpdateAPIView,
+    ClassMaterialViewSet,
+)
+from dms.views.common import (
+    AuthorViewSet,
+    PublisherViewSet,
+    SubjectViewSet,
 )
 
 router = routers.DefaultRouter()
