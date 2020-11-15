@@ -40,7 +40,7 @@ class DocumentMutateSerializer(DocumentSerializer):
         content = validated_data.pop("content", None)
         if content is None:
             return
-        
+
         file = File.objects.get(id=instance.file.id)
         file.content = content
         file.name = content.name
