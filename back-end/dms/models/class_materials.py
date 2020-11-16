@@ -8,7 +8,9 @@ from dms.models.documents import Document
 
 class Section(OrderedModel):
     title = models.CharField(max_length=255)
-    subject = models.ForeignKey(to=Subject, on_delete=models.CASCADE)
+    subject = models.ForeignKey(to=Subject,
+                                on_delete=models.CASCADE,
+                                related_name="sections")
     order_with_respect_to = "subject"
 
     class Meta(OrderedModel.Meta):
@@ -22,7 +24,9 @@ class Section(OrderedModel):
 class Topic(OrderedModel):
     title = models.CharField(max_length=255)
     annotation = models.TextField(blank=True)
-    section = models.ForeignKey(to=Section, on_delete=models.CASCADE)
+    section = models.ForeignKey(to=Section,
+                                on_delete=models.CASCADE,
+                                related_name="topics")
     order_with_respect_to = "section"
 
     class Meta(OrderedModel.Meta):
@@ -42,7 +46,9 @@ class ClassMaterial(Document):
         PRACTICES = "PR", "practices"
 
     type = models.CharField(max_length=2, choices=Type.choices)
-    topic = models.ForeignKey(to=Topic, on_delete=models.CASCADE)
+    topic = models.ForeignKey(to=Topic,
+                              on_delete=models.CASCADE,
+                              related_name="class_materials")
 
     class Meta:
         verbose_name = "Class Material"

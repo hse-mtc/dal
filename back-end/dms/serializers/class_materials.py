@@ -46,18 +46,14 @@ class TopicRetrieveSerializer(TopicSerializer):
     def get_class_materials(self, obj: Topic):
         data = {}
         for value, label in ClassMaterial.Type.choices:
-            materials = obj.classmaterial_set.filter(type=value)
+            materials = obj.class_materials.filter(type=value)
             data[label] = ClassMaterialSerializer(materials, many=True).data
         return data
 
 
 class SectionRetrieveSerializer(SectionSerializer):
-    topics = TopicRetrieveSerializer(many=True,
-                                     read_only=True,
-                                     source="topic_set")
+    topics = TopicRetrieveSerializer(many=True, read_only=True)
 
 
 class SubjectRetrieveSerializer(SubjectSerializer):
-    sections = SectionSerializer(many=True,
-                                 read_only=True,
-                                 source="section_set")
+    sections = SectionSerializer(many=True, read_only=True)
