@@ -4,6 +4,9 @@ from rest_framework import status
 
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+from rest_framework.filters import SearchFilter
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from dms.models.class_materials import (
     Section,
@@ -22,6 +25,7 @@ from dms.permissions import (
     IsOwner,
     ReadOnly,
 )
+from dms.filters import SectionFilter
 from dms.parsers import MultiPartWithJSONParser
 from dms.views.common import (
     OrderUpdateAPIView,
@@ -32,9 +36,12 @@ from dms.views.common import (
 class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
     permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = SectionFilter
+    search_fields = ["topics__title", "topics__class_materials__title"]
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
+        if self.action in ["retrieve", "list"]:
             return SectionRetrieveSerializer
         return SectionSerializer
 
