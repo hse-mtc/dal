@@ -70,7 +70,12 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals
 
-        many_fields = request.data.pop("data")
+        many_fields = request.data.pop("data", None)
+
+        # request contains fields for only one object, fall back to default
+        if many_fields is None:
+            return super().create(request, *args, **kwargs)
+
         many_content = request.data.pop("content")
         for fields, content in zip(many_fields, many_content):
             fields["content"] = content
