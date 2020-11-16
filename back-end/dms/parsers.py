@@ -13,8 +13,9 @@ class MultiPartWithJSONParser(MultiPartParser):
         # `.data` is immutable QueryDict, `.copy()` will make it mutable
         daf.data = daf.data.copy()
 
-        # No data was sent (only files), skip JSON parsing
         raw_data = daf.data.pop("data", None)
+
+        # No data was sent (only files), skip JSON parsing
         if raw_data is None:
             return daf
 
