@@ -1,3 +1,7 @@
+from rest_framework import serializers
+
+from drf_spectacular.utils import inline_serializer
+
 from dms.models.books import Book
 from dms.serializers.documents import (
     DocumentMutateSerializer,
@@ -25,3 +29,12 @@ class BookMutateSerializer(DocumentMutateSerializer):
     class Meta:
         model = Book
         fields = "__all__"
+
+
+BookMutateSerializerForSwagger = inline_serializer(
+    name="BookMutateInline",
+    fields={
+        "content": serializers.FileField(),
+        "data": BookMutateSerializer(),
+    },
+)

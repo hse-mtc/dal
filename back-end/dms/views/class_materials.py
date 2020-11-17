@@ -17,6 +17,7 @@ from dms.models.class_materials import (
 )
 from dms.serializers.class_materials import (
     ClassMaterialMutateSerializer,
+    ClassMaterialMutateSerializerForSwagger,
     ClassMaterialSerializer,
     SectionRetrieveSerializer,
     SectionSerializer,
@@ -70,7 +71,10 @@ class TopicOrderUpdateAPIView(OrderUpdateAPIView):
     queryset = Topic.objects.all()
 
 
-@extend_schema(tags=["class-materials"])
+@extend_schema(
+    request=ClassMaterialMutateSerializerForSwagger,
+    tags=["class-materials"],
+)
 class ClassMaterialViewSet(viewsets.ModelViewSet):
     queryset = ClassMaterial.objects.all()
     permission_classes = [ReadOnly | IsOwner]

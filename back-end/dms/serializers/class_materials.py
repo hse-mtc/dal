@@ -68,3 +68,12 @@ class SectionRetrieveSerializer(SectionSerializer):
 
 class SubjectRetrieveSerializer(SubjectSerializer):
     sections = SectionSerializer(many=True, read_only=True)
+
+
+ClassMaterialMutateSerializerForSwagger = inline_serializer(
+    name="ClassMaterialMutateInline",
+    fields={
+        "content": serializers.FileField(),
+        "data": ClassMaterialMutateSerializer(),
+    },
+)

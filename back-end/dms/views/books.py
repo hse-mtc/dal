@@ -8,6 +8,7 @@ from drf_spectacular.views import extend_schema
 from dms.models.books import Book
 from dms.serializers.books import (
     BookMutateSerializer,
+    BookMutateSerializerForSwagger,
     BookSerializer,
 )
 from dms.permissions import (
@@ -18,7 +19,7 @@ from dms.parsers import MultiPartWithJSONParser
 from dms.views.common import MUTATE_ACTIONS
 
 
-@extend_schema(tags=["books"])
+@extend_schema(request=BookMutateSerializerForSwagger, tags=["books"])
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     permission_classes = [ReadOnly | IsOwner]

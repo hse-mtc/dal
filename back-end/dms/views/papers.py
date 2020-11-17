@@ -20,6 +20,7 @@ from dms.models.papers import (
 from dms.serializers.papers import (
     CategorySerializer,
     PaperMutateSerializer,
+    PaperMutateSerializerForSwagger,
     PaperSerializer,
     TagSerializer,
 )
@@ -56,7 +57,7 @@ class TagListAPIView(generics.ListAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-@extend_schema(tags=["papers"])
+@extend_schema(request=PaperMutateSerializerForSwagger, tags=["papers"])
 class PaperViewSet(viewsets.ModelViewSet):
     queryset = Paper.objects.order_by("-publication_date", "title")
     permission_classes = [ReadOnly | IsOwner]

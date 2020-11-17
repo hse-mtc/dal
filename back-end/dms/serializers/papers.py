@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from taggit.models import Tag
 
+from drf_spectacular.utils import inline_serializer
+
 from dms.models.papers import (
     Category,
     Paper,
@@ -70,3 +72,12 @@ class PaperMutateSerializer(DocumentMutateSerializer):
         if tags:
             instance.tags.set(*tags, clear=True)
         return instance
+
+
+PaperMutateSerializerForSwagger = inline_serializer(
+    name="PaperMutateInline",
+    fields={
+        "content": serializers.FileField(),
+        "data": PaperMutateSerializer(),
+    },
+)
