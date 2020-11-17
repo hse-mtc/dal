@@ -217,6 +217,7 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_SETTINGS": {
         "docExpansion": "none",
         "filter": True,
+        "persistAuthorization": True,
     },
 
     # Meta info
