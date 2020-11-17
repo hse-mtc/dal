@@ -3,7 +3,6 @@ import random
 import typing as tp
 
 from django.core.files.base import ContentFile
-from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.request import Request
@@ -32,9 +31,8 @@ from dms.models.common import (
     Author,
     Publisher,
     Subject,
+    User,
 )
-
-User = get_user_model()
 
 
 def create_super_user():

@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
 from dms.models.class_materials import (
+    ClassMaterial,
     Section,
     Topic,
-    ClassMaterial,
 )
 from dms.serializers.common import SubjectSerializer
 from dms.serializers.documents import (
-    DocumentSerializer,
     DocumentMutateSerializer,
+    DocumentSerializer,
 )
 
 

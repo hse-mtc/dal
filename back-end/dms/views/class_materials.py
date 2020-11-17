@@ -1,25 +1,25 @@
-from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework import viewsets
 
-from rest_framework.response import Response
-from rest_framework.parsers import JSONParser
 from rest_framework.filters import SearchFilter
+from rest_framework.parsers import JSONParser
+from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from dms.models.class_materials import (
+    ClassMaterial,
     Section,
     Topic,
-    ClassMaterial,
 )
 from dms.serializers.class_materials import (
-    SectionSerializer,
-    SectionRetrieveSerializer,
-    TopicSerializer,
-    TopicRetrieveSerializer,
-    ClassMaterialSerializer,
     ClassMaterialMutateSerializer,
+    ClassMaterialSerializer,
+    SectionRetrieveSerializer,
+    SectionSerializer,
+    TopicRetrieveSerializer,
+    TopicSerializer,
 )
 from dms.permissions import (
     IsOwner,
@@ -28,8 +28,8 @@ from dms.permissions import (
 from dms.filters import SectionFilter
 from dms.parsers import MultiPartWithJSONParser
 from dms.views.common import (
-    OrderUpdateAPIView,
     MUTATE_ACTIONS,
+    OrderUpdateAPIView,
 )
 
 

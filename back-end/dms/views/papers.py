@@ -1,6 +1,7 @@
-from rest_framework import viewsets
-from rest_framework import permissions
 from rest_framework import generics
+from rest_framework import permissions
+from rest_framework import viewsets
+
 from rest_framework.filters import SearchFilter
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -16,13 +17,13 @@ from dms.models.papers import (
 )
 from dms.serializers.papers import (
     CategorySerializer,
-    PaperSerializer,
     PaperMutateSerializer,
+    PaperSerializer,
     TagSerializer,
 )
 from dms.permissions import (
-    ReadOnly,
     IsOwner,
+    ReadOnly,
 )
 from dms.filters import PaperFilter
 from dms.parsers import MultiPartWithJSONParser

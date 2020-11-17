@@ -1,7 +1,7 @@
 from dms.models.books import Book
 from dms.serializers.documents import (
-    DocumentSerializer,
     DocumentMutateSerializer,
+    DocumentSerializer,
 )
 from dms.serializers.common import (
     AuthorSerializer,

@@ -1,11 +1,11 @@
 import uuid
 
 from django.db import models
-from django.contrib.auth import get_user_model
 
-from dms.models.common import super_user_id
-
-User = get_user_model()
+from dms.models.common import (
+    User,
+    super_user_id,
+)
 
 
 def upload_to(instance, filename):

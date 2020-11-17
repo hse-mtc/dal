@@ -11,8 +11,8 @@ from dms.serializers.common import (
     PublisherSerializer,
 )
 from dms.serializers.documents import (
-    DocumentSerializer,
     DocumentMutateSerializer,
+    DocumentSerializer,
 )
 
 
