@@ -1,5 +1,10 @@
 from rest_framework import serializers
 
+from drf_spectacular.utils import (
+    extend_schema_field,
+    inline_serializer,
+)
+
 from dms.models.class_materials import (
     ClassMaterial,
     Section,
@@ -43,6 +48,12 @@ class ClassMaterialMutateSerializer(DocumentMutateSerializer):
 class TopicRetrieveSerializer(TopicSerializer):
     class_materials = serializers.SerializerMethodField(read_only=True)
 
+    @extend_schema_field(
+        inline_serializer(name="ClassMaterialsByType",
+                          fields={
+                              label: ClassMaterialSerializer()
+                              for label in ClassMaterial.Type.labels
+                          }))
     def get_class_materials(self, obj: Topic):
         data = {}
         for value, label in ClassMaterial.Type.choices:
