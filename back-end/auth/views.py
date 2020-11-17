@@ -11,10 +11,21 @@ from rest_framework.decorators import (
     permission_classes,
 )
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+from drf_spectacular.views import extend_schema
+
 from auth.models import Profile
-from auth.serializers import ProfileSerializer
+from auth.serializers import (
+    ProfileSerializer,
+    TokenPairSerializer,
+)
 
 
+@extend_schema(tags=["auth"])
 @csrf_exempt
 @api_view(["GET"])
 @permission_classes([permissions.AllowAny])
@@ -28,6 +39,7 @@ def info(request: Request) -> Response:
     return Response(data, status=HTTP_200_OK)
 
 
+@extend_schema(tags=["auth"])
 class ProfileRetrieveAPIView(RetrieveAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
@@ -36,3 +48,14 @@ class ProfileRetrieveAPIView(RetrieveAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
+
+
+TokenObtainPairExtendedView = extend_schema(
+    responses={200: TokenPairSerializer},
+    tags=["auth"],
+)(TokenObtainPairView)
+
+TokenRefreshExtendedView = extend_schema(
+    responses={200: TokenPairSerializer},
+    tags=["auth"],
+)(TokenRefreshView)
