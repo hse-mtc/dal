@@ -212,8 +212,13 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 8  # 80MiB
 
 # Swagger settings for drf-spectacular
 
-SPECTACULAR_DEFAULTS = {
+SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
+
+    "SWAGGER_UI_SETTINGS": {
+        "docExpansion": "none",
+        "filter": True,
+    },
 
     # Meta info
     "TITLE": "DAL REST API",
