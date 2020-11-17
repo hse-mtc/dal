@@ -15,7 +15,7 @@ from lms.serializers.serializers import (MilgroupSerializer, ProgramSerializer,
                                          RankSerializer, TeacherPostSerializer)
 
 
-@extend_schema(tags=["reference-book"])
+@extend_schema(tags=['reference-book'])
 class ReferenceBookView(ListAPIView):
     permission_classes = [AllowAny]
 

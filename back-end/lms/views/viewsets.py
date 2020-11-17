@@ -13,7 +13,7 @@ from lms.serializers.punishment import PunishmentSerializer
 from lms.filters import StudentFilterSet, TeacherFilterSet, PunishmentFilterSet
 
 
-@extend_schema(tags=["student"])
+@extend_schema(tags=['student'])
 class StudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
@@ -25,7 +25,7 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['surname', 'name', 'patronymic']
 
 
-@extend_schema(tags=["teacher"])
+@extend_schema(tags=['teacher'])
 class TeacherViewSet(ModelViewSet):
     serializer_class = TeacherSerializer
     queryset = Teacher.objects.all()
@@ -37,7 +37,7 @@ class TeacherViewSet(ModelViewSet):
     search_fields = ['surname', 'name', 'patronymic']
 
 
-@extend_schema(tags=["punishment"])
+@extend_schema(tags=['punishment'])
 class PunishmentViewSet(ModelViewSet):
     serializer_class = PunishmentSerializer
     queryset = Punishment.objects.all()

@@ -38,7 +38,7 @@ def get_date_range(date_from, date_to, weekday):
     return dates
 
 
-@extend_schema(tags=["absence"])
+@extend_schema(tags=['absence'])
 class AbsenceViewSet(ModelViewSet):
     serializer_class = AbsenceSerializer
     queryset = Absence.objects.all()
@@ -50,7 +50,7 @@ class AbsenceViewSet(ModelViewSet):
     search_fields = ['student__surname', 'student__name', 'student__patronymic']
 
 
-@extend_schema(tags=["absence-journal"])
+@extend_schema(tags=['absence-journal'])
 class AbsenceJournalView(GenericAPIView):
     permission_classes = [AllowAny]
 
