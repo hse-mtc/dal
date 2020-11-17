@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "debug_toolbar",
     "django_filters",
-    "drf_yasg",
+    "drf_spectacular",
     "ordered_model",
     "silk",
     "taggit",
@@ -145,6 +145,7 @@ REST_FRAMEWORK = {
                                        "authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions."
                                    "IsAuthenticated",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -206,17 +207,16 @@ SIMPLE_JWT = {
 }
 
 # File max size
+
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 8  # 80MiB
 
-# Swagger settings for drf-yasg
+# Swagger settings for drf-spectacular
 
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        BEARER_AUTH_HEADER_TYPE: {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
-        }
-    },
-    "JSON_EDITOR": True,
+SPECTACULAR_DEFAULTS = {
+    "COMPONENT_SPLIT_REQUEST": True,
+
+    # Meta info
+    "TITLE": "DAL REST API",
+    "DESCRIPTION": "API for auth, dms, lms apps",
+    "VERSION": "0.7.0",
 }
