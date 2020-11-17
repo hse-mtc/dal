@@ -15,6 +15,8 @@ from rest_framework.status import (
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
+from drf_spectacular.views import extend_schema
+
 from lms.serializers.serializers import MilgroupSerializer
 from lms.serializers.absence import (AbsenceSerializer,
                                      AbsenceJournalSerializer,
@@ -36,6 +38,7 @@ def get_date_range(date_from, date_to, weekday):
     return dates
 
 
+@extend_schema(tags=["absence"])
 class AbsenceViewSet(ModelViewSet):
     serializer_class = AbsenceSerializer
     queryset = Absence.objects.all()
@@ -47,6 +50,7 @@ class AbsenceViewSet(ModelViewSet):
     search_fields = ['student__surname', 'student__name', 'student__patronymic']
 
 
+@extend_schema(tags=["absence-journal"])
 class AbsenceJournalView(GenericAPIView):
     permission_classes = [AllowAny]
 

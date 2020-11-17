@@ -2,6 +2,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 
+from drf_spectacular.views import extend_schema
+
 from lms.models import (
     TeacherPost,
     Milgroup,
@@ -13,6 +15,7 @@ from lms.serializers.serializers import (MilgroupSerializer, ProgramSerializer,
                                          RankSerializer, TeacherPostSerializer)
 
 
+@extend_schema(tags=["reference-book"])
 class ReferenceBookView(ListAPIView):
     permission_classes = [AllowAny]
 

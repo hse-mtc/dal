@@ -5,6 +5,8 @@ from rest_framework import viewsets
 
 from rest_framework.filters import SearchFilter
 
+from drf_spectacular.views import extend_schema
+
 from dms.models.common import (
     Author,
     Publisher,
@@ -21,18 +23,21 @@ from dms.serializers.common import (
 MUTATE_ACTIONS = ["create", "update", "partial_update"]
 
 
+@extend_schema(tags=["authors"])
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     permission_classes = [permissions.AllowAny]
 
 
+@extend_schema(tags=["publishers"])
 class PublisherViewSet(viewsets.ModelViewSet):
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
     permission_classes = [permissions.AllowAny]
 
 
+@extend_schema(tags=["subjects"])
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     permission_classes = [permissions.AllowAny]

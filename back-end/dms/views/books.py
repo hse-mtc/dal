@@ -3,6 +3,8 @@ from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import JSONParser
 
+from drf_spectacular.views import extend_schema
+
 from dms.models.books import Book
 from dms.serializers.books import (
     BookMutateSerializer,
@@ -16,6 +18,7 @@ from dms.parsers import MultiPartWithJSONParser
 from dms.views.common import MUTATE_ACTIONS
 
 
+@extend_schema(tags=["books"])
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     permission_classes = [ReadOnly | IsOwner]

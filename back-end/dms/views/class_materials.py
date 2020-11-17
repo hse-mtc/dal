@@ -8,6 +8,8 @@ from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
 
+from drf_spectacular.views import extend_schema
+
 from dms.models.class_materials import (
     ClassMaterial,
     Section,
@@ -33,6 +35,7 @@ from dms.views.common import (
 )
 
 
+@extend_schema(tags=["sections"])
 class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
     permission_classes = [permissions.AllowAny]
@@ -46,10 +49,12 @@ class SectionViewSet(viewsets.ModelViewSet):
         return SectionSerializer
 
 
+@extend_schema(tags=["sections"])
 class SectionOrderUpdateAPIView(OrderUpdateAPIView):
     queryset = Section.objects.all()
 
 
+@extend_schema(tags=["topics"])
 class TopicViewSet(viewsets.ModelViewSet):
     queryset = Topic.objects.all()
     permission_classes = [permissions.AllowAny]
@@ -60,10 +65,12 @@ class TopicViewSet(viewsets.ModelViewSet):
         return TopicSerializer
 
 
+@extend_schema(tags=["topics"])
 class TopicOrderUpdateAPIView(OrderUpdateAPIView):
     queryset = Topic.objects.all()
 
 
+@extend_schema(tags=["class-materials"])
 class ClassMaterialViewSet(viewsets.ModelViewSet):
     queryset = ClassMaterial.objects.all()
     permission_classes = [ReadOnly | IsOwner]

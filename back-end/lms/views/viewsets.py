@@ -4,6 +4,8 @@ from rest_framework.permissions import AllowAny
 
 from django_filters.rest_framework import DjangoFilterBackend
 
+from drf_spectacular.views import extend_schema
+
 from lms.models import Student, Teacher, Punishment
 from lms.serializers.student import StudentSerializer
 from lms.serializers.teacher import TeacherSerializer
@@ -11,6 +13,7 @@ from lms.serializers.punishment import PunishmentSerializer
 from lms.filters import StudentFilterSet, TeacherFilterSet, PunishmentFilterSet
 
 
+@extend_schema(tags=["student"])
 class StudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
     queryset = Student.objects.all()
@@ -22,6 +25,7 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['surname', 'name', 'patronymic']
 
 
+@extend_schema(tags=["teacher"])
 class TeacherViewSet(ModelViewSet):
     serializer_class = TeacherSerializer
     queryset = Teacher.objects.all()
@@ -33,6 +37,7 @@ class TeacherViewSet(ModelViewSet):
     search_fields = ['surname', 'name', 'patronymic']
 
 
+@extend_schema(tags=["punishment"])
 class PunishmentViewSet(ModelViewSet):
     serializer_class = PunishmentSerializer
     queryset = Punishment.objects.all()

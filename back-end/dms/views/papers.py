@@ -11,6 +11,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from taggit.models import Tag
 
+from drf_spectacular.views import extend_schema
+
 from dms.models.papers import (
     Category,
     Paper,
@@ -30,6 +32,7 @@ from dms.parsers import MultiPartWithJSONParser
 from dms.views.common import MUTATE_ACTIONS
 
 
+@extend_schema(tags=["categories"])
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
@@ -46,12 +49,14 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
+@extend_schema(tags=["tags"])
 class TagListAPIView(generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = [permissions.AllowAny]
 
 
+@extend_schema(tags=["papers"])
 class PaperViewSet(viewsets.ModelViewSet):
     queryset = Paper.objects.order_by("-publication_date", "title")
     permission_classes = [ReadOnly | IsOwner]
