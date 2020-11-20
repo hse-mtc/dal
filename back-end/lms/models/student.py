@@ -11,7 +11,6 @@ class Status(models.Model):
         return str(self.status)
 
     class Meta:
-        db_table = 'status'
         verbose_name = 'Student Status'
         verbose_name_plural = 'Student Statuses'
 
@@ -24,18 +23,16 @@ class Program(models.Model):
         return f'({str(self.code)}) {str(self.program)}'
 
     class Meta:
-        db_table = 'program'
         verbose_name = 'Educational Program'
         verbose_name_plural = 'Educational Programs'
 
 
 class Student(Person):
     milgroup = models.ForeignKey(Milgroup,
-                                 models.DO_NOTHING,
-                                 db_column='milgroup')
+                                 models.DO_NOTHING)
     birthdate = models.DateField()
-    program = models.ForeignKey(Program, models.DO_NOTHING, db_column='program')
-    status = models.ForeignKey(Status, models.DO_NOTHING, db_column='status')
+    program = models.ForeignKey(Program, models.DO_NOTHING)
+    status = models.ForeignKey(Status, models.DO_NOTHING)
     photo = models.CharField(max_length=128, blank=True, null=True)
 
     def __str__(self):
@@ -44,6 +41,5 @@ class Student(Person):
                f'{str(self.name)} {str(self.patronymic)}\n'
 
     class Meta:
-        db_table = 'student'
         verbose_name = 'Student'
         verbose_name_plural = 'Students'

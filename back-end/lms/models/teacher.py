@@ -11,7 +11,6 @@ class Rank(models.Model):
         return str(self.rank)
 
     class Meta:
-        db_table = 'rank'
         verbose_name = 'Military Rank'
         verbose_name_plural = 'Military Ranks'
 
@@ -23,22 +22,18 @@ class TeacherPost(models.Model):
         return str(self.teacher_post)
 
     class Meta:
-        db_table = 'teacher_post'
         verbose_name = 'Teacher Post'
         verbose_name_plural = 'Teacher Posts'
 
 
 class Teacher(Person):
     milfaculty = models.ForeignKey(Milfaculty,
-                                   models.DO_NOTHING,
-                                   db_column='milfaculty')
-    rank = models.ForeignKey(Rank, models.DO_NOTHING, db_column='rank')
+                                   models.DO_NOTHING)
+    rank = models.ForeignKey(Rank, models.DO_NOTHING)
     teacher_post = models.ForeignKey(TeacherPost,
-                                     models.DO_NOTHING,
-                                     db_column='teacher_post')
+                                     models.DO_NOTHING)
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
-                                 db_column='milgroup',
                                  blank=True,
                                  null=True)
 
@@ -48,6 +43,5 @@ class Teacher(Person):
                f'{str(self.name)} {str(self.patronymic)}\n'
 
     class Meta:
-        db_table = 'teacher'
         verbose_name = 'Teacher'
         verbose_name_plural = 'Teachers'

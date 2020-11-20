@@ -13,19 +13,17 @@ class PunishmentType(models.Model):
         return str(self.punishment_type)
 
     class Meta:
-        db_table = 'punishment_type'
         verbose_name = 'Punishment Type'
         verbose_name_plural = 'Punishment Types'
 
 
 class Punishment(models.Model):
-    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
+    student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
     punishment_type = models.ForeignKey(PunishmentType,
-                                        models.DO_NOTHING,
-                                        db_column='punishment_type')
+                                        models.DO_NOTHING)
     date = models.DateField(default=datetime.date.today)
-    teacher = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacher')
+    teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
     remove_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
@@ -37,6 +35,5 @@ class Punishment(models.Model):
                f'Remove Date = {str(self.remove_date)}'
 
     class Meta:
-        db_table = 'punishment'
         verbose_name = 'Punishment Journal'
         verbose_name_plural = 'Punishment Journal'
