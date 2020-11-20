@@ -1,17 +1,11 @@
-from django_filters.rest_framework import (FilterSet, ModelChoiceFilter,
-                                           DateFilter, NumberFilter)
+from django_filters.rest_framework import (FilterSet,
+                                           DateFilter,
+                                           NumberFilter)
 
-from lms.models.student import Student
-from lms.models.absence import AbsenceType, AbsenceStatus, Absence
+from lms.models.absence import Absence
 
 
-class AbsenceFilterSet(FilterSet):
-    student = ModelChoiceFilter(field_name='student',
-                                queryset=Student.objects.all())
-    absence_type = ModelChoiceFilter(field_name='absence_type',
-                                     queryset=AbsenceType.objects.all())
-    absence_status = ModelChoiceFilter(field_name='absence_status',
-                                       queryset=AbsenceStatus.objects.all())
+class AbsenceFilter(FilterSet):
 
     milgroup = NumberFilter(field_name='student__milgroup__milgroup')
 
@@ -20,4 +14,4 @@ class AbsenceFilterSet(FilterSet):
 
     class Meta:
         model = Absence
-        fields = ['milgroup']
+        fields = ['milgroup', 'student', 'absence_type', 'absence_status']

@@ -8,7 +8,7 @@ from drf_spectacular.views import extend_schema
 
 from lms.models.encouragement import Encouragement
 from lms.serializers.encouragement import EncouragementSerializer
-from lms.filters.encouragement import EncouragementFilterSet
+from lms.filters.encouragement import EncouragementFilter
 
 
 @extend_schema(tags=['encouragement'])
@@ -19,5 +19,5 @@ class EncouragementViewSet(ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
-    filterset_class = EncouragementFilterSet
+    filterset_class = EncouragementFilter
     search_fields = ['student__surname', 'student__name', 'student__patronymic']
