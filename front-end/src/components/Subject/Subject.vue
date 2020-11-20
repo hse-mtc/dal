@@ -212,7 +212,7 @@ export default {
         .then((response) => {
           this.subject = response.data.title;
           this.subjectInfo = response.data.sections;
-          this.subjectOwnerId = response.data.user;
+          this.subjectOwnerId = response.data.profile.user.id;
         })
         .catch(() => {
           // eslint-disable-next-line no-console
