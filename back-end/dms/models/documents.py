@@ -35,7 +35,7 @@ class Document(models.Model):
     It holds fields necessary for all inherited document models.
     """
 
-    title = models.TextField()
+    title = models.TextField(blank=True)
     annotation = models.TextField(blank=True)
     file = models.ForeignKey(to=File, on_delete=models.CASCADE)
     user = models.ForeignKey(to=User,

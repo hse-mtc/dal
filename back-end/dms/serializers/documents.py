@@ -34,6 +34,10 @@ class DocumentMutateSerializer(DocumentSerializer):
 
     def create(self, validated_data):
         self.create_file(validated_data)
+
+        if "title" not in validated_data:
+            validated_data["title"] = validated_data["file"].name
+
         return super().create(validated_data)
 
     def update_file(self, instance, validated_data):
