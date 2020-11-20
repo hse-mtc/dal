@@ -1,26 +1,16 @@
 from django.contrib import admin
 
-from .models import (
-    # Reference models
-    AbsenceType,
-    EncouragementType,
-    Milfaculty,
-    PunishmentType,
-    Rank,
-    Status,
-    Program,
-    TeacherPost,
+from lms.models.common import Milgroup, Milfaculty
+from lms.models.student import Status, Program, Student
+from lms.models.teacher import Rank, TeacherPost, Teacher
+from lms.models.absence import AbsenceType, AbsenceStatus, Absence
+from lms.models.encouragement import EncouragementType, Encouragement
+from lms.models.punishment import PunishmentType, Punishment
 
-    # Other models
-    Milgroup,
-    Student,
-    Teacher,
-    Absence,
-    Encouragement,
-    Punishment)
 
 # Registering reference models
 admin.site.register(AbsenceType)
+admin.site.register(AbsenceStatus)
 admin.site.register(EncouragementType)
 admin.site.register(Milfaculty)
 admin.site.register(PunishmentType)

@@ -1,4 +1,5 @@
-from rest_framework.serializers import IntegerField, SerializerMethodField
+from rest_framework.serializers import (IntegerField, SerializerMethodField,
+                                        ModelSerializer)
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from lms.models.common import Milgroup
