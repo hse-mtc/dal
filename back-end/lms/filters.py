@@ -70,7 +70,8 @@ class EncouragementFilterSet(FilterSet):
     teacher = ModelChoiceFilter(field_name='teacher',
                                 queryset=Teacher.objects.all())
     encouragement_type = ModelChoiceFilter(
-        field_name='encouragement_type', queryset=EncouragementType.objects.all())
+        field_name='encouragement_type',
+        queryset=EncouragementType.objects.all())
 
     milgroup = NumberFilter(field_name='student__milgroup__milgroup')
 
