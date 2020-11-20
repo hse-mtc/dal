@@ -4,12 +4,12 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-django-debug-toolbar = "*"
 django-silk = "*"
 pylint = "*"
 pylint-django = "*"
 pytest-django = "*"
 yapf = "*"
+django-debug-toolbar = "*"
 
 [packages]
 django = "*"
@@ -24,8 +24,6 @@ drf-writable-nested = "*"
 psycopg2-binary = "*"
 uvicorn = "*"
 django-extensions = "*"
-pylint-django = "*"
-django-debug-toolbar = "*"
 
 [requires]
 python_version = "3.8.5"
