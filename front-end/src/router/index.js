@@ -130,6 +130,20 @@ export const constantRoutes = [
     ],
   },
 
+  {
+    path: "/mtc_discipline",
+    redirect: "/discipline",
+    component: Layout,
+    children: [
+      {
+        path: "discipline",
+        name: "Discipline",
+        component: () => import("@/views/Discipline/index"),
+        meta: { title: "Дисциплина", icon: "" },
+      },
+    ],
+  },
+
   // {
   //   path: '/mtc_referencebook',
   //   redirect: '/referencebook',
