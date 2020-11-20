@@ -9,7 +9,8 @@ from rest_framework.decorators import api_view
 
 from lms.models import (Status, Program, Milgroup, Milfaculty, Rank,
                         TeacherPost, Student, Teacher, AbsenceType,
-                        AbsenceStatus, Absence, PunishmentType, Punishment)
+                        AbsenceStatus, Absence, PunishmentType, Punishment,
+                        EncouragementType, Encouragement)
 
 
 def create_statuses() -> tp.Dict[str, Status]:
@@ -408,6 +409,44 @@ def create_punishments(punishment_types: tp.Dict[str, PunishmentType],
         punishment.save()
 
 
+def create_encouragement_types():
+    values = ['Благодарность', 'Снятие взыскания']
+
+    types = {}
+    for value in values:
+        typ, _ = EncouragementType.objects.get_or_create(
+            encouragement_type=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_encouragenements(encouragement_types: tp.Dict[str,
+                                                         EncouragementType],
+                            students: tp.Dict[str, Student],
+                            teachers: tp.Dict[str, Teacher]):
+    values = [
+        {
+            'student': students['Хромов'],
+            'reason': 'За спортивные достижения',
+            'encouragement_type': encouragement_types['Благодарность'],
+            'date': '2020-11-10',
+            'teacher': teachers['Никандров'],
+        },
+        {
+            'student': students['Исаков'],
+            'reason': 'За выступление на празднике',
+            'encouragement_type': encouragement_types['Снятие взыскания'],
+            'date': '2020-11-12',
+            'teacher': teachers['Репалов'],
+        },
+    ]
+
+    for value in values:
+        encouragement, _ = Encouragement.objects.get_or_create(**value)
+        encouragement.save()
+
+
 # pylint: disable=(too-many-locals)
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -436,6 +475,9 @@ def lms_populate(request: Request) -> Response:
 
     punishment_types = create_punishment_types()
     create_punishments(punishment_types, students, teachers)
+
+    encouragement_types = create_encouragement_types()
+    create_encouragenements(encouragement_types, students, teachers)
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)
