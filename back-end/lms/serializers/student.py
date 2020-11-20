@@ -1,13 +1,19 @@
 from rest_framework.serializers import IntegerField, SerializerMethodField
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.models import (
-    Milgroup,
-    Program,
-    Student,
-)
+from lms.models.common import Milgroup
+from lms.models.student import Program, Student
+
 from lms.validators import PresentInDatabaseValidator
-from lms.serializers.serializers import MilgroupSerializer, ProgramSerializer
+from lms.serializers.common import MilgroupSerializer
+
+
+class ProgramSerializer(ModelSerializer):
+
+    class Meta:
+        model = Program
+        fields = '__all__'
+        extra_kwargs = {'code': {'validators': []}}
 
 
 class StudentSerializer(WritableNestedModelSerializer):

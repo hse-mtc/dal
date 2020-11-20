@@ -4,15 +4,13 @@ from rest_framework.permissions import AllowAny
 
 from drf_spectacular.views import extend_schema
 
-from lms.models import (
-    TeacherPost,
-    Milgroup,
-    Program,
-    Rank,
-)
+from lms.models.common import Milgroup
+from lms.models.teacher import Rank, TeacherPost
+from lms.models.student import Program
 
-from lms.serializers.serializers import (MilgroupSerializer, ProgramSerializer,
-                                         RankSerializer, TeacherPostSerializer)
+from lms.serializers.common import MilgroupSerializer
+from lms.serializers.student import ProgramSerializer
+from lms.serializers.teacher import TeacherPostSerializer, RankSerializer
 
 
 @extend_schema(tags=['reference-book'])

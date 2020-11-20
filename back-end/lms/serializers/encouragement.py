@@ -1,6 +1,8 @@
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.models import (Student, Teacher, Encouragement)
+from lms.models.student import Student
+from lms.models.teacher import Teacher
+from lms.models.encouragement import Encouragement
 
 from lms.validators import PresentInDatabaseValidator
 from lms.serializers.student import StudentShortSerializer
