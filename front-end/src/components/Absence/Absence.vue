@@ -103,7 +103,7 @@
             >
               <el-table-column sortable label="Дата" width="100">
                 <template slot-scope="scope">
-                  {{ formatDate(scope.date) }}
+                  {{ formatDate(scope.row.date) }}
                 </template>
               </el-table-column>
               <el-table-column
