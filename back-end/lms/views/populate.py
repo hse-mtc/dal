@@ -421,10 +421,9 @@ def create_encouragement_types():
     return types
 
 
-def create_encouragements(encouragement_types: tp.Dict[str,
-                                                         EncouragementType],
-                            students: tp.Dict[str, Student],
-                            teachers: tp.Dict[str, Teacher]):
+def create_encouragements(encouragement_types: tp.Dict[str, EncouragementType],
+                          students: tp.Dict[str, Student],
+                          teachers: tp.Dict[str, Teacher]):
     values = [
         {
             'student': students['Хромов'],
