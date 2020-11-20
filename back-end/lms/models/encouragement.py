@@ -13,19 +13,17 @@ class EncouragementType(models.Model):
         return str(self.encouragement_type)
 
     class Meta:
-        db_table = 'encouragement_type'
         verbose_name = 'Encouragement Type'
         verbose_name_plural = 'Encouragement Types'
 
 
 class Encouragement(models.Model):
-    student = models.ForeignKey(Student, models.DO_NOTHING, db_column='student')
+    student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
     encouragement_type = models.ForeignKey(EncouragementType,
-                                           models.DO_NOTHING,
-                                           db_column='encouragement_type')
+                                           models.DO_NOTHING)
     date = models.DateField(default=datetime.date.today)
-    teacher = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacher')
+    teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
@@ -35,6 +33,5 @@ class Encouragement(models.Model):
                f'Date = {str(self.date)}'
 
     class Meta:
-        db_table = 'encouragement'
         verbose_name = 'Encouragement Journal'
         verbose_name_plural = 'Encouragement Journal'

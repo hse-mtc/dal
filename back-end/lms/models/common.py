@@ -8,7 +8,6 @@ class Milfaculty(models.Model):
         return str(self.milfaculty)
 
     class Meta:
-        db_table = 'milfaculty'
         verbose_name = 'Military Faculty'
         verbose_name_plural = 'Military Faculties'
 
@@ -18,14 +17,12 @@ class Milgroup(models.Model):
                                    max_digits=4,
                                    decimal_places=0)
     milfaculty = models.ForeignKey(Milfaculty,
-                                   models.DO_NOTHING,
-                                   db_column='milfaculty')
+                                   models.DO_NOTHING)
     weekday = models.DecimalField(max_digits=1, decimal_places=0)
 
     def __str__(self):
         return f'{str(self.milgroup)}, {str(self.milfaculty)}'
 
     class Meta:
-        db_table = 'milgroup'
         verbose_name = 'Military Group'
         verbose_name_plural = 'Military Groups'
