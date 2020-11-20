@@ -45,15 +45,18 @@ class ClassMaterialMutateSerializer(DocumentMutateSerializer):
         fields = "__all__"
 
 
+ClassMaterialsByType = inline_serializer(
+    name="ClassMaterialsByType",
+    fields={
+        label: ClassMaterialSerializer() for label in ClassMaterial.Type.labels
+    },
+)
+
+
 class TopicRetrieveSerializer(TopicSerializer):
     class_materials = serializers.SerializerMethodField(read_only=True)
 
-    @extend_schema_field(
-        inline_serializer(name="ClassMaterialsByType",
-                          fields={
-                              label: ClassMaterialSerializer()
-                              for label in ClassMaterial.Type.labels
-                          }))
+    @extend_schema_field(ClassMaterialsByType)
     def get_class_materials(self, obj: Topic):
         data = {}
         for value, label in ClassMaterial.Type.choices:
