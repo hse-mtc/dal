@@ -2,6 +2,8 @@ import datetime
 
 from django.db import models
 
+from common.models import Person
+
 
 class AbsenceType(models.Model):
     absence_type = models.CharField(primary_key=True, max_length=100)
@@ -130,10 +132,7 @@ class Milgroup(models.Model):
         verbose_name_plural = 'Military Groups'
 
 
-class Student(models.Model):
-    surname = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    patronymic = models.CharField(max_length=100, blank=True, null=True)
+class Student(Person):
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  db_column='milgroup')
@@ -153,10 +152,7 @@ class Student(models.Model):
         verbose_name_plural = 'Students'
 
 
-class Teacher(models.Model):
-    surname = models.CharField(max_length=100)
-    name = models.CharField(max_length=100)
-    patronymic = models.CharField(max_length=100, blank=True, null=True)
+class Teacher(Person):
     milfaculty = models.ForeignKey(Milfaculty,
                                    models.DO_NOTHING,
                                    db_column='milfaculty')
