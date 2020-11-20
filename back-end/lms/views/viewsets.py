@@ -52,7 +52,7 @@ class PunishmentViewSet(ModelViewSet):
 
 
 @extend_schema(tags=['encouragement'])
-class EncouragenementViewSet(ModelViewSet):
+class EncouragementViewSet(ModelViewSet):
     serializer_class = EncouragementSerializer
     queryset = Encouragement.objects.all()
 

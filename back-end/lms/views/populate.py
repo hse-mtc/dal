@@ -421,7 +421,7 @@ def create_encouragement_types():
     return types
 
 
-def create_encouragenements(encouragement_types: tp.Dict[str,
+def create_encouragements(encouragement_types: tp.Dict[str,
                                                          EncouragementType],
                             students: tp.Dict[str, Student],
                             teachers: tp.Dict[str, Teacher]):
@@ -477,7 +477,7 @@ def lms_populate(request: Request) -> Response:
     create_punishments(punishment_types, students, teachers)
 
     encouragement_types = create_encouragement_types()
-    create_encouragenements(encouragement_types, students, teachers)
+    create_encouragements(encouragement_types, students, teachers)
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)
