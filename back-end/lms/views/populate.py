@@ -7,10 +7,12 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 
-from lms.models import (Status, Program, Milgroup, Milfaculty, Rank,
-                        TeacherPost, Student, Teacher, AbsenceType,
-                        AbsenceStatus, Absence, PunishmentType, Punishment,
-                        EncouragementType, Encouragement)
+from lms.models.common import Milfaculty, Milgroup
+from lms.models.student import Status, Program, Student
+from lms.models.teacher import Rank, TeacherPost, Teacher
+from lms.models.absence import AbsenceStatus, AbsenceType, Absence
+from lms.models.encouragement import EncouragementType, Encouragement
+from lms.models.punishment import PunishmentType, Punishment
 
 
 def create_statuses() -> tp.Dict[str, Status]:

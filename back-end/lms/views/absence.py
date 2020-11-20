@@ -17,12 +17,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
-from lms.serializers.serializers import MilgroupSerializer
+from lms.serializers.common import MilgroupSerializer
 from lms.serializers.absence import (AbsenceSerializer,
                                      AbsenceJournalSerializer,
                                      AbsenceJournalGetQuerySerializer)
-from lms.models import Absence, Milgroup, Student
-from lms.filters import AbsenceFilterSet
+
+from lms.models.common import Milgroup
+from lms.models.absence import Absence
+from lms.models.student import Student
+
+from lms.filters.absence import AbsenceFilterSet
 
 
 def get_date_range(date_from, date_to, weekday):

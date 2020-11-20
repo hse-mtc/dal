@@ -4,11 +4,9 @@ from rest_framework.serializers import (Serializer, ModelSerializer,
 from rest_framework.serializers import ValidationError
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.models import (
-    Absence,
-    Student,
-    Milgroup,
-)
+from lms.models.absence import Absence
+from lms.models.student import Student
+from lms.models.common import Milgroup
 
 from lms.validators import PresentInDatabaseValidator
 from lms.serializers.student import StudentShortSerializer
