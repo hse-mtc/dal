@@ -20,8 +20,7 @@ class PunishmentType(models.Model):
 class Punishment(models.Model):
     student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
-    punishment_type = models.ForeignKey(PunishmentType,
-                                        models.DO_NOTHING)
+    punishment_type = models.ForeignKey(PunishmentType, models.DO_NOTHING)
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
     remove_date = models.DateField(blank=True, null=True)

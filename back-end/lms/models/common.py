@@ -16,8 +16,7 @@ class Milgroup(models.Model):
     milgroup = models.DecimalField(primary_key=True,
                                    max_digits=4,
                                    decimal_places=0)
-    milfaculty = models.ForeignKey(Milfaculty,
-                                   models.DO_NOTHING)
+    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING)
     weekday = models.DecimalField(max_digits=1, decimal_places=0)
 
     def __str__(self):
