@@ -1,6 +1,4 @@
-from django_filters.rest_framework import (FilterSet,
-                                           DateFilter,
-                                           NumberFilter)
+from django_filters.rest_framework import (FilterSet, DateFilter, NumberFilter)
 
 from lms.models.absence import Absence
 

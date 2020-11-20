@@ -1,6 +1,4 @@
-from django_filters.rest_framework import (FilterSet,
-                                           DateFilter,
-                                           NumberFilter)
+from django_filters.rest_framework import (FilterSet, DateFilter, NumberFilter)
 
 from lms.models.encouragement import Encouragement
 
@@ -14,4 +12,6 @@ class EncouragementFilter(FilterSet):
 
     class Meta:
         model = Encouragement
-        fields = ['reason', 'milgroup', 'student', 'teacher', 'encouragement_type']
+        fields = [
+            'reason', 'milgroup', 'student', 'teacher', 'encouragement_type'
+        ]

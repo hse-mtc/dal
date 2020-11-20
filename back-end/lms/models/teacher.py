@@ -27,11 +27,9 @@ class TeacherPost(models.Model):
 
 
 class Teacher(Person):
-    milfaculty = models.ForeignKey(Milfaculty,
-                                   models.DO_NOTHING)
+    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING)
     rank = models.ForeignKey(Rank, models.DO_NOTHING)
-    teacher_post = models.ForeignKey(TeacherPost,
-                                     models.DO_NOTHING)
+    teacher_post = models.ForeignKey(TeacherPost, models.DO_NOTHING)
     milgroup = models.ForeignKey(Milgroup,
                                  models.DO_NOTHING,
                                  blank=True,

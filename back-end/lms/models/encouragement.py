@@ -20,8 +20,7 @@ class EncouragementType(models.Model):
 class Encouragement(models.Model):
     student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
-    encouragement_type = models.ForeignKey(EncouragementType,
-                                           models.DO_NOTHING)
+    encouragement_type = models.ForeignKey(EncouragementType, models.DO_NOTHING)
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
 

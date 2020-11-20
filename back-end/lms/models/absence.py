@@ -30,10 +30,8 @@ class AbsenceStatus(models.Model):
 class Absence(models.Model):
     date = models.DateField(default=datetime.date.today)
     student = models.ForeignKey(Student, models.CASCADE)
-    absence_type = models.ForeignKey(AbsenceType,
-                                     models.DO_NOTHING)
-    absence_status = models.ForeignKey(AbsenceStatus,
-                                       models.DO_NOTHING)
+    absence_type = models.ForeignKey(AbsenceType, models.DO_NOTHING)
+    absence_status = models.ForeignKey(AbsenceStatus, models.DO_NOTHING)
     reason = models.CharField(max_length=100, blank=True, null=True)
     comment = models.CharField(max_length=100, blank=True, null=True)
 

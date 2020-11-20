@@ -1,6 +1,4 @@
-from django_filters.rest_framework import (FilterSet,
-                                           DateFilter,
-                                           NumberFilter)
+from django_filters.rest_framework import (FilterSet, DateFilter, NumberFilter)
 
 from lms.models.punishment import Punishment
 
@@ -17,5 +15,4 @@ class PunishmentFilter(FilterSet):
 
     class Meta:
         model = Punishment
-        fields = ['reason', 'milgroup', 'student', 'teacher',
-                  'punishment_type']
+        fields = ['reason', 'milgroup', 'student', 'teacher', 'punishment_type']

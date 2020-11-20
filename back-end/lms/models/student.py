@@ -28,8 +28,7 @@ class Program(models.Model):
 
 
 class Student(Person):
-    milgroup = models.ForeignKey(Milgroup,
-                                 models.DO_NOTHING)
+    milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING)
     birthdate = models.DateField()
     program = models.ForeignKey(Program, models.DO_NOTHING)
     status = models.ForeignKey(Status, models.DO_NOTHING)
