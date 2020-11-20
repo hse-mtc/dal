@@ -106,3 +106,13 @@ def test_put_author_requires_all_fields(client, author_data):
 
     response.data.pop("id")
     assert response.data == data
+
+
+@pytest.mark.django_db
+def test_delete_author_removes_author_from_db(client, author_data):
+    id_ = Author.objects.create(**author_data).id
+
+    response = client.delete(f"/api/dms/authors/{id_}/")
+    assert response.status_code == 204
+
+    assert Author.objects.count() == 0
