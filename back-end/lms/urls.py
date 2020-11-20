@@ -9,7 +9,6 @@ from lms.views.punishment import PunishmentViewSet
 from lms.views.encouragement import EncouragementViewSet
 from lms.views.reference_book import ReferenceBookView
 
-
 routers = DefaultRouter()
 routers.register('student', StudentViewSet)
 routers.register('teacher', TeacherViewSet)

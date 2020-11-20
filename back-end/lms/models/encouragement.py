@@ -25,9 +25,7 @@ class Encouragement(models.Model):
                                            models.DO_NOTHING,
                                            db_column='encouragement_type')
     date = models.DateField(default=datetime.date.today)
-    teacher = models.ForeignKey(Teacher,
-                                models.DO_NOTHING,
-                                db_column='teacher')
+    teacher = models.ForeignKey(Teacher, models.DO_NOTHING, db_column='teacher')
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \

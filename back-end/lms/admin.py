@@ -7,7 +7,6 @@ from lms.models.absence import AbsenceType, AbsenceStatus, Absence
 from lms.models.encouragement import EncouragementType, Encouragement
 from lms.models.punishment import PunishmentType, Punishment
 
-
 # Registering reference models
 admin.site.register(AbsenceType)
 admin.site.register(AbsenceStatus)
