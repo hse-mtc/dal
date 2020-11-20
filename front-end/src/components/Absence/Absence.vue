@@ -6,7 +6,7 @@
       </el-row>
       <el-tabs stretch>
         <el-tab-pane label="Пропуски">
-          <el-row class="filterRow" :gutter="20" style="margin-bottom: 15px">
+          <el-row class="filterRow" :gutter="20">
             <el-col :span="5">
               <el-input
                 clearable
@@ -93,12 +93,19 @@
           <el-row>
             <el-table
               :data="absences"
-              :default-sort="{ prop: 'date', order: 'descending' }"
+              :default-sort="{
+                prop: 'date',
+                order: 'descending',
+              }"
               style="width: 100%"
               max-height="680"
               stripe
             >
-              <el-table-column prop="date" sortable label="Дата" />
+              <el-table-column sortable label="Дата" width="100">
+                <template slot-scope="scope">
+                  {{ formatDate(scope.date) }}
+                </template>
+              </el-table-column>
               <el-table-column
                 prop="student.fullname"
                 sortable
@@ -109,6 +116,7 @@
                 prop="student.milgroup.milgroup"
                 sortable
                 label="Взвод"
+                width="100"
               />
               <el-table-column sortable label="Тип причины">
                 <template slot-scope="scope">
@@ -187,7 +195,10 @@
                 :data="journal.students"
                 style="width: 100%"
                 height="680"
-                :default-sort="{ prop: 'fullname', order: 'ascending' }"
+                :default-sort="{
+                  prop: 'fullname',
+                  order: 'ascending',
+                }"
                 stripe
                 border
               >
@@ -372,7 +383,6 @@ import {
   deleteAbsence,
 } from "@/api/absence";
 import moment from "moment";
-import { firstBy } from "thenby";
 
 export default {
   name: "Absence",
@@ -381,7 +391,7 @@ export default {
     return {
       dialogVisible: false,
       editAbsence: {
-        id: 1,
+        id: 0,
         date: "",
         absence_type: "",
         absence_status: "",
