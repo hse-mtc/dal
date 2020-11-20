@@ -26,7 +26,7 @@ from lms.models.common import Milgroup
 from lms.models.absence import Absence
 from lms.models.student import Student
 
-from lms.filters.absence import AbsenceFilterSet
+from lms.filters.absence import AbsenceFilter
 
 
 def get_date_range(date_from, date_to, weekday):
@@ -50,7 +50,7 @@ class AbsenceViewSet(ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
-    filterset_class = AbsenceFilterSet
+    filterset_class = AbsenceFilter
     search_fields = ['student__surname', 'student__name', 'student__patronymic']
 
 

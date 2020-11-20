@@ -8,7 +8,7 @@ from drf_spectacular.views import extend_schema
 
 from lms.models.punishment import Punishment
 from lms.serializers.punishment import PunishmentSerializer
-from lms.filters.punishment import PunishmentFilterSet
+from lms.filters.punishment import PunishmentFilter
 
 
 @extend_schema(tags=['punishment'])
@@ -19,5 +19,5 @@ class PunishmentViewSet(ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
-    filterset_class = PunishmentFilterSet
+    filterset_class = PunishmentFilter
     search_fields = ['student__surname', 'student__name', 'student__patronymic']

@@ -1,19 +1,11 @@
-from django_filters.rest_framework import (FilterSet, ModelChoiceFilter,
-                                           DateFilter, NumberFilter)
+from django_filters.rest_framework import (FilterSet,
+                                           DateFilter,
+                                           NumberFilter)
 
-from lms.models.student import Student
-from lms.models.teacher import Teacher
-from lms.models.encouragement import EncouragementType, Encouragement
+from lms.models.encouragement import Encouragement
 
 
-class EncouragementFilterSet(FilterSet):
-    student = ModelChoiceFilter(field_name='student',
-                                queryset=Student.objects.all())
-    teacher = ModelChoiceFilter(field_name='teacher',
-                                queryset=Teacher.objects.all())
-    encouragement_type = ModelChoiceFilter(
-        field_name='encouragement_type',
-        queryset=EncouragementType.objects.all())
+class EncouragementFilter(FilterSet):
 
     milgroup = NumberFilter(field_name='student__milgroup__milgroup')
 
@@ -22,4 +14,4 @@ class EncouragementFilterSet(FilterSet):
 
     class Meta:
         model = Encouragement
-        fields = ['reason', 'milgroup']
+        fields = ['reason', 'milgroup', 'student', 'teacher', 'encouragement_type']

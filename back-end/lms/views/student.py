@@ -8,7 +8,7 @@ from drf_spectacular.views import extend_schema
 
 from lms.models.student import Student
 from lms.serializers.student import StudentSerializer
-from lms.filters.student import StudentFilterSet
+from lms.filters.student import StudentFilter
 
 
 @extend_schema(tags=['student'])
@@ -19,5 +19,5 @@ class StudentViewSet(ModelViewSet):
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
-    filterset_class = StudentFilterSet
+    filterset_class = StudentFilter
     search_fields = ['surname', 'name', 'patronymic']

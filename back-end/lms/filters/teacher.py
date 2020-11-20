@@ -1,15 +1,11 @@
-from django_filters.rest_framework import FilterSet, ModelChoiceFilter
+from django_filters.rest_framework import FilterSet
 
-from lms.models.common import Milgroup, Milfaculty
-from lms.models.teacher import Rank, TeacherPost, Teacher
+from lms.models.teacher import Teacher
 
 
-class TeacherFilterSet(FilterSet):
-    milgroup = ModelChoiceFilter(queryset=Milgroup.objects.all())
-    milfaculty = ModelChoiceFilter(queryset=Milfaculty.objects.all())
-    rank = ModelChoiceFilter(queryset=Rank.objects.all())
-    teacher_post = ModelChoiceFilter(queryset=TeacherPost.objects.all())
+class TeacherFilter(FilterSet):
 
     class Meta:
         model = Teacher
-        fields = ['milgroup']
+        fields = ['milgroup', 'milgroup', 'milfaculty',
+                  'rank', 'teacher_post']

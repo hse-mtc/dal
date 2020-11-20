@@ -1,18 +1,11 @@
-from django_filters.rest_framework import (FilterSet, ModelChoiceFilter,
-                                           DateFilter, NumberFilter)
+from django_filters.rest_framework import (FilterSet,
+                                           DateFilter,
+                                           NumberFilter)
 
-from lms.models.student import Student
-from lms.models.teacher import Teacher
-from lms.models.punishment import PunishmentType, Punishment
+from lms.models.punishment import Punishment
 
 
-class PunishmentFilterSet(FilterSet):
-    student = ModelChoiceFilter(field_name='student',
-                                queryset=Student.objects.all())
-    teacher = ModelChoiceFilter(field_name='teacher',
-                                queryset=Teacher.objects.all())
-    punishment_type = ModelChoiceFilter(field_name='punishment_type',
-                                        queryset=PunishmentType.objects.all())
+class PunishmentFilter(FilterSet):
 
     milgroup = NumberFilter(field_name='student__milgroup__milgroup')
 
@@ -24,4 +17,5 @@ class PunishmentFilterSet(FilterSet):
 
     class Meta:
         model = Punishment
-        fields = ['reason', 'milgroup']
+        fields = ['reason', 'milgroup', 'student', 'teacher',
+                  'punishment_type']
