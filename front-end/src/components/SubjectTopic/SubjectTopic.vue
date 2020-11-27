@@ -75,28 +75,32 @@
       <div class="topic-files">
         <ClassMaterials
           :isOwner="isOwner"
-          title="Лекции"
+          title="LE"
+          :topic="item.id"
           :materials="
             (item.class_materials && item.class_materials.lectures) || []
           "
         />
         <ClassMaterials
           :isOwner="isOwner"
-          title="Семинары"
+          title="SE"
+          :topic="item.id"
           :materials="
             (item.class_materials && item.class_materials.seminars) || []
           "
         />
         <ClassMaterials
           :isOwner="isOwner"
-          title="Групповые занятия"
+          title="GR"
+          :topic="item.id"
           :materials="
             (item.class_materials && item.class_materials.groups) || []
           "
         />
         <ClassMaterials
           :isOwner="isOwner"
-          title="Практические занятия"
+          title="PR"
+          :topic="item.id"
           :materials="
             (item.class_materials && item.class_materials.practices) || []
           "
