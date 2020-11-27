@@ -44,3 +44,16 @@ services:
       sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
              nginx -g \"daemon off;\""
     restart: always
+
+  tgbot:
+    build:
+      context: .
+      dockerfile: tgbot/Dockerfile
+    env_file:
+      - tgbot/.env
+    depends_on:
+      - back-end
+    command: >
+      sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
+             ping ya.ru"
+    restart: always
