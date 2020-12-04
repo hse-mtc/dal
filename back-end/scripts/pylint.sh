@@ -2,4 +2,4 @@
 
 pylint \
   --verbose \
-  conf auth common dms lms
+  conf auth common dms lms tgbot

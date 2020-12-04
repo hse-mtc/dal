@@ -19,4 +19,4 @@ yapf \
   --exclude="*migrations*" \
   --verbose \
   ${inplace:- "--diff"} \
-  conf auth common dms lms
+  conf auth common dms lms tgbot
