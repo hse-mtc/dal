@@ -51,7 +51,9 @@ services:
       context: .
       dockerfile: tgbot/Dockerfile
     env_file:
+      - .env
       - tgbot/.env
     depends_on:
       - back-end
     command: python src/start_bot.py
+    restart: always
