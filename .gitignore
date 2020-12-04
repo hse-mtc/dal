@@ -21,10 +21,10 @@ front-end/node_modules
 
 ## Files
 
-### Telefram Bot ###
-### Directories
+### Telegram Bot ###
+## Directories
 tgbot/__pycache__
 
-### Files
+## Files
 tgbot/.env
 tgbot/.python-version
