@@ -13,6 +13,7 @@ from drf_spectacular.views import (
 from conf import settings
 from dms.populate import populate as dms_populate
 from lms.views.populate import lms_populate
+from tgbot.views import populate as tgbot_populate
 
 urlpatterns = [
     # Swagger
@@ -25,11 +26,13 @@ urlpatterns = [
     path("api/auth/", include("auth.urls")),
     path("api/dms/", include("dms.urls")),
     path("api/lms/", include("lms.urls")),
+    path("api/tgbot/", include("tgbot.urls")),
 
     # Internal
     path("admin/", admin.site.urls),
     path("dms_populate/", dms_populate),
     path("lms_populate/", lms_populate),
+    path("tgbot_populate/", tgbot_populate),
 ]
 
 # Serve media files

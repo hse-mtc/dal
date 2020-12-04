@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "common",
     "dms",
     "lms",
+    "tgbot",
 ]
 
 MIDDLEWARE = [
