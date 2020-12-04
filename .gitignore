@@ -2,17 +2,17 @@
 ## Directories
 *.idea
 *.vscode
+__pycache__
 
 ## Files
 .DS_Store
+.python-version
 
 ### Back end ###
 ## Directories
 back-end/media
-__pycache__
 
 ## Files
-.python-version
 
 ### Front end ###
 ## Directories
@@ -23,8 +23,6 @@ front-end/node_modules
 
 ### Telegram Bot ###
 ## Directories
-tgbot/__pycache__
 
 ## Files
 tgbot/.env
-tgbot/.python-version
