@@ -1,7 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
 class Session(models.Model):
     code = models.CharField(max_length=10)
     chat_id = models.PositiveBigIntegerField(null=True)
