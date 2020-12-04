@@ -46,6 +46,7 @@ services:
     restart: always
 
   tgbot:
+    container_name: tgbot
     build:
       context: .
       dockerfile: tgbot/Dockerfile
@@ -53,7 +54,4 @@ services:
       - tgbot/.env
     depends_on:
       - back-end
-    command: >
-      sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
-             ping ya.ru"
-    restart: always
+    command: python src/start_bot.py
