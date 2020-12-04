@@ -31,7 +31,6 @@ def create_codes():
         session.save()
 
 
-# pylint: disable=(too-many-locals)
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def populate(request: Request) -> Response:
