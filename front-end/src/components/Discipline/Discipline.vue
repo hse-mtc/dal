@@ -19,7 +19,7 @@
 
 <script>
 import Punishment from "@/components/Punishment/Punishment";
-import Encouragement from "../Encouragement/Encouragement.vue";
+import Encouragement from "@/components/Encouragement/Encouragement";
 
 export default {
   name: "Discipline",

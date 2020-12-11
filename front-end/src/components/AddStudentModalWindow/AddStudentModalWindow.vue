@@ -179,7 +179,6 @@ export default {
   },
   created() {
     if (this.student) this.form = this.student;
-    console.log(this.form);
   },
   methods: {
     handleAvatarSuccess(res, file) {
