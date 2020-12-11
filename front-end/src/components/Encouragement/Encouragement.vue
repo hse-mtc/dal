@@ -36,7 +36,7 @@
         <el-select
           v-model="filter.type"
           clearable
-          placeholder="Выберите тип взыскания"
+          placeholder="Выберите тип поощрения"
           v-on:change="onFilter"
           style="display: block"
         >
@@ -75,13 +75,13 @@
           icon="el-icon-plus"
           @click="onCreate"
         >
-          Новое взыскание
+          Новое поощрение
         </el-button>
       </el-col>
     </el-row>
     <el-row>
       <el-table
-        :data="punishments"
+        :data="encouragements"
         :default-sort="{ prop: 'date', order: 'descending' }"
         style="width: 100%"
         max-height="680"
@@ -90,7 +90,6 @@
         <el-table-column
           sortable
           label="Дата"
-          sort-by="date"
           width="100"
           prop="date"
           :formatter="formatDate"
@@ -113,41 +112,18 @@
           label="Взвод"
           width="100"
         />
-        <el-table-column label="Тип взыскания">
+        <el-table-column label="Тип поощрения">
           <template slot-scope="scope">
             <el-tag
-              :type="tagByPunishmentType(scope.row.punishment_type)"
+              :type="tagByEncouragementType(scope.row.encouragement_type)"
               disable-transitions
-              >{{ scope.row.punishment_type }}</el-tag
+              >{{ scope.row.encouragement_type }}</el-tag
             >
           </template>
         </el-table-column>
         <el-table-column prop="reason" label="Причина" />
-        <el-table-column
-          sortable
-          label="Дата снятия"
-          sort-by="remove_date"
-          width="130"
-          prop="remove_date"
-          :formatter="formatRemoveDate"
-        />
-        <el-table-column width="150px">
+        <el-table-column width="115px">
           <template slot-scope="scope">
-            <el-tooltip
-              v-if="!scope.row.remove_date"
-              class="item"
-              effect="dark"
-              content="Снять взыскание"
-              placement="top"
-            >
-              <el-button
-                size="mini"
-                icon="el-icon-remove-outline"
-                type="warning"
-                circle
-                @click="onRemove(scope.row)"
-              />
-            </el-tooltip>
             <el-button
               size="mini"
               icon="el-icon-edit"
@@ -167,7 +143,7 @@
       </el-table>
     </el-row>
     <el-dialog
-      :title="editPunishmentFullname"
+      :title="editEncouragementFullname"
       :visible.sync="dialogVisible"
       width="30%"
       :before-close="handleClose"
@@ -176,13 +152,13 @@
         label-position="right"
         label-width="150px"
         size="mini"
-        :model="editPunishment"
+        :model="editEncouragement"
       >
         <el-form-item label="Дата" required>
           <el-date-picker
             type="date"
             placeholder="Выберите дату"
-            v-model="editPunishment.date"
+            v-model="editEncouragement.date"
             style="width: 100%"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
@@ -191,10 +167,10 @@
         <el-form-item
           label="Студент"
           required
-          v-if="!(editPunishment.id && editPunishment.id > 0)"
+          v-if="!(editEncouragement.id && editEncouragement.id > 0)"
         >
           <el-select
-            v-model="editPunishment.student.id"
+            v-model="editEncouragement.student.id"
             placeholder="Выберите студента"
             filterable
             style="display: block"
@@ -209,7 +185,7 @@
         </el-form-item>
         <el-form-item label="Преподаватель" required>
           <el-select
-            v-model="editPunishment.teacher.id"
+            v-model="editEncouragement.teacher.id"
             placeholder="Выберите преподавателя"
             filterable
             style="display: block"
@@ -222,10 +198,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Тип взыскания: " required>
+        <el-form-item label="Тип поощрения: " required>
           <el-select
-            v-model="editPunishment.punishment_type"
-            placeholder="Выберите тип взыскания"
+            v-model="editEncouragement.encouragement_type"
+            placeholder="Выберите тип поощрения"
             style="display: block"
           >
             <el-option
@@ -239,12 +215,9 @@
         </el-form-item>
         <el-form-item label="Причина: ">
           <el-input
-            v-model="editPunishment.reason"
+            v-model="editEncouragement.reason"
             placeholder="Введите причину"
           />
-        </el-form-item>
-        <el-form-item>
-          <el-checkbox v-model="editPunishment.remove_date">Снято</el-checkbox>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -257,24 +230,24 @@
 
 <script>
 import {
-  getPunishment,
-  deletePunishment,
-  patchPunishment,
-  postPunishment,
-} from "@/api/punishment";
+  getEncouragement,
+  deleteEncouragement,
+  patchEncouragement,
+  postEncouragement,
+} from "@/api/encouragement";
 
 import moment from "moment";
 import { getStudent } from "../../api/student";
 import { getTeacher } from "../../api/teacher";
 
 export default {
-  name: "Punishment",
+  name: "Encouragement",
   data() {
     return {
-      editPunishment: {
+      editEncouragement: {
         id: 0,
         date: "",
-        punishment_type: "",
+        encouragement_type: "",
         reason: "",
         student: {
           id: 0,
@@ -283,10 +256,10 @@ export default {
           id: 0,
         },
       },
-      editPunishmentFullname: null,
+      editEncouragementFullname: null,
       dialogVisible: false,
-      punishments: [],
-      types: ["Взыскание", "Выговор", "Отчисление"],
+      encouragements: [],
+      types: ["Благодарность", "Снятие взыскания"],
       filter: {
         search: null,
         mg: null,
@@ -347,36 +320,32 @@ export default {
   },
   methods: {
     formatDate: (row) => moment(row.date).format("DD.MM.YY"),
-    formatRemoveDate: (row) =>
-      row.remove_date ? moment(row.remove_date).format("DD.MM.YY") : null,
     onFilter() {
-      getPunishment({
+      getEncouragement({
         date_from:
           this.filter.dateRange !== null ? this.filter.dateRange[0] : null,
         date_to:
           this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
-        punishment_type: this.filter.type,
+        encouragement_type: this.filter.type,
         search: this.filter.search,
         milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
       })
         .then((response) => {
-          this.punishments = response.data;
+          this.encouragements = response.data;
         })
         .catch(() => {});
     },
-    tagByPunishmentType(type) {
+    tagByEncouragementType(type) {
       switch (type) {
-        case "Отчисление":
-          return "info";
-        case "Выговор":
-          return "danger";
-        default:
-          return "warning";
+        case "Благодарность":
+          return "";
+        case "Снятие взыскания":
+          return "success";
       }
     },
     async onCreate() {
-      this.editPunishmentFullname = "Новое взыскание";
-      this.editPunishment = {
+      this.editEncouragementFullname = "Новое поощрение";
+      this.editEncouragement = {
         student: { id: null },
         teacher: { id: null },
         date: moment().format("YYYY-MM-DD"),
@@ -386,15 +355,15 @@ export default {
       this.dialogVisible = true;
     },
     async onEdit(row) {
-      this.editPunishmentFullname = row.student.fullname;
-      this.editPunishment = { ...row };
+      this.editEncouragementFullname = row.student.fullname;
+      this.editEncouragement = { ...row };
       this.students = (await getStudent()).data;
       this.teachers = (await getTeacher()).data;
       this.dialogVisible = true;
     },
     handleDelete(id) {
       this.$confirm(
-        "Вы уверены, что хотите удалить взыскание?",
+        "Вы уверены, что хотите удалить поощрение?",
         "Подтверждение",
         {
           confirmButtonText: "Да",
@@ -402,17 +371,17 @@ export default {
           type: "warning",
         }
       ).then(() => {
-        deletePunishment({ id })
+        deleteEncouragement({ id })
           .then(() => {
             this.$message({
-              message: "Пропуск успешно удален",
+              message: "Поощрение успешно удалено",
               type: "success",
             });
             this.onFilter();
           })
           .catch(() => {
             this.$message({
-              message: "Ошибка при удалении взыскания!",
+              message: "Ошибка при удалении поошрения!",
               type: "error",
             });
           });
@@ -434,11 +403,11 @@ export default {
         .catch(() => {});
     },
     handleAccept() {
-      if (this.editPunishment.id && this.editPunishment.id > 0) {
-        patchPunishment(this.editPunishment)
+      if (this.editEncouragement.id && this.editEncouragement.id > 0) {
+        patchEncouragement(this.editEncouragement)
           .then(() => {
             this.$message({
-              message: "Взыскание успешно отредактировано",
+              message: "Поощрение успешно отредактировано",
               type: "success",
             });
             this.dialogVisible = false;
@@ -446,15 +415,15 @@ export default {
           })
           .catch(() => {
             this.$message({
-              message: "Ошибка при редактировании взыскания!",
+              message: "Ошибка при редактировании поощрение!",
               type: "error",
             });
           });
       } else {
-        postPunishment(this.editPunishment)
+        postEncouragement(this.editEncouragement)
           .then(() => {
             this.$message({
-              message: "Взыскание успешно создано",
+              message: "Поощрение успешно создано",
               type: "success",
             });
             this.dialogVisible = false;
@@ -462,38 +431,11 @@ export default {
           })
           .catch(() => {
             this.$message({
-              message: "Ошибка при создании взыскания!",
+              message: "Ошибка при создании поощрения!",
               type: "error",
             });
           });
       }
-    },
-    onRemove(punishment) {
-      this.$confirm(
-        "Вы уверены, что хотите снять взыскание?",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        }
-      ).then(() => {
-        punishment.remove_date = moment().format("YYYY-MM-DD");
-        patchPunishment(punishment)
-          .then(() => {
-            this.$message({
-              message: "Взыскание успешно снято",
-              type: "success",
-            });
-            this.onFilter();
-          })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при снятии взыскания!",
-              type: "error",
-            });
-          });
-      });
     },
   },
 };
