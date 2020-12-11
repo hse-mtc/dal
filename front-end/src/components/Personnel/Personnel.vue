@@ -96,7 +96,10 @@
                 label="Программа"
               >
               </el-table-column>
-              <el-table-column prop="birthdate" label="Дата рождения">
+              <el-table-column label="Дата рождения">
+                <template slot-scope="scope">
+                  {{ formatDate(scope.row.birthdate) }}
+                </template>
               </el-table-column>
               <el-table-column prop="status" label="Статус"> </el-table-column>
               <el-table-column label="" width="115px">
@@ -216,7 +219,6 @@
 import { getStudent, deleteStudent } from "@/api/student";
 import { getTeacher, deleteTeacher } from "@/api/teacher";
 import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
-import { Message } from "element-ui";
 import moment from "moment";
 
 export default {
@@ -262,6 +264,7 @@ export default {
     this.onFilter();
   },
   methods: {
+    formatDate: (d) => moment(d).format("DD.MM.YYYY"),
     closeModal() {
       this.addModal = false;
       document
@@ -282,9 +285,6 @@ export default {
         })
           .then((response) => {
             this.studentsData = response.data;
-            this.studentsData.forEach((x) => {
-              x.birthdate = moment(x.birthdate).format("DD.MM.yyyy");
-            });
           })
           .catch(() => {
             this.$message.error("Ошибка получения списка студентов!");
@@ -355,7 +355,7 @@ export default {
       }
     },
     onEdit(row) {
-      this.editStudent = row;
+      this.editStudent = { ...row };
       this.openModal();
     },
   },

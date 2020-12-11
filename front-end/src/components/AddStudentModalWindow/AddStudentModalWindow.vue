@@ -84,8 +84,8 @@
           v-model="form.birthdate"
           type="date"
           placeholder="Выберите дату рождения"
-          format="dd.MM.yyyy"
-          value-format="dd.MM.yyyy"
+          format="DD.MM.yyyy"
+          value-format="yyyy-MM-DD"
         >
         </el-date-picker>
       </el-form-item>
@@ -179,6 +179,7 @@ export default {
   },
   created() {
     if (this.student) this.form = this.student;
+    console.log(this.form);
   },
   methods: {
     handleAvatarSuccess(res, file) {
@@ -200,6 +201,7 @@ export default {
       this.$refs["form"].validate((valid) => {
         if (valid) {
           if (this.student) {
+            this.form.milgroup = { milgroup: this.form.milgroup.milgroup };
             this.form.id = this.student.id;
             patchStudent(this.form)
               .then(() => {
