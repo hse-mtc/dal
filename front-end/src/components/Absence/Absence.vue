@@ -214,7 +214,7 @@
                 <el-table-column
                   v-for="d in journal.dates"
                   :key="d"
-                  :label="formatDate(d)"
+                  :label="formatColumnDate(d)"
                   align="center"
                   min-width="100"
                 >
@@ -516,6 +516,7 @@ export default {
       }
     },
     formatDate: (row) => moment(row.date).format("DD.MM.YY"),
+    formatColumnDate: (d) => moment(d).format("DD.MM.YY"),
     onFilter() {
       getAbsence({
         date_from:
@@ -628,20 +629,22 @@ export default {
       });
     },
     onJournal() {
-      getAbsenceJournal({
-        milgroup: this.filterJ.mg,
-        date_from: this.filterJ.dateRange[0],
-        date_to: this.filterJ.dateRange[1],
-      })
-        .then((response) => {
-          this.journal = response.data;
+      if (this.filterJ.mg > 0) {
+        getAbsenceJournal({
+          milgroup: this.filterJ.mg,
+          date_from: this.filterJ.dateRange[0],
+          date_to: this.filterJ.dateRange[1],
         })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка получения журнала!",
-            type: "error",
+          .then((response) => {
+            this.journal = response.data;
+          })
+          .catch(() => {
+            this.$message({
+              message: "Ошибка получения журнала!",
+              type: "error",
+            });
           });
-        });
+      }
     },
   },
 };
