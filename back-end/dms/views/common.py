@@ -10,7 +10,6 @@ from drf_spectacular.views import extend_schema
 from dms.models.common import (
     Author,
     Publisher,
-    Subject,
 )
 from dms.serializers.class_materials import SubjectRetrieveSerializer
 from dms.serializers.common import (
@@ -19,6 +18,8 @@ from dms.serializers.common import (
     PublisherSerializer,
     SubjectSerializer,
 )
+
+from common.models.subjects import Subject
 
 MUTATE_ACTIONS = ["create", "update", "partial_update"]
 

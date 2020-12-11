@@ -8,8 +8,9 @@ from auth.serializers import (
 from dms.models.common import (
     Author,
     Publisher,
-    Subject,
 )
+
+from common.models.subjects import Subject
 
 
 class AuthorSerializer(serializers.ModelSerializer):

@@ -13,7 +13,6 @@ from dms.models.class_materials import (
 from dms.models.common import (
     Author,
     Publisher,
-    Subject,
 )
 
 admin.site.register(Author)
@@ -23,5 +22,4 @@ admin.site.register(ClassMaterial)
 admin.site.register(Paper)
 admin.site.register(Publisher)
 admin.site.register(Section)
-admin.site.register(Subject)
 admin.site.register(Topic)

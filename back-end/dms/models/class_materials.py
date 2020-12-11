@@ -2,8 +2,8 @@ from django.db import models
 
 from ordered_model.models import OrderedModel
 
-from dms.models.common import Subject
 from dms.models.documents import Document
+from common.models.subjects import Subject
 
 
 class Section(OrderedModel):
