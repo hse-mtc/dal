@@ -30,9 +30,10 @@ from dms.models.class_materials import (
 from dms.models.common import (
     Author,
     Publisher,
-    Subject,
     User,
 )
+
+from common.models.subjects import Subject
 
 
 def create_super_user():

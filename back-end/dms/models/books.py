@@ -6,8 +6,9 @@ from dms.models.documents import Document
 from dms.models.common import (
     Author,
     Publisher,
-    Subject,
 )
+
+from common.models.subjects import Subject
 
 
 def current_year():

@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from common.models import Person
+from common.models.persons import Person
 
 
 class Profile(Person):

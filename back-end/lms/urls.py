@@ -8,6 +8,7 @@ from lms.views.absence import AbsenceViewSet, AbsenceJournalView
 from lms.views.punishment import PunishmentViewSet
 from lms.views.encouragement import EncouragementViewSet
 from lms.views.reference_book import ReferenceBookView
+from lms.views.subject import SubjectViewSet
 
 routers = DefaultRouter()
 routers.register('student', StudentViewSet)
@@ -15,6 +16,7 @@ routers.register('teacher', TeacherViewSet)
 routers.register('absence', AbsenceViewSet)
 routers.register('punishment', PunishmentViewSet)
 routers.register('encouragement', EncouragementViewSet)
+routers.register('subject', SubjectViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),

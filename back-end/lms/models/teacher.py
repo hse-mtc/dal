@@ -1,6 +1,6 @@
 from django.db import models
 
-from common.models import Person
+from common.models.persons import Person
 from lms.models.common import Milfaculty, Milgroup
 
 
