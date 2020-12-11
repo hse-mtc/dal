@@ -6,6 +6,7 @@ from lms.models.teacher import Rank, TeacherPost, Teacher
 from lms.models.absence import AbsenceType, AbsenceStatus, Absence
 from lms.models.encouragement import EncouragementType, Encouragement
 from lms.models.punishment import PunishmentType, Punishment
+from lms.models.achievement import AchievementType, Achievement
 
 # Registering reference models
 admin.site.register(AbsenceType)
@@ -17,6 +18,7 @@ admin.site.register(Rank)
 admin.site.register(Status)
 admin.site.register(Program)
 admin.site.register(TeacherPost)
+admin.site.register(AchievementType)
 
 # Registering other models
 admin.site.register(Milgroup)
@@ -25,3 +27,4 @@ admin.site.register(Teacher)
 admin.site.register(Absence)
 admin.site.register(Encouragement)
 admin.site.register(Punishment)
+admin.site.register(Achievement)
