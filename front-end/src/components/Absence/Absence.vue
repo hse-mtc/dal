@@ -163,157 +163,7 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Журнал">
-          <el-row class="filterRow" style="margin-bottom: 15px">
-            <el-col :offset="17" :span="5">
-              <el-date-picker
-                v-model="filterJ.dateRange"
-                type="daterange"
-                align="right"
-                unlink-panels
-                :clearable="false"
-                range-separator="по"
-                start-placeholder="Начальная дата"
-                end-placeholder="Конечная дата"
-                :picker-options="pickerOptions"
-                v-on:change="onJournal"
-                format="dd.MM.yyyy"
-                value-format="yyyy-MM-dd"
-              >
-              </el-date-picker>
-            </el-col>
-          </el-row>
-          <el-tabs
-            tab-position="left"
-            v-model="filterJ.mg"
-            @tab-click="onJournal()"
-          >
-            <el-tab-pane
-              v-for="mg in milgroups"
-              :key="mg.milgroup"
-              :label="mg.milgroup"
-              :name="mg.milgroup"
-            >
-              <el-table
-                :data="journal.students"
-                style="width: 100%"
-                height="680"
-                :default-sort="{
-                  prop: 'fullname',
-                  order: 'ascending',
-                }"
-                stripe
-                border
-              >
-                <el-table-column
-                  width="250"
-                  prop="fullname"
-                  label="ФИО"
-                  show-overflow-tooltip
-                  fixed
-                />
-                <el-table-column
-                  v-for="d in journal.dates"
-                  :key="d"
-                  :label="formatColumnDate(d)"
-                  align="center"
-                  min-width="100"
-                >
-                  <template slot-scope="scope">
-                    <div class="absence-journal-cell">
-                      <el-popover
-                        v-if="scope.row.absences.some((x) => x.date == d)"
-                        placement="top"
-                        width="400"
-                        trigger="hover"
-                      >
-                        <el-form
-                          label-position="right"
-                          label-width="150px"
-                          size="mini"
-                          :model="scope.row.absences.find((x) => x.date == d)"
-                        >
-                          <el-form-item label="Тип причины: ">
-                            <el-tag
-                              :type="
-                                tagByAbsenceType(
-                                  scope.row.absences.find((x) => x.date == d)
-                                    .absence_type
-                                )
-                              "
-                              disable-transitions
-                            >
-                              {{
-                                scope.row.absences.find((x) => x.date == d)
-                                  .absence_type
-                              }}
-                            </el-tag>
-                          </el-form-item>
-                          <el-form-item label="Причина: ">
-                            {{
-                              scope.row.absences.find((x) => x.date == d).reason
-                            }}
-                          </el-form-item>
-                          <el-form-item label="Комментарий: ">
-                            {{
-                              scope.row.absences.find((x) => x.date == d)
-                                .comment
-                            }}
-                          </el-form-item>
-                          <el-form-item>
-                            <el-button
-                              size="mini"
-                              icon="el-icon-edit"
-                              type="info"
-                              circle
-                              @click="
-                                onEdit(
-                                  scope.row.absences.find((x) => x.date == d),
-                                  scope.row.fullname
-                                )
-                              "
-                            />
-                            <el-button
-                              size="mini"
-                              icon="el-icon-delete"
-                              type="danger"
-                              circle
-                              @click="
-                                handleDelete(
-                                  scope.row.absences.find((x) => x.date == d).id
-                                )
-                              "
-                            />
-                          </el-form-item>
-                        </el-form>
-                        <i
-                          slot="reference"
-                          :class="
-                            iconByAbsenceStatus(
-                              scope.row.absences.find((x) => x.date == d)
-                                .absence_status
-                            )
-                          "
-                          :style="
-                            colorByAbsenceStatus(
-                              scope.row.absences.find((x) => x.date == d)
-                                .absence_status
-                            )
-                          "
-                        />
-                      </el-popover>
-                      <el-button
-                        v-else
-                        type="text"
-                        icon="el-icon-plus"
-                        @click="onCreate(scope.row, d)"
-                        class="create-absence-btn"
-                      />
-                    </div>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-          </el-tabs>
+          <AbsenceJournal />
         </el-tab-pane>
       </el-tabs>
     </el-col>
@@ -379,16 +229,18 @@
 <script>
 import {
   getAbsence,
-  getAbsenceJournal,
   patchAbsence,
-  postAbsence,
   deleteAbsence,
 } from "@/api/absence";
 import moment from "moment";
 
+import AbsenceJournal from "@/components/AbsenceJournal/AbsenceJournal";
+
 export default {
   name: "Absence",
-  components: {},
+  components: {
+    AbsenceJournal,
+  },
   data() {
     return {
       dialogVisible: false,
@@ -421,13 +273,6 @@ export default {
         ],
         search: null,
         mg: null,
-      },
-      filterJ: {
-        mg: null,
-        dateRange: [
-          moment().add(-3, "months").format("YYYY-MM-DD"),
-          moment().format("YYYY-MM-DD"),
-        ],
       },
       absences: [],
       types: ["Уважительная", "Неуважительная", "Опоздание"],
@@ -477,12 +322,10 @@ export default {
           },
         ],
       },
-      journal: {},
     };
   },
   created() {
     this.onFilter();
-    if (this.filterJ.mg) this.onJournal();
   },
   methods: {
     changeAbsenceStatus(absence) {
@@ -516,7 +359,6 @@ export default {
       }
     },
     formatDate: (row) => moment(row.date).format("DD.MM.YY"),
-    formatColumnDate: (d) => moment(d).format("DD.MM.YY"),
     onFilter() {
       getAbsence({
         date_from:
@@ -565,41 +407,21 @@ export default {
         .catch(() => {});
     },
     handleAccept() {
-      if (this.editAbsence.id) {
-        patchAbsence(this.editAbsence)
-          .then(() => {
-            this.$message({
-              message: "Пропуск успешно редактирован",
-              type: "success",
-            });
-            this.dialogVisible = false;
-            this.onFilter();
-            if (this.filterJ.mg) this.onJournal();
-          })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при редактировании пропуска!",
-              type: "error",
-            });
+      patchAbsence(this.editAbsence)
+        .then(() => {
+          this.$message({
+            message: "Пропуск успешно редактирован",
+            type: "success",
           });
-      } else {
-        postAbsence(this.editAbsence)
-          .then(() => {
-            this.$message({
-              message: "Пропуск успешно создан",
-              type: "success",
-            });
-            this.dialogVisible = false;
-            this.onFilter();
-            if (this.filterJ.mg) this.onJournal();
-          })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при создании пропуска!",
-              type: "error",
-            });
+          this.dialogVisible = false;
+          this.onFilter();
+        })
+        .catch(() => {
+          this.$message({
+            message: "Ошибка при редактировании пропуска!",
+            type: "error",
           });
-      }
+        });
     },
     handleDelete(id) {
       this.$confirm(
@@ -618,7 +440,6 @@ export default {
               type: "success",
             });
             this.onFilter();
-            if (this.filterJ.mg) this.onJournal();
           })
           .catch(() => {
             this.$message({
@@ -627,24 +448,6 @@ export default {
             });
           });
       });
-    },
-    onJournal() {
-      if (this.filterJ.mg > 0) {
-        getAbsenceJournal({
-          milgroup: this.filterJ.mg,
-          date_from: this.filterJ.dateRange[0],
-          date_to: this.filterJ.dateRange[1],
-        })
-          .then((response) => {
-            this.journal = response.data;
-          })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка получения журнала!",
-              type: "error",
-            });
-          });
-      }
     },
   },
 };
