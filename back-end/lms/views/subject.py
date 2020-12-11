@@ -12,7 +12,7 @@ from lms.serializers.subject import SubjectSerializer
 from lms.filters.subject import SubjectFilter
 
 
-@extend_schema(tags=['subject'])
+@extend_schema(tags=['lms_subject'])
 class SubjectViewSet(ModelViewSet):
     serializer_class = SubjectSerializer
     queryset = Subject.objects.all()
