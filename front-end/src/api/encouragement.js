@@ -20,7 +20,7 @@ export function patchEncouragement(data) {
 
 export function postEncouragement(data) {
   return request({
-    url: `/lms/encouragement/`,
+    url: "/lms/encouragement/",
     method: "post",
     data,
   });
