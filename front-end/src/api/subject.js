@@ -58,6 +58,6 @@ export function addTopicFile(data) {
   return request({
     url: `/dms/class-materials/`,
     method: "post",
-    data: data
+    data: data,
   });
 }

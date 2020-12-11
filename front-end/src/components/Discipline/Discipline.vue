@@ -5,7 +5,9 @@
         <h1>{{ this.$route.meta.title }}</h1>
       </el-row>
       <el-tabs stretch>
-        <el-tab-pane label="Поощрения"></el-tab-pane>
+        <el-tab-pane label="Поощрения">
+          <Encouragement />
+        </el-tab-pane>
         <el-tab-pane label="Взыскания">
           <Punishment />
         </el-tab-pane>
@@ -17,11 +19,13 @@
 
 <script>
 import Punishment from "@/components/Punishment/Punishment";
+import Encouragement from "../Encouragement/Encouragement.vue";
 
 export default {
   name: "Discipline",
   components: {
     Punishment,
+    Encouragement,
   },
 };
 </script>

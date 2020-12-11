@@ -101,11 +101,13 @@
               max-height="680"
               stripe
             >
-              <el-table-column sortable label="Дата" width="100">
-                <template slot-scope="scope">
-                  {{ formatDate(scope.row.date) }}
-                </template>
-              </el-table-column>
+              <el-table-column
+                sortable
+                label="Дата"
+                width="100"
+                prop="date"
+                :formatter="formatDate"
+              />
               <el-table-column
                 prop="student.fullname"
                 sortable
@@ -513,7 +515,7 @@ export default {
           return "color: green;";
       }
     },
-    formatDate: (d) => moment(d).format("DD.MM.YY"),
+    formatDate: (row) => moment(row.date).format("DD.MM.YY"),
     onFilter() {
       getAbsence({
         date_from:
