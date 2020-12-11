@@ -13,6 +13,7 @@ from lms.models.teacher import Rank, TeacherPost, Teacher
 from lms.models.absence import AbsenceStatus, AbsenceType, Absence
 from lms.models.encouragement import EncouragementType, Encouragement
 from lms.models.punishment import PunishmentType, Punishment
+from lms.models.achievement import AchievementType, Achievement
 
 
 def create_statuses() -> tp.Dict[str, Status]:
@@ -448,6 +449,38 @@ def create_encouragements(encouragement_types: tp.Dict[str, EncouragementType],
         encouragement.save()
 
 
+def create_achievement_types():
+    values = ['Спортивные', 'Научные']
+
+    types = {}
+    for value in values:
+        typ, _ = AchievementType.objects.get_or_create(achievement_type=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_achievements(achievement_types: tp.Dict[str, AchievementType],
+                        students: tp.Dict[str, Student]):
+    values = [
+        {
+            'student': students['Исаков'],
+            'text': 'Мастер спорта по футболу',
+            'achievement_type': achievement_types['Спортивные'],
+        },
+        {
+            'student': students['Хромов'],
+            'text': 'Написал научную статью',
+            'achievement_type': achievement_types['Научные'],
+            'date': '2020-11-10',
+        },
+    ]
+
+    for value in values:
+        achievement, _ = Achievement.objects.get_or_create(**value)
+        achievement.save()
+
+
 # pylint: disable=(too-many-locals)
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -479,6 +512,9 @@ def lms_populate(request: Request) -> Response:
 
     encouragement_types = create_encouragement_types()
     create_encouragements(encouragement_types, students, teachers)
+
+    achievement_types = create_achievement_types()
+    create_achievements(achievement_types, students)
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)
