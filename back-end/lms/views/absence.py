@@ -15,7 +15,8 @@ from rest_framework.status import (
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
-from drf_spectacular.views import extend_schema
+from drf_spectacular.views import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.absence import (AbsenceSerializer,
@@ -54,7 +55,12 @@ class AbsenceViewSet(ModelViewSet):
     search_fields = ['student__surname', 'student__name', 'student__patronymic']
 
 
-@extend_schema(tags=['absence-journal'])
+@extend_schema(tags=['absence-journal'],
+               parameters=[
+                    OpenApiParameter(name='milgroup', description='Filter by milgroup', required=True, type=int),
+                    OpenApiParameter(name='date_from', description='Filter by date', required=True, type=OpenApiTypes.DATE),
+                    OpenApiParameter(name='date_to', description='Filter by date', required=True, type=OpenApiTypes.DATE),
+               ])
 class AbsenceJournalView(GenericAPIView):
     permission_classes = [AllowAny]
 
