@@ -8,6 +8,7 @@ from auth.serializers import UserSerializer
 class SubjectSerializer(serializers.ModelSerializer):
     user = UserSerializer(write_only=True,
                           default=serializers.CurrentUserDefault())
+    title = serializers.CharField(required=False)
 
     class Meta:
         model = Subject

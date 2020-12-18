@@ -11,4 +11,4 @@ class LessonFilter(FilterSet):
 
     class Meta:
         model = Lesson
-        fields = ['lesson_time']
+        fields = ['ordinal']

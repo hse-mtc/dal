@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from common.models.subjects import Subject
 from lms.models.common import Milgroup
@@ -38,12 +39,14 @@ class Lesson(models.Model):
     # This field should be here to handle situations where teachers are substituted
     # teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
 
-    date = models.DateField(default=datetime.date.today())
+    date = models.DateField(default=datetime.date.today)
     # Lesson #1, #2, #3, etc
-    lesson_time = models.PositiveSmallIntegerField(max_length=1)
+    # Номер пары короче
+    ordinal = models.PositiveSmallIntegerField(
+        validators=[MaxValueValidator(10), MinValueValidator(1)])
 
     def __str__(self):
-        return f'Lesson {str(self.subject)} on {str(self.date)}, #{str(self.lesson_time)}'
+        return f'Lesson {str(self.subject)} on {str(self.date)}, #{str(self.ordinal)}'
 
     class Meta:
         verbose_name = 'Lesson'
