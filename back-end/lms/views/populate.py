@@ -519,7 +519,7 @@ def create_subjects():
 
     types = {}
     for value in values:
-        typ, _ = Subject.objects.get(title=value)
+        typ = Subject.objects.get(title=value)
         typ.save()
         types[value] = typ
     return types
@@ -528,80 +528,80 @@ def create_subjects():
 def create_lessons(lesson_types: tp.Dict[str, LessonType],
                    rooms: tp.Dict[str, Room],
                    milgroups: tp.Dict[str, Milgroup],
-                   subjects: tp.List[str, Subject]):
+                   subjects: tp.Dict[str, Subject]):
     values = [
         {
             'lesson_type': lesson_types['Лекция'],
             'room': rooms['510'],
-            'milgroup': milgroups['1809'],
+            'milgroup': milgroups[1809],
             'date': '2020-12-18',
-            'lesson_time': 1,
+            'ordinal': 1,
             'subject': subjects['Тактическая подготовка'],
         },
         {
             'lesson_type': lesson_types['Практическое занятие'],
             'room': rooms['Плац'],
-            'milgroup': milgroups['1809'],
+            'milgroup': milgroups[1809],
             'date': '2020-12-18',
-            'lesson_time': 2,
+            'ordinal': 2,
             'subject': subjects['Строевая подготовка'],
         },
         {
             'lesson_type': lesson_types['Семинар'],
             'room': rooms['504'],
-            'milgroup': milgroups['1809'],
+            'milgroup': milgroups[1809],
             'date': '2020-12-18',
-            'lesson_time': 3,
+            'ordinal': 3,
             'subject': subjects['Военная топография'],
         },
 
         {
             'lesson_type': lesson_types['Практическое занятие'],
             'room': rooms['Плац'],
-            'milgroup': milgroups['1810'],
+            'milgroup': milgroups[1810],
             'date': '2020-12-18',
-            'lesson_time': 1,
+            'ordinal': 1,
             'subject': subjects['Строевая подготовка'],
         },
         {
             'lesson_type': lesson_types['Семинар'],
             'room': rooms['504'],
-            'milgroup': milgroups['1810'],
+            'milgroup': milgroups[1810],
             'date': '2020-12-18',
-            'lesson_time': 2,
+            'ordinal': 2,
             'subject': subjects['Военная топография'],
         },
         {
             'lesson_type': lesson_types['Лекция'],
             'room': rooms['510'],
-            'milgroup': milgroups['1810'],
+            'milgroup': milgroups[1810],
             'date': '2020-12-18',
-            'lesson_time': 3,
+            'ordinal': 3,
             'subject': subjects['Тактическая подготовка'],
         },
 
         {
             'lesson_type': lesson_types['Лекция'],
             'room': rooms['510'],
-            'milgroup': milgroups['1809'],
+            'milgroup': milgroups[1809],
             'date': '2020-12-11',
-            'lesson_time': 1,
+            'ordinal': 1,
             'subject': subjects['Тактическая подготовка'],
         },
         {
             'lesson_type': lesson_types['Практическое занятие'],
             'room': rooms['Плац'],
-            'milgroup': milgroups['1809'],
+            'milgroup': milgroups[1809],
             'date': '2020-12-11',
-            'lesson_time': 2,
+            'ordinal': 2,
             'subject': subjects['Строевая подготовка'],
         },
         {
             'lesson_type': lesson_types['Семинар'],
             'room': rooms['504'],
-            'milgroup': milgroups['1809'],
+            'milgroup': milgroups[1809],
             'date': '2020-12-11',
-            'lesson_time': 3,
+            'ordinal': 3,
             'subject': subjects['Военная топография'],
         },
     ]
