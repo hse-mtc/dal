@@ -10,6 +10,7 @@ from lms.views.encouragement import EncouragementViewSet
 from lms.views.achievement import AchievementViewSet
 from lms.views.reference_book import ReferenceBookView
 from lms.views.subject import SubjectViewSet
+from lms.views.lesson import LessonViewSet
 
 routers = DefaultRouter()
 routers.register('student', StudentViewSet)
@@ -19,6 +20,7 @@ routers.register('punishment', PunishmentViewSet)
 routers.register('encouragement', EncouragementViewSet)
 routers.register('subject', SubjectViewSet)
 routers.register('achievement', AchievementViewSet)
+routers.register('lesson', LessonViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),

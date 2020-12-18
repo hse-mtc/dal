@@ -14,6 +14,9 @@ from lms.models.absence import AbsenceStatus, AbsenceType, Absence
 from lms.models.encouragement import EncouragementType, Encouragement
 from lms.models.punishment import PunishmentType, Punishment
 from lms.models.achievement import AchievementType, Achievement
+from lms.models.lesson import Room, LessonType, Lesson
+
+from common.models.subjects import Subject
 
 
 def create_statuses() -> tp.Dict[str, Status]:
@@ -481,6 +484,133 @@ def create_achievements(achievement_types: tp.Dict[str, AchievementType],
         achievement.save()
 
 
+def create_rooms():
+    values = ['510', 'Плац', '501', '502', '503', '504']
+
+    types = {}
+    for value in values:
+        typ, _ = Room.objects.get_or_create(room=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_lesson_types():
+    values = ['Семинар', 'Лекция', 'Групповое занятие', 'Практическое занятие']
+
+    types = {}
+    for value in values:
+        typ, _ = LessonType.objects.get_or_create(lesson_type=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_subjects():
+    values = [
+        "Тактическая подготовка",
+        "Тактико-специальная подготовка",
+        "Военно-специальная подготовка",
+        "Военно-инженерная подготовка",
+        "Военно-политическая подготовка",
+        "Военная топография",
+        "Строевая подготовка",
+    ]
+
+    types = {}
+    for value in values:
+        typ, _ = Subject.objects.get(title=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_lessons(lesson_types: tp.Dict[str, LessonType],
+                   rooms: tp.Dict[str, Room],
+                   milgroups: tp.Dict[str, Milgroup],
+                   subjects: tp.List[str, Subject]):
+    values = [
+        {
+            'lesson_type': lesson_types['Лекция'],
+            'room': rooms['510'],
+            'milgroup': milgroups['1809'],
+            'date': '2020-12-18',
+            'lesson_time': 1,
+            'subject': subjects['Тактическая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Практическое занятие'],
+            'room': rooms['Плац'],
+            'milgroup': milgroups['1809'],
+            'date': '2020-12-18',
+            'lesson_time': 2,
+            'subject': subjects['Строевая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Семинар'],
+            'room': rooms['504'],
+            'milgroup': milgroups['1809'],
+            'date': '2020-12-18',
+            'lesson_time': 3,
+            'subject': subjects['Военная топография'],
+        },
+
+        {
+            'lesson_type': lesson_types['Практическое занятие'],
+            'room': rooms['Плац'],
+            'milgroup': milgroups['1810'],
+            'date': '2020-12-18',
+            'lesson_time': 1,
+            'subject': subjects['Строевая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Семинар'],
+            'room': rooms['504'],
+            'milgroup': milgroups['1810'],
+            'date': '2020-12-18',
+            'lesson_time': 2,
+            'subject': subjects['Военная топография'],
+        },
+        {
+            'lesson_type': lesson_types['Лекция'],
+            'room': rooms['510'],
+            'milgroup': milgroups['1810'],
+            'date': '2020-12-18',
+            'lesson_time': 3,
+            'subject': subjects['Тактическая подготовка'],
+        },
+
+        {
+            'lesson_type': lesson_types['Лекция'],
+            'room': rooms['510'],
+            'milgroup': milgroups['1809'],
+            'date': '2020-12-11',
+            'lesson_time': 1,
+            'subject': subjects['Тактическая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Практическое занятие'],
+            'room': rooms['Плац'],
+            'milgroup': milgroups['1809'],
+            'date': '2020-12-11',
+            'lesson_time': 2,
+            'subject': subjects['Строевая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Семинар'],
+            'room': rooms['504'],
+            'milgroup': milgroups['1809'],
+            'date': '2020-12-11',
+            'lesson_time': 3,
+            'subject': subjects['Военная топография'],
+        },
+    ]
+
+    for value in values:
+        lesson, _ = Lesson.objects.get_or_create(**value)
+        lesson.save()
+
+
 # pylint: disable=(too-many-locals)
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -515,6 +645,11 @@ def lms_populate(request: Request) -> Response:
 
     achievement_types = create_achievement_types()
     create_achievements(achievement_types, students)
+
+    subjects = create_subjects()
+    rooms = create_rooms()
+    lesson_types = create_lesson_types()
+    create_lessons(lesson_types, rooms, milgroups, subjects)
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)
