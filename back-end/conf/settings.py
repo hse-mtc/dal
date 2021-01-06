@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Addons
     "corsheaders",
     "debug_toolbar",
+    "dbbackup",
     "django_filters",
     "drf_spectacular",
     "ordered_model",
@@ -101,6 +102,18 @@ DATABASES = {
         "NAME": os.environ["POSTGRES_DB"],
         "USER": os.environ["POSTGRES_USER"],
         "PASSWORD": os.environ["POSTGRES_PASSWORD"],
+    }
+}
+
+# Database backups
+
+DBBACKUP_STORAGE = "django.core.files.storage.FileSystemStorage"
+DBBACKUP_STORAGE_OPTIONS = {
+    "location": BASE_DIR / "backups",
+}
+DBBACKUP_CONNECTORS = {
+    "default": {
+        "CONNECTOR": "dbbackup.db.postgresql.PgDumpBinaryConnector",
     }
 }
 
