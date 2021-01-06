@@ -14,6 +14,7 @@ yapf = "*"
 [packages]
 django = "*"
 django-cors-headers = "*"
+django-dbbackup = "*"
 django-filter = "*"
 django-ordered-model = "*"
 django-taggit = "*"
