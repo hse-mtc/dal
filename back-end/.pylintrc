@@ -452,6 +452,12 @@ known-third-party=enchant
 preferred-modules=
 
 
+[DJANGO FOREIGN KEYS REFERENCED BY STRINGS]
+
+# A module containing Django settings to be used while linting.
+django-settings-module=conf.settings
+
+
 [CLASSES]
 
 # List of method names used to declare (i.e. assign) instance attributes.
