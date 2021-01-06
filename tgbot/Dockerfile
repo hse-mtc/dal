@@ -1,15 +1,19 @@
-FROM python:3.8.5
+# Python image
+FROM python:3.9.1-buster
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN pip install pipenv
-
+# Set working directory
 WORKDIR /tgbot
 
+# Copy Pipfile[.lock]
 COPY tgbot/Pipfile* ./
 
-RUN pipenv install --system --deploy --dev
+# Install pipenv and packages
+RUN pip install pipenv && \
+    pipenv install --system --deploy --dev
 
+# Copy everything else
 COPY tgbot/ .
