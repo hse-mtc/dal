@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 
-while [[ "$#" -gt 0 ]]; do
+for i in "$@"; do
   case $1 in
-  -i | --in-place)
+    -i | --in-place)
     inplace="--in-place"
     shift
     ;;
-  *)
-    echo "Unknown parameter passed: $1"
+
+    *)
+    echo "Unknown option: ${i}"
     exit 1
-    ;;
   esac
-  shift
 done
 
 yapf \
