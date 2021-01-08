@@ -248,9 +248,16 @@ SPECTACULAR_SETTINGS = {
 
 LOGGING = {
     "version": 1,
+    "formatters": {
+        "simple": {
+            "format": "[{asctime}] [{levelname}] [{name}] {message}",
+            "style": "{",
+        },
+    },
     "handlers": {
         "console": {
             "class": "logging.StreamHandler",
+            "formatter": "simple",
         },
     },
     "loggers": {

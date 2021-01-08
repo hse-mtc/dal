@@ -10,23 +10,21 @@ class LoggingMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
-
         # One-time configuration and initialization.
-        self.log_prefix = f"[{logger.name}]"
 
     def _log_request(self, request: WSGIRequest) -> None:
         try:
             get = request.GET.copy()
-            logger.debug("{} Request: {}, {}", self.log_prefix, request, get)
+            logger.debug("Request: {}, {}".format(request, get))
         except AttributeError as exc:
-            logger.error("{} Failed to log request: {}", self.log_prefix, exc)
+            logger.error("Failed to log request: {}".format(exc))
 
     def _log_response(self, response: Response) -> None:
         try:
             data = response.data.copy()
-            logger.debug("{} Response: {}", self.log_prefix, data)
+            logger.debug("Response: {}".format(data))
         except AttributeError as exc:
-            logger.error("{} Failed to log response: {}", self.log_prefix, exc)
+            logger.error("Failed to log response: {}".format(exc))
 
     def __call__(self, request: WSGIRequest):
         # Code to be executed for each request before
