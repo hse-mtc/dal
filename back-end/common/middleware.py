@@ -3,28 +3,25 @@ import logging
 from django.core.handlers.wsgi import WSGIRequest
 from rest_framework.response import Response
 
-logger = logging.getLogger("dal.logging")
-
 
 class LoggingMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
         # One-time configuration and initialization.
+        self.logger = logging.getLogger("dal.logging")
 
     def _log_request(self, request: WSGIRequest) -> None:
         try:
-            get = request.GET.copy()
-            logger.debug("Request: {}, {}".format(request, get))
+            self.logger.debug("Request: %s, %s", request, request.GET.copy())
         except AttributeError as exc:
-            logger.error("Failed to log request: {}".format(exc))
+            self.logger.error("Failed to log request: %s", exc)
 
     def _log_response(self, response: Response) -> None:
         try:
-            data = response.data.copy()
-            logger.debug("Response: {}".format(data))
+            self.logger.debug("Response: %s", response.data.copy())
         except AttributeError as exc:
-            logger.error("Failed to log response: {}".format(exc))
+            self.logger.error("Failed to log response: %s", exc)
 
     def __call__(self, request: WSGIRequest):
         # Code to be executed for each request before
