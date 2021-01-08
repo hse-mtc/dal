@@ -61,6 +61,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "common.middleware.LoggingMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -155,12 +156,13 @@ USE_TZ = True
 # REST framework settings
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt."
-                                       "authentication.JWTAuthentication",),
-    "DEFAULT_PERMISSION_CLASSES": (
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
         "auth.permissions.DjangoModelPermissionsWithGet",
-    ),
+    ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -240,4 +242,27 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "DAL REST API",
     "DESCRIPTION": "API for auth, dms, lms apps",
     "VERSION": "0.7.0",
+}
+
+# Logging settings
+
+LOGGING = {
+    "version": 1,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": True,
+        },
+        "dal.logging": {
+            "level": "DEBUG",
+            "handlers": ["console"],
+            "propagate": False,
+        }
+    },
 }
