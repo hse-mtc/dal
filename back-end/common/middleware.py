@@ -8,8 +8,9 @@ class LoggingMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
+
         # One-time configuration and initialization.
-        self.logger = logging.getLogger("dal.logging")
+        self.logger = logging.getLogger("dal.logs")
 
     def _log_request(self, request: WSGIRequest) -> None:
         try:
