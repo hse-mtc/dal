@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pytelegrambotapi = "*"
-requests = "*"
+aiogram = "*"
+aiohttp = {extras = ["speedups"], version = "*"}
 
 [dev-packages]
+yapf = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9.1"
