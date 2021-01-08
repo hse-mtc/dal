@@ -55,5 +55,7 @@ services:
       - tgbot/.env
     depends_on:
       - back-end
-    command: python src/start_bot.py
+    command: python src/bot.py
     restart: always
+    volumes:
+      - ./tgbot:/tgbot
