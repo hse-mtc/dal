@@ -250,8 +250,8 @@ LOGGING = {
     "version": 1,
     "formatters": {
         "simple": {
-            "format": "[{asctime}] [{levelname}] [{name}] {message}",
-            "style": "{",
+            "format": "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s",
+            "style": "%",
         },
     },
     "handlers": {
