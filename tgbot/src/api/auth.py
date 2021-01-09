@@ -29,7 +29,7 @@ async def session_exists(chat_id: int) -> bool:
 
 
 async def fetch_code(chat_id: int) -> str:
-    """Fetch code for **authorised** user.
+    """Fetch code for **authorized** user.
 
     Contract: session must exist.
     """
