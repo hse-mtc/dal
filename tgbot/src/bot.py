@@ -1,4 +1,5 @@
 import os
+import logging
 
 from aiogram import (
     Bot,
@@ -11,6 +12,11 @@ import middleware
 
 
 def main() -> None:
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s",
+    )
+
     bot = Bot(token=os.environ.get("TOKEN"))
     dp = Dispatcher(bot)
 
