@@ -4,7 +4,9 @@ import typing as tp
 from aiohttp import ClientSession
 
 PORT = os.environ.get("BACK_END_PORT")
-BASE_URL = f"http://back-end:{PORT}/api/tgbot"
+HOST = "back-end"  # os.environ.get("BACK_END_HOST")
+PROTOCOL = os.environ.get("PROTOCOL", "http")
+BASE_URL = f"{PROTOCOL}://{HOST}:{PORT}/api/tgbot"
 
 
 class Client:
