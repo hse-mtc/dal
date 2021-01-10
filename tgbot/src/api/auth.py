@@ -11,11 +11,11 @@ from api.client import client
 Session = namedtuple("Session", ["id", "code", "chat_id"])
 
 
-async def fetch_session(params: tp.Dict[str, tp.Any]) -> tp.Optional[Session]:
+async def fetch_session(params: dict[str, tp.Any]) -> tp.Optional[Session]:
     """Fetch session for chat. Session may not exist, hence `Optional`."""
 
     async with client.get("session", params=params) as response:
-        data: tp.List[tp.Dict[str, tp.Any]] = await response.json()
+        data: list[dict[str, tp.Any]] = await response.json()
 
     return Session(**data[0]) if data else None
 
@@ -40,7 +40,7 @@ async def fetch_code(chat_id: int) -> str:
     return session.code
 
 
-async def patch_session(id_: int, data: tp.Dict[str, tp.Any]) -> ClientResponse:
+async def patch_session(id_: int, data: dict[str, tp.Any]) -> ClientResponse:
     """Patch some fields of session."""
 
     async with client.patch(f"session/{id_}/", json=data) as response:
@@ -91,8 +91,8 @@ async def deauthorize(chat_id: int) -> DeauthorizeResult:
 
 # ------------------------------------------------------------------------------
 
-User = namedtuple("User", ["full_name", "platoon"])
+User = namedtuple("User", ["full_name", "milgroup"])
 
 
 async def fetch_user(chat_id: int) -> User:
-    return User(full_name="ФИО", platoon="1809")
+    return User(full_name="ФИО", milgroup="1809")
