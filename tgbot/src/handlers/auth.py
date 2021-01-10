@@ -34,7 +34,7 @@ async def set_code(message: Message) -> None:
 
     user = await fetch_user(chat_id)
     await message.reply(f"Здравия желаю, {user.full_name}!\n"
-                        f"Должность: командир взвода {user.platoon}")
+                        f"Должность: командир взвода {user.milgroup}")
 
 
 async def my_code(message: Message) -> None:
