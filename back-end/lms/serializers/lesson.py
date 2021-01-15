@@ -4,7 +4,7 @@ from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from lms.validators import PresentInDatabaseValidator
 
-from lms.serializers.subject import SubjectSerializer
+from lms.serializers.subject import LessonSubjectSerializer
 from lms.serializers.common import MilgroupSerializer
 
 from common.models.subjects import Subject
@@ -27,7 +27,7 @@ class LessonTypeSerializer(ModelSerializer):
 
 
 class LessonSerializer(WritableNestedModelSerializer):
-    subject = SubjectSerializer(
+    subject = LessonSubjectSerializer(
         required=False, validators=[PresentInDatabaseValidator(Subject)])
     milgroup = MilgroupSerializer(
         required=False, validators=[PresentInDatabaseValidator(Milgroup)])
