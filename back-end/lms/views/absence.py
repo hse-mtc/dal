@@ -1,4 +1,4 @@
-from datetime import timedelta, datetime
+from datetime import datetime
 
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -29,18 +29,7 @@ from lms.models.student import Student
 
 from lms.filters.absence import AbsenceFilter
 
-
-def get_date_range(date_from, date_to, weekday):
-    start_date = date_from + timedelta((weekday - date_from.weekday() + 7) % 7)
-
-    dates = []
-    cur_date = start_date
-
-    while cur_date <= date_to:
-        dates.append(cur_date.strftime('%Y-%m-%d'))
-        cur_date += timedelta(7)
-
-    return dates
+from lms.functions import get_date_range
 
 
 @extend_schema(tags=['absence'])
