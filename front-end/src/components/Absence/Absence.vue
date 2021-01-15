@@ -141,7 +141,7 @@
               </el-table-column>
               <el-table-column prop="reason" sortable label="Причина" />
               <el-table-column prop="comment" label="Комментарий" />
-              <el-table-column width="115px">
+              <el-table-column width="120px">
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -227,11 +227,7 @@
 </template>
 
 <script>
-import {
-  getAbsence,
-  patchAbsence,
-  deleteAbsence,
-} from "@/api/absence";
+import { getAbsence, patchAbsence, deleteAbsence } from "@/api/absence";
 import moment from "moment";
 
 import AbsenceJournal from "@/components/AbsenceJournal/AbsenceJournal";

@@ -102,7 +102,7 @@
                 </template>
               </el-table-column>
               <el-table-column prop="status" label="Статус"> </el-table-column>
-              <el-table-column label="" width="115px">
+              <el-table-column label="" width="120px">
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -182,7 +182,7 @@
               <el-table-column prop="post" label="Должность"> </el-table-column>
               <el-table-column prop="milgroup.milgroup" label="Прикр. взвод">
               </el-table-column>
-              <el-table-column label="" width="115px">
+              <el-table-column label="" width="120px">
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
