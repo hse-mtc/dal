@@ -10,7 +10,7 @@ from lms.views.encouragement import EncouragementViewSet
 from lms.views.achievement import AchievementViewSet
 from lms.views.reference_book import ReferenceBookView
 from lms.views.subject import LessonSubjectViewSet
-from lms.views.lesson import LessonViewSet
+from lms.views.lesson import LessonViewSet, LessonJournalView
 
 routers = DefaultRouter()
 routers.register('student', StudentViewSet)
@@ -25,5 +25,6 @@ routers.register('lesson', LessonViewSet)
 urlpatterns = [
     path('', include(routers.urls)),
     path('absence-journal/', AbsenceJournalView.as_view()),
-    path('reference-book/', ReferenceBookView.as_view())
+    path('reference-book/', ReferenceBookView.as_view()),
+    path('lesson-journal/', LessonJournalView.as_view()),
 ]
