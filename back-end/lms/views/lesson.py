@@ -54,6 +54,7 @@ class LessonViewSet(ModelViewSet):
 class LessonJournalView(GenericAPIView):
     permission_classes = [AllowAny]
 
+    # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
         query_params = LessonJournalGetQuerySerializer(
             data=request.query_params)
@@ -84,12 +85,11 @@ class LessonJournalView(GenericAPIView):
 
         # ordinals
         ordinals = []
-        for ord in range(1, 11):
+        for ordinal in range(1, 11):
             lessons = dict()
-            lessons['ordinal'] = ord
+            lessons['ordinal'] = ordinal
             lessons['lessons'] = LessonSerializer(
-                lessons_filtered.filter(ordinal=ord),
-                many=True).data
+                lessons_filtered.filter(ordinal=ordinal), many=True).data
             ordinals.append(lessons)
 
         data['ordinals'] = ordinals

@@ -46,9 +46,11 @@ class LessonJournalGetQuerySerializer(Serializer):
 
     def validate(self, attrs):
         if attrs['date_from'] > attrs['date_to']:
-            raise ValueError(
-                'date_from should be greater or equal to date_to')
+            raise ValueError('date_from should be greater or equal to date_to')
         return attrs
 
     def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
         pass

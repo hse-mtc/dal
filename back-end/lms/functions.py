@@ -1,7 +1,8 @@
 from datetime import timedelta, datetime
 
 
-def get_date_range(date_from: datetime, date_to: datetime, weekday: int) -> list[str]:
+def get_date_range(date_from: datetime, date_to: datetime,
+                   weekday: int) -> list[str]:
     """
     Calculate dates with the same weekday from the date range provided
 
