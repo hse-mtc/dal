@@ -1,4 +1,5 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import (ModelSerializer, Serializer,
+                                        IntegerField, DateField)
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
@@ -34,3 +35,20 @@ class LessonSerializer(WritableNestedModelSerializer):
     class Meta:
         model = Lesson
         fields = '__all__'
+
+
+class LessonJournalGetQuerySerializer(Serializer):
+    milgroup = IntegerField(
+        required=True,
+        validators=[PresentInDatabaseValidator(Milgroup, 'milgroup')])
+    date_from = DateField(required=False)
+    date_to = DateField(required=False)
+
+    def validate(self, attrs):
+        if attrs['date_from'] > attrs['date_to']:
+            raise ValueError(
+                'date_from should be greater or equal to date_to')
+        return attrs
+
+    def create(self, validated_data):
+        pass
