@@ -14,7 +14,7 @@ Session = namedtuple("Session", ["id", "code", "chat_id"])
 async def fetch_session(params: dict[str, tp.Any]) -> tp.Optional[Session]:
     """Fetch session for chat. Session may not exist, hence `Optional`."""
 
-    async with client.get("session", params=params) as response:
+    async with client.get("tgbot/session", params=params) as response:
         data: list[dict[str, tp.Any]] = await response.json()
 
     return Session(**data[0]) if data else None
@@ -43,7 +43,7 @@ async def fetch_code(chat_id: int) -> str:
 async def patch_session(id_: int, data: dict[str, tp.Any]) -> ClientResponse:
     """Patch some fields of session."""
 
-    async with client.patch(f"session/{id_}/", json=data) as response:
+    async with client.patch(f"thbot/session/{id_}/", json=data) as response:
         return response
 
 
