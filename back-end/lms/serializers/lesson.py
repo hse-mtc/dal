@@ -2,12 +2,11 @@ from rest_framework.serializers import ModelSerializer
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.validators import PresentInDatabaseValidator
+from common.models.subjects import Subject
 
+from lms.validators import PresentInDatabaseValidator
 from lms.serializers.subject import LessonSubjectSerializer
 from lms.serializers.common import MilgroupSerializer
-
-from common.models.subjects import Subject
 from lms.models.common import Milgroup
 from lms.models.lesson import Room, LessonType, Lesson
 
