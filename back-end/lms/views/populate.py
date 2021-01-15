@@ -508,13 +508,13 @@ def create_lesson_types():
 
 def create_subjects():
     values = [
-        "Тактическая подготовка",
-        "Тактико-специальная подготовка",
-        "Военно-специальная подготовка",
-        "Военно-инженерная подготовка",
-        "Военно-политическая подготовка",
-        "Военная топография",
-        "Строевая подготовка",
+        'Тактическая подготовка',
+        'Тактико-специальная подготовка',
+        'Военно-специальная подготовка',
+        'Военно-инженерная подготовка',
+        'Военно-политическая подготовка',
+        'Военная топография',
+        'Строевая подготовка',
     ]
 
     types = {}
@@ -526,8 +526,7 @@ def create_subjects():
 
 
 def create_lessons(lesson_types: tp.Dict[str, LessonType],
-                   rooms: tp.Dict[str, Room],
-                   milgroups: tp.Dict[str, Milgroup],
+                   rooms: tp.Dict[str, Room], milgroups: tp.Dict[str, Milgroup],
                    subjects: tp.Dict[str, Subject]):
     values = [
         {
@@ -554,7 +553,6 @@ def create_lessons(lesson_types: tp.Dict[str, LessonType],
             'ordinal': 3,
             'subject': subjects['Военная топография'],
         },
-
         {
             'lesson_type': lesson_types['Практическое занятие'],
             'room': rooms['Плац'],
@@ -579,7 +577,6 @@ def create_lessons(lesson_types: tp.Dict[str, LessonType],
             'ordinal': 3,
             'subject': subjects['Тактическая подготовка'],
         },
-
         {
             'lesson_type': lesson_types['Лекция'],
             'room': rooms['510'],

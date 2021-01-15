@@ -36,17 +36,20 @@ class Lesson(models.Model):
     milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING)
     # TODO: How to add teacher? Teacher is not connected to subjects
     # But it would be good to have this connection (to set teachers by default).
-    # This field should be here to handle situations where teachers are substituted
+    # This field should be here to handle situations
+    # where teachers are substituted
     # teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
 
     date = models.DateField(default=datetime.date.today)
     # Lesson #1, #2, #3, etc
     # Номер пары короче
     ordinal = models.PositiveSmallIntegerField(
-        validators=[MaxValueValidator(10), MinValueValidator(1)])
+        validators=[MaxValueValidator(10),
+                    MinValueValidator(1)])
 
     def __str__(self):
-        return f'Lesson {str(self.subject)} on {str(self.date)}, #{str(self.ordinal)}'
+        return f'Lesson {str(self.subject)} on {str(self.date)}, ' \
+               f'#{str(self.ordinal)}'
 
     class Meta:
         verbose_name = 'Lesson'

@@ -57,9 +57,18 @@ class AbsenceViewSet(ModelViewSet):
 
 @extend_schema(tags=['absence-journal'],
                parameters=[
-                    OpenApiParameter(name='milgroup', description='Filter by milgroup', required=True, type=int),
-                    OpenApiParameter(name='date_from', description='Filter by date', required=True, type=OpenApiTypes.DATE),
-                    OpenApiParameter(name='date_to', description='Filter by date', required=True, type=OpenApiTypes.DATE),
+                   OpenApiParameter(name='milgroup',
+                                    description='Filter by milgroup',
+                                    required=True,
+                                    type=int),
+                   OpenApiParameter(name='date_from',
+                                    description='Filter by date',
+                                    required=True,
+                                    type=OpenApiTypes.DATE),
+                   OpenApiParameter(name='date_to',
+                                    description='Filter by date',
+                                    required=True,
+                                    type=OpenApiTypes.DATE),
                ])
 class AbsenceJournalView(GenericAPIView):
     permission_classes = [AllowAny]
