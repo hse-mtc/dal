@@ -103,12 +103,11 @@ export const constantRoutes = [
   },
 
   {
-    path: "/mtc_personnel",
-    redirect: "/personnel",
+    path: "/personnel",
     component: Layout,
     children: [
       {
-        path: "personnel",
+        path: "",
         name: "Personnel",
         component: () => import("@/views/Personnel/index"),
         meta: { title: "Личный состав ВУЦ", icon: "" },
@@ -117,12 +116,11 @@ export const constantRoutes = [
   },
 
   {
-    path: "/mtc_absence",
-    redirect: "/absence",
+    path: "/absence",
     component: Layout,
     children: [
       {
-        path: "absence",
+        path: "",
         name: "Absence",
         component: () => import("@/views/Absence/index"),
         meta: { title: "Журнал посещаемости", icon: "" },
@@ -131,12 +129,11 @@ export const constantRoutes = [
   },
 
   {
-    path: "/mtc_discipline",
-    redirect: "/discipline",
+    path: "/discipline",
     component: Layout,
     children: [
       {
-        path: "discipline",
+        path: "",
         name: "Discipline",
         component: () => import("@/views/Discipline/index"),
         meta: { title: "Дисциплинарный журнал", icon: "" },
