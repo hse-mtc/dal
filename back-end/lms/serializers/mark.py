@@ -13,8 +13,8 @@ from lms.validators import PresentInDatabaseValidator
 class MarkSerializer(WritableNestedModelSerializer):
     student = StudentShortSerializer(
         required=False, validators=[PresentInDatabaseValidator(Student)])
-    lesson = LessonSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Lesson)])
+    lesson = LessonSerializer(required=False,
+                              validators=[PresentInDatabaseValidator(Lesson)])
 
     def validate(self, attrs):
         student_milgroup = attrs['student']['milgroup']['milgroup']
