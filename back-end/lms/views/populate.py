@@ -159,8 +159,7 @@ def create_posts() -> dict[str, TeacherPost]:
 
 # pylint: disable=(too-many-locals)
 def create_students(milgroups: dict[int, Milgroup],
-                    programs: dict[str, Program], statuses: dict[str,
-                                                                       Status]):
+                    programs: dict[str, Program], statuses: dict[str, Status]):
     values = [{
         'surname': 'Хромов',
         'name': 'Григорий',
@@ -309,9 +308,8 @@ def create_absences(types: dict[str, AbsenceType],
 # pylint: disable=(too-many-locals)
 # pylint: disable=(too-many-arguments)
 def create_teachers(milgroups: dict[int, Milgroup],
-                    milfaculties: dict[str, Milfaculty],
-                    ranks: dict[str, Rank], posts: dict[str,
-                                                              TeacherPost]):
+                    milfaculties: dict[str, Milfaculty], ranks: dict[str, Rank],
+                    posts: dict[str, TeacherPost]):
     values = [
         {
             'surname': 'Никандров',
@@ -388,8 +386,8 @@ def create_punishment_types():
 
 
 def create_punishments(punishment_types: dict[str, PunishmentType],
-                       students: dict[str, Student],
-                       teachers: dict[str, Teacher]):
+                       students: dict[str, Student], teachers: dict[str,
+                                                                    Teacher]):
     values = [
         {
             'student': students['Хромов'],
@@ -524,9 +522,9 @@ def create_subjects():
     return types
 
 
-def create_lessons(lesson_types: dict[str, LessonType],
-                   rooms: dict[str, Room], milgroups: dict[str, Milgroup],
-                   subjects: dict[str, Subject]):
+def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
+                   milgroups: dict[str, Milgroup], subjects: dict[str,
+                                                                  Subject]):
     values = [
         {
             'lesson_type': lesson_types['Лекция'],
