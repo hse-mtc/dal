@@ -140,6 +140,19 @@ export const constantRoutes = [
       },
     ],
   },
+  
+  {
+    path: "/schedule",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        name: "Schedule",
+        component: () => import("@/views/Schedule/index"),
+        meta: { title: "Расписание занятий", icon: "" },
+      },
+    ],
+  },
 
   // {
   //   path: '/mtc_referencebook',
