@@ -27,6 +27,9 @@ $xxxl: 48px;
 $xxxxl: 56px;
 $xxxxxl: 64px;
 
+$nova: ProximaNovaRegular, sans-serif;
+$nova-bold: ProximaNovaBold, sans-serif;
+
 // the :export directive is the magic sauce for webpack
 // https://www.bluematador.com/blog/how-to-share-variables-between-js-and-sass
 :export {
