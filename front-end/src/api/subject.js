@@ -39,6 +39,16 @@ export function editSectionTitle(id, data) {
   });
 }
 
+export function changeSectionOrder(id, order) {
+  return request({
+    url: `/dms/sections/${id}/order/`,
+    method: "patch",
+    data: {
+      to: order,
+    },
+  });
+}
+
 export function addSection(data) {
   return request({
     url: `/dms/sections/`,
