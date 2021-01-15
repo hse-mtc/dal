@@ -13,7 +13,6 @@ from lms.views.subject import LessonSubjectViewSet
 from lms.views.lesson import LessonViewSet, LessonJournalView
 from lms.views.mark import MarkViewSet
 
-
 routers = DefaultRouter()
 routers.register('student', StudentViewSet)
 routers.register('teacher', TeacherViewSet)

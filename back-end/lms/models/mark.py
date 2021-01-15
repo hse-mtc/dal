@@ -17,5 +17,5 @@ class Mark(models.Model):
                f'{str(self.student)} on lesson id={str(self.lesson)}'
 
     class Meta:
-        verbose_name= 'Mark'
+        verbose_name = 'Mark'
         verbose_name_plural = 'Marks'
