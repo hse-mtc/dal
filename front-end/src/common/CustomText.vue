@@ -27,6 +27,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.page-header {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 44px;
+  line-height: 54px;
+}
+
 .header {
   font-family: ProximaNovaRegular;
   font-style: normal;
