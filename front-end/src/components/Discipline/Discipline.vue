@@ -11,7 +11,7 @@
         <el-tab-pane label="Взыскания">
           <Punishment />
         </el-tab-pane>
-        <el-tab-pane label="Журнал"> </el-tab-pane>
+        <!-- <el-tab-pane label="Журнал"> </el-tab-pane> -->
       </el-tabs>
     </el-col>
   </div>
