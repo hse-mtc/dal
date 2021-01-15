@@ -12,6 +12,8 @@ from api.auth import (
     fetch_user,
 )
 
+from keyboards.reply import start_keyboard
+
 MD2 = ParseMode.MARKDOWN_V2
 
 
@@ -34,7 +36,8 @@ async def set_code(message: Message) -> None:
 
     user = await fetch_user(chat_id)
     await message.reply(f"Здравия желаю, {user.full_name}!\n"
-                        f"Должность: командир взвода {user.milgroup}")
+                        f"Должность: командир взвода {user.milgroup}",
+                        reply_markup=start_keyboard())
 
 
 async def my_code(message: Message) -> None:
