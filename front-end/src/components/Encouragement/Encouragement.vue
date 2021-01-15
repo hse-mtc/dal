@@ -122,7 +122,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="reason" label="Причина" />
-        <el-table-column width="115px">
+        <el-table-column width="120px">
           <template slot-scope="scope">
             <el-button
               size="mini"

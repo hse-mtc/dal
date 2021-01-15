@@ -1,13 +1,12 @@
 .create-absence-btn {
-    opacity: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-  .absence-journal-cell:hover .create-absence-btn {
-    opacity: 1;
-  }
-  
-  .filterRow {
-    margin-bottom: 15px;
-  }
-  
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.absence-journal-cell:hover .create-absence-btn {
+  opacity: 1;
+}
+
+.filterRow {
+  margin-bottom: 15px;
+}
