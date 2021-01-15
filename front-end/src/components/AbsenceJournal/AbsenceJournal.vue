@@ -294,6 +294,7 @@ export default {
     };
   },
   created() {
+    this.filter.mg = this.milgroups[0].milgroup;
     this.onJournal();
   },
   methods: {
