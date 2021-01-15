@@ -29,3 +29,13 @@ export function editTopics(id, data) {
     data: data,
   });
 }
+
+export function changeTopicOrder(id, order) {
+  return request({
+    url: `/dms/topics/${id}/order/`,
+    method: "patch",
+    data: {
+      to: order,
+    },
+  });
+}

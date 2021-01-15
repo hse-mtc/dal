@@ -16,9 +16,7 @@
     <draggable
       :list="topics"
       v-bind="dragOptions"
-      @start="dragging = true"
-      @end="dragging = false"
-      :disabled="false"
+      @change="({moved}) => updateOrder(moved.element.id, moved.newIndex)"
     >
       <transition-group type="transition" name="flip-list">
         <div v-for="(item, index) in topics" :key="index" class="topic">
@@ -134,7 +132,13 @@
 <script>
 import ClassMaterials from "./ClassMaterials";
 import CustomText from "@/common/CustomText";
-import { addTopics, deleteTopics, editTopics, getTopics } from "@/api/topic";
+import {
+  addTopics,
+  deleteTopics,
+  editTopics,
+  getTopics,
+  changeTopicOrder,
+} from "@/api/topic";
 import { mapState } from "vuex";
 import draggable from "vuedraggable";
 
@@ -225,6 +229,9 @@ export default {
         this.topics.push(res.data);
       });
     },
+    updateOrder(topicId, newOrder) {
+      changeTopicOrder(topicId, newOrder)
+    }
   },
 };
 </script>
