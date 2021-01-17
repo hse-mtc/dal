@@ -140,7 +140,7 @@ export const constantRoutes = [
       },
     ],
   },
-  
+
   {
     path: "/schedule",
     component: Layout,

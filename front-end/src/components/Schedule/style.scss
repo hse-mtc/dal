@@ -6,3 +6,15 @@
 .filterRow {
   margin-bottom: 15px;
 }
+
+.create-lesson-btn {
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 2rem;
+  width: 2rem;
+  align-self: center;
+}
+.lesson-journal-cell:hover .create-lesson-btn {
+  opacity: 1;
+}
