@@ -16,7 +16,7 @@
     <draggable
       :list="topics"
       v-bind="dragOptions"
-      @change="({moved}) => updateOrder(moved.element.id, moved.newIndex)"
+      @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
     >
       <transition-group type="transition" name="flip-list">
         <div v-for="(item, index) in topics" :key="index" class="topic">
@@ -230,8 +230,8 @@ export default {
       });
     },
     updateOrder(topicId, newOrder) {
-      changeTopicOrder(topicId, newOrder)
-    }
+      changeTopicOrder(topicId, newOrder);
+    },
   },
 };
 </script>
