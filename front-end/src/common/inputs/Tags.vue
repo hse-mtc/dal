@@ -1,7 +1,7 @@
 <template>
   <Select
     :title="title"
-    :annotation="inputAnnotation"
+    :annotation="annotation"
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
     :annotationClassName="annotationClassName"
@@ -24,7 +24,7 @@ export default {
   name: "TagsInput",
   components: {Select},
   props: {
-    tags: {type: Array, default: () => ['test']},
+    tags: {type: Array, default: () => []},
   },
   data() {return  {tag: ''}},
   methods: {
