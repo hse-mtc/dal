@@ -1,7 +1,9 @@
 from django_filters import rest_framework as filters
 
 from dms.models.papers import Paper
+from dms.models.books import Book
 from dms.models.class_materials import Section
+from common.models.subjects import Subject
 
 
 class PaperFilter(filters.FilterSet):
@@ -12,7 +14,7 @@ class PaperFilter(filters.FilterSet):
 
     class Meta:
         model = Paper
-        fields = ["authors", "category", "publishers"]
+        fields = ["authors", "category", "publishers", "user"]
 
 
 class SectionFilter(filters.FilterSet):
@@ -20,3 +22,21 @@ class SectionFilter(filters.FilterSet):
     class Meta:
         model = Section
         fields = ["subject"]
+
+
+class BookFilter(filters.FilterSet):
+    start_year = filters.NumberFilter(field_name="publication_year",
+                                      lookup_expr="gte")
+    end_year = filters.NumberFilter(field_name="publication_year",
+                                    lookup_expr="lte")
+
+    class Meta:
+        model = Book
+        fields = ["authors", "user", "subjects"]
+
+
+class SubjectFilter(filters.FilterSet):
+
+    class Meta:
+        model = Subject
+        fields = ["user"]
