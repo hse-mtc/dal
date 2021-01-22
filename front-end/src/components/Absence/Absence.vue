@@ -229,7 +229,13 @@
 <script>
 import { getAbsence, patchAbsence, deleteAbsence } from "@/api/absence";
 import moment from "moment";
-
+import {
+  getError,
+  patchError,
+  deleteError,
+  patchSuccess,
+  deleteSuccess
+} from "@/utils/message";
 import AbsenceJournal from "@/components/AbsenceJournal/AbsenceJournal";
 
 export default {
@@ -369,12 +375,7 @@ export default {
         .then((response) => {
           this.absences = response.data;
         })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка получения пропусков!",
-            type: "error",
-          });
-        });
+        .catch((err) => getError("пропусков", err.response.status));
     },
     onCreate(student, date) {
       this.editAbsence = { absence_status: "Открыт", student, date };
@@ -405,19 +406,11 @@ export default {
     handleAccept() {
       patchAbsence(this.editAbsence)
         .then(() => {
-          this.$message({
-            message: "Пропуск успешно редактирован",
-            type: "success",
-          });
+          patchSuccess('пропуска');
           this.dialogVisible = false;
           this.onFilter();
         })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка при редактировании пропуска!",
-            type: "error",
-          });
-        });
+        .catch((err) => patchError("пропуска", err.response.status));
     },
     handleDelete(id) {
       this.$confirm(
@@ -431,18 +424,10 @@ export default {
       ).then(() => {
         deleteAbsence({ id })
           .then(() => {
-            this.$message({
-              message: "Пропуск успешно удален",
-              type: "success",
-            });
+            deleteSuccess('пропуска');
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при удалении пропуска!",
-              type: "error",
-            });
-          });
+          .catch((err) => deleteError("пропуска", err.response.status));
       });
     },
   },

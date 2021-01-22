@@ -49,11 +49,9 @@
 
 <script>
 import {
-  getMilgroups,
-  getRanks,
-  getSkills,
-  getPosts,
-} from "@/api/referencebook";
+  getReferenceBooks
+} from "@/api/reference-book";
+import { getError } from '@/utils/message';
 
 export default {
   name: "",
@@ -104,49 +102,11 @@ export default {
       item.inputValue = null;
     },
     fetchData() {
-      getMilgroups()
+      getReferenceBooks()
         .then((response) => {
-          books.push = response.data;
+          this.books = response.data;
         })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка получения списка взводов!",
-            type: "error",
-          });
-        });
-
-      getPosts()
-        .then((response) => {
-          books.push = response.data;
-        })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка получения списка взводов!",
-            type: "error",
-          });
-        });
-
-      getSkills()
-        .then((response) => {
-          books.push = response.data;
-        })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка получения списка взводов!",
-            type: "error",
-          });
-        });
-
-      getRanks()
-        .then((response) => {
-          books.push = response.data;
-        })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка получения списка взводов!",
-            type: "error",
-          });
-        });
+        .catch((err) => getError('справочников', err.response.status));
     },
   },
 };

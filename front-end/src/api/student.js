@@ -9,6 +9,7 @@ export function getStudent(params) {
 }
 
 export function postStudent(data) {
+  data.milgroup = { milgroup: data.milgroup.milgroup };
   return request({
     url: "/lms/student/",
     method: "post",

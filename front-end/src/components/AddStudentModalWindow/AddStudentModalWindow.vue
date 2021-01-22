@@ -99,7 +99,13 @@
 </template>
 
 <script>
-import { postStudent, patchStudent } from "../../api/student";
+import { postStudent, patchStudent } from "@/api/student";
+import {
+  postError,
+  patchError,
+  postSuccess,
+  patchSuccess,
+} from "@/utils/message";
 
 export default {
   name: "AddStudentModalWindow",
@@ -204,23 +210,19 @@ export default {
             this.form.id = this.student.id;
             patchStudent(this.form)
               .then(() => {
-                this.$message.success("Студент успешно изменен.");
+                patchSuccess('студента');
                 this.$emit("submitModal");
                 this.closeModal();
               })
-              .catch(() => {
-                this.$message.error("Ошибка при изменении студента.");
-              });
+              .catch((err) => patchError("студента", err.response.status));
           } else {
             postStudent(this.form)
               .then(() => {
-                this.$message.success("Новый студент успешно добавлен.");
+                postSuccess('студента');
                 this.$emit("submitModal");
                 this.closeModal();
               })
-              .catch(() => {
-                this.$message.error("Ошибка при добавлении студента.");
-              });
+              .catch((err) => postError("студента", err.response.status));
           }
         }
       });

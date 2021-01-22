@@ -213,7 +213,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Причина: ">
+        <el-form-item label="Причина: " required>
           <el-input
             v-model="editEncouragement.reason"
             placeholder="Введите причину"
@@ -235,6 +235,15 @@ import {
   patchEncouragement,
   postEncouragement,
 } from "@/api/encouragement";
+import {
+  getError,
+  postError,
+  patchError,
+  deleteError,
+  postSuccess,
+  patchSuccess,
+  deleteSuccess
+} from "@/utils/message";
 
 import moment from "moment";
 import { getStudent } from "../../api/student";
@@ -333,7 +342,7 @@ export default {
         .then((response) => {
           this.encouragements = response.data;
         })
-        .catch(() => {});
+        .catch((err) => getError("поощрений", err.response.status));
     },
     tagByEncouragementType(type) {
       switch (type) {
@@ -373,18 +382,10 @@ export default {
       ).then(() => {
         deleteEncouragement({ id })
           .then(() => {
-            this.$message({
-              message: "Поощрение успешно удалено",
-              type: "success",
-            });
+            deleteSuccess('поощрения');
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при удалении поошрения!",
-              type: "error",
-            });
-          });
+          .catch((err) => deleteError("поощрения", err.response.status));
       });
     },
     handleClose() {
@@ -406,35 +407,19 @@ export default {
       if (this.editEncouragement.id && this.editEncouragement.id > 0) {
         patchEncouragement(this.editEncouragement)
           .then(() => {
-            this.$message({
-              message: "Поощрение успешно отредактировано",
-              type: "success",
-            });
+            patchSuccess('занятия');
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при редактировании поощрение!",
-              type: "error",
-            });
-          });
+          .catch((err) => patchError("поощрения", err.response.status));
       } else {
         postEncouragement(this.editEncouragement)
           .then(() => {
-            this.$message({
-              message: "Поощрение успешно создано",
-              type: "success",
-            });
+            postSuccess('поощрения');
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при создании поощрения!",
-              type: "error",
-            });
-          });
+          .catch((err) => postError("поощрения", err.response.status));
       }
     },
   },

@@ -1,29 +1,48 @@
 import { Message } from "element-ui";
 
-export function getError(entity) {
+function details(status) {
+    switch (status) {
+        case (400):
+            return "Неверный формат данных.";
+        case (401):
+            return "Необходима авторизация.";
+        case (403):
+            return "Доступ запрещен.";
+        case (404):
+            return "Данные не найдены.";
+        case (500):
+            return "Внутрення ошибка сервера.";
+        case (504):
+            return "Сервер не отвечает.";
+        default:
+            return "Причина неизвестна.";
+    }
+}
+
+export function getError(entity, status) {
     Message({
-        message: `Ошибка при получении ${entity}.`,
+        message: `Ошибка при получении ${entity}. ${details(status)}`,
         type: 'error'
     })
 }
 
-export function postError(entity) {
+export function postError(entity, status) {
     Message({
-        message: `Ошибка при создании ${entity}.`,
+        message: `Ошибка при создании ${entity}. ${details(status)}`,
         type: 'error'
     })
 }
 
-export function patchError(entity) {
+export function patchError(entity, status) {
     Message({
-        message: `Ошибка при редактировании ${entity}.`,
+        message: `Ошибка при редактировании ${entity}. ${details(status)}`,
         type: 'error'
     })
 }
 
-export function deleteError(entity) {
+export function deleteError(entity, status) {
     Message({
-        message: `Ошибка при удалении ${entity}.`,
+        message: `Ошибка при удалении ${entity}. ${details(status)}`,
         type: 'error'
     })
 }
@@ -46,7 +65,7 @@ export function patchSuccess(entity) {
 
 export function deleteSuccess(entity) {
     Message({
-        message: `Удаление ${entity} прошло успешноe.`,
+        message: `Удаление ${entity} прошло успешно.`,
         type: 'success'
     })
 }
