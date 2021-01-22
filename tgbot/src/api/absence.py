@@ -1,4 +1,5 @@
 import typing as tp
+import operator
 
 from dataclasses import dataclass
 
@@ -31,7 +32,7 @@ def absence_statistic(students: list[Student]) -> str:
 
 ФИО отсутствующих студентов:
 '''
-    for student in absent_students:
+    for student in sorted(absent_students, key=operator.attrgetter('full_name')):
         text = '\n'.join([text, student.full_name])
     return text
 
@@ -42,9 +43,6 @@ async def post_absence(students: list[Student]) -> str:
     tasks = []
     for student in absent_students:
         body = create_body(student)
-        print(body)
-        async with client.post('lms/absence/', json=body) as response:
-            tasks.append(response)
-    print(tasks)
+        tasks.append(client.post('lms/absence/', json=body))
     await asyncio.gather(*tasks)
     return absence_statistic(students)
