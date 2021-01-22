@@ -1,10 +1,13 @@
 <template>
   <InputsBase
     :title="title"
+    :annotation="inputAnnotation"
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
+    :annotationClassName="annotationClassName"
   >
     <el-date-picker
+      style="max-width: 100%;"
       type="date"
       v-model="value"
       v-bind="$attrs"

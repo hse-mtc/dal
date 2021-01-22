@@ -1,8 +1,10 @@
 <template>
   <Select
     :title="title"
+    :annotation="inputAnnotation"
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
+    :annotationClassName="annotationClassName"
     :options="tags"
     v-model="value"
     multiple

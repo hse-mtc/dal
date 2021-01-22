@@ -10,8 +10,10 @@ export default {
   props: {
     modelValue: { required: true },
     title: { default: null },
+    annotation: { default: null },
     wrapperClassName: { type: String, default: '' },
     titleClassName: { type: String, default: '' },
+    annotationClassName: { type: String, default: '' },
   },
   computed: {
     value: {

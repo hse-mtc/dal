@@ -6,6 +6,12 @@
       >
         {{ title }}
       </span>
+      <span
+        v-if="annotation"
+        :class="[$style.annotation, {[annotationClassName]: annotationClassName}]"
+      >
+        {{ annotation }}
+      </span>
       <slot />
     </div>
 </template>
@@ -15,8 +21,10 @@ export default {
   name: 'InputsBase',
   props: {
     title: {default: null},
+    annotation: {default: null},
     wrapperClassName: {type: String, default: ''},
     titleClassName: {type: String, default: ''},
+    annotationClassName: {type: String, default: ''},
   }
 }
 </script>
@@ -30,5 +38,14 @@ export default {
   font-size: 19px;
   line-height: 23px;
   font-family: $nova;
+}
+
+.annotation {
+  display: block;
+  margin-bottom: 14px;
+  font-family: $nova;
+  font-size: 17px;
+  line-height: 21px;
+  color: #76767a;
 }
 </style>
