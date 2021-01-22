@@ -8,16 +8,15 @@
         <div class="sort mt-3 mb-3">
           <CustomText variant="sub-header" :mr="SIZES.m">Сортировать</CustomText>
           <el-select
-              v-model="sort"
-              placeholder="Выберите тип причины"
-              style="display: block"
-              @change="updateQuery"
+            v-model="sort"
+            placeholder="Выберите тип причины"
+            style="display: block"
           >
             <el-option
-                v-for="item in sortTypes"
-                :key="item.key"
-                :label="item.label"
-                :value="item.key"
+              v-for="item in sortTypes"
+              :key="item.key"
+              :label="item.label"
+              :value="item.key"
             >
             </el-option>
           </el-select>
@@ -81,8 +80,24 @@ export default {
     };
   },
   computed: {
-    sort() { return this.$route.query.sort || '-publication_year' },
-    search() { return this.$route.query.search || '' },
+    sort: {
+      get() {return this.$route.query.sort || '-publication_year'},
+      set(value) {
+        this.$router.push({query: {
+          ...this.$route.query,
+          sort: value,
+        }})
+      }
+    },
+    search: {
+      get() { return this.$route.query.search || '' },
+      set(value) {
+        this.$router.push({query: {
+          ...this.$route.query,
+          search: value,
+        }})
+      }
+    }
   },
   mounted() {
     this.fetchData()
@@ -104,25 +119,11 @@ export default {
         this.loading = false
       })
     },
-    updateQuery() {
-      const query = {
-        sort: this.sort,
-        search: this.search
-      };
-
-      this.$router.push({query: {...this.$route.query, ...query}});
-    },
     addNewBook() {
       console.log('addNewBook func')
     },
-    searchBook(value) {
-      this.search = value
-      this.updateQuery()
-    },
-    deleteSearchInput() {
-      this.search = ''
-      this.updateQuery()
-    },
+    searchBook(value) { this.search = value },
+    deleteSearchInput() { this.search = '' },
     clearHandler() {
       console.log('clearHandler func')
     }
