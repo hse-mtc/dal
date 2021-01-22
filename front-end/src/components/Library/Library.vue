@@ -36,6 +36,7 @@ import PageHeader from "@/common/PageHeader";
 import SearchBar from "@/common/SearchBar";
 import CustomText from "@/common/CustomText";
 import LibraryFilters from "@/components/LibraryFilters";
+import {getBooks} from "@/api/books";
 
 export default {
   name: "Library",
@@ -74,16 +75,23 @@ export default {
     };
   },
   created() {
-    this.author = Number(this.$route.query.author)
-    this.subject = Number(this.$route.query.subject)
-    this.year = Number(this.$route.query.year)
+    this.sort = this.$route.query.sort ? this.$route.query.sort : '-publication_year'
+    this.author = this.$route.query.author ? Number(this.$route.query.author) : undefined
+    this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
+    this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
   },
   mounted() {
-
+    this.fetchData()
   },
   methods: {
     fetchData() {
-
+      this.author = this.$route.query.author ? Number(this.$route.query.author) : undefined
+      this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
+      this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
+      getBooks({ordering: this.sort, author: this.author, subject: this.subject, year: this.year})
+      .then(res => {
+        console.log(res.data)
+      })
     },
     updateQuery() {
       const query = {
@@ -104,7 +112,12 @@ export default {
     clearHandler() {
       console.log('clearHandler func')
     }
-  }
+  },
+  watch: {
+    $route() {
+      this.fetchData()
+    },
+  },
 }
 </script>
 
