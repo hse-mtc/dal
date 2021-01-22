@@ -1,5 +1,6 @@
 from rest_framework import viewsets
 
+from rest_framework.filters import SearchFilter
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import JSONParser
 
@@ -26,9 +27,10 @@ from dms.views.common import MUTATE_ACTIONS
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     permission_classes = [ReadOnly | IsOwner]
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = BookFilter
     ordering_fields = ["title", "publication_year"]
+    search_fields = ["title", "annotation"]
     parser_classes = [MultiPartWithJSONParser, JSONParser]
 
     def get_serializer_class(self):
