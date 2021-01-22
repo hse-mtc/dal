@@ -1,19 +1,21 @@
 <template>
   <div class="wrapper">
-    <div :id="`loader__${data.id}`" class="file-img">
+    <div :id="`loader__${data.id}`" class="file-img" @click="$router.push(`/library/book/${data.id}`)">
       <div class="lds-dual-ring" />
       <img class="file-image" :src="data.cover ? data.cover : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'" alt="">
     </div>
     <div class="content">
-      <CustomText variant="header">{{data.title}}</CustomText>
-      <CustomText variant="sub-header" :color="COLORS.gray_2" :mt="SIZES.s" :mb="SIZES.m">
-        <template v-for="item in data.authors">
-          {{item.surname}} {{item.name}} {{item.patronymic}},
-        </template> {{data.publication_year}} г.
-      </CustomText>
-      <CustomText variant="paragraph" :color="COLORS.black_2" class="annotation">
-        {{data.annotation}}
-      </CustomText>
+      <div @click="$router.push(`/library/book/${data.id}`)">
+        <CustomText style="cursor:pointer;" variant="header">{{data.title}}</CustomText>
+        <CustomText style="cursor:pointer;" variant="sub-header" :color="COLORS.gray_2" :mt="SIZES.s" :mb="SIZES.m">
+          <template v-for="item in data.authors">
+            {{item.surname}} {{item.name}} {{item.patronymic}},
+          </template> {{data.publication_year}} г.
+        </CustomText>
+        <CustomText style="cursor:pointer;" variant="paragraph" :color="COLORS.black_2" class="annotation">
+          {{data.annotation}}
+        </CustomText>
+      </div>
       <div @click.prevent="downloadFile(data.file, data.id)" style="cursor: pointer">
         <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">Скачать</CustomText>
       </div>
@@ -78,6 +80,7 @@ export default {
   align-items: flex-start;
 }
 .file-img {
+  cursor: pointer;
   border-radius: $s;
   margin-right: $xl;
 
@@ -110,6 +113,7 @@ export default {
 .file-image {
   width: 120px;
   height: 170px;
+  border-radius: $s;
 }
 
 .content {

@@ -46,9 +46,17 @@ export default {
 .page-header {
   font-family: ProximaNovaRegular;
   font-style: normal;
-  font-weight: normal;
+  font-weight: 600;
   font-size: 44px;
   line-height: 54px;
+}
+
+.page-header-1 {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 44px;
 }
 
 .header {
@@ -73,5 +81,13 @@ export default {
   font-weight: normal;
   font-size: 18px;
   line-height: 24px;
+}
+
+.label-1 {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
 }
 </style>
