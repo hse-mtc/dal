@@ -8,7 +8,7 @@ from aiohttp import ClientResponse
 
 from api.client import client
 
-from .student import Student, State
+from api.student import Student, State
 
 
 def create_body(student: Student) -> dict:
