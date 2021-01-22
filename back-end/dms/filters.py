@@ -25,10 +25,14 @@ class SectionFilter(filters.FilterSet):
 
 
 class BookFilter(filters.FilterSet):
+    start_year = filters.NumberFilter(field_name="publication_year",
+                                      lookup_expr="gte")
+    end_year = filters.NumberFilter(field_name="publication_year",
+                                    lookup_expr="lte")
 
     class Meta:
         model = Book
-        fields = ["authors", "user"]
+        fields = ["authors", "user", "subjects"]
 
 
 class SubjectFilter(filters.FilterSet):
