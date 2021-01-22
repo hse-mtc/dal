@@ -1,9 +1,10 @@
 import typing as tp
 
 from dataclasses import dataclass
-from enum import Enum, auto
-
-from aiohttp import ClientResponse
+from enum import (
+    Enum,
+    auto,
+)
 
 from api.client import client
 

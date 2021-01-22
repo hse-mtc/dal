@@ -1,5 +1,7 @@
-from aiogram.types import (ReplyKeyboardRemove, ReplyKeyboardMarkup,
-                           KeyboardButton)
+from aiogram.types import (
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+)
 
 
 def base_keyboard(button_text: list[str]) -> ReplyKeyboardMarkup:

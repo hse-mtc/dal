@@ -1,5 +1,3 @@
-import typing as tp
-
 from aiogram.types import Message
 from aiogram.types import ParseMode
 from aiogram.utils.markdown import code as md_code
