@@ -28,4 +28,6 @@ export const COLORS = {
     gray: '#606266',
     black: '#212529',
     darkBlue: '#0c4b9a',
+    gray_2: '#858587',
+    black_2: '#2E3746'
 };

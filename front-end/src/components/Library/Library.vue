@@ -5,7 +5,7 @@
     <CustomText :mt="SIZES.m" variant="paragraph">Найдено: {{ books.length }}</CustomText>
     <el-row>
       <el-col :span="18">
-        <div class="sort mt-3">
+        <div class="sort mt-3 mb-3">
           <CustomText variant="sub-header" :mr="SIZES.m">Сортировать</CustomText>
           <el-select
               v-model="sort"
@@ -23,7 +23,11 @@
           </el-select>
         </div>
         <div class="content" v-loading="loading">
-
+          <div class="books">
+            <div class="book" v-for="item in books" :key="item.id">
+              <Book :data="item" />
+            </div>
+          </div>
         </div>
       </el-col>
       <el-col :span="5" :offset="1">
@@ -39,6 +43,7 @@ import PageHeader from "@/common/PageHeader";
 import SearchBar from "@/common/SearchBar";
 import CustomText from "@/common/CustomText";
 import LibraryFilters from "@/components/LibraryFilters";
+import Book from "@/components/Book";
 import {getBooks} from "@/api/books";
 
 export default {
@@ -47,7 +52,8 @@ export default {
     LibraryFilters,
     CustomText,
     SearchBar,
-    PageHeader
+    PageHeader,
+    Book
   },
   data() {
     return {
@@ -130,6 +136,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "@/styles/variables.scss";
+
 .root {
 
 }
