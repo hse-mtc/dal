@@ -5,6 +5,9 @@ import typing as tp
 from django.core.files.base import ContentFile
 from django.views.decorators.csrf import csrf_exempt
 
+from django.contrib.auth.models import Permission, Group
+from django.contrib.contenttypes.models import ContentType
+
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
@@ -379,14 +382,41 @@ def create_books(authors, files, publishers, subjects):
     return books
 
 
+def create_student_permissions(content_type):
+    return [
+        Permission.objects.get_or_create(codename="absence_get",
+                                         name="Can use GET in absence",
+                                         content_type=content_type)[0]
+    ]
+
+
+def create_teacher_permissions(content_type):
+    return [
+        Permission.objects.get_or_create(codename="absence_full",
+                                         name="Full access to absence",
+                                         content_type=content_type)[0]
+    ]
+
+
 @csrf_exempt
 @api_view(["POST"])
-@permission_classes((AllowAny,))
+@permission_classes([AllowAny])
 def populate(request: Request) -> Response:
     # pylint: disable=too-many-locals
 
     create_users()
 
+    # create groups and permissions
+    students, _ = Group.objects.get_or_create(name="students")
+    teachers, _ = Group.objects.get_or_create(name="teachers")
+    content_type = ContentType.objects.get_for_model(Group)
+
+    students.permissions.set(create_student_permissions(content_type))
+    teachers.permissions.set(create_teacher_permissions(content_type))
+
+    students.user_set.add(User.objects.get(username="test"))
+
+    # other dms models population
     authors = create_authors()
     categories = create_categories()
     publishers = create_publishers()

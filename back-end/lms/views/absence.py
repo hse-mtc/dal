@@ -31,13 +31,15 @@ from lms.filters.absence import AbsenceFilter
 
 from lms.functions import get_date_range
 
+from lms.permissions.absence import AbsencePermission
+
 
 @extend_schema(tags=['absence'])
 class AbsenceViewSet(ModelViewSet):
     serializer_class = AbsenceSerializer
     queryset = Absence.objects.all()
 
-    permission_classes = [AllowAny]
+    permission_classes = [AbsencePermission]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = AbsenceFilter
