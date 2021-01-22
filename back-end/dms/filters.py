@@ -14,7 +14,7 @@ class PaperFilter(filters.FilterSet):
 
     class Meta:
         model = Paper
-        fields = ["authors", "category", "publishers"]
+        fields = ["authors", "category", "publishers", "user"]
 
 
 class SectionFilter(filters.FilterSet):
@@ -28,7 +28,7 @@ class BookFilter(filters.FilterSet):
 
     class Meta:
         model = Book
-        fields = ["authors"]
+        fields = ["authors", "user"]
 
 
 class SubjectFilter(filters.FilterSet):

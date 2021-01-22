@@ -73,8 +73,8 @@ class StatisticsAPIView(generics.GenericAPIView):
     lookup_url_kwarg = "id"
 
     def get(self, request, uid):
-        papers_count = Paper.objects.filter(authors__id=uid).count()
-        books_count = Book.objects.filter(authors__id=uid).count()
+        papers_count = Paper.objects.filter(user__id=uid).count()
+        books_count = Book.objects.filter(user__id=uid).count()
         subject_count = Subject.objects.filter(user__id=uid).count()
 
         data = {
