@@ -7,7 +7,7 @@ from aiohttp import ClientResponse
 
 from api.client import client
 
-from .student import Student
+from .student import Student, State
 
 
 def create_body(student: Student) -> dict:
@@ -21,7 +21,7 @@ def create_body(student: Student) -> dict:
 
 
 def absence_statistic(students: list[Student]) -> str:
-    absent_students = [i for i in students if not bool(int(i.state))]
+    absent_students = [i for i in students if i.state == State.absent]
     text = f'''
 Список студентов отправлен!
 
@@ -36,16 +36,15 @@ def absence_statistic(students: list[Student]) -> str:
     return text
 
 
-async def post_one_absence(student: Student) -> dict:
-    body = create_body(student)
-    async with client.post(f'lms/absence/', json=body) as response:
-        data: dict[str, tp.Any] = await response.json()
-    return data
-
-
-async def post_all_absence(students: list[Student]) -> bool:
-    results = await asyncio.gather(
-        *[post_one_absence(student) for student in students
-          if not bool(int(student.state))],
-        return_exceptions=True)
+async def post_absence(students: list[Student]) -> str:
+    absent_students = [student for student in students
+                       if student.state.value == State.absent.value]
+    tasks = []
+    for student in absent_students:
+        body = create_body(student)
+        print(body)
+        async with client.post('lms/absence/', json=body) as response:
+            tasks.append(response)
+    print(tasks)
+    await asyncio.gather(*tasks)
     return absence_statistic(students)
