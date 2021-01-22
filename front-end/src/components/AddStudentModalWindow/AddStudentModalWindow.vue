@@ -210,7 +210,7 @@ export default {
             this.form.id = this.student.id;
             patchStudent(this.form)
               .then(() => {
-                patchSuccess('студента');
+                patchSuccess("студента");
                 this.$emit("submitModal");
                 this.closeModal();
               })
@@ -218,7 +218,7 @@ export default {
           } else {
             postStudent(this.form)
               .then(() => {
-                postSuccess('студента');
+                postSuccess("студента");
                 this.$emit("submitModal");
                 this.closeModal();
               })

@@ -242,7 +242,7 @@ import {
   deleteError,
   postSuccess,
   patchSuccess,
-  deleteSuccess
+  deleteSuccess,
 } from "@/utils/message";
 
 import moment from "moment";
@@ -382,7 +382,7 @@ export default {
       ).then(() => {
         deleteEncouragement({ id })
           .then(() => {
-            deleteSuccess('поощрения');
+            deleteSuccess("поощрения");
             this.onFilter();
           })
           .catch((err) => deleteError("поощрения", err.response.status));
@@ -407,7 +407,7 @@ export default {
       if (this.editEncouragement.id && this.editEncouragement.id > 0) {
         patchEncouragement(this.editEncouragement)
           .then(() => {
-            patchSuccess('занятия');
+            patchSuccess("занятия");
             this.dialogVisible = false;
             this.onFilter();
           })
@@ -415,7 +415,7 @@ export default {
       } else {
         postEncouragement(this.editEncouragement)
           .then(() => {
-            postSuccess('поощрения');
+            postSuccess("поощрения");
             this.dialogVisible = false;
             this.onFilter();
           })

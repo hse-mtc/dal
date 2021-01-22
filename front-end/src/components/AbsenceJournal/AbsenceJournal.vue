@@ -368,7 +368,7 @@ export default {
       if (this.editAbsence.id) {
         patchAbsence(this.editAbsence)
           .then(() => {
-            patchSuccess('пропуска');
+            patchSuccess("пропуска");
             this.dialogVisible = false;
             if (this.filter.mg) this.onJournal();
           })
@@ -376,7 +376,7 @@ export default {
       } else {
         postAbsence(this.editAbsence)
           .then(() => {
-            postSuccess('пропуска');
+            postSuccess("пропуска");
             this.dialogVisible = false;
             if (this.filter.mg) this.onJournal();
           })
@@ -395,7 +395,7 @@ export default {
       ).then(() => {
         deleteAbsence({ id })
           .then(() => {
-            deleteSuccess('пропуска');
+            deleteSuccess("пропуска");
             if (this.filter.mg) this.onJournal();
           })
           .catch((err) => deleteError("пропуска", err.response.status));

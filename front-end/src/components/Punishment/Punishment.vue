@@ -371,7 +371,7 @@ export default {
         .then((response) => {
           this.punishments = response.data;
         })
-        .catch((err) => getError('взысканий', err.response.status));
+        .catch((err) => getError("взысканий", err.response.status));
     },
     tagByPunishmentType(type) {
       switch (type) {
@@ -413,10 +413,10 @@ export default {
       ).then(() => {
         deletePunishment({ id })
           .then(() => {
-            deleteSuccess('взыскания');
+            deleteSuccess("взыскания");
             this.onFilter();
           })
-          .catch((err) => deleteError('взыскания', err.response.status));
+          .catch((err) => deleteError("взыскания", err.response.status));
       });
     },
     handleClose() {
@@ -438,19 +438,19 @@ export default {
       if (this.editPunishment.id && this.editPunishment.id > 0) {
         patchPunishment(this.editPunishment)
           .then(() => {
-            patchSuccess('взыскания');
+            patchSuccess("взыскания");
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch((err) => patchError('взыскания', err.response.status));
+          .catch((err) => patchError("взыскания", err.response.status));
       } else {
         postPunishment(this.editPunishment)
           .then(() => {
-            postSuccess('взыскания');
+            postSuccess("взыскания");
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch((err) => postError('взыскания', err.response.status));
+          .catch((err) => postError("взыскания", err.response.status));
       }
     },
     onRemove(punishment) {
@@ -466,10 +466,10 @@ export default {
         punishment.remove_date = moment().format("YYYY-MM-DD");
         patchPunishment(punishment)
           .then(() => {
-            patchSuccess('взыскания');
+            patchSuccess("взыскания");
             this.onFilter();
           })
-          .catch((err) => patchError('взыскания', err.response.status));
+          .catch((err) => patchError("взыскания", err.response.status));
       });
     },
   },

@@ -234,7 +234,7 @@ import {
   patchError,
   deleteError,
   patchSuccess,
-  deleteSuccess
+  deleteSuccess,
 } from "@/utils/message";
 import AbsenceJournal from "@/components/AbsenceJournal/AbsenceJournal";
 
@@ -406,7 +406,7 @@ export default {
     handleAccept() {
       patchAbsence(this.editAbsence)
         .then(() => {
-          patchSuccess('пропуска');
+          patchSuccess("пропуска");
           this.dialogVisible = false;
           this.onFilter();
         })
@@ -424,7 +424,7 @@ export default {
       ).then(() => {
         deleteAbsence({ id })
           .then(() => {
-            deleteSuccess('пропуска');
+            deleteSuccess("пропуска");
             this.onFilter();
           })
           .catch((err) => deleteError("пропуска", err.response.status));

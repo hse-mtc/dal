@@ -379,7 +379,7 @@ export default {
       if (this.editLesson.id) {
         patchLesson(this.editLesson)
           .then(() => {
-            patchSuccess('занятия');
+            patchSuccess("занятия");
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
@@ -387,7 +387,7 @@ export default {
       } else {
         postLesson(this.editLesson)
           .then(() => {
-            postSuccess('занятия');
+            postSuccess("занятия");
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })

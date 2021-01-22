@@ -48,10 +48,8 @@
 </template>
 
 <script>
-import {
-  getReferenceBooks
-} from "@/api/reference-book";
-import { getError } from '@/utils/message';
+import { getReferenceBooks } from "@/api/reference-book";
+import { getError } from "@/utils/message";
 
 export default {
   name: "",
@@ -106,7 +104,7 @@ export default {
         .then((response) => {
           this.books = response.data;
         })
-        .catch((err) => getError('справочников', err.response.status));
+        .catch((err) => getError("справочников", err.response.status));
     },
   },
 };
