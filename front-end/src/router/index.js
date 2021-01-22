@@ -31,122 +31,115 @@ import Layout from "@/layout";
  * all roles can be accessed
  */
 export const constantRoutes = [
-    {
-        path: "/login",
-        component: () => import("@/views/login/index"),
+  {
+    path: "/login",
+    component: () => import("@/views/login/index"),
+    hidden: true,
+  },
+
+  {
+    path: "/404",
+    component: () => import("@/views/404"),
+    hidden: true,
+  },
+
+  {
+    path: "/my-materials/",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        name: "Мои материалы",
+        component: () => import("@/views/myMaterials/index"),
+        meta: { title: "Мои материалы", icon: "" },
+      },
+    ],
+  },
+
+  {
+    path: "/",
+    component: Layout,
+    redirect: "/msw/science-articles",
+    name: "Military scientific work",
+    children: [
+      {
+        path: "/msw/science-articles",
+        name: "Science Articles",
+        component: () => import("@/views/ScienceArticles/index"),
+        meta: { title: "Военно-научные работы", icon: "" },
+      },
+    ],
+  },
+  {
+    path: "/subjects/",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        name: "Subjects",
+        component: () => import("@/views/Subjects/index"),
+        meta: { title: "Учебно-методические материалы", icon: "" },
+      },
+      {
+        path: "/subjects/:subjectId/",
         hidden: true,
-    },
+        name: "Subject",
+        component: () => import("@/views/Subject/index"),
+        meta: { title: "Учебно-методические материалы", icon: "" },
+      },
+    ],
+  },
+  {
+    path: "/library/",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        name: "Library",
+        component: () => import("@/views/myMaterials/index"),
+        meta: { title: "Электронная библиотека", icon: "" },
+      },
+    ],
+  },
 
-    {
-        path: "/404",
-        component: () => import("@/views/404"),
-        hidden: true,
-    },
+  {
+    path: "/personnel",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        name: "Personnel",
+        component: () => import("@/views/Personnel/index"),
+        meta: { title: "Личный состав ВУЦ", icon: "" },
+      },
+    ],
+  },
 
-    {
-        path: "/my-materials/",
-        component: Layout,
-        children: [
-            {
-                path: "",
-                name: "Мои материалы",
-                component: () => import("@/views/myMaterials/index"),
-                meta: {title: "Мои материалы", icon: ""},
-            },
-        ],
-    },
+  {
+    path: "/absence",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        name: "Absence",
+        component: () => import("@/views/Absence/index"),
+        meta: { title: "Журнал посещаемости", icon: "" },
+      },
+    ],
+  },
 
-    {
-        path: "/",
-        component: Layout,
-        redirect: "/msw/science-articles",
-        name: "Military scientific work",
-        children: [
-            {
-                path: "/msw/science-articles",
-                name: "Science Articles",
-                component: () => import("@/views/ScienceArticles/index"),
-                meta: {title: "Военно-научные работы", icon: ""},
-            },
-        ],
-    },
-    {
-        path: "/subjects/",
-        component: Layout,
-        children: [
-            {
-                path: "",
-                name: "Subjects",
-                component: () => import("@/views/Subjects/index"),
-                meta: {title: "Учебно-методические материалы", icon: ""},
-            },
-            {
-                path: "/subjects/:subjectId/",
-                hidden: true,
-                name: "Subject",
-                component: () => import("@/views/Subject/index"),
-                meta: {title: "Учебно-методические материалы", icon: ""},
-            },
-        ],
-    },
-    {
-        path: "/library/",
-        component: Layout,
-        children: [
-            {
-                path: "",
-                name: "Library",
-                component: () => import("@/views/Library/index"),
-                meta: {title: "Электронная библиотека", icon: ""},
-            },
-            {
-                path: "book/:id",
-                name: "Book",
-                component: () => import("@/views/Book/index"),
-                meta: {title: "Электронная библиотека", icon: ""},
-                hidden: true,
-            },
-        ],
-    },
-
-    {
-        path: "/personnel",
-        component: Layout,
-        children: [
-            {
-                path: "",
-                name: "Personnel",
-                component: () => import("@/views/Personnel/index"),
-                meta: {title: "Личный состав ВУЦ", icon: ""},
-            },
-        ],
-    },
-
-    {
-        path: "/absence",
-        component: Layout,
-        children: [
-            {
-                path: "",
-                name: "Absence",
-                component: () => import("@/views/Absence/index"),
-                meta: {title: "Журнал посещаемости", icon: ""},
-            },
-        ],
-    },
-
-    {
-        path: "/discipline",
-        component: Layout,
-        children: [
-            {
-                path: "",
-                name: "Discipline",
-                component: () => import("@/views/Discipline/index"),
-                meta: {title: "Дисциплинарный журнал", icon: ""},
-            },
-        ],
-    },
+  {
+    path: "/discipline",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        name: "Discipline",
+        component: () => import("@/views/Discipline/index"),
+        meta: { title: "Дисциплинарный журнал", icon: "" },
+      },
+    ],
+  },
 
   {
     path: "/schedule",
@@ -173,35 +166,35 @@ export const constantRoutes = [
   //   }]
   // },
 
-    // {
-    //   path: 'external-link',
-    //   component: Layout,
-    //   children: [
-    //     {
-    //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-    //       meta: { title: 'External Link', icon: 'link' }
-    //     }
-    //   ]
-    // },
+  // {
+  //   path: 'external-link',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
+  //       meta: { title: 'External Link', icon: 'link' }
+  //     }
+  //   ]
+  // },
 
-    // 404 page must be placed at the end !!!
+  // 404 page must be placed at the end !!!
 
-    {path: "*", redirect: "/404", hidden: true},
+  { path: "*", redirect: "/404", hidden: true },
 ];
 
 const createRouter = () =>
-    new Router({
-        // mode: 'history', // require service support
-        scrollBehavior: () => ({y: 0}),
-        routes: constantRoutes,
-    });
+  new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({ y: 0 }),
+    routes: constantRoutes,
+  });
 
 const router = createRouter();
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-    const newRouter = createRouter();
-    router.matcher = newRouter.matcher; // reset router
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
 }
 
 export default router;

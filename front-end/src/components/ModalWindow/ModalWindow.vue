@@ -1,10 +1,10 @@
 <template>
-  <div v-if="opened" class="root">
+  <div class="root">
     <div style="position: relative">
-      <div class="addModal" @close-modal="closeModal">
+      <div class="addModal" v-if="opened" v-on:closeModal="closeModal">
         <slot></slot>
       </div>
-      <div class="background" @click="closeModal" />
+      <div v-if="opened" class="background" @click="closeModal" />
     </div>
   </div>
 </template>
@@ -28,7 +28,7 @@ export default {
         .classList.remove("stop-scrolling");
     },
     closeModal() {
-      this.$emit("close-modal");
+      this.$emit("closeModal");
     },
   },
   watch: {
