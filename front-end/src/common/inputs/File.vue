@@ -22,7 +22,7 @@
         size="small"
         type="primary"
       >
-        Загрузить...
+        Выберете файл
       </el-button>
     </el-upload>
   </InputsBase>
@@ -44,7 +44,7 @@ export default {
         return this.annotation
       }
 
-      return `Файлы в формате ${this.filesTypes.slice(0, -1)}${
+      return `Файлы в формате ${this.filesTypes.slice(0, -1).join(', ')}${
         this.filesTypes.length !== 1
           ? ' или '
           : ''
