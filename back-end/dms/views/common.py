@@ -70,16 +70,15 @@ class OrderUpdateAPIView(generics.GenericAPIView, mixins.UpdateModelMixin):
 @extend_schema(tags=["statistics"])
 class StatisticsAPIView(generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
-    lookup_url_kwarg = "id"
 
     def get(self, request, uid):
-        papers_count = Paper.objects.filter(user__id=uid).count()
-        books_count = Book.objects.filter(user__id=uid).count()
+        paper_count = Paper.objects.filter(user__id=uid).count()
+        book_count = Book.objects.filter(user__id=uid).count()
         subject_count = Subject.objects.filter(user__id=uid).count()
 
         data = {
-            "papers_count": papers_count,
-            "books_count": books_count,
+            "paper_count": paper_count,
+            "book_count": book_count,
             "subject_count": subject_count
         }
 
