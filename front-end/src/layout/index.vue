@@ -16,11 +16,14 @@
 </template>
 
 <script>
+import {mapActions} from "vuex";
+
+import {getAuthors} from "@/api/authors";
+import {getSubjects} from "@/api/subjects";
+import { getPublishPlaces } from '@/api/published_places';
+
 import {Navbar, Sidebar, AppMain} from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
-import {getAuthors} from "@/api/authors";
-import {mapActions} from "vuex";
-import {getSubjects} from "@/api/subjects";
 
 export default {
   name: "Layout",
@@ -32,19 +35,26 @@ export default {
   mixins: [ResizeMixin],
   mounted() {
     getAuthors()
-        .then((response) => {
-          this.setAuthors(response.data);
-        })
-        .catch(() => {
-          console.log("Данные по авторам не указаны");
-        });
+      .then((response) => {
+        this.setAuthors(response.data);
+      })
+      .catch(() => {
+        console.log("Данные по авторам не указаны");
+      });
     getSubjects()
-        .then((response) => {
-          this.setSubjects(response.data);
-        })
-        .catch(() => {
-          console.log("Данные по предметам не указаны");
-        });
+      .then((response) => {
+        this.setSubjects(response.data);
+      })
+      .catch(() => {
+        console.log("Данные по предметам не указаны");
+      });
+    getPublishPlaces()
+      .then((response) => {
+        this.setPublishers(response.data);
+      })
+      .catch(() => {
+        console.log("Данные по издательствам не указаны");
+      });
   },
   computed: {
     sidebar() {
@@ -69,6 +79,7 @@ export default {
     ...mapActions({
       setAuthors: "documents/setAuthors",
       setSubjects: "subjects/setSubjects",
+      setPublishers: "documents/setPublishers",
     }),
     handleClickOutside() {
       this.$store.dispatch("app/closeSideBar", {withoutAnimation: false});

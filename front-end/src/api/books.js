@@ -7,3 +7,11 @@ export function getBooks(params) {
     params,
   });
 }
+
+export function uploadBook(data) {
+  return request({
+    url: '/dms/books/',
+    method: 'POST',
+    data,
+  })
+}
