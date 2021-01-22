@@ -1,14 +1,11 @@
-import typing as tp
+import asyncio
 import operator
 
-from dataclasses import dataclass
-
-import asyncio
-from aiohttp import ClientResponse
-
 from api.client import client
-
-from api.student import Student, State
+from api.student import (
+    Student,
+    State,
+)
 
 
 def create_body(student: Student) -> dict:

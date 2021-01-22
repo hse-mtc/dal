@@ -20,8 +20,7 @@ def main() -> None:
     )
 
     bot = Bot(token=os.environ.get("TOKEN"))
-    storage = MemoryStorage()
-    dp = Dispatcher(bot, storage=storage)
+    dp = Dispatcher(bot, storage=MemoryStorage())
 
     handlers.setup(dp)
     middleware.setup(dp)

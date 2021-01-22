@@ -1,9 +1,9 @@
 from aiogram.types import Message
 
-from keyboards.reply import menu_keyboard, start_keyboard
+from keyboards.reply import start_keyboard
 
 
 async def menu_handler(message: Message) -> None:
     await message.answer(
-        'Вы вернулись в главное меню!\nВыберите нужно действие',
+        'Возврат в главное меню. Выберите нужное действие',
         reply_markup=start_keyboard())

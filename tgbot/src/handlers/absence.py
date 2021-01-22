@@ -41,7 +41,6 @@ async def get_student(message: Message, state: FSMContext) -> None:
         'После того, как отметите всех студентов, нажмите\n'
         'кнопку "Отправить данные"',
         reply_markup=absence_keyboard())
-    return
 
 
 async def callback_query_process(callback_query: CallbackQuery,
@@ -59,12 +58,10 @@ async def callback_query_process(callback_query: CallbackQuery,
     await state.set_data(students)
 
     await message.edit_reply_markup(
-        reply_markup=student_absence_keyboard(student_id,
-                                              State(student_state).value))
+        reply_markup=student_absence_keyboard(student_id, student_state))
 
 
 async def send_absence(message: Message, state: FSMContext) -> None:
     students = await state.get_data()
     message_text = await post_absence(students)
     await message.answer(message_text, reply_markup=menu_keyboard())
-    return

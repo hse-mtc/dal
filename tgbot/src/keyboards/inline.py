@@ -1,6 +1,9 @@
-from aiogram.types import (InlineKeyboardButton, InlineKeyboardMarkup)
+from aiogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+)
 
-from api.student import Student, State
+from api.student import State
 
 
 def student_absence_keyboard(
