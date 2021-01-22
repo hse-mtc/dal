@@ -108,6 +108,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import moment from 'moment'
 
 import SelectInput from '@/common/inputs/Select'
 import DateInput from '@/common/inputs/Date'
@@ -175,7 +176,7 @@ export default {
         formData.set('data', JSON.stringify(this.lodash.pickBy({
           title: data.bookName,
           annotation: data.annotation,
-          publication_year: data.publishDate,
+          publication_year: moment(data.publishDate).format('YYYY'),
           authors: data.authors,
           publishers: data.publishers,
           subjects: data.subjects,
