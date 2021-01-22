@@ -2,6 +2,7 @@ from django_filters import rest_framework as filters
 
 from dms.models.papers import Paper
 from dms.models.books import Book
+from common.models.subjects import Subject
 from dms.models.class_materials import Section
 
 
@@ -28,3 +29,10 @@ class BookFilter(filters.FilterSet):
     class Meta:
         model = Book
         fields = ["authors"]
+
+
+class SubjectFilter(filters.FilterSet):
+
+    class Meta:
+        model = Subject
+        fields = ["user"]

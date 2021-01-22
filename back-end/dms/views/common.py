@@ -7,6 +7,9 @@ from rest_framework.filters import SearchFilter
 
 from drf_spectacular.views import extend_schema
 
+from django_filters.rest_framework import DjangoFilterBackend
+from dms.filters import SubjectFilter
+
 from dms.models.common import (
     Author,
     Publisher,
@@ -42,7 +45,8 @@ class PublisherViewSet(viewsets.ModelViewSet):
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     permission_classes = [permissions.AllowAny]
-    filter_backends = [SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = SubjectFilter
     search_fields = ["title", "annotation"]
 
     def get_serializer_class(self):
