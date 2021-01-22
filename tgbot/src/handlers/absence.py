@@ -19,7 +19,7 @@ from api.student import fetch_students, State
 from api.absence import post_absence
 
 from keyboards.inline import student_absence_keyboard
-from keyboards.reply import absence_keyboard
+from keyboards.reply import absence_keyboard, menu_keyboard
 
 MD2 = ParseMode.MARKDOWN_V2
 
@@ -28,18 +28,19 @@ async def get_student(message: Message, state: FSMContext) -> None:
     chat_id = message.chat.id
 
     user = await fetch_user(chat_id)
-    message_tasks = []
 
     students = await fetch_students(user.milgroup)
     await state.set_data(students)
-    print(sorted(students, key=operator.attrgetter('full_name')))
+
+    # TODO: now we have no idea how to sort list with Student objects
+    # inside `gather`. We need to collect `message.anwser` tasks and pull
+    # it into `gather`. But it have to be sorted.
+    # This is not final realisation.
     for student in sorted(students, key=operator.attrgetter('full_name')):
-        message_tasks.append(
-            message.answer(
+        await message.answer(
             student.full_name,
             reply_markup=student_absence_keyboard(student.id)
-        ))
-    await gather(*message_tasks)
+        )
 
     await message.answer('После того, как отметите всех студентов, нажмите\n'
                          'кнопку "Отправить данные"',
@@ -74,5 +75,8 @@ async def callback_query_process(
 async def send_absence(message: Message, state: FSMContext) -> None:
     students = await state.get_data()
     message_text = await post_absence(students)
-    await message.answer(message_text)
+    await message.answer(
+        message_text,
+        reply_markup=menu_keyboard()
+    )
     return

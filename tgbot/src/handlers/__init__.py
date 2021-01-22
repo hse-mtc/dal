@@ -12,6 +12,8 @@ from .absence import (
     send_absence
 )
 
+from .menu import menu_handler
+
 
 def setup(dp: Dispatcher) -> None:
     # Register `auth` handlers
@@ -32,6 +34,10 @@ def setup(dp: Dispatcher) -> None:
         send_absence,
         lambda message: message.text and message.text == 'Отправить данные',
         state='*'
+    )
+    dp.register_message_handler(
+        menu_handler,
+        lambda message: message.text and message.text == 'Главное меню',
     )
 
     # Register `absence` handlers
