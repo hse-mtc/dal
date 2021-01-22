@@ -2,8 +2,8 @@ from django_filters import rest_framework as filters
 
 from dms.models.papers import Paper
 from dms.models.books import Book
-from common.models.subjects import Subject
 from dms.models.class_materials import Section
+from common.models.subjects import Subject
 
 
 class PaperFilter(filters.FilterSet):

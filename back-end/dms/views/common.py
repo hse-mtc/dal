@@ -2,8 +2,9 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import viewsets
-
+from rest_framework.status import HTTP_200_OK
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
 
 from drf_spectacular.views import extend_schema
 
@@ -14,6 +15,8 @@ from dms.models.common import (
     Author,
     Publisher,
 )
+from dms.models.papers import Paper
+from dms.models.books import Book
 from dms.serializers.class_materials import SubjectRetrieveSerializer
 from dms.serializers.common import (
     AuthorSerializer,
@@ -62,3 +65,22 @@ class OrderUpdateAPIView(generics.GenericAPIView, mixins.UpdateModelMixin):
 
     def patch(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+
+@extend_schema(tags=["statistics"])
+class StatisticsAPIView(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny]
+    lookup_url_kwarg = "id"
+
+    def get(self, request, uid):
+        papers_count = Paper.objects.filter(authors__id=uid).count()
+        books_count = Book.objects.filter(authors__id=uid).count()
+        subject_count = Subject.objects.filter(user__id=uid).count()
+
+        data = {
+            "papers_count": papers_count,
+            "books_count": books_count,
+            "subject_count": subject_count
+        }
+
+        return Response(data, status=HTTP_200_OK)
