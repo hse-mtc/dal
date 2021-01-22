@@ -29,11 +29,7 @@ async def fetch_students(milgroup: str) -> list[Student]:
 
     for student in data:
         students.append(
-            Student(
-                id=student['id'],
-                full_name=student['fullname'],
-                state=State.present
-            )
-        )
+            Student(id=student['id'],
+                    full_name=student['fullname'],
+                    state=State.present))
     return students
- 

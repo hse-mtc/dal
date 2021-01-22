@@ -35,10 +35,11 @@ async def set_code(message: Message) -> None:
         return
 
     user = await fetch_user(chat_id)
-    await message.reply(f"Здравия желаю, {user.full_name}!\n"
-                        f"Должность: командир взвода {user.milgroup}\n"
-                        "Нажмите кнопку \"Расход\", чтобы начать отмечать студентов!",
-                        reply_markup=start_keyboard())
+    await message.reply(
+        f"Здравия желаю, {user.full_name}!\n"
+        f"Должность: командир взвода {user.milgroup}\n"
+        "Нажмите кнопку \"Расход\", чтобы начать отмечать студентов!",
+        reply_markup=start_keyboard())
 
 
 async def my_code(message: Message) -> None:
