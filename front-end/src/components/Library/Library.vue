@@ -22,6 +22,9 @@
             </el-option>
           </el-select>
         </div>
+        <div class="content" v-loading="loading">
+
+        </div>
       </el-col>
       <el-col :span="5" :offset="1">
         <LibraryFilters :clear="clearHandler" />
@@ -54,6 +57,8 @@ export default {
       author: null,
       subject: null,
       year: null,
+      search: '',
+      loading: false,
       sortTypes: [
         {
           key: '-publication_year',
@@ -79,23 +84,29 @@ export default {
     this.author = this.$route.query.author ? Number(this.$route.query.author) : undefined
     this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
     this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
+    this.search = this.$route.query.search ? this.$route.query.search : ''
   },
   mounted() {
     this.fetchData()
   },
   methods: {
     fetchData() {
+      this.loading = true
       this.author = this.$route.query.author ? Number(this.$route.query.author) : undefined
       this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
       this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
-      getBooks({ordering: this.sort, author: this.author, subject: this.subject, year: this.year})
+      this.search = this.$route.query.search ? this.$route.query.search : undefined
+      getBooks({ordering: this.sort, author: this.author, subject: this.subject, year: this.year, search: this.search})
       .then(res => {
-        console.log(res.data)
+        console.log('[BOOKS]: ', res.data)
+        this.books = res.data
+        this.loading = false
       })
     },
     updateQuery() {
       const query = {
-        sort: this.sort
+        sort: this.sort,
+        search: this.search
       };
 
       this.$router.push({query: {...this.$route.query, ...query}});
@@ -103,11 +114,13 @@ export default {
     addNewBook() {
       console.log('addNewBook func')
     },
-    searchBook() {
-      console.log('searchBook func')
+    searchBook(value) {
+      this.search = value
+      this.updateQuery()
     },
     deleteSearchInput() {
-      console.log('deleteSearchInput func')
+      this.search = ''
+      this.updateQuery()
     },
     clearHandler() {
       console.log('clearHandler func')
@@ -129,5 +142,9 @@ export default {
 .sort {
   display: flex;
   align-items: center;
+}
+
+.content {
+  min-height: 50vh;
 }
 </style>
