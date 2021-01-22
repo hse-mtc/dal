@@ -158,7 +158,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Аудитория: ">
-          <el-input v-model="editLesson.room" placeholder="Введите аудиторию" />
+          <el-select
+            filterable
+            v-model="editLesson.room"
+            placeholder="Выберите аудиторию"
+            style="display: block"
+          >
+            <el-option
+              v-for="item in rooms"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="Тип занятия: ">
           <el-select
@@ -193,6 +206,14 @@ import {
   deleteLesson,
 } from "@/api/lesson";
 import { getSubjects } from "@/api/subjects";
+import {
+  getError,
+  postError,
+  patchError,
+  deleteError,
+  postSuccess,
+  patchSuccess,
+} from "@/utils/message";
 
 export default {
   name: "Schedule",
@@ -216,7 +237,7 @@ export default {
         room: "",
       },
       filter: {
-        mg: null, // TODO change to null later
+        mg: null,
         dateRange: [
           moment().format("YYYY-MM-DD"),
           moment().add(1, "months").format("YYYY-MM-DD"),
@@ -228,6 +249,7 @@ export default {
         "Групповое занятие",
         "Практическое занятие",
       ],
+      rooms: ["510", "501", "502", "503", "504", "Плац"],
       milgroups: [
         {
           milgroup: "1807",
@@ -307,12 +329,7 @@ export default {
           .then((response) => {
             this.schedule = response.data;
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка получения расписания!",
-              type: "error",
-            });
-          });
+          .catch(() => getError("расписания"));
       }
     },
     getSubjects() {
@@ -320,12 +337,7 @@ export default {
         .then((response) => {
           this.subjects = response.data;
         })
-        .catch(() => {
-          this.$message({
-            message: "Ошибка получения дисциплин!",
-            type: "error",
-          });
-        });
+        .catch(() => getError("дисциплин"));
     },
 
     onCreate(ordinal, date) {
@@ -367,35 +379,19 @@ export default {
       if (this.editLesson.id) {
         patchLesson(this.editLesson)
           .then(() => {
-            this.$message({
-              message: "Занятие успешно отредактировано",
-              type: "success",
-            });
+            patchSuccess('занятия');
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при редактировании занятия!",
-              type: "error",
-            });
-          });
+          .catch(() => patchError("занятия"));
       } else {
         postLesson(this.editLesson)
           .then(() => {
-            this.$message({
-              message: "Занятие успешно создано",
-              type: "success",
-            });
+            postSuccess('занятия');
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при создании занятия!",
-              type: "error",
-            });
-          });
+          .catch(() => postError("занятия"));
       }
     },
     handleDelete(id) {
@@ -410,18 +406,9 @@ export default {
       ).then(() => {
         deleteLesson({ id })
           .then(() => {
-            this.$message({
-              message: "Занятие успешно удалено",
-              type: "success",
-            });
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при удалении занятия!",
-              type: "error",
-            });
-          });
+          .catch(() => deleteError("занятия"));
       });
     },
   },
