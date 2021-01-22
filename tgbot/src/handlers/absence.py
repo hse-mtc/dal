@@ -55,19 +55,19 @@ async def callback_query_process(
     data = callback_query.data
     message = callback_query.message
     
-    student_state, student_id = data.split()
+    student_state, student_id = map(int, data.split())
 
     students = await state.get_data()
     for student in students:
-        if int(student_id) == student.id:
-            student.state = State(int(student_state))
+        if student_id == student.id:
+            student.state = State(student_state)
 
     await state.set_data(students)
 
     await message.edit_reply_markup(
         reply_markup=student_absence_keyboard(
             student_id,
-            State(int(student_state)).value
+            State(student_state).value
         )
     )
 
