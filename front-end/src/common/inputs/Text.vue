@@ -7,6 +7,7 @@
     :annotationClassName="annotationClassName"
   >
     <el-input
+      style="width: 100%; max-width: 100%"
       v-model="value"
       :type="type"
       v-bind="$attrs"
