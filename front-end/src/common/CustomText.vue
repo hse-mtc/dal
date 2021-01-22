@@ -1,5 +1,5 @@
 <template>
-  <div :class="variant" :style="{ color: color, ...customStyle }">
+  <div :class="variant" :style="{ color: color, 'margin-top': mt + 'px', 'margin-bottom': mb + 'px', 'margin-left': ml + 'px', 'margin-right': mr + 'px', ...customStyle }">
     <slot></slot>
   </div>
 </template>
@@ -22,11 +22,43 @@ export default {
         return {};
       },
     },
+    mt: {
+      type: Number,
+      default: 0,
+    },
+    mb: {
+      type: Number,
+      default: 0,
+    },
+    mr: {
+      type: Number,
+      default: 0,
+    },
+    ml: {
+      type: Number,
+      default: 0,
+    }
   },
 };
 </script>
 
 <style scoped lang="scss">
+.page-header {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 54px;
+}
+
+.page-header-1 {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 36px;
+  line-height: 44px;
+}
+
 .header {
   font-family: ProximaNovaRegular;
   font-style: normal;
@@ -49,5 +81,13 @@ export default {
   font-weight: normal;
   font-size: 18px;
   line-height: 24px;
+}
+
+.label-1 {
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
 }
 </style>
