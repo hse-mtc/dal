@@ -11,7 +11,6 @@ def student_absence_keyboard(student_id: int, selected_button: int = State.prese
         State.present.value: ('Присутствует ✅', 'Отсутствует'),
         State.absent.value: ('Присутствует', 'Отсутствует ✅')
     }
-    print(type(State.present.value))
     present_text, absent_text = base_text[selected_button]
     present = InlineKeyboardButton(
         present_text,
