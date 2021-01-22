@@ -7,6 +7,8 @@
     <el-input
       v-model="value"
       :type="type"
+      v-bind="$attrs"
+      v-on="$listeners"
     />
   </InputsBase>
 </template>
@@ -16,7 +18,7 @@ import mixin from './inputsMixin'
 
 export default {
   mixins: [mixin],
-  name: 'Text',
+  name: 'TextInput',
   props: {
     isTextArea: {type: Boolean, default: false},
   },

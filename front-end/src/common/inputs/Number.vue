@@ -7,6 +7,8 @@
     <el-input
       v-model="value"
       type="number"
+      v-bind="$attrs"
+      v-on="$listeners"
     />
   </InputsBase>
 </template>
@@ -16,6 +18,6 @@ import mixin from './inputsMixin'
 
 export default {
   mixins: [mixin],
-  name: 'Text',
+  name: 'NumberInput',
 }
 </script>

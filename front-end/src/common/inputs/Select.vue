@@ -1,12 +1,13 @@
 <template>
   <InputsBase
-    v-if="options && options.length"
     :title="title"
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
   >
     <el-select
       v-model="value"
+      v-bind="$attrs"
+      v-on="$listeners"
     >
       <!-- key в optionData(option) -->
       <!-- eslint-disable-next-line vue/valid-v-for -->
@@ -23,7 +24,7 @@ import mixin from './inputsMixin'
 
 export default {
   mixins: [mixin],
-  name: 'Select',
+  name: 'SelectInput',
   props: {
     options: {type: Array, default: () => []},
   },
