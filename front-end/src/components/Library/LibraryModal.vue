@@ -27,19 +27,26 @@
         />
       </el-form-item>
 
-      <el-form-item prop="publishDate">
+      <el-form-item>
         <el-col :span="11">
-          <DateInput
-            title="Год издания"
-            v-model="formValues.publishDate"
-          />
+          <el-form-item prop="publishDate">
+            <DateInput
+              title="Год издания"
+              type="year"
+              v-model="formValues.publishDate"
+            />
+          </el-form-item>
         </el-col>
+
         <el-col :span="2">&nbsp;</el-col>
+
         <el-col :span="11">
-          <NumberInput
-            title="Количество страниц"
-            v-model="formValues.pagesCount"
-          />
+          <el-form-item>
+            <NumberInput
+              title="Количество страниц"
+              v-model="formValues.pagesCount"
+            />
+          </el-form-item>
         </el-col>
       </el-form-item>
 
