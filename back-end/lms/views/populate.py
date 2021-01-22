@@ -1,5 +1,3 @@
-import typing as tp
-
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
@@ -14,9 +12,13 @@ from lms.models.absence import AbsenceStatus, AbsenceType, Absence
 from lms.models.encouragement import EncouragementType, Encouragement
 from lms.models.punishment import PunishmentType, Punishment
 from lms.models.achievement import AchievementType, Achievement
+from lms.models.lesson import Room, LessonType, Lesson
+from lms.models.mark import Mark
+
+from common.models.subjects import Subject
 
 
-def create_statuses() -> tp.Dict[str, Status]:
+def create_statuses() -> dict[str, Status]:
     values = ['Завершил', 'Обучается', 'Отчислен']
     statuses = {}
 
@@ -28,7 +30,7 @@ def create_statuses() -> tp.Dict[str, Status]:
     return statuses
 
 
-def create_programs() -> tp.Dict[str, Program]:
+def create_programs() -> dict[str, Program]:
     values = [{
         'code': '09.03.01',
         'program': 'Информатика и вычислительная техника'
@@ -53,7 +55,7 @@ def create_programs() -> tp.Dict[str, Program]:
     return programs
 
 
-def create_milfaculties() -> tp.Dict[str, Milfaculty]:
+def create_milfaculties() -> dict[str, Milfaculty]:
     values = ['ВКС', 'Сержанты', 'Разведка', 'РВСН']
     milfaculties = {}
 
@@ -66,7 +68,7 @@ def create_milfaculties() -> tp.Dict[str, Milfaculty]:
 
 
 def create_milgroups(
-        milfaculties: tp.Dict[str, Milfaculty]) -> tp.Dict[str, Milgroup]:
+        milfaculties: dict[str, Milfaculty]) -> dict[str, Milgroup]:
     values = [{
         'milgroup': 1801,
         'weekday': 4,
@@ -129,7 +131,7 @@ def create_milgroups(
     return milgroups
 
 
-def create_ranks() -> tp.Dict[str, Rank]:
+def create_ranks() -> dict[str, Rank]:
     values = ['Подполковник', 'Полковник', 'Майор', 'Генерал-майор']
 
     ranks = {}
@@ -142,7 +144,7 @@ def create_ranks() -> tp.Dict[str, Rank]:
     return ranks
 
 
-def create_posts() -> tp.Dict[str, TeacherPost]:
+def create_posts() -> dict[str, TeacherPost]:
     values = ['Начальник цикла', 'Преподаватель', 'Профессор', 'Начальник ВУЦ']
 
     posts = {}
@@ -156,9 +158,8 @@ def create_posts() -> tp.Dict[str, TeacherPost]:
 
 
 # pylint: disable=(too-many-locals)
-def create_students(milgroups: tp.Dict[int, Milgroup],
-                    programs: tp.Dict[str, Program], statuses: tp.Dict[str,
-                                                                       Status]):
+def create_students(milgroups: dict[int, Milgroup],
+                    programs: dict[str, Program], statuses: dict[str, Status]):
     values = [{
         'surname': 'Хромов',
         'name': 'Григорий',
@@ -263,9 +264,9 @@ def create_absence_statuses():
 
 
 # pylint: disable=(too-many-locals)
-def create_absences(types: tp.Dict[str, AbsenceType],
-                    statuses: tp.Dict[str, AbsenceStatus],
-                    students: tp.Dict[str, Student]):
+def create_absences(types: dict[str, AbsenceType],
+                    statuses: dict[str, AbsenceStatus],
+                    students: dict[str, Student]):
     values = [
         {
             'date': '2020-09-04',
@@ -306,10 +307,9 @@ def create_absences(types: tp.Dict[str, AbsenceType],
 
 # pylint: disable=(too-many-locals)
 # pylint: disable=(too-many-arguments)
-def create_teachers(milgroups: tp.Dict[int, Milgroup],
-                    milfaculties: tp.Dict[str, Milfaculty],
-                    ranks: tp.Dict[str, Rank], posts: tp.Dict[str,
-                                                              TeacherPost]):
+def create_teachers(milgroups: dict[int, Milgroup],
+                    milfaculties: dict[str, Milfaculty], ranks: dict[str, Rank],
+                    posts: dict[str, TeacherPost]):
     values = [
         {
             'surname': 'Никандров',
@@ -385,9 +385,9 @@ def create_punishment_types():
     return types
 
 
-def create_punishments(punishment_types: tp.Dict[str, PunishmentType],
-                       students: tp.Dict[str, Student],
-                       teachers: tp.Dict[str, Teacher]):
+def create_punishments(punishment_types: dict[str, PunishmentType],
+                       students: dict[str, Student], teachers: dict[str,
+                                                                    Teacher]):
     values = [
         {
             'student': students['Хромов'],
@@ -424,9 +424,9 @@ def create_encouragement_types():
     return types
 
 
-def create_encouragements(encouragement_types: tp.Dict[str, EncouragementType],
-                          students: tp.Dict[str, Student],
-                          teachers: tp.Dict[str, Teacher]):
+def create_encouragements(encouragement_types: dict[str, EncouragementType],
+                          students: dict[str, Student],
+                          teachers: dict[str, Teacher]):
     values = [
         {
             'student': students['Хромов'],
@@ -460,8 +460,8 @@ def create_achievement_types():
     return types
 
 
-def create_achievements(achievement_types: tp.Dict[str, AchievementType],
-                        students: tp.Dict[str, Student]):
+def create_achievements(achievement_types: dict[str, AchievementType],
+                        students: dict[str, Student]):
     values = [
         {
             'student': students['Исаков'],
@@ -479,6 +479,174 @@ def create_achievements(achievement_types: tp.Dict[str, AchievementType],
     for value in values:
         achievement, _ = Achievement.objects.get_or_create(**value)
         achievement.save()
+
+
+def create_rooms():
+    values = ['510', 'Плац', '501', '502', '503', '504']
+
+    types = {}
+    for value in values:
+        typ, _ = Room.objects.get_or_create(room=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_lesson_types():
+    values = ['Семинар', 'Лекция', 'Групповое занятие', 'Практическое занятие']
+
+    types = {}
+    for value in values:
+        typ, _ = LessonType.objects.get_or_create(lesson_type=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_subjects():
+    values = [
+        'Тактическая подготовка',
+        'Тактико-специальная подготовка',
+        'Военно-специальная подготовка',
+        'Военно-инженерная подготовка',
+        'Военно-политическая подготовка',
+        'Военная топография',
+        'Строевая подготовка',
+    ]
+
+    types = {}
+    for value in values:
+        typ = Subject.objects.get(title=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
+def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
+                   milgroups: dict[str, Milgroup], subjects: dict[str,
+                                                                  Subject]):
+    values = [
+        {
+            'lesson_type': lesson_types['Лекция'],
+            'room': rooms['510'],
+            'milgroup': milgroups[1809],
+            'date': '2020-12-18',
+            'ordinal': 1,
+            'subject': subjects['Тактическая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Практическое занятие'],
+            'room': rooms['Плац'],
+            'milgroup': milgroups[1809],
+            'date': '2020-12-18',
+            'ordinal': 2,
+            'subject': subjects['Строевая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Семинар'],
+            'room': rooms['504'],
+            'milgroup': milgroups[1809],
+            'date': '2020-12-18',
+            'ordinal': 3,
+            'subject': subjects['Военная топография'],
+        },
+        {
+            'lesson_type': lesson_types['Практическое занятие'],
+            'room': rooms['Плац'],
+            'milgroup': milgroups[1810],
+            'date': '2020-12-18',
+            'ordinal': 1,
+            'subject': subjects['Строевая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Семинар'],
+            'room': rooms['504'],
+            'milgroup': milgroups[1810],
+            'date': '2020-12-18',
+            'ordinal': 2,
+            'subject': subjects['Военная топография'],
+        },
+        {
+            'lesson_type': lesson_types['Лекция'],
+            'room': rooms['510'],
+            'milgroup': milgroups[1810],
+            'date': '2020-12-18',
+            'ordinal': 3,
+            'subject': subjects['Тактическая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Лекция'],
+            'room': rooms['510'],
+            'milgroup': milgroups[1809],
+            'date': '2020-12-11',
+            'ordinal': 1,
+            'subject': subjects['Тактическая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Практическое занятие'],
+            'room': rooms['Плац'],
+            'milgroup': milgroups[1809],
+            'date': '2020-12-11',
+            'ordinal': 2,
+            'subject': subjects['Строевая подготовка'],
+        },
+        {
+            'lesson_type': lesson_types['Семинар'],
+            'room': rooms['504'],
+            'milgroup': milgroups[1809],
+            'date': '2020-12-11',
+            'ordinal': 3,
+            'subject': subjects['Военная топография'],
+        },
+    ]
+
+    lessons = []
+
+    for value in values:
+        lesson, _ = Lesson.objects.get_or_create(**value)
+        lesson.save()
+        lessons.append(lesson)
+
+    return lessons
+
+
+def create_marks(lessons: list[Lesson], students: dict[str, Student]):
+    values = [
+        {
+            'lesson': lessons[0],
+            'student': students['Хромов'],
+            'mark': 10,
+        },
+        {
+            'lesson': lessons[0],
+            'student': students['Исаков'],
+            'mark': 6,
+        },
+        {
+            'lesson': lessons[0],
+            'student': students['Кацевалов'],
+            'mark': 4,
+        },
+        {
+            'lesson': lessons[1],
+            'student': students['Хромов'],
+            'mark': 8,
+        },
+        {
+            'lesson': lessons[1],
+            'student': students['Исаков'],
+            'mark': 4,
+        },
+        {
+            'lesson': lessons[1],
+            'student': students['Кацевалов'],
+            'mark': 0,
+        },
+    ]
+
+    for value in values:
+        mark, _ = Mark.objects.get_or_create(**value)
+        mark.save()
 
 
 # pylint: disable=(too-many-locals)
@@ -515,6 +683,13 @@ def lms_populate(request: Request) -> Response:
 
     achievement_types = create_achievement_types()
     create_achievements(achievement_types, students)
+
+    subjects = create_subjects()
+    rooms = create_rooms()
+    lesson_types = create_lesson_types()
+    lessons = create_lessons(lesson_types, rooms, milgroups, subjects)
+
+    create_marks(lessons, students)
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)

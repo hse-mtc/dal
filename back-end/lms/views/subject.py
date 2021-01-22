@@ -8,19 +8,19 @@ from drf_spectacular.views import extend_schema
 
 from common.models.subjects import Subject
 
-from lms.serializers.subject import SubjectSerializer
-from lms.filters.subject import SubjectFilter
+from lms.serializers.subject import LessonSubjectSerializer
+from lms.filters.subject import LessonSubjectFilter
 
 
 @extend_schema(tags=['lms_subject'])
-class SubjectViewSet(ModelViewSet):
-    serializer_class = SubjectSerializer
+class LessonSubjectViewSet(ModelViewSet):
+    serializer_class = LessonSubjectSerializer
     queryset = Subject.objects.all()
 
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
-    filterset_class = SubjectFilter
+    filterset_class = LessonSubjectFilter
     search_fields = [
         'title',
     ]

@@ -49,6 +49,9 @@
             @start="dragging = true"
             @end="dragging = false"
             :disabled="userId !== subjectOwnerId"
+            @change="
+              ({ moved }) => updateOrder(moved.element.id, moved.newIndex)
+            "
           >
             <transition-group type="transition" name="flip-list">
               <div
@@ -128,6 +131,7 @@ import {
   addSection,
   deleteSection,
   editSectionTitle,
+  changeSectionOrder,
   getSubject,
 } from "@/api/subject";
 import { mapActions, mapState } from "vuex";
@@ -256,6 +260,9 @@ export default {
     },
     backToSubjects() {
       this.$router.push({ path: `/subjects/` });
+    },
+    updateOrder(sectionId, newOrder) {
+      changeSectionOrder(sectionId, newOrder);
     },
   },
 };
