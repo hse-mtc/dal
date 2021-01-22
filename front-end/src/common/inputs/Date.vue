@@ -8,7 +8,7 @@
   >
     <el-date-picker
       style="width: 100%; max-width: 100%"
-      type="date"
+      :type="type"
       v-model="value"
       v-bind="$attrs"
       v-on="$listeners"
@@ -22,5 +22,8 @@ import mixin from './inputsMixin'
 export default {
   mixins: [mixin],
   name: 'DateInput',
+  props: {
+    type: {type: String, default: 'date'}
+  }
 }
 </script>
