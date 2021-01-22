@@ -1,5 +1,8 @@
 <template>
-  <ModalWindow :opened="true">
+  <ModalWindow
+    :opened="opened"
+    v-on="$listeners"
+  >
     <el-form
       ref="form"
       :model="formValues"
@@ -24,7 +27,7 @@
         />
       </el-form-item>
 
-      <el-form-item>
+      <el-form-item prop="publishDate">
         <el-col :span="11">
           <DateInput
             title="Год издания"
@@ -88,6 +91,9 @@
         <el-button type="primary" @click="onSubmit">
           Сохранить
         </el-button>
+        <el-button type="info" @click="close">
+          Закрыть
+        </el-button>
       </el-form-item>
     </el-form>
   </ModalWindow>
@@ -119,7 +125,8 @@ export default {
     submitCallback: {
       type: Function,
       default: () => () => {}
-    }
+    },
+    opened: {type: Boolean, default: false}
   },
   data() {
     const required = [{ required: true, message: "Обязательное поле" }];
@@ -129,18 +136,9 @@ export default {
         publishers: required,
         bookName: required,
         book: required,
+        publishDate: required,
       },
-      formValues: {
-        authors: null,
-        publishers: null,
-        publishDate: null,
-        bookName: '',
-        annotation: '',
-        pagesCount: 0,
-        subjects: [],
-        book: [],
-        bookCover: [],
-      },
+      formValues: this.getInitData(),
     }
   },
   computed: {
@@ -165,26 +163,53 @@ export default {
         if (!valid || !this.formValues.book.length) return false
 
         const formData = new FormData()
+        const data = this.formValues
 
         formData.set('data', JSON.stringify(this.lodash.pickBy({
-          title: this.formValues.bookName,
-          annotation: this.formValues.annotation,
-          publication_year: this.formValues.publishDate,
-          authors: this.formValues.authors,
-          publishers: this.formValues.publishers,
-          subjects: this.formValues.subjects,
-          pages_count: this.formValues.pagesCount,
-          cover: this.formValues.bookCover.length && this.formValues.bookCover[0].raw,
+          title: data.bookName,
+          annotation: data.annotation,
+          publication_year: data.publishDate,
+          authors: data.authors,
+          publishers: data.publishers,
+          subjects: data.subjects,
+          pages_count: data.pagesCount,
         })))
+
+        if (data.bookCover.length) {
+          formData.set('cover', this.formValues.bookCover[0].raw)
+        }
+
         formData.set('content', this.formValues.book[0].raw)
 
         try {
           await uploadBook(formData)
+          this.close()
+          this.submitCallback()
         } catch(e) {
-          console.log('e', e)
+          this.$message({
+            message: 'Не удалось сохранить книгу',
+            type: "error",
+          });
+          console.error('Не удалось создать книгу:', e)
         }
-        this.submitCallback()
       })
+    },
+    getInitData() {
+      return {
+        authors: [],
+        publishers: null,
+        publishDate: null,
+        bookName: '',
+        annotation: '',
+        pagesCount: 0,
+        subjects: [],
+        book: [],
+        bookCover: [],
+      }
+    },
+    close() {
+      this.formValues = this.getInitData()
+      this.$emit('close-modal')
     }
   }
 }

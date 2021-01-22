@@ -1,6 +1,11 @@
 <template>
   <div class="root">
     <PageHeader title="Библиотека" button="+ Добавить учебник" :click="addNewBook"/>
+    <Modal
+      :opened="showModal"
+      :submit-callback="fetchData"
+      @close-modal="showModal = false"
+    />
     <SearchBar placeholder="Введите название книги" :search="searchBook" :delete="deleteSearchInput"/>
     <CustomText :mt="SIZES.m" variant="paragraph">Найдено: {{ books.length }}</CustomText>
     <el-row>
@@ -40,6 +45,7 @@
 import {SIZES} from "@/utils/appConsts"
 import PageHeader from "@/common/PageHeader";
 import SearchBar from "@/common/SearchBar";
+import Modal from "./LibraryModal.vue";
 import CustomText from "@/common/CustomText";
 import LibraryFilters from "@/components/LibraryFilters";
 import Book from "@/components/Book";
@@ -52,7 +58,8 @@ export default {
     CustomText,
     SearchBar,
     PageHeader,
-    Book
+    Book,
+    Modal,
   },
   data() {
     return {
@@ -76,7 +83,8 @@ export default {
           key: 'title',
           label: 'По названию ↑'
         }
-      ]
+      ],
+      showModal: false,
     };
   },
   computed: {
@@ -120,7 +128,7 @@ export default {
       })
     },
     addNewBook() {
-      console.log('addNewBook func')
+      this.showModal = true
     },
     searchBook(value) { this.search = value },
     deleteSearchInput() { this.search = '' },
