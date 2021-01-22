@@ -7,10 +7,12 @@ from drf_spectacular.views import extend_schema
 from lms.models.common import Milgroup
 from lms.models.teacher import Rank, TeacherPost
 from lms.models.student import Program
+from lms.models.lesson import Room
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.student import ProgramSerializer
 from lms.serializers.teacher import TeacherPostSerializer, RankSerializer
+from lms.serializers.lesson import RoomSerializer
 
 
 @extend_schema(tags=['reference-book'])
@@ -22,6 +24,7 @@ class ReferenceBookView(ListAPIView):
         'program': (Program, ProgramSerializer),
         'ranks': (Rank, RankSerializer),
         'teacher_posts': (TeacherPost, TeacherPostSerializer),
+        'rooms': (Room, RoomSerializer),
     }
 
     def list(self, request, *args, **kwargs):
