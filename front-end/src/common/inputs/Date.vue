@@ -7,6 +7,8 @@
     <el-date-picker
       type="date"
       v-model="value"
+      v-bind="$attrs"
+      v-on="$listeners"
     />
   </InputsBase>
 </template>
@@ -16,6 +18,6 @@ import mixin from './inputsMixin'
 
 export default {
   mixins: [mixin],
-  name: 'Date',
+  name: 'DateInput',
 }
 </script>

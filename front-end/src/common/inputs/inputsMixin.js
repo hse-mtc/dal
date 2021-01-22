@@ -1,6 +1,7 @@
 import InputsBase from './InputsBase.vue'
 
 export default {
+  inheritAttrs: false,
   components: { InputsBase },
   model: {
     prop: 'modelValue',
