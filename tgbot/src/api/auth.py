@@ -43,7 +43,7 @@ async def fetch_code(chat_id: int) -> str:
 async def patch_session(id_: int, data: dict[str, tp.Any]) -> ClientResponse:
     """Patch some fields of session."""
 
-    async with client.patch(f"thbot/session/{id_}/", json=data) as response:
+    async with client.patch(f"tgbot/session/{id_}/", json=data) as response:
         return response
 
 
