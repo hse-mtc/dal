@@ -5,6 +5,9 @@ from rest_framework.parsers import JSONParser
 
 from drf_spectacular.views import extend_schema
 
+from django_filters.rest_framework import DjangoFilterBackend
+
+from dms.filters import BookFilter
 from dms.models.books import Book
 from dms.serializers.books import (
     BookMutateSerializer,
@@ -23,7 +26,8 @@ from dms.views.common import MUTATE_ACTIONS
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects.all()
     permission_classes = [ReadOnly | IsOwner]
-    filter_backends = [OrderingFilter]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_class = BookFilter
     ordering_fields = ["title", "publication_year"]
     parser_classes = [MultiPartWithJSONParser, JSONParser]
 
