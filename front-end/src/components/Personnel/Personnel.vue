@@ -157,11 +157,7 @@
           </el-row>
           <el-row class="addRow">
             <el-col :span="24">
-              <el-button
-                class="addBtn"
-                type="primary"
-                icon="el-icon-plus"
-              >
+              <el-button class="addBtn" type="primary" icon="el-icon-plus">
                 Новый преподаватель
               </el-button>
             </el-col>
@@ -218,11 +214,7 @@ import { getStudent, deleteStudent } from "@/api/student";
 import { getTeacher, deleteTeacher } from "@/api/teacher";
 import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
 import moment from "moment";
-import {
-  getError,
-  deleteError,
-  deleteSuccess
-} from "@/utils/message";
+import { getError, deleteError, deleteSuccess } from "@/utils/message";
 
 export default {
   name: "",
@@ -289,7 +281,7 @@ export default {
           .then((response) => {
             this.studentsData = response.data;
           })
-          .catch((err) => getError('студентов', err.response.status));
+          .catch((err) => getError("студентов", err.response.status));
       } else if (this.selectedSection == "teachers") {
         getTeacher({
           search: this.filterT.search,
@@ -298,7 +290,7 @@ export default {
           .then((response) => {
             this.teachersData = response.data;
           })
-          .catch((err) => getError('преподавателей', err.response.status));
+          .catch((err) => getError("преподавателей", err.response.status));
       }
     },
     clearFilter() {
@@ -326,9 +318,9 @@ export default {
           deleteStudent(id)
             .then(() => {
               this.onFilter();
-              deleteSuccess('студента');
+              deleteSuccess("студента");
             })
-            .catch((err) => deleteError('студента', err.response.status));
+            .catch((err) => deleteError("студента", err.response.status));
         });
       } else if (this.selectedSection == "teachers") {
         this.$confirm(
@@ -343,9 +335,9 @@ export default {
           deleteTeacher(id)
             .then(() => {
               this.onFilter();
-              deleteSuccess('преподавателя');
+              deleteSuccess("преподавателя");
             })
-            .catch((err) => deleteError('преподавателя', err.response.status));
+            .catch((err) => deleteError("преподавателя", err.response.status));
         });
       }
     },
