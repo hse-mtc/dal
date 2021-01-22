@@ -29,8 +29,12 @@ class ReferenceBookView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         # pylint:disable=(too-many-locals)
+        if request.data:
+            titles = request.data['filter_by']
+        else:
+            titles = self.model_serializer.keys()
         response = {}
-        for title in self.model_serializer:
+        for title in titles:
             model, serializer = self.model_serializer[title]
             response[title] = serializer(model.objects.all(), many=True).data
 
