@@ -209,6 +209,15 @@ import {
   deleteAbsence,
 } from "@/api/absence";
 import moment from "moment";
+import {
+  getError,
+  postError,
+  patchError,
+  deleteError,
+  postSuccess,
+  patchSuccess,
+  deleteSuccess,
+} from "@/utils/message";
 
 export default {
   name: "Absence",
@@ -359,35 +368,19 @@ export default {
       if (this.editAbsence.id) {
         patchAbsence(this.editAbsence)
           .then(() => {
-            this.$message({
-              message: "Пропуск успешно редактирован",
-              type: "success",
-            });
+            patchSuccess('пропуска');
             this.dialogVisible = false;
             if (this.filter.mg) this.onJournal();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при редактировании пропуска!",
-              type: "error",
-            });
-          });
+          .catch((err) => patchError("пропуска", err.response.status));
       } else {
         postAbsence(this.editAbsence)
           .then(() => {
-            this.$message({
-              message: "Пропуск успешно создан",
-              type: "success",
-            });
+            postSuccess('пропуска');
             this.dialogVisible = false;
             if (this.filter.mg) this.onJournal();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при создании пропуска!",
-              type: "error",
-            });
-          });
+          .catch((err) => postError("пропуска", err.response.status));
       }
     },
     handleDelete(id) {
@@ -402,18 +395,10 @@ export default {
       ).then(() => {
         deleteAbsence({ id })
           .then(() => {
-            this.$message({
-              message: "Пропуск успешно удален",
-              type: "success",
-            });
+            deleteSuccess('пропуска');
             if (this.filter.mg) this.onJournal();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при удалении пропуска!",
-              type: "error",
-            });
-          });
+          .catch((err) => deleteError("пропуска", err.response.status));
       });
     },
     onJournal() {
@@ -426,12 +411,7 @@ export default {
           .then((response) => {
             this.journal = response.data;
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка получения журнала!",
-              type: "error",
-            });
-          });
+          .catch((err) => getError("журнала", err.response.status));
       }
     },
   },

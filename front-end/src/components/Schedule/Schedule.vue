@@ -140,7 +140,7 @@
         size="mini"
         :model="editLesson"
       >
-        <el-form-item label="Дисциплина: ">
+        <el-form-item label="Дисциплина: " required>
           <el-select
             filterable
             v-model="editLesson.subject"
@@ -157,7 +157,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Аудитория: ">
+        <el-form-item label="Аудитория: " required>
           <el-select
             filterable
             v-model="editLesson.room"
@@ -173,7 +173,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Тип занятия: ">
+        <el-form-item label="Тип занятия: " required>
           <el-select
             v-model="editLesson.lesson_type"
             placeholder="Выберите тип занятия"
@@ -329,7 +329,7 @@ export default {
           .then((response) => {
             this.schedule = response.data;
           })
-          .catch(() => getError("расписания"));
+          .catch((err) => getError("расписания", err.response.status));
       }
     },
     getSubjects() {
@@ -337,7 +337,7 @@ export default {
         .then((response) => {
           this.subjects = response.data;
         })
-        .catch(() => getError("дисциплин"));
+        .catch((err) => getError("дисциплин", err.response.status));
     },
 
     onCreate(ordinal, date) {
@@ -383,7 +383,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(() => patchError("занятия"));
+          .catch((err) => patchError("занятия", err.response.status));
       } else {
         postLesson(this.editLesson)
           .then(() => {
@@ -391,7 +391,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(() => postError("занятия"));
+          .catch((err) => postError("занятия", err.response.status));
       }
     },
     handleDelete(id) {
@@ -408,7 +408,7 @@ export default {
           .then(() => {
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch(() => deleteError("занятия"));
+          .catch((err) => deleteError("занятия", err.response.status));
       });
     },
   },

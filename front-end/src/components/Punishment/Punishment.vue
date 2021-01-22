@@ -237,7 +237,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Причина: ">
+        <el-form-item label="Причина: " required>
           <el-input
             v-model="editPunishment.reason"
             placeholder="Введите причину"
@@ -266,6 +266,15 @@ import {
 import moment from "moment";
 import { getStudent } from "../../api/student";
 import { getTeacher } from "../../api/teacher";
+import {
+  getError,
+  postError,
+  patchError,
+  deleteError,
+  postSuccess,
+  patchSuccess,
+  deleteSuccess,
+} from "@/utils/message";
 
 export default {
   name: "Punishment",
@@ -362,7 +371,7 @@ export default {
         .then((response) => {
           this.punishments = response.data;
         })
-        .catch(() => {});
+        .catch((err) => getError('взысканий', err.response.status));
     },
     tagByPunishmentType(type) {
       switch (type) {
@@ -404,18 +413,10 @@ export default {
       ).then(() => {
         deletePunishment({ id })
           .then(() => {
-            this.$message({
-              message: "Пропуск успешно удален",
-              type: "success",
-            });
+            deleteSuccess('взыскания');
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при удалении взыскания!",
-              type: "error",
-            });
-          });
+          .catch((err) => deleteError('взыскания', err.response.status));
       });
     },
     handleClose() {
@@ -437,35 +438,19 @@ export default {
       if (this.editPunishment.id && this.editPunishment.id > 0) {
         patchPunishment(this.editPunishment)
           .then(() => {
-            this.$message({
-              message: "Взыскание успешно отредактировано",
-              type: "success",
-            });
+            patchSuccess('взыскания');
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при редактировании взыскания!",
-              type: "error",
-            });
-          });
+          .catch((err) => patchError('взыскания', err.response.status));
       } else {
         postPunishment(this.editPunishment)
           .then(() => {
-            this.$message({
-              message: "Взыскание успешно создано",
-              type: "success",
-            });
+            postSuccess('взыскания');
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при создании взыскания!",
-              type: "error",
-            });
-          });
+          .catch((err) => postError('взыскания', err.response.status));
       }
     },
     onRemove(punishment) {
@@ -481,18 +466,10 @@ export default {
         punishment.remove_date = moment().format("YYYY-MM-DD");
         patchPunishment(punishment)
           .then(() => {
-            this.$message({
-              message: "Взыскание успешно снято",
-              type: "success",
-            });
+            patchSuccess('взыскания');
             this.onFilter();
           })
-          .catch(() => {
-            this.$message({
-              message: "Ошибка при снятии взыскания!",
-              type: "error",
-            });
-          });
+          .catch((err) => patchError('взыскания', err.response.status));
       });
     },
   },
