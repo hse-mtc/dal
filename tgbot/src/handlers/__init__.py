@@ -9,7 +9,7 @@ from .auth import (
 from .absence import (
     get_student,
     callback_query_process,
-    send_abcense
+    send_absence
 )
 
 
@@ -29,7 +29,7 @@ def setup(dp: Dispatcher) -> None:
         state='*'
     )
     dp.register_message_handler(
-        send_abcense,
+        send_absence,
         lambda message: message.text and message.text == 'Отправить данные',
         state='*'
     )
