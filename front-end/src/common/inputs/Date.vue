@@ -7,7 +7,7 @@
     :annotationClassName="annotationClassName"
   >
     <el-date-picker
-      style="max-width: 100%;"
+      style="width: 100%; max-width: 100%"
       type="date"
       v-model="value"
       v-bind="$attrs"

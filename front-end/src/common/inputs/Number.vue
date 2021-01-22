@@ -5,6 +5,7 @@
     :titleClassName="titleClassName"
   >
     <el-input
+      style="width: 100%; max-width: 100%"
       v-model="value"
       type="number"
       v-bind="$attrs"

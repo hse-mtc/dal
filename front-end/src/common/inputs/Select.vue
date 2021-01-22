@@ -7,6 +7,7 @@
     :annotationClassName="annotationClassName"
   >
     <el-select
+      style="width: 100%; max-width: 100%"
       v-model="value"
       v-bind="$attrs"
       v-on="$listeners"
