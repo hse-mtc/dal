@@ -1,7 +1,7 @@
 <template>
   <InputsBase
     :title="title"
-    :annotation="inputAnnotation"
+    :annotation="annotation"
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
     :annotationClassName="annotationClassName"
