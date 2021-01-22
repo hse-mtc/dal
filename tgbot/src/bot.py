@@ -7,6 +7,8 @@ from aiogram import (
     executor,
 )
 
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
 import handlers
 import middleware
 
@@ -18,7 +20,8 @@ def main() -> None:
     )
 
     bot = Bot(token=os.environ.get("TOKEN"))
-    dp = Dispatcher(bot)
+    storage = MemoryStorage()
+    dp = Dispatcher(bot, storage=storage)
 
     handlers.setup(dp)
     middleware.setup(dp)

@@ -12,9 +12,10 @@ from api.client import client
 class Student:
     id: int
     full_name: str
-    state: int = 0
+    state: int = 1
+    absence_type: str = 'Неуважительная'
+    absence_status: str = 'Открыт'
 
-student_states = []
 
 async def fetch_students(milgroup: str) -> list[Student]:
     students = []
@@ -22,12 +23,11 @@ async def fetch_students(milgroup: str) -> list[Student]:
         data: list[dict[str, tp.Any]] = await response.json()
 
     for student in data:
-        student_states.append(
+        students.append(
             Student(
                 id=student['id'],
-                full_name=student['fullname'],
-                state=0
+                full_name=student['fullname']
             )
         )
-    return student_states
-    
+    return students
+ 
