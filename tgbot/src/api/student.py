@@ -1,18 +1,23 @@
 import typing as tp
 
-from collections import namedtuple
 from dataclasses import dataclass
+from enum import Enum, auto
 
 from aiohttp import ClientResponse
 
 from api.client import client
 
 
+class State(Enum):
+    absent = auto()
+    present = auto()
+
+
 @dataclass
 class Student:
     id: int
     full_name: str
-    state: int = 1
+    state: State
     absence_type: str = 'Неуважительная'
     absence_status: str = 'Открыт'
 
@@ -26,7 +31,8 @@ async def fetch_students(milgroup: str) -> list[Student]:
         students.append(
             Student(
                 id=student['id'],
-                full_name=student['fullname']
+                full_name=student['fullname'],
+                state=State.present
             )
         )
     return students
