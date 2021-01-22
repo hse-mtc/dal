@@ -99,6 +99,13 @@ export const constantRoutes = [
                 component: () => import("@/views/Library/index"),
                 meta: {title: "Электронная библиотека", icon: ""},
             },
+            {
+                path: "book/:id",
+                name: "Book",
+                component: () => import("@/views/Book/index"),
+                meta: {title: "Электронная библиотека", icon: ""},
+                hidden: true,
+            },
         ],
     },
 

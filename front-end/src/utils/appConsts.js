@@ -25,9 +25,11 @@ export const COLORS = {
     white: '#ffffff',
     lightGray: '#f5f5f7',
     blue: '#0050b2',
-    gray: '#606266',
     black: '#212529',
     darkBlue: '#0c4b9a',
+    gray: '#606266',
     gray_2: '#858587',
+    gray_3: '#76767A',
+    gray_4: '#6B7A99',
     black_2: '#2E3746'
 };
