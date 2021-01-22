@@ -1,8 +1,10 @@
 <template>
   <InputsBase
     :title="title"
+    :annotation="inputAnnotation"
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
+    :annotationClassName="annotationClassName"
   >
     <el-select
       v-model="value"
