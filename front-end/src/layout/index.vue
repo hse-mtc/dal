@@ -1,23 +1,26 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <div
-      v-if="device === 'mobile' && sidebar.opened"
-      class="drawer-bg"
-      @click="handleClickOutside"
+        v-if="device === 'mobile' && sidebar.opened"
+        class="drawer-bg"
+        @click="handleClickOutside"
     />
-    <sidebar class="sidebar-container" />
+    <sidebar class="sidebar-container"/>
     <div class="main-container" id="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">
-        <navbar />
+        <navbar/>
       </div>
-      <app-main />
+      <app-main/>
     </div>
   </div>
 </template>
 
 <script>
-import { Navbar, Sidebar, AppMain } from "./components";
+import {Navbar, Sidebar, AppMain} from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
+import {getAuthors} from "@/api/authors";
+import {mapActions} from "vuex";
+import {getSubjects} from "@/api/subjects";
 
 export default {
   name: "Layout",
@@ -27,6 +30,22 @@ export default {
     AppMain,
   },
   mixins: [ResizeMixin],
+  mounted() {
+    getAuthors()
+        .then((response) => {
+          this.setAuthors(response.data);
+        })
+        .catch(() => {
+          console.log("Данные по авторам не указаны");
+        });
+    getSubjects()
+        .then((response) => {
+          this.setSubjects(response.data);
+        })
+        .catch(() => {
+          console.log("Данные по предметам не указаны");
+        });
+  },
   computed: {
     sidebar() {
       return this.$store.state.app.sidebar;
@@ -47,8 +66,12 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      setAuthors: "documents/setAuthors",
+      setSubjects: "subjects/setSubjects",
+    }),
     handleClickOutside() {
-      this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
+      this.$store.dispatch("app/closeSideBar", {withoutAnimation: false});
     },
   },
 };
@@ -63,11 +86,13 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
+
   &.mobile.openSidebar {
     position: fixed;
     top: 0;
   }
 }
+
 .drawer-bg {
   background: #000;
   opacity: 0.3;
