@@ -75,9 +75,9 @@ export default {
   name: "LibraryFilters",
   components: {CustomText},
   created() {
-    this.author = Number(this.$route.query.author)
-    this.subject = Number(this.$route.query.subject)
-    this.year = Number(this.$route.query.year)
+    this.author = this.$route.query.author ? Number(this.$route.query.author) : undefined
+    this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
+    this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
   },
   methods: {
     updateQuery() {
