@@ -96,7 +96,7 @@ export default {
       this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
       this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
       this.search = this.$route.query.search ? this.$route.query.search : undefined
-      getBooks({ordering: this.sort, author: this.author, subject: this.subject, year: this.year, search: this.search})
+      getBooks({ordering: this.sort, authors: this.author, subjects: this.subject, end_year: this.year, start_year: this.year, search: this.search})
       .then(res => {
         console.log('[BOOKS]: ', res.data)
         this.books = res.data
