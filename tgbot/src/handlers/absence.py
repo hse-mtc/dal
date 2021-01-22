@@ -54,7 +54,7 @@ async def callback_query_process(
 ) -> None:
     data = callback_query.data
     message = callback_query.message
-    
+
     student_state, student_id = map(int, data.split())
 
     students = await state.get_data()
