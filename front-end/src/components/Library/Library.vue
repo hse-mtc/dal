@@ -53,11 +53,6 @@ export default {
     return {
       SIZES,
       books: [],
-      sort: '-publication_year',
-      author: null,
-      subject: null,
-      year: null,
-      search: '',
       loading: false,
       sortTypes: [
         {
@@ -79,12 +74,9 @@ export default {
       ]
     };
   },
-  created() {
-    this.sort = this.$route.query.sort ? this.$route.query.sort : '-publication_year'
-    this.author = this.$route.query.author ? Number(this.$route.query.author) : undefined
-    this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
-    this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
-    this.search = this.$route.query.search ? this.$route.query.search : ''
+  computed: {
+    sort() { return this.$route.query.sort || '-publication_year' },
+    search() { return this.$route.query.search || '' },
   },
   mounted() {
     this.fetchData()
@@ -92,12 +84,15 @@ export default {
   methods: {
     fetchData() {
       this.loading = true
-      this.author = this.$route.query.author ? Number(this.$route.query.author) : undefined
-      this.subject = this.$route.query.subject ? Number(this.$route.query.subject) : undefined
-      this.year = this.$route.query.year ? Number(this.$route.query.year) : undefined
-      this.search = this.$route.query.search ? this.$route.query.search : undefined
-      getBooks({ordering: this.sort, authors: this.author, subjects: this.subject, end_year: this.year, start_year: this.year, search: this.search})
-      .then(res => {
+      const {author, subject, year} = this.$route.query
+      getBooks(this.lodash.pickBy({
+        ordering: this.sort,
+        authors: author,
+        subjects: subject,
+        end_year: year,
+        start_year: year,
+        search: this.search,
+      })).then(res => {
         console.log('[BOOKS]: ', res.data)
         this.books = res.data
         this.loading = false
