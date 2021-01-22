@@ -17,7 +17,7 @@ def create_body(student: Student) -> dict:
             'id': student.id
         },
         'absence_type': student.absence_type,
-        'absence_status': student.absence_status,        
+        'absence_status': student.absence_status,
     }
 
 
@@ -32,14 +32,17 @@ def absence_statistic(students: list[Student]) -> str:
 
 ФИО отсутствующих студентов:
 '''
-    for student in sorted(absent_students, key=operator.attrgetter('full_name')):
+    for student in sorted(absent_students,
+                          key=operator.attrgetter('full_name')):
         text = '\n'.join([text, student.full_name])
     return text
 
 
 async def post_absence(students: list[Student]) -> str:
-    absent_students = [student for student in students
-                       if student.state.value == State.absent.value]
+    absent_students = [
+        student for student in students
+        if student.state.value == State.absent.value
+    ]
     tasks = []
     for student in absent_students:
         body = create_body(student)
