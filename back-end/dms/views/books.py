@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.filters import OrderingFilter
 from rest_framework.parsers import JSONParser
+from rest_framework.pagination import LimitOffsetPagination
 
 from drf_spectacular.views import extend_schema
 
@@ -25,13 +26,18 @@ from dms.views.common import MUTATE_ACTIONS
 
 @extend_schema(request=BookMutateSerializerForSwagger, tags=["books"])
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
+    queryset = Book.objects.order_by("title")
+
     permission_classes = [ReadOnly | IsOwner]
+
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = BookFilter
     ordering_fields = ["title", "publication_year"]
     search_fields = ["title", "annotation"]
+
     parser_classes = [MultiPartWithJSONParser, JSONParser]
+
+    pagination_class = LimitOffsetPagination
 
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
