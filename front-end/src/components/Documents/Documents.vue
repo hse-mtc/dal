@@ -6,89 +6,86 @@
         {{ `документ${(count > 4 && "ов") || (count > 1 && "а") || ""}` }}
       </div>
 
-      <div v-for="group in documents" :key="group.year">
-        <div class="cool-hr d-flex align-items-center">
+      <el-row
+        v-for="(document, index) in documents"
+        :key="document.id"
+        class="document-card mt-3 mb-4"
+      >
+        <div
+          v-if="yearChanged(index)"
+          class="cool-hr d-flex align-items-center"
+        >
           <hr class="mr-3" />
-          {{ group.year }}
+          {{ year(document) }}
           <hr class="ml-3" />
         </div>
 
-        <el-row
-          v-for="(document, index) in group.documents"
-          :key="document.id"
-          class="document-card mt-3 mb-4"
-        >
-          <el-col :span="2" style="font-size: 22px" class="mt-4">
-            № {{ index + 1 }}
-          </el-col>
+        <el-col :span="2" style="font-size: 22px" class="mt-4">
+          № {{ index + 1 }}
+        </el-col>
 
-          <el-col :span="21">
-            <div class="d-flex">
-              <div>
-                {{ document.publication_date | moment }}
-              </div>
-
-              <div class="ml-5" style="color: #76767a">
-                <span
-                  v-for="(publisher, index) in document.publishers"
-                  :key="index"
-                  >{{ publisher.name }}
-                </span>
-              </div>
+        <el-col :span="21">
+          <div class="d-flex">
+            <div>
+              {{ document.publication_date | moment }}
             </div>
 
-            <div class="document-card-title">{{ document.title }}</div>
+            <div class="ml-5" style="color: #76767a">
+              <span
+                v-for="publisher in document.publishers"
+                :key="publisher.id"
+              >
+                {{ publisher.name }}
+              </span>
+            </div>
+          </div>
+
+          <div class="document-card-title">{{ document.title }}</div>
+
+          <div
+            v-for="author in document.authors"
+            :key="author.id"
+            class="document-card-authors"
+          >
+            {{
+              `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
+            }}
+          </div>
+
+          <div class="document-card-annotation">
+            {{ document.annotation }}
+          </div>
+        </el-col>
+
+        <el-col :span="1" class="d-flex justify-content-end mt-4">
+          <el-popover placement="bottom" trigger="hover">
+            <div
+              style="text-align: center; margin: 0; padding: 0; font-size: 15px"
+            >
+              <div
+                style="cursor: pointer"
+                @click.prevent="downloadFile(document.file)"
+              >
+                Скачать
+              </div>
+              <div style="cursor: pointer" @click="editPaper(document.id)">
+                Редактировать
+              </div>
+              <div style="cursor: pointer" @click="deletePaper(document.id)">
+                Удалить
+              </div>
+            </div>
 
             <div
-              v-for="(author, index) in document.authors"
-              :key="index"
-              class="document-card-authors"
+              slot="reference"
+              class="d-flex justify-content-center"
+              style="width: 10px; cursor: pointer"
             >
-              {{
-                `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
-              }}
+              <img src="../../assets/scienceWorks/popover.svg" alt="" />
             </div>
-
-            <div class="document-card-annotation">
-              {{ document.annotation }}
-            </div>
-          </el-col>
-
-          <el-col :span="1" class="d-flex justify-content-end mt-4">
-            <el-popover placement="bottom" trigger="hover">
-              <div
-                style="
-                  text-align: center;
-                  margin: 0;
-                  padding: 0;
-                  font-size: 15px;
-                "
-              >
-                <div
-                  style="cursor: pointer"
-                  @click.prevent="downloadFile(document.file)"
-                >
-                  Скачать
-                </div>
-                <div style="cursor: pointer" @click="editPaper(document.id)">
-                  Редактировать
-                </div>
-                <div style="cursor: pointer" @click="deletePaper(document.id)">
-                  Удалить
-                </div>
-              </div>
-
-              <div
-                slot="reference"
-                class="d-flex justify-content-center"
-                style="width: 10px; cursor: pointer"
-              >
-                <img src="../../assets/scienceWorks/popover.svg" alt="" />
-              </div>
-            </el-popover>
-          </el-col>
-        </el-row>
-      </div>
+          </el-popover>
+        </el-col>
+      </el-row>
     </div>
 
     <div v-else class="my-document">Документы не найдены</div>
@@ -98,8 +95,6 @@
 <script>
 import axios from "axios";
 import moment from "moment";
-import groupBy from "lodash/groupBy";
-import keys from "lodash/keys";
 
 import { getDocuments } from "@/api/documents";
 import { deleteDocument } from "@/api/delete";
@@ -121,7 +116,6 @@ export default {
   data() {
     return {
       documents: [],
-      count: undefined,
       paperToEdit: {},
     };
   },
@@ -133,8 +127,29 @@ export default {
     });
   },
 
+  computed: {
+    count() {
+      return this.documents.length;
+    },
+  },
+
   methods: {
     moment,
+
+    yearChanged(index) {
+      if (index === 0) {
+        return true;
+      }
+
+      const prev = this.year(this.documents[index - 1]);
+      const curr = this.year(this.documents[index]);
+
+      return prev !== curr;
+    },
+
+    year(document) {
+      return moment(document.publication_date).year();
+    },
 
     async downloadFile(file) {
       let data;
@@ -157,8 +172,7 @@ export default {
     },
 
     editPaper(id) {
-      const allDocs = this.documents.map((group) => group.documents).flat(1);
-      const paperToEdit = allDocs.find((paper) => paper.id === id);
+      const paperToEdit = this.documents.find((paper) => paper.id === id);
       this.$emit("openPaperModal", "edit", paperToEdit);
     },
 
@@ -176,11 +190,7 @@ export default {
         return;
       }
 
-      this.documents.forEach((group) => {
-        group.documents = group.documents.filter((paper) => paper.id !== id);
-      });
-      this.documents = this.documents.filter((group) => group.documents.length);
-      this.count = this.count - 1;
+      this.documents.filter((paper) => paper.id !== id);
 
       this.$message({
         type: "success",
@@ -196,9 +206,8 @@ export default {
       const text = this.$route.query.text;
       const category = this.$route.query.category;
 
-      let papers;
       try {
-        ({ data: papers } = await getDocuments(
+        ({ data: this.documents } = await getDocuments(
           category,
           author,
           place,
@@ -208,20 +217,7 @@ export default {
         ));
       } catch (error) {
         console.log("Failed to fetch Papers: ", error);
-        return;
       }
-
-      const groupsByYear = groupBy(papers, (paper) => {
-        return moment(paper.publication_date).year();
-      });
-      this.documents = keys(groupsByYear)
-        .sort()
-        .reverse()
-        .map((year) => ({
-          year: year,
-          documents: groupsByYear[year],
-        }));
-      this.count = papers.length;
     },
   },
 };
