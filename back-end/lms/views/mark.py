@@ -54,7 +54,7 @@ class MarkViewSet(ModelViewSet):
                    OpenApiParameter(name='subject',
                                     description='Filter by subject',
                                     required=True,
-                                    type=str),
+                                    type=int),
                    OpenApiParameter(name='date_from',
                                     description='Filter by date',
                                     required=True,
@@ -84,7 +84,7 @@ class MarkJournalView(GenericAPIView):
         data['milgroup'] = milgroup
 
         subject_query = Subject.objects.get(
-            title=request.query_params['subject'])
+            id=request.query_params['subject'])
         subject = LessonSubjectSerializer(subject_query).data
         data['subject'] = subject
 
@@ -102,7 +102,7 @@ class MarkJournalView(GenericAPIView):
             context={
                 'request': request,
                 'date_range': date_range,
-                'subject': subject_query.title
+                'subject': subject_query.id
             },
             many=True).data
 
