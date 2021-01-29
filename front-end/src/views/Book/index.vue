@@ -19,9 +19,9 @@
             <div class="additional-info">
 
               <CustomText :custom-style="{fontWeight: 'normal'}" variant="header">{{book.publishers[0].name}}</CustomText>
-              <template v-if="book.pagesCount">
+              <template v-if="book.page_count">
                 <img src="@/assets/icons/dot.svg" alt="">
-                <CustomText :custom-style="{fontWeight: 'normal'}" variant="header">{{book.pagesCount}} печат. страниц</CustomText>
+                <CustomText :custom-style="{fontWeight: 'normal'}" variant="header">{{book.page_count}} печат. страниц</CustomText>
               </template>
               <template v-if="book.publication_year">
                 <img src="@/assets/icons/dot.svg" alt="">
