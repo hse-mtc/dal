@@ -61,7 +61,6 @@
                 <el-popover
                   v-if="scope.row.absences.some((x) => x.date == d)"
                   placement="top"
-                  width="400"
                   trigger="hover"
                 >
                   <el-form
@@ -103,7 +102,8 @@
                             scope.row.fullname
                           )
                         "
-                      >Редактировать</el-button>
+                        >Редактировать</el-button
+                      >
                       <el-button
                         size="mini"
                         icon="el-icon-delete"
@@ -113,7 +113,8 @@
                             scope.row.absences.find((x) => x.date == d).id
                           )
                         "
-                      >Удалить</el-button>
+                        >Удалить</el-button
+                      >
                     </el-form-item>
                   </el-form>
                   <i

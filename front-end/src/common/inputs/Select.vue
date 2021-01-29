@@ -14,7 +14,11 @@
     >
       <!-- key в optionData(option) -->
       <!-- eslint-disable-next-line vue/valid-v-for -->
-      <el-option v-for="option in options" v-bind="optionData(option)" />
+      <el-option
+        v-for="option in options"
+        :key="option.value"
+        v-bind="optionData(option)"
+      />
     </el-select>
   </InputsBase>
 </template>
