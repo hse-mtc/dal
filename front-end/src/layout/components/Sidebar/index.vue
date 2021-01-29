@@ -2,12 +2,9 @@
   <div :class="{ 'has-logo': showLogo }">
     <logo v-if="showLogo" :collapse="isCollapse" />
 
-    <div :class="['burger', {'collapsed': isCollapse}]" @click="toggleSideBar">
+    <div :class="['burger', { collapsed: isCollapse }]" @click="toggleSideBar">
       <span v-if="!isCollapse" class="burgerText">Свернуть меню</span>
-      <hamburger
-        :is-active="sidebar.opened"
-        class="hamburger-container"
-      />
+      <hamburger :is-active="sidebar.opened" class="hamburger-container" />
     </div>
 
     <el-scrollbar wrap-class="scrollbar-wrapper">
@@ -69,7 +66,7 @@ export default {
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");
     },
-  }
+  },
 };
 </script>
 
@@ -89,7 +86,7 @@ export default {
     padding: 0;
     justify-content: center;
   }
-  
+
   &Text {
     color: rgb(191, 203, 217);
     line-height: 56px;

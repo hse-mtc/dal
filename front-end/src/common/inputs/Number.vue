@@ -15,10 +15,10 @@
 </template>
 
 <script>
-import mixin from './inputsMixin'
+import mixin from "./inputsMixin";
 
 export default {
   mixins: [mixin],
-  name: 'NumberInput',
-}
+  name: "NumberInput",
+};
 </script>

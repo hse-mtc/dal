@@ -17,13 +17,13 @@
 </template>
 
 <script>
-import mixin from './inputsMixin'
+import mixin from "./inputsMixin";
 
 export default {
   mixins: [mixin],
-  name: 'DateInput',
+  name: "DateInput",
   props: {
-    type: {type: String, default: 'date'}
-  }
-}
+    type: { type: String, default: "date" },
+  },
+};
 </script>

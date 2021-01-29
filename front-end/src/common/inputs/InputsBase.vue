@@ -1,32 +1,35 @@
 <template>
-    <div :class="{[wrapperClassName]: wrapperClassName}">
-      <span
-        v-if="title"
-        :class="[$style.title, {[titleClassName]: titleClassName}]"
-      >
-        {{ title }}
-      </span>
-      <span
-        v-if="annotation"
-        :class="[$style.annotation, {[annotationClassName]: annotationClassName}]"
-      >
-        {{ annotation }}
-      </span>
-      <slot />
-    </div>
+  <div :class="{ [wrapperClassName]: wrapperClassName }">
+    <span
+      v-if="title"
+      :class="[$style.title, { [titleClassName]: titleClassName }]"
+    >
+      {{ title }}
+    </span>
+    <span
+      v-if="annotation"
+      :class="[
+        $style.annotation,
+        { [annotationClassName]: annotationClassName },
+      ]"
+    >
+      {{ annotation }}
+    </span>
+    <slot />
+  </div>
 </template>
 
 <script>
 export default {
-  name: 'InputsBase',
+  name: "InputsBase",
   props: {
-    title: {default: null},
-    annotation: {default: null},
-    wrapperClassName: {type: String, default: ''},
-    titleClassName: {type: String, default: ''},
-    annotationClassName: {type: String, default: ''},
-  }
-}
+    title: { default: null },
+    annotation: { default: null },
+    wrapperClassName: { type: String, default: "" },
+    titleClassName: { type: String, default: "" },
+    annotationClassName: { type: String, default: "" },
+  },
+};
 </script>
 
 <style lang="scss" module>

@@ -19,7 +19,12 @@
         </el-date-picker>
       </el-col>
     </el-row>
-    <el-tabs tab-position="left" v-model="filter.mg" @tab-click="onJournal()" class="my-tabs">
+    <el-tabs
+      tab-position="left"
+      v-model="filter.mg"
+      @tab-click="onJournal()"
+      class="my-tabs"
+    >
       <el-tab-pane
         v-for="mg in milgroups"
         :key="mg.milgroup"
@@ -92,25 +97,23 @@
                         size="mini"
                         icon="el-icon-edit"
                         type="info"
-                        circle
                         @click="
                           onEdit(
                             scope.row.absences.find((x) => x.date == d),
                             scope.row.fullname
                           )
                         "
-                      />
+                      >Редактировать</el-button>
                       <el-button
                         size="mini"
                         icon="el-icon-delete"
                         type="danger"
-                        circle
                         @click="
                           handleDelete(
                             scope.row.absences.find((x) => x.date == d).id
                           )
                         "
-                      />
+                      >Удалить</el-button>
                     </el-form-item>
                   </el-form>
                   <i

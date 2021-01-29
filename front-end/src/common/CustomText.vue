@@ -1,5 +1,15 @@
 <template>
-  <div :class="variant" :style="{ color: color, 'margin-top': mt + 'px', 'margin-bottom': mb + 'px', 'margin-left': ml + 'px', 'margin-right': mr + 'px', ...customStyle }">
+  <div
+    :class="variant"
+    :style="{
+      color: color,
+      'margin-top': mt + 'px',
+      'margin-bottom': mb + 'px',
+      'margin-left': ml + 'px',
+      'margin-right': mr + 'px',
+      ...customStyle,
+    }"
+  >
     <slot></slot>
   </div>
 </template>
@@ -37,7 +47,7 @@ export default {
     ml: {
       type: Number,
       default: 0,
-    }
+    },
   },
 };
 </script>

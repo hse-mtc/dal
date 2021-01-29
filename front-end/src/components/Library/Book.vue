@@ -1,23 +1,54 @@
 <template>
   <div class="wrapper">
-    <div :id="`loader__${data.id}`" class="file-img" @click="$router.push(`/library/book/${data.id}`)">
+    <div
+      :id="`loader__${data.id}`"
+      class="file-img"
+      @click="$router.push(`/library/book/${data.id}`)"
+    >
       <div class="lds-dual-ring" />
-      <img class="file-image" :src="data.cover ? data.cover.image : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'" alt="">
+      <img
+        class="file-image"
+        :src="
+          data.cover
+            ? data.cover.image
+            : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'
+        "
+        alt=""
+      />
     </div>
     <div class="content">
       <div @click="$router.push(`/library/book/${data.id}`)">
-        <CustomText style="cursor:pointer;" variant="header">{{data.title}}</CustomText>
-        <CustomText style="cursor:pointer;" variant="sub-header" :color="COLORS.gray_2" :mt="SIZES.s" :mb="SIZES.m">
+        <CustomText style="cursor: pointer" variant="header">{{
+          data.title
+        }}</CustomText>
+        <CustomText
+          style="cursor: pointer"
+          variant="sub-header"
+          :color="COLORS.gray_2"
+          :mt="SIZES.s"
+          :mb="SIZES.m"
+        >
           <template v-for="item in data.authors">
-            {{item.surname}} {{item.name}} {{item.patronymic}},
-          </template> {{data.publication_year}} г.
+            {{ item.surname }} {{ item.name }} {{ item.patronymic }},
+          </template>
+          {{ data.publication_year }} г.
         </CustomText>
-        <CustomText style="cursor:pointer;" variant="paragraph" :color="COLORS.black_2" class="annotation">
-          {{data.annotation}}
+        <CustomText
+          style="cursor: pointer"
+          variant="paragraph"
+          :color="COLORS.black_2"
+          class="annotation"
+        >
+          {{ data.annotation }}
         </CustomText>
       </div>
-      <div @click.prevent="downloadFile(data.file, data.id)" style="cursor: pointer">
-        <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">Скачать</CustomText>
+      <div
+        @click.prevent="downloadFile(data.file, data.id)"
+        style="cursor: pointer"
+      >
+        <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph"
+          >Скачать</CustomText
+        >
       </div>
     </div>
   </div>
@@ -25,33 +56,33 @@
 
 <script>
 import CustomText from "@/common/CustomText";
-import {COLORS, SIZES} from "@/utils/appConsts";
+import { COLORS, SIZES } from "@/utils/appConsts";
 import axios from "axios";
 export default {
   name: "Book",
-  components: {CustomText},
+  components: { CustomText },
   props: {
     data: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       SIZES,
       COLORS,
-      loading: false
-    }
+      loading: false,
+    };
   },
   methods: {
     async downloadFile(file, id) {
-      document.getElementById(`loader__${id}`).classList.add('loading')
+      document.getElementById(`loader__${id}`).classList.add("loading");
       let data;
       try {
         ({ data } = await axios.get(file.content, { responseType: "blob" }));
       } catch (error) {
         console.log("Failed to download Book.file: ", error);
-        document.getElementById(`loader__${id}`).classList.remove('loading')
+        document.getElementById(`loader__${id}`).classList.remove("loading");
         return;
       }
 
@@ -64,10 +95,10 @@ export default {
 
       link.click();
       URL.revokeObjectURL(link.href);
-      document.getElementById(`loader__${id}`).classList.remove('loading')
+      document.getElementById(`loader__${id}`).classList.remove("loading");
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -118,7 +149,6 @@ export default {
 }
 
 .content {
-
 }
 
 .annotation {

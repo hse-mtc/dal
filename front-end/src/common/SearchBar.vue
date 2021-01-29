@@ -1,22 +1,22 @@
 <template>
   <div class="mysearch d-flex">
     <input
-        ref="searchInput"
-        type="text"
-        class="words-search"
-        :placeholder="placeholder"
-        @keyup.enter="searchHandler"
+      ref="searchInput"
+      type="text"
+      class="words-search"
+      :placeholder="placeholder"
+      @keyup.enter="searchHandler"
     />
     <img
-        src="@/assets/delete-cross.svg"
-        class="delete-cross"
-        alt=""
-        @click="deleteHandler"
+      src="@/assets/delete-cross.svg"
+      class="delete-cross"
+      alt=""
+      @click="deleteHandler"
     />
     <img
-        src="@/assets/scienceWorks/searchIcon.svg"
-        class="search-icon"
-        @click="searchHandler"
+      src="@/assets/scienceWorks/searchIcon.svg"
+      class="search-icon"
+      @click="searchHandler"
     />
   </div>
 </template>
@@ -28,38 +28,40 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: 'Введите текст'
+      default: "Введите текст",
     },
     delete: {
       type: Function,
     },
     search: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   mounted() {
     if (this.$route.query.search) {
-      this.$refs.searchInput.value = this.$route.query.search
+      this.$refs.searchInput.value = this.$route.query.search;
     }
   },
   methods: {
     searchHandler() {
-      this.search(this.$refs.searchInput.value)
+      this.search(this.$refs.searchInput.value);
     },
     deleteHandler() {
       this.$refs.searchInput.value = "";
-      if (this.delete) { this.delete() }
+      if (this.delete) {
+        this.delete();
+      }
     },
   },
   watch: {
     $route() {
       if (this.$route.query.search) {
-        this.$refs.searchInput.value = this.$route.query.search
+        this.$refs.searchInput.value = this.$route.query.search;
       }
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
@@ -95,5 +97,4 @@ export default {
     }
   }
 }
-
 </style>

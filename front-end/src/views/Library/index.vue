@@ -1,19 +1,18 @@
 <template>
   <el-row>
     <el-col :span="20" :offset="2">
-      <LibraryComponent/>
+      <LibraryComponent />
     </el-col>
   </el-row>
 </template>
 
 <script>
-
 import LibraryComponent from "@/components/Library/Library";
 
 export default {
   name: "Library",
   components: {
-    LibraryComponent
+    LibraryComponent,
   },
   computed: {},
   data() {

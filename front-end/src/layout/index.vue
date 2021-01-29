@@ -1,28 +1,28 @@
 <template>
   <div :class="classObj" class="app-wrapper">
     <div
-        v-if="device === 'mobile' && sidebar.opened"
-        class="drawer-bg"
-        @click="handleClickOutside"
+      v-if="device === 'mobile' && sidebar.opened"
+      class="drawer-bg"
+      @click="handleClickOutside"
     />
-    <sidebar class="sidebar-container"/>
+    <sidebar class="sidebar-container" />
     <div class="main-container" id="main-container">
       <div :class="{ 'fixed-header': fixedHeader }">
-        <navbar/>
+        <navbar />
       </div>
-      <app-main/>
+      <app-main />
     </div>
   </div>
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import { mapActions } from "vuex";
 
-import {getAuthors} from "@/api/authors";
-import {getSubjects} from "@/api/subjects";
-import { getPublishPlaces } from '@/api/published_places';
+import { getAuthors } from "@/api/authors";
+import { getSubjects } from "@/api/subjects";
+import { getPublishPlaces } from "@/api/published_places";
 
-import {Navbar, Sidebar, AppMain} from "./components";
+import { Navbar, Sidebar, AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 
 export default {
@@ -82,7 +82,7 @@ export default {
       setPublishers: "documents/setPublishers",
     }),
     handleClickOutside() {
-      this.$store.dispatch("app/closeSideBar", {withoutAnimation: false});
+      this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
     },
   },
 };
