@@ -56,6 +56,7 @@ class LessonShortSerializer(LessonSerializer):
         model = Lesson
         exclude = ['milgroup']
 
+
 class LessonJournalGetQuerySerializer(Serializer):
     milgroup = IntegerField(
         required=True,
