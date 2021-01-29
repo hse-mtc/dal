@@ -7,17 +7,17 @@
       </div>
 
       <el-row
-        v-for="(document, index) in documents"
-        :key="document.id"
-        class="document-card mt-3 mb-4"
+          v-for="(document, index) in documents"
+          :key="document.id"
+          class="document-card mt-3 mb-4"
       >
         <div
-          v-if="yearChanged(index)"
-          class="cool-hr d-flex align-items-center"
+            v-if="yearChanged(index)"
+            class="cool-hr d-flex align-items-center"
         >
-          <hr class="mr-3" />
+          <hr class="mr-3"/>
           {{ year(document) }}
-          <hr class="ml-3" />
+          <hr class="ml-3"/>
         </div>
 
         <el-col :span="2" style="font-size: 22px" class="mt-4">
@@ -32,8 +32,8 @@
 
             <div class="ml-5" style="color: #76767a">
               <span
-                v-for="publisher in document.publishers"
-                :key="publisher.id"
+                  v-for="publisher in document.publishers"
+                  :key="publisher.id"
               >
                 {{ publisher.name }}
               </span>
@@ -43,9 +43,9 @@
           <div class="document-card-title">{{ document.title }}</div>
 
           <div
-            v-for="author in document.authors"
-            :key="author.id"
-            class="document-card-authors"
+              v-for="author in document.authors"
+              :key="author.id"
+              class="document-card-authors"
           >
             {{
               `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
@@ -60,11 +60,11 @@
         <el-col :span="1" class="d-flex justify-content-end mt-4">
           <el-popover placement="bottom" trigger="hover">
             <div
-              style="text-align: center; margin: 0; padding: 0; font-size: 15px"
+                style="text-align: center; margin: 0; padding: 0; font-size: 15px"
             >
               <div
-                style="cursor: pointer"
-                @click.prevent="downloadFile(document.file)"
+                  style="cursor: pointer"
+                  @click.prevent="downloadFile(document.file)"
               >
                 Скачать
               </div>
@@ -77,18 +77,18 @@
             </div>
 
             <div
-              slot="reference"
-              class="d-flex justify-content-center"
-              style="width: 10px; cursor: pointer"
+                slot="reference"
+                class="d-flex justify-content-center"
+                style="width: 10px; cursor: pointer"
             >
-              <img src="../../assets/scienceWorks/popover.svg" alt="" />
+              <img src="../../assets/scienceWorks/popover.svg" alt=""/>
             </div>
           </el-popover>
         </el-col>
       </el-row>
     </div>
-
     <div v-else class="my-document">Документы не найдены</div>
+    <div v-loading="loading" class="requests__loader"></div>
   </div>
 </template>
 
@@ -96,10 +96,11 @@
 import axios from "axios";
 import moment from "moment";
 
-import { getDocuments } from "@/api/documents";
-import { deleteDocument } from "@/api/delete";
+import {getDocuments} from "@/api/documents";
+import {deleteDocument} from "@/api/delete";
 
 import EventBus from "../EventBus";
+import {scrollMixin} from "@/mixins/scrollMixin";
 
 export default {
   name: "",
@@ -110,11 +111,17 @@ export default {
     },
   },
   watch: {
-    $route: "fetchData",
+    $route() {
+      this.documents = []
+      this.fetchData()
+    },
   },
-
+  mixins: [scrollMixin],
   data() {
     return {
+      count: null,
+      limit: 10,
+      loading: false,
       documents: [],
       paperToEdit: {},
     };
@@ -135,7 +142,9 @@ export default {
 
   methods: {
     moment,
-
+    loadMore() {
+      this.fetchData()
+    },
     yearChanged(index) {
       if (index === 0) {
         return true;
@@ -154,7 +163,7 @@ export default {
     async downloadFile(file) {
       let data;
       try {
-        ({ data } = await axios.get(file.content, { responseType: "blob" }));
+        ({data} = await axios.get(file.content, {responseType: "blob"}));
       } catch (error) {
         console.log("Failed to download Paper.file: ", error);
         return;
@@ -199,6 +208,8 @@ export default {
     },
 
     async fetchData() {
+      if (this.documents.length <= this.count)
+        this.loading = true
       const author = this.$route.query.author;
       const place = this.$route.query.place;
       const start_date = this.$route.query.start_date;
@@ -207,14 +218,19 @@ export default {
       const category = this.$route.query.category;
 
       try {
-        ({ data: this.documents } = await getDocuments(
-          category,
-          author,
-          place,
-          start_date,
-          end_date,
-          text
-        ));
+        const {data} = await getDocuments(
+            category,
+            author,
+            place,
+            start_date,
+            end_date,
+            text,
+            this.limit,
+            this.documents.length
+        )
+        this.documents = [...this.documents, ...data.results]
+        this.count = data.count
+        this.loading = false
       } catch (error) {
         console.log("Failed to fetch Papers: ", error);
       }
