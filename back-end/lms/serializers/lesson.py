@@ -40,10 +40,10 @@ class LessonSerializer(WritableNestedModelSerializer):
 
     # specify that these fields are not required
     ordinal = IntegerField(required=False)
-    lesson_type = CharField(
-        required=False, validators=[PresentInDatabaseValidator(LessonType)])
-    room = CharField(
-        required=False, validators=[PresentInDatabaseValidator(Room)])
+    lesson_type = CharField(required=False,
+                            validators=[PresentInDatabaseValidator(LessonType)])
+    room = CharField(required=False,
+                     validators=[PresentInDatabaseValidator(Room)])
 
     class Meta:
         model = Lesson

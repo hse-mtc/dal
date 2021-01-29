@@ -26,8 +26,7 @@ from lms.models.student import Student
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subject import LessonSubjectSerializer
-from lms.serializers.mark import (MarkSerializer,
-                                  MarkJouralSerializer,
+from lms.serializers.mark import (MarkSerializer, MarkJouralSerializer,
                                   MarkJournalGetQuerySerializer)
 
 from lms.functions import get_date_range
@@ -69,8 +68,7 @@ class MarkJournalView(GenericAPIView):
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
-        query_params = MarkJournalGetQuerySerializer(
-            data=request.query_params)
+        query_params = MarkJournalGetQuerySerializer(data=request.query_params)
         if not query_params.is_valid():
             return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
 
@@ -83,8 +81,7 @@ class MarkJournalView(GenericAPIView):
                 milgroup=request.query_params['milgroup'])).data
         data['milgroup'] = milgroup
 
-        subject_query = Subject.objects.get(
-            id=request.query_params['subject'])
+        subject_query = Subject.objects.get(id=request.query_params['subject'])
         subject = LessonSubjectSerializer(subject_query).data
         data['subject'] = subject
 
@@ -96,14 +93,13 @@ class MarkJournalView(GenericAPIView):
 
         # add dates and absences
         data['dates'] = date_range
-        data['students'] = MarkJouralSerializer(
-            Student.objects.filter(
-                milgroup__milgroup=request.query_params['milgroup']),
-            context={
-                'request': request,
-                'date_range': date_range,
-                'subject': subject_query.id
-            },
-            many=True).data
+        data['students'] = MarkJouralSerializer(Student.objects.filter(
+            milgroup__milgroup=request.query_params['milgroup']),
+                                                context={
+                                                    'request': request,
+                                                    'date_range': date_range,
+                                                    'subject': subject_query.id
+                                                },
+                                                many=True).data
 
         return Response(data, status=HTTP_200_OK)

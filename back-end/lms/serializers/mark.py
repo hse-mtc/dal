@@ -19,8 +19,8 @@ from lms.validators import PresentInDatabaseValidator
 class MarkSerializer(WritableNestedModelSerializer):
     student = StudentShortSerializer(
         required=False, validators=[PresentInDatabaseValidator(Student)])
-    lesson = LessonSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Lesson)])
+    lesson = LessonSerializer(required=False,
+                              validators=[PresentInDatabaseValidator(Lesson)])
 
     def validate(self, attrs):
         student_id = attrs['student']['id']
@@ -43,10 +43,8 @@ class MarkJournalGetQuerySerializer(Serializer):
         validators=[PresentInDatabaseValidator(Milgroup, 'milgroup')])
     date_from = DateField(required=False)
     date_to = DateField(required=False)
-    subject = CharField(
-        required=True,
-        validators=[PresentInDatabaseValidator(Subject, 'id')]
-    )
+    subject = CharField(required=True,
+                        validators=[PresentInDatabaseValidator(Subject, 'id')])
 
     def validate(self, attrs):
         if attrs['date_from'] > attrs['date_to']:
@@ -81,8 +79,6 @@ class MarkJouralSerializer(ModelSerializer):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
     def get_marks(self, obj):
-        marks = obj.mark_set.filter(
-            lesson__date__in=self.context['date_range'],
-            lesson__subject__id=self.context['subject']
-        )
+        marks = obj.mark_set.filter(lesson__date__in=self.context['date_range'],
+                                    lesson__subject__id=self.context['subject'])
         return MarkShortSerializer(marks, many=True).data
