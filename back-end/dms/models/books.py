@@ -39,7 +39,7 @@ class Book(Document):
     publishers = models.ManyToManyField(to=Publisher, blank=True)
     subjects = models.ManyToManyField(to=Subject, blank=True)
     cover = models.OneToOneField(to=Cover, on_delete=models.CASCADE, null=True)
-    page_count = models.PositiveSmallIntegerField()
+    page_count = models.PositiveSmallIntegerField(null=True, default=None)
 
     class Meta:
         verbose_name = "Book"
