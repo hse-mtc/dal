@@ -44,7 +44,7 @@
           <el-form-item>
             <NumberInput
               title="Количество страниц"
-              v-model="formValues.pagesCount"
+              v-model="formValues.pageCount"
             />
           </el-form-item>
         </el-col>
@@ -180,7 +180,7 @@ export default {
           authors: data.authors,
           publishers: data.publishers,
           subjects: data.subjects,
-          pages_count: data.pagesCount,
+          page_count: data.pageCount,
         })))
 
         if (data.bookCover.length) {
@@ -209,7 +209,7 @@ export default {
         publishDate: null,
         bookName: '',
         annotation: '',
-        pagesCount: 0,
+        pageCount: 0,
         subjects: [],
         book: [],
         bookCover: [],
