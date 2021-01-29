@@ -169,7 +169,7 @@ export const constantRoutes = [
         path: "",
         name: "Marks",
         component: () => import("@/views/Marks/index"),
-        meta: { title: "Журнал оценок", icon: "" },
+        meta: { title: "Журнал оценок", icon: "journal" },
       },
     ],
   },

@@ -75,53 +75,87 @@
               :key="d"
               :label="formatDate(d)"
               align="center"
-              min-width="250"
-              show-overflow-tooltip
+              min-width="80"
             >
               <template slot-scope="scope">
                 <div class="mark-journal-cell">
                   <el-popover
-                    v-if="scope.row.marks.some((x) => x.date == d)"
+                    v-if="scope.row.marks.some((x) => x.lesson.date == d)"
                     trigger="hover"
+                    placement="top"
                   >
-                    <div class="text-center">
-                      <el-button
-                        size="mini"
-                        icon="el-icon-edit"
-                        type="info"
-                        circle
-                        @click="
-                          onEdit(scope.row.marks.find((x) => x.date == d))
-                        "
-                      />
-                      <el-button
-                        size="mini"
-                        icon="el-icon-delete"
-                        type="danger"
-                        circle
-                        @click="
-                          handleDelete(
-                            scope.row.marks.find((x) => x.date == d).id
-                          )
-                        "
-                      />
-                    </div>
+                    <el-form
+                      label-position="right"
+                      label-width="150px"
+                      size="mini"
+                      :model="scope.row.marks.find((x) => x.lesson.date == d)"
+                    >
+                      <el-form-item label="Тип занятия: ">
+                        <el-tag
+                          :type="
+                            tagByLessonType(
+                              scope.row.marks.find((x) => x.lesson.date == d)
+                                .lesson.lesson_type
+                            )
+                          "
+                          disable-transitions
+                        >
+                          {{
+                            scope.row.marks.find((x) => x.lesson.date == d)
+                              .lesson.lesson_type
+                          }}
+                        </el-tag>
+                      </el-form-item>
+                      <el-form-item label="Комментарий: ">
+                        {{
+                          scope.row.marks.find((x) => x.lesson.date == d)
+                            .comment
+                        }}
+                      </el-form-item>
+                      <el-form-item>
+                        <el-button
+                          size="mini"
+                          icon="el-icon-edit"
+                          type="info"
+                          @click="
+                            onEdit(
+                              scope.row.marks.find((x) => x.lesson.date == d),
+                              scope.row
+                            )
+                          "
+                          >Редактировать</el-button
+                        >
+                        <el-button
+                          size="mini"
+                          icon="el-icon-delete"
+                          type="danger"
+                          @click="
+                            handleDelete(
+                              scope.row.marks.find((x) => x.lesson.date == d).id
+                            )
+                          "
+                          >Удалить</el-button
+                        >
+                      </el-form-item>
+                    </el-form>
                     <el-tag
                       slot="reference"
                       :type="
-                        tagByMark(scope.row.marks.find((x) => x.date == d).mark)
+                        tagByMark(
+                          scope.row.marks.find((x) => x.lesson.date == d).mark
+                        )
                       "
                       effect="dark"
                       disable-transitions
                     >
-                      {{ scope.row.marks.find((x) => x.date == d).mark }}
+                      {{ scope.row.marks.find((x) => x.lesson.date == d).mark }}
                     </el-tag>
                   </el-popover>
                   <el-button
                     v-else
                     type="text"
                     icon="el-icon-plus"
-                    @click="onCreate(scope.row.ordinal, d)"
+                    @click="onCreate(scope.row, d)"
                     class="create-mark-btn"
                   />
                 </div>
@@ -143,53 +177,21 @@
         size="mini"
         :model="editMark"
       >
-        <el-form-item label="Дисциплина: " required>
-          <el-select
-            filterable
-            v-model="editMark.subject"
-            value-key="id"
-            placeholder="Выберите дисциплину"
-            style="display: block"
-          >
-            <el-option
-              v-for="item in subjects"
-              :key="item.id"
-              :label="item.title"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
+        <el-form-item label="Оценка: " required>
+          <el-input-number
+            v-model="editMark.mark"
+            controls-position="right"
+            :min="1"
+            :max="10"
+          />
         </el-form-item>
-        <el-form-item label="Аудитория: " required>
-          <el-select
-            filterable
-            v-model="editMark.room"
-            placeholder="Выберите аудиторию"
-            style="display: block"
-          >
-            <el-option
-              v-for="item in rooms"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Тип занятия: " required>
-          <el-select
-            v-model="editMark.mark_type"
-            placeholder="Выберите тип занятия"
-            style="display: block"
-          >
-            <el-option
-              v-for="item in lesson_types"
-              :key="item"
-              :label="item"
-              :value="item"
-            >
-            </el-option>
-          </el-select>
+        <el-form-item label="Комментарий: ">
+          <el-input
+            v-model="editMark.comment"
+            placeholder="Введите комментарий"
+            type="textarea"
+            :rows="2"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -211,6 +213,7 @@ import {
   deleteError,
   postSuccess,
   patchSuccess,
+  deleteSuccess,
 } from "@/utils/message";
 
 export default {
@@ -229,8 +232,8 @@ export default {
         mark: 0,
       },
       filter: {
-        subject_id: null,
-        mg: null,
+        subject_id: 0,
+        mg: 0,
         dateRange: [
           moment().add(-3, "months").format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
@@ -265,7 +268,7 @@ export default {
             onClick(picker) {
               const end = new Date();
               const start = new Date();
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 7);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
               picker.$emit("pick", [start, end]);
             },
           },
@@ -274,7 +277,7 @@ export default {
             onClick(picker) {
               const end = new Date();
               const start = new Date();
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 30);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
               picker.$emit("pick", [start, end]);
             },
           },
@@ -283,7 +286,7 @@ export default {
             onClick(picker) {
               const end = new Date();
               const start = new Date();
-              end.setTime(start.getTime() + 3600 * 1000 * 24 * 90);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
               picker.$emit("pick", [start, end]);
             },
           },
@@ -323,7 +326,7 @@ export default {
       } else return "danger";
     },
     fetchData() {
-      if (this.filter.mg > 0) {
+      if (this.filter.mg > 0 && this.filter.subject_id > 0) {
         getMarkJournal({
           milgroup: this.filter.mg,
           subject: this.filter.subject_id,
@@ -340,22 +343,26 @@ export default {
       this.subjects = (await getSubjects()).data;
     },
 
-    onCreate(student, discipline, date) {
+    onCreate(student, date) {
       this.editMark = {
+        student,
         date,
         milgroup: { milgroup: this.filter.mg },
         subject: {},
       };
       this.editMarkFullname = student.fullname;
       this.getSubjects();
-      this.dialogVisible = true;
+      // this.dialogVisible = true;
     },
-    onEdit(row) {
-      this.editMark = { ...row };
-      this.editMark.milgroup = {
-        milgroup: this.editMark.milgroup.milgroup,
+    onEdit(mark, student) {
+      this.editMark = {
+        id: mark.id,
+        student: { id: student.id },
+        lesson: { id: mark.lesson.id },
+        mark: mark.mark,
       };
-      this.editMarkFullname = row.student.fullname;
+      console.log(this.editMark);
+      this.editMarkFullname = student.fullname;
       this.getSubjects();
       this.dialogVisible = true;
     },
@@ -378,36 +385,33 @@ export default {
       if (this.editMark.id) {
         patchMark(this.editMark)
           .then(() => {
-            patchSuccess("занятия");
+            patchSuccess("оценки");
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => patchError("занятия", err.response.status));
+          .catch((err) => patchError("оценки", err.response.status));
       } else {
         postMark(this.editMark)
           .then(() => {
-            postSuccess("занятия");
+            postSuccess("оценки");
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => postError("занятия", err.response.status));
+          .catch((err) => postError("оценки", err.response.status));
       }
     },
     handleDelete(id) {
-      this.$confirm(
-        "Вы уверены, что хотите удалить занятие?",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        }
-      ).then(() => {
+      this.$confirm("Вы уверены, что хотите удалить оценку?", "Подтверждение", {
+        confirmButtonText: "Да",
+        cancelButtonText: "Отмена",
+        type: "warning",
+      }).then(() => {
         deleteMark({ id })
           .then(() => {
+            deleteSuccess("оценки");
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch((err) => deleteError("занятия", err.response.status));
+          .catch((err) => deleteError("оценки", err.response.status));
       });
     },
   },

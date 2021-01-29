@@ -21,7 +21,7 @@ export function getDocuments(
       end_date: end_date,
       search: text,
       limit: limit,
-      offset: offset
+      offset: offset,
     },
   });
 }

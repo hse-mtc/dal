@@ -218,6 +218,7 @@ import {
   deleteError,
   postSuccess,
   patchSuccess,
+  deleteSuccess,
 } from "@/utils/message";
 
 export default {
@@ -411,6 +412,7 @@ export default {
       ).then(() => {
         deleteLesson({ id })
           .then(() => {
+            deleteSuccess("занятия");
             if (this.filter.mg > 0) this.fetchData();
           })
           .catch((err) => deleteError("занятия", err.response.status));
