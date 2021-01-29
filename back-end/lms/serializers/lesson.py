@@ -52,6 +52,7 @@ class LessonSerializer(WritableNestedModelSerializer):
 
 class LessonShortSerializer(LessonSerializer):
     milgroup = None
+
     class Meta:
         model = Lesson
         exclude = ['milgroup']
