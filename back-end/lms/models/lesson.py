@@ -11,7 +11,7 @@ class Room(models.Model):
     room = models.CharField(primary_key=True, max_length=50)
 
     def __str__(self):
-        return f'Room {str(self.room)}'
+        return f'{str(self.room)}'
 
     class Meta:
         verbose_name = 'Room'
