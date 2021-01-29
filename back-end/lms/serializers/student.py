@@ -34,7 +34,7 @@ class StudentSerializer(WritableNestedModelSerializer):
 
 
 class StudentShortSerializer(WritableNestedModelSerializer):
-    id = IntegerField(required=False)
+    id = IntegerField(required=True)
     fullname = SerializerMethodField(required=False)
     milgroup = MilgroupSerializer(
         many=False,

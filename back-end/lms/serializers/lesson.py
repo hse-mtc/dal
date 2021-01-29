@@ -1,5 +1,5 @@
 from rest_framework.serializers import (ModelSerializer, Serializer,
-                                        IntegerField, DateField)
+                                        IntegerField, DateField, CharField)
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
@@ -7,8 +7,10 @@ from common.models.subjects import Subject
 
 from lms.validators import PresentInDatabaseValidator
 from lms.serializers.subject import LessonSubjectSerializer
+from lms.serializers.student import StudentShortSerializer
 from lms.serializers.common import MilgroupSerializer
 from lms.models.common import Milgroup
+from lms.models.student import Student
 from lms.models.lesson import Room, LessonType, Lesson
 
 
@@ -27,10 +29,21 @@ class LessonTypeSerializer(ModelSerializer):
 
 
 class LessonSerializer(WritableNestedModelSerializer):
+    id = IntegerField(required=True)
+
     subject = LessonSubjectSerializer(
         required=False, validators=[PresentInDatabaseValidator(Subject)])
     milgroup = MilgroupSerializer(
         required=False, validators=[PresentInDatabaseValidator(Milgroup)])
+    student = StudentShortSerializer(
+        required=False, validators=[PresentInDatabaseValidator(Student)])
+
+    # specify that these fields are not required
+    ordinal = IntegerField(required=False)
+    lesson_type = CharField(
+        required=False, validators=[PresentInDatabaseValidator(LessonType)])
+    room = CharField(
+        required=False, validators=[PresentInDatabaseValidator(Room)])
 
     class Meta:
         model = Lesson
