@@ -51,11 +51,7 @@ export const constantRoutes = [
                 path: "",
                 name: "Мои материалы",
                 component: () => import("@/views/myMaterials/index"),
-<<<<<<< HEAD
                 meta: {title: "Мои материалы", icon: "materials"},
-=======
-                meta: { title: "Мои материалы", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
         ],
     },
@@ -70,11 +66,7 @@ export const constantRoutes = [
                 path: "/msw/science-articles",
                 name: "Science Articles",
                 component: () => import("@/views/ScienceArticles/index"),
-<<<<<<< HEAD
                 meta: {title: "Военно-научные работы", icon: "study"},
-=======
-                meta: { title: "Военно-научные работы", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
         ],
     },
@@ -86,22 +78,14 @@ export const constantRoutes = [
                 path: "",
                 name: "Subjects",
                 component: () => import("@/views/Subjects/index"),
-<<<<<<< HEAD
                 meta: {title: "Учебно-методические материалы", icon: "book"},
-=======
-                meta: { title: "Учебно-методические материалы", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
             {
                 path: "/subjects/:subjectId/",
                 hidden: true,
                 name: "Subject",
                 component: () => import("@/views/Subject/index"),
-<<<<<<< HEAD
                 meta: {title: "Учебно-методические материалы"},
-=======
-                meta: { title: "Учебно-методические материалы", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
         ],
     },
@@ -113,21 +97,13 @@ export const constantRoutes = [
                 path: "",
                 name: "Library",
                 component: () => import("@/views/Library/index"),
-<<<<<<< HEAD
                 meta: {title: "Электронная библиотека", icon: "books"},
-=======
-                meta: { title: "Электронная библиотека", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
             {
                 path: "book/:id",
                 name: "Book",
                 component: () => import("@/views/Book/index"),
-<<<<<<< HEAD
                 meta: {title: "Электронная библиотека"},
-=======
-                meta: { title: "Электронная библиотека", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
                 hidden: true,
             },
         ],
@@ -141,11 +117,7 @@ export const constantRoutes = [
                 path: "",
                 name: "Personnel",
                 component: () => import("@/views/Personnel/index"),
-<<<<<<< HEAD
                 meta: {title: "Личный состав ВУЦ", icon: "people"},
-=======
-                meta: { title: "Личный состав ВУЦ", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
         ],
     },
@@ -158,11 +130,7 @@ export const constantRoutes = [
                 path: "",
                 name: "Absence",
                 component: () => import("@/views/Absence/index"),
-<<<<<<< HEAD
                 meta: {title: "Журнал посещаемости", icon: "session-log"},
-=======
-                meta: { title: "Журнал посещаемости", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
         ],
     },
@@ -175,41 +143,11 @@ export const constantRoutes = [
                 path: "",
                 name: "Discipline",
                 component: () => import("@/views/Discipline/index"),
-<<<<<<< HEAD
                 meta: {title: "Дисциплинарный журнал", icon: "cross"},
-=======
-                meta: { title: "Дисциплинарный журнал", icon: "" },
->>>>>>> 8e64f9a (feat: marks page)
             },
         ],
     },
 
-<<<<<<< HEAD
-  {
-    path: "/schedule",
-    component: Layout,
-    children: [
-      {
-        path: "",
-        name: "Schedule",
-        component: () => import("@/views/Schedule/index"),
-        meta: { title: "Расписание занятий", icon: "calendar" },
-      },
-    ],
-  },
-
-  // {
-  //   path: '/mtc_referencebook',
-  //   redirect: '/referencebook',
-  //   component: Layout,
-  //   children: [{
-  //     path: 'referencebook',
-  //     name: 'ReferenceBook',
-  //     component: () => import('@/views/ReferenceBook/index'),
-  //     meta: { title: 'Справочники', icon: '' }
-  //   }]
-  // },
-=======
     {
         path: "/schedule",
         component: Layout,
@@ -247,7 +185,6 @@ export const constantRoutes = [
     //     meta: { title: 'Справочники', icon: '' }
     //   }]
     // },
->>>>>>> 8e64f9a (feat: marks page)
 
     // {
     //   path: 'external-link',
