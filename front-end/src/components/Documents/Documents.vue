@@ -2,7 +2,7 @@
   <div>
     <div v-if="documents.length !== 0" class="my-document">
       <div class="count">
-        {{ count }}
+        {{ count || 0 }}
         {{ `документ${(count > 4 && "ов") || (count > 1 && "а") || ""}` }}
       </div>
 
@@ -112,6 +112,7 @@ export default {
   },
   watch: {
     $route() {
+      this.count = null
       this.documents = []
       this.fetchData()
     },
@@ -126,20 +127,12 @@ export default {
       paperToEdit: {},
     };
   },
-
   async mounted() {
     await this.fetchData();
     EventBus.$on("UPDATE_EVENT", () => {
       this.fetchData();
     });
   },
-
-  computed: {
-    count() {
-      return this.documents.length;
-    },
-  },
-
   methods: {
     moment,
     loadMore() {
@@ -208,31 +201,32 @@ export default {
     },
 
     async fetchData() {
-      if (this.documents.length <= this.count)
+      if (this.documents.length < this.count || this.count === null) {
         this.loading = true
-      const author = this.$route.query.author;
-      const place = this.$route.query.place;
-      const start_date = this.$route.query.start_date;
-      const end_date = this.$route.query.end_date;
-      const text = this.$route.query.text;
-      const category = this.$route.query.category;
+        const author = this.$route.query.author;
+        const place = this.$route.query.place;
+        const start_date = this.$route.query.start_date;
+        const end_date = this.$route.query.end_date;
+        const text = this.$route.query.text;
+        const category = this.$route.query.category;
 
-      try {
-        const {data} = await getDocuments(
-            category,
-            author,
-            place,
-            start_date,
-            end_date,
-            text,
-            this.limit,
-            this.documents.length
-        )
-        this.documents = [...this.documents, ...data.results]
-        this.count = data.count
-        this.loading = false
-      } catch (error) {
-        console.log("Failed to fetch Papers: ", error);
+        try {
+          const {data} = await getDocuments(
+              category,
+              author,
+              place,
+              start_date,
+              end_date,
+              text,
+              this.limit,
+              this.documents.length
+          )
+          this.documents = [...this.documents, ...data.results]
+          this.count = data.count
+          this.loading = false
+        } catch (error) {
+          console.log("Failed to fetch Papers: ", error);
+        }
       }
     },
   },

@@ -7,7 +7,7 @@
         @close-modal="showModal = false"
     />
     <SearchBar placeholder="Введите название книги" :search="searchBook" :delete="deleteSearchInput"/>
-    <CustomText :mt="SIZES.m" variant="paragraph">Найдено: {{ count }}</CustomText>
+    <CustomText :mt="SIZES.m" variant="paragraph">Найдено: {{ count || 0 }}</CustomText>
     <el-row>
       <el-col :span="18">
         <div class="sort mt-3 mb-3">
@@ -70,7 +70,7 @@ export default {
       limit: 10,
       books: [],
       loading: false,
-      count: 0,
+      count: null,
       sortTypes: [
         {
           key: '-publication_year',
@@ -128,7 +128,7 @@ export default {
       this.fetchData()
     },
     fetchData() {
-      if (this.books.length <= this.count) {
+      if (this.books.length < this.count || this.count === null) {
         this.loading = true
         const {author, subject, year} = this.$route.query
         getBooks(this.lodash.pickBy({
@@ -159,6 +159,7 @@ export default {
   },
   watch: {
     $route() {
+      this.count = null
       this.books = []
       this.fetchData()
     },
