@@ -4,18 +4,25 @@
       <el-row class="pageTitle">
         <h1>{{ this.$route.meta.title }}</h1>
       </el-row>
-      <el-row>
-        <el-tabs v-model="filter.subject_id" @tab-click="fetchData()">
-          <el-tab-pane
-            v-for="item in subjects"
-            :key="item.id"
-            :label="item.title"
-            :name="item.id"
+      <el-row class="filterRow" style="margin-bottom: 15px" :gutter="20">
+        <el-col :offset="11" :span="6">
+          <el-select
+            filterable
+            v-model="filter.subject_id"
+            placeholder="Дисциплина"
+            style="display: block"
+            @change="fetchData()"
           >
-          </el-tab-pane></el-tabs
-      ></el-row>
-      <el-row class="filterRow" style="margin-bottom: 15px">
-        <el-col :offset="17" :span="5">
+            <el-option
+              v-for="item in subjects"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col :span="5">
           <el-date-picker
             v-model="filter.dateRange"
             type="daterange"
@@ -33,7 +40,7 @@
           </el-date-picker>
         </el-col>
       </el-row>
-      <el-tabs tab-position="left" v-model="filter.mg" @tab-click="fetchData()">
+      <el-tabs tab-position="left" v-model="filter.mg" @tab-click="fetchData()" class="my-tabs">
         <el-tab-pane
           v-for="mg in milgroups"
           :key="mg.milgroup"
@@ -186,7 +193,7 @@
             style="display: block"
           >
             <el-option
-              v-for="item in mark_types"
+              v-for="item in lesson_types"
               :key="item"
               :label="item"
               :value="item"
@@ -224,25 +231,21 @@ export default {
       editMarkFullname: "",
       editMark: {
         id: 0,
-        subject: {
+        student: {
+
+        },
+        lesson: {
           id: 0,
           title: "",
         },
-        milgroup: {
-          milgroup: null,
-          milfaculty: "",
-        },
-        date: "",
-        ordinal: 0,
-        mark_type: "",
-        room: "",
+        mark: 0,
       },
       filter: {
         subject_id: null,
         mg: null,
         dateRange: [
+          moment().add(-3, "months").format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
-          moment().add(1, "months").format("YYYY-MM-DD"),
         ],
       },
       lesson_types: [
@@ -251,7 +254,6 @@ export default {
         "Групповое занятие",
         "Практическое занятие",
       ],
-      rooms: ["510", "501", "502", "503", "504", "Плац"],
       milgroups: [
         {
           milgroup: "1807",
@@ -301,8 +303,8 @@ export default {
       },
     };
   },
-  created() {
-    this.getSubjects();
+  async created() {
+    await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
     this.filter.mg = this.milgroups[0].milgroup;
     this.fetchData();
@@ -327,6 +329,7 @@ export default {
       if (this.filter.mg > 0) {
         getMarkJournal({
           milgroup: this.filter.mg,
+          subject: this.filter.subject_id,
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
         })
@@ -336,22 +339,17 @@ export default {
           .catch((err) => getError("расписания", err.response.status));
       }
     },
-    getSubjects() {
-      getSubjects()
-        .then((response) => {
-          this.subjects = response.data;
-        })
-        .catch((err) => getError("дисциплин", err.response.status));
+    async getSubjects() {
+      this.subjects = (await getSubjects()).data;
     },
 
-    onCreate(ordinal, date) {
+    onCreate(student, discipline, date) {
       this.editMark = {
-        ordinal,
         date,
         milgroup: { milgroup: this.filter.mg },
         subject: {},
       };
-      this.editMarkFullname = "Новое занятие";
+      this.editMarkFullname = student.fullname;
       this.getSubjects();
       this.dialogVisible = true;
     },
@@ -360,7 +358,7 @@ export default {
       this.editMark.milgroup = {
         milgroup: this.editMark.milgroup.milgroup,
       };
-      this.editMarkFullname = "Редактирование занятия";
+      this.editMarkFullname = row.student.fullname;
       this.getSubjects();
       this.dialogVisible = true;
     },
