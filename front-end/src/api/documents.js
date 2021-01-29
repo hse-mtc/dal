@@ -6,7 +6,9 @@ export function getDocuments(
   published_places,
   start_date,
   end_date,
-  text
+  text,
+  limit,
+  offset
 ) {
   return request({
     url: "/dms/papers/",
@@ -18,6 +20,8 @@ export function getDocuments(
       start_date: start_date,
       end_date: end_date,
       search: text,
+      limit: limit,
+      offset: offset
     },
   });
 }
