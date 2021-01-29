@@ -358,6 +358,7 @@ def create_books(authors, files, publishers, subjects):
         book, is_created = Book.objects.get_or_create(
             title=random.choice(titles),
             file=file,
+            page_count=random.randint(100, 300),
         )
 
         if not is_created:
