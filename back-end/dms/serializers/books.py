@@ -42,7 +42,7 @@ class BookSerializer(DocumentSerializer):
 
 
 class BookMutateSerializer(DocumentMutateSerializer):
-    image = serializers.ImageField(write_only=True)
+    image = serializers.ImageField(write_only=True, required=False)
 
     class Meta:
         model = Book
