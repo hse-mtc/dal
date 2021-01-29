@@ -58,24 +58,54 @@ def create_super_user():
     profile.save()
 
 
-def create_test_user():
-    if User.objects.filter(username="test").exists():
-        return
+def create_test_users():
+    if not User.objects.filter(username="test").exists():
+        test_user = User.objects.create_user(
+            username="test",
+            password="qwerty",
+            is_staff=True,
+        )
+        test_user.save()
 
-    test_user = User.objects.create_user(
-        username="test",
-        password="qwerty",
-        is_staff=True,
-    )
-    test_user.save()
+        profile, _ = Profile.objects.get_or_create(
+            surname="Фамилия",
+            name="Имя",
+            patronymic="Отчество",
+            user=test_user,
+        )
+        profile.save()
 
-    profile, _ = Profile.objects.get_or_create(
-        surname="Фамилия",
-        name="Имя",
-        patronymic="Отчество",
-        user=test_user,
-    )
-    profile.save()
+    if not User.objects.filter(username="student").exists():
+        test_user = User.objects.create_user(
+            username="student",
+            password="qwerty",
+            is_staff=True,
+        )
+        test_user.save()
+
+        profile, _ = Profile.objects.get_or_create(
+            surname="Студентов",
+            name="Студент",
+            patronymic="Студентович",
+            user=test_user,
+        )
+        profile.save()
+
+    if not User.objects.filter(username="teacher").exists():
+        test_user = User.objects.create_user(
+            username="teacher",
+            password="qwerty",
+            is_staff=True,
+        )
+        test_user.save()
+
+        profile, _ = Profile.objects.get_or_create(
+            surname="Преподов",
+            name="Препод",
+            patronymic="Преподович",
+            user=test_user,
+        )
+        profile.save()
 
 
 def create_users():
@@ -86,7 +116,7 @@ def create_users():
     """
 
     create_super_user()
-    create_test_user()
+    create_test_users()
 
 
 def create_authors() -> tp.List[Author]:
@@ -414,7 +444,8 @@ def populate(request: Request) -> Response:
     students.permissions.set(create_student_permissions(content_type))
     teachers.permissions.set(create_teacher_permissions(content_type))
 
-    students.user_set.add(User.objects.get(username="test"))
+    students.user_set.add(User.objects.get(username="student"))
+    teachers.user_set.add(User.objects.get(username="teacher"))
 
     # other dms models population
     authors = create_authors()
