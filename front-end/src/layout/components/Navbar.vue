@@ -1,11 +1,5 @@
 <template>
   <div class="mynavbar">
-    <hamburger
-      :is-active="sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
-
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
@@ -31,21 +25,16 @@
 <script>
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
-import Hamburger from "@/components/Hamburger";
 import LocalStorageService from "@/utils/LocalStorageService";
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger,
   },
   computed: {
     ...mapGetters(["sidebar", "name"]),
   },
   methods: {
-    toggleSideBar() {
-      this.$store.dispatch("app/toggleSideBar");
-    },
     logout() {
       const localStorageService = LocalStorageService.getService();
       localStorageService.clearToken();
@@ -57,29 +46,17 @@ export default {
 
 <style lang="scss" scoped>
 .mynavbar {
-  height: 50px;
+  height: 56px;
   overflow: hidden;
   position: relative;
-  /*background: #fff;*/
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   background-color: #2d3746;
   color: #fff !important;
 
-  .hamburger-container {
-    margin-left: 60px;
-    line-height: 46px;
-    height: 100%;
-    float: left;
-    cursor: pointer;
-    transition: background 0.3s;
-    -webkit-tap-highlight-color: transparent;
-
-    &:hover {
-      background: rgba(0, 0, 0, 0.025);
-    }
-  }
-
   .breadcrumb-container {
+    height: 56px;
+    display: flex;
+    align-items: center;
     float: left;
     color: #fff;
     color: #fff !important;
@@ -89,7 +66,7 @@ export default {
     margin-right: 120px;
     float: right;
     height: 100%;
-    line-height: 50px;
+    line-height: 56px;
 
     &:focus {
       outline: none;

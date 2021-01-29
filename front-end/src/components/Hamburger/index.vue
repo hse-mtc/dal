@@ -1,8 +1,11 @@
 <template>
-  <div style="padding: 0 15px" @click="toggleClick">
+  <div
+    :class="['hamburger', {'is-active': isActive}]"
+    @click="toggleClick"
+  >
     <svg
       width="25"
-      height="18"
+      height="25"
       viewBox="0 0 25 18"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -33,13 +36,12 @@ export default {
 
 <style scoped>
 .hamburger {
-  display: inline-block;
-  vertical-align: middle;
-  width: 20px;
-  height: 20px;
+  transition: 0.5s;
+  height: 25px;
+  width: 25px;
 }
 
-.hamburger.is-active {
-  transform: rotate(180deg);
+.is-active {
+  transform: rotate(90deg);
 }
 </style>
