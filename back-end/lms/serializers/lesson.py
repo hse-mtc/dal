@@ -50,6 +50,12 @@ class LessonSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
+class LessonShortSerializer(LessonSerializer):
+    milgroup = None
+    class Meta:
+        model = Lesson
+        exclude = ['milgroup']
+
 class LessonJournalGetQuerySerializer(Serializer):
     milgroup = IntegerField(
         required=True,

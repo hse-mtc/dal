@@ -10,7 +10,7 @@ from lms.models.lesson import Lesson
 from lms.models.mark import Mark
 from lms.models.student import Student
 from lms.models.common import Milgroup
-from lms.serializers.lesson import LessonSerializer
+from lms.serializers.lesson import LessonSerializer, LessonShortSerializer
 from lms.serializers.student import StudentShortSerializer
 
 from lms.validators import PresentInDatabaseValidator
@@ -45,7 +45,7 @@ class MarkJournalGetQuerySerializer(Serializer):
     date_to = DateField(required=False)
     subject = CharField(
         required=True,
-        validators=[PresentInDatabaseValidator(Subject, 'title')]
+        validators=[PresentInDatabaseValidator(Subject, 'id')]
     )
 
     def validate(self, attrs):
@@ -62,10 +62,11 @@ class MarkJournalGetQuerySerializer(Serializer):
 
 
 class MarkShortSerializer(ModelSerializer):
+    lesson = LessonShortSerializer(read_only=True)
 
     class Meta:
         model = Mark
-        fields = ['id', 'mark']
+        fields = ['id', 'mark', 'lesson']
 
 
 class MarkJouralSerializer(ModelSerializer):
@@ -82,6 +83,6 @@ class MarkJouralSerializer(ModelSerializer):
     def get_marks(self, obj):
         marks = obj.mark_set.filter(
             lesson__date__in=self.context['date_range'],
-            lesson__subject__title=self.context['subject']
+            lesson__subject__id=self.context['subject']
         )
         return MarkShortSerializer(marks, many=True).data
