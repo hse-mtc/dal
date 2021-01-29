@@ -1,4 +1,5 @@
 import uuid
+import datetime
 
 from django.db import models
 
@@ -41,6 +42,7 @@ class Document(models.Model):
     user = models.ForeignKey(to=User,
                              on_delete=models.SET_DEFAULT,
                              default=super_user_id)
+    upload_date = models.DateField(default=datetime.date.today)
 
     class Meta:
         abstract = True
