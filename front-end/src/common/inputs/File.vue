@@ -22,7 +22,7 @@
         size="small"
         type="primary"
       >
-        Выберете файл
+        Выберите файл
       </el-button>
     </el-upload>
   </InputsBase>
