@@ -1,6 +1,10 @@
 <template>
   <div class="root">
-    <PageHeader title="Библиотека" button="+ Добавить учебник" :click="addNewBook"/>
+    <PageHeader
+      title="Библиотека"
+      button="+ Добавить учебник"
+      :click="addNewBook"
+    />
     <Modal
         :opened="showModal"
         :submit-callback="fetchData"
@@ -11,7 +15,9 @@
     <el-row>
       <el-col :span="18">
         <div class="sort mt-3 mb-3">
-          <CustomText variant="sub-header" :mr="SIZES.m">Сортировать</CustomText>
+          <CustomText variant="sub-header" :mr="SIZES.m"
+            >Сортировать</CustomText
+          >
           <el-select
               v-model="sort"
               placeholder="Выберите тип причины"
@@ -43,7 +49,7 @@
 </template>
 
 <script>
-import {SIZES} from "@/utils/appConsts"
+import { SIZES } from "@/utils/appConsts";
 import PageHeader from "@/common/PageHeader";
 import SearchBar from "@/common/SearchBar";
 import Modal from "./LibraryModal.vue";
@@ -73,21 +79,21 @@ export default {
       count: null,
       sortTypes: [
         {
-          key: '-publication_year',
-          label: 'По году ↓'
+          key: "-publication_year",
+          label: "По году ↓",
         },
         {
-          key: 'publication_year',
-          label: 'По году ↑'
+          key: "publication_year",
+          label: "По году ↑",
         },
         {
-          key: '-title',
-          label: 'По названию ↓'
+          key: "-title",
+          label: "По названию ↓",
         },
         {
-          key: 'title',
-          label: 'По названию ↑'
-        }
+          key: "title",
+          label: "По названию ↑",
+        },
       ],
       showModal: false,
     };
@@ -121,7 +127,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchData()
+    this.fetchData();
   },
   methods: {
     loadMore() {
@@ -148,13 +154,13 @@ export default {
       }
     },
     addNewBook() {
-      this.showModal = true
+      this.showModal = true;
     },
     searchBook(value) {
-      this.search = value
+      this.search = value;
     },
     deleteSearchInput() {
-      this.search = ''
+      this.search = "";
     },
   },
   watch: {
@@ -164,14 +170,13 @@ export default {
       this.fetchData()
     },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
 @import "@/styles/variables.scss";
 
 .root {
-
 }
 
 .sort {

@@ -23,7 +23,12 @@
           </el-date-picker>
         </el-col>
       </el-row>
-      <el-tabs tab-position="left" v-model="filter.mg" @tab-click="fetchData()" class="my-tabs">
+      <el-tabs
+        tab-position="left"
+        v-model="filter.mg"
+        @tab-click="fetchData()"
+        class="my-tabs"
+      >
         <el-tab-pane
           v-for="mg in milgroups"
           :key="mg.milgroup"

@@ -2,30 +2,59 @@
   <el-row>
     <el-col :span="20" :offset="2">
       <div class="book-header" @click="$router.go(-1)">
-        <img src="@/assets/icons/arrow-back.svg" alt="">
-        <CustomText variant="label-1" :color="COLORS.gray_2">Все учебники</CustomText>
+        <img src="@/assets/icons/arrow-back.svg" alt="" />
+        <CustomText variant="label-1" :color="COLORS.gray_2"
+          >Все учебники</CustomText
+        >
       </div>
       <div class="my-loading" v-loading="loading">
         <div class="wrapper" v-if="book">
           <div :id="`loader__${book.id}`" class="file-img">
             <div class="lds-dual-ring" />
-            <img class="file-image" :src="book.cover ? book.cover.image : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'" alt="">
+            <img
+              class="file-image"
+              :src="
+                book.cover
+                  ? book.cover.image
+                  : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'
+              "
+              alt=""
+            />
           </div>
           <div class="content">
-            <CustomText variant="page-header-1" :mb="SIZES.m">{{book.title}}</CustomText>
-            <CustomText :custom-style="{fontWeight: 'normal'}" variant="header" :color="COLORS.gray_2" v-for="item in book.authors" :key="item.id" >
-              {{item.surname}} {{item.name}} {{item.patronymic}}
+            <CustomText variant="page-header-1" :mb="SIZES.m">{{
+              book.title
+            }}</CustomText>
+            <CustomText
+              :custom-style="{ fontWeight: 'normal' }"
+              variant="header"
+              :color="COLORS.gray_2"
+              v-for="item in book.authors"
+              :key="item.id"
+            >
+              {{ item.surname }} {{ item.name }} {{ item.patronymic }}
             </CustomText>
             <div class="additional-info">
-
-              <CustomText :custom-style="{fontWeight: 'normal'}" variant="header">{{book.publishers[0].name}}</CustomText>
+              <CustomText
+                :custom-style="{ fontWeight: 'normal' }"
+                variant="header"
+                >{{ book.publishers[0].name }}</CustomText
+              >
               <template v-if="book.page_count">
-                <img src="@/assets/icons/dot.svg" alt="">
-                <CustomText :custom-style="{fontWeight: 'normal'}" variant="header">{{book.page_count}} печат. страниц</CustomText>
+                <img src="@/assets/icons/dot.svg" alt="" />
+                <CustomText
+                  :custom-style="{ fontWeight: 'normal' }"
+                  variant="header"
+                  >{{ book.page_count }} печат. страниц</CustomText
+                >
               </template>
               <template v-if="book.publication_year">
-                <img src="@/assets/icons/dot.svg" alt="">
-                <CustomText :custom-style="{fontWeight: 'normal'}" variant="header">{{book.publication_year}} г.</CustomText>
+                <img src="@/assets/icons/dot.svg" alt="" />
+                <CustomText
+                  :custom-style="{ fontWeight: 'normal' }"
+                  variant="header"
+                  >{{ book.publication_year }} г.</CustomText
+                >
               </template>
             </div>
 
@@ -33,13 +62,19 @@
               Скачать
             </div>
 
-            <CustomText variant="header" :mt="SIZES.xxxl" :mb="SIZES.m">О книге</CustomText>
-            <CustomText variant="paragraph">{{book.annotation}}</CustomText>
+            <CustomText variant="header" :mt="SIZES.xxxl" :mb="SIZES.m"
+              >О книге</CustomText
+            >
+            <CustomText variant="paragraph">{{ book.annotation }}</CustomText>
 
-            <CustomText variant="header" :mt="SIZES.xxxl" :mb="SIZES.m">Предметы</CustomText>
+            <CustomText variant="header" :mt="SIZES.xxxl" :mb="SIZES.m"
+              >Предметы</CustomText
+            >
             <div class="subjects">
               <div class="subject" v-for="item in book.subjects" :key="item.id">
-                <CustomText variant="label-1" :color="COLORS.gray_4">{{item.title}}</CustomText>
+                <CustomText variant="label-1" :color="COLORS.gray_4">{{
+                  item.title
+                }}</CustomText>
               </div>
             </div>
           </div>
@@ -50,46 +85,43 @@
 </template>
 
 <script>
-
-
 import CustomText from "@/common/CustomText";
-import {COLORS, SIZES} from "@/utils/appConsts";
-import {getBook} from "@/api/books";
+import { COLORS, SIZES } from "@/utils/appConsts";
+import { getBook } from "@/api/books";
 import axios from "axios";
 
 export default {
   name: "Book",
-  components: {CustomText},
+  components: { CustomText },
   computed: {},
   created() {
-    this.fetchData()
+    this.fetchData();
   },
   data() {
     return {
       SIZES,
       COLORS,
       book: null,
-      loading: true
-    }
+      loading: true,
+    };
   },
   methods: {
     fetchData() {
-      this.loading = true
-      getBook(this.$route.params.id)
-          .then(res => {
-            console.log('[BOOK]: ', res.data)
-            this.book = res.data
-            this.loading = false
-          })
+      this.loading = true;
+      getBook(this.$route.params.id).then((res) => {
+        console.log("[BOOK]: ", res.data);
+        this.book = res.data;
+        this.loading = false;
+      });
     },
     async downloadFile(file, id) {
-      document.getElementById(`loader__${id}`).classList.add('loading')
+      document.getElementById(`loader__${id}`).classList.add("loading");
       let data;
       try {
         ({ data } = await axios.get(file.content, { responseType: "blob" }));
       } catch (error) {
         console.log("Failed to download Book.file: ", error);
-        document.getElementById(`loader__${id}`).classList.remove('loading')
+        document.getElementById(`loader__${id}`).classList.remove("loading");
         return;
       }
 
@@ -102,7 +134,7 @@ export default {
 
       link.click();
       URL.revokeObjectURL(link.href);
-      document.getElementById(`loader__${id}`).classList.remove('loading')
+      document.getElementById(`loader__${id}`).classList.remove("loading");
     },
   },
 };
@@ -129,7 +161,6 @@ export default {
 
 .my-loading {
   min-height: 50vh;
-
 }
 
 .content {
@@ -215,6 +246,6 @@ export default {
   background: $lightGray;
   border-radius: $xs;
   padding: 6px 8px;
-  margin-right: $m;;
+  margin-right: $m;
 }
 </style>

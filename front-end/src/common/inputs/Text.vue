@@ -17,20 +17,18 @@
 </template>
 
 <script>
-import mixin from './inputsMixin'
+import mixin from "./inputsMixin";
 
 export default {
   mixins: [mixin],
-  name: 'TextInput',
+  name: "TextInput",
   props: {
-    isTextArea: {type: Boolean, default: false},
+    isTextArea: { type: Boolean, default: false },
   },
   computed: {
     type() {
-      return this.isTextArea
-        ? 'textarea'
-        : 'text'
-    }
-  }
-}
+      return this.isTextArea ? "textarea" : "text";
+    },
+  },
+};
 </script>

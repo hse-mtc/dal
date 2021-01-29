@@ -17,8 +17,8 @@ export function getBook(id) {
 
 export function uploadBook(data) {
   return request({
-    url: '/dms/books/',
-    method: 'POST',
+    url: "/dms/books/",
+    method: "POST",
     data,
-  })
+  });
 }

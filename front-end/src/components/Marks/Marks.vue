@@ -40,7 +40,12 @@
           </el-date-picker>
         </el-col>
       </el-row>
-      <el-tabs tab-position="left" v-model="filter.mg" @tab-click="fetchData()" class="my-tabs">
+      <el-tabs
+        tab-position="left"
+        v-model="filter.mg"
+        @tab-click="fetchData()"
+        class="my-tabs"
+      >
         <el-tab-pane
           v-for="mg in milgroups"
           :key="mg.milgroup"
@@ -48,7 +53,7 @@
           :name="mg.milgroup"
         >
           <el-table
-            :data="journal.ordinals"
+            :data="journal.students"
             style="width: 100%"
             height="730"
             :default-sort="{
@@ -59,10 +64,10 @@
             border
           >
             <el-table-column
-              label="№"
-              prop="ordinal"
-              align="center"
-              width="40"
+              label="ФИО"
+              prop="fullname"
+              width="250"
+              show-overflow-tooltip
               fixed
             />
             <el-table-column
@@ -77,7 +82,6 @@
                 <div class="mark-journal-cell">
                   <el-popover
                     v-if="scope.row.marks.some((x) => x.date == d)"
-                    placement="right"
                     trigger="hover"
                   >
                     <div class="text-center">
@@ -102,30 +106,16 @@
                         "
                       />
                     </div>
-                    <div slot="reference">
-                      <div>
-                        <svg-icon icon-class="notebook-outline" />
-                        {{
-                          scope.row.marks.find((x) => x.date == d).subject.title
-                        }}
-                      </div>
-
-                      <div>
-                        <svg-icon icon-class="map-marker-outline" />
-                        {{ scope.row.marks.find((x) => x.date == d).room }}
-                      </div>
-
-                      <el-tag
-                        :type="
-                          tagByLessonType(
-                            scope.row.marks.find((x) => x.date == d).mark_type
-                          )
-                        "
-                        disable-transitions
-                      >
-                        {{ scope.row.marks.find((x) => x.date == d).mark_type }}
-                      </el-tag>
-                    </div>
+                    <el-tag
+                      slot="reference"
+                      :type="
+                        tagByMark(scope.row.marks.find((x) => x.date == d).mark)
+                      "
+                      effect="dark"
+                      disable-transitions
+                    >
+                      {{ scope.row.marks.find((x) => x.date == d).mark }}
+                    </el-tag>
                   </el-popover>
                   <el-button
                     v-else
@@ -231,9 +221,7 @@ export default {
       editMarkFullname: "",
       editMark: {
         id: 0,
-        student: {
-
-        },
+        student: {},
         lesson: {
           id: 0,
           title: "",
@@ -324,6 +312,15 @@ export default {
         default:
           return "info";
       }
+    },
+    tagByMark(mark) {
+      if (mark >= 8) {
+        return "primary";
+      } else if (mark >= 6) {
+        return "success";
+      } else if (mark >= 4) {
+        return "warning";
+      } else return "danger";
     },
     fetchData() {
       if (this.filter.mg > 0) {

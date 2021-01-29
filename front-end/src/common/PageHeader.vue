@@ -13,7 +13,7 @@ import CustomText from "@/common/CustomText";
 export default {
   name: "PageHeader",
   components: {
-    CustomText
+    CustomText,
   },
   props: {
     title: {
@@ -24,10 +24,10 @@ export default {
       type: String,
     },
     click: {
-      type: Function
-    }
+      type: Function,
+    },
   },
-}
+};
 </script>
 
 <style scoped lang="scss">
