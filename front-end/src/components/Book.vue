@@ -2,7 +2,7 @@
   <div class="wrapper">
     <div :id="`loader__${data.id}`" class="file-img" @click="$router.push(`/library/book/${data.id}`)">
       <div class="lds-dual-ring" />
-      <img class="file-image" :src="data.cover ? data.cover : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'" alt="">
+      <img class="file-image" :src="data.cover ? data.cover.image : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'" alt="">
     </div>
     <div class="content">
       <div @click="$router.push(`/library/book/${data.id}`)">
@@ -114,6 +114,7 @@ export default {
   width: 120px;
   height: 170px;
   border-radius: $s;
+  object-fit: cover;
 }
 
 .content {

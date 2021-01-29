@@ -184,7 +184,7 @@ export default {
         })))
 
         if (data.bookCover.length) {
-          formData.set('cover', this.formValues.bookCover[0].raw)
+          formData.set('image', this.formValues.bookCover[0].raw)
         }
 
         formData.set('content', this.formValues.book[0].raw)

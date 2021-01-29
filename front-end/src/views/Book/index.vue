@@ -9,7 +9,7 @@
         <div class="wrapper" v-if="book">
           <div :id="`loader__${book.id}`" class="file-img">
             <div class="lds-dual-ring" />
-            <img class="file-image" :src="book.cover ? book.cover : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'" alt="">
+            <img class="file-image" :src="book.cover ? book.cover.image : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'" alt="">
           </div>
           <div class="content">
             <CustomText variant="page-header-1" :mb="SIZES.m">{{book.title}}</CustomText>
@@ -151,6 +151,7 @@ export default {
   height: 254px;
   border-radius: $s;
   margin-right: $xxl;
+  object-fit: cover;
 }
 
 .file-img {
