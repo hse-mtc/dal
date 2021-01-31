@@ -12,7 +12,7 @@ jobs:
       - name: "Build back end Docker container"
         run:  docker-compose build back-end
       - name: "Run Postgres in background"
-        run:  docker-compose run -d postgres
+        run:  docker-compose up -d postgres
       - name: "Run tests"
         run:  docker-compose run back-end scripts/test.sh
       - name: "Check code style"
