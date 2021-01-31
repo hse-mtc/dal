@@ -10,7 +10,7 @@ apt-get install -y lsb-release
 
 # Let `apt` know about Postgres repositories
 # Taken from here: https://wiki.postgresql.org/wiki/Apt
-apt-get install curl ca-certificates gnupg
+apt-get install -y curl ca-certificates gnupg
 curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
