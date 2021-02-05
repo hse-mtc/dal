@@ -19,8 +19,11 @@ from rest_framework.decorators import (
 
 from auth.models import Profile
 
-from dms.models.books import Book
 from dms.models.documents import File
+from dms.models.books import (
+    Book,
+    FavoriteBook,
+)
 from dms.models.papers import (
     Category,
     Paper,
@@ -428,6 +431,15 @@ def create_books(authors, files, publishers, subjects):
     return books
 
 
+def create_favorite_books(books, user):
+    for book in books:
+        FavoriteBook.objects.get_or_create(
+            book=book,
+            user=user
+        )
+
+
+
 def create_permissions_for_a_view(view_name, view_name_rus):
     get_str = ": получение данных"
     post_str = ": добавление данных"
@@ -611,11 +623,12 @@ def populate(request: Request) -> Response:
         files=files,
         topics=topics,
     )
-    create_books(
+    books = create_books(
         authors=authors,
         files=files,
         publishers=publishers,
         subjects=subjects,
     )
+    create_favorite_books(books[:11], User.objects.get(username="vspelyak"))
 
     return Response(status=HTTP_200_OK)
