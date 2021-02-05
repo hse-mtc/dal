@@ -4,7 +4,7 @@ from rest_framework.serializers import (Serializer, ModelSerializer,
 from rest_framework.serializers import ValidationError
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.models.absence import Absence
+from lms.models.absence import Absence, AbsenceTime
 from lms.models.student import Student
 from lms.models.common import Milgroup
 
@@ -64,3 +64,10 @@ class AbsenceJournalSerializer(ModelSerializer):
     def get_absences(self, obj):
         absences = obj.absence_set.filter(date__in=self.context['date_range'])
         return AbsenceShortSerializer(absences, many=True).data
+
+
+class AbsenceTimeSerializer(ModelSerializer):
+
+    class Meta:
+        model = AbsenceTime
+        fields = '__all__'

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -10,7 +10,8 @@ from rest_framework.decorators import api_view
 from lms.models.common import Milfaculty, Milgroup
 from lms.models.student import Status, Program, Student
 from lms.models.teacher import Rank, TeacherPost, Teacher
-from lms.models.absence import AbsenceStatus, AbsenceType, Absence
+from lms.models.absence import (AbsenceStatus, AbsenceType,
+                                Absence, AbsenceTime)
 from lms.models.encouragement import EncouragementType, Encouragement
 from lms.models.punishment import PunishmentType, Punishment
 from lms.models.achievement import AchievementType, Achievement
@@ -657,6 +658,13 @@ def create_marks(lessons: list[Lesson], students: dict[str, Student]):
         mark.save()
 
 
+def create_absence_restriction_time():
+    restriction_time = time(hour=9, minute=15)
+    AbsenceTime.objects.create(
+        absence_restrinction_time=restriction_time
+    )
+
+
 # pylint: disable=(too-many-locals)
 @api_view(['POST'])
 @permission_classes((AllowAny,))
@@ -704,6 +712,7 @@ def lms_populate(request: Request) -> Response:
                              nearest_day)
 
     create_marks(lessons, students)
+    create_absence_restriction_time()
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)

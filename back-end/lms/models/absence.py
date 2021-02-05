@@ -45,3 +45,14 @@ class Absence(models.Model):
         unique_together = (('date', 'student'),)
         verbose_name = 'Absence Journal'
         verbose_name_plural = 'Absence Journal'
+
+
+class AbsenceTime(models.Model):
+    absence_restrinction_time = models.TimeField()
+
+    def __str__(self):
+        return self.absence_restrinction_time
+
+    class Meta:
+        verbose_name = 'Abcense Time'
+        verbose_name_plural = 'Abcense Time'
