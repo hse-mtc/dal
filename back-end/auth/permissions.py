@@ -16,6 +16,5 @@ class BasicPermission(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
         # check for method permission
-        print(self.permission_class + '_' + request.method.lower())
         return request.user.has_perm(self.permission_class + '_' +
                                      request.method.lower())
