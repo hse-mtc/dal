@@ -4,11 +4,16 @@ from datetime import datetime
 from api.client import client
 
 
-async def get_restriction_time() -> str:
+async def fetch_restriction_time() -> str:
     async with client.get('lms/absence-time/') as response:
-        print(response.text)
         data: list[dict[str, tp.Any]] = await response.json()
     return data['absence_restrinction_time']
+
+
+def utc_to_local(utc_dt: datetime) -> datetime:
+    local_tz = pytz.timezone('Europe/Moscow')
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_dt)
 
 
 async def absence_report_overdue() -> bool:
@@ -16,9 +21,3 @@ async def absence_report_overdue() -> bool:
     local_now = utc_to_local(utc_now).strftime('%H:%M:%S')
     restriction_time = await get_restriction_time()
     return restriction_time >= local_now
-
-
-def utc_to_local(utc_dt: datetime) -> datetime:
-    local_tz = pytz.timezone('Europe/Moscow')
-    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
-    return local_tz.normalize(local_dt)
