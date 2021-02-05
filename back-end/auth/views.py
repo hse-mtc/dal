@@ -44,6 +44,8 @@ class ProfileRetrieveAPIView(RetrieveAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
+    permission_classes = [permissions.IsAuthenticated]
+
     def get_object(self):
         queryset = self.filter_queryset(self.get_queryset())
         obj = get_object_or_404(queryset, user=self.request.user)
