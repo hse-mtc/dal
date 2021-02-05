@@ -10,8 +10,8 @@ from rest_framework.decorators import api_view
 from lms.models.common import Milfaculty, Milgroup
 from lms.models.student import Status, Program, Student
 from lms.models.teacher import Rank, TeacherPost, Teacher
-from lms.models.absence import (AbsenceStatus, AbsenceType,
-                                Absence, AbsenceTime)
+from lms.models.absence import (AbsenceStatus, AbsenceType, Absence,
+                                AbsenceTime)
 from lms.models.encouragement import EncouragementType, Encouragement
 from lms.models.punishment import PunishmentType, Punishment
 from lms.models.achievement import AchievementType, Achievement
@@ -660,9 +660,7 @@ def create_marks(lessons: list[Lesson], students: dict[str, Student]):
 
 def create_absence_restriction_time():
     restriction_time = time(hour=9, minute=15)
-    AbsenceTime.objects.create(
-        absence_restrinction_time=restriction_time
-    )
+    AbsenceTime.objects.create(absence_restrinction_time=restriction_time)
 
 
 # pylint: disable=(too-many-locals)
