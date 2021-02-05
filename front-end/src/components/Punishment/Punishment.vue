@@ -244,7 +244,11 @@
           />
         </el-form-item>
         <el-form-item>
-          <el-checkbox v-model="editPunishment.remove_date">Снято</el-checkbox>
+          <el-checkbox :value="editPunishment.remove_date != null" @change="onRemovePunishmentCheckboxClick" border>{{
+            editPunishment.remove_date != null
+              ? 'Взыскание снято'
+              : "Взыскание НЕ снято"
+          }}</el-checkbox>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -471,6 +475,14 @@ export default {
           })
           .catch((err) => patchError("взыскания", err.response.status));
       });
+    },
+    onRemovePunishmentCheckboxClick() {
+      if (this.editPunishment.remove_date != null) {
+        this.editPunishment.remove_date = null;
+      }
+      else {
+        this.editPunishment.remove_date = moment().format("YYYY-MM-DD");
+      }
     },
   },
 };
