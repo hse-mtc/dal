@@ -9,12 +9,19 @@ from drf_spectacular.views import extend_schema
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from dms.filters import BookFilter
-from dms.models.books import Book
+from dms.filters import (
+    BookFilter,
+    FavoriteBookFilter,
+)
+from dms.models.books import (
+    Book,
+    FavoriteBook
+)
 from dms.serializers.books import (
     BookMutateSerializer,
     BookMutateSerializerForSwagger,
     BookSerializer,
+    FavoriteBookSerializer
 )
 from dms.permissions import (
     IsOwner,
@@ -43,3 +50,15 @@ class BookViewSet(viewsets.ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return BookMutateSerializer
         return BookSerializer
+
+
+@extend_schema(tags=["favorite-books"])
+class FavoriteBookViewSet(viewsets.ModelViewSet):
+    queryset = FavoriteBook.objects.all()
+
+    permission_classes = [ReadOnly | IsOwner]
+    filter_backends = [DjangoFilterBackend]
+
+    filterset_class = FavoriteBookFilter
+
+    serializer_class = FavoriteBookSerializer
