@@ -10,11 +10,12 @@ class DjangoModelPermissionsWithGet(permissions.DjangoModelPermissions):
 
 
 class BasicPermission(permissions.BasePermission):
-    permission_model = ''
+    permission_class = ''
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
             return False
         # check for method permission
-        return request.user.has_perm(self.permission_model + '_' +
-                                     request.method.to_lower())
+        print(self.permission_class + '_' + request.method.lower())
+        return request.user.has_perm(self.permission_class + '_' +
+                                     request.method.lower())
