@@ -1,10 +1,13 @@
 from rest_framework import serializers
 
+from auth.serializers import UserSerializer
+
 from drf_spectacular.utils import inline_serializer
 
 from dms.models.books import (
     Book,
     Cover,
+    FavoriteBook,
 )
 from dms.serializers.documents import (
     DocumentMutateSerializer,
@@ -72,3 +75,12 @@ BookMutateSerializerForSwagger = inline_serializer(
         "data": BookMutateSerializer(),
     },
 )
+
+
+class FavoriteBookSerializer(serializers.ModelSerializer):
+    book = BookSerializer()
+    user = UserSerializer(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = FavoriteBook
+        fields = "__all__"
