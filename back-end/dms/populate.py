@@ -433,11 +433,7 @@ def create_books(authors, files, publishers, subjects):
 
 def create_favorite_books(books, user):
     for book in books:
-        FavoriteBook.objects.get_or_create(
-            book=book,
-            user=user
-        )
-
+        FavoriteBook.objects.get_or_create(book=book, user=user)
 
 
 def create_permissions_for_a_view(view_name, view_name_rus):

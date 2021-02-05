@@ -13,10 +13,7 @@ from dms.filters import (
     BookFilter,
     FavoriteBookFilter,
 )
-from dms.models.books import (
-    Book,
-    FavoriteBook
-)
+from dms.models.books import (Book, FavoriteBook)
 from dms.serializers.books import (
     BookMutateSerializer,
     BookMutateSerializerForSwagger,
