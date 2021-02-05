@@ -21,7 +21,8 @@ from dms.serializers.books import (
     BookMutateSerializer,
     BookMutateSerializerForSwagger,
     BookSerializer,
-    FavoriteBookSerializer
+    FavoriteBookSerializer,
+    FavoriteBookMutateSerializer,
 )
 from dms.permissions import (
     IsOwner,
@@ -61,4 +62,7 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
 
     filterset_class = FavoriteBookFilter
 
-    serializer_class = FavoriteBookSerializer
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return FavoriteBookMutateSerializer
+        return FavoriteBookSerializer

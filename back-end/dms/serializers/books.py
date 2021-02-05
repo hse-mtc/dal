@@ -78,8 +78,15 @@ BookMutateSerializerForSwagger = inline_serializer(
 
 
 class FavoriteBookSerializer(serializers.ModelSerializer):
-    book = BookSerializer()
-    user = UserSerializer(default=serializers.CurrentUserDefault())
+    book = BookSerializer(read_only=True)
+    user = UserSerializer(read_only=True, default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = FavoriteBook
+        fields = "__all__"
+
+
+class FavoriteBookMutateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FavoriteBook
