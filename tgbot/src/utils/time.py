@@ -3,7 +3,7 @@ from datetime import datetime
 
 CHECK_TIME = '09:15'
 
-def check_time() -> bool:
+def absence_report_overdue() -> bool:
     utc_now = datetime.utcnow()
     local_now = utc_to_local(utc_now).strftime('%H:%M')
     return CHECK_TIME >= local_now
