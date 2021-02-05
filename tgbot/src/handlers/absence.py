@@ -19,7 +19,7 @@ from api.absence import post_absence
 from keyboards.inline import student_absence_keyboard
 from keyboards.reply import absence_keyboard, menu_keyboard
 
-from utils.time import absence_report_overdue, CHECK_TIME
+from utils.time import absence_report_overdue, get_restriction_time
 
 MD2 = ParseMode.MARKDOWN_V2
 
@@ -40,10 +40,11 @@ async def get_student(message: Message, state: FSMContext) -> None:
         await message.answer(student.full_name,
                              reply_markup=student_absence_keyboard(student.id))
 
+    restriction_time = await get_restriction_time()
     await message.answer(
         f'После того, как отметите всех студентов, нажмите\n'
         f'кнопку "Отправить данные"\n\n'
-        f'{bold_text(f"Время отправки ограничено до {CHECK_TIME}!")}',
+        f'{bold_text(f"Время отправки ограничено до {restriction_time}!")}',
         parse_mode=MD2,
         reply_markup=absence_keyboard()
     )
@@ -68,10 +69,11 @@ async def callback_query_process(callback_query: CallbackQuery,
 
 
 async def send_absence(message: Message, state: FSMContext) -> None:
-    if not absence_report_overdue():
+    if not await absence_report_overdue():
+        restriction_time = await get_restriction_time()
         await message.answer(
             f'Товарищ командир взвода, время отправки ограничено ' \
-            f'до {CHECK_TIME}!',
+            f'до {restriction_time}!',
             reply_markup=menu_keyboard()
         )
         return

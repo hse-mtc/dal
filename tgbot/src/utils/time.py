@@ -1,12 +1,21 @@
 import pytz
 from datetime import datetime
 
-CHECK_TIME = '09:15'
+from api.client import client
 
-def absence_report_overdue() -> bool:
+
+async def get_restriction_time() -> str:
+    async with client.get('lms/absence-time/') as response:
+        print(response.text)
+        data: list[dict[str, tp.Any]] = await response.json()
+    return data['absence_restrinction_time']
+
+
+async def absence_report_overdue() -> bool:
     utc_now = datetime.utcnow()
-    local_now = utc_to_local(utc_now).strftime('%H:%M')
-    return CHECK_TIME >= local_now
+    local_now = utc_to_local(utc_now).strftime('%H:%M:%S')
+    restriction_time = await get_restriction_time()
+    return restriction_time >= local_now
 
 
 def utc_to_local(utc_dt: datetime) -> datetime:
