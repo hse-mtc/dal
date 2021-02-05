@@ -9,6 +9,7 @@ from aiogram.types import Message
 from aiogram.types import ParseMode
 from aiogram.types import CallbackQuery
 from aiogram.dispatcher.storage import FSMContext
+from aiogram.utils.markdown import bold as bold_text
 
 from api.auth import (session_exists, fetch_user)
 
@@ -17,6 +18,8 @@ from api.absence import post_absence
 
 from keyboards.inline import student_absence_keyboard
 from keyboards.reply import absence_keyboard, menu_keyboard
+
+from utils.time import check_time
 
 MD2 = ParseMode.MARKDOWN_V2
 
@@ -38,9 +41,12 @@ async def get_student(message: Message, state: FSMContext) -> None:
                              reply_markup=student_absence_keyboard(student.id))
 
     await message.answer(
-        'После того, как отметите всех студентов, нажмите\n'
-        'кнопку "Отправить данные"',
-        reply_markup=absence_keyboard())
+        f'После того, как отметите всех студентов, нажмите\n'
+        f'кнопку "Отправить данные"\n\n'
+        f'{bold_text("Время отправки ограничено до 09:15!")}',
+        parse_mode=MD2,
+        reply_markup=absence_keyboard()
+    )
 
 
 async def callback_query_process(callback_query: CallbackQuery,
@@ -62,6 +68,13 @@ async def callback_query_process(callback_query: CallbackQuery,
 
 
 async def send_absence(message: Message, state: FSMContext) -> None:
+    if not check_time():
+        await message.answer(
+            'Товарищ командир взвода, время отправки ограничено ' \
+            'до 09:15!',
+            reply_markup=menu_keyboard()
+        )
+        return
     students = await state.get_data()
     message_text = await post_absence(students)
     await message.answer(message_text, reply_markup=menu_keyboard())
