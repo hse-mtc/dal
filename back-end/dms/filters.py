@@ -46,7 +46,11 @@ class SubjectFilter(filters.FilterSet):
 
 
 class FavoriteBookFilter(filters.FilterSet):
+    start_year = filters.NumberFilter(field_name="book__publication_year",
+                                          lookup_expr="gte")
+    end_year = filters.NumberFilter(field_name="book__publication_year",
+                                        lookup_expr="lte")
 
     class Meta:
         model = FavoriteBook
-        fields = ["user"]
+        fields = ["user", "book__authors", "book__subjects"]
