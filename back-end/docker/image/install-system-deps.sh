@@ -17,5 +17,8 @@ sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg
 # Update system again
 apt-get update
 
-# Install client (its version should preferably match Postgres service image)
+# Install Postgres client (its version should preferably match service image)
 apt-get install -y postgresql-client-13
+
+# Install cron
+apt-get -y install cron
