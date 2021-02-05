@@ -12,11 +12,10 @@ class PermissionSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    permissions = PermissionSerializer(many=True)
 
     class Meta:
         model = Group
-        fields = ["name", "permissions"]
+        fields = ["name"]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -29,6 +28,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
+    permissions = serializers.SerializerMethodField(read_only=True)
+
+    def get_permissions(self, obj):
+        user_perms = Permission.objects.filter(
+            group__user=obj.user.id).values_list("codename", flat=True)
+        return user_perms
 
     class Meta:
         model = Profile
