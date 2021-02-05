@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED
@@ -14,6 +16,7 @@ from lms.models.punishment import PunishmentType, Punishment
 from lms.models.achievement import AchievementType, Achievement
 from lms.models.lesson import Room, LessonType, Lesson
 from lms.models.mark import Mark
+from lms.functions import get_date_range
 
 from common.models.subjects import Subject
 
@@ -266,10 +269,11 @@ def create_absence_statuses():
 # pylint: disable=(too-many-locals)
 def create_absences(types: dict[str, AbsenceType],
                     statuses: dict[str, AbsenceStatus],
-                    students: dict[str, Student]):
+                    students: dict[str, Student], nearest_day: datetime):
+    date_f = '%Y-%m-%d'
     values = [
         {
-            'date': '2020-09-04',
+            'date': (nearest_day - timedelta(7)).strftime(date_f),
             'student': students['Кацевалов'],
             'absence_type': types['Уважительная'],
             'reason': 'Заболел',
@@ -277,7 +281,7 @@ def create_absences(types: dict[str, AbsenceType],
             'comment': 'Болеть будет недолго'
         },
         {
-            'date': '2020-09-11',
+            'date': nearest_day.strftime(date_f),
             'student': students['Хромов'],
             'absence_type': types['Опоздание'],
             'reason': 'Электричка опоздала',
@@ -285,7 +289,7 @@ def create_absences(types: dict[str, AbsenceType],
             'comment': ''
         },
         {
-            'date': '2020-09-18',
+            'date': (nearest_day - timedelta(14)).strftime(date_f),
             'student': students['Хромов'],
             'absence_type': types['Неуважительная'],
             'reason': 'Прогул',
@@ -386,22 +390,23 @@ def create_punishment_types():
 
 
 def create_punishments(punishment_types: dict[str, PunishmentType],
-                       students: dict[str, Student], teachers: dict[str,
-                                                                    Teacher]):
+                       students: dict[str, Student],
+                       teachers: dict[str, Teacher], nearest_day: datetime):
+    date_f = '%Y-%m-%d'
     values = [
         {
             'student': students['Хромов'],
             'reason': 'Не пришел на пары',
             'punishment_type': punishment_types['Взыскание'],
-            'date': '2020-11-10',
+            'date': (nearest_day - timedelta(7)).strftime(date_f),
             'teacher': teachers['Никандров'],
-            'remove_date': '2020-11-13',
+            'remove_date': nearest_day.strftime(date_f),
         },
         {
             'student': students['Исаков'],
             'reason': 'Сломал парту',
             'punishment_type': punishment_types['Выговор'],
-            'date': '2020-11-12',
+            'date': nearest_day.strftime(date_f),
             'teacher': teachers['Репалов'],
             'remove_date': None,
         },
@@ -426,20 +431,21 @@ def create_encouragement_types():
 
 def create_encouragements(encouragement_types: dict[str, EncouragementType],
                           students: dict[str, Student],
-                          teachers: dict[str, Teacher]):
+                          teachers: dict[str, Teacher], nearest_day: datetime):
+    date_f = '%Y-%m-%d'
     values = [
         {
             'student': students['Хромов'],
             'reason': 'За спортивные достижения',
             'encouragement_type': encouragement_types['Благодарность'],
-            'date': '2020-11-10',
+            'date': (nearest_day - timedelta(7)).strftime(date_f),
             'teacher': teachers['Никандров'],
         },
         {
             'student': students['Исаков'],
             'reason': 'За выступление на празднике',
             'encouragement_type': encouragement_types['Снятие взыскания'],
-            'date': '2020-11-12',
+            'date': nearest_day.strftime(date_f),
             'teacher': teachers['Репалов'],
         },
     ]
@@ -461,7 +467,8 @@ def create_achievement_types():
 
 
 def create_achievements(achievement_types: dict[str, AchievementType],
-                        students: dict[str, Student]):
+                        students: dict[str, Student], nearest_day: datetime):
+    date_f = '%Y-%m-%d'
     values = [
         {
             'student': students['Исаков'],
@@ -472,7 +479,7 @@ def create_achievements(achievement_types: dict[str, AchievementType],
             'student': students['Хромов'],
             'text': 'Написал научную статью',
             'achievement_type': achievement_types['Научные'],
-            'date': '2020-11-10',
+            'date': nearest_day.strftime(date_f),
         },
     ]
 
@@ -523,14 +530,15 @@ def create_subjects():
 
 
 def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
-                   milgroups: dict[str, Milgroup], subjects: dict[str,
-                                                                  Subject]):
+                   milgroups: dict[str, Milgroup], subjects: dict[str, Subject],
+                   nearest_day: datetime):
+    date_f = '%Y-%m-%d'
     values = [
         {
             'lesson_type': lesson_types['Лекция'],
             'room': rooms['510'],
             'milgroup': milgroups[1809],
-            'date': '2020-12-18',
+            'date': nearest_day.strftime(date_f),
             'ordinal': 1,
             'subject': subjects['Тактическая подготовка'],
         },
@@ -538,7 +546,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Практическое занятие'],
             'room': rooms['Плац'],
             'milgroup': milgroups[1809],
-            'date': '2020-12-18',
+            'date': nearest_day.strftime(date_f),
             'ordinal': 2,
             'subject': subjects['Строевая подготовка'],
         },
@@ -546,7 +554,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Семинар'],
             'room': rooms['504'],
             'milgroup': milgroups[1809],
-            'date': '2020-12-18',
+            'date': nearest_day.strftime(date_f),
             'ordinal': 3,
             'subject': subjects['Военная топография'],
         },
@@ -554,7 +562,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Практическое занятие'],
             'room': rooms['Плац'],
             'milgroup': milgroups[1810],
-            'date': '2020-12-18',
+            'date': nearest_day.strftime(date_f),
             'ordinal': 1,
             'subject': subjects['Строевая подготовка'],
         },
@@ -562,7 +570,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Семинар'],
             'room': rooms['504'],
             'milgroup': milgroups[1810],
-            'date': '2020-12-18',
+            'date': nearest_day.strftime(date_f),
             'ordinal': 2,
             'subject': subjects['Военная топография'],
         },
@@ -570,7 +578,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Лекция'],
             'room': rooms['510'],
             'milgroup': milgroups[1810],
-            'date': '2020-12-18',
+            'date': nearest_day.strftime(date_f),
             'ordinal': 3,
             'subject': subjects['Тактическая подготовка'],
         },
@@ -578,7 +586,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Лекция'],
             'room': rooms['510'],
             'milgroup': milgroups[1809],
-            'date': '2020-12-11',
+            'date': (nearest_day - timedelta(7)).strftime(date_f),
             'ordinal': 1,
             'subject': subjects['Тактическая подготовка'],
         },
@@ -586,7 +594,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Практическое занятие'],
             'room': rooms['Плац'],
             'milgroup': milgroups[1809],
-            'date': '2020-12-11',
+            'date': (nearest_day - timedelta(7)).strftime(date_f),
             'ordinal': 2,
             'subject': subjects['Строевая подготовка'],
         },
@@ -594,7 +602,7 @@ def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
             'lesson_type': lesson_types['Семинар'],
             'room': rooms['504'],
             'milgroup': milgroups[1809],
-            'date': '2020-12-11',
+            'date': (nearest_day - timedelta(7)).strftime(date_f),
             'ordinal': 3,
             'subject': subjects['Военная топография'],
         },
@@ -666,6 +674,11 @@ def lms_populate(request: Request) -> Response:
     ranks = create_ranks()
     posts = create_posts()
 
+    # nearest day for 18XX milgroups
+    nearest_day = datetime.strptime(
+        get_date_range(datetime.now() - timedelta(6), datetime.now(), 4)[0],
+        '%Y-%m-%d')
+
     students = create_students(milgroups, programs, statuses)
 
     teachers = create_teachers(milgroups, milfaculties, ranks, posts)
@@ -673,21 +686,22 @@ def lms_populate(request: Request) -> Response:
     absence_types = create_absence_types()
     absence_statuses = create_absence_statuses()
 
-    create_absences(absence_types, absence_statuses, students)
+    create_absences(absence_types, absence_statuses, students, nearest_day)
 
     punishment_types = create_punishment_types()
-    create_punishments(punishment_types, students, teachers)
+    create_punishments(punishment_types, students, teachers, nearest_day)
 
     encouragement_types = create_encouragement_types()
-    create_encouragements(encouragement_types, students, teachers)
+    create_encouragements(encouragement_types, students, teachers, nearest_day)
 
     achievement_types = create_achievement_types()
-    create_achievements(achievement_types, students)
+    create_achievements(achievement_types, students, nearest_day)
 
     subjects = create_subjects()
     rooms = create_rooms()
     lesson_types = create_lesson_types()
-    lessons = create_lessons(lesson_types, rooms, milgroups, subjects)
+    lessons = create_lessons(lesson_types, rooms, milgroups, subjects,
+                             nearest_day)
 
     create_marks(lessons, students)
 
