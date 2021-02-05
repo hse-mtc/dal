@@ -1,103 +1,101 @@
 <template>
-  <ModalWindow :opened="opened" v-on="$listeners">
+  <ModalWindow :opened="true" v-on="$listeners">
     <el-form ref="form" :model="formValues" :rules="rules">
-      <el-form-item prop="authors">
-        <SelectInput
-          :options="authors"
-          title="Автор"
-          multiple
-          filterable
-          v-model="formValues.authors"
-        />
-      </el-form-item>
+        <el-form-item
+          v-for="(value, key) in formValues"
+          :key="key"
+          :prop="key"
+        >
+          <SelectInput
+            v-if="key === 'authors'"
+            :options="authors"
+            title="Автор"
+            multiple
+            filterable
+            v-model="formValues.authors"
+          />
 
-      <el-form-item prop="publishers">
-        <SelectInput
-          :options="publishers"
-          title="Издательство"
-          filterable
-          v-model="formValues.publishers"
-        />
-      </el-form-item>
+          <SelectInput
+            v-else-if="key === 'publishers'"
+            :options="publishers"
+            title="Издательство"
+            filterable
+            v-model="formValues.publishers"
+          />
 
-      <el-form-item>
-        <el-col :span="11">
-          <el-form-item prop="publishDate">
-            <DateInput
-              title="Год издания"
-              type="year"
-              v-model="formValues.publishDate"
-            />
-          </el-form-item>
-        </el-col>
+          <template v-else-if="key === 'publishDate'">
+            <el-col :span="11">
+              <el-form-item prop="publishDate">
+                <DateInput
+                  title="Год издания"
+                  type="year"
+                  v-model="formValues.publishDate"
+                />
+              </el-form-item>
+            </el-col>
 
-        <el-col :span="2">&nbsp;</el-col>
+            <el-col :span="2">&nbsp;</el-col>
 
-        <el-col :span="11">
-          <el-form-item>
-            <NumberInput
-              title="Количество страниц"
-              v-model="formValues.pageCount"
-            />
-          </el-form-item>
-        </el-col>
-      </el-form-item>
+            <el-col :span="11">
+              <el-form-item>
+                <NumberInput
+                  title="Количество страниц"
+                  v-model="formValues.pageCount"
+                />
+              </el-form-item>
+            </el-col>
+          </template>
 
-      <el-form-item prop="bookName">
-        <TextInput
-          title="Название книги"
-          v-model="formValues.bookName"
-          isTextArea
-        />
-      </el-form-item>
+          <TextInput
+            v-else-if="key === 'bookName'"
+            title="Название книги"
+            v-model="formValues.bookName"
+            isTextArea
+          />
 
-      <el-form-item>
-        <TextInput
-          title="Аннотация"
-          v-model="formValues.annotation"
-          isTextArea
-        />
-      </el-form-item>
+          <TextInput
+            v-else-if="key === 'annotation'"
+            title="Аннотация"
+            v-model="formValues.annotation"
+            isTextArea
+          />
 
-      <el-form-item>
-        <SelectInput
-          title="Предметы"
-          v-model="formValues.subjects"
-          multiple
-          filterable
-          :options="subjects"
-        />
-      </el-form-item>
+          <SelectInput
+            v-else-if="key === 'subjects'"
+            title="Предметы"
+            v-model="formValues.subjects"
+            multiple
+            filterable
+            :options="subjects"
+          />
 
-      <el-form-item>
-        <FileInput
-          title="Загрузите обложку для книги"
-          v-model="formValues.bookCover"
-          :limit="1"
-          :filesTypes="['.png', '.jpg']"
-        />
-      </el-form-item>
+          <FileInput
+            v-else-if="key === 'bookCover'"
+            title="Загрузите обложку для книги"
+            v-model="formValues.bookCover"
+            :limit="1"
+            :filesTypes="['.png', '.jpg']"
+          />
 
-      <el-form-item prop="book">
-        <FileInput
-          title="Загрузите текст книги"
-          v-model="formValues.book"
-          :limit="1"
-          :filesTypes="['.pdf', '.djvu', '.epub', '.fb2', '.rtf', '.docx']"
-        />
-      </el-form-item>
+          <FileInput
+            v-else-if="key === 'book'"
+            title="Загрузите текст книги"
+            v-model="formValues.book"
+            :limit="1"
+            :filesTypes="['.pdf', '.djvu', '.epub', '.fb2', '.rtf', '.docx']"
+          />
+        </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit"> Сохранить </el-button>
-        <el-button type="info" @click="close"> Закрыть </el-button>
-      </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit"> Сохранить </el-button>
+          <el-button type="info" @click="close"> Закрыть </el-button>
+        </el-form-item>
     </el-form>
   </ModalWindow>
 </template>
 
 <script>
 import { mapState } from "vuex";
-import moment from "moment";
 
 import SelectInput from "@/common/inputs/Select";
 import DateInput from "@/common/inputs/Date";
@@ -105,8 +103,6 @@ import TextInput from "@/common/inputs/Text";
 import NumberInput from "@/common/inputs/Number";
 import FileInput from "@/common/inputs/File";
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
-
-import { uploadBook } from "@/api/books";
 
 export default {
   name: "LibraryModal",
@@ -123,7 +119,9 @@ export default {
       type: Function,
       default: () => () => {},
     },
-    opened: { type: Boolean, default: false },
+    opened: {type: Boolean, default: false},
+    initData: {type: Object, required: true},
+    isChanging: {type: Boolean, default: false}
   },
   data() {
     const required = [{ required: true, message: "Обязательное поле" }];
@@ -135,8 +133,8 @@ export default {
         book: required,
         publishDate: required,
       },
-      formValues: this.getInitData(),
-    };
+      formValues: this.lodash.cloneDeep(this.initData),
+    }
   },
   computed: {
     ...mapState({
@@ -158,66 +156,27 @@ export default {
     }),
   },
   methods: {
-    async onSubmit() {
-      this.$refs.form.validate(async (valid) => {
-        if (!valid || !this.formValues.book.length) return false;
+    onSubmit() {
+      this.$refs.form.validate((valid) => {
+        console.log('this.formValues.book', this.formValues.book)
+        if (!valid || (!this.isChanging && !this.formValues.book.length)) return false
 
-        const formData = new FormData();
-        const data = this.formValues;
-
-        formData.set(
-          "data",
-          JSON.stringify(
-            this.lodash.pickBy({
-              title: data.bookName,
-              annotation: data.annotation,
-              publication_year: moment(data.publishDate).format("YYYY"),
-              authors: data.authors,
-              publishers: data.publishers,
-              subjects: data.subjects,
-              page_count: data.pageCount,
-            })
-          )
-        );
-
-        if (data.bookCover.length) {
-          formData.set("image", this.formValues.bookCover[0].raw);
-        }
-
-        formData.set("content", this.formValues.book[0].raw);
-
-        try {
-          await uploadBook(formData);
-          this.close();
-          this.submitCallback();
-        } catch (e) {
-          this.$message({
-            message: "Не удалось сохранить книгу",
-            type: "error",
-          });
-          console.error("Не удалось создать книгу:", e);
-        }
-      });
-    },
-    getInitData() {
-      return {
-        authors: [],
-        publishers: null,
-        publishDate: null,
-        bookName: "",
-        annotation: "",
-        pageCount: 0,
-        subjects: [],
-        book: [],
-        bookCover: [],
-      };
+        this.$emit('save', this.formValues)
+        this.$emit('close-modal')
+      })
     },
     close() {
-      this.formValues = this.getInitData();
-      this.$emit("close-modal");
-    },
+      this.$emit('close-modal')
+    }
   },
-};
+  watch: {
+    initData(nextValue, prevValue) {
+      if (!this.lodash.isEqual(nextValue, prevValue)) {
+        this.formValues = this.lodash.cloneDeep(nextValue)
+      }
+    }
+  }
+}
 </script>
 
 <style lang="scss" module></style>

@@ -22,3 +22,10 @@ export function uploadBook(data) {
     data,
   });
 }
+export function editBook(id, data) {
+  return request({
+    url: `/dms/books/${id}/`,
+    method: "PATCH",
+    data,
+  });
+}

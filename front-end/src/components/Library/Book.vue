@@ -42,13 +42,18 @@
           {{ data.annotation }}
         </CustomText>
       </div>
-      <div
-        @click.prevent="downloadFile(data.file, data.id)"
-        style="cursor: pointer"
-      >
-        <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph"
-          >Скачать</CustomText
-        >
+      <div class="buttons">
+        <div class="button" @click.prevent="downloadFile(data.file, data.id)">
+          <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">
+            Скачать
+          </CustomText>
+        </div>
+
+        <div class="button" @click="onEdit">
+          <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">
+            Редактировать
+          </CustomText>
+        </div>
       </div>
     </div>
   </div>
@@ -64,8 +69,9 @@ export default {
   props: {
     data: {
       type: Object,
-      required: true,
+      required: true
     },
+    onEdit: { type: Function }
   },
   data() {
     return {
@@ -167,6 +173,18 @@ export default {
   }
   .file-image {
     display: none;
+  }
+}
+
+.buttons {
+  display: flex;
+  
+  .button {
+    cursor: pointer;
+
+    &:first-child {
+      margin-right: 20px;
+    }
   }
 }
 </style>
