@@ -1,6 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import AllowAny
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -10,13 +9,19 @@ from lms.models.encouragement import Encouragement
 from lms.serializers.encouragement import EncouragementSerializer
 from lms.filters.encouragement import EncouragementFilter
 
+from auth.permissions import BasicPermission
+
+
+class EncouragementPermission(BasicPermission):
+    permission_class = 'auth.encouragement'
+
 
 @extend_schema(tags=['encouragement'])
 class EncouragementViewSet(ModelViewSet):
     serializer_class = EncouragementSerializer
     queryset = Encouragement.objects.all()
 
-    permission_classes = [AllowAny]
+    permission_classes = [EncouragementPermission]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = EncouragementFilter

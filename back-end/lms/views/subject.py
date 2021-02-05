@@ -1,6 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import AllowAny
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -11,13 +10,19 @@ from common.models.subjects import Subject
 from lms.serializers.subject import LessonSubjectSerializer
 from lms.filters.subject import LessonSubjectFilter
 
+from auth.permissions import BasicPermission
+
+
+class LessonSubjectPermission(BasicPermission):
+    permission_class = 'auth.subject'
+
 
 @extend_schema(tags=['lms_subject'])
 class LessonSubjectViewSet(ModelViewSet):
     serializer_class = LessonSubjectSerializer
     queryset = Subject.objects.all()
 
-    permission_classes = [AllowAny]
+    permission_classes = [LessonSubjectPermission]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = LessonSubjectFilter
