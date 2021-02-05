@@ -18,6 +18,12 @@ export default {
       required: true,
     },
   },
+  mounted() {
+    this.toggleScroll(this.opened)
+  },
+  destroyed() {
+    this.toggleScroll(false)
+  },
   methods: {
     stopScrolling() {
       document.getElementById("main-container").classList.add("stop-scrolling");
@@ -30,14 +36,17 @@ export default {
     closeModal() {
       this.$emit("close-modal");
     },
-  },
-  watch: {
-    opened(val) {
-      if (val) {
+    toggleScroll(opened) {
+      if (opened) {
         this.stopScrolling();
       } else {
         this.startScrolling();
       }
+    }
+  },
+  watch: {
+    opened(val) {
+      this.toggleScroll(val)
     },
   },
 };
