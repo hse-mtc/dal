@@ -5,7 +5,10 @@ from django.urls import (
 
 from rest_framework import routers
 
-from dms.views.books import BookViewSet
+from dms.views.books import (
+    BookViewSet,
+    FavoriteBookViewSet,
+)
 from dms.views.papers import (
     PaperViewSet,
     CategoryViewSet,
@@ -28,6 +31,7 @@ from dms.views.common import (
 router = routers.DefaultRouter()
 router.register("authors", AuthorViewSet)
 router.register("books", BookViewSet)
+router.register("favorite-books", FavoriteBookViewSet)
 router.register("categories", CategoryViewSet)
 router.register("class-materials", ClassMaterialViewSet)
 router.register("papers", PaperViewSet)
