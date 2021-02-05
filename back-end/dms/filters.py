@@ -1,8 +1,8 @@
 from django_filters import rest_framework as filters
 
+from common.models.subjects import Subject
 from dms.models.papers import Paper
 from dms.models.class_materials import Section
-from common.models.subjects import Subject
 from dms.models.books import (
     Book,
     FavoriteBook,
@@ -47,9 +47,9 @@ class SubjectFilter(filters.FilterSet):
 
 class FavoriteBookFilter(filters.FilterSet):
     start_year = filters.NumberFilter(field_name="book__publication_year",
-                                          lookup_expr="gte")
+                                      lookup_expr="gte")
     end_year = filters.NumberFilter(field_name="book__publication_year",
-                                        lookup_expr="lte")
+                                    lookup_expr="lte")
 
     class Meta:
         model = FavoriteBook
