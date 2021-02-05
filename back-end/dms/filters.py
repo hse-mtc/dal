@@ -1,9 +1,12 @@
 from django_filters import rest_framework as filters
 
 from dms.models.papers import Paper
-from dms.models.books import Book
 from dms.models.class_materials import Section
 from common.models.subjects import Subject
+from dms.models.books import (
+    Book,
+    FavoriteBook,
+)
 
 
 class PaperFilter(filters.FilterSet):
@@ -39,4 +42,11 @@ class SubjectFilter(filters.FilterSet):
 
     class Meta:
         model = Subject
+        fields = ["user"]
+
+
+class FavoriteBookFilter(filters.FilterSet):
+
+    class Meta:
+        model = FavoriteBook
         fields = ["user"]
