@@ -1,0 +1,2 @@
+# Backup database and media files every 3 days
+0 0 */3 * * cd /back-end; /usr/local/bin/pipenv run scripts/backup.sh -d -m
