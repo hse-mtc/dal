@@ -1,6 +1,5 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
 
 from drf_spectacular.views import extend_schema
 
@@ -14,10 +13,16 @@ from lms.serializers.student import ProgramSerializer
 from lms.serializers.teacher import TeacherPostSerializer, RankSerializer
 from lms.serializers.lesson import RoomSerializer
 
+from auth.permissions import BasicPermission
+
+
+class ReferenceBookPermission(BasicPermission):
+    permission_class = 'auth.reference_book'
+
 
 @extend_schema(tags=['reference-book'])
 class ReferenceBookView(ListAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [ReferenceBookPermission]
 
     model_serializer = {
         'milgroups': (Milgroup, MilgroupSerializer),

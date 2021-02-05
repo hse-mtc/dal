@@ -4,7 +4,6 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import AllowAny
 
 from rest_framework.status import (
     HTTP_200_OK,
@@ -24,13 +23,19 @@ from lms.serializers.lesson import (LessonSerializer,
 from lms.filters.lesson import LessonFilter
 from lms.functions import get_date_range
 
+from auth.permissions import BasicPermission
+
+
+class LessonPermission(BasicPermission):
+    permission_class = 'auth.lesson'
+
 
 @extend_schema(tags=['lesson'])
 class LessonViewSet(ModelViewSet):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
 
-    permission_classes = [AllowAny]
+    permission_classes = [LessonPermission]
     filter_backends = [DjangoFilterBackend]
 
     filterset_class = LessonFilter
@@ -52,7 +57,7 @@ class LessonViewSet(ModelViewSet):
                                     type=OpenApiTypes.DATE),
                ])
 class LessonJournalView(GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [LessonPermission]
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
