@@ -7,6 +7,7 @@ from dms.models.documents import Document
 from dms.models.common import (
     Author,
     Publisher,
+    User,
 )
 
 from common.models.subjects import Subject
@@ -44,3 +45,15 @@ class Book(Document):
     class Meta:
         verbose_name = "Book"
         verbose_name_plural = "Books"
+
+
+class FavoriteBook(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Favorite book"
+        verbose_name_plural = "Favorite books"
+
+    def __str__(self):
+        return f"{self.user} - {self.book}"
