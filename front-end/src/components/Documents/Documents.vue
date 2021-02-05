@@ -192,7 +192,7 @@ export default {
         return;
       }
 
-      this.documents.filter((paper) => paper.id !== id);
+      this.documents = this.lodash.filter(this.documents, (paper) => paper.id !== id);
 
       this.$message({
         type: "success",
