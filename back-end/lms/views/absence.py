@@ -31,7 +31,11 @@ from lms.filters.absence import AbsenceFilter
 
 from lms.functions import get_date_range
 
-from lms.permissions.absence import AbsencePermission
+from auth.permissions import BasicPermission
+
+
+class AbsencePermission(BasicPermission):
+    permission_class = 'auth.absence'
 
 
 @extend_schema(tags=['absence'])

@@ -107,6 +107,22 @@ def create_test_users():
         )
         profile.save()
 
+    if not User.objects.filter(username="milfaculty_head").exists():
+        test_user = User.objects.create_user(
+            username="milfaculty_head",
+            password="qwerty",
+            is_staff=True,
+        )
+        test_user.save()
+
+        profile, _ = Profile.objects.get_or_create(
+            surname="Начальников",
+            name="Начальник",
+            patronymic="Начальникович",
+            user=test_user,
+        )
+        profile.save()
+
 
 def create_users():
     """Create some mock users.
@@ -412,20 +428,64 @@ def create_books(authors, files, publishers, subjects):
     return books
 
 
-def create_student_permissions(content_type):
+def create_permissions_for_a_view(view_name, view_name_rus):
+    get_str = ": получение данных"
+    post_str = ": добавление данных"
+    patch_str = ": редактирование данных"
+    delete_str = ": удаление данных"
+
     return [
-        Permission.objects.get_or_create(codename="absence_get",
-                                         name="Can use GET in absence",
-                                         content_type=content_type)[0]
+        {
+            "codename": view_name + "_get",
+            "name": view_name_rus + get_str,
+        },
+        {
+            "codename": view_name + "_post",
+            "name": view_name_rus + post_str,
+        },
+        {
+            "codename": view_name + "_patch",
+            "name": view_name_rus + patch_str,
+        },
+        {
+            "codename": view_name + "_delete",
+            "name": view_name_rus + delete_str,
+        },
     ]
 
 
-def create_teacher_permissions(content_type):
-    return [
-        Permission.objects.get_or_create(codename="absence_full",
-                                         name="Full access to absence",
-                                         content_type=content_type)[0]
+def create_permissions(content_type):
+
+    values = []
+    values += create_permissions_for_a_view("absence", "Пропуски")
+    for val in values:
+        Permission.objects.get_or_create(codename=val["codename"],
+                                         name=val["name"],
+                                         content_type=content_type)
+
+
+def get_student_permissions():
+    values = [
+        "absence_get",
     ]
+    return [Permission.objects.get(codename=val) for val in values]
+
+
+def get_teacher_permissions():
+    values = [
+        "absence_get",
+    ]
+    return [Permission.objects.get(codename=val) for val in values]
+
+
+def get_milfaculty_head_permissions():
+    values = [
+        "absence_get",
+        "absence_post",
+        "absence_patch",
+        "absence_delete",
+    ]
+    return [Permission.objects.get(codename=val) for val in values]
 
 
 @csrf_exempt
@@ -439,13 +499,18 @@ def populate(request: Request) -> Response:
     # create groups and permissions
     students, _ = Group.objects.get_or_create(name="students")
     teachers, _ = Group.objects.get_or_create(name="teachers")
+    milfaculty_heads, _ = Group.objects.get_or_create(name="milfaculty_heads")
     content_type = ContentType.objects.get_for_model(Group)
 
-    students.permissions.set(create_student_permissions(content_type))
-    teachers.permissions.set(create_teacher_permissions(content_type))
+    create_permissions(content_type)
+
+    students.permissions.set(get_student_permissions())
+    teachers.permissions.set(get_teacher_permissions())
+    milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
 
     students.user_set.add(User.objects.get(username="student"))
     teachers.user_set.add(User.objects.get(username="teacher"))
+    milfaculty_heads.user_set.add(User.objects.get(username="milfaculty_head"))
 
     # other dms models population
     authors = create_authors()
