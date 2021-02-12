@@ -50,7 +50,12 @@
                 >
                   Удалить
                 </div>
-                <div style="cursor: pointer">Скачать</div>
+                <DownloadFile
+                  :url="material.file.content"
+                  :fileName="material.file.name"
+                >
+                  Скачать
+                </DownloadFile>
               </div>
 
               <div
@@ -124,11 +129,12 @@
 
 <script>
 import CustomText from "@/common/CustomText";
+import DownloadFile from '@/common/DownloadFile/index.vue'
 import { deleteMaterial } from "@/api/material";
 import { addTopicFile } from "@/api/subject";
 
 export default {
-  components: { CustomText },
+  components: { CustomText, DownloadFile },
   props: {
     topic: {
       type: Number,
