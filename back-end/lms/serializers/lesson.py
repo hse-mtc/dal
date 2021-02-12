@@ -29,7 +29,7 @@ class LessonTypeSerializer(ModelSerializer):
 
 
 class LessonSerializer(WritableNestedModelSerializer):
-    id = IntegerField(required=True)
+    id = IntegerField(required=False)
 
     subject = LessonSubjectSerializer(
         required=False, validators=[PresentInDatabaseValidator(Subject)])
@@ -38,12 +38,8 @@ class LessonSerializer(WritableNestedModelSerializer):
     student = StudentShortSerializer(
         required=False, validators=[PresentInDatabaseValidator(Student)])
 
-    # specify that these fields are not required
+    # specify that this field is not required
     ordinal = IntegerField(required=False)
-    lesson_type = CharField(required=False,
-                            validators=[PresentInDatabaseValidator(LessonType)])
-    room = CharField(required=False,
-                     validators=[PresentInDatabaseValidator(Room)])
 
     class Meta:
         model = Lesson
