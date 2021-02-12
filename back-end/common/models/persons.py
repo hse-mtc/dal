@@ -5,7 +5,6 @@ class Person(models.Model):
     surname = models.CharField(max_length=32)
     name = models.CharField(max_length=32)
     patronymic = models.CharField(max_length=32, blank=True)
-    
 
     @property
     def full_name(self):
@@ -19,12 +18,10 @@ class Person(models.Model):
     def __str__(self):
         return self.full_name
 
-    
+
 class Relative(Person):
-    relative_list = [('father', 'отец'),
-                    ('mother', 'мать'),
-                    ('sister', 'сестра'),
-                    ('brother', 'брат')]
+    relative_list = [('father', 'отец'), ('mother', 'мать'),
+                     ('sister', 'сестра'), ('brother', 'брат')]
     rel_status = models.CharField(max_length=32, choices=relative_list)
     birthdate = models.DateField()
     citizenship = models.CharField(max_length=32)
@@ -40,10 +37,10 @@ class Relative(Person):
     def __str__(self):
         return self.full_name
 
-    
+
 class Personnel(Person):
     birthdate = models.DateField()
-    photo = models.ImageField(upload_to = '', max_length=128)
+    photo = models.ImageField(upload_to='', max_length=128)
     place_birth = models.CharField(max_length=32)
     region_birth = models.CharField(max_length=64)
     citizenship = models.CharField(max_length=32)
