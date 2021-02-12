@@ -43,12 +43,14 @@
         </CustomText>
       </div>
       <div class="buttons">
-        <div class="button" @click.prevent="downloadFile(data.file, data.id)">
+        <DownloadFile
+          :url="data.file.content"
+          :fileName="data.file.name"
+        >
           <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">
             Скачать
           </CustomText>
-        </div>
-
+        </DownloadFile>
         <div class="button" @click="onEdit">
           <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">
             Редактировать
@@ -61,11 +63,12 @@
 
 <script>
 import CustomText from "@/common/CustomText";
+import DownloadFile from '@/common/DownloadFile/index.vue'
 import { COLORS, SIZES } from "@/utils/appConsts";
-import axios from "axios";
+
 export default {
   name: "Book",
-  components: { CustomText },
+  components: { CustomText, DownloadFile },
   props: {
     data: {
       type: Object,
@@ -79,31 +82,7 @@ export default {
       COLORS,
       loading: false,
     };
-  },
-  methods: {
-    async downloadFile(file, id) {
-      document.getElementById(`loader__${id}`).classList.add("loading");
-      let data;
-      try {
-        ({ data } = await axios.get(file.content, { responseType: "blob" }));
-      } catch (error) {
-        console.log("Failed to download Book.file: ", error);
-        document.getElementById(`loader__${id}`).classList.remove("loading");
-        return;
-      }
-
-      const create = document.createElement.bind(document);
-      const link = create("a");
-
-      const blob = new Blob([data]);
-      link.href = URL.createObjectURL(blob);
-      link.download = file.name;
-
-      link.click();
-      URL.revokeObjectURL(link.href);
-      document.getElementById(`loader__${id}`).classList.remove("loading");
-    },
-  },
+  }
 };
 </script>
 
@@ -154,9 +133,6 @@ export default {
   object-fit: cover;
 }
 
-.content {
-}
-
 .annotation {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -181,10 +157,7 @@ export default {
   
   .button {
     cursor: pointer;
-
-    &:first-child {
-      margin-right: 20px;
-    }
+    margin-left: 20px;
   }
 }
 </style>

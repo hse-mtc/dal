@@ -62,12 +62,12 @@
             <div
               style="text-align: center; margin: 0; padding: 0; font-size: 15px"
             >
-              <div
-                style="cursor: pointer"
-                @click.prevent="downloadFile(document.file)"
+              <DownloadFile
+                :url="document.file.content"
+                :fileName="document.file.name"
               >
                 Скачать
-              </div>
+              </DownloadFile>
               <div style="cursor: pointer" @click="editPaper(document.id)">
                 Редактировать
               </div>
@@ -93,7 +93,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import moment from "moment";
 
 import { getDocuments } from "@/api/documents";
@@ -101,10 +100,11 @@ import { deleteDocument } from "@/api/delete";
 
 import EventBus from "../EventBus";
 import { scrollMixin } from "@/mixins/scrollMixin";
+import DownloadFile from '@/common/DownloadFile/index.vue'
 
 export default {
   name: "",
-
+  components: { DownloadFile },
   filters: {
     moment: function (date) {
       return moment(date).format("DD MMMM YYYY");
@@ -151,26 +151,6 @@ export default {
 
     year(document) {
       return moment(document.publication_date).year();
-    },
-
-    async downloadFile(file) {
-      let data;
-      try {
-        ({ data } = await axios.get(file.content, { responseType: "blob" }));
-      } catch (error) {
-        console.log("Failed to download Paper.file: ", error);
-        return;
-      }
-
-      const create = document.createElement.bind(document);
-      const link = create("a");
-
-      const blob = new Blob([data]);
-      link.href = URL.createObjectURL(blob);
-      link.download = file.name;
-
-      link.click();
-      URL.revokeObjectURL(link.href);
     },
 
     editPaper(id) {

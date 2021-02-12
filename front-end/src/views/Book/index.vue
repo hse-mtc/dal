@@ -58,9 +58,13 @@
               </template>
             </div>
 
-            <div class="cta" @click.prevent="downloadFile(book.file, book.id)">
+            <DownloadFile
+              class="cta"
+              :url="book.file.content"
+              :fileName="book.file.name"
+            >
               Скачать
-            </div>
+            </DownloadFile>
 
             <CustomText variant="header" :mt="SIZES.xxxl" :mb="SIZES.m"
               >О книге</CustomText
@@ -86,13 +90,13 @@
 
 <script>
 import CustomText from "@/common/CustomText";
+import DownloadFile from '@/common/DownloadFile/index.vue'
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook } from "@/api/books";
-import axios from "axios";
 
 export default {
   name: "Book",
-  components: { CustomText },
+  components: { CustomText, DownloadFile },
   computed: {},
   created() {
     this.fetchData();
@@ -113,29 +117,7 @@ export default {
         this.book = res.data;
         this.loading = false;
       });
-    },
-    async downloadFile(file, id) {
-      document.getElementById(`loader__${id}`).classList.add("loading");
-      let data;
-      try {
-        ({ data } = await axios.get(file.content, { responseType: "blob" }));
-      } catch (error) {
-        console.log("Failed to download Book.file: ", error);
-        document.getElementById(`loader__${id}`).classList.remove("loading");
-        return;
-      }
-
-      const create = document.createElement.bind(document);
-      const link = create("a");
-
-      const blob = new Blob([data]);
-      link.href = URL.createObjectURL(blob);
-      link.download = file.name;
-
-      link.click();
-      URL.revokeObjectURL(link.href);
-      document.getElementById(`loader__${id}`).classList.remove("loading");
-    },
+    }
   },
 };
 </script>
@@ -229,7 +211,6 @@ export default {
 }
 
 .cta {
-  cursor: pointer;
   color: white;
   width: max-content;
   background: $darkBlue;
