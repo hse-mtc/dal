@@ -1,7 +1,14 @@
 from rest_framework.serializers import (ModelSerializer, IntegerField,
                                         CharField)
 
-from lms.models.common import Milgroup
+from lms.models.common import Milgroup, Milfaculty
+
+
+class MilfacultySerializer(ModelSerializer):
+
+    class Meta:
+        model = Milfaculty
+        fields = '__all__'
 
 
 class MilgroupSerializer(ModelSerializer):
