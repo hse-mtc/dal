@@ -62,6 +62,7 @@
       width: 20px;
       height: 20px;
       margin-right: 16px;
+      flex: none
     }
 
     .el-menu {
@@ -79,6 +80,8 @@
     }
 
     .submenu-title-noDropdown {
+      display: flex;
+      align-items: center;
       padding-left: 16px !important;
     }
 
@@ -112,9 +115,12 @@
 
       .el-tooltip {
         padding: 0 !important;
+        display: flex !important;
+        align-items: center;
 
         .svg-icon {
           margin-left: 16px;
+          flex: none
         }
       }
     }
@@ -127,6 +133,7 @@
 
         .svg-icon {
           margin-left: 16px;
+          flex: none
         }
 
         .el-submenu__icon-arrow {
@@ -187,6 +194,7 @@
   & > .el-menu {
     .svg-icon {
       margin-right: 16px;
+      flex: none
     }
   }
 

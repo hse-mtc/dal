@@ -2,11 +2,6 @@
   <div :class="{ 'has-logo': showLogo }">
     <logo v-if="showLogo" :collapse="isCollapse" />
 
-    <div :class="['burger', { collapsed: isCollapse }]" @click="toggleSideBar">
-      <span v-if="!isCollapse" class="burgerText">Свернуть меню</span>
-      <hamburger :is-active="sidebar.opened" class="hamburger-container" />
-    </div>
-
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
@@ -34,10 +29,9 @@ import { mapGetters } from "vuex";
 import Logo from "./Logo";
 import SidebarItem from "./SidebarItem";
 import variables from "@/styles/variables.scss";
-import Hamburger from "@/components/Hamburger";
 
 export default {
-  components: { SidebarItem, Logo, Hamburger },
+  components: { SidebarItem, Logo },
   computed: {
     ...mapGetters(["sidebar"]),
     routes() {
@@ -61,12 +55,7 @@ export default {
     isCollapse() {
       return !this.sidebar.opened;
     },
-  },
-  methods: {
-    toggleSideBar() {
-      this.$store.dispatch("app/toggleSideBar");
-    },
-  },
+  }
 };
 </script>
 

@@ -1,5 +1,12 @@
 <template>
   <div class="mynavbar">
+    <div
+      class="burger"
+      @click="toggleSideBar"
+      :title="isCollapse ? 'Развернуть меню' : 'Свернуть меню'"
+    >
+      <hamburger :is-active="sidebar.opened" class="hamburger-container" />
+    </div>
     <breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
@@ -26,13 +33,18 @@
 import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import LocalStorageService from "@/utils/LocalStorageService";
+import Hamburger from "@/components/Hamburger";
 
 export default {
   components: {
     Breadcrumb,
+    Hamburger,
   },
   computed: {
     ...mapGetters(["sidebar", "name"]),
+    isCollapse() {
+      return !this.sidebar.opened;
+    },
   },
   methods: {
     logout() {
@@ -40,12 +52,16 @@ export default {
       localStorageService.clearToken();
       this.$router.push(`/login`);
     },
+    toggleSideBar() {
+      this.$store.dispatch("app/toggleSideBar");
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .mynavbar {
+  display: flex;
   height: 56px;
   overflow: hidden;
   position: relative;
@@ -57,6 +73,7 @@ export default {
     height: 56px;
     display: flex;
     align-items: center;
+    align-items: center;
     float: left;
     color: #fff;
     color: #fff !important;
@@ -64,7 +81,7 @@ export default {
 
   .right-menu {
     margin-right: 120px;
-    float: right;
+    margin-left: auto;
     height: 100%;
     line-height: 56px;
 
@@ -114,6 +131,19 @@ export default {
         }
       }
     }
+  }
+}
+
+.burger {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  padding: 20px;
+  justify-content: space-between;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #263445;
   }
 }
 </style>
