@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from lms.models.common import Milgroup, Milfaculty
-from lms.models.student import Faculty, Status, Program, Student, MilSpecialty
+from lms.models.student import Status, Program, Student, MilSpecialty
 from lms.models.teacher import Rank, TeacherPost, Teacher
 from lms.models.absence import AbsenceType, AbsenceStatus, Absence
 from lms.models.encouragement import EncouragementType, Encouragement
@@ -32,6 +32,4 @@ admin.site.register(Encouragement)
 admin.site.register(Punishment)
 admin.site.register(Achievement)
 admin.site.register(Lesson)
-admin.site.register(Personnel)
-admin.site.register(Relative)
 admin.site.register(MilSpecialty)
