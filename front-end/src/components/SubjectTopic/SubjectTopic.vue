@@ -19,7 +19,7 @@
       @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
     >
       <transition-group type="transition" name="flip-list">
-        <div v-for="(item, index) in topics" :key="index" class="topic">
+        <div v-for="(item, index) in topics" :key="item.id" class="topic">
           <div class="topic-title">
             <div class="d-flex align-items-center">
               <img
