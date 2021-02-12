@@ -49,14 +49,12 @@
             @start="dragging = true"
             @end="dragging = false"
             :disabled="userId !== subjectOwnerId"
-            @change="
-              ({ moved }) => updateOrder(moved.element.id, moved.newIndex)
-            "
+            @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
           >
             <transition-group type="transition" name="flip-list">
               <div
                 v-for="(mainPart, index) in subjectInfo"
-                :key="index"
+                :key="mainPart.id"
                 class="main-part"
                 :id="'part-' + (index + 1)"
               >
