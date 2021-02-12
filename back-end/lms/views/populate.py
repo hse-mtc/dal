@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 
 from lms.models.common import Milfaculty, Milgroup
-from lms.models.student import Status, Program, Student
+from lms.models.student import Status, Program, Student, MilSpecialty
 from lms.models.teacher import Rank, TeacherPost, Teacher
 from lms.models.absence import (AbsenceStatus, AbsenceType, Absence,
                                 AbsenceTime)
@@ -466,6 +466,16 @@ def create_achievement_types():
         types[value] = typ
     return types
 
+def create_programs():
+    values = ['ИТСС', 'ИВТ', 'КБ']
+
+    types = {}
+    for value in values:
+        typ, _ = Program.objects.get_or_create(Program=value)
+        typ.save()
+        types[value] = typ
+    return types
+
 
 def create_mil_specialty():
     values = [{
@@ -493,7 +503,7 @@ def create_mil_specialty():
 
     types = {}
     for value in values:
-        typ, _ = AchievementType.objects.get_or_create(achievement_type=value)
+        typ, _ = MilSpecialty.objects.get_or_create(MilSpecialty=value)
         typ.save()
         types[value] = typ
     return types
