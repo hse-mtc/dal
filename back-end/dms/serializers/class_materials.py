@@ -61,7 +61,11 @@ class TopicRetrieveSerializer(TopicSerializer):
         data = {}
         for value, label in ClassMaterial.Type.choices:
             materials = obj.class_materials.filter(type=value)
-            data[label] = ClassMaterialSerializer(materials, many=True).data
+            data[label] = ClassMaterialSerializer(
+                materials,
+                many=True,
+                context=self.context,
+            ).data
         return data
 
 
