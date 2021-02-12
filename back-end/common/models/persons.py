@@ -55,8 +55,7 @@ class Personnel(Person):
     class Meta:
         abstract = True
         verbose_name = "Personnel"
-        verbose_name_plural = "Personnels"
+        verbose_name_plural = "Personnel"
 
     def __str__(self):
         return self.full_name
-    
