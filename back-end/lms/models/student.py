@@ -1,6 +1,6 @@
 from django.db import models
 
-from common.models.persons import Person, Personnel, Relative
+from common.models.persons import Personnel, Relative
 from lms.models.common import Milgroup
 
 
@@ -27,11 +27,11 @@ class MilSpecialty(models.Model):
 
 
 class Status(models.Model):
-    status_list = [('student', 'обучающийся'),
-                   ('graduated', 'выпускник'),
-                   ('deducted', 'отчислен'),
-                   ('enrollee','абитуриент')]
-    status = models.CharField(primary_key=True, max_length=20, choices=status_list)
+    status_list = [('student', 'обучающийся'), ('graduated', 'выпускник'),
+                   ('deducted', 'отчислен'), ('enrollee', 'абитуриент')]
+    status = models.CharField(primary_key=True,
+                              max_length=20,
+                              choices=status_list)
 
     def __str__(self):
         return str(self.status)
@@ -52,7 +52,7 @@ class Program(models.Model):
     class Meta:
         verbose_name = 'Educational Program'
         verbose_name_plural = 'Educational Programs'
-        
+
 
 class Student(Personnel):
     # Military faculty
@@ -73,10 +73,14 @@ class Student(Personnel):
     passport_ufms_name = models.CharField(max_length=64)
     passport_ufms_code = models.CharField(max_length=7)
     passport_date = models.DateField()
-    
+
     # Family
-    mother = models.ForeignKey(Relative, models.DO_NOTHING, related_name='mother')
-    father = models.ForeignKey(Relative, models.DO_NOTHING, related_name='father')
+    mother = models.ForeignKey(Relative,
+                               models.DO_NOTHING,
+                               related_name='mother')
+    father = models.ForeignKey(Relative,
+                               models.DO_NOTHING,
+                               related_name='father')
     brothers = models.ManyToManyField(Relative, related_name='brothers')
     sisters = models.ManyToManyField(Relative, related_name='sisters')
 
