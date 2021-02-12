@@ -3,6 +3,7 @@ from django.db import models
 from common.models.persons import Person, Personnel, Relative
 from lms.models.common import Milgroup
 
+
 class Faculty(models.Model):
     faculty = models.CharField(primary_key=True, max_length=128)
 
@@ -54,35 +55,35 @@ class Program(models.Model):
         
 
 class Student(Personnel):
-    #militrary
+    # Military faculty
     milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING)
     commissariat_city = models.CharField(max_length=32)
     commissariat_district = models.CharField(max_length=32)
     mil_specialty = models.ForeignKey(MilSpecialty, models.DO_NOTHING)
-    
-    #student characteristics
+
+    # Student characteristics
     program = models.ForeignKey(Program, models.DO_NOTHING)
     status = models.ForeignKey(Status, models.DO_NOTHING)
     hse_id = models.CharField(max_length=32)
     hse_group = models.CharField(max_length=32)
-    
-    #passport information
+
+    # Passport information
     passport_series = models.CharField(max_length=4)
     passport_code = models.CharField(max_length=6)
-    pasport_ufms_name = models.CharField(max_length=64)
-    pasport_ufms_code = models.CharField(max_length=7)
-    pasport_date = models.DateField()
+    passport_ufms_name = models.CharField(max_length=64)
+    passport_ufms_code = models.CharField(max_length=7)
+    passport_date = models.DateField()
     
-    #family
+    # Family
     mother = models.ForeignKey(Relative, models.DO_NOTHING, related_name='mother')
     father = models.ForeignKey(Relative, models.DO_NOTHING, related_name='father')
-    brother = models.ManyToManyField(Relative, models.DO_NOTHING)
-    sister = models.ManyToManyField(Relative, models.DO_NOTHING)
-    
-    #name in genitive
+    brothers = models.ManyToManyField(Relative, related_name='brothers')
+    sisters = models.ManyToManyField(Relative, related_name='sisters')
+
+    # Genitive name
     surname_genitive = models.CharField(max_length=32)
     name_genitive = models.CharField(max_length=32)
-    patronymic_genetive = models.CharField(max_length=32, blank=True)
+    patronymic_genitive = models.CharField(max_length=32, blank=True)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
