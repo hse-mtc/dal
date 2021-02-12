@@ -467,6 +467,25 @@ def create_achievement_types():
     return types
 
 
+def create_mil_specialty():
+    values = [
+        {'094001': 'Применение наземных подразделений войсковой разведки'},
+        {'411300': 'Эксплуатация и ремонт автоматизированных систем комплексов баллистических стратегических ракет наземного базирования'},
+        {'453000': 'Организация эксплуатации и ремонта автоматизированных систем управления и вычислительных комплексов ракетно-космической обороны'},
+        {'453100': 'Математическое и программное обеспечение функционирования вычислительных комплексов ракетно-космической обороны'},
+        {'751100': 'Защита информационных технологий'},
+        {'100182': 'Стрелковые, командир стрелкового отделения'},
+        {'106646-543': 'Разведывательные, разведчик-оператор СБР, ПСНР'}
+    ]
+
+    types = {}
+    for value in values:
+        typ, _ = AchievementType.objects.get_or_create(achievement_type=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
 def create_achievements(achievement_types: dict[str, AchievementType],
                         students: dict[str, Student], nearest_day: datetime):
     date_f = '%Y-%m-%d'
@@ -710,7 +729,8 @@ def lms_populate(request: Request) -> Response:
                              nearest_day)
 
     create_marks(lessons, students)
-    create_absence_restriction_time()
+    
+    mil_specialties = create_mil_specialty()
 
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)

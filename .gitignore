@@ -3,6 +3,7 @@
 *.idea
 *.vscode
 __pycache__
+.ipynb_checkpoints
 
 ## Files
 .DS_Store
