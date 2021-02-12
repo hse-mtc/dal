@@ -17,7 +17,9 @@ from lms.serializers.common import MilgroupSerializer, MilfacultySerializer
 from lms.serializers.student import ProgramSerializer
 from lms.serializers.teacher import TeacherPostSerializer, RankSerializer
 from lms.serializers.lesson import LessonTypeSerializer, RoomSerializer
-from lms.serializers.absence import AbsenceTypeSerializer, AbsenceStatusSerializer, AbsenceTimeSerializer
+from lms.serializers.absence import (AbsenceTypeSerializer,
+                                     AbsenceStatusSerializer,
+                                     AbsenceTimeSerializer)
 from lms.serializers.achievement import AchievementTypeSerializer
 from lms.serializers.encouragement import EncouragementTypeSerializer
 from lms.serializers.punishment import PunishmentTypeSerializer
