@@ -1,6 +1,11 @@
 from django.db import models
 
 
+def upload_to_(instance, filename):
+    # pylint: disable=unused-argument
+    return f"photos/{instance.id}/"
+
+
 class Person(models.Model):
     surname = models.CharField(max_length=32)
     name = models.CharField(max_length=32)
@@ -40,7 +45,7 @@ class Relative(Person):
 
 class Personnel(Person):
     birthdate = models.DateField()
-    photo = models.ImageField(upload_to='', max_length=128)
+    photo = models.ImageField(upload_to=upload_to_, max_length=128)
     place_birth = models.CharField(max_length=32)
     region_birth = models.CharField(max_length=64)
     citizenship = models.CharField(max_length=32)
