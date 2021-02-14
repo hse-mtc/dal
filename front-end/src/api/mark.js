@@ -1,8 +1,14 @@
 import request from "@/utils/request";
+import { BASE_API_URL, LMS_URLS } from "@/constants/api";
+
+const { marks: {
+  mark,
+  journal
+} } = LMS_URLS
 
 export function getMark(params) {
   return request({
-    url: "/lms/mark/",
+    url: BASE_API_URL + mark,
     method: "get",
     params,
   });
@@ -10,7 +16,7 @@ export function getMark(params) {
 
 export function getMarkJournal(params) {
   return request({
-    url: "/lms/mark-journal/",
+    url: BASE_API_URL + journal,
     method: "get",
     params,
   });
@@ -18,7 +24,7 @@ export function getMarkJournal(params) {
 
 export function patchMark(data) {
   return request({
-    url: `/lms/mark/${data.id}/`,
+    url: `${BASE_API_URL}${mark}${data.id}/`,
     method: "patch",
     data,
   });
@@ -26,7 +32,7 @@ export function patchMark(data) {
 
 export function postMark(data) {
   return request({
-    url: `/lms/mark/`,
+    url: BASE_API_URL + mark,
     method: "post",
     data,
   });
@@ -34,7 +40,7 @@ export function postMark(data) {
 
 export function deleteMark(params) {
   return request({
-    url: `/lms/mark/${params.id}/`,
+    url: `${BASE_API_URL}${mark}${params.id}/`,
     method: "delete",
   });
 }

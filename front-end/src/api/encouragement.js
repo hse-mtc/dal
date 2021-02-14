@@ -1,8 +1,11 @@
 import request from "@/utils/request";
+import { BASE_API_URL, LMS_URLS } from "@/constants/api";
+
+const { encouragement: { encouragement } } = LMS_URLS
 
 export function getEncouragement(params) {
   return request({
-    url: "/lms/encouragement/",
+    url: BASE_API_URL + encouragement,
     method: "get",
     params,
   });
@@ -12,7 +15,7 @@ export function patchEncouragement(data) {
   data.student = { id: data.student.id };
   data.teacher = { id: data.teacher.id };
   return request({
-    url: `/lms/encouragement/${data.id}/`,
+    url: `${BASE_API_URL}${encouragement}${data.id}/`,
     method: "patch",
     data,
   });
@@ -20,7 +23,7 @@ export function patchEncouragement(data) {
 
 export function postEncouragement(data) {
   return request({
-    url: "/lms/encouragement/",
+    url: BASE_API_URL + encouragement,
     method: "post",
     data,
   });
@@ -28,7 +31,7 @@ export function postEncouragement(data) {
 
 export function deleteEncouragement(params) {
   return request({
-    url: `/lms/encouragement/${params.id}/`,
+    url: `${BASE_API_URL}${encouragement}${params.id}/`,
     method: "delete",
   });
 }

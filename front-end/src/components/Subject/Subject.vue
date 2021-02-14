@@ -131,7 +131,7 @@ import {
   editSectionTitle,
   changeSectionOrder,
   getSubject,
-} from "@/api/subject";
+} from "@/api/subjects";
 import { mapActions, mapState } from "vuex";
 import CustomText from "@/common/CustomText";
 

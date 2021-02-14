@@ -33,7 +33,7 @@
 
 <script>
 import CustomText from "@/common/CustomText";
-import { deleteSubject } from "../../api/subject";
+import { deleteSubject } from "../../api/subjects";
 
 export default {
   name: "SubjectCard",

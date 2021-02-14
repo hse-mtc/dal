@@ -131,7 +131,7 @@
 import CustomText from "@/common/CustomText";
 import DownloadFile from '@/common/DownloadFile/index.vue'
 import { deleteMaterial } from "@/api/material";
-import { addTopicFile } from "@/api/subject";
+import { addTopicFile } from "@/api/material";
 
 export default {
   components: { CustomText, DownloadFile },
