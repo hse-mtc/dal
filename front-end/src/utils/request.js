@@ -4,17 +4,10 @@ import { updateAccess } from "@/api/tokens";
 import LocalStorageService from "./LocalStorageService";
 
 const localStorageService = LocalStorageService.getService();
-export const baseURL = (() => {
-  // eslint-disable-next-line
-  const host = process.env.VUE_APP_BACK_END_HOST || "localhost";
-  // eslint-disable-next-line
-  const port = process.env.VUE_APP_BACK_END_PORT || "9090";
-  return "http://" + host + ":" + port + "/api";
-})();
 
 // create an axios instance
 const service = axios.create({
-  baseURL: baseURL,
+  baseURL: '/',
   timeout: 10000, // request timeout
   // withCredentials: true, // send cookies when cross-domain requests
 });

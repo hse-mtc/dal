@@ -14,6 +14,12 @@ const name = defaultSettings.title || "ВУЦ ВШЭ"; // page title
 // You can change the port by the following methods:
 // port = 9528 npm run dev OR npm run dev --port = 9528
 const port = process.env.port || process.env.npm_config_port || 9528; // dev port
+const apiHost = process.env.VUE_APP_BACK_END_HOST || "localhost";
+const apiPort = process.env.VUE_APP_BACK_END_PORT || "9090";
+const apiUrl = process.env.VUE_APP_API_BASE_URL
+const mediaUrl = process.env.VUE_APP_MEDIA_BASE_URL
+
+const isDev = process.env.NODE_ENV === 'development'
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -27,7 +33,7 @@ module.exports = {
   publicPath: "/",
   outputDir: "dist",
   assetsDir: "static",
-  lintOnSave: process.env.NODE_ENV === "development",
+  lintOnSave: isDev,
   productionSourceMap: false,
   devServer: {
     port: port,
@@ -35,6 +41,26 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true,
+    },
+    proxy: {
+      // change /api/... => http://API_HOST/api/...
+      // detail: https://cli.vuejs.org/config/#devserver-proxy
+      [`/${apiUrl}`]: {
+        target: `http://${apiHost}:${apiPort}/${apiUrl}`,
+        changeOrigin: true, // needed for virtual hosted sites
+        ws: true, // proxy websockets
+        pathRewrite: {
+          [`^/${apiUrl}`]: ''
+        }
+      },
+      [`/${mediaUrl}`]: {
+        target: `http://${apiHost}:${apiPort}/${mediaUrl}`,
+        changeOrigin: true, // needed for virtual hosted sites
+        ws: true, // proxy websockets
+        pathRewrite: {
+          [`^/${mediaUrl}`]: ''
+        }
+      }
     },
   },
   configureWebpack: {
@@ -78,11 +104,11 @@ module.exports = {
 
     config
       // https://webpack.js.org/configuration/devtool/#development
-      .when(process.env.NODE_ENV === "development", (config) =>
+      .when(isDev, (config) =>
         config.devtool("cheap-source-map")
       );
 
-    config.when(process.env.NODE_ENV !== "development", (config) => {
+    config.when(!isDev, (config) => {
       config
         .plugin("ScriptExtHtmlWebpackPlugin")
         .after("html")
