@@ -1,16 +1,17 @@
 import request from "@/utils/request";
+import { AUTH_URLS, BASE_API_URL } from "@/constants/api";
 
 export function login(data) {
   return request({
-    url: "/auth/tokens/obtain/",
+    url: BASE_API_URL + AUTH_URLS.obtain,
     method: "post",
     data,
   });
 }
 
-export function getInfo(token) {
+export function getInfo() {
   return request({
-    url: "/auth/users/info/",
+    url: BASE_API_URL + AUTH_URLS.info,
     method: "get",
   });
 }

@@ -86,7 +86,7 @@ import { mapState, mapActions } from "vuex";
 import SearchForSubjects from "@/components/Search/SearchForSubjects";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
-import { upsertSubject } from "@/api/subject";
+import { upsertSubject } from "@/api/subjects";
 
 export default {
   name: "",

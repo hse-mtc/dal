@@ -95,8 +95,8 @@
 <script>
 import moment from "moment";
 
-import {getDocuments} from "@/api/documents";
-import {deleteDocument} from "@/api/delete";
+import { getPapers } from "@/api/papers";
+import { deleteDocument } from "@/api/delete";
 
 import EventBus from "../EventBus";
 import {scrollMixin} from "@/mixins/scrollMixin";
@@ -204,7 +204,7 @@ export default {
         const category = this.$route.query.category;
 
         try {
-          const {data} = await getDocuments(this.lodash.pickBy({
+          const { data } = await getPapers(this.lodash.pickBy({
             category,
             authors,
             publishers: place,
