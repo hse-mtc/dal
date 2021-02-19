@@ -660,7 +660,7 @@ def create_marks(lessons: list[Lesson], students: dict[str, Student]):
 
 def create_absence_restriction_time():
     restriction_time = time(hour=9, minute=15)
-    AbsenceTime.objects.create(absence_restrinction_time=restriction_time)
+    AbsenceTime.objects.create(absence_restriction_time=restriction_time)
 
 
 # pylint: disable=(too-many-locals)
