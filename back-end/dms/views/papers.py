@@ -31,7 +31,7 @@ from dms.permissions import (
 )
 from dms.filters import PaperFilter
 from dms.parsers import MultiPartWithJSONParser
-from dms.views.common import MUTATE_ACTIONS
+from common.constants import MUTATE_ACTIONS
 
 
 @extend_schema(tags=["categories"])
