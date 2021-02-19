@@ -143,7 +143,7 @@ export const constantRoutes = [
         path: "",
         name: "Discipline",
         component: () => import("@/views/Discipline/index"),
-        meta: { title: "Дисциплинарный журнал", icon: "cross" },
+        meta: { title: "Дисциплинарная практика", icon: "cross" },
       },
     ],
   },
