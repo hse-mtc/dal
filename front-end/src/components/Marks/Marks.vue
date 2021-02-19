@@ -22,7 +22,7 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="5">
+        <el-col :span="7">
           <el-date-picker
             v-model="filter.dateRange"
             type="daterange"
@@ -181,8 +181,8 @@
           <el-input-number
             v-model="editMark.mark"
             controls-position="right"
-            :min="1"
-            :max="10"
+            :min="2"
+            :max="5"
           />
         </el-form-item>
         <el-form-item label="Комментарий: ">
@@ -312,18 +312,29 @@ export default {
           return "warning";
         case "Практическое занятие":
           return "success";
+        case "Зачет": 
+          return "info";
+        case "Экзамен":
+          return "info";
+        case "Контрольная работа":
+          return "info";
         default:
           return "info";
       }
     },
     tagByMark(mark) {
-      if (mark >= 8) {
-        return "primary";
-      } else if (mark >= 6) {
-        return "success";
-      } else if (mark >= 4) {
-        return "warning";
-      } else return "danger";
+      switch (mark) {
+        case 5:
+          return "primary";
+        case 4:
+          return "success";
+        case 3:
+          return "warning";
+        case 2:
+          return "danger";
+        default:
+          return "info";
+      }
     },
     fetchData() {
       if (this.filter.mg > 0 && this.filter.subject_id > 0) {

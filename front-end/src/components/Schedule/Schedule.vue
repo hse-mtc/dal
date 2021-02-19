@@ -254,6 +254,9 @@ export default {
         "Лекция",
         "Групповое занятие",
         "Практическое занятие",
+        "Зачет",
+        "Экзамен",
+        "Контрольная работа",
       ],
       rooms: ["510", "501", "502", "503", "504", "Плац"],
       milgroups: [
@@ -321,6 +324,12 @@ export default {
           return "warning";
         case "Практическое занятие":
           return "success";
+        case "Зачет": 
+          return "info";
+        case "Экзамен":
+          return "info";
+        case "Контрольная работа":
+          return "info";
         default:
           return "info";
       }

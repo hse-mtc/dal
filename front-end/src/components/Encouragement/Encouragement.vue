@@ -1,6 +1,23 @@
 <template>
   <div>
     <el-row class="filterRow" :gutter="20">
+      <el-col :span="7">
+        <el-date-picker
+          v-model="filter.dateRange"
+          type="daterange"
+          align="right"
+          unlink-panels
+          range-separator="по"
+          start-placeholder="Начальная дата"
+          end-placeholder="Конечная дата"
+          :picker-options="pickerOptions"
+          v-on:change="onFilter"
+          v-on:clear="onFilter"
+          format="dd.MM.yyyy"
+          value-format="yyyy-MM-dd"
+        >
+        </el-date-picker>
+      </el-col>
       <el-col :span="6">
         <el-input
           clearable
@@ -48,23 +65,6 @@
           >
           </el-option>
         </el-select>
-      </el-col>
-      <el-col :span="6">
-        <el-date-picker
-          v-model="filter.dateRange"
-          type="daterange"
-          align="right"
-          unlink-panels
-          range-separator="по"
-          start-placeholder="Начальная дата"
-          end-placeholder="Конечная дата"
-          :picker-options="pickerOptions"
-          v-on:change="onFilter"
-          v-on:clear="onFilter"
-          format="dd.MM.yyyy"
-          value-format="yyyy-MM-dd"
-        >
-        </el-date-picker>
       </el-col>
     </el-row>
     <el-row class="addRow">
