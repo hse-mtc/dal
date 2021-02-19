@@ -1,6 +1,8 @@
 from django_filters import rest_framework as filters
 
 from common.models.subjects import Subject
+
+from dms.models.common import Author
 from dms.models.papers import Paper
 from dms.models.class_materials import Section
 from dms.models.books import (
@@ -50,7 +52,15 @@ class FavoriteBookFilter(filters.FilterSet):
                                       lookup_expr="gte")
     end_year = filters.NumberFilter(field_name="book__publication_year",
                                     lookup_expr="lte")
+    authors = filters.ModelMultipleChoiceFilter(
+        field_name="book__authors",
+        queryset=Author.objects.all(),
+    )
+    subjects = filters.ModelMultipleChoiceFilter(
+        field_name="book__subjects",
+        queryset=Subject.objects.all(),
+    )
 
     class Meta:
         model = FavoriteBook
-        fields = ["user", "book__authors", "book__subjects"]
+        fields = ["user"]
