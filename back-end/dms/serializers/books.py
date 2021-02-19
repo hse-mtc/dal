@@ -38,6 +38,11 @@ class BookSerializer(DocumentSerializer):
     publishers = PublisherSerializer(many=True, read_only=True)
     subjects = SubjectSerializer(many=True, read_only=True)
     cover = CoverSerializer(read_only=True)
+    favorite = serializers.SerializerMethodField()
+
+    def get_favorite(self, obj: Book) -> bool:
+        user_id = self.context["request"].user.id
+        return obj.favoritebook_set.filter(user=user_id).exists()
 
     class Meta:
         model = Book
@@ -81,6 +86,7 @@ class FavoriteBookSerializer(serializers.ModelSerializer):
     book = BookSerializer(read_only=True)
     user = UserSerializer(read_only=True,
                           default=serializers.CurrentUserDefault())
+    favorite = serializers.BooleanField(default=True)
 
     class Meta:
         model = FavoriteBook
