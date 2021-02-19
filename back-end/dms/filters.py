@@ -63,4 +63,4 @@ class FavoriteBookFilter(filters.FilterSet):
 
     class Meta:
         model = FavoriteBook
-        fields = ["user"]
+        exclude = ["user"]
