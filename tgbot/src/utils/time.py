@@ -7,7 +7,7 @@ from api.client import client
 async def fetch_restriction_time() -> str:
     async with client.get('lms/absence-time/') as response:
         data: list[dict[str, tp.Any]] = await response.json()
-    return data['absence_restrinction_time']
+    return data['absence_restriction_time']
 
 
 def utc_to_local(utc_dt: datetime) -> datetime:
