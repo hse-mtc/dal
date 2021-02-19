@@ -1,5 +1,5 @@
 from rest_framework.serializers import (ModelSerializer, Serializer,
-                                        IntegerField, DateField)
+                                        IntegerField, DateField, CharField)
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 

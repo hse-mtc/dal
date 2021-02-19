@@ -26,7 +26,7 @@ from dms.permissions import (
     ReadOnly,
 )
 from dms.parsers import MultiPartWithJSONParser
-from dms.views.common import MUTATE_ACTIONS
+from common.constants import MUTATE_ACTIONS
 
 
 @extend_schema(request=BookMutateSerializerForSwagger, tags=["books"])

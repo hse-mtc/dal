@@ -1,4 +1,5 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 from lms.models.lesson import Lesson
@@ -6,9 +7,9 @@ from lms.models.student import Student
 
 
 class Mark(models.Model):
-    mark = models.PositiveSmallIntegerField(
-        validators=[MaxValueValidator(10),
-                    MinValueValidator(0)])
+    mark = ArrayField(models.IntegerField(
+        validators=[MaxValueValidator(5),
+                    MinValueValidator(2)]))
     lesson = models.ForeignKey(Lesson, models.DO_NOTHING)
     student = models.ForeignKey(Student, models.DO_NOTHING)
 

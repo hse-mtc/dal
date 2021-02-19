@@ -624,32 +624,32 @@ def create_marks(lessons: list[Lesson], students: dict[str, Student]):
         {
             'lesson': lessons[0],
             'student': students['Хромов'],
-            'mark': 10,
+            'mark': [5],
         },
         {
             'lesson': lessons[0],
             'student': students['Исаков'],
-            'mark': 6,
+            'mark': [4],
         },
         {
             'lesson': lessons[0],
             'student': students['Кацевалов'],
-            'mark': 4,
+            'mark': [3],
         },
         {
             'lesson': lessons[1],
             'student': students['Хромов'],
-            'mark': 8,
+            'mark': [5],
         },
         {
             'lesson': lessons[1],
             'student': students['Исаков'],
-            'mark': 4,
+            'mark': [3],
         },
         {
             'lesson': lessons[1],
             'student': students['Кацевалов'],
-            'mark': 0,
+            'mark': [2],
         },
     ]
 

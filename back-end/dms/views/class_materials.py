@@ -31,9 +31,9 @@ from dms.permissions import (
 from dms.filters import SectionFilter
 from dms.parsers import MultiPartWithJSONParser
 from dms.views.common import (
-    MUTATE_ACTIONS,
     OrderUpdateAPIView,
 )
+from common.constants import MUTATE_ACTIONS
 
 
 @extend_schema(tags=["sections"])

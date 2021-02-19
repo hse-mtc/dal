@@ -25,12 +25,13 @@ from lms.models.student import Student
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subject import LessonSubjectSerializer
-from lms.serializers.mark import (MarkSerializer, MarkJouralSerializer,
-                                  MarkJournalGetQuerySerializer)
+from lms.serializers.mark import (MarkSerializer, MarkMutateSerializer,
+                                  MarkJouralSerializer, MarkJournalGetQuerySerializer)
 
 from lms.functions import get_date_range
 
 from auth.permissions import BasicPermission
+from common.constants import MUTATE_ACTIONS
 
 
 class MarkPermission(BasicPermission):
@@ -39,7 +40,6 @@ class MarkPermission(BasicPermission):
 
 @extend_schema(tags=['mark'])
 class MarkViewSet(ModelViewSet):
-    serializer_class = MarkSerializer
     queryset = Mark.objects.all()
 
     permission_classes = [MarkPermission]
@@ -47,6 +47,11 @@ class MarkViewSet(ModelViewSet):
 
     filterset_class = MarkFilter
     search_fields = ['student__surname', 'student__name', 'student__patronymic']
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return MarkMutateSerializer
+        return MarkSerializer
 
 
 @extend_schema(tags=['mark-journal'],

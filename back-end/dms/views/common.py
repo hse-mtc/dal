@@ -29,8 +29,6 @@ from dms.serializers.common import (
 
 from common.models.subjects import Subject
 
-MUTATE_ACTIONS = ["create", "update", "partial_update"]
-
 
 @extend_schema(tags=["authors"])
 class AuthorViewSet(viewsets.ModelViewSet):
