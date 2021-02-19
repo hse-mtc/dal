@@ -7,9 +7,10 @@ from lms.models.student import Student
 
 
 class Mark(models.Model):
-    mark = ArrayField(models.IntegerField(
-        validators=[MaxValueValidator(5),
-                    MinValueValidator(2)]))
+    mark = ArrayField(
+        models.IntegerField(
+            validators=[MaxValueValidator(5),
+                        MinValueValidator(2)]))
     lesson = models.ForeignKey(Lesson, models.DO_NOTHING)
     student = models.ForeignKey(Student, models.DO_NOTHING)
 

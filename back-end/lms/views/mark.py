@@ -16,6 +16,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 from common.models.subjects import Subject
+from common.constants import MUTATE_ACTIONS
 
 from lms.filters.mark import MarkFilter
 
@@ -26,12 +27,12 @@ from lms.models.student import Student
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subject import LessonSubjectSerializer
 from lms.serializers.mark import (MarkSerializer, MarkMutateSerializer,
-                                  MarkJouralSerializer, MarkJournalGetQuerySerializer)
+                                  MarkJouralSerializer,
+                                  MarkJournalGetQuerySerializer)
 
 from lms.functions import get_date_range
 
 from auth.permissions import BasicPermission
-from common.constants import MUTATE_ACTIONS
 
 
 class MarkPermission(BasicPermission):
