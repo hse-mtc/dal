@@ -59,6 +59,8 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
 
     filterset_class = FavoriteBookFilter
 
+    pagination_class = LimitOffsetPagination
+
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
             return FavoriteBookMutateSerializer
