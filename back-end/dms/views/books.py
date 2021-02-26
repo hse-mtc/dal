@@ -1,9 +1,13 @@
 from rest_framework import viewsets
 
-from rest_framework.filters import SearchFilter
-from rest_framework.filters import OrderingFilter
+from rest_framework.response import Response
+from rest_framework.status import HTTP_204_NO_CONTENT
 from rest_framework.parsers import JSONParser
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.filters import (
+    SearchFilter,
+    OrderingFilter,
+)
 
 from drf_spectacular.views import extend_schema
 
@@ -65,3 +69,9 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return FavoriteBookMutateSerializer
         return FavoriteBookSerializer
+
+    def destroy(self, request, *args, pk=None, **kwargs):
+        # pylint: disable=unused-argument,invalid-name
+        favorite = FavoriteBook.objects.filter(book__id=pk)
+        favorite.delete()
+        return Response(status=HTTP_204_NO_CONTENT)
