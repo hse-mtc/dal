@@ -84,16 +84,22 @@ BookMutateSerializerForSwagger = inline_serializer(
 
 class FavoriteBookSerializer(serializers.ModelSerializer):
     book = BookSerializer(read_only=True)
-    user = UserSerializer(read_only=True,
-                          default=serializers.CurrentUserDefault())
-    favorite = serializers.BooleanField(default=True)
 
     class Meta:
         model = FavoriteBook
         fields = "__all__"
 
+    # TODO: help Swagger deduce response schema
+    def to_representation(self, obj: FavoriteBook):
+        representation = super().to_representation(obj)
+        return representation["book"]
+
 
 class FavoriteBookMutateSerializer(serializers.ModelSerializer):
+    user = UserSerializer(
+        write_only=True,
+        default=serializers.CurrentUserDefault(),
+    )
 
     class Meta:
         model = FavoriteBook
