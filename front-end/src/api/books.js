@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 import { BASE_API_URL, DMS_URLS } from "@/constants/api";
 
-const {books: {books}} = DMS_URLS
+const {books: {books, favorite}} = DMS_URLS
 
 export function getBooks(params) {
   return request({
@@ -36,7 +36,7 @@ export function editBook(id, data) {
 
 export function getFavoriteBooks(params) {
   return request({
-    url: "/dms/favorite-books/",
+    url: BASE_API_URL + favorite,
     method: "get",
     params,
   });
@@ -44,7 +44,7 @@ export function getFavoriteBooks(params) {
 
 export function saveFavBook(data) {
   return request({
-    url: "/dms/favorite-books/",
+    url: BASE_API_URL + favorite,
     method: "post",
     data,
   });
@@ -53,7 +53,7 @@ export function saveFavBook(data) {
 
 export function unsaveFavBook(id) {
   return request({
-    url: `/dms/favorite-books/${id}/`,
+    url: `${BASE_API_URL}${favorite}${id}/`,
     method: "delete",
   });
 }
