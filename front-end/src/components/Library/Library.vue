@@ -34,7 +34,7 @@
             <div class="book" v-for="item in books" :key="item.id">
               <Book @deleteFavBook="deleteFavBook" :data="item" :onEdit="() => onBookEdit(item)"/>
             </div>
-            <div v-if="books.length === 0 && isFavoriteBooks" >
+            <div v-if="books.length === 0 && isFavoriteBooks && !loading" >
               <CustomText :mt="SIZES.m" variant="paragraph">
                 У вас нет сохраненных учебников, добавить их можно в разделе <span class="link" @click="$router.push(`/library`);">Библиотека</span>
               </CustomText>
