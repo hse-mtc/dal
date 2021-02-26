@@ -1,9 +1,8 @@
 import request from "@/utils/request";
 
-export function getDocuments(params) {
+export function getStatistics(id) {
   return request({
-    url: "/dms/papers/",
+    url: `/dms/statistics/${id}`,
     method: "get",
-    params
   });
 }

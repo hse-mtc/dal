@@ -54,7 +54,7 @@ export default {
 
 <style scoped lang="scss">
 .addModal {
-  margin-top: 50px;
+  margin-top: 56px;
   position: fixed;
   top: 50%;
   left: calc(50%);

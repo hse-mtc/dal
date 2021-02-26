@@ -1,143 +1,94 @@
 <template>
-  <div class="dashboard-container">
-    <div class="dashboard-text">{{ name }}, добро пожаловать на сайт.</div>
-    <div>
-      Страница сейчас находится на стадии разработки, по всем вопросам:
-      <a href="mailto:vmloskutov@edu.hse.ru">vmloskutov@edu.hse.ru</a>
-    </div>
-  </div>
-  <!--  <div class="container">-->
-  <!--    <el-upload-->
-  <!--            class="upload-demo"-->
-  <!--            action="http://172.20.10.3:8000/api/XEP"-->
-  <!--            :on-preview="handlePreview"-->
-  <!--            :on-remove="handleRemove"-->
-  <!--            :before-remove="beforeRemove"-->
-  <!--            multiple-->
-  <!--            :limit="3"-->
-  <!--            :on-exceed="handleExceed"-->
-  <!--            :file-list="fileList">-->
-  <!--      <el-button size="small" type="primary">Click to upload</el-button>-->
-  <!--      <div slot="tip" class="el-upload__tip">jpg/png files with a size less than 500kb</div>-->
-  <!--    </el-upload>-->
-
-  <!--    <div class="large-12 medium-12 small-12 cell">-->
-  <!--      <label>Files-->
-  <!--        <input type="file" id="files" ref="files" multiple v-on:change="handleFilesUpload()"/>-->
-  <!--      </label>-->
-  <!--    </div>-->
-  <!--    <div class="large-12 medium-12 small-12 cell">-->
-  <!--      <div v-for="(file, key) in files" class="file-listing">{{ file.name }} <span class="remove-file" v-on:click="removeFile( key )">Remove</span></div>-->
-  <!--    </div>-->
-  <!--    <br>-->
-  <!--    <div class="large-12 medium-12 small-12 cell">-->
-  <!--      <button v-on:click="addFiles()">Add Files</button>-->
-  <!--    </div>-->
-  <!--    <br>-->
-  <!--    <div class="large-12 medium-12 small-12 cell">-->
-  <!--      <button v-on:click="submitFiles()">Submit</button>-->
-  <!--    </div>-->
-  <!--  </div>-->
+  <el-row>
+    <el-col :span="20" :offset="2">
+      <PageHeader title="Мои материалы"/>
+      <Statistics/>
+    </el-col>
+    <el-col :span="24">
+      <div class="tabs">
+        <div class="tab" v-for="item in tabs" :class="{ 'active': activeTab === item.value }" :key="item.value"
+             @click="changeTab(item.value)">
+          {{ item.label }}
+        </div>
+      </div>
+    </el-col>
+    <el-col :span="20" :offset="2">
+      <div v-if="activeTab === 'disciplines'">
+        <MyDisciplines />
+      </div>
+      <div v-if="activeTab === 'works'">
+        <MyDocuments />
+      </div>
+      <div v-if="activeTab === 'library'">
+        <Library :isMyLibrary="true" />
+      </div>
+      <div v-if="activeTab === 'books'">
+        <Library :isFavoriteBooks="true" />
+      </div>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import axios from "axios";
+import {mapGetters} from "vuex";
+import Statistics from "@/components/MyMaterials/Statistics"
+import PageHeader from "@/common/PageHeader";
+import MyDisciplines from "@/components/MyMaterials/MyDisciplines";
+import MyDocuments from "@/components/MyMaterials/MyDocuments";
+import Library from "@/components/Library/Library";
+
 export default {
-  name: "Dashboard",
+  name: "MyMaterials",
+  components: {
+    Library,
+    MyDisciplines,
+    MyDocuments,
+    Statistics,
+    PageHeader
+  },
   computed: {
     ...mapGetters(["name"]),
   },
   data() {
     return {
-      files: [],
-      fileList: [],
+      activeTab: 'disciplines',
+      tabs: [
+        {label: 'Дисциплины', value: 'disciplines'},
+        {label: 'Военно-научные работы', value: 'works'},
+        {label: 'Библиотека', value: 'library'},
+        {label: 'Сохраненные учебники', value: 'books'},
+      ]
     };
   },
   methods: {
-    handleRemove(file, fileList) {
-      // console.log(file, fileList);
-    },
-    handlePreview(file) {
-      // console.log(file);
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(
-        `The limit is 3, you selected ${
-          files.length
-        } files this time, add up to ${files.length + fileList.length} totally`
-      );
-    },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`Cancel the transfert of ${file.name} ?`);
-    },
-    // submitUpload() {
-    //   console.log(this.$refs.upload)
-    //   // this.$refs.upload.submit();
-    // },
-    // addFiles(){
-    //   this.$refs.files.click();
-    // },
-    // submitFiles(){
-    //
-    //   let formData = new FormData();
-    //   for( var i = 0; i < this.files.length; i++ ){
-    //     let file = this.files[i];
-    //     formData.append('files[' + i + ']', file);
-    //   }
-    //   formData.append('first_name', 'Dan');
-    //   formData.append('last_name', 'Pastori');
-    //   console.log(formData)
-    //   axios.post( 'http://172.20.10.3:8000/api/XEP',
-    //           formData,
-    //           {
-    //             headers: {
-    //               'Content-Type': 'multipart/form-data'
-    //             }
-    //           }
-    //   ).then(function(){
-    //     console.log('SUCCESS!!');
-    //   })
-    //           .catch(function(){
-    //             console.log('FAILURE!!');
-    //           });
-    // },
-    // handleFilesUpload(){
-    //   let uploadedFiles = this.$refs.files.files;
-    //   for( var i = 0; i < uploadedFiles.length; i++ ){
-    //     this.files.push( uploadedFiles[i] );
-    //   }
-    // },
-    // removeFile( key ){
-    //   this.files.splice( key, 1 );
-    // }
+    changeTab(value) {
+      this.activeTab = value
+    }
   },
 };
 </script>
 
-<!--<style lang="scss" scoped>-->
-<!--.dashboard {-->
-<!--  &-container {-->
-<!--    margin: 30px;-->
-<!--  }-->
-<!--  &-text {-->
-<!--    font-size: 30px;-->
-<!--    line-height: 46px;-->
-<!--  }-->
-<!--}-->
-<!--</style>-->
+<style lang="scss" scoped>
+@import "@/styles/variables.scss";
 
-<style>
-input[type="file"] {
-  position: absolute;
-  top: -500px;
+.tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: $lightGray;
+  padding: $m;
 }
-div.file-listing {
-  width: 200px;
-}
-span.remove-file {
-  color: red;
+
+.tab {
   cursor: pointer;
-  float: right;
+  font-family: ProximaNovaRegular;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 24px;
+  line-height: 29px;
+}
+
+.active {
+  font-weight: bold;
 }
 </style>

@@ -29,3 +29,27 @@ export function editBook(id, data) {
     data,
   });
 }
+
+export function getFavoriteBooks(params) {
+  return request({
+    url: "/dms/favorite-books/",
+    method: "get",
+    params,
+  });
+}
+
+export function saveFavBook(data) {
+  return request({
+    url: "/dms/favorite-books/",
+    method: "post",
+    data,
+  });
+}
+
+
+export function unsaveFavBook(id) {
+  return request({
+    url: `/dms/favorite-books/${id}/`,
+    method: "delete",
+  });
+}

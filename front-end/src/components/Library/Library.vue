@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-    <PageHeader title="Библиотека" button="+ Добавить учебник" :click="addNewBook"/>
+    <PageHeader v-if="!(isMyLibrary || isFavoriteBooks)" title="Библиотека" button="+ Добавить учебник" :click="addNewBook"/>
     <Modal
       v-if="showModal"
       :initData="modalData"
@@ -9,11 +9,11 @@
       @close-modal="onClose"
       @save="onSave"
     />
-    <SearchBar placeholder="Введите название книги" :search="searchBook" :delete="deleteSearchInput"/>
-    <CustomText :mt="SIZES.m" variant="paragraph">Найдено: {{ count || 0 }}</CustomText>
+    <SearchBar v-if="!(isMyLibrary || isFavoriteBooks)" placeholder="Введите название книги" :search="searchBook" :delete="deleteSearchInput"/>
+    <CustomText v-if="!(isMyLibrary || isFavoriteBooks)" :mt="SIZES.m" variant="paragraph">Найдено: {{ count || 0 }}</CustomText>
     <el-row>
       <el-col :span="18">
-        <div class="sort mt-3 mb-3">
+        <div class="sort mt-3 mb-3" v-if="!(isMyLibrary || isFavoriteBooks)">
           <CustomText variant="sub-header" :mr="SIZES.m">Сортировать</CustomText>
           <el-select
               v-model="sort"
@@ -32,14 +32,19 @@
         <div class="content">
           <div class="books">
             <div class="book" v-for="item in books" :key="item.id">
-              <Book :data="item" :onEdit="() => onBookEdit(item)"/>
+              <Book @deleteFavBook="deleteFavBook" :data="item" :onEdit="() => onBookEdit(item)"/>
+            </div>
+            <div v-if="books.length === 0 && isFavoriteBooks" >
+              <CustomText :mt="SIZES.m" variant="paragraph">
+                У вас нет сохраненных учебников, добавить их можно в разделе <span class="link" @click="$router.push(`/library`);">Библиотека</span>
+              </CustomText>
             </div>
           </div>
         </div>
         <div v-loading="loading" class="requests__loader"></div>
       </el-col>
       <el-col :span="5" :offset="1">
-        <LibraryFilters/>
+        <LibraryFilters :isMyLibrary="isMyLibrary"/>
       </el-col>
     </el-row>
   </div>
@@ -55,8 +60,9 @@ import Modal from "./LibraryModal.vue";
 import CustomText from "@/common/CustomText";
 import LibraryFilters from "@/components/Library/LibraryFilters";
 import Book from "@/components/Library/Book";
-import {editBook, getBook, getBooks, uploadBook} from "@/api/books";
+import {editBook, getBook, getBooks, uploadBook, getFavoriteBooks} from "@/api/books";
 import {scrollMixin} from "@/mixins/scrollMixin";
+import {mapState} from "vuex";
 
 export default {
   name: "Library",
@@ -69,6 +75,16 @@ export default {
     Modal,
   },
   mixins: [scrollMixin],
+  props: {
+    isMyLibrary: {
+      type: Boolean,
+      default: false,
+    },
+    isFavoriteBooks: {
+      type: Boolean,
+      default: false,
+    }
+  },
   data() {
     return {
       SIZES,
@@ -100,6 +116,9 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      userId: (state) => state.app.userId,
+    }),
     sort: {
       get() {
         return this.$route.query.sort || '-publication_year'
@@ -134,24 +153,46 @@ export default {
     loadMore() {
       this.fetchData()
     },
+    deleteFavBook(id) {
+      this.books = this.books.filter(item => item.id !== id)
+    },
     fetchData() {
       if (this.books.length < this.count || this.count === null) {
         this.loading = true
         const {author, subject, year} = this.$route.query
-        getBooks(this.lodash.pickBy({
-          ordering: this.sort,
-          authors: author,
-          subjects: subject,
-          end_year: year,
-          start_year: year,
-          search: this.search,
-          limit: this.limit,
-          offset: this.books.length
-        })).then(res => {
-          this.count = res.data.count
-          this.books = [...this.books, ...res.data.results]
-          this.loading = false
-        })
+        if (this.isFavoriteBooks) {
+          getFavoriteBooks(this.lodash.pickBy({
+            ordering: this.sort,
+            authors: author,
+            subjects: subject,
+            end_year: year,
+            start_year: year,
+            search: this.search,
+            limit: this.limit,
+            offset: this.books.length,
+            user: this.isMyLibrary ? this.userId : undefined
+          })).then(res => {
+            this.count = res.data.count
+            this.books = [...this.books, ...res.data.results]
+            this.loading = false
+          })
+        } else {
+          getBooks(this.lodash.pickBy({
+            ordering: this.sort,
+            authors: author,
+            subjects: subject,
+            end_year: year,
+            start_year: year,
+            search: this.search,
+            limit: this.limit,
+            offset: this.books.length,
+            user: this.isMyLibrary ? this.userId : undefined
+          })).then(res => {
+            this.count = res.data.count
+            this.books = [...this.books, ...res.data.results]
+            this.loading = false
+          })
+        }
       }
     },
     addNewBook() {
@@ -193,7 +234,7 @@ export default {
       if (data.bookCover.length) {
         formData.set('image', data.bookCover[0].raw)
       }
-      
+
       if (!changingId) {
         formData.set('content', data.book[0].raw)
       }
@@ -243,6 +284,11 @@ export default {
     }
   },
   watch: {
+    isFavoriteBooks() {
+      this.count = null
+      this.books = []
+      this.fetchData()
+    },
     $route() {
       this.count = null
       this.books = []
@@ -259,12 +305,17 @@ export default {
 
 }
 
+.link {
+  color: $darkBlue;
+  cursor: pointer;
+}
+
 .sort {
   display: flex;
   align-items: center;
 }
 
 .content {
-  min-height: 50vh;
+  margin-top: $l;
 }
 </style>
