@@ -2,36 +2,24 @@ import datetime
 
 from django.db import models
 
-from lms.models.student import Student
-
-
-class AbsenceType(models.Model):
-    absence_type = models.CharField(primary_key=True, max_length=100)
-
-    def __str__(self):
-        return str(self.absence_type)
-
-    class Meta:
-        verbose_name = 'Absence Type'
-        verbose_name_plural = 'Absence Types'
-
-
-class AbsenceStatus(models.Model):
-    absence_status = models.CharField(primary_key=True, max_length=100)
-
-    def __str__(self):
-        return str(self.absence_status)
-
-    class Meta:
-        verbose_name = 'Absence Status'
-        verbose_name_plural = 'Absence Statuses'
+from lms.models.students import Student
 
 
 class Absence(models.Model):
+
+    class AbsenceType(models.TextChoices):
+        SERIOUS = 'SE', 'Уважительная'
+        NOT_SERIOUS = 'NS', 'Неуважительная'
+        LATE = 'LA', 'Опоздание'
+
+    class AbsenceStatus(models.TextChoices):
+        OPEN = 'OP', 'Открыт'
+        CLOSED = 'CL', 'Закрыт'
+
     date = models.DateField(default=datetime.date.today)
     student = models.ForeignKey(Student, models.CASCADE)
-    absence_type = models.ForeignKey(AbsenceType, models.DO_NOTHING)
-    absence_status = models.ForeignKey(AbsenceStatus, models.DO_NOTHING)
+    absence_type = models.CharField(max_length=2, choices=AbsenceType.choices)
+    absence_status = models.CharField(max_length=2, choices=AbsenceStatus.choices)
     reason = models.CharField(max_length=100, blank=True, null=True)
     comment = models.CharField(max_length=100, blank=True, null=True)
 

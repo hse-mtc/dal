@@ -5,13 +5,13 @@ from rest_framework.viewsets import ModelViewSet
 from drf_spectacular.views import extend_schema
 
 from lms.models.common import Milgroup, Milfaculty
-from lms.models.teacher import Rank, TeacherPost
-from lms.models.student import Program
-from lms.models.lesson import LessonType, Room
-from lms.models.absence import AbsenceType, AbsenceStatus, AbsenceTime
-from lms.models.achievement import AchievementType
-from lms.models.encouragement import EncouragementType
-from lms.models.punishment import PunishmentType
+from lms.models.teachers import Rank, TeacherPost
+from lms.models.students import Program
+from lms.models.lessons import LessonType, Room
+from lms.models.absences import AbsenceType, AbsenceStatus, AbsenceTime
+from lms.models.achievements import AchievementType
+from lms.models.encouragements import EncouragementType
+from lms.models.punishments import PunishmentType
 
 from lms.serializers.common import MilgroupSerializer, MilfacultySerializer
 from lms.serializers.student import ProgramSerializer

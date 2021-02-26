@@ -1,6 +1,6 @@
 from django_filters.rest_framework import (FilterSet, DateFilter, NumberFilter)
 
-from lms.models.punishment import Punishment
+from lms.models.punishments import Punishment
 
 
 class PunishmentFilter(FilterSet):

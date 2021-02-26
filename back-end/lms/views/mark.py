@@ -21,8 +21,8 @@ from common.constants import MUTATE_ACTIONS
 from lms.filters.mark import MarkFilter
 
 from lms.models.common import Milgroup
-from lms.models.mark import Mark
-from lms.models.student import Student
+from lms.models.marks import Mark
+from lms.models.students import Student
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subject import LessonSubjectSerializer

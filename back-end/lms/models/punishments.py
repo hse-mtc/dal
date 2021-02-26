@@ -2,25 +2,19 @@ import datetime
 
 from django.db import models
 
-from lms.models.student import Student
-from lms.models.teacher import Teacher
-
-
-class PunishmentType(models.Model):
-    punishment_type = models.CharField(primary_key=True, max_length=100)
-
-    def __str__(self):
-        return str(self.punishment_type)
-
-    class Meta:
-        verbose_name = 'Punishment Type'
-        verbose_name_plural = 'Punishment Types'
+from lms.models.students import Student
+from lms.models.teachers import Teacher
 
 
 class Punishment(models.Model):
+
+    class PunishmentType(models.Model):
+        PUNISHMENT = 'PU', 'Взыскание'
+        REBUKE = 'RE', 'Выговор'
+
     student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
-    punishment_type = models.ForeignKey(PunishmentType, models.DO_NOTHING)
+    punishment_type = models.CharField(max_length=2, choices=PunishmentType.choices)
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
     remove_date = models.DateField(blank=True, null=True)

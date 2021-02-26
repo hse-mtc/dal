@@ -4,7 +4,7 @@ from rest_framework.generics import RetrieveUpdateAPIView
 
 from drf_spectacular.views import extend_schema
 
-from lms.models.absence import AbsenceTime
+from lms.models.absences import AbsenceTime
 from lms.serializers.absence import AbsenceTimeSerializer
 
 

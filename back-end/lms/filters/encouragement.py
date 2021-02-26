@@ -1,6 +1,6 @@
 from django_filters.rest_framework import (FilterSet, DateFilter, NumberFilter)
 
-from lms.models.encouragement import Encouragement
+from lms.models.encouragements import Encouragement
 
 
 class EncouragementFilter(FilterSet):

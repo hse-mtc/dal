@@ -1,6 +1,6 @@
 from django_filters.rest_framework import (FilterSet, NumberFilter)
 
-from lms.models.mark import Mark
+from lms.models.marks import Mark
 
 
 class MarkFilter(FilterSet):

@@ -23,8 +23,8 @@ from lms.serializers.absence import (AbsenceSerializer,
                                      AbsenceJournalGetQuerySerializer)
 
 from lms.models.common import Milgroup
-from lms.models.absence import Absence
-from lms.models.student import Student
+from lms.models.absences import Absence
+from lms.models.students import Student
 
 from lms.filters.absence import AbsenceFilter
 
