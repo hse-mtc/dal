@@ -3,29 +3,11 @@ import { BASE_API_URL, DMS_URLS } from "@/constants/api";
 
 const {papers: {papers}} = DMS_URLS
 
-export function getPapers(
-  category,
-  authors,
-  published_places,
-  start_date,
-  end_date,
-  text,
-  limit,
-  offset
-) {
+export function getPapers(params) {
   return request({
     url: BASE_API_URL + papers,
     method: "get",
-    params: {
-      category: category,
-      authors: authors,
-      publishers: published_places,
-      start_date: start_date,
-      end_date: end_date,
-      search: text,
-      limit: limit,
-      offset: offset,
-    },
+    params,
   });
 }
 

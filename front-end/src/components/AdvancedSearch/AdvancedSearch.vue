@@ -106,7 +106,7 @@ export default {
       const query = {
         author: this.author,
         category: this.$route.query.category,
-        place: this.placing,
+        publishers: this.placing,
         text: this.$route.query.text,
       };
 
