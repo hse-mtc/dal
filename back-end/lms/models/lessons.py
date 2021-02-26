@@ -18,19 +18,17 @@ class Room(models.Model):
         verbose_name_plural = 'Rooms'
 
 
-class LessonType(models.Model):
-    lesson_type = models.CharField(primary_key=True, max_length=50)
-
-    def __str__(self):
-        return f'{str(self.lesson_type)}'
-
-    class Meta:
-        verbose_name = 'Lesson Type'
-        verbose_name_plural = 'Lesson Types'
-
-
 class Lesson(models.Model):
-    lesson_type = models.ForeignKey(LessonType, models.DO_NOTHING)
+
+    class LessonType(models.TextChoices):
+        LECTURE = 'LE', 'Лекция'
+        SEMINAR = 'SE', 'Семинар'
+        GROUP_LESSON = 'GR', 'Групповое занятие'
+        PRACTICE = 'PR', 'Практическое занятие'
+        FINAL_TEST = 'FI', 'Зачет'
+        EXAM = 'EX', 'Экзамен'
+
+    lesson_type = models.CharField(max_length=2, choices=LessonType.choices)
     subject = models.ForeignKey(Subject, models.DO_NOTHING)
     room = models.ForeignKey(Room, models.DO_NOTHING)
     milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING)

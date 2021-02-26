@@ -1,6 +1,6 @@
 from django_filters.rest_framework import (FilterSet, NumberFilter, DateFilter)
 
-from lms.models.lesson import Lesson
+from lms.models.lessons import Lesson
 
 
 class LessonFilter(FilterSet):

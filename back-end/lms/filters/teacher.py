@@ -1,6 +1,6 @@
 from django_filters.rest_framework import FilterSet
 
-from lms.models.teacher import Teacher
+from lms.models.teachers import Teacher
 
 
 class TeacherFilter(FilterSet):

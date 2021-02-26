@@ -1,7 +1,7 @@
 from django_filters.rest_framework import FilterSet
 
 from lms.models.common import Milgroup
-from lms.models.student import Program
+from lms.models.students import Program
 
 
 class MilgroupFilter(FilterSet):

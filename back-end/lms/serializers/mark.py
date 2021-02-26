@@ -6,9 +6,9 @@ from rest_framework.serializers import ValidationError
 
 from common.models.subjects import Subject
 
-from lms.models.lesson import Lesson
-from lms.models.mark import Mark
-from lms.models.student import Student
+from lms.models.lessons import Lesson
+from lms.models.marks import Mark
+from lms.models.students import Student
 from lms.models.common import Milgroup
 from lms.serializers.lesson import LessonSerializer, LessonShortSerializer
 from lms.serializers.student import StudentShortSerializer

@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
-from lms.models.teacher import Teacher
+from lms.models.teachers import Teacher
 from lms.serializers.teacher import TeacherSerializer
 from lms.filters.teacher import TeacherFilter
 

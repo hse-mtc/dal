@@ -10,8 +10,8 @@ from lms.serializers.subject import LessonSubjectSerializer
 from lms.serializers.student import StudentShortSerializer
 from lms.serializers.common import MilgroupSerializer
 from lms.models.common import Milgroup
-from lms.models.student import Student
-from lms.models.lesson import Room, LessonType, Lesson
+from lms.models.students import Student
+from lms.models.lessons import Room, LessonType, Lesson
 
 
 class RoomSerializer(ModelSerializer):

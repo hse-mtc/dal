@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
-from lms.models.achievement import Achievement
+from lms.models.achievements import Achievement
 from lms.serializers.achievement import AchievementSerializer
 from lms.filters.achievement import AchievementFilter
 

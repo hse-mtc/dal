@@ -2,25 +2,19 @@ import datetime
 
 from django.db import models
 
-from lms.models.student import Student
-from lms.models.teacher import Teacher
-
-
-class EncouragementType(models.Model):
-    encouragement_type = models.CharField(primary_key=True, max_length=100)
-
-    def __str__(self):
-        return str(self.encouragement_type)
-
-    class Meta:
-        verbose_name = 'Encouragement Type'
-        verbose_name_plural = 'Encouragement Types'
+from lms.models.students import Student
+from lms.models.teachers import Teacher
 
 
 class Encouragement(models.Model):
+
+    class EncouragementType(models.TextChoices):
+        ENCOURAGEMENT = 'EN', 'Благодарность'
+        REMOVE_PUNISHMENT = 'RE', 'Снятие взыскания'
+
     student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
-    encouragement_type = models.ForeignKey(EncouragementType, models.DO_NOTHING)
+    encouragement_type = models.CharField(max_length=2, choices=EncouragementType.choices)
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
 

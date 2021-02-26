@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
-from lms.models.punishment import Punishment
+from lms.models.punishments import Punishment
 from lms.serializers.punishment import PunishmentSerializer
 from lms.filters.punishment import PunishmentFilter
 

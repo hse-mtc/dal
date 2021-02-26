@@ -1,6 +1,6 @@
 from django.db import models
 
-from lms.models.student import Student
+from lms.models.students import Student
 
 
 class AchievementType(models.Model):

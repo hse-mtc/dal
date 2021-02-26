@@ -1,6 +1,6 @@
 from django_filters.rest_framework import (FilterSet, DateFilter)
 
-from lms.models.achievement import Achievement
+from lms.models.achievements import Achievement
 
 
 class AchievementFilter(FilterSet):

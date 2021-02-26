@@ -2,8 +2,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
-from lms.models.lesson import Lesson
-from lms.models.student import Student
+from lms.models.lessons import Lesson
+from lms.models.students import Student
 
 
 class Mark(models.Model):

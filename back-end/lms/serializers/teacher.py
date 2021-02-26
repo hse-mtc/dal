@@ -3,7 +3,7 @@ from rest_framework.serializers import (IntegerField, SerializerMethodField,
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from lms.models.common import Milgroup
-from lms.models.teacher import Rank, TeacherPost, Teacher
+from lms.models.teachers import Rank, TeacherPost, Teacher
 
 from lms.validators import PresentInDatabaseValidator
 from lms.serializers.common import MilgroupSerializer

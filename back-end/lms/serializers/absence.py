@@ -4,8 +4,8 @@ from rest_framework.serializers import (Serializer, ModelSerializer,
 from rest_framework.serializers import ValidationError
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.models.absence import Absence, AbsenceStatus, AbsenceType, AbsenceTime
-from lms.models.student import Student
+from lms.models.absences import Absence, AbsenceStatus, AbsenceType, AbsenceTime
+from lms.models.students import Student
 from lms.models.common import Milgroup
 
 from lms.validators import PresentInDatabaseValidator

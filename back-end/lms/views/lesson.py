@@ -16,7 +16,7 @@ from drf_spectacular.views import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 from lms.models.common import Milgroup
-from lms.models.lesson import Lesson
+from lms.models.lessons import Lesson
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.lesson import (LessonSerializer,
                                     LessonJournalGetQuerySerializer)

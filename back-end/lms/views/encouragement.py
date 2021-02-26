@@ -5,7 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
-from lms.models.encouragement import Encouragement
+from lms.models.encouragements import Encouragement
 from lms.serializers.encouragement import EncouragementSerializer
 from lms.filters.encouragement import EncouragementFilter
 

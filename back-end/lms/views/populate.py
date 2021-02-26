@@ -15,42 +15,37 @@ from lms.models.common import (
     Milfaculty,
     Milgroup,
 )
-from lms.models.student import (
+from lms.models.students import (
     Status,
     Program,
     Student,
     MilSpecialty,
     Faculty,
 )
-from lms.models.teacher import (
+from lms.models.teachers import (
     Rank,
     TeacherPost,
     Teacher,
 )
-from lms.models.absence import (
-    AbsenceStatus,
-    AbsenceType,
+from lms.models.absences import (
     Absence,
     AbsenceTime,
 )
-from lms.models.encouragement import (
-    EncouragementType,
+from lms.models.encouragements import (
     Encouragement,
 )
-from lms.models.punishment import (
-    PunishmentType,
+from lms.models.punishments import (
     Punishment,
 )
-from lms.models.achievement import (
+from lms.models.achievements import (
     AchievementType,
     Achievement,
 )
-from lms.models.lesson import (
+from lms.models.lessons import (
     Room,
-    LessonType,
     Lesson,
 )
-from lms.models.mark import Mark
+from lms.models.marks import Mark
 from lms.functions import get_date_range
 
 from common.models.subjects import Subject

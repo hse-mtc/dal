@@ -1,6 +1,6 @@
 from django_filters.rest_framework import (FilterSet, DateFilter, NumberFilter)
 
-from lms.models.absence import Absence
+from lms.models.absences import Absence
 
 
 class AbsenceFilter(FilterSet):
