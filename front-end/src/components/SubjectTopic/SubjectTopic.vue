@@ -1,197 +1,131 @@
 <template>
-  <div class="topics" style="display: none">
-    <el-button v-if="isOwner" @click="addTopic" class="add-theme">
-      <CustomText
-        variant="paragraph"
-        color="#FFF"
-        :custom-style="{ fontWeight: 600 }"
-        >Добавить тему
-      </CustomText>
-    </el-button>
-    <div v-if="topics.length === 0" class="pt-2 pl-2">
-      <CustomText v-if="!isOwner" variant="paragraph"
-        >Этот раздел пока пуст
+  <div class="topic">
+    <div class="topic-title">
+      <div class="d-flex align-items-center">
+        <img
+          height="12"
+          class="mr-2"
+          src="../../assets/icons/drag.svg"
+          alt=""
+        />
+        <div>Тема №{{ index }}</div>
+      </div>
+      <div class="buttons" v-if="isOwner">
+        <img
+          v-if="isEditing"
+          @click="acceptNewTopic(topic.id)"
+          class="grow"
+          src="../../assets/subject/accept.svg"
+          alt=""
+        />
+
+        <template v-else>
+          <img
+            @click="isEditing = true"
+            class="grow"
+            src="../../assets/subject/edit.svg"
+            alt=""
+          />
+          <img
+            @click="deleteTopic(topic.id)"
+            class="grow"
+            src="../../assets/subject/close.svg"
+            alt=""
+          />
+          <!-- <img
+            @click="downloadTopic(topic.id)"
+            class="grow"
+            src="../../assets/subject/download.svg"
+            alt=""
+          /> -->
+        </template>
+      </div>
+    </div>
+
+    <div v-if="!isEditing">
+      <CustomText variant="header" class="topic-content">
+        {{ topic.title }}
       </CustomText>
     </div>
-    <draggable
-      :list="topics"
-      v-bind="dragOptions"
-      @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
+    <div v-else style="width: 90%">
+      <el-input class="title-input" v-model="topic.title" clearable />
+    </div>
+
+    <div v-if="!isEditing">
+      <CustomText variant="paragraph">
+        {{ topic.annotation }}
+      </CustomText>
+    </div>
+    <div
+      v-else
+      style="width: 90%; margin-top: 10px"
     >
-      <transition-group type="transition" name="flip-list">
-        <div v-for="(item, index) in topics" :key="item.id" class="topic">
-          <div class="topic-title">
-            <div class="d-flex align-items-center">
-              <img
-                height="12"
-                class="mr-2"
-                src="../../assets/icons/drag.svg"
-                alt=""
-              />
-              <div>Тема №{{ index + 1 }}</div>
-            </div>
-            <div class="buttons" v-if="isOwner">
-              <img
-                v-if="editTopicId === item.id"
-                @click="acceptNewTopic(item.id)"
-                class="grow"
-                src="../../assets/subject/accept.svg"
-                alt=""
-              />
-              <img
-                v-if="editTopicId === null"
-                @click="editTopic(item.id)"
-                class="grow"
-                src="../../assets/subject/edit.svg"
-                alt=""
-              />
-              <img
-                v-if="editTopicId === null"
-                @click="deleteTopic(item.id)"
-                class="grow"
-                src="../../assets/subject/close.svg"
-                alt=""
-              />
-              <img
-                v-if="editTopicId === null"
-                @click="downloadTopic(item.id)"
-                class="grow"
-                src="../../assets/subject/download.svg"
-                alt=""
-              />
-            </div>
-          </div>
+      <el-input
+        type="textarea"
+        :autosize="{ minRows: 2, maxRows: 4 }"
+        class="title-input"
+        v-model="topic.annotation"
+        clearable
+      />
+    </div>
 
-          <div v-if="editTopicId !== item.id">
-            <CustomText variant="header" class="topic-content">
-              {{ item.title }}
-            </CustomText>
-          </div>
-          <div v-if="editTopicId === item.id" style="width: 90%">
-            <el-input class="title-input" v-model="item.title" clearable />
-          </div>
-
-          <div v-if="editTopicId !== item.id">
-            <CustomText variant="paragraph">
-              {{ item.annotation }}
-            </CustomText>
-          </div>
-          <div
-            v-if="editTopicId === item.id"
-            style="width: 90%; margin-top: 10px"
-          >
-            <el-input
-              type="textarea"
-              :autosize="{ minRows: 2, maxRows: 4 }"
-              class="title-input"
-              v-model="item.annotation"
-              clearable
-            />
-          </div>
-
-          <div class="topic-files">
-            <ClassMaterials
-              :isOwner="isOwner"
-              title="LE"
-              :topic="item.id"
-              :materials="
-                (item.class_materials && item.class_materials.lectures) || []
-              "
-            />
-            <ClassMaterials
-              :isOwner="isOwner"
-              title="SE"
-              :topic="item.id"
-              :materials="
-                (item.class_materials && item.class_materials.seminars) || []
-              "
-            />
-            <ClassMaterials
-              :isOwner="isOwner"
-              title="GR"
-              :topic="item.id"
-              :materials="
-                (item.class_materials && item.class_materials.groups) || []
-              "
-            />
-            <ClassMaterials
-              :isOwner="isOwner"
-              title="PR"
-              :topic="item.id"
-              :materials="
-                (item.class_materials && item.class_materials.practices) || []
-              "
-            />
-          </div>
-        </div>
-      </transition-group>
-    </draggable>
+    <div class="topic-files">
+      <ClassMaterials
+        v-for="(variant, key) in (topic.class_materials || {})"
+        :key="`${topic.id}-${key}`"
+        :opened="openedMaterials.includes(key)"
+        :isOwner="isOwner"
+        :title="key"
+        :highlight="key === highlight"
+        :topic="topic.id"
+        :materials="variant || []"
+        :ref="key"
+        @click="toggleMaterialsOpen(key)"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import ClassMaterials from "./ClassMaterials";
 import CustomText from "@/common/CustomText";
-import {
-  addTopics,
-  deleteTopics,
-  editTopics,
-  getTopics,
-  changeTopicOrder,
-} from "@/api/topic";
-import { mapState } from "vuex";
-import draggable from "vuedraggable";
 
 export default {
-  name: "",
-  components: { CustomText, ClassMaterials, draggable },
-  props: ["sectionId", "isOwner"],
+  name: "SubjectTopic",
+  components: { CustomText, ClassMaterials },
+  props: ["isOwner", 'topic', 'index'],
   data() {
     return {
-      topics: [],
-      editTopicId: null,
+      isEditing: null,
+      openedMaterials: [],
+      highlight: ''
     };
   },
-  computed: {
-    ...mapState({
-      userId: (state) => state.app.userId,
-    }),
-    dragOptions() {
-      return {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost",
-        easing: "cubic-bezier(1, 0.5, 0.8, 1)",
-      };
-    },
-  },
   mounted() {
-    this.fetchData();
+    if (+this.$route.query.topic === this.topic.id) {
+      this.openedMaterials = [...this.openedMaterials, this.$route.query.materialsType]
+      this.$refs[this.$route.query.materialsType][0].$vnode.elm.scrollIntoView({
+        block: "center",
+        inline: "nearest",
+        behavior: 'smooth'
+      })
+
+      this.highlight = this.$route.query.materialsType
+
+      setTimeout(() => this.highlight = '', 2000)
+    }
   },
   methods: {
-    fetchData() {
-      getTopics(this.sectionId).then((res) => {
-        this.topics = res.data.topics;
-      });
-    },
-    editTopic(id) {
-      this.editTopicId = id;
-    },
-    acceptNewTopic(id) {
+    acceptNewTopic() {
       let title;
       let annotation;
 
-      if (this.topics.find((item) => item.id === id).title) {
-        title = this.topics.find((item) => item.id === id).title;
-      } else {
+      if (this.topic.title) {
         this.$message.warning("Пожалуйста, заполните название темы");
         return;
       }
 
-      if (this.topics.find((item) => item.id === id).annotation) {
-        annotation = this.topics.find((item) => item.id === id).annotation;
-      } else {
+      if (this.topic.annotation) {
         this.$message.warning("Пожалуйста, заполните аннотацию для темы");
         return;
       }
@@ -199,39 +133,23 @@ export default {
       const dataToSend = {
         title: title,
         annotation: annotation,
-        section: this.sectionId,
       };
-      editTopics(id, dataToSend);
-      this.editTopicId = null;
+
+      this.$emit('change', {id: this.topic.id, newData: dataToSend})
+      this.isEditing = null;
     },
-    deleteTopic(id) {
-      this.$confirm(
-        "Вы уверены, что хотите удалить раздел? Это действие не обратимо.",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        }
-      ).then(() => {
-        deleteTopics(id).then(() => {
-          this.topics = this.topics.filter((item) => item.id !== id);
-        });
-      });
+    deleteTopic() {
+      this.$emit('delete', this.topic.id)
     },
-    addTopic() {
-      const dataToSend = {
-        title: "Новая тема",
-        section: this.sectionId,
-        annotation: "Введите аннотацию",
-      };
-      addTopics(dataToSend).then((res) => {
-        this.topics.push(res.data);
-      });
-    },
-    updateOrder(topicId, newOrder) {
-      changeTopicOrder(topicId, newOrder);
-    },
+    toggleMaterialsOpen(key) {
+      const index = this.openedMaterials.indexOf(key)
+
+      if (index !== -1) {
+        this.openedMaterials = this.openedMaterials.filter(item => item !== key)
+      } else {
+        this.openedMaterials = [...this.openedMaterials, key]
+      }
+    }
   },
 };
 </script>

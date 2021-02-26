@@ -31,10 +31,10 @@
           <div class="parts-all">Все разделы</div>
           <div
             v-for="(part, index) in subjectInfo"
-            :key="index"
+            :key="part.id"
             class="part"
-            @click="selectPart"
-            :id="index + 1"
+            @click="selectPart(part.id, index)"
+            :id="part.id"
           >
             {{ part.title }}
           </div>
@@ -55,10 +55,10 @@
           >
             <transition-group type="transition" name="flip-list">
               <div
-                v-for="(mainPart, index) in subjectInfo"
+                v-for="mainPart in subjectInfo"
                 :key="mainPart.id"
                 class="main-part"
-                :id="'part-' + (index + 1)"
+                ref="cards"
               >
                 <div class="main-part-title" style="width: 100%">
                   <img
@@ -67,15 +67,16 @@
                     src="../../assets/icons/drag.svg"
                     alt=""
                   />
+
                   <div
                     v-if="editTitleIndex !== mainPart.id"
                     style="width: 90%"
-                    @click="togglePart"
+                    @click="togglePart(mainPart.id)"
                   >
                     {{ mainPart.title }}
                   </div>
                   <div
-                    v-if="editTitleIndex === mainPart.id"
+                    v-else
                     style="width: 90%"
                     @keyup.enter="acceptNewTitle(mainPart.id)"
                   >
@@ -86,6 +87,7 @@
                       clearable
                     />
                   </div>
+
                   <div class="buttons" v-if="userId === subjectOwnerId">
                     <img
                       v-if="editTitleIndex === mainPart.id"
@@ -94,23 +96,25 @@
                       src="../../assets/subject/accept.svg"
                       alt=""
                     />
-                    <img
-                      v-if="editTitleIndex === null"
-                      @click="editTitle(mainPart.id)"
-                      class="grow"
-                      src="../../assets/subject/edit.svg"
-                      alt=""
-                    />
-                    <img
-                      v-if="editTitleIndex === null"
-                      @click="deleteSection(mainPart.id)"
-                      class="grow"
-                      src="../../assets/subject/close.svg"
-                      alt=""
-                    />
+                    <template v-else>
+                      <img
+                        @click="editTitle(mainPart.id)"
+                        class="grow"
+                        src="../../assets/subject/edit.svg"
+                        alt=""
+                      />
+                      <img
+                        @click="deleteSection(mainPart.id)"
+                        class="grow"
+                        src="../../assets/subject/close.svg"
+                        alt=""
+                      />
+                    </template>
                   </div>
                 </div>
-                <SubjectTopic
+
+                <SubjectTopics
+                  v-show="openedCards.includes(mainPart.id)"
                   :sectionId="mainPart.id"
                   :isOwner="userId === subjectOwnerId"
                 />
@@ -125,7 +129,7 @@
 
 <script>
 import SearchForMaterials from "@/components/Search/SearchForMaterials";
-import SubjectTopic from "@/components/SubjectTopic/SubjectTopic";
+import SubjectTopics from "@/components/SubjectTopic/SubjectTopics.vue";
 import draggable from "vuedraggable";
 import {
   addSection,
@@ -139,8 +143,10 @@ import CustomText from "@/common/CustomText";
 
 export default {
   name: "Subject",
-  mounted() {
-    this.fetchData(this.$route.params.subjectId);
+  async mounted() {
+    await this.fetchData(this.$route.params.subjectId);
+    console.log('this.$route', this.$route)
+    this.openedCards = [...this.openedCards, +this.$route.query.section]
   },
   data() {
     return {
@@ -149,13 +155,14 @@ export default {
       subjectInfo: null,
       editTitleIndex: null,
       subjectOwnerId: null,
+      openedCards: [],
     };
   },
   components: {
     draggable,
     CustomText,
     SearchForMaterials,
-    SubjectTopic,
+    SubjectTopics,
   },
   computed: {
     ...mapState({
@@ -200,13 +207,13 @@ export default {
       });
     },
     acceptNewTitle(id) {
-      let title;
-      if (this.subjectInfo.find((item) => item.id === id).title) {
-        title = this.subjectInfo.find((item) => item.id === id).title;
-      } else {
+      let title = this.subjectInfo.find((item) => item.id === id).title;
+
+      if (!title) {
         this.$message.warning("Пожалуйста, заполните название раздела");
         return;
       }
+
       const sendData = {
         title: title,
         subject: this.subjectId,
@@ -226,28 +233,29 @@ export default {
         this.subjectInfo.push(res.data);
       });
     },
-    togglePart(event) {
-      if (event.target.className !== "kebab") {
-        if (
-          event.target.closest(".main-part").children[1].style.display !==
-          "none"
-        ) {
-          event.target.closest(".main-part").children[1].style.display = "none";
-        } else {
-          event.target.closest(".main-part").children[1].style.display =
-            "block";
-        }
+    togglePart(id) {
+      const index = this.openedCards.indexOf(id)
+
+      if (index !== -1) {
+        this.openedCards = this.openedCards.filter(item => item !== id)
+      } else {
+        this.openedCards = [...this.openedCards, id]
       }
     },
-    selectPart(event) {
-      document.getElementById(
-        "part-" + event.target.id
-      ).children[1].style.display = "block";
-      document.getElementById("part-" + event.target.id).scrollIntoView(true);
+    selectPart(id, index) {
+      if (this.openedCards.indexOf(id)) {
+        this.openedCards = [...this.openedCards, id]
+      }
+
+      this.$nextTick(() => this.$refs.cards[index].scrollIntoView({
+        block: "start",
+        inline: "nearest",
+        behavior: 'smooth'
+      }))
     },
-    fetchData(subjectId) {
+    async fetchData(subjectId) {
       this.subjectId = subjectId;
-      getSubject({ id: subjectId })
+      await getSubject({ id: subjectId })
         .then((response) => {
           this.subject = response.data.title;
           this.subjectInfo = response.data.sections;
