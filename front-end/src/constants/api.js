@@ -39,7 +39,9 @@ export const DMS_URLS = {
     authors: 'dms/authors/'
   },
   books: {
-    books: 'dms/books/'
+    books: 'dms/books/',
+    favorite: 'dms/favorite-books/'
+    
   },
   papers: {
     papers: 'dms/papers/'
