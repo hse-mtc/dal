@@ -32,7 +32,7 @@ module.exports = {
    */
   publicPath: "/",
   outputDir: "dist",
-  assetsDir: "static",
+  assetsDir: "front-end-static",
   lintOnSave: isDev,
   productionSourceMap: false,
   devServer: {
