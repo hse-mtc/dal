@@ -90,8 +90,8 @@ class FavoriteBookSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     # TODO: help Swagger deduce response schema
-    def to_representation(self, obj: FavoriteBook):
-        representation = super().to_representation(obj)
+    def to_representation(self, instance: FavoriteBook):
+        representation = super().to_representation(instance)
         return representation["book"]
 
 
