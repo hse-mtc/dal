@@ -197,7 +197,7 @@ export default {
       if (this.documents.length < this.count || this.count === null) {
         this.loading = true;
         const authors = this.$route.query.author;
-        const place = this.$route.query.place;
+        const publishers = this.$route.query.publishers;
         const start_date = this.$route.query.start_date;
         const end_date = this.$route.query.end_date;
         const text = this.$route.query.text;
@@ -207,7 +207,7 @@ export default {
           const { data } = await getPapers(this.lodash.pickBy({
             category,
             authors,
-            publishers: place,
+            publishers,
             start_date,
             end_date,
             search: text,
@@ -215,16 +215,7 @@ export default {
             offset: this.documents.length,
             user: this.isMyDocuments ? this.userId : undefined
           }))
-          // const { data } = await getDocuments(
-          //   category,
-          //   author,
-          //   place,
-          //   start_date,
-          //   end_date,
-          //   text,
-          //   this.limit,
-          //   this.documents.length
-          // );
+
           this.documents = [...this.documents, ...data.results];
           this.count = data.count;
           this.loading = false;

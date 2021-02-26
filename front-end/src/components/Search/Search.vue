@@ -31,7 +31,7 @@ export default {
         query: {
           text: this.$refs.searchInput.value,
           category: this.$route.query.category,
-          place: this.$route.query.place,
+          publishers: this.$route.query.publishers,
           author: this.$route.query.author,
           start_date: this.$route.query.start_date,
           end_date: this.$route.query.end_date,
@@ -43,7 +43,7 @@ export default {
       this.$router.push({
         query: {
           category: this.$route.query.category,
-          place: this.$route.query.place,
+          publishers: this.$route.query.publishers,
           author: this.$route.query.author,
           start_date: this.$route.query.start_date,
           end_date: this.$route.query.end_date,
