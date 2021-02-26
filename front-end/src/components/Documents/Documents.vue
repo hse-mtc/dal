@@ -7,17 +7,17 @@
       </div>
 
       <el-row
-        v-for="(document, index) in documents"
-        :key="document.id"
-        class="document-card mt-3 mb-4"
+          v-for="(document, index) in documents"
+          :key="document.id"
+          class="document-card mt-3 mb-4"
       >
         <div
-          v-if="yearChanged(index)"
-          class="cool-hr d-flex align-items-center"
+            v-if="yearChanged(index)"
+            class="cool-hr d-flex align-items-center"
         >
-          <hr class="mr-3" />
+          <hr class="mr-3"/>
           {{ year(document) }}
-          <hr class="ml-3" />
+          <hr class="ml-3"/>
         </div>
 
         <el-col :span="2" style="font-size: 22px" class="mt-4">
@@ -32,8 +32,8 @@
 
             <div class="ml-5" style="color: #76767a">
               <span
-                v-for="publisher in document.publishers"
-                :key="publisher.id"
+                  v-for="publisher in document.publishers"
+                  :key="publisher.id"
               >
                 {{ publisher.name }}
               </span>
@@ -43,9 +43,9 @@
           <div class="document-card-title">{{ document.title }}</div>
 
           <div
-            v-for="author in document.authors"
-            :key="author.id"
-            class="document-card-authors"
+              v-for="author in document.authors"
+              :key="author.id"
+              class="document-card-authors"
           >
             {{
               `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
@@ -60,11 +60,11 @@
         <el-col :span="1" class="d-flex justify-content-end mt-4">
           <el-popover placement="bottom" trigger="hover">
             <div
-              style="text-align: center; margin: 0; padding: 0; font-size: 15px"
+                style="text-align: center; margin: 0; padding: 0; font-size: 15px"
             >
               <DownloadFile
-                :url="document.file.content"
-                :fileName="document.file.name"
+                  :url="document.file.content"
+                  :fileName="document.file.name"
               >
                 Скачать
               </DownloadFile>
@@ -77,17 +77,17 @@
             </div>
 
             <div
-              slot="reference"
-              class="d-flex justify-content-center"
-              style="width: 10px; cursor: pointer"
+                slot="reference"
+                class="d-flex justify-content-center"
+                style="width: 10px; cursor: pointer"
             >
-              <img src="../../assets/scienceWorks/popover.svg" alt="" />
+              <img src="../../assets/scienceWorks/popover.svg" alt=""/>
             </div>
           </el-popover>
         </el-col>
       </el-row>
     </div>
-    <div v-else class="my-document">Документы не найдены</div>
+    <div v-else-if="!loading" class="my-document">Документы не найдены</div>
     <div v-loading="loading" class="requests__loader"></div>
   </div>
 </template>
@@ -95,16 +95,28 @@
 <script>
 import moment from "moment";
 
-import { getDocuments } from "@/api/documents";
-import { deleteDocument } from "@/api/delete";
+import {getDocuments} from "@/api/documents";
+import {deleteDocument} from "@/api/delete";
 
 import EventBus from "../EventBus";
-import { scrollMixin } from "@/mixins/scrollMixin";
+import {scrollMixin} from "@/mixins/scrollMixin";
 import DownloadFile from '@/common/DownloadFile/index.vue'
+import {mapState} from "vuex";
 
 export default {
   name: "",
-  components: { DownloadFile },
+  components: {DownloadFile},
+  props: {
+    isMyDocuments: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    ...mapState({
+      userId: (state) => state.app.userId,
+    }),
+  },
   filters: {
     moment: function (date) {
       return moment(date).format("DD MMMM YYYY");
@@ -130,6 +142,7 @@ export default {
   async mounted() {
     await this.fetchData();
     EventBus.$on("UPDATE_EVENT", () => {
+      this.documents = []
       this.fetchData();
     });
   },
@@ -183,7 +196,7 @@ export default {
     async fetchData() {
       if (this.documents.length < this.count || this.count === null) {
         this.loading = true;
-        const author = this.$route.query.author;
+        const authors = this.$route.query.author;
         const place = this.$route.query.place;
         const start_date = this.$route.query.start_date;
         const end_date = this.$route.query.end_date;
@@ -191,16 +204,27 @@ export default {
         const category = this.$route.query.category;
 
         try {
-          const { data } = await getDocuments(
+          const {data} = await getDocuments(this.lodash.pickBy({
             category,
-            author,
-            place,
+            authors,
+            publishers: place,
             start_date,
             end_date,
-            text,
-            this.limit,
-            this.documents.length
-          );
+            search: text,
+            limit: this.limit,
+            offset: this.documents.length,
+            user: this.isMyDocuments ? this.userId : undefined
+          }))
+          // const { data } = await getDocuments(
+          //   category,
+          //   author,
+          //   place,
+          //   start_date,
+          //   end_date,
+          //   text,
+          //   this.limit,
+          //   this.documents.length
+          // );
           this.documents = [...this.documents, ...data.results];
           this.count = data.count;
           this.loading = false;

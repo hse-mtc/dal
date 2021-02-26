@@ -56,9 +56,9 @@ export default {
 .page-header {
   font-family: ProximaNovaRegular;
   font-style: normal;
-  font-weight: 600;
+  font-weight: 400;
   font-size: 44px;
-  line-height: 54px;
+  margin-top: 30px;
 }
 
 .page-header-1 {

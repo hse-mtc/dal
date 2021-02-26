@@ -14,7 +14,7 @@
         </CustomText>
       </div>
     </div>
-    <div class="filter">
+    <div class="filter" v-if="!isMyLibrary">
       <div class="filters-title pl-1 mb-2">Автор</div>
       <el-select
         clearable
@@ -78,6 +78,12 @@ import { mapState } from "vuex";
 export default {
   name: "LibraryFilters",
   components: { CustomText },
+  props: {
+    isMyLibrary: {
+      type: Boolean,
+      default: false,
+    }
+  },
   created() {
     this.author = this.$route.query.author
       ? Number(this.$route.query.author)
@@ -138,6 +144,7 @@ export default {
 @import "@/styles/variables.scss";
 
 .filters {
+  margin-top: $l;
 }
 
 .filters-header {
