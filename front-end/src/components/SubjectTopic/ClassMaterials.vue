@@ -160,7 +160,7 @@ export default {
       dialogVisible: false,
       titles: {
         LE: "Лекции",
-        SE: "Семианры",
+        SE: "Семинары",
         GR: "Групповые занятия",
         PR: "Практические занятия",
       },

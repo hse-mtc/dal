@@ -38,7 +38,7 @@ export default {
       statistics: null,
       cards: {
         paper_count: {color: '#0061D9', name: 'Материалов загружено'},
-        subject_count: {color: '#3CA0EA', name: 'Дисцплины разработано'},
+        subject_count: {color: '#3CA0EA', name: 'Дисцплин разработано'},
         book_count: {color: '#3D9E3B', name: 'Книг в библиотеке'},
       },
     };
