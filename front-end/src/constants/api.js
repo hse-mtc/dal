@@ -45,14 +45,10 @@ export const DMS_URLS = {
     papers: 'dms/papers/'
   },
   materials: {
-    educational: 'dms/educational_materials/',
     class: 'dms/class-materials/'
   },
   tags: {
     tags: 'dms/tags/'
-  },
-  nir: {
-    nir: 'dms/nir/'
   },
   categories: {
     categories: 'dms/categories/'
@@ -64,5 +60,8 @@ export const DMS_URLS = {
     subjects: 'dms/subjects/',
     sections: 'dms/sections/',
     topics: 'dms/topics/'
+  },
+  statistics: {
+    statistics: 'dms/statistics/'
   }
 }

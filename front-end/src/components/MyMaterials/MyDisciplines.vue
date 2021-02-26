@@ -63,8 +63,7 @@
 
 <script>
 import {mapActions, mapState} from "vuex";
-import {getMySubjects} from "@/api/myMaterials";
-import {upsertSubject} from "@/api/subject";
+import { getSubjects, upsertSubject } from "@/api/subjects";
 import CustomText from "@/common/CustomText";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import SubjectCard from "@/components/SubjectCard/SubjectCard";
@@ -123,7 +122,7 @@ export default {
     },
     fetchData() {
       this.loading = true
-      getMySubjects(this.userId).then(res => {
+      getSubjects({user: this.userId}).then(res => {
         this.mySubjects = res.data
         this.loading = false
       })
