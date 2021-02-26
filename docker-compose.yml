@@ -44,6 +44,8 @@ services:
       sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
              nginx -g \"daemon off;\""
     restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
 
   tgbot:
     container_name: tgbot
