@@ -30,9 +30,9 @@ urlpatterns = [
 
     # Internal
     path("admin/", admin.site.urls),
-    path("dms_populate/", dms_populate),
-    path("lms_populate/", lms_populate),
-    path("tgbot_populate/", tgbot_populate),
+    path("populate/dms/", dms_populate),
+    path("populate/lms/", lms_populate),
+    path("populate/tgbot/", tgbot_populate),
 ]
 
 # Serve media files
