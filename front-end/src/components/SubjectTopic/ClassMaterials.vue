@@ -1,15 +1,18 @@
 <template>
-  <div class="class-materials file-group">
-    <div class="class-materials-title file-section-title" @click="toggleFiles">
+  <div :class="['class-materials', 'file-group', { highlight }]">
+    <div
+      class="class-materials-title file-section-title"
+      @click="$emit('click')"
+    >
       <div>{{ titles[title] }}</div>
       <img
         src="../../assets/scienceWorks/dropdown.svg"
         alt=""
-        class="files-dropdown"
+        :class="['files-dropdown', { opened: isOpened }]"
       />
     </div>
 
-    <div style="display: none">
+    <div v-show="isOpened">
       <div class="files" v-if="hasMaterials">
         <div
           class="file"
@@ -18,11 +21,8 @@
         >
           <div class="file-icon">
             <img
-              :src="
-                require(`../../assets/extensions-icon/${
-                  Object.keys(icons).includes(material.file.extension)
-                    ? icons[material.file.extension]
-                    : 'new-file'
+              :src="require(`../../assets/extensions-icon/${
+                  icons[material.file.extension] || 'new-file'
                 }.svg`)
               "
               alt=""
@@ -36,12 +36,12 @@
           <div class="file-kebab">
             <el-popover placement="bottom" trigger="click">
               <div
-                style="
-                  text-align: center;
-                  margin: 0;
-                  padding: 0;
-                  font-size: 15px;
-                "
+                :style="{
+                  textAlign: 'center',
+                  margin: 0,
+                  padding: 0,
+                  fontSize: '15px',
+                }"
               >
                 <div
                   v-if="isOwner"
@@ -74,8 +74,8 @@
         </div>
       </div>
       <div v-else class="pt-2 pl-2">
-        <CustomText v-if="!isOwner" variant="paragraph"
-          >Здесь пока нет материалов
+        <CustomText v-if="!isOwner" variant="paragraph">
+          Здесь пока нет материалов
         </CustomText>
       </div>
       <CustomText
@@ -135,6 +135,10 @@ import { addTopicFile } from "@/api/material";
 
 export default {
   components: { CustomText, DownloadFile },
+  model: {
+    prop: 'opened',
+    event: 'change'
+  },
   props: {
     topic: {
       type: Number,
@@ -152,17 +156,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    opened: {
+      type: Boolean,
+      default: false,
+    },
+    highlight: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     return {
       fileList: [],
       displayMaterials: [],
       dialogVisible: false,
+      openedTypes: [],
       titles: {
-        LE: "Лекции",
-        SE: "Семинары",
-        GR: "Групповые занятия",
-        PR: "Практические занятия",
+        lectures: "Лекции",
+        seminars: "Семианры",
+        groups: "Групповые занятия",
+        practices: "Практические занятия",
       },
       icons: {
         doc: "doc",
@@ -184,6 +197,10 @@ export default {
     hasMaterials() {
       return this.displayMaterials && this.displayMaterials.length > 0;
     },
+    isOpened: {
+      get() { return this.opened },
+      set(value) { this.$emit('change', value) }
+    }
   },
   mounted() {
     this.displayMaterials = [...this.materials];
@@ -213,7 +230,7 @@ export default {
       });
       addTopicFile(formData).then((res) => {
         const files = Array.isArray(res.data) ? res.data : [res.data];
-        console.log(files);
+
         files.forEach((file) => {
           this.displayMaterials.unshift(file);
         });
@@ -222,9 +239,6 @@ export default {
     },
     handleRemoveFile(file, fileList) {
       this.fileList = this.fileList.filter((item) => item.uid !== file.uid);
-    },
-    handlePreview(file) {
-      console.log(file);
     },
     handleExceed() {
       this.$message.warning(`Вы можете выбрать максимум 3 файлов.`);
@@ -258,25 +272,10 @@ export default {
         cancelButtonText: "Отменить",
         type: "warning",
       })
-        .then((_) => {
+        .then(() => {
           done();
         })
-        .catch((_) => {});
-    },
-    toggleFiles(event) {
-      if (
-        event.target.closest(".file-group").children[1].style.display === "none"
-      ) {
-        event.target.closest(".file-group").children[1].style.display = "block";
-        event.target.closest(
-          ".file-section-title"
-        ).children[1].style.transform = "rotate(180deg)";
-      } else {
-        event.target.closest(".file-group").children[1].style.display = "none";
-        event.target.closest(
-          ".file-section-title"
-        ).children[1].style.transform = "rotate(0deg)";
-      }
+        .catch(() => {});
     },
   },
 };
@@ -284,4 +283,32 @@ export default {
 
 <style scoped lang="scss">
 @import "style";
+
+.files-dropdown.opened {
+  transform: rotate(180deg);
+}
+
+.class-materials {
+  position: relative;
+
+  &::after {
+    transition: 0.5s;
+    display: block;
+    position: absolute;
+    content: "";
+    top: -10px;
+    bottom: -10px;
+    left: -10px;
+    right: -10px;
+    background-color: #000;
+    border-radius: 10px;
+    opacity: 0;
+    z-index: -1;
+  }
+
+  &.highlight::after {
+    opacity: 0.2;
+    z-index: 1;
+  }
+}
 </style>
