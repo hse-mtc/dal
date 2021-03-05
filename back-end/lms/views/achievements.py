@@ -17,7 +17,7 @@ class AchievementPermission(BasicPermission):
     permission_class = 'auth.achievement'
 
 
-@extend_schema(tags=['achievement'])
+@extend_schema(tags=['achievements'])
 class AchievementViewSet(ModelViewSet):
     queryset = Achievement.objects.all()
 

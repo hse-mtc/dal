@@ -21,7 +21,6 @@ class RoomSerializer(ModelSerializer):
 class LessonSerializer(WritableNestedModelSerializer):
     subject = LessonSubjectSerializer()
     milgroup = MilgroupSerializer()
-    student = StudentShortSerializer()
 
     class Meta:
         model = Lesson

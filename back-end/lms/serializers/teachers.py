@@ -25,13 +25,17 @@ class TeacherPostSerializer(ModelSerializer):
 
 class TeacherSerializer(WritableNestedModelSerializer):
     fullname = SerializerMethodField(required=False)
-    milgroup = MilgroupSerializer(
-        required=False,
-        many=False,
-        validators=[PresentInDatabaseValidator(Milgroup)])
+    milgroup = MilgroupSerializer()
 
     def get_fullname(self, obj):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
+
+    class Meta:
+        model = Teacher
+        fields = '__all__'
+
+
+class TeacherMutateSerializer(ModelSerializer):
 
     class Meta:
         model = Teacher

@@ -16,7 +16,7 @@ class StudentPermission(BasicPermission):
     permission_class = 'auth.student'
 
 
-@extend_schema(tags=['student'])
+@extend_schema(tags=['students'])
 class StudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
     queryset = Student.objects.all()

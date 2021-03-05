@@ -17,7 +17,7 @@ class EncouragementPermission(BasicPermission):
     permission_class = 'auth.encouragement'
 
 
-@extend_schema(tags=['encouragement'])
+@extend_schema(tags=['encouragements'])
 class EncouragementViewSet(ModelViewSet):
     queryset = Encouragement.objects.all()
 
