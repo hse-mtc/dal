@@ -8,14 +8,13 @@ from lms.models.teachers import Teacher
 
 class Punishment(models.Model):
 
-    class PunishmentType(models.TextChoices):
+    class Type(models.TextChoices):
         PUNISHMENT = 'PU', 'Взыскание'
         REBUKE = 'RE', 'Выговор'
 
     student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
-    punishment_type = models.CharField(max_length=2,
-                                       choices=PunishmentType.choices)
+    type = models.CharField(max_length=2, choices=Type.choices)
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
     remove_date = models.DateField(blank=True, null=True)
@@ -24,7 +23,7 @@ class Punishment(models.Model):
         return f'ID = {str(self.id)}\n' \
                f'StudentID = {str(self.student)}, ' \
                f'TeacherID = {str(self.teacher)}\n' \
-               f'Type = {str(self.punishment_type)}\n' \
+               f'Type = {str(self.type)}\n' \
                f'Date = {str(self.date)}, ' \
                f'Remove Date = {str(self.remove_date)}'
 

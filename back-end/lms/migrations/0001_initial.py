@@ -220,7 +220,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('reason', models.CharField(max_length=200)),
-                ('punishment_type', models.CharField(choices=[('PU', 'Взыскание'), ('RE', 'Выговор')], max_length=2)),
+                ('type', models.CharField(choices=[('PU', 'Взыскание'), ('RE', 'Выговор')], max_length=2)),
                 ('date', models.DateField(default=datetime.date.today)),
                 ('remove_date', models.DateField(blank=True, null=True)),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.student')),
@@ -264,7 +264,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('reason', models.CharField(max_length=200)),
-                ('encouragement_type', models.CharField(choices=[('EN', 'Благодарность'), ('RE', 'Снятие взыскания')], max_length=2)),
+                ('type', models.CharField(choices=[('EN', 'Благодарность'), ('RE', 'Снятие взыскания')], max_length=2)),
                 ('date', models.DateField(default=datetime.date.today)),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.student')),
                 ('teacher', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.teacher')),
@@ -293,8 +293,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(default=datetime.date.today)),
-                ('absence_type', models.CharField(choices=[('SE', 'Уважительная'), ('NS', 'Неуважительная'), ('LA', 'Опоздание')], max_length=2)),
-                ('absence_status', models.CharField(choices=[('OP', 'Открыт'), ('CL', 'Закрыт')], max_length=2)),
+                ('type', models.CharField(choices=[('SE', 'Уважительная'), ('NS', 'Неуважительная'), ('LA', 'Опоздание')], max_length=2)),
+                ('status', models.CharField(choices=[('OP', 'Открыт'), ('CL', 'Закрыт')], max_length=2)),
                 ('reason', models.CharField(blank=True, max_length=100, null=True)),
                 ('comment', models.CharField(blank=True, max_length=100, null=True)),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lms.student')),

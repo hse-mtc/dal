@@ -12,4 +12,4 @@ class AbsenceFilter(FilterSet):
 
     class Meta:
         model = Absence
-        fields = ['milgroup', 'student', 'absence_type', 'absence_status']
+        fields = ['milgroup', 'student', 'type', 'status']

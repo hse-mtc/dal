@@ -13,8 +13,8 @@ def create_body(student: Student) -> dict:
         'student': {
             'id': student.id
         },
-        'absence_type': student.absence_type,
-        'absence_status': student.absence_status,
+        'absence_type': student.type,
+        'absence_status': student.status,
     }
 
 

@@ -23,7 +23,7 @@ class Lesson(models.Model):
     class LessonType(models.TextChoices):
         LECTURE = 'LE', 'Лекция'
         SEMINAR = 'SE', 'Семинар'
-        GROUP_LESSON = 'GR', 'Групповое занятие'
+        GROUP = 'GR', 'Групповое занятие'
         PRACTICE = 'PR', 'Практическое занятие'
         FINAL_TEST = 'FI', 'Зачет'
         EXAM = 'EX', 'Экзамен'
