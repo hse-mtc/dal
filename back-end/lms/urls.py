@@ -9,9 +9,10 @@ from lms.views.absence_time import AbsenceTimeView
 from lms.views.punishments import PunishmentViewSet
 from lms.views.encouragements import EncouragementViewSet
 from lms.views.achievements import AchievementViewSet
-from lms.views.reference_book import (
-    ReferenceBookView, MilfacultyViewSet, MilgroupViewSet, ProgramViewSet,
-    RankViewSet, TeacherPostViewSet, RoomViewSet, AchievementTypeViewSet)
+from lms.views.reference_book import (ReferenceBookView, MilfacultyViewSet,
+                                      MilgroupViewSet, ProgramViewSet,
+                                      RankViewSet, TeacherPostViewSet,
+                                      RoomViewSet, AchievementTypeViewSet)
 from lms.views.subjects import LessonSubjectViewSet
 from lms.views.lessons import LessonViewSet, LessonJournalView
 from lms.views.marks import MarkViewSet, MarkJournalView

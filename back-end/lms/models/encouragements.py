@@ -14,7 +14,8 @@ class Encouragement(models.Model):
 
     student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
-    encouragement_type = models.CharField(max_length=2, choices=EncouragementType.choices)
+    encouragement_type = models.CharField(max_length=2,
+                                          choices=EncouragementType.choices)
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
 
