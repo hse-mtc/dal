@@ -76,6 +76,16 @@ const actions = {
     resetRouter();
   },
 
+  // set token
+  setToken({ commit }, token) {
+    return new Promise((resolve) => {
+      commit("SET_TOKEN", token);
+      setToken(token);
+      localStorageService.setToken({ access: token, refresh: null });
+      resolve();
+    });
+  },
+
   // remove token
   resetToken({ commit }) {
     return new Promise((resolve) => {
