@@ -37,7 +37,7 @@
             :mb="SIZES.m"
         >
           <template v-for="item in data.authors">
-            {{getAuthors(item)}},
+            {{getAuthor(item)}},
           </template>
           {{ data.publication_year }} г.
         </CustomText>
@@ -99,7 +99,7 @@ export default {
     }),
   },
   methods: {
-    getAuthors(id) {
+    getAuthor(id) {
       const author = this.authors.find(author => author.id === id)
       return `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
     },

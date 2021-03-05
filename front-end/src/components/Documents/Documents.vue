@@ -47,7 +47,7 @@
               :key="author"
               class="document-card-authors"
           >
-            {{getAuthors(author)}}
+            {{getAuthor(author)}}
           </div>
 
           <div class="document-card-annotation">
@@ -148,7 +148,7 @@ export default {
   },
   methods: {
     moment,
-    getAuthors(id) {
+    getAuthor(id) {
       const author = this.authors.find(author => author.id === id)
       return `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
     },
