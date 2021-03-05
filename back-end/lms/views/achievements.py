@@ -4,9 +4,10 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
+from common.constants import MUTATE_ACTIONS
 
 from lms.models.achievements import Achievement
-from lms.serializers.achievements import AchievementSerializer
+from lms.serializers.achievements import AchievementSerializer, AchievementMutateSerializer
 from lms.filters.achievement import AchievementFilter
 
 from auth.permissions import BasicPermission
@@ -18,7 +19,6 @@ class AchievementPermission(BasicPermission):
 
 @extend_schema(tags=['achievement'])
 class AchievementViewSet(ModelViewSet):
-    serializer_class = AchievementSerializer
     queryset = Achievement.objects.all()
 
     permission_classes = [AchievementPermission]
@@ -26,3 +26,8 @@ class AchievementViewSet(ModelViewSet):
 
     filterset_class = AchievementFilter
     search_fields = ['text']
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return AchievementMutateSerializer
+        return AchievementSerializer

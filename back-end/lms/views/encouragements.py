@@ -4,9 +4,10 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
+from common.constants import MUTATE_ACTIONS
 
 from lms.models.encouragements import Encouragement
-from lms.serializers.encouragements import EncouragementSerializer
+from lms.serializers.encouragements import EncouragementSerializer, EncouragementMutateSerializer
 from lms.filters.encouragement import EncouragementFilter
 
 from auth.permissions import BasicPermission
@@ -18,7 +19,6 @@ class EncouragementPermission(BasicPermission):
 
 @extend_schema(tags=['encouragement'])
 class EncouragementViewSet(ModelViewSet):
-    serializer_class = EncouragementSerializer
     queryset = Encouragement.objects.all()
 
     permission_classes = [EncouragementPermission]
@@ -26,3 +26,8 @@ class EncouragementViewSet(ModelViewSet):
 
     filterset_class = EncouragementFilter
     search_fields = ['student__surname', 'student__name', 'student__patronymic']
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return EncouragementMutateSerializer
+        return EncouragementSerializer

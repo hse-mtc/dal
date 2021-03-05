@@ -2,28 +2,28 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from lms.views.student import StudentViewSet
-from lms.views.teacher import TeacherViewSet
-from lms.views.absence import AbsenceViewSet, AbsenceJournalView
+from lms.views.students import StudentViewSet
+from lms.views.teachers import TeacherViewSet
+from lms.views.absences import AbsenceViewSet, AbsenceJournalView
 from lms.views.absence_time import AbsenceTimeView
-from lms.views.punishment import PunishmentViewSet
-from lms.views.encouragement import EncouragementViewSet
-from lms.views.achievement import AchievementViewSet
+from lms.views.punishments import PunishmentViewSet
+from lms.views.encouragements import EncouragementViewSet
+from lms.views.achievements import AchievementViewSet
 from lms.views.reference_book import ReferenceBookView
-from lms.views.subject import LessonSubjectViewSet
-from lms.views.lesson import LessonViewSet, LessonJournalView
-from lms.views.mark import MarkViewSet, MarkJournalView
+from lms.views.subjects import LessonSubjectViewSet
+from lms.views.lessons import LessonViewSet, LessonJournalView
+from lms.views.marks import MarkViewSet, MarkJournalView
 
 routers = DefaultRouter()
-routers.register('student', StudentViewSet)
-routers.register('teacher', TeacherViewSet)
-routers.register('absence', AbsenceViewSet)
-routers.register('punishment', PunishmentViewSet)
-routers.register('encouragement', EncouragementViewSet)
-routers.register('subject', LessonSubjectViewSet)
-routers.register('achievement', AchievementViewSet)
-routers.register('lesson', LessonViewSet)
-routers.register('mark', MarkViewSet)
+routers.register('students', StudentViewSet)
+routers.register('teachers', TeacherViewSet)
+routers.register('absences', AbsenceViewSet)
+routers.register('punishments', PunishmentViewSet)
+routers.register('encouragements', EncouragementViewSet)
+routers.register('subjects', LessonSubjectViewSet)
+routers.register('achievements', AchievementViewSet)
+routers.register('lessons', LessonViewSet)
+routers.register('marks', MarkViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),
