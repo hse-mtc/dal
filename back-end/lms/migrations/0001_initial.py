@@ -18,16 +18,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='AbsenceStatus',
-            fields=[
-                ('absence_status', models.CharField(max_length=100, primary_key=True, serialize=False)),
-            ],
-            options={
-                'verbose_name': 'Absence Status',
-                'verbose_name_plural': 'Absence Statuses',
-            },
-        ),
-        migrations.CreateModel(
             name='AbsenceTime',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -36,16 +26,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Absence Time',
                 'verbose_name_plural': 'Abcense Time',
-            },
-        ),
-        migrations.CreateModel(
-            name='AbsenceType',
-            fields=[
-                ('absence_type', models.CharField(max_length=100, primary_key=True, serialize=False)),
-            ],
-            options={
-                'verbose_name': 'Absence Type',
-                'verbose_name_plural': 'Absence Types',
             },
         ),
         migrations.CreateModel(
@@ -82,22 +62,13 @@ class Migration(migrations.Migration):
             name='Lesson',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('lesson_type', models.CharField(choices=[('LE', 'Лекция'), ('SE', 'Семинар'), ('GR', 'Групповое занятие'), ('PR', 'Практическое занятие'), ('FI', 'Зачет'), ('EX', 'Экзамен')], max_length=2)),
                 ('date', models.DateField(default=datetime.date.today)),
                 ('ordinal', models.PositiveSmallIntegerField(validators=[django.core.validators.MaxValueValidator(10), django.core.validators.MinValueValidator(1)])),
             ],
             options={
                 'verbose_name': 'Lesson',
                 'verbose_name_plural': 'Lessons',
-            },
-        ),
-        migrations.CreateModel(
-            name='LessonType',
-            fields=[
-                ('lesson_type', models.CharField(max_length=50, primary_key=True, serialize=False)),
-            ],
-            options={
-                'verbose_name': 'Lesson Type',
-                'verbose_name_plural': 'Lesson Types',
             },
         ),
         migrations.CreateModel(
@@ -143,16 +114,6 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Educational Program',
                 'verbose_name_plural': 'Educational Programs',
-            },
-        ),
-        migrations.CreateModel(
-            name='PunishmentType',
-            fields=[
-                ('punishment_type', models.CharField(max_length=100, primary_key=True, serialize=False)),
-            ],
-            options={
-                'verbose_name': 'Punishment Type',
-                'verbose_name_plural': 'Punishment Types',
             },
         ),
         migrations.CreateModel(
@@ -259,9 +220,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('reason', models.CharField(max_length=200)),
+                ('punishment_type', models.CharField(choices=[('PU', 'Взыскание'), ('RE', 'Выговор')], max_length=2)),
                 ('date', models.DateField(default=datetime.date.today)),
                 ('remove_date', models.DateField(blank=True, null=True)),
-                ('punishment_type', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.punishmenttype')),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.student')),
                 ('teacher', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.teacher')),
             ],
@@ -285,11 +246,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='lesson',
-            name='lesson_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.lessontype'),
-        ),
-        migrations.AddField(
-            model_name='lesson',
             name='milgroup',
             field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.milgroup'),
         ),
@@ -308,8 +264,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('reason', models.CharField(max_length=200)),
+                ('encouragement_type', models.CharField(choices=[('EN', 'Благодарность'), ('RE', 'Снятие взыскания')], max_length=2)),
                 ('date', models.DateField(default=datetime.date.today)),
-                ('encouragement_type', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.encouragementtype')),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.student')),
                 ('teacher', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.teacher')),
             ],
@@ -337,10 +293,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField(default=datetime.date.today)),
+                ('absence_type', models.CharField(choices=[('SE', 'Уважительная'), ('NS', 'Неуважительная'), ('LA', 'Опоздание')], max_length=2)),
+                ('absence_status', models.CharField(choices=[('OP', 'Открыт'), ('CL', 'Закрыт')], max_length=2)),
                 ('reason', models.CharField(blank=True, max_length=100, null=True)),
                 ('comment', models.CharField(blank=True, max_length=100, null=True)),
-                ('absence_status', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.absencestatus')),
-                ('absence_type', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='lms.absencetype')),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lms.student')),
             ],
             options={

@@ -559,7 +559,6 @@ def create_encouragements(students: dict[str, Student],
     values = [
         {
             'student': students['Хромов'],
-            'reason': 'За спортивные достижения',
             'encouragement_type': Encouragement.EncouragementType.ENCOURAGEMENT.value,
             'date': (nearest_day - timedelta(7)).strftime(date_f),
             'teacher': teachers['Никандров'],
@@ -673,19 +672,6 @@ def create_rooms():
     return rooms
 
 
-def create_lesson_types():
-    values = ['Семинар', 'Лекция', 'Групповое занятие', 'Практическое занятие']
-
-    types = {}
-
-    for value in values:
-        type_, _ = LessonType.objects.get_or_create(lesson_type=value)
-        type_.save()
-        types[value] = type_
-
-    return types
-
-
 def create_subjects():
     """Not really create, just read from database."""
 
@@ -708,17 +694,13 @@ def create_subjects():
     return subjects
 
 
-def create_lessons(
-    lesson_types: dict[str, LessonType],
-    rooms: dict[str, Room],
-    milgroups: dict[int, Milgroup],
-    subjects: dict[str, Subject],
-    nearest_day: datetime,
-):
+def create_lessons(rooms: dict[str, Room],
+                   milgroups: dict[str, Milgroup], subjects: dict[str, Subject],
+                   nearest_day: datetime):
     date_f = '%Y-%m-%d'
     values = [
         {
-            'lesson_type': lesson_types['Лекция'],
+            'lesson_type': Lesson.LessonType.LECTURE.value,
             'room': rooms['510'],
             'milgroup': milgroups[1809],
             'date': nearest_day.strftime(date_f),
@@ -726,7 +708,7 @@ def create_lessons(
             'subject': subjects['Тактическая подготовка'],
         },
         {
-            'lesson_type': lesson_types['Практическое занятие'],
+            'lesson_type': Lesson.LessonType.PRACTICE.value,
             'room': rooms['Плац'],
             'milgroup': milgroups[1809],
             'date': nearest_day.strftime(date_f),
@@ -734,7 +716,7 @@ def create_lessons(
             'subject': subjects['Строевая подготовка'],
         },
         {
-            'lesson_type': lesson_types['Семинар'],
+            'lesson_type': Lesson.LessonType.SEMINAR.value,
             'room': rooms['504'],
             'milgroup': milgroups[1809],
             'date': nearest_day.strftime(date_f),
@@ -742,7 +724,7 @@ def create_lessons(
             'subject': subjects['Военная топография'],
         },
         {
-            'lesson_type': lesson_types['Практическое занятие'],
+            'lesson_type': Lesson.LessonType.PRACTICE.value,
             'room': rooms['Плац'],
             'milgroup': milgroups[1810],
             'date': nearest_day.strftime(date_f),
@@ -750,7 +732,7 @@ def create_lessons(
             'subject': subjects['Строевая подготовка'],
         },
         {
-            'lesson_type': lesson_types['Семинар'],
+            'lesson_type': Lesson.LessonType.SEMINAR.value,
             'room': rooms['504'],
             'milgroup': milgroups[1810],
             'date': nearest_day.strftime(date_f),
@@ -758,7 +740,7 @@ def create_lessons(
             'subject': subjects['Военная топография'],
         },
         {
-            'lesson_type': lesson_types['Лекция'],
+            'lesson_type': Lesson.LessonType.LECTURE.value,
             'room': rooms['510'],
             'milgroup': milgroups[1810],
             'date': nearest_day.strftime(date_f),
@@ -766,7 +748,7 @@ def create_lessons(
             'subject': subjects['Тактическая подготовка'],
         },
         {
-            'lesson_type': lesson_types['Лекция'],
+            'lesson_type': Lesson.LessonType.LECTURE.value,
             'room': rooms['510'],
             'milgroup': milgroups[1809],
             'date': (nearest_day - timedelta(7)).strftime(date_f),
@@ -774,7 +756,7 @@ def create_lessons(
             'subject': subjects['Тактическая подготовка'],
         },
         {
-            'lesson_type': lesson_types['Практическое занятие'],
+            'lesson_type': Lesson.LessonType.PRACTICE.value,
             'room': rooms['Плац'],
             'milgroup': milgroups[1809],
             'date': (nearest_day - timedelta(7)).strftime(date_f),
@@ -782,7 +764,7 @@ def create_lessons(
             'subject': subjects['Строевая подготовка'],
         },
         {
-            'lesson_type': lesson_types['Семинар'],
+            'lesson_type': Lesson.LessonType.SEMINAR.value,
             'room': rooms['504'],
             'milgroup': milgroups[1809],
             'date': (nearest_day - timedelta(7)).strftime(date_f),
@@ -884,9 +866,7 @@ def lms_populate(request: Request) -> Response:
 
     subjects = create_subjects()
     rooms = create_rooms()
-    lesson_types = create_lesson_types()
-    lessons = create_lessons(lesson_types, rooms, milgroups, subjects,
-                             nearest_day)
+    lessons = create_lessons(rooms, milgroups, subjects, nearest_day)
 
     create_absence_restriction_time()
 
