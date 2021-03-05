@@ -1,4 +1,5 @@
 from rest_framework.generics import ListAPIView
+from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -57,25 +58,38 @@ class ReferenceBookView(ListAPIView):
 
 
 @extend_schema(tags=['reference-book'])
-class MilfacultyView(ModelViewSet):
+class MilfacultyViewSet(ModelViewSet):
     serializer_class = MilfacultySerializer
     queryset = Milfaculty.objects.all()
 
     permission_classes = [ReferenceBookPermission]
 
 
+# Allow all users to get info about milgroups
+class MilgroupPermission(BasePermission):
+    permission_class = ReferenceBookPermission.permission_class
+
+    def has_permission(self, request, view):
+        if request.method == 'GET':
+            return True
+        if not request.user.is_authenticated:
+            return False
+        return request.user.has_perm(self.permission_class + '_' +
+                                     request.method.lower())
+
+
 @extend_schema(tags=['reference-book'])
-class MilgroupView(ModelViewSet):
+class MilgroupViewSet(ModelViewSet):
     serializer_class = MilgroupSerializer
     queryset = Milgroup.objects.all()
 
-    permission_classes = [ReferenceBookPermission]
+    permission_classes = [MilgroupPermission]
 
     filterset_class = MilgroupFilter
 
 
 @extend_schema(tags=['reference-book'])
-class ProgramView(ModelViewSet):
+class ProgramViewSet(ModelViewSet):
     serializer_class = ProgramSerializer
     queryset = Program.objects.all()
 
@@ -85,7 +99,7 @@ class ProgramView(ModelViewSet):
 
 
 @extend_schema(tags=['reference-book'])
-class RankView(ModelViewSet):
+class RankViewSet(ModelViewSet):
     serializer_class = RankSerializer
     queryset = Rank.objects.all()
 
@@ -93,7 +107,7 @@ class RankView(ModelViewSet):
 
 
 @extend_schema(tags=['reference-book'])
-class TeacherPostView(ModelViewSet):
+class TeacherPostViewSet(ModelViewSet):
     serializer_class = TeacherPostSerializer
     queryset = TeacherPost.objects.all()
 
@@ -101,7 +115,7 @@ class TeacherPostView(ModelViewSet):
 
 
 @extend_schema(tags=['reference-book'])
-class RoomView(ModelViewSet):
+class RoomViewSet(ModelViewSet):
     serializer_class = RoomSerializer
     queryset = Room.objects.all()
 
@@ -109,7 +123,7 @@ class RoomView(ModelViewSet):
 
 
 @extend_schema(tags=['reference-book'])
-class AbsenceTimeView(ModelViewSet):
+class AbsenceTimeViewSet(ModelViewSet):
     serializer_class = AbsenceTimeSerializer
     queryset = AbsenceTime.objects.all()
 
@@ -117,7 +131,7 @@ class AbsenceTimeView(ModelViewSet):
 
 
 @extend_schema(tags=['reference-book'])
-class AchievementTypeView(ModelViewSet):
+class AchievementTypeViewSet(ModelViewSet):
     serializer_class = AchievementTypeSerializer
     queryset = AchievementType.objects.all()
 
