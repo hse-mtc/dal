@@ -17,7 +17,7 @@ class PunishmentPermission(BasicPermission):
     permission_class = 'auth.punishment'
 
 
-@extend_schema(tags=['punishment'])
+@extend_schema(tags=['punishments'])
 class PunishmentViewSet(ModelViewSet):
     queryset = Punishment.objects.all()
 

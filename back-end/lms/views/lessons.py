@@ -31,7 +31,7 @@ class LessonPermission(BasicPermission):
     permission_class = 'auth.lesson'
 
 
-@extend_schema(tags=['lesson'])
+@extend_schema(tags=['lessons'])
 class LessonViewSet(ModelViewSet):
     queryset = Lesson.objects.all()
 

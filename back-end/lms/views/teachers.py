@@ -4,9 +4,10 @@ from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
+from common.constants import MUTATE_ACTIONS
 
 from lms.models.teachers import Teacher
-from lms.serializers.teachers import TeacherSerializer
+from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
 from lms.filters.teacher import TeacherFilter
 
 from auth.permissions import BasicPermission
@@ -16,9 +17,8 @@ class TeacherPermission(BasicPermission):
     permission_class = 'auth.teacher'
 
 
-@extend_schema(tags=['teacher'])
+@extend_schema(tags=['teachers'])
 class TeacherViewSet(ModelViewSet):
-    serializer_class = TeacherSerializer
     queryset = Teacher.objects.all()
 
     permission_classes = [TeacherPermission]
@@ -26,3 +26,8 @@ class TeacherViewSet(ModelViewSet):
 
     filterset_class = TeacherFilter
     search_fields = ['surname', 'name', 'patronymic']
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return TeacherMutateSerializer
+        return TeacherSerializer

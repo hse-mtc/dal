@@ -39,7 +39,7 @@ class MarkPermission(BasicPermission):
     permission_class = 'auth.mark'
 
 
-@extend_schema(tags=['mark'])
+@extend_schema(tags=['marks'])
 class MarkViewSet(ModelViewSet):
     queryset = Mark.objects.all()
 

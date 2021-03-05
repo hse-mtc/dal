@@ -39,7 +39,7 @@ class AbsencePermission(BasicPermission):
     permission_class = 'auth.absence'
 
 
-@extend_schema(tags=['absence'])
+@extend_schema(tags=['absences'])
 class AbsenceViewSet(ModelViewSet):
     queryset = Absence.objects.all()
 
