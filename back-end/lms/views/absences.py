@@ -1,47 +1,61 @@
 from datetime import datetime
 
-from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
+
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import GenericAPIView
 
 from rest_framework.status import (
     HTTP_200_OK,
     HTTP_400_BAD_REQUEST,
 )
 
+from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from common.constants import MUTATE_ACTIONS
+
+from lms.serializers.common import MilgroupSerializer
+from lms.serializers.absences import (AbsenceSerializer,
+                                     AbsenceJournalSerializer,
+                                     AbsenceJournalQuerySerializer,
+                                     AbsenceMutateSerializer)
 
 from lms.models.common import Milgroup
-from lms.models.lessons import Lesson
-from lms.serializers.common import MilgroupSerializer
-from lms.serializers.lessons import (LessonSerializer,
-                                    LessonJournalQuerySerializer)
-from lms.filters.lesson import LessonFilter
+from lms.models.absences import Absence
+from lms.models.students import Student
+
+from lms.filters.absence import AbsenceFilter
+
 from lms.functions import get_date_range
 
 from auth.permissions import BasicPermission
 
 
-class LessonPermission(BasicPermission):
-    permission_class = 'auth.lesson'
+class AbsencePermission(BasicPermission):
+    permission_class = 'auth.absence'
 
 
-@extend_schema(tags=['lesson'])
-class LessonViewSet(ModelViewSet):
-    serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
+@extend_schema(tags=['absence'])
+class AbsenceViewSet(ModelViewSet):
+    queryset = Absence.objects.all()
 
-    permission_classes = [LessonPermission]
-    filter_backends = [DjangoFilterBackend]
+    permission_classes = [AbsencePermission]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
 
-    filterset_class = LessonFilter
+    filterset_class = AbsenceFilter
+    search_fields = ['student__surname', 'student__name', 'student__patronymic']
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return AbsenceMutateSerializer
+        return AbsenceSerializer
 
 
-@extend_schema(tags=['lesson-journal'],
+@extend_schema(tags=['absence-journal'],
                parameters=[
                    OpenApiParameter(name='milgroup',
                                     description='Filter by milgroup',
@@ -56,12 +70,12 @@ class LessonViewSet(ModelViewSet):
                                     required=True,
                                     type=OpenApiTypes.DATE),
                ])
-class LessonJournalView(GenericAPIView):
-    permission_classes = [LessonPermission]
+class AbsenceJournalView(GenericAPIView):
+    permission_classes = [AbsencePermission]
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
-        query_params = LessonJournalQuerySerializer(
+        query_params = AbsenceJournalQuerySerializer(
             data=request.query_params)
         if not query_params.is_valid():
             return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
@@ -76,27 +90,20 @@ class LessonJournalView(GenericAPIView):
         data['milgroup'] = milgroup
 
         # calculate dates
-        date_from = datetime.fromisoformat((query_params.data['date_from']))
-        date_to = datetime.fromisoformat((query_params.data['date_to']))
+        date_from = datetime.fromisoformat(query_params.data['date_from'])
+        date_to = datetime.fromisoformat(query_params.data['date_to'])
 
         date_range = get_date_range(date_from, date_to, milgroup['weekday'])
+
+        # add dates and absences
         data['dates'] = date_range
-
-        # sort lessons by date and milgroup
-        lessons_filtered = Lesson.objects.filter(
-            milgroup=request.query_params['milgroup'],
-            date__gte=request.query_params['date_from'],
-            date__lte=request.query_params['date_to'])
-
-        # ordinals
-        ordinals = []
-        for ordinal in range(1, 11):
-            lessons = dict()
-            lessons['ordinal'] = ordinal
-            lessons['lessons'] = LessonSerializer(
-                lessons_filtered.filter(ordinal=ordinal), many=True).data
-            ordinals.append(lessons)
-
-        data['ordinals'] = ordinals
+        data['students'] = AbsenceJournalSerializer(
+            Student.objects.filter(
+                milgroup__milgroup=request.query_params['milgroup']),
+            context={
+                'request': request,
+                'date_range': date_range,
+            },
+            many=True).data
 
         return Response(data, status=HTTP_200_OK)
