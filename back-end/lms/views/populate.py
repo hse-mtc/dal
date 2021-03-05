@@ -8,7 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 
 from lms.models.common import Milfaculty, Milgroup
-from lms.models.student import Status, Program, Student, MilSpecialty
+from lms.models.student import Status, Program, Student, MilSpecialty, Faculty
 from lms.models.teacher import Rank, TeacherPost, Teacher
 from lms.models.absence import (AbsenceStatus, AbsenceType, Absence,
                                 AbsenceTime)
@@ -20,6 +20,37 @@ from lms.models.mark import Mark
 from lms.functions import get_date_range
 
 from common.models.subjects import Subject
+
+def create_mil_specialty():
+    values = [{
+        '094001': 'Применение наземных подразделений войсковой разведки'
+    }, {
+        '411300':
+            'Эксплуатация и ремонт автоматизированных систем комплексов ' \
+        'баллистических стратегических ракет наземного базирования'
+    }, {
+        '453000':
+            'Организация эксплуатации и ремонта автоматизированных ' \
+        'систем управления и вычислительных комплексов ракетно-' \
+        'космической обороны'
+    }, {
+        '453100':
+            'Математическое и программное обеспечение функционирования ' \
+        'вычислительных комплексов ракетно-космической обороны'
+    }, {
+        '751100': 'Защита информационных технологий'
+    }, {
+        '100182': 'Стрелковые, командир стрелкового отделения'
+    }, {
+        '106646-543': 'Разведывательные, разведчик-оператор СБР, ПСНР'
+    }]
+
+    types = {}
+    for value in values:
+        typ, _ = MilSpecialty.objects.get_or_create(MilSpecialty=value)
+        typ.save()
+        types[value] = typ
+    return types
 
 
 def create_statuses() -> dict[str, Status]:
@@ -59,6 +90,17 @@ def create_programs() -> dict[str, Program]:
     return programs
 
 
+def create_faculties():
+    values = ['МИЭМ', 'МИЭФ', 'ФКН']
+
+    types = {}
+    for value in values:
+        typ, _ = Faculty.objects.get_or_create(faculty=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
 def create_milfaculties() -> dict[str, Milfaculty]:
     values = ['ВКС', 'Сержанты', 'Разведка', 'РВСН']
     milfaculties = {}
@@ -69,6 +111,38 @@ def create_milfaculties() -> dict[str, Milfaculty]:
         milfaculties[value] = milfaculty
 
     return milfaculties
+
+
+def create_programs(
+    faculties: dict[str, Faculty]) -> dict[str, Program]:
+    values = [{
+        'code': '09.03.01',
+        'program': 'Информатика и вычислительная техника',
+        'faculty': faculties['МИЭМ']
+    }, {
+        'code': '09.03.04',
+        'program': 'Программная инженерия',
+        'faculty': faculties['ФКН']
+    }, {
+        'code': '15.03.01',
+        'program': 'Машиностроение',
+        'faculty': faculties['МИЭМ']
+    }, {
+        'code': '45.03.04',
+        'program': 'Интеллектуальные системы в гуманитарной сфере',
+        'faculty': faculties['МИЭМ']
+    }]
+    programs = {}
+
+    for value in values:
+        program, _ = Program.objects.get_or_create(code=value['code'],
+                                                   program=value['program'],
+                                                   faculty=value['faculty']
+                                                  )
+        program.save()
+        programs[value['program']] = program
+
+    return programs
 
 
 def create_milgroups(
@@ -163,7 +237,9 @@ def create_posts() -> dict[str, TeacherPost]:
 
 # pylint: disable=(too-many-locals)
 def create_students(milgroups: dict[int, Milgroup],
-                    programs: dict[str, Program], statuses: dict[str, Status]):
+                    programs: dict[str, Program], statuses: dict[str, Status],
+                   milspecialties: dict[str, MilSpecialty],
+                   ):
     values = [{
         'surname': 'Хромов',
         'name': 'Григорий',
@@ -172,7 +248,20 @@ def create_students(milgroups: dict[int, Milgroup],
         'birthdate': '2000-11-04',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
-        'photo': None
+        'photo': None,
+        'surname_genitive': 'Хромова',
+        'name_genitive': 'Григория',
+        'patronymic_genitive': 'Александровича',
+        'passport_series': '1111',
+        'passport_code': '111111',
+        'passport_ufms_name': 'УФМС гор. Москвы',
+        'passport_ufms_code': '740-056',
+        'passport_date': '2020-10-02',
+        'commissariat_city': 'г. Москва',
+        'commissariat_district': 'Центрального',
+        'mil_specialty': milspecialties['Защита информационных технологий'],
+        'hse_id': 'HSE11229',
+        'hse_group': 'БИТ 188'
     }, {
         'surname': 'Кацевалов',
         'name': 'Артем',
@@ -181,7 +270,20 @@ def create_students(milgroups: dict[int, Milgroup],
         'birthdate': '2000-02-23',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
-        'photo': None
+        'photo': None,
+        'surname_genitive': 'Кацевалова',
+        'name_genitive': 'Артема',
+        'patronymic_genitive': 'Сергеевича',
+        'passport_series': '1111',
+        'passport_code': '111111',
+        'passport_ufms_name': 'УФМС гор. Москвы',
+        'passport_ufms_code': '740-056',
+        'passport_date': '2020-10-02',
+        'commissariat_city': 'г. Москва',
+        'commissariat_district': 'Центрального',
+        'mil_specialty': milspecialties['Защита информационных технологий'],
+        'hse_id': 'HSE11239',
+        'hse_group': 'БИТ 188'
     }, {
         'surname': 'Исаков',
         'name': 'Владислав',
@@ -190,7 +292,20 @@ def create_students(milgroups: dict[int, Milgroup],
         'birthdate': '1999-08-29',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
-        'photo': None
+        'photo': None,
+        'surname_genitive': 'Исакова',
+        'name_genitive' : 'Владислава',
+        'patronymic_genitive': 'Евгеньевича',
+        'passport_series': '1111',
+        'passport_code': '111111',
+        'passport_ufms_name': 'УФМС гор. Москвы',
+        'passport_ufms_code': '740-056',
+        'passport_date': '2020-10-02',
+        'commissariat_city': 'г. Москва',
+        'commissariat_district': 'Центрального',
+        'mil_specialty': milspecialties['Защита информационных технологий'],
+        'hse_id': 'HSE11219',
+        'hse_group': 'БИТ 188'
     }, {
         'surname': 'Алиев',
         'name': 'Насир',
@@ -199,7 +314,20 @@ def create_students(milgroups: dict[int, Milgroup],
         'birthdate': '1999-05-14',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
-        'photo': None
+        'photo': None,
+        'surname_genitive': 'Алиева',
+        'name_genitive': 'Насира',
+        'patronymic_genitive': 'Ашуровича',
+        'passport_series': '1111',
+        'passport_code': '111111',
+        'passport_ufms_name': 'УФМС гор. Москвы',
+        'passport_ufms_code': '740-056',
+        'passport_date': '2020-10-02',
+        'commissariat_city': 'г. Москва',
+        'commissariat_district': 'Центрального',
+        'mil_specialty': milspecialties['Защита информационных технологий'],
+        'hse_id': 'HSE1889',
+        'hse_group': 'БИТ 188'
     }, {
         'surname': 'Куркин',
         'name': 'Андрей',
@@ -208,7 +336,20 @@ def create_students(milgroups: dict[int, Milgroup],
         'birthdate': '1999-11-12',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
-        'photo': None
+        'photo': None,
+        'surname_genitive': 'Куркина',
+        'name_genitive': 'Андрея',
+        'patronymic_genitive': 'Витальевича',
+        'passport_series': '1111',
+        'passport_code': '111111',
+        'passport_ufms_name': 'УФМС гор. Москвы',
+        'passport_ufms_code': '740-056',
+        'passport_date': '2020-10-02',
+        'commissariat_city': 'г. Москва',
+        'commissariat_district': 'Центрального',
+        'mil_specialty': milspecialties['Защита информационных технологий'],
+        'hse_id': 'HSE11255',
+        'hse_group': 'БИТ 188'
     }, {
         'surname': 'Иванов',
         'name': 'Петр',
@@ -217,7 +358,20 @@ def create_students(milgroups: dict[int, Milgroup],
         'birthdate': '1999-05-04',
         'program': programs['Машиностроение'],
         'status': statuses['Отчислен'],
-        'photo': None
+        'photo': None,
+        'surname_genitive': 'Иванова',
+        'name_genitive': 'Петра',
+        'patronymic_genitive': 'Сидоровича',
+        'passport_series': '1111',
+        'passport_code': '111111',
+        'passport_ufms_name': 'УФМС гор. Москвы',
+        'passport_ufms_code': '740-056',
+        'passport_date': '2020-10-02',
+        'commissariat_city': 'г. Москва',
+        'commissariat_district': 'Центрального',
+        'mil_specialty': milspecialties['Защита информационных технологий'],
+        'hse_id': 'HSE1199',
+        'hse_group': 'БИТ 188'
     }, {
         'surname': 'Чукмарикадзе',
         'name': 'Губарибек',
@@ -226,7 +380,20 @@ def create_students(milgroups: dict[int, Milgroup],
         'birthdate': '1969-04-13',
         'program': programs['Интеллектуальные системы в гуманитарной сфере'],
         'status': statuses['Завершил'],
-        'photo': None
+        'photo': None,
+        'surname_genitive': 'Чукмаридзе',
+        'name_genitive': 'Губарибека',
+        'patronymic_genitive': 'Алкинбекова',
+        'passport_series': '1111',
+        'passport_code': '111111',
+        'passport_ufms_name': 'УФМС гор. Москвы',
+        'passport_ufms_code': '740-056',
+        'passport_date': '2020-10-02',
+        'commissariat_city': 'г. Москва',
+        'commissariat_district': 'Центрального',
+        'mil_specialty': milspecialties['Защита информационных технологий'],
+        'hse_id': 'HSE7779',
+        'hse_group': 'БИТ 188'
     }]
 
     students = {}
@@ -239,7 +406,20 @@ def create_students(milgroups: dict[int, Milgroup],
             birthdate=value['birthdate'],
             program=value['program'],
             status=value['status'],
-            photo=value['photo'])
+            photo=value['photo'],
+            surname_genitive=value['surname_genitive'],
+            name_genitive=value['name_genitive'],
+            patronymic_genitive=value['patronymic_genitive'],
+            passport_series=value['passport_series'],
+            passport_code=value['passport_code'],
+            passport_ufms_name=value['passport_ufms_name'],
+            passport_ufms_code=value['passport_ufms_code'],
+            passport_date=value['passport_date'],
+            commissariat_city=value['commissariat_city'],
+            commissariat_district=value['commissariat_district'],
+            mil_specialty=value['mil_specialty'],
+            hse_id=value['hse_id'],
+            hse_group=value['hse_group'])
         student.save()
         students[value['surname']] = student
     return students
@@ -466,46 +646,66 @@ def create_achievement_types():
         types[value] = typ
     return types
 
-def create_programs():
-    values = ['ИТСС', 'ИВТ', 'КБ']
+def create_programs(
+    faculties: dict[str, Faculty]) -> dict[str, Program]:
+    values = [{
+        'code': '09.03.01',
+        'program': 'Информатика и вычислительная техника',
+        'faculty': faculties['МИЭМ']
+    }, {
+        'code': '09.03.04',
+        'program': 'Программная инженерия',
+        'faculty': faculties['ФКН']
+    }, {
+        'code': '15.03.01',
+        'program': 'Машиностроение',
+        'faculty': faculties['МИЭМ']
+    }, {
+        'code': '45.03.04',
+        'program': 'Интеллектуальные системы в гуманитарной сфере',
+        'faculty': faculties['МИЭМ']
+    }]
+    programs = {}
 
-    types = {}
     for value in values:
-        typ, _ = Program.objects.get_or_create(Program=value)
-        typ.save()
-        types[value] = typ
-    return types
+        program, _ = Program.objects.get_or_create(code=value['code'],
+                                                   program=value['program'],
+                                                   faculty=value['faculty']
+                                                  )
+        program.save()
+        programs[value['program']] = program
 
+    return programs
 
 def create_mil_specialty():
     values = [{
-        '094001': 'Применение наземных подразделений войсковой разведки'
+        'code': '094001', 'program': 'Применение наземных подразделений войсковой разведки'
     }, {
-        '411300':
-            'Эксплуатация и ремонт автоматизированных систем комплексов ' \
+        'code': '411300', 'program': 'Эксплуатация и ремонт автоматизированных систем комплексов ' \
         'баллистических стратегических ракет наземного базирования'
     }, {
-        '453000':
+        'code': '453000', 'program':
             'Организация эксплуатации и ремонта автоматизированных ' \
         'систем управления и вычислительных комплексов ракетно-' \
         'космической обороны'
     }, {
-        '453100':
+        'code': '453100', 'program':
             'Математическое и программное обеспечение функционирования ' \
         'вычислительных комплексов ракетно-космической обороны'
     }, {
-        '751100': 'Защита информационных технологий'
+        'code': '751100', 'program': 'Защита информационных технологий'
     }, {
-        '100182': 'Стрелковые, командир стрелкового отделения'
+        'code': '100182', 'program': 'Стрелковые, командир стрелкового отделения'
     }, {
-        '106646-543': 'Разведывательные, разведчик-оператор СБР, ПСНР'
+        'code': '106646-543', 'program': 'Разведывательные, разведчик-оператор СБР, ПСНР'
     }]
 
     types = {}
     for value in values:
-        typ, _ = MilSpecialty.objects.get_or_create(MilSpecialty=value)
+        typ, _ = MilSpecialty.objects.get_or_create(mil_specialty=value['program'],
+                                                   code=value['code'])
         typ.save()
-        types[value] = typ
+        types[value['program']] = typ
     return types
 
 
@@ -715,19 +915,22 @@ def lms_populate(request: Request) -> Response:
     :return: response indicating whether request was successful (probably was).
     """
 
+    faculties = create_faculties()
     statuses = create_statuses()
-    programs = create_programs()
+    programs = create_programs(faculties)
     milfaculties = create_milfaculties()
     milgroups = create_milgroups(milfaculties)
     ranks = create_ranks()
     posts = create_posts()
+    milspecialties = create_mil_specialty()
+    
 
     # nearest day for 18XX milgroups
     nearest_day = datetime.strptime(
         get_date_range(datetime.now() - timedelta(6), datetime.now(), 4)[0],
         '%Y-%m-%d')
 
-    students = create_students(milgroups, programs, statuses)
+    students = create_students(milgroups, programs, statuses, milspecialties)
 
     teachers = create_teachers(milgroups, milfaculties, ranks, posts)
 
@@ -752,8 +955,5 @@ def lms_populate(request: Request) -> Response:
                              nearest_day)
 
     create_marks(lessons, students)
-
-    create_mil_specialty()
-
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)

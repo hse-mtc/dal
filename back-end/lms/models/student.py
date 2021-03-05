@@ -16,7 +16,8 @@ class Faculty(models.Model):
 
 
 class MilSpecialty(models.Model):
-    mil_specialty = models.CharField(primary_key=True, max_length=20)
+    code = models.CharField(primary_key=True, max_length=20)
+    mil_specialty = models.CharField(max_length=150)
 
     def __str__(self):
         return str(self.mil_specialty)
@@ -77,12 +78,12 @@ class Student(Personnel):
     # Family
     mother = models.ForeignKey(Relative,
                                models.DO_NOTHING,
-                               related_name='mother')
+                               related_name='mother', blank=True, null=True)
     father = models.ForeignKey(Relative,
                                models.DO_NOTHING,
-                               related_name='father')
-    brothers = models.ManyToManyField(Relative, related_name='brothers')
-    sisters = models.ManyToManyField(Relative, related_name='sisters')
+                               related_name='father', blank=True, null=True)
+    brothers = models.ManyToManyField(Relative, related_name='brothers', blank=True,  null=True)
+    sisters = models.ManyToManyField(Relative, related_name='sisters', blank=True, null=True)
 
     # Genitive name
     surname_genitive = models.CharField(max_length=32)
