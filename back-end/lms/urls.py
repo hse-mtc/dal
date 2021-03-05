@@ -31,9 +31,9 @@ routers.register('milfaculties', MilfacultyViewSet)
 routers.register('milgroups', MilgroupViewSet)
 routers.register('programs', ProgramViewSet)
 routers.register('ranks', RankViewSet)
-routers.register('teacher_posts', TeacherPostViewSet)
+routers.register('teacher-posts', TeacherPostViewSet)
 routers.register('rooms', RoomViewSet)
-routers.register('achievement_type', AchievementTypeViewSet)
+routers.register('achievement-types', AchievementTypeViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),

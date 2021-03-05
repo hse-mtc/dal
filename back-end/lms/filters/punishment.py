@@ -15,4 +15,4 @@ class PunishmentFilter(FilterSet):
 
     class Meta:
         model = Punishment
-        fields = ['reason', 'milgroup', 'student', 'teacher', 'punishment_type']
+        fields = ['reason', 'milgroup', 'student', 'teacher', 'type']

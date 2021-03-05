@@ -65,17 +65,10 @@ class MilfacultyViewSet(ModelViewSet):
     permission_classes = [ReferenceBookPermission]
 
 
-# Allow all users to get info about milgroups
-class MilgroupPermission(BasePermission):
-    permission_class = ReferenceBookPermission.permission_class
+class ReadOnly(BasePermission):
 
     def has_permission(self, request, view):
-        if request.method == 'GET':
-            return True
-        if not request.user.is_authenticated:
-            return False
-        return request.user.has_perm(self.permission_class + '_' +
-                                     request.method.lower())
+        return request.method == 'GET'
 
 
 @extend_schema(tags=['reference-book'])
@@ -83,7 +76,7 @@ class MilgroupViewSet(ModelViewSet):
     serializer_class = MilgroupSerializer
     queryset = Milgroup.objects.all()
 
-    permission_classes = [MilgroupPermission]
+    permission_classes = [ReadOnly | ReferenceBookPermission]
 
     filterset_class = MilgroupFilter
 

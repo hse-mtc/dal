@@ -12,6 +12,4 @@ class EncouragementFilter(FilterSet):
 
     class Meta:
         model = Encouragement
-        fields = [
-            'reason', 'milgroup', 'student', 'teacher', 'encouragement_type'
-        ]
+        fields = ['reason', 'milgroup', 'student', 'teacher', 'type']

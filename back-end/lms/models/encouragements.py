@@ -8,14 +8,13 @@ from lms.models.teachers import Teacher
 
 class Encouragement(models.Model):
 
-    class EncouragementType(models.TextChoices):
+    class Type(models.TextChoices):
         ENCOURAGEMENT = 'EN', 'Благодарность'
         REMOVE_PUNISHMENT = 'RE', 'Снятие взыскания'
 
     student = models.ForeignKey(Student, models.DO_NOTHING)
     reason = models.CharField(max_length=200)
-    encouragement_type = models.CharField(max_length=2,
-                                          choices=EncouragementType.choices)
+    type = models.CharField(max_length=2, choices=Type.choices)
     date = models.DateField(default=datetime.date.today)
     teacher = models.ForeignKey(Teacher, models.DO_NOTHING)
 
@@ -23,7 +22,7 @@ class Encouragement(models.Model):
         return f'ID = {str(self.id)}\n' \
                f'StudentID = {str(self.student)}, ' \
                f'TeacherID = {str(self.teacher)}\n' \
-               f'Type = {str(self.encouragement_type)}\n' \
+               f'Type = {str(self.type)}\n' \
                f'Date = {str(self.date)}'
 
     class Meta:

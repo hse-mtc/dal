@@ -418,25 +418,25 @@ def create_absences(students: dict[str, Student], nearest_day: datetime):
         {
             'date': (nearest_day - timedelta(7)).strftime(date_f),
             'student': students['Кацевалов'],
-            'absence_type': Absence.AbsenceType.SERIOUS.value,
+            'type': Absence.Type.SERIOUS.value,
             'reason': 'Заболел',
-            'absence_status': Absence.AbsenceStatus.CLOSED.value,
+            'status': Absence.Status.CLOSED.value,
             'comment': 'Болеть будет недолго'
         },
         {
             'date': nearest_day.strftime(date_f),
             'student': students['Хромов'],
-            'absence_type': Absence.AbsenceType.LATE.value,
+            'type': Absence.Type.LATE.value,
             'reason': 'Электричка опоздала',
-            'absence_status': Absence.AbsenceStatus.CLOSED.value,
+            'status': Absence.Status.CLOSED.value,
             'comment': ''
         },
         {
             'date': (nearest_day - timedelta(14)).strftime(date_f),
             'student': students['Хромов'],
-            'absence_type': Absence.AbsenceType.NOT_SERIOUS.value,
+            'type': Absence.Type.NOT_SERIOUS.value,
             'reason': 'Прогул',
-            'absence_status': Absence.AbsenceStatus.OPEN,
+            'status': Absence.Status.OPEN,
             'comment': 'Лежал дома на диване'
         },
     ]
@@ -445,11 +445,10 @@ def create_absences(students: dict[str, Student], nearest_day: datetime):
         absence, _ = Absence.objects.get_or_create(
             date=value['date'],
             student=value['student'],
-            absence_type=value['absence_type'],
+            type=value['type'],
             reason=value['reason'],
-            absence_status=value['absence_status'],
-            comment=value['comment'],
-        )
+            status=value['status'],
+            comment=value['comment'])
         absence.save()
 
 
@@ -533,7 +532,7 @@ def create_punishments(students: dict[str, Student],
         {
             'student': students['Хромов'],
             'reason': 'Не пришел на пары',
-            'punishment_type': Punishment.PunishmentType.PUNISHMENT.value,
+            'type': Punishment.Type.PUNISHMENT.value,
             'date': (nearest_day - timedelta(7)).strftime(date_f),
             'teacher': teachers['Никандров'],
             'remove_date': nearest_day.strftime(date_f),
@@ -541,7 +540,7 @@ def create_punishments(students: dict[str, Student],
         {
             'student': students['Исаков'],
             'reason': 'Сломал парту',
-            'punishment_type': Punishment.PunishmentType.REBUKE.value,
+            'type': Punishment.Type.REBUKE.value,
             'date': nearest_day.strftime(date_f),
             'teacher': teachers['Репалов'],
             'remove_date': None,
@@ -558,27 +557,18 @@ def create_encouragements(students: dict[str, Student],
     date_f = '%Y-%m-%d'
     values = [
         {
-            'student':
-                students['Хромов'],
-            'reason':
-                'За спортивные достижения',
-            'encouragement_type':
-                Encouragement.EncouragementType.ENCOURAGEMENT.value,
+            'student': students['Хромов'],
+            'reason': 'За спортивные достижения',
+            'type': Encouragement.Type.ENCOURAGEMENT.value,
             'date': (nearest_day - timedelta(7)).strftime(date_f),
-            'teacher':
-                teachers['Никандров'],
+            'teacher': teachers['Никандров'],
         },
         {
-            'student':
-                students['Исаков'],
-            'reason':
-                'За выступление на празднике',
-            'encouragement_type':
-                Encouragement.EncouragementType.REMOVE_PUNISHMENT.value,
-            'date':
-                nearest_day.strftime(date_f),
-            'teacher':
-                teachers['Репалов'],
+            'student': students['Исаков'],
+            'reason': 'За выступление на празднике',
+            'type': Encouragement.Type.REMOVE_PUNISHMENT.value,
+            'date': nearest_day.strftime(date_f),
+            'teacher': teachers['Репалов'],
         },
     ]
 
