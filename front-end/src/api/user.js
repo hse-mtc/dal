@@ -15,3 +15,11 @@ export function getInfo() {
     method: "get",
   });
 }
+
+export function createPassword(data) {
+  return request({
+    url: BASE_API_URL + AUTH_URLS.create_password,
+    method: "post",
+    data
+  })
+}
