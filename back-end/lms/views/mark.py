@@ -25,10 +25,10 @@ from lms.models.marks import Mark
 from lms.models.students import Student
 
 from lms.serializers.common import MilgroupSerializer
-from lms.serializers.subject import LessonSubjectSerializer
-from lms.serializers.mark import (MarkSerializer, MarkMutateSerializer,
-                                  MarkJouralSerializer,
-                                  MarkJournalGetQuerySerializer)
+from lms.serializers.subjects import LessonSubjectSerializer
+from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
+                                  MarkJournalSerializer,
+                                  MarkJournalQuerySerializer)
 
 from lms.functions import get_date_range
 
@@ -79,7 +79,7 @@ class MarkJournalView(GenericAPIView):
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
-        query_params = MarkJournalGetQuerySerializer(data=request.query_params)
+        query_params = MarkJournalQuerySerializer(data=request.query_params)
         if not query_params.is_valid():
             return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
 
@@ -104,7 +104,7 @@ class MarkJournalView(GenericAPIView):
 
         # add dates and absences
         data['dates'] = date_range
-        data['students'] = MarkJouralSerializer(Student.objects.filter(
+        data['students'] = MarkJournalSerializer(Student.objects.filter(
             milgroup__milgroup=request.query_params['milgroup']),
                                                 context={
                                                     'request': request,

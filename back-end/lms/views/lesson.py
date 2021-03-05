@@ -18,8 +18,8 @@ from drf_spectacular.types import OpenApiTypes
 from lms.models.common import Milgroup
 from lms.models.lessons import Lesson
 from lms.serializers.common import MilgroupSerializer
-from lms.serializers.lesson import (LessonSerializer,
-                                    LessonJournalGetQuerySerializer)
+from lms.serializers.lessons import (LessonSerializer,
+                                    LessonJournalQuerySerializer)
 from lms.filters.lesson import LessonFilter
 from lms.functions import get_date_range
 
@@ -61,7 +61,7 @@ class LessonJournalView(GenericAPIView):
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
-        query_params = LessonJournalGetQuerySerializer(
+        query_params = LessonJournalQuerySerializer(
             data=request.query_params)
         if not query_params.is_valid():
             return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)

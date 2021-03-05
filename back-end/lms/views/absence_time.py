@@ -5,7 +5,7 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from drf_spectacular.views import extend_schema
 
 from lms.models.absences import AbsenceTime
-from lms.serializers.absence import AbsenceTimeSerializer
+from lms.serializers.absences import AbsenceTimeSerializer
 
 
 @extend_schema(tags=['absence-time'])

@@ -14,15 +14,15 @@ from lms.models.encouragements import EncouragementType
 from lms.models.punishments import PunishmentType
 
 from lms.serializers.common import MilgroupSerializer, MilfacultySerializer
-from lms.serializers.student import ProgramSerializer
-from lms.serializers.teacher import TeacherPostSerializer, RankSerializer
-from lms.serializers.lesson import LessonTypeSerializer, RoomSerializer
-from lms.serializers.absence import (AbsenceTypeSerializer,
+from lms.serializers.students import ProgramSerializer
+from lms.serializers.teachers import TeacherPostSerializer, RankSerializer
+from lms.serializers.lessons import LessonTypeSerializer, RoomSerializer
+from lms.serializers.absences import (AbsenceTypeSerializer,
                                      AbsenceStatusSerializer,
                                      AbsenceTimeSerializer)
-from lms.serializers.achievement import AchievementTypeSerializer
-from lms.serializers.encouragement import EncouragementTypeSerializer
-from lms.serializers.punishment import PunishmentTypeSerializer
+from lms.serializers.achievements import AchievementTypeSerializer
+from lms.serializers.encouragements import EncouragementTypeSerializer
+from lms.serializers.punishments import PunishmentTypeSerializer
 
 from lms.filters.reference_book import MilgroupFilter, ProgramFilter
 

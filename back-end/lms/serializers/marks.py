@@ -10,8 +10,8 @@ from lms.models.lessons import Lesson
 from lms.models.marks import Mark
 from lms.models.students import Student
 from lms.models.common import Milgroup
-from lms.serializers.lesson import LessonSerializer, LessonShortSerializer
-from lms.serializers.student import StudentShortSerializer
+from lms.serializers.lessons import LessonSerializer, LessonShortSerializer
+from lms.serializers.students import StudentShortSerializer
 
 from lms.validators import PresentInDatabaseValidator
 
@@ -42,7 +42,7 @@ class MarkMutateSerializer(ModelSerializer):
         fields = '__all__'
 
 
-class MarkJournalGetQuerySerializer(Serializer):
+class MarkJournalQuerySerializer(Serializer):
     milgroup = IntegerField(
         required=True,
         validators=[PresentInDatabaseValidator(Milgroup, 'milgroup')])
@@ -72,7 +72,7 @@ class MarkShortSerializer(ModelSerializer):
         fields = ['id', 'mark', 'lesson']
 
 
-class MarkJouralSerializer(ModelSerializer):
+class MarkJournalSerializer(ModelSerializer):
     fullname = SerializerMethodField(read_only=True)
     marks = SerializerMethodField(read_only=True)
 
