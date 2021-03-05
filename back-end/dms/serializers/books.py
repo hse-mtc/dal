@@ -9,14 +9,10 @@ from dms.models.books import (
     Cover,
     FavoriteBook,
 )
+from dms.serializers.common import SubjectSerializer
 from dms.serializers.documents import (
     DocumentMutateSerializer,
     DocumentSerializer,
-)
-from dms.serializers.common import (
-    AuthorSerializer,
-    PublisherSerializer,
-    SubjectSerializer,
 )
 
 

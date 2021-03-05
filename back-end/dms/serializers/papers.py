@@ -8,10 +8,6 @@ from dms.models.papers import (
     Category,
     Paper,
 )
-from dms.serializers.common import (
-    AuthorSerializer,
-    PublisherSerializer,
-)
 from dms.serializers.documents import (
     DocumentMutateSerializer,
     DocumentSerializer,
