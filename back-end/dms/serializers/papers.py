@@ -43,8 +43,6 @@ class TagListField(serializers.ListField):
 
 
 class PaperSerializer(DocumentSerializer):
-    authors = AuthorSerializer(many=True, read_only=True)
-    publishers = PublisherSerializer(many=True, read_only=True)
     tags = TagListField(required=False, read_only=True)
 
     class Meta:

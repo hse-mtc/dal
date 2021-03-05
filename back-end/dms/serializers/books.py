@@ -34,8 +34,6 @@ class CoverSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(DocumentSerializer):
-    authors = AuthorSerializer(many=True, read_only=True)
-    publishers = PublisherSerializer(many=True, read_only=True)
     subjects = SubjectSerializer(many=True, read_only=True)
     cover = CoverSerializer(read_only=True)
     favorite = serializers.SerializerMethodField()
