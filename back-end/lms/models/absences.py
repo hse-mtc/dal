@@ -4,6 +4,17 @@ from django.db import models
 
 from lms.models.students import Student
 
+def create_punishment_types():
+    values = ['Взыскание', 'Выговор', 'Отчисление']
+
+    types = {}
+    for value in values:
+        typ, _ = PunishmentType.objects.get_or_create(punishment_type=value)
+        typ.save()
+        types[value] = typ
+    return types
+
+
 
 class Absence(models.Model):
 
