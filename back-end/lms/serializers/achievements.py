@@ -1,11 +1,8 @@
-from drf_writable_nested.serializers import WritableNestedModelSerializer
+from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.serializers import ModelSerializer
 
-from lms.models.students import Student
 from lms.models.achievements import Achievement, AchievementType
-
-from lms.validators import PresentInDatabaseValidator
-from lms.serializers.student import StudentShortSerializer
+from lms.serializers.students import StudentShortSerializer
 
 
 class AchievementTypeSerializer(ModelSerializer):
@@ -16,8 +13,14 @@ class AchievementTypeSerializer(ModelSerializer):
 
 
 class AchievementSerializer(WritableNestedModelSerializer):
-    student = StudentShortSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Student)])
+    student = StudentShortSerializer()
+
+    class Meta:
+        model = Achievement
+        fields = '__all__'
+
+
+class AchievementMutateSerializer(ModelSerializer):
 
     class Meta:
         model = Achievement

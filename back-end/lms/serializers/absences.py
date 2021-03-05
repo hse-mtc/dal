@@ -1,41 +1,34 @@
+from drf_writable_nested import WritableNestedModelSerializer
+
 from rest_framework.serializers import (Serializer, ModelSerializer,
                                         IntegerField, DateField,
                                         SerializerMethodField)
 from rest_framework.serializers import ValidationError
-from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from lms.models.absences import Absence, AbsenceStatus, AbsenceType, AbsenceTime
+from lms.models.absences import Absence, AbsenceTime
 from lms.models.students import Student
 from lms.models.common import Milgroup
 
 from lms.validators import PresentInDatabaseValidator
-from lms.serializers.student import StudentShortSerializer
-
-
-class AbsenceTypeSerializer(ModelSerializer):
-
-    class Meta:
-        model = AbsenceType
-        fields = '__all__'
-
-
-class AbsenceStatusSerializer(ModelSerializer):
-
-    class Meta:
-        model = AbsenceStatus
-        fields = '__all__'
+from lms.serializers.students import StudentShortSerializer
 
 
 class AbsenceSerializer(WritableNestedModelSerializer):
-    student = StudentShortSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Student)])
+    student = StudentShortSerializer()
 
     class Meta:
         model = Absence
         fields = '__all__'
 
 
-class AbsenceJournalGetQuerySerializer(Serializer):
+class AbsenceMutateSerializer(ModelSerializer):
+
+    class Meta:
+        model = Absence
+        fields = '__all__'
+
+
+class AbsenceJournalQuerySerializer(Serializer):
     milgroup = IntegerField(
         required=True,
         validators=[PresentInDatabaseValidator(Milgroup, 'milgroup')])

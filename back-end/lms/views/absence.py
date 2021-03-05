@@ -18,9 +18,9 @@ from drf_spectacular.views import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 from lms.serializers.common import MilgroupSerializer
-from lms.serializers.absence import (AbsenceSerializer,
+from lms.serializers.absences import (AbsenceSerializer,
                                      AbsenceJournalSerializer,
-                                     AbsenceJournalGetQuerySerializer)
+                                     AbsenceJournalQuerySerializer)
 
 from lms.models.common import Milgroup
 from lms.models.absences import Absence
@@ -69,7 +69,7 @@ class AbsenceJournalView(GenericAPIView):
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
-        query_params = AbsenceJournalGetQuerySerializer(
+        query_params = AbsenceJournalQuerySerializer(
             data=request.query_params)
         if not query_params.is_valid():
             return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
