@@ -37,7 +37,7 @@
             :mb="SIZES.m"
         >
           <template v-for="item in data.authors">
-            {{ item.surname }} {{ item.name }} {{ item.patronymic }},
+            {{getAuthors(item)}},
           </template>
           {{ data.publication_year }} г.
         </CustomText>
@@ -74,6 +74,7 @@ import CustomText from "@/common/CustomText";
 import DownloadFile from '@/common/DownloadFile/index.vue'
 import {COLORS, SIZES} from "@/utils/appConsts";
 import {saveFavBook, unsaveFavBook} from "@/api/books";
+import {mapState} from "vuex";
 
 export default {
   name: "Book",
@@ -92,7 +93,16 @@ export default {
       loading: false,
     };
   },
+  computed: {
+    ...mapState({
+      authors: (state) => state.documents.authors,
+    }),
+  },
   methods: {
+    getAuthors(id) {
+      const author = this.authors.find(author => author.id === id)
+      return `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
+    },
     saveBook() {
       saveFavBook({book: this.data.id}).then(() => {
         this.data.favorite = true

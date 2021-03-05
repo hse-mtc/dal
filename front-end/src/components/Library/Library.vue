@@ -154,7 +154,9 @@ export default {
       this.fetchData()
     },
     deleteFavBook(id) {
-      this.books = this.books.filter(item => item.id !== id)
+      if (this.isFavoriteBooks) {
+        this.books = this.books.filter(item => item.id !== id)
+      }
     },
     fetchData() {
       if (this.books.length < this.count || this.count === null) {

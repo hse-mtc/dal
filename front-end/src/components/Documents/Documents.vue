@@ -33,9 +33,9 @@
             <div class="ml-5" style="color: #76767a">
               <span
                   v-for="publisher in document.publishers"
-                  :key="publisher.id"
+                  :key="publisher"
               >
-                {{ publisher.name }}
+                {{getPublisher(publisher)}}
               </span>
             </div>
           </div>
@@ -44,12 +44,10 @@
 
           <div
               v-for="author in document.authors"
-              :key="author.id"
+              :key="author"
               class="document-card-authors"
           >
-            {{
-              `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
-            }}
+            {{getAuthors(author)}}
           </div>
 
           <div class="document-card-annotation">
@@ -115,6 +113,8 @@ export default {
   computed: {
     ...mapState({
       userId: (state) => state.app.userId,
+      authors: (state) => state.documents.authors,
+      publishers: (state) => state.documents.publishers,
     }),
   },
   filters: {
@@ -148,6 +148,13 @@ export default {
   },
   methods: {
     moment,
+    getAuthors(id) {
+      const author = this.authors.find(author => author.id === id)
+      return `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
+    },
+    getPublisher(id) {
+      return this.publishers.find(publisher => publisher.id === id).name
+    },
     loadMore() {
       this.fetchData();
     },
