@@ -7,7 +7,8 @@ from drf_spectacular.views import extend_schema
 from common.constants import MUTATE_ACTIONS
 
 from lms.models.punishments import Punishment
-from lms.serializers.punishments import PunishmentSerializer, PunishmentMutateSerializer
+from lms.serializers.punishments import (PunishmentSerializer,
+                                         PunishmentMutateSerializer)
 from lms.filters.punishment import PunishmentFilter
 
 from auth.permissions import BasicPermission

@@ -27,8 +27,8 @@ from lms.models.students import Student
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subjects import LessonSubjectSerializer
 from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
-                                  MarkJournalSerializer,
-                                  MarkJournalQuerySerializer)
+                                   MarkJournalSerializer,
+                                   MarkJournalQuerySerializer)
 
 from lms.functions import get_date_range
 
@@ -106,11 +106,11 @@ class MarkJournalView(GenericAPIView):
         data['dates'] = date_range
         data['students'] = MarkJournalSerializer(Student.objects.filter(
             milgroup__milgroup=request.query_params['milgroup']),
-                                                context={
-                                                    'request': request,
-                                                    'date_range': date_range,
-                                                    'subject': subject_query.id
-                                                },
-                                                many=True).data
+                                                 context={
+                                                     'request': request,
+                                                     'date_range': date_range,
+                                                     'subject': subject_query.id
+                                                 },
+                                                 many=True).data
 
         return Response(data, status=HTTP_200_OK)

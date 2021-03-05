@@ -5,7 +5,6 @@ from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from lms.validators import PresentInDatabaseValidator
 from lms.serializers.subjects import LessonSubjectSerializer
-from lms.serializers.students import StudentShortSerializer
 from lms.serializers.common import MilgroupSerializer
 from lms.models.common import Milgroup
 from lms.models.lessons import Room, Lesson

@@ -558,17 +558,27 @@ def create_encouragements(students: dict[str, Student],
     date_f = '%Y-%m-%d'
     values = [
         {
-            'student': students['Хромов'],
-            'encouragement_type': Encouragement.EncouragementType.ENCOURAGEMENT.value,
+            'student':
+                students['Хромов'],
+            'reason':
+                'За спортивные достижения',
+            'encouragement_type':
+                Encouragement.EncouragementType.ENCOURAGEMENT.value,
             'date': (nearest_day - timedelta(7)).strftime(date_f),
-            'teacher': teachers['Никандров'],
+            'teacher':
+                teachers['Никандров'],
         },
         {
-            'student': students['Исаков'],
-            'reason': 'За выступление на празднике',
-            'encouragement_type': Encouragement.EncouragementType.REMOVE_PUNISHMENT.value,
-            'date': nearest_day.strftime(date_f),
-            'teacher': teachers['Репалов'],
+            'student':
+                students['Исаков'],
+            'reason':
+                'За выступление на празднике',
+            'encouragement_type':
+                Encouragement.EncouragementType.REMOVE_PUNISHMENT.value,
+            'date':
+                nearest_day.strftime(date_f),
+            'teacher':
+                teachers['Репалов'],
         },
     ]
 
@@ -694,9 +704,8 @@ def create_subjects():
     return subjects
 
 
-def create_lessons(rooms: dict[str, Room],
-                   milgroups: dict[str, Milgroup], subjects: dict[str, Subject],
-                   nearest_day: datetime):
+def create_lessons(rooms: dict[str, Room], milgroups: dict[str, Milgroup],
+                   subjects: dict[str, Subject], nearest_day: datetime):
     date_f = '%Y-%m-%d'
     values = [
         {

@@ -4,17 +4,6 @@ from django.db import models
 
 from lms.models.students import Student
 
-def create_punishment_types():
-    values = ['Взыскание', 'Выговор', 'Отчисление']
-
-    types = {}
-    for value in values:
-        typ, _ = PunishmentType.objects.get_or_create(punishment_type=value)
-        typ.save()
-        types[value] = typ
-    return types
-
-
 
 class Absence(models.Model):
 
@@ -30,7 +19,8 @@ class Absence(models.Model):
     date = models.DateField(default=datetime.date.today)
     student = models.ForeignKey(Student, models.CASCADE)
     absence_type = models.CharField(max_length=2, choices=AbsenceType.choices)
-    absence_status = models.CharField(max_length=2, choices=AbsenceStatus.choices)
+    absence_status = models.CharField(max_length=2,
+                                      choices=AbsenceStatus.choices)
     reason = models.CharField(max_length=100, blank=True, null=True)
     comment = models.CharField(max_length=100, blank=True, null=True)
 

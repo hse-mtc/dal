@@ -136,5 +136,3 @@ class AchievementTypeViewSet(ModelViewSet):
     queryset = AchievementType.objects.all()
 
     permission_classes = [ReferenceBookPermission]
-
-
