@@ -410,63 +410,33 @@ def create_students(
     return students
 
 
-def create_absence_types():
-    values = ['Уважительная', 'Опоздание', 'Неуважительная']
-
-    types = {}
-
-    for value in values:
-        type_, _ = AbsenceType.objects.get_or_create(absence_type=value)
-        type_.save()
-        types[value] = type_
-
-    return types
-
-
-def create_absence_statuses():
-    values = ['Открыт', 'Закрыт']
-
-    statuses = {}
-
-    for value in values:
-        status, _ = AbsenceStatus.objects.get_or_create(absence_status=value)
-        status.save()
-        statuses[value] = status
-
-    return statuses
-
-
 # pylint: disable=(too-many-locals)
-def create_absences(
-    types: dict[str, AbsenceType],
-    statuses: dict[str, AbsenceStatus],
-    students: dict[str, Student],
-    nearest_day: datetime,
-):
+def create_absences(students: dict[str, Student], nearest_day: datetime):
     date_f = '%Y-%m-%d'
+
     values = [
         {
             'date': (nearest_day - timedelta(7)).strftime(date_f),
             'student': students['Кацевалов'],
-            'absence_type': types['Уважительная'],
+            'absence_type': Absence.AbsenceType.SERIOUS.value,
             'reason': 'Заболел',
-            'absence_status': statuses['Закрыт'],
+            'absence_status': Absence.AbsenceStatus.CLOSED.value,
             'comment': 'Болеть будет недолго'
         },
         {
             'date': nearest_day.strftime(date_f),
             'student': students['Хромов'],
-            'absence_type': types['Опоздание'],
+            'absence_type': Absence.AbsenceType.LATE.value,
             'reason': 'Электричка опоздала',
-            'absence_status': statuses['Закрыт'],
+            'absence_status': Absence.AbsenceStatus.CLOSED.value,
             'comment': ''
         },
         {
             'date': (nearest_day - timedelta(14)).strftime(date_f),
             'student': students['Хромов'],
-            'absence_type': types['Неуважительная'],
+            'absence_type': Absence.AbsenceType.NOT_SERIOUS.value,
             'reason': 'Прогул',
-            'absence_status': statuses['Открыт'],
+            'absence_status': Absence.AbsenceStatus.OPEN,
             'comment': 'Лежал дома на диване'
         },
     ]
@@ -556,31 +526,14 @@ def create_teachers(
     return teachers
 
 
-def create_punishment_types():
-    values = ['Взыскание', 'Выговор', 'Отчисление']
-
-    types = {}
-
-    for value in values:
-        type_, _ = PunishmentType.objects.get_or_create(punishment_type=value)
-        type_.save()
-        types[value] = type_
-
-    return types
-
-
-def create_punishments(
-    punishment_types: dict[str, PunishmentType],
-    students: dict[str, Student],
-    teachers: dict[str, Teacher],
-    nearest_day: datetime,
-):
+def create_punishments(students: dict[str, Student],
+                       teachers: dict[str, Teacher], nearest_day: datetime):
     date_f = '%Y-%m-%d'
     values = [
         {
             'student': students['Хромов'],
             'reason': 'Не пришел на пары',
-            'punishment_type': punishment_types['Взыскание'],
+            'punishment_type': Punishment.PunishmentType.PUNISHMENT.value,
             'date': (nearest_day - timedelta(7)).strftime(date_f),
             'teacher': teachers['Никандров'],
             'remove_date': nearest_day.strftime(date_f),
@@ -588,7 +541,7 @@ def create_punishments(
         {
             'student': students['Исаков'],
             'reason': 'Сломал парту',
-            'punishment_type': punishment_types['Выговор'],
+            'punishment_type': Punishment.PunishmentType.REBUKE.value,
             'date': nearest_day.strftime(date_f),
             'teacher': teachers['Репалов'],
             'remove_date': None,
@@ -600,39 +553,21 @@ def create_punishments(
         punishment.save()
 
 
-def create_encouragement_types():
-    values = ['Благодарность', 'Снятие взыскания']
-
-    types = {}
-
-    for value in values:
-        type_, _ = EncouragementType.objects.get_or_create(
-            encouragement_type=value)
-        type_.save()
-        types[value] = type_
-
-    return types
-
-
-def create_encouragements(
-    encouragement_types: dict[str, EncouragementType],
-    students: dict[str, Student],
-    teachers: dict[str, Teacher],
-    nearest_day: datetime,
-):
+def create_encouragements(students: dict[str, Student],
+                          teachers: dict[str, Teacher], nearest_day: datetime):
     date_f = '%Y-%m-%d'
     values = [
         {
             'student': students['Хромов'],
             'reason': 'За спортивные достижения',
-            'encouragement_type': encouragement_types['Благодарность'],
+            'encouragement_type': Encouragement.EncouragementType.ENCOURAGEMENT.value,
             'date': (nearest_day - timedelta(7)).strftime(date_f),
             'teacher': teachers['Никандров'],
         },
         {
             'student': students['Исаков'],
             'reason': 'За выступление на празднике',
-            'encouragement_type': encouragement_types['Снятие взыскания'],
+            'encouragement_type': Encouragement.EncouragementType.REMOVE_PUNISHMENT.value,
             'date': nearest_day.strftime(date_f),
             'teacher': teachers['Репалов'],
         },
@@ -938,16 +873,11 @@ def lms_populate(request: Request) -> Response:
 
     teachers = create_teachers(milgroups, milfaculties, ranks, posts)
 
-    absence_types = create_absence_types()
-    absence_statuses = create_absence_statuses()
+    create_absences(students, nearest_day)
 
-    create_absences(absence_types, absence_statuses, students, nearest_day)
+    create_punishments(students, teachers, nearest_day)
 
-    punishment_types = create_punishment_types()
-    create_punishments(punishment_types, students, teachers, nearest_day)
-
-    encouragement_types = create_encouragement_types()
-    create_encouragements(encouragement_types, students, teachers, nearest_day)
+    create_encouragements(students, teachers, nearest_day)
 
     achievement_types = create_achievement_types()
     create_achievements(achievement_types, students, nearest_day)

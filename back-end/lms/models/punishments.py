@@ -8,7 +8,7 @@ from lms.models.teachers import Teacher
 
 class Punishment(models.Model):
 
-    class PunishmentType(models.Model):
+    class PunishmentType(models.TextChoices):
         PUNISHMENT = 'PU', 'Взыскание'
         REBUKE = 'RE', 'Выговор'
 
