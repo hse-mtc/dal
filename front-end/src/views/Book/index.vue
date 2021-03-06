@@ -75,10 +75,10 @@
               >Предметы</CustomText
             >
             <div class="subjects">
-              <div class="subject" v-for="item in book.subjects" :key="item.id">
-                <CustomText variant="label-1" :color="COLORS.gray_4">{{
-                  item.title
-                }}</CustomText>
+              <div class="subject" v-for="subjectId in book.subjects" :key="subjectId">
+                <CustomText variant="label-1" :color="COLORS.gray_4">
+                  {{ getSubjectTitle(subjectId) }}
+                </CustomText>
               </div>
             </div>
           </div>
@@ -93,11 +93,16 @@ import CustomText from "@/common/CustomText";
 import DownloadFile from '@/common/DownloadFile/index.vue'
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook } from "@/api/books";
+import {mapState} from "vuex";
 
 export default {
   name: "Book",
   components: { CustomText, DownloadFile },
-  computed: {},
+  computed: {
+    ...mapState({
+      subjects: (state) => state.subjects.subjects,
+    })
+  },
   created() {
     this.fetchData();
   },
@@ -110,6 +115,10 @@ export default {
     };
   },
   methods: {
+    getSubjectTitle(subjectId) {
+      const subject = this.subjects.find(subject => subject.id === subjectId)
+      return subject.title
+    },
     fetchData() {
       this.loading = true;
       getBook(this.$route.params.id).then((res) => {
