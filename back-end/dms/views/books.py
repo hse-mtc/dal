@@ -35,7 +35,9 @@ from common.constants import MUTATE_ACTIONS
 
 @extend_schema(request=BookMutateSerializerForSwagger, tags=["books"])
 class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.order_by("title")
+    queryset = Book.objects \
+        .prefetch_related("authors", "publishers", "subjects", "file", "user") \
+        .order_by("title")
 
     permission_classes = [ReadOnly | IsOwner]
 
