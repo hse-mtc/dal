@@ -9,7 +9,6 @@ from dms.models.books import (
     Cover,
     FavoriteBook,
 )
-from dms.serializers.common import SubjectSerializer
 from dms.serializers.documents import (
     DocumentMutateSerializer,
     DocumentSerializer,
@@ -30,7 +29,6 @@ class CoverSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(DocumentSerializer):
-    subjects = SubjectSerializer(many=True, read_only=True)
     cover = CoverSerializer(read_only=True)
     favorite = serializers.SerializerMethodField()
 
