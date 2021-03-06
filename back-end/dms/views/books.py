@@ -58,7 +58,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
 @extend_schema(tags=["favorite-books"])
 class FavoriteBookViewSet(viewsets.ModelViewSet):
-    queryset = FavoriteBook.objects.all()
+    queryset = FavoriteBook.objects.prefetch_related("book", "user")
 
     permission_classes = [ReadOnly | IsOwner]
     filter_backends = [DjangoFilterBackend]
