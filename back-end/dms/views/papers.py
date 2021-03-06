@@ -60,7 +60,9 @@ class TagListAPIView(generics.ListAPIView):
 
 @extend_schema(request=PaperMutateSerializerForSwagger, tags=["papers"])
 class PaperViewSet(viewsets.ModelViewSet):
-    queryset = Paper.objects.order_by("-publication_date", "title")
+    queryset = Paper.objects \
+        .prefetch_related("authors", "category", "publishers", "file", "tags") \
+        .order_by("-publication_date", "title")
 
     permission_classes = [ReadOnly | IsOwner]
 
