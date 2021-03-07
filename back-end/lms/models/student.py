@@ -71,7 +71,7 @@ class Student(Personnel):
     # Passport information
     passport_series = models.CharField(max_length=4)
     passport_code = models.CharField(max_length=6)
-    passport_ufms_name = models.CharField(max_length=64)
+    passport_ufms_name = models.CharField(max_length=255)
     passport_ufms_code = models.CharField(max_length=7)
     passport_date = models.DateField()
 
