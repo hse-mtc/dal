@@ -963,6 +963,8 @@ def lms_populate(request: Request) -> Response:
     lessons = create_lessons(lesson_types, rooms, milgroups, subjects,
                              nearest_day)
 
+    create_absence_restriction_time()
+
     create_marks(lessons, students)
     return Response({'message': 'Population successful'},
                     status=HTTP_201_CREATED)
