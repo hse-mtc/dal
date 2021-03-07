@@ -1,4 +1,8 @@
-from datetime import datetime, timedelta, time
+from datetime import (
+    datetime,
+    timedelta,
+    time,
+)
 
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -7,54 +11,54 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view
 
-from lms.models.common import Milfaculty, Milgroup
-from lms.models.student import Status, Program, Student, MilSpecialty, Faculty
-from lms.models.teacher import Rank, TeacherPost, Teacher
-from lms.models.absence import (AbsenceStatus, AbsenceType, Absence,
-                                AbsenceTime)
-from lms.models.encouragement import EncouragementType, Encouragement
-from lms.models.punishment import PunishmentType, Punishment
-from lms.models.achievement import AchievementType, Achievement
-from lms.models.lesson import Room, LessonType, Lesson
+from lms.models.common import (
+    Milfaculty,
+    Milgroup,
+)
+from lms.models.student import (
+    Status,
+    Program,
+    Student,
+    MilSpecialty,
+    Faculty,
+)
+from lms.models.teacher import (
+    Rank,
+    TeacherPost,
+    Teacher,
+)
+from lms.models.absence import (
+    AbsenceStatus,
+    AbsenceType,
+    Absence,
+    AbsenceTime,
+)
+from lms.models.encouragement import (
+    EncouragementType,
+    Encouragement,
+)
+from lms.models.punishment import (
+    PunishmentType,
+    Punishment,
+)
+from lms.models.achievement import (
+    AchievementType,
+    Achievement,
+)
+from lms.models.lesson import (
+    Room,
+    LessonType,
+    Lesson,
+)
 from lms.models.mark import Mark
 from lms.functions import get_date_range
 
 from common.models.subjects import Subject
 
-def create_mil_specialty():
-    values = [{
-        '094001': 'Применение наземных подразделений войсковой разведки'
-    }, {
-        '411300':
-            'Эксплуатация и ремонт автоматизированных систем комплексов ' \
-        'баллистических стратегических ракет наземного базирования'
-    }, {
-        '453000':
-            'Организация эксплуатации и ремонта автоматизированных ' \
-        'систем управления и вычислительных комплексов ракетно-' \
-        'космической обороны'
-    }, {
-        '453100':
-            'Математическое и программное обеспечение функционирования ' \
-        'вычислительных комплексов ракетно-космической обороны'
-    }, {
-        '751100': 'Защита информационных технологий'
-    }, {
-        '100182': 'Стрелковые, командир стрелкового отделения'
-    }, {
-        '106646-543': 'Разведывательные, разведчик-оператор СБР, ПСНР'
-    }]
-
-    types = {}
-    for value in values:
-        typ, _ = MilSpecialty.objects.get_or_create(MilSpecialty=value)
-        typ.save()
-        types[value] = typ
-    return types
-
 
 def create_statuses() -> dict[str, Status]:
     values = ['Завершил', 'Обучается', 'Отчислен']
+
     statuses = {}
 
     for value in values:
@@ -65,44 +69,22 @@ def create_statuses() -> dict[str, Status]:
     return statuses
 
 
-def create_programs() -> dict[str, Program]:
-    values = [{
-        'code': '09.03.01',
-        'program': 'Информатика и вычислительная техника'
-    }, {
-        'code': '09.03.04',
-        'program': 'Программная инженерия'
-    }, {
-        'code': '15.03.01',
-        'program': 'Машиностроение'
-    }, {
-        'code': '45.03.04',
-        'program': 'Интеллектуальные системы в гуманитарной сфере'
-    }]
-    programs = {}
-
-    for value in values:
-        program, _ = Program.objects.get_or_create(code=value['code'],
-                                                   program=value['program'])
-        program.save()
-        programs[value['program']] = program
-
-    return programs
-
-
 def create_faculties():
     values = ['МИЭМ', 'МИЭФ', 'ФКН']
 
-    types = {}
+    faculties = {}
+
     for value in values:
-        typ, _ = Faculty.objects.get_or_create(faculty=value)
-        typ.save()
-        types[value] = typ
-    return types
+        faculty, _ = Faculty.objects.get_or_create(faculty=value)
+        faculty.save()
+        faculties[value] = faculty
+
+    return faculties
 
 
 def create_milfaculties() -> dict[str, Milfaculty]:
     values = ['ВКС', 'Сержанты', 'Разведка', 'РВСН']
+
     milfaculties = {}
 
     for value in values:
@@ -113,8 +95,7 @@ def create_milfaculties() -> dict[str, Milfaculty]:
     return milfaculties
 
 
-def create_programs(
-    faculties: dict[str, Faculty]) -> dict[str, Program]:
+def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
     values = [{
         'code': '09.03.01',
         'program': 'Информатика и вычислительная техника',
@@ -132,13 +113,15 @@ def create_programs(
         'program': 'Интеллектуальные системы в гуманитарной сфере',
         'faculty': faculties['МИЭМ']
     }]
+
     programs = {}
 
     for value in values:
-        program, _ = Program.objects.get_or_create(code=value['code'],
-                                                   program=value['program'],
-                                                   faculty=value['faculty']
-                                                  )
+        program, _ = Program.objects.get_or_create(
+            code=value['code'],
+            program=value['program'],
+            faculty=value['faculty'],
+        )
         program.save()
         programs[value['program']] = program
 
@@ -146,7 +129,7 @@ def create_programs(
 
 
 def create_milgroups(
-        milfaculties: dict[str, Milfaculty]) -> dict[str, Milgroup]:
+        milfaculties: dict[str, Milfaculty]) -> dict[int, Milgroup]:
     values = [{
         'milgroup': 1801,
         'weekday': 4,
@@ -196,13 +179,15 @@ def create_milgroups(
         'weekday': 4,
         'milfaculty': milfaculties['РВСН']
     }]
+
     milgroups = {}
 
     for value in values:
         milgroup, _ = Milgroup.objects.get_or_create(
             milgroup=value['milgroup'],
             milfaculty=value['milfaculty'],
-            weekday=value['weekday'])
+            weekday=value['weekday'],
+        )
         milgroup.save()
         milgroups[value['milgroup']] = milgroup
 
@@ -236,10 +221,12 @@ def create_posts() -> dict[str, TeacherPost]:
 
 
 # pylint: disable=(too-many-locals)
-def create_students(milgroups: dict[int, Milgroup],
-                    programs: dict[str, Program], statuses: dict[str, Status],
-                   milspecialties: dict[str, MilSpecialty],
-                   ):
+def create_students(
+    milgroups: dict[int, Milgroup],
+    programs: dict[str, Program],
+    statuses: dict[str, Status],
+    milspecialties: dict[str, MilSpecialty],
+):
     values = [{
         'surname': 'Хромов',
         'name': 'Григорий',
@@ -294,7 +281,7 @@ def create_students(milgroups: dict[int, Milgroup],
         'status': statuses['Обучается'],
         'photo': None,
         'surname_genitive': 'Исакова',
-        'name_genitive' : 'Владислава',
+        'name_genitive': 'Владислава',
         'patronymic_genitive': 'Евгеньевича',
         'passport_series': '1111',
         'passport_code': '111111',
@@ -397,6 +384,7 @@ def create_students(milgroups: dict[int, Milgroup],
     }]
 
     students = {}
+
     for value in values:
         student, _ = Student.objects.get_or_create(
             surname=value['surname'],
@@ -419,9 +407,11 @@ def create_students(milgroups: dict[int, Milgroup],
             commissariat_district=value['commissariat_district'],
             mil_specialty=value['mil_specialty'],
             hse_id=value['hse_id'],
-            hse_group=value['hse_group'])
+            hse_group=value['hse_group'],
+        )
         student.save()
         students[value['surname']] = student
+
     return students
 
 
@@ -429,28 +419,35 @@ def create_absence_types():
     values = ['Уважительная', 'Опоздание', 'Неуважительная']
 
     types = {}
+
     for value in values:
-        typ, _ = AbsenceType.objects.get_or_create(absence_type=value)
-        typ.save()
-        types[value] = typ
+        type_, _ = AbsenceType.objects.get_or_create(absence_type=value)
+        type_.save()
+        types[value] = type_
+
     return types
 
 
 def create_absence_statuses():
     values = ['Открыт', 'Закрыт']
 
-    types = {}
+    statuses = {}
+
     for value in values:
-        typ, _ = AbsenceStatus.objects.get_or_create(absence_status=value)
-        typ.save()
-        types[value] = typ
-    return types
+        status, _ = AbsenceStatus.objects.get_or_create(absence_status=value)
+        status.save()
+        statuses[value] = status
+
+    return statuses
 
 
 # pylint: disable=(too-many-locals)
-def create_absences(types: dict[str, AbsenceType],
-                    statuses: dict[str, AbsenceStatus],
-                    students: dict[str, Student], nearest_day: datetime):
+def create_absences(
+    types: dict[str, AbsenceType],
+    statuses: dict[str, AbsenceStatus],
+    students: dict[str, Student],
+    nearest_day: datetime,
+):
     date_f = '%Y-%m-%d'
     values = [
         {
@@ -486,15 +483,19 @@ def create_absences(types: dict[str, AbsenceType],
             absence_type=value['absence_type'],
             reason=value['reason'],
             absence_status=value['absence_status'],
-            comment=value['comment'])
+            comment=value['comment'],
+        )
         absence.save()
 
 
 # pylint: disable=(too-many-locals)
 # pylint: disable=(too-many-arguments)
-def create_teachers(milgroups: dict[int, Milgroup],
-                    milfaculties: dict[str, Milfaculty], ranks: dict[str, Rank],
-                    posts: dict[str, TeacherPost]):
+def create_teachers(
+    milgroups: dict[int, Milgroup],
+    milfaculties: dict[str, Milfaculty],
+    ranks: dict[str, Rank],
+    posts: dict[str, TeacherPost],
+):
     values = [
         {
             'surname': 'Никандров',
@@ -553,7 +554,8 @@ def create_teachers(milgroups: dict[int, Milgroup],
             milfaculty=value['milfaculty'],
             rank=value['rank'],
             teacher_post=value['teacher_post'],
-            milgroup=value['milgroup'])
+            milgroup=value['milgroup'],
+        )
         teacher.save()
         teachers[value['surname']] = teacher
     return teachers
@@ -563,16 +565,21 @@ def create_punishment_types():
     values = ['Взыскание', 'Выговор', 'Отчисление']
 
     types = {}
+
     for value in values:
-        typ, _ = PunishmentType.objects.get_or_create(punishment_type=value)
-        typ.save()
-        types[value] = typ
+        type_, _ = PunishmentType.objects.get_or_create(punishment_type=value)
+        type_.save()
+        types[value] = type_
+
     return types
 
 
-def create_punishments(punishment_types: dict[str, PunishmentType],
-                       students: dict[str, Student],
-                       teachers: dict[str, Teacher], nearest_day: datetime):
+def create_punishments(
+    punishment_types: dict[str, PunishmentType],
+    students: dict[str, Student],
+    teachers: dict[str, Teacher],
+    nearest_day: datetime,
+):
     date_f = '%Y-%m-%d'
     values = [
         {
@@ -602,17 +609,22 @@ def create_encouragement_types():
     values = ['Благодарность', 'Снятие взыскания']
 
     types = {}
+
     for value in values:
-        typ, _ = EncouragementType.objects.get_or_create(
+        type_, _ = EncouragementType.objects.get_or_create(
             encouragement_type=value)
-        typ.save()
-        types[value] = typ
+        type_.save()
+        types[value] = type_
+
     return types
 
 
-def create_encouragements(encouragement_types: dict[str, EncouragementType],
-                          students: dict[str, Student],
-                          teachers: dict[str, Teacher], nearest_day: datetime):
+def create_encouragements(
+    encouragement_types: dict[str, EncouragementType],
+    students: dict[str, Student],
+    teachers: dict[str, Teacher],
+    nearest_day: datetime,
+):
     date_f = '%Y-%m-%d'
     values = [
         {
@@ -640,77 +652,64 @@ def create_achievement_types():
     values = ['Спортивные', 'Научные']
 
     types = {}
+
     for value in values:
-        typ, _ = AchievementType.objects.get_or_create(achievement_type=value)
-        typ.save()
-        types[value] = typ
+        type_, _ = AchievementType.objects.get_or_create(achievement_type=value)
+        type_.save()
+        types[value] = type_
+
     return types
 
-def create_programs(
-    faculties: dict[str, Faculty]) -> dict[str, Program]:
-    values = [{
-        'code': '09.03.01',
-        'program': 'Информатика и вычислительная техника',
-        'faculty': faculties['МИЭМ']
-    }, {
-        'code': '09.03.04',
-        'program': 'Программная инженерия',
-        'faculty': faculties['ФКН']
-    }, {
-        'code': '15.03.01',
-        'program': 'Машиностроение',
-        'faculty': faculties['МИЭМ']
-    }, {
-        'code': '45.03.04',
-        'program': 'Интеллектуальные системы в гуманитарной сфере',
-        'faculty': faculties['МИЭМ']
-    }]
-    programs = {}
-
-    for value in values:
-        program, _ = Program.objects.get_or_create(code=value['code'],
-                                                   program=value['program'],
-                                                   faculty=value['faculty']
-                                                  )
-        program.save()
-        programs[value['program']] = program
-
-    return programs
 
 def create_mil_specialty():
     values = [{
-        'code': '094001', 'program': 'Применение наземных подразделений войсковой разведки'
+        'code': '094001',
+        'mil_specialty': 'Применение наземных подразделений войсковой разведки',
     }, {
-        'code': '411300', 'program': 'Эксплуатация и ремонт автоматизированных систем комплексов ' \
-        'баллистических стратегических ракет наземного базирования'
+        'code': '411300',
+        'mil_specialty': 'Эксплуатация и ремонт автоматизированных систем '
+                         'комплексов баллистических стратегических ракет '
+                         'наземного базирования',
     }, {
-        'code': '453000', 'program':
-            'Организация эксплуатации и ремонта автоматизированных ' \
-        'систем управления и вычислительных комплексов ракетно-' \
-        'космической обороны'
+        'code': '453000',
+        'mil_specialty':
+            'Организация эксплуатации и ремонта автоматизированных '
+            'систем управления и вычислительных комплексов '
+            'ракетно-космической обороны',
     }, {
-        'code': '453100', 'program':
-            'Математическое и программное обеспечение функционирования ' \
-        'вычислительных комплексов ракетно-космической обороны'
+        'code': '453100',
+        'mil_specialty':
+            'Математическое и программное обеспечение функционирования '
+            'вычислительных комплексов ракетно-космической обороны',
     }, {
-        'code': '751100', 'program': 'Защита информационных технологий'
+        'code': '751100',
+        'mil_specialty': 'Защита информационных технологий',
     }, {
-        'code': '100182', 'program': 'Стрелковые, командир стрелкового отделения'
+        'code': '100182',
+        'mil_specialty': 'Стрелковые, командир стрелкового отделения',
     }, {
-        'code': '106646-543', 'program': 'Разведывательные, разведчик-оператор СБР, ПСНР'
+        'code': '106646-543',
+        'mil_specialty': 'Разведывательные, разведчик-оператор СБР, ПСНР',
     }]
 
-    types = {}
+    specs = {}
+
     for value in values:
-        typ, _ = MilSpecialty.objects.get_or_create(mil_specialty=value['program'],
-                                                   code=value['code'])
-        typ.save()
-        types[value['program']] = typ
-    return types
+        spec, _ = MilSpecialty.objects.get_or_create(
+            mil_specialty=value['mil_specialty'],
+            code=value['code'],
+        )
+        spec.save()
+        specs[value['mil_specialty']] = spec
+
+    return specs
 
 
-def create_achievements(achievement_types: dict[str, AchievementType],
-                        students: dict[str, Student], nearest_day: datetime):
+def create_achievements(
+    achievement_types: dict[str, AchievementType],
+    students: dict[str, Student],
+    nearest_day: datetime,
+):
     date_f = '%Y-%m-%d'
     values = [
         {
@@ -734,26 +733,32 @@ def create_achievements(achievement_types: dict[str, AchievementType],
 def create_rooms():
     values = ['510', 'Плац', '501', '502', '503', '504']
 
-    types = {}
+    rooms = {}
+
     for value in values:
-        typ, _ = Room.objects.get_or_create(room=value)
-        typ.save()
-        types[value] = typ
-    return types
+        room, _ = Room.objects.get_or_create(room=value)
+        room.save()
+        rooms[value] = room
+
+    return rooms
 
 
 def create_lesson_types():
     values = ['Семинар', 'Лекция', 'Групповое занятие', 'Практическое занятие']
 
     types = {}
+
     for value in values:
-        typ, _ = LessonType.objects.get_or_create(lesson_type=value)
-        typ.save()
-        types[value] = typ
+        type_, _ = LessonType.objects.get_or_create(lesson_type=value)
+        type_.save()
+        types[value] = type_
+
     return types
 
 
 def create_subjects():
+    """Not really create, just read from database."""
+
     values = [
         'Тактическая подготовка',
         'Тактико-специальная подготовка',
@@ -764,17 +769,22 @@ def create_subjects():
         'Строевая подготовка',
     ]
 
-    types = {}
+    subjects = {}
+
     for value in values:
-        typ = Subject.objects.get(title=value)
-        typ.save()
-        types[value] = typ
-    return types
+        subject = Subject.objects.get(title=value)
+        subjects[value] = subject
+
+    return subjects
 
 
-def create_lessons(lesson_types: dict[str, LessonType], rooms: dict[str, Room],
-                   milgroups: dict[str, Milgroup], subjects: dict[str, Subject],
-                   nearest_day: datetime):
+def create_lessons(
+    lesson_types: dict[str, LessonType],
+    rooms: dict[str, Room],
+    milgroups: dict[int, Milgroup],
+    subjects: dict[str, Subject],
+    nearest_day: datetime,
+):
     date_f = '%Y-%m-%d'
     values = [
         {
@@ -923,7 +933,6 @@ def lms_populate(request: Request) -> Response:
     ranks = create_ranks()
     posts = create_posts()
     milspecialties = create_mil_specialty()
-    
 
     # nearest day for 18XX milgroups
     nearest_day = datetime.strptime(
