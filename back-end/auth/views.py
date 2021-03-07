@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 
-from rest_framework import permissions
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -9,6 +9,10 @@ from rest_framework.status import HTTP_200_OK
 from rest_framework.decorators import (
     api_view,
     permission_classes,
+)
+from rest_framework import (
+    permissions,
+    generics,
 )
 
 from rest_framework_simplejwt.views import (
@@ -18,11 +22,12 @@ from rest_framework_simplejwt.views import (
 
 from drf_spectacular.views import extend_schema
 
-from auth.models import Profile
 from auth.serializers import (
     ProfileSerializer,
     TokenPairSerializer,
+    MyTokenObtainPairSerializer,
 )
+from auth.models import Profile
 
 
 @extend_schema(tags=["auth"])
@@ -50,6 +55,19 @@ class ProfileRetrieveAPIView(RetrieveAPIView):
         queryset = self.filter_queryset(self.get_queryset())
         obj = get_object_or_404(queryset, user=self.request.user)
         return obj
+
+
+@extend_schema(tags=["auth"])
+class AuthLink(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, email):
+        user = get_user_model().objects.get(email=email)
+        token = MyTokenObtainPairSerializer.get_token(user)
+
+        print(f"{request.META.get('HTTP_HOST')}"
+              f"/auth/password/create?access_token={str(token)}")
+        return Response(status=HTTP_200_OK)
 
 
 TokenObtainPairExtendedView = extend_schema(
