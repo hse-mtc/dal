@@ -76,14 +76,30 @@ class Student(Personnel):
     passport_date = models.DateField()
 
     # Family
-    mother = models.ForeignKey(Relative,
-                               models.DO_NOTHING,
-                               related_name='mother', blank=True, null=True)
-    father = models.ForeignKey(Relative,
-                               models.DO_NOTHING,
-                               related_name='father', blank=True, null=True)
-    brothers = models.ManyToManyField(Relative, related_name='brothers', blank=True,  null=True)
-    sisters = models.ManyToManyField(Relative, related_name='sisters', blank=True, null=True)
+    mother = models.ForeignKey(
+        Relative,
+        models.DO_NOTHING,
+        related_name='mother',
+        blank=True,
+        null=True,
+    )
+    father = models.ForeignKey(
+        Relative,
+        models.DO_NOTHING,
+        related_name='father',
+        blank=True,
+        null=True,
+    )
+    brothers = models.ManyToManyField(
+        Relative,
+        related_name='brothers',
+        blank=True,
+    )
+    sisters = models.ManyToManyField(
+        Relative,
+        related_name='sisters',
+        blank=True,
+    )
 
     # Genitive name
     surname_genitive = models.CharField(max_length=32)
@@ -91,9 +107,7 @@ class Student(Personnel):
     patronymic_genitive = models.CharField(max_length=32, blank=True)
 
     def __str__(self):
-        return f'ID = {str(self.id)}\n' \
-               f'Full name = {str(self.surname)} ' \
-               f'{str(self.name)} {str(self.patronymic)}\n'
+        return f'ID = {self.id}, full name = {self.full_name}'
 
     class Meta:
         verbose_name = 'Student'
