@@ -228,6 +228,10 @@ SIMPLE_JWT = {
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 8  # 80MiB
 
+# Token lifetime for password creation
+
+CREATE_PASSWORD_TOKEN_LIFETIME = timedelta(days=5)
+
 # Swagger settings for drf-spectacular
 
 SPECTACULAR_SETTINGS = {
