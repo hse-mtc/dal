@@ -3,7 +3,7 @@ export const BASE_API_URL = 'api/'
 export const AUTH_URLS = {
   refresh: 'auth/tokens/refresh/',
   obtain: 'auth/tokens/obtain/',
-  info: 'auth/users/info/',
+  profile: 'auth/profile/',
 }
 
 export const LMS_URLS = {
