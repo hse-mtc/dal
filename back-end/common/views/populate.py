@@ -1,3 +1,5 @@
+# pylint: disable=ungrouped-imports
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
@@ -52,7 +54,9 @@ class PopulateAPIView(GenericAPIView):
     serializer_class = PopulateSerializer
     permission_classes = [AllowAny]
 
-    def post(self, request: Request, *args, **kwargs):
+    def post(self, request: Request) -> Response:
+        # pylint: disable=too-many-locals
+
         # ----------------------------------------------------------------------
         # Validate request
 
