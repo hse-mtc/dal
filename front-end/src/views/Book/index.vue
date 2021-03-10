@@ -29,17 +29,17 @@
               :custom-style="{ fontWeight: 'normal' }"
               variant="header"
               :color="COLORS.gray_2"
-              v-for="item in book.authors"
-              :key="item.id"
+              v-for="authorId in book.authors"
+              :key="authorId"
             >
-              {{ item.surname }} {{ item.name }} {{ item.patronymic }}
+              {{ surnameWithInitials(authors.filter((a) => a.id === authorId)[0]) }}
             </CustomText>
             <div class="additional-info">
               <CustomText
                 :custom-style="{ fontWeight: 'normal' }"
-                variant="header"
-                >{{ book.publishers[0].name }}</CustomText
-              >
+                variant="header">
+                {{ publishers.filter((p) => p.id === book.publishers[0])[0].name }}
+              </CustomText>
               <template v-if="book.page_count">
                 <img src="@/assets/icons/dot.svg" alt="" />
                 <CustomText
@@ -94,13 +94,16 @@ import DownloadFile from '@/common/DownloadFile/index.vue'
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook } from "@/api/books";
 import {mapState} from "vuex";
+import {surnameWithInitials} from "@/utils/person";
 
 export default {
   name: "Book",
   components: { CustomText, DownloadFile },
   computed: {
     ...mapState({
+      authors: (state) => state.documents.authors,
       subjects: (state) => state.subjects.subjects,
+      publishers: (state) => state.documents.publishers,
     })
   },
   created() {
@@ -115,6 +118,7 @@ export default {
     };
   },
   methods: {
+    surnameWithInitials,
     getSubjectTitle(subjectId) {
       const subject = this.subjects.find(subject => subject.id === subjectId)
       return subject.title
