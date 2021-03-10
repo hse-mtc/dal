@@ -10,6 +10,7 @@ Data = namedtuple(
     "Data",
     [
         "username",
+        "email",
         "password",
         "is_staff",
         "is_superuser",
@@ -26,6 +27,7 @@ def create_user(data: Data) -> (User, Profile):
     if not query.exists():
         User.objects.create_user(
             username=data.username,
+            email=data.email,
             password=data.password,
             is_staff=data.is_staff,
             is_superuser=data.is_superuser,
@@ -47,6 +49,7 @@ def create_users() -> list[(User, Profile)]:
     users = [
         Data(
             username="vspelyak",
+            email="vspelyak@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=True,
@@ -56,6 +59,7 @@ def create_users() -> list[(User, Profile)]:
         ),
         Data(
             username="test",
+            email="test@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
@@ -65,6 +69,7 @@ def create_users() -> list[(User, Profile)]:
         ),
         Data(
             username="student",
+            email="student@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
@@ -74,6 +79,7 @@ def create_users() -> list[(User, Profile)]:
         ),
         Data(
             username="teacher",
+            email="teacher@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
@@ -83,6 +89,7 @@ def create_users() -> list[(User, Profile)]:
         ),
         Data(
             username="milfaculty_head",
+            email="milfaculty_head@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
