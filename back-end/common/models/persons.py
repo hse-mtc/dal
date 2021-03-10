@@ -25,8 +25,8 @@ class Person(models.Model):
 
 
 class Relative(Person):
-    relative_list = [('father', 'отец'), ('mother', 'мать'),
-                     ('sister', 'сестра'), ('brother', 'брат')]
+    relative_list = [("father", "отец"), ("mother", "мать"),
+                     ("sister", "сестра"), ("brother", "брат")]
     rel_status = models.CharField(max_length=32, choices=relative_list)
     birthdate = models.DateField()
     citizenship = models.CharField(max_length=32)
