@@ -11,7 +11,9 @@ from drf_spectacular.views import (
 )
 
 from conf import settings
-from dms.populate import populate as dms_populate
+
+from common.views.populate import PopulateAPIView
+
 from lms.views.populate import lms_populate
 from tgbot.views import populate as tgbot_populate
 
@@ -30,7 +32,7 @@ urlpatterns = [
 
     # Internal
     path("admin/", admin.site.urls),
-    path("populate/dms/", dms_populate),
+    path("better-populate/", PopulateAPIView.as_view()),
     path("populate/lms/", lms_populate),
     path("populate/tgbot/", tgbot_populate),
 ]
