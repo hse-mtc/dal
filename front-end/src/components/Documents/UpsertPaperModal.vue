@@ -30,7 +30,7 @@
           <ElOption
             v-for="author in authors"
             :key="author.id"
-            :label="`${author.surname} ${author.name[0]}. ${author.patronymic[0]}`"
+            :label="surnameWithInitials(author)"
             :value="author.id"
           />
         </ElSelect>
@@ -124,6 +124,7 @@ import TagsInput from "@/components/Tags/TagsInput";
 import { patchPaper, postPaper } from "@/api/papers";
 
 import PaperForm from "@/utils/PaperForm";
+import {surnameWithInitials} from "@/utils/person";
 
 export default {
   name: "UpsertPaperModal",
@@ -180,6 +181,8 @@ export default {
   },
 
   methods: {
+    surnameWithInitials,
+
     async submitForm(name) {
       let formValid = this.paperForm.files.length > 0;
       this.$refs[name].validate((valid) => {

@@ -27,7 +27,7 @@
               v-for="item in authors"
               :key="item.id"
               :value="item.id"
-              :label="`${item.surname} ${item.name[0]}. ${item.patronymic[0]}.`"
+              :label="surnameWithInitials(item)"
             />
           </el-select>
         </el-col>
@@ -72,6 +72,7 @@ import { getAuthors } from "@/api/authors";
 import { getPublishPlaces } from "@/api/published_places";
 import moment from "moment";
 import { mapActions } from "vuex";
+import {surnameWithInitials} from "@/utils/person";
 
 export default {
   name: "",
@@ -86,6 +87,7 @@ export default {
     };
   },
   methods: {
+    surnameWithInitials,
     ...mapActions({
       setAuthors: "documents/setAuthors",
       setPublishers: "documents/setPublishers",

@@ -27,7 +27,7 @@
           v-for="item in authors"
           :key="item.id"
           :value="item.id"
-          :label="`${item.surname} ${item.name[0]}. ${item.patronymic[0]}.`"
+          :label="surnameWithInitials(item)"
         />
       </el-select>
     </div>
@@ -74,6 +74,7 @@
 import { SIZES, COLORS } from "@/utils/appConsts";
 import CustomText from "@/common/CustomText";
 import { mapState } from "vuex";
+import {surnameWithInitials} from "@/utils/person";
 
 export default {
   name: "LibraryFilters",
@@ -96,6 +97,7 @@ export default {
       : undefined;
   },
   methods: {
+    surnameWithInitials,
     updateQuery() {
       const query = {
         author: this.author,

@@ -75,6 +75,7 @@ import DownloadFile from '@/common/DownloadFile/index.vue'
 import {COLORS, SIZES} from "@/utils/appConsts";
 import {saveFavBook, unsaveFavBook} from "@/api/books";
 import {mapState} from "vuex";
+import {surnameWithInitials} from "@/utils/person";
 
 export default {
   name: "Book",
@@ -101,7 +102,7 @@ export default {
   methods: {
     getAuthor(id) {
       const author = this.authors.find(author => author.id === id)
-      return `${author.surname} ${author.name[0]}. ${author.patronymic[0]}.`
+      return surnameWithInitials(author);
     },
     saveBook() {
       saveFavBook({book: this.data.id}).then(() => {
