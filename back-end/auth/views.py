@@ -1,4 +1,3 @@
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
@@ -9,10 +8,6 @@ from rest_framework.generics import RetrieveAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
-from rest_framework.decorators import (
-    api_view,
-    permission_classes,
-)
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -28,20 +23,6 @@ from auth.serializers import (
     CreatePasswordSerializer,
     CreatePasswordTokenSerializer,
 )
-
-
-@extend_schema(tags=["auth"])
-@csrf_exempt
-@api_view(["GET"])
-@permission_classes([permissions.AllowAny])
-def info(request: Request) -> Response:
-    data = {
-        "roles": ["admin"],
-        "avatar": "mock",
-        "name": "Mock M. M.",
-    }
-
-    return Response(data, status=HTTP_200_OK)
 
 
 @extend_schema(tags=["auth"])
