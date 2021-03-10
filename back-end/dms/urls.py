@@ -51,6 +51,6 @@ urlpatterns = [
     # Statistics
     path("statistics/<int:uid>/", StatisticsAPIView.as_view()),
 
-    # Manual urls
+    # Papers tags
     path("tags/", TagListAPIView.as_view()),
 ]
