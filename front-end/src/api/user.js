@@ -11,7 +11,7 @@ export function login(data) {
 
 export function getInfo() {
   return request({
-    url: BASE_API_URL + AUTH_URLS.info,
+    url: BASE_API_URL + AUTH_URLS.profile,
     method: "get",
   });
 }
