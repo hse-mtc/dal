@@ -13,8 +13,14 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token;
   },
+  SET_SURNAME: (state, surname) => {
+    state.surname = surname;
+  },
   SET_NAME: (state, name) => {
     state.name = name;
+  },
+  SET_PATRONYMIC: (state, patronymic) => {
+    state.patronymic = patronymic;
   },
 };
 
@@ -48,9 +54,12 @@ const actions = {
             reject("Verification failed, please Login again.");
           }
 
-          const { name } = data;
+          const { surname, name, patronymic } = data;
 
+          commit("SET_SURNAME", surname);
           commit("SET_NAME", name);
+          commit("SET_PATRONYMIC", patronymic);
+
           resolve(data);
         })
         .catch((error) => {
