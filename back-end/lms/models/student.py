@@ -55,27 +55,25 @@ class Program(models.Model):
         verbose_name_plural = 'Educational Programs'
 
 
-class Student(Personnel):
-    # Military faculty
-    milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING)
-    commissariat_city = models.CharField(max_length=32)
-    commissariat_district = models.CharField(max_length=32)
-    mil_specialty = models.ForeignKey(MilSpecialty, models.DO_NOTHING)
+class RecruitmentOffice(models.Model):
+    city = models.CharField(max_length=32)
+    district = models.CharField(max_length=32)
 
-    # Student characteristics
-    program = models.ForeignKey(Program, models.DO_NOTHING)
-    status = models.ForeignKey(Status, models.DO_NOTHING)
-    hse_id = models.CharField(max_length=32)
-    hse_group = models.CharField(max_length=32)
 
-    # Passport information
+class UniversityInfo(models.Model):
+    id_card = models.CharField(max_length=32)
+    group_title = models.CharField(max_length=32)
+
+
+class Passport(models.Model):
     passport_series = models.CharField(max_length=4)
     passport_code = models.CharField(max_length=6)
     passport_ufms_name = models.CharField(max_length=255)
     passport_ufms_code = models.CharField(max_length=7)
     passport_date = models.DateField()
 
-    # Family
+
+class Family(models.Model):
     mother = models.ForeignKey(
         Relative,
         models.DO_NOTHING,
@@ -101,10 +99,31 @@ class Student(Personnel):
         blank=True,
     )
 
-    # Genitive name
+
+class Student(Personnel):
     surname_genitive = models.CharField(max_length=32)
     name_genitive = models.CharField(max_length=32)
     patronymic_genitive = models.CharField(max_length=32, blank=True)
+
+    milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING)
+    mil_specialty = models.ForeignKey(MilSpecialty, models.DO_NOTHING)
+
+    program = models.ForeignKey(Program, models.DO_NOTHING)
+    status = models.ForeignKey(Status, models.DO_NOTHING)
+
+    passport = models.ForeignKey(Passport, models.DO_NOTHING)
+
+    family = models.ForeignKey(Family, models.DO_NOTHING)
+
+    recruitment_office = models.ForeignKey(
+        RecruitmentOffice,
+        on_delete=models.DO_NOTHING
+    )
+
+    university_info = models.ForeignKey(
+        UniversityInfo,
+        on_delete=models.DO_NOTHING
+    )
 
     def __str__(self):
         return f'ID = {self.id}, full name = {self.full_name}'
