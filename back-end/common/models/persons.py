@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 
 def upload_to(instance, filename):
@@ -43,9 +44,21 @@ class Relative(Person):
         return self.full_name
 
 
+class PersonPhoto(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    image = models.ImageField(upload_to=upload_to, blank=True)
+
+    class Meta:
+        verbose_name = "PersonPhoto"
+        verbose_name_plural = "PersonPhoto"
+
+    def __str__(self) -> str:
+        return self.image.name
+
+
 class Personnel(Person):
     birthdate = models.DateField()
-    photo = models.ImageField(upload_to=upload_to, max_length=128)
+    photo = models.OneToOneField(to=PersonPhoto, on_delete=models.CASCADE, null=True)
     place_birth = models.CharField(max_length=32)
     region_birth = models.CharField(max_length=64)
     citizenship = models.CharField(max_length=32)

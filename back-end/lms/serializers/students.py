@@ -1,6 +1,8 @@
 from rest_framework.serializers import (IntegerField, SerializerMethodField,
-                                        ModelSerializer)
+                                        ModelSerializer, ImageField)
 from drf_writable_nested.serializers import WritableNestedModelSerializer
+from common.models.persons import PersonPhoto
+from common.serializers.populate import BaseMutateSerializer
 
 from lms.models.common import Milgroup
 from lms.models.students import Program, Student
@@ -17,13 +19,22 @@ class ProgramSerializer(ModelSerializer):
         extra_kwargs = {'code': {'validators': []}}
 
 
-class StudentSerializer(WritableNestedModelSerializer):
-    milgroup = MilgroupSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Milgroup)])
-    program = ProgramSerializer(
-        required=False, validators=[PresentInDatabaseValidator(Program)])
+class PersonPhotoSerializer(ModelSerializer):
+    image = ImageField(
+        use_url=True, allow_null=True,
+        required=False, read_only=True)
 
-    fullname = SerializerMethodField(required=False)
+    class Meta:
+        model = PersonPhoto
+        exclude = ['id']
+
+
+class StudentSerializer(WritableNestedModelSerializer):
+    milgroup = MilgroupSerializer()
+    program = ProgramSerializer()
+    photo = PersonPhotoSerializer(read_only=True)
+
+    fullname = SerializerMethodField()
 
     class Meta:
         model = Student
@@ -33,13 +44,32 @@ class StudentSerializer(WritableNestedModelSerializer):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
 
+class StudentMutateSerializer(BaseMutateSerializer):
+    image = ImageField(write_only=True, required=False)
+
+    class Meta:
+        model = Student
+        fields = '__all__'
+
+    def create(self, validated_data):
+        if image := validated_data.pop('image', None):
+            person_photo = PersonPhoto.objects.create(image=image)
+            validated_data['photo'] = person_photo
+        return super().create(validated_data)
+
+    def update(self, instance: Student, validated_data):
+        if image := validated_data.pop('image', None):
+            if instance.photo:
+                instance.photo.image = image
+                instance.photo.save()
+            else:
+                instance.photo = PersonPhoto.objects.create(image=image)
+        return super().update(instance, validated_data)
+
+
 class StudentShortSerializer(WritableNestedModelSerializer):
-    id = IntegerField(required=True)
     fullname = SerializerMethodField(required=False)
-    milgroup = MilgroupSerializer(
-        many=False,
-        required=False,
-        validators=[PresentInDatabaseValidator(Milgroup)])
+    milgroup = MilgroupSerializer(many=False, required=False)
 
     def get_fullname(self, obj):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
