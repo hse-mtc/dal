@@ -22,6 +22,7 @@ from auth.serializers import (
     TokenPairSerializer,
     CreatePasswordSerializer,
     CreatePasswordTokenSerializer,
+    ChangePasswordSerializer,
 )
 
 
@@ -57,6 +58,21 @@ class CreatePasswordAPIView(generics.GenericAPIView):
 
         return Response(status=HTTP_200_OK)
 
+
+@extend_schema(tags=["auth"])
+class ChangePasswordAPIView(generics.GenericAPIView):
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request: Request) -> Response:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        password = serializer.validated_data["password"]
+        user = request.user
+        user.set_password(password)
+        user.save()
+
+        return Response(status=HTTP_200_OK)
 
 # ------------------------------------------------------------------------------
 
