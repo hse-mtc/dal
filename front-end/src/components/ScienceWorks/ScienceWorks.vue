@@ -2,7 +2,7 @@
   <div>
     <el-col :span="24" class="scienceWork">
       <el-row class="pageTitle">
-        <el-col :offset="2"> Военно-научная работа </el-col>
+        <el-col :offset="2"> Военно-научные работы </el-col>
       </el-row>
 
       <div class="categories-block" v-if="categories.length">
