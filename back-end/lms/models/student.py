@@ -115,15 +115,11 @@ class Student(Personnel):
 
     family = models.ForeignKey(Family, models.DO_NOTHING)
 
-    recruitment_office = models.ForeignKey(
-        RecruitmentOffice,
-        on_delete=models.DO_NOTHING
-    )
+    recruitment_office = models.ForeignKey(RecruitmentOffice,
+                                           on_delete=models.DO_NOTHING)
 
-    university_info = models.ForeignKey(
-        UniversityInfo,
-        on_delete=models.DO_NOTHING
-    )
+    university_info = models.ForeignKey(UniversityInfo,
+                                        on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return f'ID = {self.id}, full name = {self.full_name}'
