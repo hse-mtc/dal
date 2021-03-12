@@ -74,6 +74,7 @@ class ChangePasswordAPIView(generics.GenericAPIView):
 
         return Response(status=HTTP_200_OK)
 
+
 # ------------------------------------------------------------------------------
 
 TokenObtainPairExtendedView = extend_schema(
