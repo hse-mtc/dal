@@ -32,11 +32,9 @@ from lms.models.absences import (
     AbsenceTime,
 )
 from lms.models.encouragements import (
-    Encouragement,
-)
+    Encouragement,)
 from lms.models.punishments import (
-    Punishment,
-)
+    Punishment,)
 from lms.models.achievements import (
     AchievementType,
     Achievement,
@@ -442,13 +440,12 @@ def create_absences(students: dict[str, Student], nearest_day: datetime):
     ]
 
     for value in values:
-        absence, _ = Absence.objects.get_or_create(
-            date=value['date'],
-            student=value['student'],
-            type=value['type'],
-            reason=value['reason'],
-            status=value['status'],
-            comment=value['comment'])
+        absence, _ = Absence.objects.get_or_create(date=value['date'],
+                                                   student=value['student'],
+                                                   type=value['type'],
+                                                   reason=value['reason'],
+                                                   status=value['status'],
+                                                   comment=value['comment'])
         absence.save()
 
 
