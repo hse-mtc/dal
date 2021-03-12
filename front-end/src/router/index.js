@@ -60,40 +60,30 @@ export const constantRoutes = [
 
       {
         path: "subjects/",
-        children: [
-          {
-            path: "",
-            name: "Subjects",
-            component: () => import("@/views/Subjects/index"),
-            meta: { title: "Учебно-методические материалы", icon: "book" },
-          },
-          {
-            path: ":subjectId/",
-            hidden: true,
-            name: "Subject",
-            component: () => import("@/views/Subject/index"),
-            meta: { title: "Учебно-методические материалы" },
-          },
-        ],
+        name: "Subjects",
+        component: () => import("@/views/Subjects/index"),
+        meta: { title: "Учебно-методические материалы", icon: "book" },
       },
-      
+      {
+        path: "subjects/:subjectId/",
+        hidden: true,
+        name: "Subject",
+        component: () => import("@/views/Subject/index"),
+        meta: { title: "Учебно-методические материалы" },
+      },
+
       {
         path: "library/",
-        children: [
-          {
-            path: "",
-            name: "Library",
-            component: () => import("@/views/Library/index"),
-            meta: { title: "Электронная библиотека", icon: "books" },
-          },
-          {
-            path: "book/:id/",
-            name: "Book",
-            component: () => import("@/views/Book/index"),
-            meta: { title: "Электронная библиотека" },
-            hidden: true,
-          },
-        ],
+        name: "Library",
+        component: () => import("@/views/Library/index"),
+        meta: { title: "Электронная библиотека", icon: "books" },
+      },
+      {
+        path: "library/book/:id/",
+        name: "Book",
+        component: () => import("@/views/Book/index"),
+        meta: { title: "Электронная библиотека" },
+        hidden: true,
       },
 
       {
