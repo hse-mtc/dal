@@ -35,8 +35,6 @@ services:
     restart: always
     volumes:
       - ./back-end:/back-end
-    labels:
-      ofelia.enabled: "true"
 
   front-end:
     build:
