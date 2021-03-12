@@ -5,7 +5,7 @@ export const AUTH_URLS = {
   obtain: 'auth/tokens/obtain/',
   profile: 'auth/profile/',
   info: 'auth/users/info/',
-  create_password: 'auth/password/create'
+  change_password: 'auth/password/change/'
 }
 
 export const LMS_URLS = {
