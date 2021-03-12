@@ -2,6 +2,7 @@ from rest_framework.serializers import (ModelSerializer, Serializer,
                                         IntegerField, DateField)
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
+from common.serializers.populate import BaseMutateSerializer
 
 from lms.validators import PresentInDatabaseValidator
 from lms.serializers.subjects import LessonSubjectSerializer
@@ -26,7 +27,7 @@ class LessonSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-class LessonMutateSerializer(ModelSerializer):
+class LessonMutateSerializer(BaseMutateSerializer):
 
     class Meta:
         model = Lesson

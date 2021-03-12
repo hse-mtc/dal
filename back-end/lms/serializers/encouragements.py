@@ -1,5 +1,6 @@
 from drf_writable_nested import WritableNestedModelSerializer
 from rest_framework.serializers import ModelSerializer
+from common.serializers.populate import BaseMutateSerializer
 
 from lms.models.encouragements import Encouragement
 
@@ -16,7 +17,7 @@ class EncouragementSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-class EncouragementMutateSerializer(ModelSerializer):
+class EncouragementMutateSerializer(BaseMutateSerializer):
 
     class Meta:
         model = Encouragement
