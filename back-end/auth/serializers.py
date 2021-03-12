@@ -68,6 +68,16 @@ class CreatePasswordSerializer(serializers.Serializer):
         pass
 
 
+class ChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True, required=True)
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+
 class CreatePasswordTokenSerializer(TokenObtainPairSerializer):
 
     @classmethod

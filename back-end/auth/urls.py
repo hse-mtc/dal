@@ -5,6 +5,7 @@ from auth.views import (
     TokenObtainPairExtendedView,
     TokenRefreshExtendedView,
     CreatePasswordAPIView,
+    ChangePasswordAPIView,
 )
 
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path("tokens/obtain/", TokenObtainPairExtendedView.as_view()),
     path("tokens/refresh/", TokenRefreshExtendedView.as_view()),
     path("password/create/", CreatePasswordAPIView.as_view()),
+    path("password/change/", ChangePasswordAPIView.as_view()),
 ]
