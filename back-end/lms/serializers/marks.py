@@ -5,6 +5,7 @@ from rest_framework.serializers import (Serializer, ModelSerializer,
 from rest_framework.serializers import ValidationError
 
 from common.models.subjects import Subject
+from common.serializers.populate import BaseMutateSerializer
 
 from lms.models.lessons import Lesson
 from lms.models.marks import Mark
@@ -27,7 +28,7 @@ class MarkSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-class MarkMutateSerializer(ModelSerializer):
+class MarkMutateSerializer(BaseMutateSerializer):
 
     def validate(self, attrs):
         student_milgroup = attrs['student'].milgroup.milgroup

@@ -17,7 +17,7 @@ class LessonSubjectPermission(BasicPermission):
     permission_class = 'auth.subject'
 
 
-@extend_schema(tags=['lms_subjects'])
+@extend_schema(tags=['lms-subjects'])
 class LessonSubjectViewSet(ModelViewSet):
     serializer_class = LessonSubjectSerializer
     queryset = Subject.objects.all()

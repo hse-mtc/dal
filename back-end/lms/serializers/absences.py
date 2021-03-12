@@ -4,6 +4,7 @@ from rest_framework.serializers import (Serializer, ModelSerializer,
                                         IntegerField, DateField,
                                         SerializerMethodField)
 from rest_framework.serializers import ValidationError
+from common.serializers.populate import BaseMutateSerializer
 
 from lms.models.absences import Absence, AbsenceTime
 from lms.models.students import Student
@@ -21,7 +22,7 @@ class AbsenceSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-class AbsenceMutateSerializer(ModelSerializer):
+class AbsenceMutateSerializer(BaseMutateSerializer):
 
     class Meta:
         model = Absence
