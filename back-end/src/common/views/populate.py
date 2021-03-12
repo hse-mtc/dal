@@ -88,10 +88,10 @@ class PopulateAPIView(GenericAPIView):
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
 
-        students.user_set.add(User.objects.get(username="student"))
-        teachers.user_set.add(User.objects.get(username="teacher"))
+        students.user_set.add(User.objects.get(email="student@mail.com"))
+        teachers.user_set.add(User.objects.get(email="teacher@mail.com"))
         milfaculty_heads.user_set.add(
-            User.objects.get(username="milfaculty_head"))
+            User.objects.get(email="milfaculty_head@mail.com"))
 
         # ----------------------------------------------------------------------
         # common
@@ -127,6 +127,6 @@ class PopulateAPIView(GenericAPIView):
             publishers=publishers,
             subjects=subjects,
         )
-        create_favorite_books(books[:11], User.objects.get(username="vspelyak"))
+        create_favorite_books(books[:11], User.objects.get(email="vspelyak@mail.com"))
 
         return Response(status=status.HTTP_201_CREATED)

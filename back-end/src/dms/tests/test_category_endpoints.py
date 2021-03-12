@@ -33,7 +33,7 @@ def file():
 @pytest.fixture(scope="function")
 def user():
     instance = get_user_model().objects.create_user(
-        username="username",
+        email="username@example.com",
         password="password",
     )
     instance.save()
