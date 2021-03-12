@@ -294,3 +294,7 @@ LOGGING = {
         }
     },
 }
+
+# Custom user model
+
+AUTH_USER_MODEL = 'auth.ProfileUser'
