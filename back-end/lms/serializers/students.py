@@ -1,13 +1,11 @@
-from rest_framework.serializers import (IntegerField, SerializerMethodField,
-                                        ModelSerializer, ImageField)
+from rest_framework.serializers import (SerializerMethodField, ModelSerializer,
+                                        ImageField)
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from common.models.persons import PersonPhoto
 from common.serializers.populate import BaseMutateSerializer
 
-from lms.models.common import Milgroup
 from lms.models.students import Program, Student
 
-from lms.validators import PresentInDatabaseValidator
 from lms.serializers.common import MilgroupSerializer
 
 
@@ -20,9 +18,10 @@ class ProgramSerializer(ModelSerializer):
 
 
 class PersonPhotoSerializer(ModelSerializer):
-    image = ImageField(
-        use_url=True, allow_null=True,
-        required=False, read_only=True)
+    image = ImageField(use_url=True,
+                       allow_null=True,
+                       required=False,
+                       read_only=True)
 
     class Meta:
         model = PersonPhoto

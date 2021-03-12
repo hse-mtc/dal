@@ -1,5 +1,5 @@
-from django.db import models
 import uuid
+from django.db import models
 
 
 def upload_to(instance, filename):
@@ -58,7 +58,9 @@ class PersonPhoto(models.Model):
 
 class Personnel(Person):
     birthdate = models.DateField()
-    photo = models.OneToOneField(to=PersonPhoto, on_delete=models.CASCADE, null=True)
+    photo = models.OneToOneField(to=PersonPhoto,
+                                 on_delete=models.CASCADE,
+                                 null=True)
     place_birth = models.CharField(max_length=32)
     region_birth = models.CharField(max_length=64)
     citizenship = models.CharField(max_length=32)
