@@ -3,7 +3,27 @@ from rest_framework import serializers
 from dms.models.documents import File
 
 
+class FileField(serializers.FileField):
+
+    def to_representation(self, value):
+        if not value:
+            return None
+
+        use_url = getattr(self, "use_url", True)
+
+        if not use_url:
+            return value.name
+
+        try:
+            url = value.url
+        except AttributeError:
+            return None
+
+        return url
+
+
 class FileSerializer(serializers.ModelSerializer):
+    content = FileField()
     extension = serializers.CharField(source="get_extension",
                                       required=False,
                                       read_only=True)

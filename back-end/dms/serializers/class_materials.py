@@ -64,7 +64,6 @@ class TopicRetrieveSerializer(TopicSerializer):
             data[label] = ClassMaterialSerializer(
                 materials,
                 many=True,
-                context=self.context,
             ).data
         return data
 
