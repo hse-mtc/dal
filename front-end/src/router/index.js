@@ -5,6 +5,7 @@ Vue.use(Router);
 
 /* Layout */
 import Layout from "@/layout";
+// import { component } from "vue/types/umd";
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -40,6 +41,12 @@ export const constantRoutes = [
     {
         path: "/404",
         component: () => import("@/views/404"),
+        hidden: true,
+    },
+
+    {
+        path: "/change-password",
+        component: () => import("@/views/ChangePassword/index"),
         hidden: true,
     },
 
