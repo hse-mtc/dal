@@ -7,6 +7,15 @@ services:
     env_file:
       - .env
 
+  ofelia:
+    image: mcuadros/ofelia:latest
+    command: daemon --config=/ofelia/config.ini
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./ofelia:/ofelia:ro
+    # depends_on:
+    #   - back-end
+
   back-end:
     container_name: back-end
     build:
@@ -26,6 +35,8 @@ services:
     restart: always
     volumes:
       - ./back-end:/back-end
+    labels:
+      ofelia.enabled: "true"
 
   front-end:
     build:
