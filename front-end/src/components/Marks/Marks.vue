@@ -75,7 +75,7 @@
               :key="d"
               :label="formatDate(d)"
               align="center"
-              min-width="80"
+              min-width="150"
             >
               <template slot-scope="scope">
                 <div class="mark-journal-cell">
@@ -112,43 +112,51 @@
                             .comment
                         }}
                       </el-form-item>
-                      <el-form-item>
-                        <el-button
+                    </el-form>
+                    <el-button-group>
+                      <el-button
+                          size="mini"
+                          icon="el-icon-plus"
+                          type="primary"
+                          @click="onCreate(scope.row, d)"
+                      >Пересдача</el-button
+                      >
+                      <el-button
                           size="mini"
                           icon="el-icon-edit"
                           type="info"
                           @click="
-                            onEdit(
-                              scope.row.marks.find((x) => x.lesson.date == d),
-                              scope.row
-                            )
-                          "
-                          >Редактировать</el-button
-                        >
-                        <el-button
+                              onEdit(
+                                scope.row.marks.find((x) => x.lesson.date == d),
+                                scope.row
+                              )
+                            "
+                      >Редактировать</el-button
+                      >
+                      <el-button
                           size="mini"
                           icon="el-icon-delete"
                           type="danger"
                           @click="
-                            handleDelete(
-                              scope.row.marks.find((x) => x.lesson.date == d).id
-                            )
-                          "
-                          >Удалить</el-button
-                        >
-                      </el-form-item>
-                    </el-form>
+                              handleDelete(
+                                scope.row.marks.find((x) => x.lesson.date == d)
+                                  .id
+                              )
+                            "
+                      >Удалить</el-button
+                      >
+                    </el-button-group>
                     <el-tag
-                      slot="reference"
-                      :type="
-                        tagByMark(
-                          scope.row.marks.find((x) => x.lesson.date == d).mark
-                        )
-                      "
-                      effect="dark"
-                      disable-transitions
+                        v-for="m in scope.row.marks.find(
+                        (x) => x.lesson.date == d
+                      ).mark"
+                        :key="m"
+                        slot="reference"
+                        :type="tagByMark(m)"
+                        effect="dark"
+                        disable-transitions
                     >
-                      {{ scope.row.marks.find((x) => x.lesson.date == d).mark }}
+                      {{ m }}
                     </el-tag>
                   </el-popover>
                   <el-button
@@ -312,7 +320,7 @@ export default {
           return "warning";
         case "Практическое занятие":
           return "success";
-        case "Зачет": 
+        case "Зачет":
           return "info";
         case "Экзамен":
           return "info";
@@ -368,8 +376,8 @@ export default {
     onEdit(mark, student) {
       this.editMark = {
         id: mark.id,
-        student: { id: student.id },
-        lesson: { id: mark.lesson.id },
+        student: student.id,
+        lesson: mark.lesson.id,
         mark: mark.mark,
       };
       console.log(this.editMark);
