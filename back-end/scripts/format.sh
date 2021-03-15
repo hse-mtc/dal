@@ -2,8 +2,8 @@
 
 for i in "$@"; do
   case $1 in
-    -i | --in-place)
-    inplace="--in-place"
+    -d | --diff)
+    diff="--diff"
     shift
     ;;
 
@@ -17,5 +17,5 @@ yapf \
   --recursive \
   --exclude="*migrations*" \
   --verbose \
-  ${inplace:- "--diff"} \
-  conf auth common dms lms tgbot
+  ${diff:- "--in-place"} \
+  src
