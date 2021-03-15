@@ -19,7 +19,7 @@ from lms.serializers.lessons import RoomSerializer
 from lms.serializers.absences import AbsenceTimeSerializer
 from lms.serializers.achievements import AchievementTypeSerializer
 
-from lms.filters.reference_book import MilgroupFilter, ProgramFilter
+from lms.filters.reference_books import MilgroupFilter, ProgramFilter
 
 from auth.permissions import BasicPermission
 

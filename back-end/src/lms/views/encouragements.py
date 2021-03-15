@@ -9,7 +9,7 @@ from common.constants import MUTATE_ACTIONS
 from lms.models.encouragements import Encouragement
 from lms.serializers.encouragements import (EncouragementSerializer,
                                             EncouragementMutateSerializer)
-from lms.filters.encouragement import EncouragementFilter
+from lms.filters.encouragements import EncouragementFilter
 
 from auth.permissions import BasicPermission
 

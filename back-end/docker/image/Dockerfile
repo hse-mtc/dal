@@ -5,12 +5,15 @@ FROM python:3.9.1-buster
 COPY back-end/docker/image/install-postgres-client.sh /
 RUN sh install-postgres-client.sh
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
 # Set working directory
 WORKDIR /back-end
+
+# Do not cache bytecode
+ENV PYTHONDONTWRITEBYTECODE 1
+# Do not buffer stdout & stderr
+ENV PYTHONUNBUFFERED 1
+# Help Python with imports
+ENV PYTHONPATH "src:${PYTHONPATH}"
 
 # Copy Pipfile[.lock]
 COPY back-end/Pipfile* ./

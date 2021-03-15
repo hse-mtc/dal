@@ -18,7 +18,7 @@ from drf_spectacular.types import OpenApiTypes
 from common.models.subjects import Subject
 from common.constants import MUTATE_ACTIONS
 
-from lms.filters.mark import MarkFilter
+from lms.filters.marks import MarkFilter
 
 from lms.models.common import Milgroup
 from lms.models.marks import Mark

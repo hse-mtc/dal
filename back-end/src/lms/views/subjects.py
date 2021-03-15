@@ -8,7 +8,7 @@ from drf_spectacular.views import extend_schema
 from common.models.subjects import Subject
 
 from lms.serializers.subjects import LessonSubjectSerializer
-from lms.filters.subject import LessonSubjectFilter
+from lms.filters.subjects import LessonSubjectFilter
 
 from auth.permissions import BasicPermission
 

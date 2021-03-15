@@ -8,7 +8,7 @@ from common.constants import MUTATE_ACTIONS
 
 from lms.models.students import Student
 from lms.serializers.students import StudentSerializer, StudentMutateSerializer
-from lms.filters.student import StudentFilter
+from lms.filters.students import StudentFilter
 
 from auth.permissions import BasicPermission
 

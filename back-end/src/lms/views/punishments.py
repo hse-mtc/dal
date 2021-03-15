@@ -9,7 +9,7 @@ from common.constants import MUTATE_ACTIONS
 from lms.models.punishments import Punishment
 from lms.serializers.punishments import (PunishmentSerializer,
                                          PunishmentMutateSerializer)
-from lms.filters.punishment import PunishmentFilter
+from lms.filters.punishments import PunishmentFilter
 
 from auth.permissions import BasicPermission
 

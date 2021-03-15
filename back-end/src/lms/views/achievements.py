@@ -9,7 +9,7 @@ from common.constants import MUTATE_ACTIONS
 from lms.models.achievements import Achievement
 from lms.serializers.achievements import (AchievementSerializer,
                                           AchievementMutateSerializer)
-from lms.filters.achievement import AchievementFilter
+from lms.filters.achievements import AchievementFilter
 
 from auth.permissions import BasicPermission
 
