@@ -21,6 +21,9 @@ from lms.models.students import (
     Student,
     MilSpecialty,
     Faculty,
+    Passport,
+    RecruitmentOffice,
+    UniversityInfo,
 )
 from lms.models.teachers import (
     Rank,
@@ -213,18 +216,127 @@ def create_posts() -> dict[str, TeacherPost]:
     return posts
 
 
+def create_passports() -> dict[str, Passport]:
+    values = [{
+        'series': '0000',
+        'code': '111111',
+        'ufms_name': 'УФМС гор. Москвы',
+        'ufms_code': '740-056',
+        'issue_date': '2020-10-02',
+    }, {
+        'series': '1111',
+        'code': '111111',
+        'ufms_name': 'УФМС гор. Москвы',
+        'ufms_code': '740-056',
+        'issue_date': '2020-10-02',
+    }, {
+        'series': '2222',
+        'code': '111111',
+        'ufms_name': 'УФМС гор. Москвы',
+        'ufms_code': '740-056',
+        'issue_date': '2020-10-02',
+    }, {
+        'series': '3333',
+        'code': '111111',
+        'ufms_name': 'УФМС гор. Москвы',
+        'ufms_code': '740-056',
+        'issue_date': '2020-10-02',
+    }, {
+        'series': '4444',
+        'code': '111111',
+        'ufms_name': 'УФМС гор. Москвы',
+        'ufms_code': '740-056',
+        'issue_date': '2020-10-02',
+    }, {
+        'series': '5555',
+        'code': '111111',
+        'ufms_name': 'УФМС гор. Москвы',
+        'ufms_code': '740-056',
+        'issue_date': '2020-10-02',
+    }, {
+        'series': '6666',
+        'code': '111111',
+        'ufms_name': 'УФМС гор. Москвы',
+        'ufms_code': '740-056',
+        'issue_date': '2020-10-02',
+    }]
+
+    passports = {}
+
+    for fields in values:
+        passport, _ = Passport.objects.get_or_create(**fields)
+        passports[fields['series']] = passport
+
+    return passports
+
+
+def create_recruitments_offices() -> dict[str, RecruitmentOffice]:
+    values = [{
+        'city': 'Москва',
+        'district': 'Центрального',
+    }]
+
+    offices = {}
+
+    for fields in values:
+        office, _ = RecruitmentOffice.objects.get_or_create(**fields)
+        offices[fields["city"]] = office
+
+    return offices
+
+
+def create_university_infos() -> dict[str, UniversityInfo]:
+    values = [{
+        'id_card': 'HSE11229',
+        'group_title': 'БИТ 188',
+    }, {
+        'id_card': 'HSE1129',
+        'group_title': 'БИТ 188',
+    }, {
+        'id_card': 'HSE11319',
+        'group_title': 'БИТ 188',
+    }, {
+        'id_card': 'HSE1889',
+        'group_title': 'БИТ 188',
+    }, {
+        'id_card': 'HSE11255',
+        'group_title': 'БИТ 188',
+    }, {
+        'id_card': 'HSE1199',
+        'group_title': 'БИТ 188',
+    }, {
+        'id_card': 'HSE7779',
+        'group_title': 'БИТ 188',
+    }]
+
+    infos = {}
+
+    for fields in values:
+        info, _ = UniversityInfo.objects.get_or_create(**fields)
+        infos[fields['id_card']] = info
+
+    return infos
+
+
 # pylint: disable=(too-many-locals)
 def create_students(
     milgroups: dict[int, Milgroup],
     programs: dict[str, Program],
     statuses: dict[str, Status],
     milspecialties: dict[str, MilSpecialty],
+    passports: dict[str, Passport],
+    recruitment_offices: dict[str, RecruitmentOffice],
+    university_infos: dict[str, UniversityInfo],
 ):
+    # TODO – index term
+    # FIXME(TmLev): provide family for every student
+
     values = [{
         'surname': 'Хромов',
         'name': 'Григорий',
         'patronymic': 'Александрович',
         'milgroup': milgroups[1809],
+        'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '2000-11-04',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
@@ -232,21 +344,15 @@ def create_students(
         'surname_genitive': 'Хромова',
         'name_genitive': 'Григория',
         'patronymic_genitive': 'Александровича',
-        'passport_series': '1111',
-        'passport_code': '111111',
-        'passport_ufms_name': 'УФМС гор. Москвы',
-        'passport_ufms_code': '740-056',
-        'passport_date': '2020-10-02',
-        'commissariat_city': 'г. Москва',
-        'commissariat_district': 'Центрального',
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'hse_id': 'HSE11229',
-        'hse_group': 'БИТ 188'
+        'passport': passports['0000'],
+        'recruitment_office': recruitment_offices['Москва'],
+        'university_info': university_infos['HSE11229']
     }, {
         'surname': 'Кацевалов',
         'name': 'Артем',
         'patronymic': 'Сергеевич',
         'milgroup': milgroups[1809],
+        'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '2000-02-23',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
@@ -254,21 +360,15 @@ def create_students(
         'surname_genitive': 'Кацевалова',
         'name_genitive': 'Артема',
         'patronymic_genitive': 'Сергеевича',
-        'passport_series': '1111',
-        'passport_code': '111111',
-        'passport_ufms_name': 'УФМС гор. Москвы',
-        'passport_ufms_code': '740-056',
-        'passport_date': '2020-10-02',
-        'commissariat_city': 'г. Москва',
-        'commissariat_district': 'Центрального',
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'hse_id': 'HSE11239',
-        'hse_group': 'БИТ 188'
+        'passport': passports['1111'],
+        'recruitment_office': recruitment_offices['Москва'],
+        'university_info': university_infos['HSE1129'],
     }, {
         'surname': 'Исаков',
         'name': 'Владислав',
         'patronymic': 'Евгеньевич',
         'milgroup': milgroups[1809],
+        'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-08-29',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
@@ -276,21 +376,15 @@ def create_students(
         'surname_genitive': 'Исакова',
         'name_genitive': 'Владислава',
         'patronymic_genitive': 'Евгеньевича',
-        'passport_series': '1111',
-        'passport_code': '111111',
-        'passport_ufms_name': 'УФМС гор. Москвы',
-        'passport_ufms_code': '740-056',
-        'passport_date': '2020-10-02',
-        'commissariat_city': 'г. Москва',
-        'commissariat_district': 'Центрального',
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'hse_id': 'HSE11219',
-        'hse_group': 'БИТ 188'
+        'passport': passports['2222'],
+        'recruitment_office': recruitment_offices['Москва'],
+        'university_info': university_infos['HSE11319'],
     }, {
         'surname': 'Алиев',
         'name': 'Насир',
         'patronymic': 'Ашурович',
         'milgroup': milgroups[1808],
+        'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-05-14',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
@@ -298,21 +392,15 @@ def create_students(
         'surname_genitive': 'Алиева',
         'name_genitive': 'Насира',
         'patronymic_genitive': 'Ашуровича',
-        'passport_series': '1111',
-        'passport_code': '111111',
-        'passport_ufms_name': 'УФМС гор. Москвы',
-        'passport_ufms_code': '740-056',
-        'passport_date': '2020-10-02',
-        'commissariat_city': 'г. Москва',
-        'commissariat_district': 'Центрального',
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'hse_id': 'HSE1889',
-        'hse_group': 'БИТ 188'
+        'passport': passports['3333'],
+        'recruitment_office': recruitment_offices['Москва'],
+        'university_info': university_infos['HSE1889'],
     }, {
         'surname': 'Куркин',
         'name': 'Андрей',
         'patronymic': 'Витальевич',
         'milgroup': milgroups[1812],
+        'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-11-12',
         'program': programs['Информатика и вычислительная техника'],
         'status': statuses['Обучается'],
@@ -320,21 +408,15 @@ def create_students(
         'surname_genitive': 'Куркина',
         'name_genitive': 'Андрея',
         'patronymic_genitive': 'Витальевича',
-        'passport_series': '1111',
-        'passport_code': '111111',
-        'passport_ufms_name': 'УФМС гор. Москвы',
-        'passport_ufms_code': '740-056',
-        'passport_date': '2020-10-02',
-        'commissariat_city': 'г. Москва',
-        'commissariat_district': 'Центрального',
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'hse_id': 'HSE11255',
-        'hse_group': 'БИТ 188'
+        'passport': passports['4444'],
+        'recruitment_office': recruitment_offices['Москва'],
+        'university_info': university_infos['HSE11255'],
     }, {
         'surname': 'Иванов',
         'name': 'Петр',
         'patronymic': 'Сидорович',
         'milgroup': milgroups[1804],
+        'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-05-04',
         'program': programs['Машиностроение'],
         'status': statuses['Отчислен'],
@@ -342,21 +424,15 @@ def create_students(
         'surname_genitive': 'Иванова',
         'name_genitive': 'Петра',
         'patronymic_genitive': 'Сидоровича',
-        'passport_series': '1111',
-        'passport_code': '111111',
-        'passport_ufms_name': 'УФМС гор. Москвы',
-        'passport_ufms_code': '740-056',
-        'passport_date': '2020-10-02',
-        'commissariat_city': 'г. Москва',
-        'commissariat_district': 'Центрального',
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'hse_id': 'HSE1199',
-        'hse_group': 'БИТ 188'
+        'passport': passports['5555'],
+        'recruitment_office': recruitment_offices['Москва'],
+        'university_info': university_infos['HSE1199'],
     }, {
         'surname': 'Чукмарикадзе',
         'name': 'Губарибек',
         'patronymic': 'Алкинбеков',
         'milgroup': milgroups[1801],
+        'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1969-04-13',
         'program': programs['Интеллектуальные системы в гуманитарной сфере'],
         'status': statuses['Завершил'],
@@ -364,46 +440,17 @@ def create_students(
         'surname_genitive': 'Чукмаридзе',
         'name_genitive': 'Губарибека',
         'patronymic_genitive': 'Алкинбекова',
-        'passport_series': '1111',
-        'passport_code': '111111',
-        'passport_ufms_name': 'УФМС гор. Москвы',
-        'passport_ufms_code': '740-056',
-        'passport_date': '2020-10-02',
-        'commissariat_city': 'г. Москва',
-        'commissariat_district': 'Центрального',
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'hse_id': 'HSE7779',
-        'hse_group': 'БИТ 188'
+        'passport': passports['6666'],
+        'recruitment_office': recruitment_offices['Москва'],
+        'university_info': university_infos['HSE7779'],
     }]
 
     students = {}
 
-    for value in values:
-        student, _ = Student.objects.get_or_create(
-            surname=value['surname'],
-            name=value['name'],
-            patronymic=value['patronymic'],
-            milgroup=value['milgroup'],
-            birthdate=value['birthdate'],
-            program=value['program'],
-            status=value['status'],
-            photo=value['photo'],
-            surname_genitive=value['surname_genitive'],
-            name_genitive=value['name_genitive'],
-            patronymic_genitive=value['patronymic_genitive'],
-            passport_series=value['passport_series'],
-            passport_code=value['passport_code'],
-            passport_ufms_name=value['passport_ufms_name'],
-            passport_ufms_code=value['passport_ufms_code'],
-            passport_date=value['passport_date'],
-            commissariat_city=value['commissariat_city'],
-            commissariat_district=value['commissariat_district'],
-            mil_specialty=value['mil_specialty'],
-            hse_id=value['hse_id'],
-            hse_group=value['hse_group'],
-        )
+    for fields in values:
+        student, _ = Student.objects.get_or_create(**fields)
         student.save()
-        students[value['surname']] = student
+        students[fields['surname']] = student
 
     return students
 
@@ -691,7 +738,7 @@ def create_subjects():
     return subjects
 
 
-def create_lessons(rooms: dict[str, Room], milgroups: dict[str, Milgroup],
+def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
                    subjects: dict[str, Subject], nearest_day: datetime):
     date_f = '%Y-%m-%d'
     values = [
@@ -847,7 +894,18 @@ def lms_populate(request: Request) -> Response:
         get_date_range(datetime.now() - timedelta(6), datetime.now(), 4)[0],
         '%Y-%m-%d')
 
-    students = create_students(milgroups, programs, statuses, milspecialties)
+    passports = create_passports()
+    offices = create_recruitments_offices()
+    infos = create_university_infos()
+    students = create_students(
+        milgroups,
+        programs,
+        statuses,
+        milspecialties,
+        passports,
+        offices,
+        infos,
+    )
 
     teachers = create_teachers(milgroups, milfaculties, ranks, posts)
 
