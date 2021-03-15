@@ -1,11 +1,25 @@
-from rest_framework.serializers import (SerializerMethodField, ModelSerializer,
-                                        ImageField)
+from rest_framework.serializers import (
+    SerializerMethodField,
+    ModelSerializer,
+    ImageField,
+)
+
 from drf_writable_nested.serializers import WritableNestedModelSerializer
-from common.models.persons import PersonPhoto
+
+from common.models.persons import (
+    PersonPhoto,
+    Relative,
+)
 from common.serializers.populate import BaseMutateSerializer
 
-from lms.models.students import Program, Student
-
+from lms.models.students import (
+    Program,
+    Student,
+    Passport,
+    Family,
+    RecruitmentOffice,
+    UniversityInfo,
+)
 from lms.serializers.common import MilgroupSerializer
 
 
@@ -28,6 +42,45 @@ class PersonPhotoSerializer(ModelSerializer):
         exclude = ['id']
 
 
+class PassportSerializer(ModelSerializer):
+
+    class Meta:
+        model = Passport
+        exclude = ['id']
+
+
+class RelativeSerializer(ModelSerializer):
+
+    class Meta:
+        model = Relative
+        exclude = ['id']
+
+
+class FamilySerializer(ModelSerializer):
+    mother = RelativeSerializer()
+    father = RelativeSerializer()
+    brothers = RelativeSerializer(many=True)
+    sisters = RelativeSerializer(many=True)
+
+    class Meta:
+        model = Family
+        exclude = ['id']
+
+
+class RecruitmentOfficeSerializer(ModelSerializer):
+
+    class Meta:
+        model = RecruitmentOffice
+        exclude = ['id']
+
+
+class UniversityInfoSerializer(ModelSerializer):
+
+    class Meta:
+        model = UniversityInfo
+        exclude = ['id']
+
+
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
     program = ProgramSerializer()
@@ -45,6 +98,10 @@ class StudentSerializer(WritableNestedModelSerializer):
 
 class StudentMutateSerializer(BaseMutateSerializer):
     image = ImageField(write_only=True, required=False)
+    recruitment_office = RecruitmentOfficeSerializer(required=False)
+    university_info = UniversityInfoSerializer(required=False)
+    passport = PassportSerializer(required=False)
+    family = FamilySerializer(required=False)
 
     class Meta:
         model = Student
