@@ -39,6 +39,12 @@ export const constantRoutes = [
   },
 
   {
+    path: "/change-password",
+    component: () => import("@/views/ChangePassword/index"),
+    hidden: true,
+  },
+
+  {
     path: '/',
     redirect: "/my-materials/",
     component: Layout,
@@ -92,7 +98,7 @@ export const constantRoutes = [
         component: () => import("@/views/Personnel/index"),
         meta: { title: "Личный состав ВУЦ", icon: "people" },
       },
-      
+
       {
         path: "absence/",
         name: "Absence",
