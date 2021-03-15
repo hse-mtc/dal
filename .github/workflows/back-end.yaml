@@ -16,7 +16,7 @@ jobs:
       - name: "Run tests"
         run:  docker-compose run back-end scripts/test.sh
       - name: "Check code style"
-        run:  docker-compose run back-end scripts/format.sh
+        run:  docker-compose run back-end scripts/format.sh --diff
       - name: "Lint code"
         run:  docker-compose run back-end scripts/lint.sh
       - name: "Stop all containers"
