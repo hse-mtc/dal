@@ -16,9 +16,9 @@ export function getInfo() {
   });
 }
 
-export function createPassword(data) {
+export function changePassword(data) {
   return request({
-    url: BASE_API_URL + AUTH_URLS.create_password,
+    url: BASE_API_URL + AUTH_URLS.change_password,
     method: "post",
     data
   })

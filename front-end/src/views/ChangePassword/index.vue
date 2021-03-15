@@ -43,7 +43,7 @@
           :loading="loading"
           type="primary"
           style="width: 100%; margin-bottom: 30px"
-          @click.native.prevent="handleChangePassword"
+          @click="handleChangePassword"
       >Подтвердить</el-button
       >
     </el-form>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { createPassword } from "@/api/user";
+import { changePassword } from "@/api/user";
 import jwt_decode from "jwt-decode";
 export default {
   name: "ChangePassword",
@@ -89,13 +89,11 @@ export default {
   },
   created() {
     let token = this.$route.query.token;
-    console.log("token => ", token);
     try {
       jwt_decode(token);
     } catch (ex) {
       token = null;
     }
-    console.log("valid");
     if (!token) {
       this.$router.push({ path: "/" });
       return;
@@ -114,11 +112,14 @@ export default {
       });
     },
     handleChangePassword() {
+      console.log(1);
       this.$refs.changePasswordForm.validate((valid) => {
+        console.log(2);
         if (valid) {
           this.loading = true;
-          createPassword({ password: this.changePasswordForm.password })
+          changePassword({ password: this.changePasswordForm.password })
               .then(() => {
+                console.log("changed");
                 this.$store
                     .dispatch("user/resetToken")
                     .then(() => {
