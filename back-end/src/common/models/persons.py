@@ -1,16 +1,49 @@
 import uuid
+
 from django.db import models
 
 
-def upload_to(instance, filename):
-    # pylint: disable=unused-argument
-    return f"photos/{instance.id}/"
+class BirthInfo(models.Model):
+    date = models.DateField()
+    country = models.CharField(max_length=32, null=True)
+    city = models.CharField(max_length=32, null=True)
+
+    class Meta:
+        verbose_name = "Birth Info"
+        verbose_name_plural = "Birth Infos"
+
+    def __str__(self):
+        return f"{self.date}, {self.country}, {self.city}"
+
+
+class ContactInfo(models.Model):
+    corporate_email = models.EmailField()
+    personal_email = models.EmailField(blank=True)
+    personal_phone_number = models.CharField(max_length=32)
+
+    class Meta:
+        verbose_name = "Contact Info"
+        verbose_name_plural = "Contact Infos"
 
 
 class Person(models.Model):
     surname = models.CharField(max_length=32)
     name = models.CharField(max_length=32)
     patronymic = models.CharField(max_length=32, blank=True)
+
+    citizenship = models.CharField(max_length=64, null=True)
+    permanent_address = models.CharField(max_length=128, null=True)
+
+    birth_info = models.ForeignKey(
+        to=BirthInfo,
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    contact_info = models.ForeignKey(
+        to=ContactInfo,
+        on_delete=models.SET_NULL,
+        null=True,
+    )
 
     @property
     def full_name(self):
@@ -26,25 +59,26 @@ class Person(models.Model):
 
 
 class Relative(Person):
-    relative_list = [("father", "отец"), ("mother", "мать"),
-                     ("sister", "сестра"), ("brother", "брат")]
-    rel_status = models.CharField(max_length=32, choices=relative_list)
-    birthdate = models.DateField()
-    citizenship = models.CharField(max_length=32)
-    pers_mobile = models.CharField(max_length=15, blank=True)
-    permanent_address = models.CharField(max_length=64)
-    place_birth = models.CharField(max_length=64)
+
+    class Status(models.TextChoices):
+        FATHER = "FA", "Отец"
+        MOTHER = "MA", "Мать"
+        BROTHER = "BR", "Брат"
+        SISTER = "SI", "Сестра"
+
+    status = models.CharField(max_length=2, choices=Status.choices)
 
     class Meta:
-        abstract = False
-        verbose_name = "Person"
-        verbose_name_plural = "Persons"
-
-    def __str__(self):
-        return self.full_name
+        verbose_name = "Relative"
+        verbose_name_plural = "Relatives"
 
 
-class PersonPhoto(models.Model):
+def upload_to(instance, filename):
+    # pylint: disable=unused-argument
+    return f"photos/{instance.id}/"
+
+
+class Photo(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     image = models.ImageField(upload_to=upload_to, blank=True)
 
@@ -57,22 +91,17 @@ class PersonPhoto(models.Model):
 
 
 class Personnel(Person):
-    birthdate = models.DateField()
-    photo = models.OneToOneField(to=PersonPhoto,
-                                 on_delete=models.CASCADE,
-                                 null=True)
-    place_birth = models.CharField(max_length=32)
-    region_birth = models.CharField(max_length=64)
-    citizenship = models.CharField(max_length=32)
-    pers_mobile = models.CharField(max_length=15)
-    corp_email = models.EmailField()
-    pers_email = models.EmailField(blank=True)
-    permanent_address = models.CharField(max_length=64)
+    surname_genitive = models.CharField(max_length=32)
+    name_genitive = models.CharField(max_length=32)
+    patronymic_genitive = models.CharField(max_length=32, blank=True)
+
+    photo = models.OneToOneField(
+        to=Photo,
+        on_delete=models.SET_NULL,
+        null=True,
+    )
 
     class Meta:
         abstract = True
         verbose_name = "Personnel"
         verbose_name_plural = "Personnel"
-
-    def __str__(self):
-        return self.full_name
