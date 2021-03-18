@@ -246,6 +246,23 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "DAL REST API",
     "DESCRIPTION": "API for auth, dms, lms apps",
     "VERSION": "0.7.0",
+
+    # Enum namings
+    "ENUM_NAME_OVERRIDES": {
+        # common
+        "RelativeType": "common.models.persons.Relative.Type",
+
+        # dms
+        "ClassMaterialType": "dms.models.class_materials.ClassMaterial.Type",
+
+        # lms
+        "AbsenceType": "lms.models.absences.Absence.Type",
+        "AbsenceStatus": "lms.models.absences.Absence.Status",
+        "EncouragementType": "lms.models.encouragements.Encouragement.Type",
+        "LessonType": "lms.models.lessons.Lesson.Type",
+        "PunishmentType": "lms.models.punishments.Punishment.Type",
+        "StudentStatus": "lms.models.students.Student.Status",
+    },
 }
 
 # Logging settings
