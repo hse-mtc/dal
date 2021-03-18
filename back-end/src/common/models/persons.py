@@ -17,9 +17,9 @@ class BirthInfo(models.Model):
 
 
 class ContactInfo(models.Model):
-    corporate_email = models.EmailField()
-    personal_email = models.EmailField(blank=True)
-    personal_phone_number = models.CharField(max_length=32)
+    corporate_email = models.EmailField(null=True)
+    personal_email = models.EmailField(null=True)
+    personal_phone_number = models.CharField(max_length=32, null=True)
 
     class Meta:
         verbose_name = "Contact Info"
@@ -60,13 +60,13 @@ class Person(models.Model):
 
 class Relative(Person):
 
-    class Status(models.TextChoices):
+    class Type(models.TextChoices):
         FATHER = "FA", "Отец"
         MOTHER = "MA", "Мать"
         BROTHER = "BR", "Брат"
         SISTER = "SI", "Сестра"
 
-    status = models.CharField(max_length=2, choices=Status.choices)
+    type = models.CharField(max_length=2, choices=Type.choices)
 
     class Meta:
         verbose_name = "Relative"
