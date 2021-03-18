@@ -27,8 +27,8 @@ class Program(models.Model):
 
 class UniversityInfo(models.Model):
     program = models.ForeignKey(Program, models.DO_NOTHING)
-    id_card = models.CharField(max_length=32)
-    group_title = models.CharField(max_length=32)
+    group = models.CharField(max_length=32)
+    card_id = models.CharField(max_length=32)
 
     class Meta:
         verbose_name = 'University Info'
