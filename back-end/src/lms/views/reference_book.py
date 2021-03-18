@@ -7,7 +7,7 @@ from drf_spectacular.views import extend_schema
 
 from lms.models.common import Milgroup, Milfaculty
 from lms.models.teachers import Rank, TeacherPost
-from lms.models.students import Program
+from lms.models.universities import Program
 from lms.models.lessons import Room
 from lms.models.absences import AbsenceTime
 from lms.models.achievements import AchievementType

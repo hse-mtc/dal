@@ -14,16 +14,17 @@ from rest_framework.decorators import api_view
 from lms.models.common import (
     Milfaculty,
     Milgroup,
+    Milspecialty,
+)
+from lms.models.universities import (
+    Faculty,
+    Program,
+    UniversityInfo,
 )
 from lms.models.students import (
-    Status,
-    Program,
     Student,
-    MilSpecialty,
-    Faculty,
     Passport,
     RecruitmentOffice,
-    UniversityInfo,
 )
 from lms.models.teachers import (
     Rank,
@@ -50,19 +51,6 @@ from lms.models.marks import Mark
 from lms.functions import get_date_range
 
 from common.models.subjects import Subject
-
-
-def create_statuses() -> dict[str, Status]:
-    values = ['Завершил', 'Обучается', 'Отчислен']
-
-    statuses = {}
-
-    for value in values:
-        status, _ = Status.objects.get_or_create(status=value)
-        status.save()
-        statuses[value] = status
-
-    return statuses
 
 
 def create_faculties():
@@ -280,7 +268,7 @@ def create_recruitments_offices() -> dict[str, RecruitmentOffice]:
 
     for fields in values:
         office, _ = RecruitmentOffice.objects.get_or_create(**fields)
-        offices[fields["city"]] = office
+        offices[fields['city']] = office
 
     return offices
 
@@ -322,12 +310,13 @@ def create_university_infos() -> dict[str, UniversityInfo]:
 def create_students(
     milgroups: dict[int, Milgroup],
     programs: dict[str, Program],
-    statuses: dict[str, Status],
-    milspecialties: dict[str, MilSpecialty],
+    milspecialties: dict[str, Milspecialty],
     passports: dict[str, Passport],
     recruitment_offices: dict[str, RecruitmentOffice],
     university_infos: dict[str, UniversityInfo],
 ):
+    # pylint: disable=too-many-arguments
+
     # TODO – index term
     # FIXME(TmLev): provide family for every student
 
@@ -339,7 +328,7 @@ def create_students(
         'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '2000-11-04',
         'program': programs['Информатика и вычислительная техника'],
-        'status': statuses['Обучается'],
+        'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Хромова',
         'name_genitive': 'Григория',
@@ -355,7 +344,7 @@ def create_students(
         'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '2000-02-23',
         'program': programs['Информатика и вычислительная техника'],
-        'status': statuses['Обучается'],
+        'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Кацевалова',
         'name_genitive': 'Артема',
@@ -371,7 +360,7 @@ def create_students(
         'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-08-29',
         'program': programs['Информатика и вычислительная техника'],
-        'status': statuses['Обучается'],
+        'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Исакова',
         'name_genitive': 'Владислава',
@@ -387,7 +376,7 @@ def create_students(
         'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-05-14',
         'program': programs['Информатика и вычислительная техника'],
-        'status': statuses['Обучается'],
+        'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Алиева',
         'name_genitive': 'Насира',
@@ -403,7 +392,7 @@ def create_students(
         'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-11-12',
         'program': programs['Информатика и вычислительная техника'],
-        'status': statuses['Обучается'],
+        'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Куркина',
         'name_genitive': 'Андрея',
@@ -419,7 +408,7 @@ def create_students(
         'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1999-05-04',
         'program': programs['Машиностроение'],
-        'status': statuses['Отчислен'],
+        'status': Student.Status.DEDUCTED.value,
         'photo': None,
         'surname_genitive': 'Иванова',
         'name_genitive': 'Петра',
@@ -435,7 +424,7 @@ def create_students(
         'mil_specialty': milspecialties['Защита информационных технологий'],
         'birthdate': '1969-04-13',
         'program': programs['Интеллектуальные системы в гуманитарной сфере'],
-        'status': statuses['Завершил'],
+        'status': Student.Status.GRADUATED.value,
         'photo': None,
         'surname_genitive': 'Чукмаридзе',
         'name_genitive': 'Губарибека',
@@ -668,7 +657,7 @@ def create_mil_specialty():
     specs = {}
 
     for value in values:
-        spec, _ = MilSpecialty.objects.get_or_create(
+        spec, _ = Milspecialty.objects.get_or_create(
             mil_specialty=value['mil_specialty'],
             code=value['code'],
         )
@@ -881,7 +870,6 @@ def lms_populate(request: Request) -> Response:
     """
 
     faculties = create_faculties()
-    statuses = create_statuses()
     programs = create_programs(faculties)
     milfaculties = create_milfaculties()
     milgroups = create_milgroups(milfaculties)
@@ -900,7 +888,6 @@ def lms_populate(request: Request) -> Response:
     students = create_students(
         milgroups,
         programs,
-        statuses,
         milspecialties,
         passports,
         offices,

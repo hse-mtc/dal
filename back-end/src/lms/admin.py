@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from lms.models.common import Milgroup, Milfaculty
-from lms.models.students import Status, Program, Student, MilSpecialty
+from lms.models.common import Milgroup, Milfaculty, Milspecialty
+from lms.models.students import Student
 from lms.models.teachers import Rank, TeacherPost, Teacher
 from lms.models.absences import Absence
 from lms.models.encouragements import Encouragement
@@ -11,10 +11,8 @@ from lms.models.lessons import Room, Lesson
 
 # Registering reference models
 admin.site.register(Milfaculty)
-admin.site.register(MilSpecialty)
+admin.site.register(Milspecialty)
 admin.site.register(Rank)
-admin.site.register(Status)
-admin.site.register(Program)
 admin.site.register(TeacherPost)
 admin.site.register(AchievementType)
 admin.site.register(Room)
