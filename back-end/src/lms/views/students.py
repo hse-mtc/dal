@@ -9,8 +9,12 @@ from common.constants import MUTATE_ACTIONS
 from common.parsers import MultiPartWithJSONParser
 
 from lms.models.students import Student
-from lms.serializers.students import StudentSerializer, StudentMutateSerializer
 from lms.filters.students import StudentFilter
+from lms.serializers.students import (
+    StudentSerializer,
+    StudentMutateSerializer,
+    StudentMutateSerializerForSwagger,
+)
 
 from auth.permissions import BasicPermission
 
@@ -19,7 +23,7 @@ class StudentPermission(BasicPermission):
     permission_class = 'auth.student'
 
 
-@extend_schema(tags=['students'])
+@extend_schema(request=StudentMutateSerializerForSwagger, tags=['students'])
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
 

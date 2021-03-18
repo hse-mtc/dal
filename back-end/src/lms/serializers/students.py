@@ -6,6 +6,8 @@ from rest_framework.serializers import (
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
+from drf_spectacular.utils import inline_serializer
+
 from common.models.persons import (
     Photo,
     Relative,
@@ -133,6 +135,15 @@ class StudentMutateSerializer(BaseMutateSerializer):
     def update(self, instance: Student, validated_data):
         self.update_image(instance, validated_data)
         return super().update(instance, validated_data)
+
+
+StudentMutateSerializerForSwagger = inline_serializer(
+    name="StudentMutateInline",
+    fields={
+        "image": ImageField(),
+        "data": StudentMutateSerializer(),
+    },
+)
 
 
 class StudentShortSerializer(WritableNestedModelSerializer):
