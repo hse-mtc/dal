@@ -7,13 +7,13 @@ from rest_framework.serializers import (
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from common.models.persons import (
-    PersonPhoto,
+    Photo,
     Relative,
 )
 from common.serializers.populate import BaseMutateSerializer
 
+from lms.models.universities import Program
 from lms.models.students import (
-    Program,
     Student,
     Passport,
     Family,
@@ -31,14 +31,14 @@ class ProgramSerializer(ModelSerializer):
         extra_kwargs = {'code': {'validators': []}}
 
 
-class PersonPhotoSerializer(ModelSerializer):
+class PhotoSerializer(ModelSerializer):
     image = ImageField(use_url=True,
                        allow_null=True,
                        required=False,
                        read_only=True)
 
     class Meta:
-        model = PersonPhoto
+        model = Photo
         exclude = ['id']
 
 
@@ -84,7 +84,7 @@ class UniversityInfoSerializer(ModelSerializer):
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
     program = ProgramSerializer()
-    photo = PersonPhotoSerializer(read_only=True)
+    photo = PhotoSerializer(read_only=True)
 
     fullname = SerializerMethodField()
 
@@ -107,19 +107,31 @@ class StudentMutateSerializer(BaseMutateSerializer):
         model = Student
         fields = '__all__'
 
+    def create_image(self, validated_data):
+        image = validated_data.pop('image', None)
+        if image is None:
+            return
+
+        photo = Photo.objects.create(image=image)
+        validated_data['photo'] = photo
+
     def create(self, validated_data):
-        if image := validated_data.pop('image', None):
-            person_photo = PersonPhoto.objects.create(image=image)
-            validated_data['photo'] = person_photo
+        self.create_image(validated_data)
         return super().create(validated_data)
 
+    def update_image(self, instance: Student, validated_data):
+        image = validated_data.pop('image', None)
+        if image is None:
+            return
+
+        if instance.photo:
+            instance.photo.image = image
+            instance.photo.save()
+        else:
+            instance.photo = Photo.objects.create(image=image)
+
     def update(self, instance: Student, validated_data):
-        if image := validated_data.pop('image', None):
-            if instance.photo:
-                instance.photo.image = image
-                instance.photo.save()
-            else:
-                instance.photo = PersonPhoto.objects.create(image=image)
+        self.update_image(instance, validated_data)
         return super().update(instance, validated_data)
 
 
