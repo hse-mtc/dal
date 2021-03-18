@@ -126,6 +126,13 @@ export const constantRoutes = [
         component: () => import("@/views/Marks/index"),
         meta: { title: "Журнал оценок", icon: "journal" },
       },
+
+      {
+        path: "receipt/",
+        name: "Receipt",
+        component: () => import("@/views/ReceiptForm/index.vue"),
+        meta: { title: "Форма поступления", icon: "journal" },
+      },
     ]
   },
 
