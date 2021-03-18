@@ -30,7 +30,8 @@ from dms.permissions import (
     ReadOnly,
 )
 from dms.filters import PaperFilter
-from dms.parsers import MultiPartWithJSONParser
+
+from common.parsers import MultiPartWithJSONParser
 from common.constants import MUTATE_ACTIONS
 
 

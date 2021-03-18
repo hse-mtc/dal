@@ -29,7 +29,8 @@ from dms.permissions import (
     IsOwner,
     ReadOnly,
 )
-from dms.parsers import MultiPartWithJSONParser
+
+from common.parsers import MultiPartWithJSONParser
 from common.constants import MUTATE_ACTIONS
 
 

@@ -29,10 +29,10 @@ from dms.permissions import (
     ReadOnly,
 )
 from dms.filters import SectionFilter
-from dms.parsers import MultiPartWithJSONParser
-from dms.views.common import (
-    OrderUpdateAPIView,)
+from dms.views.common import OrderUpdateAPIView
+
 from common.constants import MUTATE_ACTIONS
+from common.parsers import MultiPartWithJSONParser
 
 
 @extend_schema(tags=["sections"])
