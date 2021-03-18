@@ -61,10 +61,10 @@ class Person(models.Model):
 class Relative(Person):
 
     class Type(models.TextChoices):
-        FATHER = "FA", "Отец"
-        MOTHER = "MA", "Мать"
-        BROTHER = "BR", "Брат"
-        SISTER = "SI", "Сестра"
+        FATHER = "FA", "отец"
+        MOTHER = "MA", "мать"
+        BROTHER = "BR", "брат"
+        SISTER = "SI", "сестра"
 
     type = models.CharField(max_length=2, choices=Type.choices)
 
