@@ -20,7 +20,7 @@ class Room(models.Model):
 
 class Lesson(models.Model):
 
-    class LessonType(models.TextChoices):
+    class Type(models.TextChoices):
         LECTURE = 'LE', 'Лекция'
         SEMINAR = 'SE', 'Семинар'
         GROUP = 'GR', 'Групповое занятие'
@@ -28,7 +28,7 @@ class Lesson(models.Model):
         FINAL_TEST = 'FI', 'Зачет'
         EXAM = 'EX', 'Экзамен'
 
-    lesson_type = models.CharField(max_length=2, choices=LessonType.choices)
+    lesson_type = models.CharField(max_length=2, choices=Type.choices)
     subject = models.ForeignKey(Subject, models.DO_NOTHING)
     room = models.ForeignKey(Room, models.DO_NOTHING)
     milgroup = models.ForeignKey(Milgroup, models.DO_NOTHING)
