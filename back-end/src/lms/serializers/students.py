@@ -6,13 +6,11 @@ from rest_framework.serializers import (
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from drf_spectacular.utils import inline_serializer
-
-from common.models.persons import (
-    Photo,
-    Relative,
+from common.models.persons import Photo
+from common.serializers.persons import (
+    RelativeSerializer,
+    PersonnelMutateSerializer,
 )
-from common.serializers.populate import BaseMutateSerializer
 
 from lms.models.universities import Program
 from lms.models.students import (
@@ -48,13 +46,6 @@ class PassportSerializer(ModelSerializer):
 
     class Meta:
         model = Passport
-        exclude = ['id']
-
-
-class RelativeSerializer(ModelSerializer):
-
-    class Meta:
-        model = Relative
         exclude = ['id']
 
 
@@ -98,52 +89,25 @@ class StudentSerializer(WritableNestedModelSerializer):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
 
 
-class StudentMutateSerializer(BaseMutateSerializer):
-    image = ImageField(write_only=True, required=False)
+class StudentMutateSerializer(
+        WritableNestedModelSerializer,
+        PersonnelMutateSerializer,
+):
     recruitment_office = RecruitmentOfficeSerializer(required=False)
     university_info = UniversityInfoSerializer(required=False)
     passport = PassportSerializer(required=False)
     family = FamilySerializer(required=False)
 
-    class Meta:
+    class Meta(PersonnelMutateSerializer.Meta):
         model = Student
-        fields = '__all__'
-
-    def create_image(self, validated_data):
-        image = validated_data.pop('image', None)
-        if image is None:
-            return
-
-        photo = Photo.objects.create(image=image)
-        validated_data['photo'] = photo
 
     def create(self, validated_data):
-        self.create_image(validated_data)
+        self.create_photo(validated_data)
         return super().create(validated_data)
 
-    def update_image(self, instance: Student, validated_data):
-        image = validated_data.pop('image', None)
-        if image is None:
-            return
-
-        if instance.photo:
-            instance.photo.image = image
-            instance.photo.save()
-        else:
-            instance.photo = Photo.objects.create(image=image)
-
     def update(self, instance: Student, validated_data):
-        self.update_image(instance, validated_data)
+        self.update_photo(instance, validated_data)
         return super().update(instance, validated_data)
-
-
-StudentMutateSerializerForSwagger = inline_serializer(
-    name="StudentMutateInline",
-    fields={
-        "image": ImageField(),
-        "data": StudentMutateSerializer(),
-    },
-)
 
 
 class StudentShortSerializer(WritableNestedModelSerializer):
