@@ -74,7 +74,7 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         return FavoriteBookSerializer
 
     def destroy(self, request, *args, pk=None, **kwargs):
-        # pylint: disable=unused-argument,invalid-name
+        # pylint: disable=unused-argument,invalid-name,arguments-differ
         favorite = FavoriteBook.objects.filter(book__id=pk)
         favorite.delete()
         return Response(status=HTTP_204_NO_CONTENT)
