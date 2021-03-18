@@ -25,33 +25,6 @@ class Passport(models.Model):
         verbose_name_plural = 'Passports'
 
 
-class Family(models.Model):
-    mother = models.ForeignKey(
-        Relative,
-        models.DO_NOTHING,
-        related_name='mother',
-        blank=True,
-        null=True,
-    )
-    father = models.ForeignKey(
-        Relative,
-        models.DO_NOTHING,
-        related_name='father',
-        blank=True,
-        null=True,
-    )
-    brothers = models.ManyToManyField(
-        Relative,
-        related_name='brothers',
-        blank=True,
-    )
-    sisters = models.ManyToManyField(
-        Relative,
-        related_name='sisters',
-        blank=True,
-    )
-
-
 class RecruitmentOffice(models.Model):
     city = models.CharField(max_length=32)
     district = models.CharField(max_length=32)
@@ -84,8 +57,8 @@ class Student(Personnel):
         on_delete=models.DO_NOTHING,
     )
 
-    passport = models.OneToOneField(Passport, models.DO_NOTHING)
-    family = models.ForeignKey(Family, models.DO_NOTHING)
+    passport = models.OneToOneField(to=Passport, on_delete=models.DO_NOTHING)
+    family = models.ManyToManyField(to=Relative)
     recruitment_office = models.ForeignKey(
         to=RecruitmentOffice,
         on_delete=models.SET_NULL,

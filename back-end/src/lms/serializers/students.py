@@ -16,7 +16,6 @@ from lms.models.universities import Program
 from lms.models.students import (
     Student,
     Passport,
-    Family,
     RecruitmentOffice,
     UniversityInfo,
 )
@@ -32,10 +31,12 @@ class ProgramSerializer(ModelSerializer):
 
 
 class PhotoSerializer(ModelSerializer):
-    image = ImageField(use_url=True,
-                       allow_null=True,
-                       required=False,
-                       read_only=True)
+    image = ImageField(
+        use_url=True,
+        allow_null=True,
+        required=False,
+        read_only=True,
+    )
 
     class Meta:
         model = Photo
@@ -46,17 +47,6 @@ class PassportSerializer(ModelSerializer):
 
     class Meta:
         model = Passport
-        exclude = ['id']
-
-
-class FamilySerializer(ModelSerializer):
-    mother = RelativeSerializer()
-    father = RelativeSerializer()
-    brothers = RelativeSerializer(many=True)
-    sisters = RelativeSerializer(many=True)
-
-    class Meta:
-        model = Family
         exclude = ['id']
 
 
@@ -93,10 +83,10 @@ class StudentMutateSerializer(
         WritableNestedModelSerializer,
         PersonnelMutateSerializer,
 ):
+    passport = PassportSerializer(required=False)
+    family = RelativeSerializer(required=False, many=True)
     recruitment_office = RecruitmentOfficeSerializer(required=False)
     university_info = UniversityInfoSerializer(required=False)
-    passport = PassportSerializer(required=False)
-    family = FamilySerializer(required=False)
 
     class Meta(PersonnelMutateSerializer.Meta):
         model = Student
@@ -110,9 +100,9 @@ class StudentMutateSerializer(
         return super().update(instance, validated_data)
 
 
-class StudentShortSerializer(WritableNestedModelSerializer):
+class StudentShortSerializer(ModelSerializer):
     fullname = SerializerMethodField(required=False)
-    milgroup = MilgroupSerializer(many=False, required=False)
+    milgroup = MilgroupSerializer(required=False)
 
     def get_fullname(self, obj):
         return f'{obj.surname} {obj.name} {obj.patronymic}'
