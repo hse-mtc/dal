@@ -30,7 +30,7 @@
           <ElOption
             v-for="author in authors"
             :key="author.id"
-            :label="surnameWithInitials(author)"
+            :label="getAuthor(author.id)"
             :value="author.id"
           />
         </ElSelect>
@@ -45,10 +45,10 @@
           style="width: 300px"
         >
           <ElOption
-            v-for="{ id, name } in publishers"
+            v-for="{ id } in publishers"
             :key="id"
             :value="id"
-            :label="name"
+            :label="getPublisher(id)"
           />
         </ElSelect>
       </ElFormItem>
@@ -174,6 +174,8 @@ export default {
   },
 
   computed: {
+    authors: (state) => state.documents.authors,
+    publishers: (state) => state.documents.publishers,
     today() {
       return moment().format(this.dateFormat.toUpperCase());
     },
@@ -182,7 +184,13 @@ export default {
 
   methods: {
     surnameWithInitials,
-
+    getAuthor(id) {
+      const author = this.authors.find(author => author.id === id)
+      return surnameWithInitials(author);
+    },
+    getPublisher(id) {
+      return this.publishers.find(publisher => publisher.id === id).name
+    },
     async submitForm(name) {
       let formValid = this.paperForm.files.length > 0;
       this.$refs[name].validate((valid) => {

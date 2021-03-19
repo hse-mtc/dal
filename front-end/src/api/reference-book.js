@@ -8,3 +8,31 @@ export function getReferenceBooks(params) {
     params,
   });
 }
+
+export function getMilGroups() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.milgroups,
+    method: "get",
+  });
+}
+
+export function getMilFaculties() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.milfaculties,
+    method: "get",
+  });
+}
+
+export function getRanks() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.ranks,
+    method: "get",
+  });
+}
+
+export function getPosts() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.posts,
+    method: "get",
+  });
+}

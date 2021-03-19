@@ -1,79 +1,78 @@
 <template>
   <div class="login-container">
     <el-form
-      ref="loginForm"
-      :model="loginForm"
-      :rules="loginRules"
-      class="login-form"
-      auto-complete="on"
-      label-position="left"
+        ref="loginForm"
+        :model="loginForm"
+        :rules="loginRules"
+        class="login-form"
+        auto-complete="on"
+        label-position="left"
     >
       <div class="title-container">
         <h3 class="title">Форма авторизации</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="email">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon icon-class="user"/>
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Логин"
-          name="username"
-          type="text"
-          tabindex="1"
-          auto-complete="on"
+            ref="email"
+            v-model="loginForm.email"
+            placeholder="Email"
+            name="email"
+            type="text"
+            tabindex="1"
+            auto-complete="on"
         />
       </el-form-item>
 
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon icon-class="password"/>
         </span>
         <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="Пароль"
-          name="password"
-          tabindex="2"
-          auto-complete="on"
-          @keyup.enter.native="handleLogin"
+            :key="passwordType"
+            ref="password"
+            v-model="loginForm.password"
+            :type="passwordType"
+            placeholder="Пароль"
+            name="password"
+            tabindex="2"
+            auto-complete="on"
+            @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon
-            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+              :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
           />
         </span>
       </el-form-item>
 
       <el-button
-        :loading="loading"
-        type="primary"
-        style="width: 100%; margin-bottom: 30px"
-        @click.native.prevent="handleLogin"
-        >Вход</el-button
+          :loading="loading"
+          type="primary"
+          style="width: 100%; margin-bottom: 30px"
+          @click.native.prevent="handleLogin"
+      >Вход
+      </el-button
       >
-
-      <!--      <div class="tips">-->
-      <!--        <span style="margin-right:20px;">username: vspelyak</span>-->
-      <!--        <span> password: qwerty</span>-->
-      <!--      </div>-->
     </el-form>
+    <div class="register">Еще нет аккаунта?
+      <router-link style="color: #0060CF" :to="{ path: 'register'}" replace>Зарегистрироваться</router-link>
+    </div>
   </div>
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
+import {validEmail, validUsername} from "@/utils/validate";
 
 export default {
   name: "Login",
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error("Please enter the correct email"));
       } else {
         callback();
       }
@@ -87,15 +86,15 @@ export default {
     };
     return {
       loginForm: {
-        username: "",
+        email: "",
         password: "",
       },
       loginRules: {
-        username: [
-          { required: true, trigger: "blur", validator: validateUsername },
+        email: [
+          {required: true, trigger: "blur", validator: validateEmail},
         ],
         password: [
-          { required: true, trigger: "blur", validator: validatePassword },
+          {required: true, trigger: "blur", validator: validatePassword},
         ],
       },
       loading: false,
@@ -127,14 +126,14 @@ export default {
         if (valid) {
           this.loading = true;
           this.$store
-            .dispatch("user/login", this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
+              .dispatch("user/login", this.loginForm)
+              .then(() => {
+                this.$router.push({path: this.redirect || "/"});
+                this.loading = false;
+              })
+              .catch(() => {
+                this.loading = false;
+              });
         } else {
           console.log("error submit!");
           return false;
@@ -145,13 +144,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
-$bg: #283443;
+<style lang="scss" scoped>
 $light_gray: #fff;
 $cursor: #fff;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -167,7 +164,7 @@ $cursor: #fff;
     width: 85%;
 
     input {
-      background: transparent;
+      background: transparent !important;
       border: 0px;
       -webkit-appearance: none;
       border-radius: 0px;
@@ -178,7 +175,7 @@ $cursor: #fff;
 
       &:-webkit-autofill {
         box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
+        -webkit-text-fill-color: #293543 !important;
       }
     }
   }
@@ -190,12 +187,6 @@ $cursor: #fff;
     color: #454545;
   }
 }
-</style>
-
-<style lang="scss" scoped>
-$bg: #2d3a4b;
-$dark_gray: #889aa4;
-$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
@@ -252,6 +243,30 @@ $light_gray: #eee;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
+  }
+}
+
+.register {
+  color: $light_gray;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+
+/deep/.el-input__inner {
+  color: white;
+  border: none;
+  background-color: transparent !important;
+}
+
+/deep/.el-input {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active
+  {
+    -webkit-box-shadow: 0 0 0 30px #293543 inset !important;
+    -webkit-text-fill-color: white !important;
   }
 }
 </style>
