@@ -83,7 +83,7 @@ class ProgramViewSet(ModelViewSet):
     serializer_class = ProgramSerializer
     queryset = Program.objects.all()
 
-    permission_classes = [ReferenceBookPermission]
+    permission_classes = [ReadOnly | ReferenceBookPermission]
 
     filterset_class = ProgramFilter
 
