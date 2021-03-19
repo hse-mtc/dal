@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from common.models.persons import (
@@ -69,6 +70,7 @@ class Student(Personnel):
         on_delete=models.SET_NULL,
         null=True,
     )
+    user = models.OneToOneField(to=get_user_model(), on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Student'

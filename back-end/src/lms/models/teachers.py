@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from common.models.persons import Person
@@ -34,6 +35,7 @@ class Teacher(Person):
                                  models.DO_NOTHING,
                                  blank=True,
                                  null=True)
+    user = models.OneToOneField(to=get_user_model(), on_delete=models.CASCADE)
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
