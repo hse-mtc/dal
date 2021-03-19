@@ -1,18 +1,25 @@
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import BasePermission
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from drf_spectacular.views import extend_schema
 
-from lms.models.common import Milgroup, Milfaculty
+from lms.models.common import (
+    Milfaculty,
+    Milspecialty,
+    Milgroup,
+)
 from lms.models.teachers import Rank, TeacherPost
 from lms.models.universities import Program
 from lms.models.lessons import Room
 from lms.models.absences import AbsenceTime
 from lms.models.achievements import AchievementType
 
-from lms.serializers.common import MilgroupSerializer, MilfacultySerializer
+from lms.serializers.common import (
+    MilfacultySerializer,
+    MilspecialtySerializer,
+    MilgroupSerializer,
+)
 from lms.serializers.students import ProgramSerializer
 from lms.serializers.teachers import TeacherPostSerializer, RankSerializer
 from lms.serializers.lessons import RoomSerializer
@@ -64,6 +71,14 @@ class ReferenceBookView(ListAPIView):
 class MilfacultyViewSet(ModelViewSet):
     serializer_class = MilfacultySerializer
     queryset = Milfaculty.objects.all()
+
+    permission_classes = [ReadOnly | ReferenceBookPermission]
+
+
+@extend_schema(tags=['reference-book'])
+class MilspecialtyViewSet(ModelViewSet):
+    serializer_class = MilspecialtySerializer
+    queryset = Milspecialty.objects.all()
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
