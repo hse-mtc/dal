@@ -48,7 +48,7 @@
           <el-tab-pane
             v-for="(item, index) in studentData[stepName]"
             :key="index"
-            :label="`${item.name || tabsLabel[stepName]} ${index + 1}`"
+            :label="item.name || `${tabsLabel[stepName]} ${index + 1}`"
             :name="`${index}`"
           >
             <el-form
@@ -221,7 +221,7 @@ export default {
         sisters: 'Данные о сестрах',
       },
 
-      step: 1,
+      step: 10,
       STEPS,
       tabsIndex: {
         brothers: '',
