@@ -32,6 +32,9 @@ export const LMS_URLS = {
   stuff: {
     student: 'lms/student/',
     teacher: 'lms/teacher/'
+  },
+  students: {
+    students: 'lms/students/'
   }
 }
 
