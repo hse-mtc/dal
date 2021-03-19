@@ -623,46 +623,46 @@ def create_achievement_types():
     return types
 
 
-def create_mil_specialty():
+def create_milspecialties():
     values = [{
         'code': '094001',
-        'mil_specialty': 'Применение наземных подразделений войсковой разведки',
+        'milspecialty': 'Применение наземных подразделений войсковой разведки',
     }, {
         'code': '411300',
-        'mil_specialty': 'Эксплуатация и ремонт автоматизированных систем '
+        'milspecialty': 'Эксплуатация и ремонт автоматизированных систем '
                          'комплексов баллистических стратегических ракет '
                          'наземного базирования',
     }, {
         'code': '453000',
-        'mil_specialty':
+        'milspecialty':
             'Организация эксплуатации и ремонта автоматизированных '
             'систем управления и вычислительных комплексов '
             'ракетно-космической обороны',
     }, {
         'code': '453100',
-        'mil_specialty':
+        'milspecialty':
             'Математическое и программное обеспечение функционирования '
             'вычислительных комплексов ракетно-космической обороны',
     }, {
         'code': '751100',
-        'mil_specialty': 'Защита информационных технологий',
+        'milspecialty': 'Защита информационных технологий',
     }, {
         'code': '100182',
-        'mil_specialty': 'Стрелковые, командир стрелкового отделения',
+        'milspecialty': 'Стрелковые, командир стрелкового отделения',
     }, {
         'code': '106646-543',
-        'mil_specialty': 'Разведывательные, разведчик-оператор СБР, ПСНР',
+        'milspecialty': 'Разведывательные, разведчик-оператор СБР, ПСНР',
     }]
 
     specs = {}
 
     for value in values:
         spec, _ = Milspecialty.objects.get_or_create(
-            mil_specialty=value['mil_specialty'],
+            milspecialty=value['milspecialty'],
             code=value['code'],
         )
         spec.save()
-        specs[value['mil_specialty']] = spec
+        specs[value['milspecialty']] = spec
 
     return specs
 
@@ -871,11 +871,13 @@ def lms_populate(request: Request) -> Response:
 
     faculties = create_faculties()
     programs = create_programs(faculties)
+
     milfaculties = create_milfaculties()
+    milspecialties = create_milspecialties()
     milgroups = create_milgroups(milfaculties)
+
     ranks = create_ranks()
     posts = create_posts()
-    milspecialties = create_mil_specialty()
 
     # nearest day for 18XX milgroups
     nearest_day = datetime.strptime(

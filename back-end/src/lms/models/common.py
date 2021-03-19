@@ -14,10 +14,10 @@ class Milfaculty(models.Model):
 
 class Milspecialty(models.Model):
     code = models.CharField(primary_key=True, max_length=20)
-    mil_specialty = models.CharField(max_length=150)
+    milspecialty = models.CharField(max_length=150)
 
     def __str__(self):
-        return str(self.mil_specialty)
+        return str(self.milspecialty)
 
     class Meta:
         verbose_name = 'Military specialty'

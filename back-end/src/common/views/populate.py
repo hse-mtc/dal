@@ -45,6 +45,14 @@ from dms.populate.books import (
     create_favorite_books,
 )
 
+from lms.views.populate import (
+    create_faculties,
+    create_programs,
+    create_milfaculties,
+    create_milspecialties,
+    create_milgroups,
+)
+
 User = get_user_model()
 
 # ------------------------------------------------------------------------------
@@ -128,5 +136,15 @@ class PopulateAPIView(GenericAPIView):
             subjects=subjects,
         )
         create_favorite_books(books[:11], User.objects.get(username="vspelyak"))
+
+        # ----------------------------------------------------------------------
+        # lms
+
+        faculties = create_faculties()
+        programs = create_programs(faculties)
+
+        milfaculties = create_milfaculties()
+        milspecialties = create_milspecialties()
+        milgroups = create_milgroups(milfaculties)
 
         return Response(status=status.HTTP_201_CREATED)

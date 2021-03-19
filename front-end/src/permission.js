@@ -9,7 +9,7 @@ const localStorageService = LocalStorageService.getService();
 
 NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
-const whiteList = ["/login"]; // no redirect whitelist
+const whiteList = ["/login", "/receipt"]; // no redirect whitelist
 
 router.beforeEach(async (to, from, next) => {
   // start progress bar
