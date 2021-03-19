@@ -96,7 +96,7 @@
       </el-button>
 
       <el-button
-        v-if="step !== STEPS.sisters"
+        v-if="step !== STEPS.military"
         @click="next"
         type="primary"
       >
@@ -127,6 +127,7 @@ const STEPS = {
   father: 10,
   brothers: 11,
   sisters: 12,
+  military: 13,
 }
 
 const STEPS_RU = {
@@ -142,6 +143,7 @@ const STEPS_RU = {
   father: 'Отец',
   brothers: 'Братья',
   sisters: 'Сестры',
+  military: 'Направление ВУЦ'
 }
 
 const getRelationData = (rel) => {
@@ -188,7 +190,7 @@ export default {
 
     const campus = {
       mil_campus: {component: 'SelectInput', title: 'Кампус', props: {
-        options: ['Москва', 'Санкт-Петербург', 'Нижний Новгород', 'Пермь']
+        options: ['Москва', 'Санкт-Петербург', 'Нижний Новгород', 'Пермь'],
       }},
     }
 
@@ -234,6 +236,26 @@ export default {
       group: {component: 'TextInput', title: 'Номер группы'},
     }
 
+    const MILS = [
+      {
+        milgroup: 'ВКС',
+        milspecialty: 'Математическое и программное обеспечение ВРК'
+      },
+      {
+        milgroup: 'РВСН',
+        milspecialty: 'Залупа какая-то'
+      }
+    ]
+
+    const military = {
+      military: {component: 'SelectInput', title: 'Направление ВУЦ', props: {
+        options: MILS.map(item => ({
+          label: item.milspecialty,
+          value: item,
+        }))
+      }}
+    }
+
     const rules = {
         campus: ['mil_campus']
           .reduce((memo, item) => ({...memo, [item]: required}), {}),
@@ -268,7 +290,8 @@ export default {
             .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
           ...{personal_email: [mailValidator], personal_phone_number: [phoneValidator]}
         },
-        photo: { photo: [required] }
+        photo: { photo: [required] },
+        military: { military: [required] }
     }
     return {
       studentData: {
@@ -283,7 +306,8 @@ export default {
         father: Object.keys(getRelationData('отца')).reduce((memo, item) => ({ ...memo, [item]: '' }), {}),
         brothers: [],
         sisters: [],
-        photo: { photo: null }
+        photo: { photo: null },
+        military: Object.keys(military).reduce((memo, item) => ({ ...memo, [item]: '' }), {}),
       },
       fields: {
         campus,
@@ -297,7 +321,8 @@ export default {
         father: getRelationData('отца'),
         brothers: getRelationData('брата'),
         sisters: getRelationData('сестры'),
-        photo: { photo: {component: 'FileInput', title: 'Загрузите фотографию', props: { filesTypes: ['.png', '.jpg', '.jpeg']}} }
+        photo: { photo: {component: 'FileInput', title: 'Загрузите фотографию', props: { filesTypes: ['.png', '.jpg', '.jpeg']}} },
+        military,
       },
 
       headers: {
@@ -313,9 +338,10 @@ export default {
         father: 'Данные об отце (При необходимости оставьте поля пустыми)',
         brothers: 'Данные о братьях',
         sisters: 'Данные о сестрах',
+        military: 'Направление в ВУЦ',
       },
 
-      step: STEPS.brothers,
+      step: STEPS.campus,
       STEPS,
       STEPS_RU,
       tabsIndex: {
@@ -487,6 +513,7 @@ export default {
         const data = {
           ...this.studentData.about,
           ...this.studentData.campus,
+          ...JSON.parse(this.studentData.military.military),
           birth_info: this.studentData.birthInfo,
           contact_info: this.studentData.contactInfo,
           passport: this.studentData.passport,
@@ -499,7 +526,6 @@ export default {
           data.image = reader.result
 
           addStudent(data)
-          console.log(data)
         }
 
         reader.readAsDataURL(this.studentData.photo.photo[0].raw)
