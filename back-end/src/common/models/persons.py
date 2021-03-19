@@ -101,6 +101,7 @@ class Personnel(Person):
         to=Photo,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
     )
 
     class Meta:
