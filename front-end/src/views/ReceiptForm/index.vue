@@ -11,6 +11,7 @@
         />
       </el-steps>
 
+    </div>
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
         <el-form
           ref="form"
@@ -88,7 +89,6 @@
           Добавьте {{ tabsLabelMany[stepName]}} (при наличии)
         </div>
       </template>
-    </div>
 
     <div>
       <el-button v-if="step !== 1" @click="prev">
