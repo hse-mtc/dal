@@ -8,3 +8,11 @@ export function getReferenceBooks(params) {
     params,
   });
 }
+
+export function getReferenceMilSpecialties(params) {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.milspecialties,
+    method: "get",
+    params,
+  });
+}
