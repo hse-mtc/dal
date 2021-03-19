@@ -28,7 +28,7 @@ class ProfileUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class ProfileUser(AbstractUser, Person):
+class ProfileUser(AbstractUser):
     username = None
     first_name = None
     last_name = None
