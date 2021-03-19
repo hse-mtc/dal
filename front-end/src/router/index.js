@@ -139,6 +139,13 @@ export const constantRoutes = [
         component: () => import("@/views/Marks/index"),
         meta: { title: "Журнал оценок", icon: "journal" },
       },
+
+      {
+        path: "apanel/",
+        name: "AdminPanel",
+        component: () => import("@/views/AdminPanel/index"),
+        meta: { title: "Панель администратора", icon: "journal" },
+      },
     ]
   },
 
