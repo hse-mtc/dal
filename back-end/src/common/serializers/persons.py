@@ -25,7 +25,7 @@ class ContactInfoSerializer(serializers.ModelSerializer):
 
 
 class PersonMutateSerializer(serializers.ModelSerializer):
-    birth_info = BirthInfoSerializer()
+    birth_info = BirthInfoSerializer(required=False)
     contact_info = ContactInfoSerializer()
 
     class Meta:

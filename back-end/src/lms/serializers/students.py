@@ -66,7 +66,6 @@ class UniversityInfoSerializer(ModelSerializer):
 
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
-    program = ProgramSerializer()
     photo = PhotoSerializer(read_only=True)
 
     fullname = SerializerMethodField()
@@ -87,6 +86,7 @@ class StudentMutateSerializer(
     family = RelativeSerializer(required=False, many=True)
     recruitment_office = RecruitmentOfficeSerializer(required=False)
     university_info = UniversityInfoSerializer(required=False)
+    milgroup = MilgroupSerializer()
 
     class Meta(PersonnelMutateSerializer.Meta):
         model = Student
