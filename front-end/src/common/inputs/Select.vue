@@ -10,7 +10,6 @@
       style="width: 100%; max-width: 100%"
       v-model="value"
       v-bind="$attrs"
-      v-on="$listeners"
     >
       <el-option
         v-for="option in selectOptions"
@@ -24,6 +23,7 @@
 
 <script>
 import mixin from "./inputsMixin";
+import _isArray from 'lodash/isArray'
 
 export default {
   mixins: [mixin],
@@ -32,55 +32,42 @@ export default {
     options: { type: Array, default: () => [] },
   },
   computed: {
-    // value: {
-    //   get() {
-    //     // console.log(this.modelValue
-    //     //   ? JSON.stringify(this.modelValue)
-    //     //   : this.modelValue)
+    value: {
+      get() {
+        if (_isArray(this.modelValue)) {
+          return this.modelValue.map((item) => JSON.stringify(item))
+        }
 
-    //     // return this.modelValue
-    //     //   ? JSON.stringify(this.modelValue)
-    //     //   : this.modelValue
+        if (!this.modelValue && this.modelValue !== 0) return ''
 
-    //     if (this.lodash.isArray(this.modelValue)) {
-    //       return this.modelValue.map((item) => this.isObject(item) ? JSON.stringify(item) : item)
-    //     }
+        return JSON.stringify(this.modelValue)
+      },
+      set(value) {
+        let newValue
+        if (_isArray(value)) {
+          newValue = value.map((item) => JSON.parse(item))
+        } else {
+          newValue = JSON.parse(value)
+        }
 
-    //     if (!this.modelValue && this.modelValue !== 0) return ''
-
-    //     return this.isObject(this.modelValue) ? JSON.stringify(this.modelValue) : this.modelValue
-    //   },
-    //   set(value) {
-    //     // const newVal = rawValue ? JSON.parse(rawValue) : rawValue 
-    //     // console.log(newVal)
-    //     // this.$emit('change', newVal)
-
-    //     let newValue
-    //     if (this.lodash.isArray(value)) {
-    //       newValue = value.map((item) => this.isObject(item) ? item : JSON.parse(item))
-    //     } else {
-    //       newValue = JSON.parse(this.isObject(value) ? value : JSON.parse(value))
-    //     }
-
-    //     this.$emit('change', newValue)
-    //   }
-    // },
+        console.log(`newValue`, newValue)
+        this.$emit('change', newValue)
+      }
+    },
     selectOptions() {
-      return this.options.map((option) => this.optionData(option))
+      return this.options.map((option) => this.optionProps(option))
     }
   },
   methods: {
     isObject(item) {
       return !this.lodash.isString(item) && !this.lodash.isNumber(item);
     },
-    optionData(option) {
-      const isObj = this.isObject(option);
+    optionProps(item) {
+      const value = JSON.stringify(this.isObject(item) ? item.value : item)
+      const label = `${this.isObject(item) ? item.label : item}`
 
-      return {
-        value: isObj && option.value ? JSON.stringify(option.value) : option,
-        label: isObj ? option.label : option,
-      };
-    },
+      return { value, label }
+    }
   },
 };
 </script>

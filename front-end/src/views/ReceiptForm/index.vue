@@ -513,7 +513,7 @@ export default {
         const data = {
           ...this.studentData.about,
           ...this.studentData.campus,
-          ...JSON.parse(this.studentData.military.military),
+          ...this.studentData.military.military,
           birth_info: this.studentData.birthInfo,
           contact_info: this.studentData.contactInfo,
           passport: this.studentData.passport,
