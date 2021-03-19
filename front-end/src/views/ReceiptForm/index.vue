@@ -99,21 +99,23 @@
 </template>
 
 <script>
-import { DateInput, FileInput, TextInput } from '@/common/inputs'
+import { DateInput, FileInput, TextInput, SelectInput } from '@/common/inputs'
 import allowMobileView from '@/utils/allowMobileView'
+import { addStudent } from '@/api/students'
 
 const STEPS = {
-  about: 1,
-  birthInfo: 2,
-  contactInfo: 3,
-  passport: 4,
-  recruitmentOffice: 5,
-  universityInfo: 6,
-  photo: 7,
-  mother: 8,
-  father: 9,
-  brothers: 10,
-  sisters: 11,
+  campus: 1,
+  about: 2,
+  birthInfo: 3,
+  contactInfo: 4,
+  passport: 5,
+  recruitmentOffice: 6,
+  universityInfo: 7,
+  photo: 8,
+  mother: 9,
+  father: 10,
+  brothers: 11,
+  sisters: 12,
 }
 
 const getRelationData = (rel) => {
@@ -133,9 +135,15 @@ const getRelationData = (rel) => {
 
 export default {
   name: 'ReceiptForm',
-  components: { DateInput, FileInput, TextInput },
+  components: { DateInput, FileInput, TextInput, SelectInput },
   data() {
     const required = [{ required: true, message: "Обязательное поле" }];
+
+    const campus = {
+      mil_campus: {component: 'SelectInput', title: 'Кампус', props: {
+        options: ['Москва', 'Санкт-Петербург', 'Нижний Новгород', 'Пермь']
+      }},
+    }
 
     const about = {
       surname: {component: 'TextInput', title: 'Фамилия'},
@@ -181,6 +189,7 @@ export default {
 
     return {
       studentData: {
+        campus: Object.keys(campus).reduce((memo, item) => ({ ...memo, [item]: '' }), {}),
         about: Object.keys(about).reduce((memo, item) => ({ ...memo, [item]: '' }), {}),
         birthInfo: Object.keys(birthInfo).reduce((memo, item) => ({ ...memo, [item]: '' }), {}),
         passport: Object.keys(passport).reduce((memo, item) => ({ ...memo, [item]: '' }), {}),
@@ -194,6 +203,7 @@ export default {
         photo: { photo: null }
       },
       fields: {
+        campus,
         about,
         birthInfo,
         passport,
@@ -208,6 +218,7 @@ export default {
       },
 
       headers: {
+        campus: 'Город обучения',
         about: 'Данные о вас',
         birthInfo: 'Информация о рождении',
         contactInfo: 'Контактная информация',
@@ -215,13 +226,13 @@ export default {
         recruitmentOffice: 'Состою на воинском учете в военном комиссариате',
         universityInfo: 'Информация о ВУЗе',
         photo: 'Фотография',
-        mother: 'Данные о матери',
-        father: 'Данные об отце',
+        mother: 'Данные о матери (При необходимости оставьте поля пустыми)',
+        father: 'Данные об отце (При необходимости оставьте поля пустыми)',
         brothers: 'Данные о братьях',
         sisters: 'Данные о сестрах',
       },
 
-      step: 10,
+      step: 1,
       STEPS,
       tabsIndex: {
         brothers: '',
@@ -249,6 +260,8 @@ export default {
       },
 
       rules: {
+        campus: ['mil_campus']
+          .reduce((memo, item) => ({...memo, [item]: required}), {}),
         about: ['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']
           .reduce((memo, item) => ({...memo, [item]: required}), {}),
         birthInfo: ['date', 'country', 'city']
@@ -260,9 +273,9 @@ export default {
         universityInfo: ['card_id', 'program', 'group_title']
           .reduce((memo, item) => ({...memo, [item]: required}), {}),
         contactInfo: { personal_email: required },
-        mother: ['surname', 'name', 'citizenship', 'date', 'country', 'city']
+        mother: [/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
           .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        father: ['surname', 'name', 'citizenship', 'date', 'country', 'city']
+        father: [/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
           .reduce((memo, item) => ({...memo, [item]: required}), {}),
         brothers: ['surname', 'name', 'citizenship', 'date', 'country', 'city']
           .reduce((memo, item) => ({...memo, [item]: required}), {}),
@@ -339,15 +352,6 @@ export default {
 
       return isValid
     },
-    onSubmit() {
-      this.$refs.form.validate((valid) => {
-        console.log('this.formValues.book', this.formValues.book)
-        if (!valid || (!this.isChanging && !this.formValues.book.length)) return false
-
-        this.$emit('save', this.formValues)
-        this.$emit('close-modal')
-      })
-    },
 
     next() {
       if (this.validate()) this.step += 1
@@ -381,21 +385,28 @@ export default {
 
     submit() {
       if (this.validate()) {
-        const father = {
-          ...this.convertFamily(this.studentData.father),
-          type: 'FA',
+        const family = []
+
+        if (Object.values(this.studentData.father).filter(Boolean).length) {
+          family.push({
+            ...this.convertFamily(this.studentData.father),
+            type: 'FA',
+          })
         }
 
-        const mother = {
-          ...this.convertFamily(this.studentData.mother),
-          type: 'MO',
+        if (Object.values(this.studentData.mother).filter(Boolean).length) {
+          family.push({
+            ...this.convertFamily(this.studentData.mother),
+            type: 'MO',
+          })
         }
-        const brothers = this.studentData.brothers.map(brother => ({
+
+        this.studentData.brothers.forEach(brother => family.push({
           ...this.convertFamily(brother),
           type: 'BR',
         }))
 
-        const sisters = this.studentData.sisters.map(sister => ({
+        this.studentData.sisters.forEach(sister => family.push({
           ...this.convertFamily(sister),
           type: 'SI',
         }))
@@ -406,17 +417,19 @@ export default {
 
         const data = {
           ...this.studentData.about,
+          ...this.studentData.campus,
           birth_info: this.studentData.birthInfo,
           contact_info: this.studentData.contactInfo,
           passport: this.studentData.passport,
           recruitment_office: this.studentData.recruitmentOffice,
           university_info: this.studentData.universityInfo,
-          family: [father, mother, ...brothers, ...sisters]
+          family
         }
 
         reader.onload = () => {
           data.image = reader.result
 
+          addStudent(data)
           console.log(data)
         }
 
