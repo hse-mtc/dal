@@ -1,4 +1,5 @@
 import copy
+
 from rest_framework import permissions
 
 
@@ -18,3 +19,9 @@ class BasicPermission(permissions.BasePermission):
         # check for method permission
         return request.user.has_perm(self.permission_class + '_' +
                                      request.method.lower())
+
+
+class ReadOnly(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return request.method in permissions.SAFE_METHODS
