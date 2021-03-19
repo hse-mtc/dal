@@ -28,8 +28,18 @@ class Milgroup(models.Model):
     milgroup = models.DecimalField(primary_key=True,
                                    max_digits=4,
                                    decimal_places=0)
-    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING)
-    weekday = models.DecimalField(max_digits=1, decimal_places=0)
+    milfaculty = models.ForeignKey(
+        Milfaculty,
+        models.DO_NOTHING,
+        blank=True,
+        null=True,
+    )
+    weekday = models.DecimalField(
+        max_digits=1,
+        decimal_places=0,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f'{str(self.milgroup)}, {str(self.milfaculty)}'

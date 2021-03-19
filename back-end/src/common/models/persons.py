@@ -1,4 +1,5 @@
 import uuid
+from django.contrib.auth import get_user_model
 
 from django.db import models
 
@@ -27,8 +28,8 @@ class ContactInfo(models.Model):
 
 
 class Person(models.Model):
-    surname = models.CharField(max_length=32)
-    name = models.CharField(max_length=32)
+    surname = models.CharField(max_length=32, blank=True)
+    name = models.CharField(max_length=32, blank=True)
     patronymic = models.CharField(max_length=32, blank=True)
 
     citizenship = models.CharField(max_length=64, blank=True)
@@ -96,6 +97,13 @@ class Personnel(Person):
     surname_genitive = models.CharField(max_length=32, blank=True)
     name_genitive = models.CharField(max_length=32, blank=True)
     patronymic_genitive = models.CharField(max_length=32, blank=True)
+
+    user = models.OneToOneField(
+        to=get_user_model(),
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
     photo = models.OneToOneField(
         to=Photo,

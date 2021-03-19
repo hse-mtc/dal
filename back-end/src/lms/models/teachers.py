@@ -1,7 +1,5 @@
-from django.contrib.auth import get_user_model
 from django.db import models
-
-from common.models.persons import Person
+from common.models.persons import Personnel
 from lms.models.common import Milfaculty, Milgroup
 
 
@@ -27,7 +25,7 @@ class TeacherPost(models.Model):
         verbose_name_plural = 'Teacher Posts'
 
 
-class Teacher(Person):
+class Teacher(Personnel):
     milfaculty = models.ForeignKey(
         Milfaculty,
         models.DO_NOTHING,
@@ -51,12 +49,6 @@ class Teacher(Person):
         models.DO_NOTHING,
         blank=True,
         null=True,
-    )
-    user = models.OneToOneField(
-        to=get_user_model(),
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     def __str__(self):

@@ -81,12 +81,6 @@ class Student(Personnel):
         null=True,
         blank=True,
     )
-    user = models.OneToOneField(
-        to=get_user_model(),
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
 
     class Meta:
         verbose_name = 'Student'
