@@ -120,13 +120,13 @@ const STEPS = {
 
 const getRelationData = (rel) => {
   return {
-    surname: {component: 'TextInput', title: `Фамилия ${rel}`},
-    name: {component: 'TextInput', title: `Имя ${rel}`},
-    patronymic: {component: 'TextInput', title: `Отчество ${rel} (при наличии)`},
-    citizenship: {component: 'TextInput', title: `Гражданство ${rel}`},
+    surname: {component: 'TextInput', title: `Фамилия ${rel}`, props: { onlyChars: true }},
+    name: {component: 'TextInput', title: `Имя ${rel}`, props: { onlyChars: true }},
+    patronymic: {component: 'TextInput', title: `Отчество ${rel} (при наличии)`, props: { onlyChars: true }},
+    citizenship: {component: 'TextInput', title: `Гражданство ${rel}`, props: { onlyChars: true }},
     permanent_address: {component: 'TextInput', title: `Адрес постоянной регистрации ${rel}`},
     date: {component: 'DateInput', title: `Дата рождения ${rel}`},
-    country: {component: 'TextInput', title: `Страна рождения ${rel}`},
+    country: {component: 'TextInput', title: `Страна рождения ${rel}`, props: { onlyChars: true }},
     city: {component: 'TextInput', title: `Город рождения ${rel}`},
     personal_email: {component: 'TextInput', title: `Личная почта ${rel}`},
     personal_phone_number: {component: 'TextInput', title: `Номер телефона ${rel}`},
@@ -137,7 +137,28 @@ export default {
   name: 'ReceiptForm',
   components: { DateInput, FileInput, TextInput, SelectInput },
   data() {
-    const required = [{ required: true, message: "Обязательное поле" }];
+    const required = { required: true, message: "Обязательное поле" };
+    const mailValidator = {validator: (rule, value, cb) => {
+      if (value && !/@.+\..+/.test(value)) {
+        cb(new Error('Введите корректный email'))
+      } else {
+        cb()
+      }
+    }}
+    const corpMailValidator = {validator: (rule, value, cb) => {
+      if (value && !/[A-Za-z0-9_]*@edu\.hse\.ru$/.test(value)) {
+        cb(new Error('Введите корректный email'))
+      } else {
+        cb()
+      }
+    }}
+    const phoneValidator = {validator: (rule, value, cb) => {
+      if (value && !/^\+?\d{10}$/.test(value)) {
+        cb(new Error('Введите корректный телефон'))
+      } else {
+        cb()
+      }
+    }}
 
     const campus = {
       mil_campus: {component: 'SelectInput', title: 'Кампус', props: {
@@ -146,14 +167,14 @@ export default {
     }
 
     const about = {
-      surname: {component: 'TextInput', title: 'Фамилия'},
-      name: {component: 'TextInput', title: 'Имя'},
-      patronymic: {component: 'TextInput', title: 'Отчество (при наличии)'},
-      citizenship: {component: 'TextInput', title: 'Гражданство'},
+      surname: {component: 'TextInput', title: 'Фамилия', props: { onlyChars: true }},
+      name: {component: 'TextInput', title: 'Имя', props: { onlyChars: true }},
+      patronymic: {component: 'TextInput', title: 'Отчество (при наличии)', props: { onlyChars: true }},
+      citizenship: {component: 'TextInput', title: 'Гражданство', props: { onlyChars: true }},
       permanent_address: {component: 'TextInput', title: 'Адрес постоянной регистрации'},
-      surname_genitive: {component: 'TextInput', title: 'Фамилия в родительном падеже'},
-      name_genitive: {component: 'TextInput', title: 'Имя в родительном падеже'},
-      patronymic_genitive: {component: 'TextInput', title: 'Отчество в родительном падеже (при наличии)'},
+      surname_genitive: {component: 'TextInput', title: 'Фамилия в родительном падеже', props: { onlyChars: true }},
+      name_genitive: {component: 'TextInput', title: 'Имя в родительном падеже', props: { onlyChars: true }},
+      patronymic_genitive: {component: 'TextInput', title: 'Отчество в родительном падеже (при наличии)', props: { onlyChars: true }},
     }
 
     const birthInfo = {
@@ -187,6 +208,42 @@ export default {
       group: {component: 'TextInput', title: 'Номер группы'},
     }
 
+    const rules = {
+        campus: ['mil_campus']
+          .reduce((memo, item) => ({...memo, [item]: required}), {}),
+        about: ['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']
+          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+        birthInfo: ['date', 'country', 'city']
+          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+        passport: ['series', 'code', 'ufms_name', 'ufms_code', 'issue_date']
+          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+        recruitmentOffice: ['city', 'district']
+          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+        universityInfo: ['card_id', 'program', 'group_title']
+          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+        contactInfo: { personal_email: [mailValidator], corporate_email: [required, corpMailValidator], personal_phone_number: [phoneValidator] },
+        mother: {
+          ...[/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
+            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+          ...{personal_email: [mailValidator], personal_phone_number: [phoneValidator]}
+        },
+        father: {
+          ...[/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
+            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+          ...{personal_email: [mailValidator], personal_phone_number: [phoneValidator]}
+        },
+        brothers: {
+          ...['surname', 'name', 'citizenship', 'date', 'country', 'city']
+            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+          ...{personal_email: [mailValidator], personal_phone_number: [phoneValidator]}
+        },
+        sisters: {
+          ...['surname', 'name', 'citizenship', 'date', 'country', 'city']
+            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+          ...{personal_email: [mailValidator], personal_phone_number: [phoneValidator]}
+        },
+        photo: { photo: [required] }
+    }
     return {
       studentData: {
         campus: Object.keys(campus).reduce((memo, item) => ({ ...memo, [item]: '' }), {}),
@@ -232,7 +289,7 @@ export default {
         sisters: 'Данные о сестрах',
       },
 
-      step: 1,
+      step: STEPS.mother,
       STEPS,
       tabsIndex: {
         brothers: '',
@@ -259,30 +316,7 @@ export default {
         sisters: 'сестры',
       },
 
-      rules: {
-        campus: ['mil_campus']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        about: ['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        birthInfo: ['date', 'country', 'city']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        passport: ['series', 'code', 'ufms_name', 'ufms_code', 'issue_date']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        recruitmentOffice: ['city', 'district']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        universityInfo: ['card_id', 'program', 'group_title']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        contactInfo: { personal_email: required },
-        mother: [/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        father: [/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        brothers: ['surname', 'name', 'citizenship', 'date', 'country', 'city']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        sisters: ['surname', 'name', 'citizenship', 'date', 'country', 'city']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
-        photo: { photo: required }
-      },
+      rules,
     }
   },
 
@@ -354,6 +388,14 @@ export default {
     },
 
     next() {
+      const { studentData, stepName } = this
+      const data = studentData[stepName] 
+      Object.keys(data).forEach(key => {
+        if (this.lodash.isString(data[key])) {
+          data[key] = data[key].trim()
+        }
+      })
+
       if (this.validate()) this.step += 1
     },
     prev() { this.step = (this.step - 1) || 1 },

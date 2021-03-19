@@ -24,11 +24,21 @@ export default {
   name: "TextInput",
   props: {
     isTextArea: { type: Boolean, default: false },
+    onlyChars: { type: Boolean, default: false },
   },
   computed: {
     type() {
       return this.isTextArea ? "textarea" : "text";
     },
+    value: {
+      get() { return this.modelValue },
+      set(value) {
+        this.$emit("change", this.onlyChars
+          ? value.replace(/\d/g, '')
+          : value
+        );
+      },
+    }
   },
 };
 </script>
