@@ -28,8 +28,10 @@ class ProfileUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class ProfileUser(AbstractUser):
+class ProfileUser(AbstractUser, Person):
     username = None
+    first_name = None
+    last_name = None
     email = models.EmailField('email address', unique=True)
 
     USERNAME_FIELD = 'email'
