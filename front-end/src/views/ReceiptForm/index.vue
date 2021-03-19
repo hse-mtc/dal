@@ -98,6 +98,7 @@
 
 <script>
 import { DateInput, FileInput, TextInput } from '@/common/inputs'
+import allowMobileView from '@/utils/allowMobileView'
 
 const STEPS = {
   about: 1,
@@ -261,6 +262,10 @@ export default {
       return Object.entries(STEPS).find(([, value]) => value === this.step)[0]
     },
   },
+
+  created() { allowMobileView(true)} ,
+
+  destroyed() { allowMobileView(false) },
 
   methods: {
     getFamilyInit() {
