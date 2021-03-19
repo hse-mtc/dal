@@ -28,14 +28,36 @@ class TeacherPost(models.Model):
 
 
 class Teacher(Person):
-    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING)
-    rank = models.ForeignKey(Rank, models.DO_NOTHING)
-    teacher_post = models.ForeignKey(TeacherPost, models.DO_NOTHING)
-    milgroup = models.ForeignKey(Milgroup,
-                                 models.DO_NOTHING,
-                                 blank=True,
-                                 null=True)
-    user = models.OneToOneField(to=get_user_model(), on_delete=models.CASCADE)
+    milfaculty = models.ForeignKey(
+        Milfaculty,
+        models.DO_NOTHING,
+        null=True,
+        blank=True
+    )
+    rank = models.ForeignKey(
+        Rank,
+        models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    teacher_post = models.ForeignKey(
+        TeacherPost,
+        models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    milgroup = models.ForeignKey(
+        Milgroup,
+        models.DO_NOTHING,
+        blank=True,
+        null=True,
+    )
+    user = models.OneToOneField(
+        to=get_user_model(),
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
