@@ -1,5 +1,6 @@
 <template>
   <div :class="$style.root">
+    <h2>{{ headers[stepName] }}</h2>
     <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
       <el-form
         ref="form"
@@ -90,7 +91,8 @@
       >
         Дальше
       </el-button>
-      <el-button v-else @click="submit">
+      <el-button v-else type="primary" @click="submit">
+        Отправить форму
       </el-button>
     </div>
   </div>
@@ -147,9 +149,9 @@ export default {
     }
 
     const birthInfo = {
-      date: {component: 'DateInput', title: 'Дата рождения'},
-      country: {component: 'TextInput', title: 'Страна рождения'},
-      city: {component: 'TextInput', title: 'Город рождения'},
+      date: {component: 'DateInput', title: 'Дата'},
+      country: {component: 'TextInput', title: 'Страна'},
+      city: {component: 'TextInput', title: 'Город'},
     }
 
     const contactInfo = {
@@ -159,16 +161,16 @@ export default {
     }
 
     const passport = {
-      series: {component: 'TextInput', title: 'Серию паспорта'},
-      code: {component: 'TextInput', title: 'Номер паспорта'},
-      ufms_name: {component: 'TextInput', title: 'Отделения выдавшее паспорт'},
-      ufms_code: {component: 'TextInput', title: 'Код отделения выдавшее паспорт'},
-      issue_date: {component: 'DateInput', title: 'Дата выдачи паспорта'},
+      series: {component: 'TextInput', title: 'Серия'},
+      code: {component: 'TextInput', title: 'Номер'},
+      ufms_name: {component: 'TextInput', title: 'Отделение выдачи'},
+      ufms_code: {component: 'TextInput', title: 'Код отделения'},
+      issue_date: {component: 'DateInput', title: 'Дата выдачи'},
     }
 
     const recruitmentOffice = {
-      city: {component: 'TextInput', title: 'Состою на воинском учете в военном комиссариате города'},
-      district: {component: 'TextInput', title: 'Состою на воинском учете в военном комиссариате района'},
+      city: {component: 'TextInput', title: 'города'},
+      district: {component: 'TextInput', title: 'района'},
     }
 
     const universityInfo = {
@@ -203,6 +205,20 @@ export default {
         brothers: getRelationData('брата'),
         sisters: getRelationData('сестры'),
         photo: { photo: {component: 'FileInput', title: 'Загрузите фотографию', props: { filesTypes: ['.png', '.jpg', '.jpeg']}} }
+      },
+
+      headers: {
+        about: 'Данные о вас',
+        birthInfo: 'Информация о рождении',
+        contactInfo: 'Контактная информация',
+        passport: 'Данные паспорта',
+        recruitmentOffice: 'Состою на воинском учете в военном комиссариате',
+        universityInfo: 'Информация о ВУЗе',
+        photo: 'Фотография',
+        mother: 'Данные о матери',
+        father: 'Данные об отце',
+        brothers: 'Данные о братьях',
+        sisters: 'Данные о сестрах',
       },
 
       step: 1,
@@ -417,8 +433,9 @@ export default {
   max-width: 600px;
   min-height: 80vh;
   margin: auto;
-  padding-top: 20px;
+  padding: 20px 10px 0;
   flex-direction: column;
   justify-content: space-between;
 }
+
 </style>
