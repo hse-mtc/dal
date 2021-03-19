@@ -27,7 +27,8 @@ export const LMS_URLS = {
     punishment: 'lms/punishment/'
   },
   reference: {
-    book: 'lms/reference-book/'
+    book: 'lms/reference-book/',
+    milspecialties: 'lms/milspecialties/'
   },
   stuff: {
     student: 'lms/student/',
@@ -35,7 +36,7 @@ export const LMS_URLS = {
   },
   students: {
     students: 'lms/students/'
-  }
+  },
 }
 
 export const DMS_URLS = {
