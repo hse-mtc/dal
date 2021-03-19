@@ -21,7 +21,10 @@ from lms.serializers.achievements import AchievementTypeSerializer
 
 from lms.filters.reference_books import MilgroupFilter, ProgramFilter
 
-from auth.permissions import BasicPermission
+from auth.permissions import (
+    BasicPermission,
+    ReadOnly,
+)
 
 
 class ReferenceBookPermission(BasicPermission):
@@ -62,13 +65,7 @@ class MilfacultyViewSet(ModelViewSet):
     serializer_class = MilfacultySerializer
     queryset = Milfaculty.objects.all()
 
-    permission_classes = [ReferenceBookPermission]
-
-
-class ReadOnly(BasePermission):
-
-    def has_permission(self, request, view):
-        return request.method == 'GET'
+    permission_classes = [ReadOnly | ReferenceBookPermission]
 
 
 @extend_schema(tags=['reference-book'])
@@ -96,7 +93,7 @@ class RankViewSet(ModelViewSet):
     serializer_class = RankSerializer
     queryset = Rank.objects.all()
 
-    permission_classes = [ReferenceBookPermission]
+    permission_classes = [ReadOnly | ReferenceBookPermission]
 
 
 @extend_schema(tags=['reference-book'])
@@ -104,7 +101,7 @@ class TeacherPostViewSet(ModelViewSet):
     serializer_class = TeacherPostSerializer
     queryset = TeacherPost.objects.all()
 
-    permission_classes = [ReferenceBookPermission]
+    permission_classes = [ReadOnly | ReferenceBookPermission]
 
 
 @extend_schema(tags=['reference-book'])
