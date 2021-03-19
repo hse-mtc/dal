@@ -68,7 +68,7 @@ class Student(Personnel):
         null=True,
         blank=True,
     )
-    family = models.ManyToManyField(to=Relative, null=True, blank=True)
+    family = models.ManyToManyField(to=Relative, blank=True)
     recruitment_office = models.ForeignKey(
         to=RecruitmentOffice,
         on_delete=models.SET_NULL,
