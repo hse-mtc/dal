@@ -26,6 +26,14 @@ class Program(models.Model):
 
 
 class UniversityInfo(models.Model):
+
+    class Campus(models.TextChoices):
+        MOSCOW = 'MO', 'Москва'
+        SAINT_PETERSBURG = 'SP', 'Санкт-Петербург'
+        NIZHNY_NOVGOROD = 'NN', 'Нижний Новгород'
+        PERM = 'PE', 'Пермь'
+
+    campus = models.CharField(max_length=2, choices=Campus.choices)
     program = models.ForeignKey(Program, models.DO_NOTHING)
     group = models.CharField(max_length=32)
     card_id = models.CharField(max_length=32)
