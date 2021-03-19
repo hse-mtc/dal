@@ -8,6 +8,8 @@ from enum import (
 
 from api.client import client
 
+from utils.auth import check_token
+
 
 class State(Enum):
     absent = auto()
@@ -23,11 +25,11 @@ class Student:
     absence_status: str = 'Открыт'
 
 
-async def fetch_students(milgroup: str) -> list[Student]:
+@check_token
+async def fetch_students(milgroup: str, *args, **kwargs) -> list[Student]:
     students = []
-    async with client.get(f'lms/student?milgroup={milgroup}') as response:
+    async with client.get(f'lms/students?milgroup={milgroup}', *args, **kwargs) as response:
         data: list[dict[str, tp.Any]] = await response.json()
-
     for student in data:
         students.append(
             Student(id=student['id'],
