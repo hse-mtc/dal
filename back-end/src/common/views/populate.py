@@ -51,6 +51,8 @@ from lms.views.populate import (
     create_milfaculties,
     create_milspecialties,
     create_milgroups,
+    create_ranks,
+    create_posts,
 )
 
 User = get_user_model()
@@ -146,5 +148,8 @@ class PopulateAPIView(GenericAPIView):
         milfaculties = create_milfaculties()
         milspecialties = create_milspecialties()
         milgroups = create_milgroups(milfaculties)
+
+        ranks = create_ranks()
+        posts = create_posts()
 
         return Response(status=status.HTTP_201_CREATED)
