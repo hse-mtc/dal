@@ -6,11 +6,13 @@ from aiohttp import ClientResponse
 
 from api.client import client
 
+from utils.auth import check_token
 # ------------------------------------------------------------------------------
 
 Session = namedtuple("Session", ["id", "code", "chat_id"])
 
 
+@check_token
 async def fetch_session(params: dict[str, tp.Any]) -> tp.Optional[Session]:
     """Fetch session for chat. Session may not exist, hence `Optional`."""
 

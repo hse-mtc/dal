@@ -1,3 +1,4 @@
+import typing as tp
 import asyncio
 import operator
 
@@ -7,12 +8,12 @@ from api.student import (
     State,
 )
 
+from utils.auth import check_token
+
 
 def create_body(student: Student) -> dict:
     return {
-        'student': {
-            'id': student.id
-        },
+        'student': student.id,
         'absence_type': student.type,
         'absence_status': student.status,
     }
@@ -35,7 +36,12 @@ def absence_statistic(students: list[Student]) -> str:
     return text
 
 
-async def post_absence(students: list[Student]) -> str:
+@check_token
+async def post_absence(
+    students: list[Student],
+    *args: tp.Any,
+    **kwargs: tp.Any
+) -> str:
     absent_students = [
         student for student in students
         if student.state.value == State.absent.value
@@ -43,6 +49,6 @@ async def post_absence(students: list[Student]) -> str:
     tasks = []
     for student in absent_students:
         body = create_body(student)
-        tasks.append(client.post('lms/absence/', json=body))
+        tasks.append(client.post('lms/absences/', json=body, *args, **kwargs))
     await asyncio.gather(*tasks)
     return absence_statistic(students)
