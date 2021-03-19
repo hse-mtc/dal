@@ -297,4 +297,4 @@ LOGGING = {
 
 # Custom user model
 
-AUTH_USER_MODEL = 'dal_auth.ProfileUser'
+AUTH_USER_MODEL = "dal_auth.ProfileUser"

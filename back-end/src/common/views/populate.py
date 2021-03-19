@@ -127,6 +127,7 @@ class PopulateAPIView(GenericAPIView):
             publishers=publishers,
             subjects=subjects,
         )
-        create_favorite_books(books[:11], User.objects.get(email="vspelyak@mail.com"))
+        create_favorite_books(books[:11],
+                              User.objects.get(email="vspelyak@mail.com"))
 
         return Response(status=status.HTTP_201_CREATED)
