@@ -1,84 +1,95 @@
 <template>
   <div :class="$style.root">
-    <h2>{{ headers[stepName] }}</h2>
-    <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
-      <el-form
-        ref="form"
-        :model="studentData[stepName]"
-        :rules="rules[stepName]"
-        :key="step"
-      >
-        <el-form-item
-          v-for="({component, title, props = {}}, key) in fields[stepName]"
+    <div>
+      <h2>{{ headers[stepName] }}</h2>
+
+      <el-steps :active="+step - 1" finish-status="success">
+        <el-step
+          v-for="(title, key) in STEPS_RU"
           :key="key"
-          :prop="key"
+          :title="key === stepName ? title : ''"
+        />
+      </el-steps>
+
+      <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
+        <el-form
+          ref="form"
+          :model="studentData[stepName]"
+          :rules="rules[stepName]"
+          :key="step"
         >
-          <component
-            :is="component"
-            :title="title"
-            v-bind="props"
-            v-model="studentData[stepName][key]"
-          />
-        </el-form-item>
-      </el-form>
-
-      <div
-        v-if="step === STEPS.photo && studentData.photo.photo && studentData.photo.photo.length"
-        :style="{
-          flex: 1,
-          background: 'no-repeat center / contain',
-          backgroundImage: `url('${getObjUrl(studentData.photo.photo[0].raw)}')`,
-          margin: '10px'
-        }"
-      />
-    </template>
-
-    <template v-else>
-      <div>
-        <el-button
-          style="width: 100%"
-          icon="el-icon-plus"
-          type="primary"
-          @click="addTab"
-        >
-          Добавить {{ tabButtonLabel[stepName] }}
-        </el-button>
-
-        <el-tabs v-model="tabsIndex[stepName]" type="card" closable @tab-remove="removeTab">
-          <el-tab-pane
-            v-for="(item, index) in studentData[stepName]"
-            :key="index"
-            :label="item.name || `${tabsLabel[stepName]} ${index + 1}`"
-            :name="`${index}`"
+          <el-form-item
+            v-for="({component, title, props = {}}, key) in fields[stepName]"
+            :key="key"
+            :prop="key"
           >
-            <el-form
-              v-if="+tabsIndex[stepName] === index"
-              ref="form"
-              :model="item"
-              :rules="rules[stepName]"
-            >
-              <el-form-item
-                v-for="({component, title, props = {}}, key) in fields[stepName]"
-                :key="key"
-                :prop="key"
-              >
-                <component
-                  :is="component"
-                  :title="title"
-                  v-bind="props"
-                  v-model="item[key]"
-                />
-              </el-form-item>
-            </el-form>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+            <component
+              :is="component"
+              :title="title"
+              v-bind="props"
+              v-model="studentData[stepName][key]"
+            />
+          </el-form-item>
+        </el-form>
 
-      <div v-if="!studentData[stepName].length">
-        Добавьте {{ tabsLabelMany[stepName]}} (при наличии)
-      </div>
-    </template>
-    
+        <div
+          v-if="step === STEPS.photo && studentData.photo.photo && studentData.photo.photo.length"
+          :style="{
+            flex: 1,
+            background: 'no-repeat center / contain',
+            backgroundImage: `url('${getObjUrl(studentData.photo.photo[0].raw)}')`,
+            margin: '10px'
+          }"
+        />
+      </template>
+
+      <template v-else>
+        <div>
+          <el-button
+            style="width: 100%"
+            icon="el-icon-plus"
+            type="primary"
+            @click="addTab"
+          >
+            Добавить {{ tabButtonLabel[stepName] }}
+          </el-button>
+
+          <el-tabs v-model="tabsIndex[stepName]" type="card" closable @tab-remove="removeTab">
+            <el-tab-pane
+              v-for="(item, index) in studentData[stepName]"
+              :key="index"
+              :label="item.name || `${tabsLabel[stepName]} ${index + 1}`"
+              :name="`${index}`"
+            >
+              <el-form
+                v-if="+tabsIndex[stepName] === index"
+                ref="form"
+                :model="item"
+                :rules="rules[stepName]"
+              >
+                <el-form-item
+                  v-for="({component, title, props = {}}, key) in fields[stepName]"
+                  :key="key"
+                  :prop="key"
+                >
+                  <component
+                    :is="component"
+                    :title="title"
+                    v-bind="props"
+                    v-model="item[key]"
+                  />
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+        </div>
+
+        <div v-if="!studentData[stepName].length">
+          Добавьте {{ tabsLabelMany[stepName]}} (при наличии)
+        </div>
+      </template>
+    </div>
+
     <div>
       <el-button v-if="step !== 1" @click="prev">
         Назад
@@ -116,6 +127,21 @@ const STEPS = {
   father: 10,
   brothers: 11,
   sisters: 12,
+}
+
+const STEPS_RU = {
+  campus: 'Кампус',
+  about: 'Общая',
+  birthInfo: 'Рождение',
+  contactInfo: 'Контакты',
+  passport: 'Паспорт',
+  recruitmentOffice: 'Военкомат',
+  universityInfo: 'Университет',
+  photo: 'Фото',
+  mother: 'Мать',
+  father: 'Отец',
+  brothers: 'Братья',
+  sisters: 'Сестры',
 }
 
 const getRelationData = (rel) => {
@@ -289,8 +315,9 @@ export default {
         sisters: 'Данные о сестрах',
       },
 
-      step: STEPS.mother,
+      step: STEPS.brothers,
       STEPS,
+      STEPS_RU,
       tabsIndex: {
         brothers: '',
         sisters: '',
