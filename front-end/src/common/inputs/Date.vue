@@ -12,6 +12,8 @@
       v-model="value"
       v-bind="$attrs"
       v-on="$listeners"
+      format="dd.MM.yyyy"
+      value-format="yyyy-MM-dd"
     />
   </InputsBase>
 </template>
