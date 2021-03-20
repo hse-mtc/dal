@@ -150,12 +150,12 @@ const getRelationData = (rel) => {
     surname: {
       component: 'TextInput',
       title: `Фамилия ${rel}`,
-      props: {onlyChars: true, placeholder: "Горький"}
+      props: {onlyChars: true}
     },
     name: {
       component: 'TextInput',
       title: `Имя ${rel}`,
-      props: {onlyChars: true, placeholder: "Максим"}
+      props: {onlyChars: true}
     },
     patronymic: {
       component: 'TextInput',
@@ -226,18 +226,22 @@ export default {
       surname: {
         component: 'TextInput',
         title: 'Фамилия',
-        props: {onlyChars: true}
+        props: {onlyChars: true, placeholder: "Чехов"},
       },
-      name: {component: 'TextInput', title: 'Имя', props: {onlyChars: true}},
+      name: {
+        component: 'TextInput',
+        title: 'Имя',
+        props: {onlyChars: true, placeholder: "Антон"},
+      },
       patronymic: {
         component: 'TextInput',
         title: 'Отчество (при наличии)',
-        props: {onlyChars: true}
+        props: {onlyChars: true, placeholder: "Павлович"},
       },
       citizenship: {
         component: 'TextInput',
         title: 'Гражданство',
-        props: {onlyChars: true}
+        props: {onlyChars: true, placeholder: "РФ"},
       },
       permanent_address: {
         component: 'TextInput',
@@ -246,17 +250,17 @@ export default {
       surname_genitive: {
         component: 'TextInput',
         title: 'Фамилия в родительном падеже',
-        props: {onlyChars: true}
+        props: {onlyChars: true, placeholder: "Чехова"}
       },
       name_genitive: {
         component: 'TextInput',
         title: 'Имя в родительном падеже',
-        props: {onlyChars: true}
+        props: {onlyChars: true, placeholder: "Антона"},
       },
       patronymic_genitive: {
         component: 'TextInput',
         title: 'Отчество в родительном падеже (при наличии)',
-        props: {onlyChars: true}
+        props: {onlyChars: true, placeholder: "Павловича"}
       },
     }
 
