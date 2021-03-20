@@ -625,35 +625,44 @@ def create_achievement_types():
 
 def create_milspecialties():
     values = [{
-        'code': '100код868',
-        'milspecialty': '',
-    }, {
-        'code': '106код543',
-        'milspecialty': '',
-    }, {
-        'code': '666код543',
-        'milspecialty': '',
-    }, {
-        'code': '094001',
-        'milspecialty': 'Применение наземных подразделений войсковой разведки',
-    }, {
-        'code': '411300',
-        'milspecialty': 'Эксплуатация и ремонт автоматизированных систем '
-                        'комплексов баллистических стратегических ракет '
-                        'наземного базирования',
-    }, {
         'code': '453000',
         'milspecialty': 'Организация эксплуатации и ремонта автоматизированных '
                         'систем управления и вычислительных комплексов '
                         'ракетно-космической обороны',
+        'available_for': [UniversityInfo.Campus.MOSCOW.value],
     }, {
         'code': '453100',
         'milspecialty':
             'Математическое и программное обеспечение функционирования '
             'вычислительных комплексов ракетно-космической обороны',
+        'available_for': [UniversityInfo.Campus.MOSCOW.value],
+    }, {
+        'code': '461300',
+        'milspecialty': 'Эксплуатация и ремонт радиоэлектронного оборудования '
+                        'самолетов, вертолетов и авиационных ракет',
+        'available_for': [UniversityInfo.Campus.MOSCOW.value],
+    }, {
+        'code': '094001',
+        'milspecialty': 'Применение наземных подразделений войсковой разведки',
+        'available_for': [UniversityInfo.Campus.MOSCOW.value],
+    }, {
+        'code': '411300',
+        'milspecialty': 'Эксплуатация и ремонт автоматизированных систем '
+                        'комплексов баллистических стратегических ракет '
+                        'наземного базирования',
+        'available_for': [UniversityInfo.Campus.MOSCOW.value],
     }, {
         'code': '751100',
         'milspecialty': 'Защита информационных технологий',
+        'available_for': [UniversityInfo.Campus.MOSCOW.value],
+    }, {
+        'code': '100182',
+        'milspecialty': 'Стрелковые, командир стрелкового отделения',
+        'available_for': UniversityInfo.Campus.values,
+    }, {
+        'code': '106646-543',
+        'milspecialty': 'Разведывательные, разведчик-оператор СБР, ПСНР',
+        'available_for': UniversityInfo.Campus.values,
     }]
 
     specs = {}
@@ -662,6 +671,7 @@ def create_milspecialties():
         spec, _ = Milspecialty.objects.get_or_create(
             milspecialty=value['milspecialty'],
             code=value['code'],
+            available_for=value['available_for'],
         )
         spec.save()
         specs[value['milspecialty']] = spec
