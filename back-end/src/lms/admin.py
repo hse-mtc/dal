@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from lms.models.common import Milgroup, Milfaculty, Milspecialty
+from lms.models.universities import Program
 from lms.models.students import Student
 from lms.models.teachers import Rank, TeacherPost, Teacher
 from lms.models.absences import Absence
@@ -18,6 +19,7 @@ admin.site.register(AchievementType)
 admin.site.register(Room)
 
 # Registering other models
+admin.site.register(Program)
 admin.site.register(Milgroup)
 admin.site.register(Student)
 admin.site.register(Teacher)
