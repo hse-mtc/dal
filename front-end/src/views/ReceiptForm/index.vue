@@ -118,10 +118,10 @@ import {addStudent} from '@/api/students'
 const STEPS = {
   about: 1,
   birthInfo: 2,
-  contactInfo: 3,
-  passport: 4,
+  passport: 3,
+  universityInfo: 4,
   recruitmentOffice: 5,
-  universityInfo: 6,
+  contactInfo: 6,
   photo: 7,
   mother: 8,
   father: 9,
@@ -133,16 +133,16 @@ const STEPS = {
 const STEPS_RU = {
   about: 'Общее',
   birthInfo: 'Рождение',
-  contactInfo: 'Контакты',
   passport: 'Паспорт',
-  recruitmentOffice: 'Военкомат',
   universityInfo: 'Университет',
+  recruitmentOffice: 'Военкомат',
+  contactInfo: 'Контакты',
   photo: 'Фото',
   mother: 'Мать',
   father: 'Отец',
   brothers: 'Братья',
   sisters: 'Сёстры',
-  military: 'Направление ВУЦ'
+  military: 'ВУС',
 }
 
 const getRelationData = (rel) => {
@@ -266,27 +266,73 @@ export default {
 
     const birthInfo = {
       date: {component: 'DateInput', title: 'Дата'},
-      country: {component: 'TextInput', title: 'Страна'},
-      city: {component: 'TextInput', title: 'Город'},
+      country: {
+        component: 'TextInput',
+        title: 'Страна',
+        props: {placeholder: "Россия"},
+      },
+      city: {
+        component: 'TextInput',
+        title: 'Город',
+        props: {placeholder: "Владимир"},
+      }
     }
 
     const contactInfo = {
-      corporate_email: {component: 'TextInput', title: 'Корпоративная почта'},
-      personal_email: {component: 'TextInput', title: 'Личная почта'},
-      personal_phone_number: {component: 'TextInput', title: 'Номер телефона'},
+      corporate_email: {
+        component: 'TextInput',
+        title: 'Корпоративная почта',
+        props: {placeholder: "apchekhov@edu.hse.ru"},
+      },
+      personal_email: {
+        component: 'TextInput',
+        title: 'Личная почта',
+        props: {placeholder: "chekhov@writers.ru"},
+      },
+      personal_phone_number: {
+        component: 'TextInput',
+        title: 'Номер телефона',
+        props: {placeholder: "+79095050011"},
+      },
     }
 
     const passport = {
-      series: {component: 'TextInput', title: 'Серия'},
-      code: {component: 'TextInput', title: 'Номер'},
-      ufms_name: {component: 'TextInput', title: 'Паспорт выдан'},
+      series: {
+        component: 'TextInput',
+        title: 'Серия',
+        props: {placeholder: "1234"}
+      },
+      code: {
+        component: 'TextInput',
+        title: 'Номер',
+        props: {placeholder: "567890"}
+      },
+      ufms_name: {
+        component: 'TextInput',
+        title: 'Паспорт выдан',
+        props: {
+          placeholder: "Отделом УФМС России по гор. Таганрог по району Светлый",
+        }
+      },
       issue_date: {component: 'DateInput', title: 'Дата выдачи'},
-      ufms_code: {component: 'TextInput', title: 'Код подразделения'},
+      ufms_code: {
+        component: 'TextInput',
+        title: 'Код подразделения',
+        props: {placeholder: "700-007"},
+      },
     }
 
     const recruitmentOffice = {
-      city: {component: 'TextInput', title: 'города'},
-      district: {component: 'TextInput', title: 'района'},
+      district: {
+        component: 'TextInput',
+        title: 'района',
+        props: {placeholder: "Одинцовский"},
+      },
+      city: {
+        component: 'TextInput',
+        title: 'города',
+        props: {placeholder: "Москва"},
+      },
     }
 
     const universityInfo = {
@@ -329,9 +375,9 @@ export default {
 
     const military = {
       military: {
-        component: 'SelectInput', title: 'Направление ВУЦ', props: {
-          options: []
-        }
+        component: 'SelectInput',
+        title: 'Желаемая военная специальность',
+        props: {options: []},
       }
     }
 
@@ -461,7 +507,7 @@ export default {
         father: 'Данные об отце (При необходимости оставьте поля пустыми)',
         brothers: 'Данные о братьях',
         sisters: 'Данные о сёстрах',
-        military: 'Желаемое направление в ВУЦ',
+        military: 'Желаемая военная специальность',
       },
 
       step: STEPS.about,
