@@ -51,6 +51,8 @@ class Student(Personnel):
     milgroup = models.ForeignKey(
         to=Milgroup,
         on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
     )
     milspecialty = models.ForeignKey(
         to=Milspecialty,
