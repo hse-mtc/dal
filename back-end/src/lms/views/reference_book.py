@@ -2,6 +2,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 from drf_spectacular.views import extend_schema
 
 from lms.models.common import (
@@ -10,10 +12,10 @@ from lms.models.common import (
     Milgroup,
 )
 from lms.models.teachers import Rank, TeacherPost
-from lms.models.universities import Program
 from lms.models.lessons import Room
 from lms.models.absences import AbsenceTime
 from lms.models.achievements import AchievementType
+from lms.models.universities import Program
 
 from lms.serializers.common import (
     MilfacultySerializer,
@@ -26,7 +28,11 @@ from lms.serializers.lessons import RoomSerializer
 from lms.serializers.absences import AbsenceTimeSerializer
 from lms.serializers.achievements import AchievementTypeSerializer
 
-from lms.filters.reference_books import MilgroupFilter, ProgramFilter
+from lms.filters.reference_books import (
+    MilspecialtyFilter,
+    MilgroupFilter,
+    ProgramFilter,
+)
 
 from auth.permissions import (
     BasicPermission,
@@ -81,6 +87,9 @@ class MilspecialtyViewSet(ModelViewSet):
     queryset = Milspecialty.objects.all()
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MilspecialtyFilter
 
 
 @extend_schema(tags=['reference-book'])
