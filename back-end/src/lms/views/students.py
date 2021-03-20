@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import BasePermission
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -21,11 +22,17 @@ class StudentPermission(BasicPermission):
     permission_class = 'auth.student'
 
 
+class AllowStudentPost(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return request.method == "POST"
+
+
 @extend_schema(tags=['students'])
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
 
-    permission_classes = [StudentPermission]
+    permission_classes = [AllowStudentPost | StudentPermission]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = StudentFilter
