@@ -2,6 +2,7 @@ from rest_framework.serializers import (
     SerializerMethodField,
     ModelSerializer,
     ImageField,
+    PrimaryKeyRelatedField,
 )
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
@@ -12,6 +13,7 @@ from common.serializers.persons import (
     PersonnelMutateSerializer,
 )
 
+from lms.models.common import Milgroup
 from lms.models.universities import Program
 from lms.models.students import (
     Student,
@@ -83,6 +85,11 @@ class StudentMutateSerializer(
         WritableNestedModelSerializer,
         PersonnelMutateSerializer,
 ):
+    milgroup = PrimaryKeyRelatedField(
+        queryset=Milgroup.objects.all(),
+        required=False,
+    )
+
     passport = PassportSerializer(required=False)
     family = RelativeSerializer(required=False, many=True)
     recruitment_office = RecruitmentOfficeSerializer(required=False)
