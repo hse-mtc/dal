@@ -505,19 +505,9 @@ export default {
   methods: {
     fillMilitaryOptions(data) {
       this.fields.military.military.props.options = data.map(item => ({
-        label: item.milspecialty ? item.milspecialty : item.code,
-        value: item,
+        label: item.milspecialty ? `${item.code} - ${item.milspecialty}` : item.code,
+        value: item.code,
       }))
-    },
-    getFamilyInit() {
-      return {
-        rel_status: '',
-        birthdate: '',
-        citizenship: '',
-        pers_mobile: '',
-        permanent_address: '',
-        place_birth: '',
-      }
     },
 
     convertFamily(data) {
