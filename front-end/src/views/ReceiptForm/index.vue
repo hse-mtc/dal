@@ -133,7 +133,7 @@ const STEPS = {
 
 const STEPS_RU = {
   campus: 'Кампус',
-  about: 'Общая',
+  about: 'Общее',
   birthInfo: 'Рождение',
   contactInfo: 'Контакты',
   passport: 'Паспорт',
@@ -143,7 +143,7 @@ const STEPS_RU = {
   mother: 'Мать',
   father: 'Отец',
   brothers: 'Братья',
-  sisters: 'Сестры',
+  sisters: 'Сёстры',
   military: 'Направление ВУЦ'
 }
 
@@ -199,7 +199,7 @@ export default {
     const mailValidator = {
       validator: (rule, value, cb) => {
         if (value && !/@.+\..+/.test(value)) {
-          cb(new Error('Введите корректный email'))
+          cb(new Error('Введите корректную почту'))
         } else {
           cb()
         }
@@ -208,7 +208,7 @@ export default {
     const corpMailValidator = {
       validator: (rule, value, cb) => {
         if (value && !/[A-Za-z0-9._%+-]+@edu\.hse\.ru$/.test(value)) {
-          cb(new Error('Email должен оканчиваться на @edu.hse.ru'))
+          cb(new Error('Почта должна оканчиваться на @edu.hse.ru'))
         } else {
           cb()
         }
@@ -217,7 +217,7 @@ export default {
     const phoneValidator = {
       validator: (rule, value, cb) => {
         if (value && !/^\+?\d{11}$/.test(value)) {
-          cb(new Error('Введите корректный телефон'))
+          cb(new Error('Введите корректный номер телефона'))
         } else {
           cb()
         }
@@ -297,7 +297,7 @@ export default {
 
     const universityInfo = {
       card_id: {component: 'TextInput', title: 'Номер студенческого билета'},
-      program: {component: 'TextInput', title: 'Образовательная программа'},
+      program: {component: 'TextInput', title: 'Код образовательной программы'},
       group: {component: 'TextInput', title: 'Номер группы'},
     }
 
@@ -432,18 +432,18 @@ export default {
 
       headers: {
         campus: 'Город обучения',
-        about: 'Данные о вас',
+        about: 'Общие сведения',
         birthInfo: 'Информация о рождении',
         contactInfo: 'Контактная информация',
-        passport: 'Данные паспорта',
-        recruitmentOffice: 'Состою на воинском учете в военном комиссариате',
+        passport: 'Паспортные данные',
+        recruitmentOffice: 'Состою на воинском учёте в военном комиссариате',
         universityInfo: 'Информация о ВУЗе',
         photo: 'Фотография',
         mother: 'Данные о матери (При необходимости оставьте поля пустыми)',
         father: 'Данные об отце (При необходимости оставьте поля пустыми)',
         brothers: 'Данные о братьях',
-        sisters: 'Данные о сестрах',
-        military: 'Направление в ВУЦ',
+        sisters: 'Данные о сёстрах',
+        military: 'Желаемое направление в ВУЦ',
       },
 
       step: STEPS.campus,
@@ -461,7 +461,7 @@ export default {
 
       tabsLabelMany: {
         brothers: 'братьев',
-        sisters: 'сестер',
+        sisters: 'сестёр',
       },
 
       tabButtonLabel: {
@@ -471,7 +471,7 @@ export default {
 
       relationsLabel: {
         brothers: 'брата',
-        sisters: 'сестры',
+        sisters: 'сёстры',
       },
 
       rules,
