@@ -12,6 +12,7 @@
       :type="type"
       v-bind="$attrs"
       v-on="$listeners"
+      :placeholder="placeholder"
     />
   </InputsBase>
 </template>
@@ -25,6 +26,7 @@ export default {
   props: {
     isTextArea: { type: Boolean, default: false },
     onlyChars: { type: Boolean, default: false },
+    placeholder: { type: String, default: "" },
   },
   computed: {
     type() {
