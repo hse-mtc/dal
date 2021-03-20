@@ -548,16 +548,6 @@ export default {
     },
   },
 
-  beforeRouteEnter(to, from, next) {
-    getReferenceMilSpecialties().then(res => {
-      const MILS = res.data
-      next(vm => vm.fillMilitaryOptions(MILS))
-    }).catch(err => {
-      next(false)
-      console.log('ReceiptForm Error: ', err)
-    })
-  },
-
   created() {
     allowMobileView(true)
   },
@@ -619,7 +609,7 @@ export default {
       return isValid
     },
 
-    next() {
+    async next() {
       const {studentData, stepName} = this
       const data = studentData[stepName]
       Object.keys(data).forEach(key => {
@@ -629,6 +619,13 @@ export default {
       })
 
       if (this.validate()) this.step += 1
+
+      if (this.step === STEPS.military) {
+        const params = {campus: this.studentData.universityInfo.campus};
+        console.log(params);
+        const { data } = await getReferenceMilSpecialties(params);
+        this.fillMilitaryOptions(data)
+      }
     },
     prev() {
       this.step = (this.step - 1) || 1
