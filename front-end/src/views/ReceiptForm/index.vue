@@ -116,23 +116,21 @@ import allowMobileView from '@/utils/allowMobileView'
 import {addStudent} from '@/api/students'
 
 const STEPS = {
-  campus: 1,
-  about: 2,
-  birthInfo: 3,
-  contactInfo: 4,
-  passport: 5,
-  recruitmentOffice: 6,
-  universityInfo: 7,
-  photo: 8,
-  mother: 9,
-  father: 10,
-  brothers: 11,
-  sisters: 12,
-  military: 13,
+  about: 1,
+  birthInfo: 2,
+  contactInfo: 3,
+  passport: 4,
+  recruitmentOffice: 5,
+  universityInfo: 6,
+  photo: 7,
+  mother: 8,
+  father: 9,
+  brothers: 10,
+  sisters: 11,
+  military: 12,
 }
 
 const STEPS_RU = {
-  campus: 'Кампус',
   about: 'Общее',
   birthInfo: 'Рождение',
   contactInfo: 'Контакты',
@@ -152,12 +150,12 @@ const getRelationData = (rel) => {
     surname: {
       component: 'TextInput',
       title: `Фамилия ${rel}`,
-      props: {onlyChars: true}
+      props: {onlyChars: true, placeholder: "Горький"}
     },
     name: {
       component: 'TextInput',
       title: `Имя ${rel}`,
-      props: {onlyChars: true}
+      props: {onlyChars: true, placeholder: "Максим"}
     },
     patronymic: {
       component: 'TextInput',
@@ -167,11 +165,11 @@ const getRelationData = (rel) => {
     citizenship: {
       component: 'TextInput',
       title: `Гражданство ${rel}`,
-      props: {onlyChars: true}
+      props: {onlyChars: true, placeholder: "РФ"}
     },
     permanent_address: {
       component: 'TextInput',
-      title: `Адрес постоянной регистрации ${rel}`
+      title: `Адрес постоянной регистрации ${rel}`,
     },
     date: {component: 'DateInput', title: `Дата рождения ${rel}`},
     country: {
@@ -222,14 +220,6 @@ export default {
           cb()
         }
       }
-    }
-
-    const campus = {
-      mil_campus: {
-        component: 'SelectInput', title: 'Кампус', props: {
-          options: ['Москва', 'Санкт-Петербург', 'Нижний Новгород', 'Пермь'],
-        }
-      },
     }
 
     const about = {
@@ -285,9 +275,9 @@ export default {
     const passport = {
       series: {component: 'TextInput', title: 'Серия'},
       code: {component: 'TextInput', title: 'Номер'},
-      ufms_name: {component: 'TextInput', title: 'Отделение выдачи'},
-      ufms_code: {component: 'TextInput', title: 'Код отделения'},
+      ufms_name: {component: 'TextInput', title: 'Паспорт выдан'},
       issue_date: {component: 'DateInput', title: 'Дата выдачи'},
+      ufms_code: {component: 'TextInput', title: 'Код подразделения'},
     }
 
     const recruitmentOffice = {
@@ -296,9 +286,41 @@ export default {
     }
 
     const universityInfo = {
-      card_id: {component: 'TextInput', title: 'Номер студенческого билета'},
-      program: {component: 'TextInput', title: 'Код образовательной программы'},
-      group: {component: 'TextInput', title: 'Номер группы'},
+      campus: {
+        component: 'SelectInput', title: 'Кампус', props: {
+          options: [
+            {
+              value: "MO",
+              label: 'Москва',
+            },
+            {
+              value: "SP",
+              label: 'Санкт-Петербург',
+            }, {
+              value: "NN",
+              label: 'Нижний Новгород',
+            }, {
+              value: "PE",
+              label: 'Пермь',
+            },
+          ],
+        }
+      },
+      card_id: {
+        component: 'TextInput',
+        title: 'Номер студенческого билета',
+        props: { placeholder: "М123БМИЭФ321" },
+      },
+      program: {
+        component: 'TextInput',
+        title: 'Код образовательной программы',
+        props: { placeholder: "01.02.03" },
+      },
+      group: {
+        component: 'TextInput',
+        title: 'Номер группы',
+        props: { placeholder: "БИТ 123"},
+      },
     }
 
     const military = {
@@ -310,8 +332,6 @@ export default {
     }
 
     const rules = {
-      campus: ['mil_campus']
-          .reduce((memo, item) => ({...memo, [item]: required}), {}),
       about: ['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']
           .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
       birthInfo: ['date', 'country', 'city']
@@ -320,7 +340,7 @@ export default {
           .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
       recruitmentOffice: ['city', 'district']
           .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-      universityInfo: ['card_id', 'program', 'group_title']
+      universityInfo: ['campus', 'card_id', 'program', 'group_title']
           .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
       contactInfo: {
         personal_email: [mailValidator],
@@ -364,10 +384,6 @@ export default {
     }
     return {
       studentData: {
-        campus: Object.keys(campus).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
         about: Object.keys(about).reduce((memo, item) => ({
           ...memo,
           [item]: ''
@@ -409,7 +425,6 @@ export default {
         }), {}),
       },
       fields: {
-        campus,
         about,
         birthInfo,
         passport,
@@ -431,7 +446,6 @@ export default {
       },
 
       headers: {
-        campus: 'Город обучения',
         about: 'Общие сведения',
         birthInfo: 'Информация о рождении',
         contactInfo: 'Контактная информация',
@@ -446,7 +460,7 @@ export default {
         military: 'Желаемое направление в ВУЦ',
       },
 
-      step: STEPS.campus,
+      step: STEPS.about,
       STEPS,
       STEPS_RU,
       tabsIndex: {
@@ -629,7 +643,6 @@ export default {
 
         const data = {
           ...this.studentData.about,
-          ...this.studentData.campus,
           ...this.studentData.military.military,
           birth_info: this.studentData.birthInfo,
           contact_info: this.studentData.contactInfo,
