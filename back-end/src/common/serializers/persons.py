@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from drf_writable_nested.serializers import WritableNestedModelSerializer
+
 from drf_extra_fields.fields import Base64ImageField
 
 from common.models.persons import (
@@ -32,7 +34,10 @@ class PersonMutateSerializer(serializers.ModelSerializer):
         abstract = True
 
 
-class RelativeSerializer(PersonMutateSerializer):
+class RelativeSerializer(
+    WritableNestedModelSerializer,
+    PersonMutateSerializer,
+):
 
     class Meta:
         model = Relative
