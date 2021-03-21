@@ -15,7 +15,12 @@ class Faculty(models.Model):
 class Program(models.Model):
     code = models.CharField(primary_key=True, max_length=8)
     program = models.CharField(max_length=128, blank=True, null=True)
-    faculty = models.ForeignKey(Faculty, models.DO_NOTHING, blank=True)
+    faculty = models.ForeignKey(
+        to=Faculty,
+        on_delete=models.DO_NOTHING,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f'({str(self.code)}) {str(self.program)}'
