@@ -1,17 +1,19 @@
 <template>
   <div :class="$style.root">
-    <div>
-      <h2>{{ headers[step] }}</h2>
+    <template v-if="!formSubmited">
+      <div>
+        <h2>{{ headers[step] }}</h2>
 
-      <el-steps :active="stepIndex" finish-status="success">
-        <el-step
-          v-for="(title, key) in STEPS_RU"
-          :key="key"
-          :title="key === step ? title : ''"
-        />
-      </el-steps>
+        <el-steps :active="stepIndex" finish-status="success">
+          <el-step
+            v-for="(title, key) in STEPS_RU"
+            :key="key"
+            :title="key === step ? title : ''"
+          />
+        </el-steps>
 
-    </div>
+      </div>
+
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
         <el-form
           ref="form"
@@ -95,22 +97,36 @@
         </div>
       </template>
 
-    <div>
-      <el-button v-if="step !== firstStep" @click="prev">
-        Назад
-      </el-button>
+      <div>
+        <el-button v-if="step !== firstStep" @click="prev">
+          Назад
+        </el-button>
 
-      <el-button
-        v-if="step !== lastStep"
-        @click="next"
-        type="primary"
-      >
-        Дальше
-      </el-button>
-      <el-button v-else type="primary" @click="submit">
-        Отправить форму
-      </el-button>
-    </div>
+        <el-button
+          v-if="step !== lastStep"
+          @click="next"
+          type="primary"
+        >
+          Дальше
+        </el-button>
+        <el-button
+          v-else 
+          type="primary"
+          v-loading="isSubmiting"
+          @click="submit"
+        >
+          Отправить форму
+        </el-button>
+      </div>
+    </template>
+
+    <template v-else>
+      <div :class="$style.thanks">
+        <h2>
+          Форма успешно отправлена
+        </h2>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -230,6 +246,8 @@ export default {
       },
       rules,
 
+      formSubmited: false,
+      isSubmiting: false,
       headers: HEADERS_BY_STEPS,
 
       step: STEPS.about,
@@ -256,7 +274,8 @@ export default {
     },
     stepIndex() {
       return Object.keys(STEPS).indexOf(this.step)
-    }
+    },
+    campus() { return this.studentData.universityInfo.campus }
   },
 
   created() {
@@ -319,7 +338,7 @@ export default {
       return isValid
     },
 
-    async next() {
+    next() {
       const {studentData, step} = this
       const data = studentData[step]
 
@@ -334,14 +353,8 @@ export default {
         const stepIndex = stepsKeys.indexOf(step)
         this.step = stepsKeys[stepIndex + 1] || stepsKeys[stepsKeys.length - 1] 
       }
-
-      if (this.step === STEPS.milspecialty) {
-        const params = {campus: this.studentData.universityInfo.campus};
-        console.log(params);
-        const { data } = await getReferenceMilSpecialties(params);
-        this.fillMilspecialtyOptions(data)
-      }
     },
+
     prev() {
       const stepsKeys = Object.keys(STEPS)
       const stepIndex = stepsKeys.indexOf(this.step)
@@ -361,6 +374,7 @@ export default {
         this.tabsIndex[step] = `${this.studentData[step].length - 1}`
       }
     },
+
     removeTab(index) {
       const {step} = this
 
@@ -374,6 +388,7 @@ export default {
             : '0',
       }
     },
+
     getObjUrl(file) {
       return URL.createObjectURL(file)
     },
@@ -421,14 +436,33 @@ export default {
           family
         }
 
-        reader.onload = () => {
+        this.isSubmiting = true
+
+        reader.onload = async () => {
           data.image = reader.result
 
-          addStudent(data)
+          try {
+            await addStudent(data)
+            this.formSubmited = true
+          } catch (e) {
+            this.$message({
+              type: 'error',
+              message: 'Не удалось отправить форму'
+            })
+          }
+
+          this.isSubmiting = false
         }
 
         reader.readAsDataURL(this.studentData.photo.photo[0].raw)
       }
+    }
+  },
+
+  watch: {
+    async campus(next) {
+      const { data } = await getReferenceMilSpecialties(next);
+      this.fillMilspecialtyOptions(data)
     }
   }
 }
@@ -440,9 +474,15 @@ export default {
   max-width: 600px;
   min-height: 80vh;
   margin: auto;
-  padding: 20px 10px 0;
+  padding: 20px 10px;
   flex-direction: column;
   justify-content: space-between;
 }
 
+.thanks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
 </style>

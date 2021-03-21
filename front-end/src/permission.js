@@ -9,7 +9,7 @@ const localStorageService = LocalStorageService.getService();
 
 NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
-const whiteList = ["/login", "/receipt"]; // no redirect whitelist
+const whiteList = ["/login/", "/receipt/"]; // no redirect whitelist
 
 router.beforeEach(async (to, from, next) => {
   // start progress bar
@@ -53,7 +53,7 @@ router.beforeEach(async (to, from, next) => {
       next();
     } else {
       // other pages that do not have permission to access are redirected to the login page.
-      next(`/login?redirect=${to.path}`);
+      next(`/login/?redirect=${to.path}`);
       NProgress.done();
     }
   }
