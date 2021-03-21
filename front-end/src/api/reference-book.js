@@ -11,10 +11,10 @@ export function getReferenceBooks(params) {
   });
 }
 
-export function getReferenceMilSpecialties(params) {
+export function getReferenceMilSpecialties(campus) {
   return request({
     url: BASE_API_URL + milspecialties,
     method: "get",
-    params,
+    params: {campus},
   });
 }
