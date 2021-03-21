@@ -154,6 +154,19 @@ const createRouter = () =>
 
 const router = createRouter();
 
+router.beforeEach((to, from, next) => {
+  if (!/\/$/.test(to.path)) {
+    next({
+      path: `${to.path}/`,
+      params: to.params,
+      query: to.query,
+      replace: true
+    })
+  } else {
+    next()
+  }
+})
+
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter();
