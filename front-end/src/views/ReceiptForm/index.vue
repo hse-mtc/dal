@@ -460,8 +460,8 @@ export default {
   },
 
   watch: {
-    async campus(next) {
-      const { data } = await getReferenceMilSpecialties(next);
+    async campus(nextValue) {
+      const { data } = await getReferenceMilSpecialties(nextValue);
       this.fillMilspecialtyOptions(data)
     }
   }
