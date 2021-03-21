@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     ModelSerializer,
     ImageField,
     PrimaryKeyRelatedField,
+    CharField,
 )
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
@@ -60,6 +61,17 @@ class RecruitmentOfficeSerializer(ModelSerializer):
 
 
 class UniversityInfoSerializer(ModelSerializer):
+    program = CharField(max_length=8)
+
+    def create(self, validated_data):
+        code = validated_data.pop("program")
+        query = Program.objects.filter(code=code)
+
+        if not query.exists():
+            Program.objects.create(code=code)
+        validated_data["program"] = query.first()
+
+        return super().create(validated_data)
 
     class Meta:
         model = UniversityInfo
