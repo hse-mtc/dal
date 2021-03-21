@@ -195,7 +195,7 @@ export default {
       isSubmiting: false,
       headers: HEADERS_BY_STEPS,
 
-      step: STEPS.mother,
+      step: STEPS.about,
       STEPS,
       STEPS_RU,
 
