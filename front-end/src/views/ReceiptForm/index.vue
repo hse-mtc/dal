@@ -125,7 +125,7 @@ import {
   PASSPORT,
   RECRUITMENT_OFFICE,
   UNIVERSITY_INFO,
-  MILITARY,
+  MILSPECIALTY,
   PHOTO,
   HEADERS_BY_STEPS,
   STEPS_RU,
@@ -169,14 +169,14 @@ export default {
       birthInfo: makeRequired(['date', 'country', 'city']),
       passport: {
         ...makeRequired(['ufms_name', 'issue_date']),
-        series: [required, getValidator(/^\d{4}$/, 'Введите серию паспорта корректно')],
-        code: [required, getValidator(/^\d{6}$/, 'Введите номер паспорта корректно')],
-        ufms_code: [required, getValidator(/^\d{3}-\d{3}$/, 'Введите код отделения корректно')],
+        series: [required, getValidator(/^\d{4}$/, 'Введите серию паспорта в формате 1234')],
+        code: [required, getValidator(/^\d{6}$/, 'Введите номер паспорта в формате 567890')],
+        ufms_code: [required, getValidator(/^\d{3}-\d{3}$/, 'Введите код подразделения в формате 700-007 ')],
       },
       recruitmentOffice: makeRequired(['city', 'district']),
       universityInfo: {
         ...makeRequired(['campus', 'card_id', 'program', 'group_title']),
-        program: [required, getValidator(/^\d\d.\d\d.\d\d$/, 'Введите верный код программы')]
+        program: [required, getValidator(/^\d\d.\d\d.\d\d$/, 'Введите код программы в формате 01.02.03')]
       },
       contactInfo: {
         personal_email: [mailValidator],
@@ -196,7 +196,7 @@ export default {
         personal_phone_number: [phoneValidator]
       },
       photo: {photo: [required]},
-      military: {military: [required]}
+      milspecialty: {milspecialty: [required]}
     }
 
     return {
@@ -212,7 +212,7 @@ export default {
         brothers: [],
         sisters: [],
         photo: {photo: null},
-        military: createData(MILITARY),
+        milspecialty: createData(MILSPECIALTY),
       },
       fields: {
         about: ABOUT,
@@ -226,7 +226,7 @@ export default {
         brothers: getRelationData('брата'),
         sisters: getRelationData('сестры'),
         photo: PHOTO,
-        military: MILITARY,
+        milspecialty: MILSPECIALTY,
       },
       rules,
 
@@ -268,8 +268,8 @@ export default {
   },
 
   methods: {
-    fillMilitaryOptions(data) {
-      this.fields.military.military.props.options = data.map(item => ({
+    fillMilspecialtyOptions(data) {
+      this.fields.milspecialty.milspecialty.props.options = data.map(item => ({
         label: item.milspecialty ? `${item.code} - ${item.milspecialty}` : item.code,
         value: item.code,
       }))
@@ -335,11 +335,11 @@ export default {
         this.step = stepsKeys[stepIndex + 1] || stepsKeys[stepsKeys.length - 1] 
       }
 
-      if (this.step === STEPS.military) {
+      if (this.step === STEPS.milspecialty) {
         const params = {campus: this.studentData.universityInfo.campus};
         console.log(params);
         const { data } = await getReferenceMilSpecialties(params);
-        this.fillMilitaryOptions(data)
+        this.fillMilspecialtyOptions(data)
       }
     },
     prev() {
@@ -412,7 +412,7 @@ export default {
 
         const data = {
           ...this.studentData.about,
-          ...this.studentData.military,
+          ...this.studentData.milspecialty,
           birth_info: this.studentData.birthInfo,
           contact_info: this.studentData.contactInfo,
           passport: this.studentData.passport,

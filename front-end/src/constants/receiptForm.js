@@ -10,7 +10,7 @@ export const STEPS = {
   father: 'father',
   brothers: 'brothers',
   sisters: 'sisters',
-  military: 'military',
+  milspecialty: 'milspecialty',
 }
 
 export const ABOUT = {
@@ -164,7 +164,7 @@ export const UNIVERSITY_INFO = {
   },
 }
 
-export const MILITARY = {
+export const MILSPECIALTY = {
   milspecialty: {
     component: 'SelectInput',
     title: 'Желаемая военная специальность',
@@ -233,7 +233,7 @@ export const STEPS_RU = {
   father: 'Отец',
   brothers: 'Братья',
   sisters: 'Сёстры',
-  military: 'ВУС',
+  milspecialty: 'ВУС',
 }
 
 export const HEADERS_BY_STEPS = {
@@ -248,5 +248,5 @@ export const HEADERS_BY_STEPS = {
   father: 'Данные об отце (При необходимости оставьте поля пустыми)',
   brothers: 'Данные о братьях',
   sisters: 'Данные о сёстрах',
-  military: 'Желаемая военная специальность',
+  milspecialty: 'Желаемая военная специальность',
 }
