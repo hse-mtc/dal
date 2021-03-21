@@ -39,9 +39,16 @@ export const constantRoutes = [
   },
 
   {
-    path: "/change-password",
+    path: "/change-password/",
     component: () => import("@/views/ChangePassword/index"),
     hidden: true,
+  },
+  
+  {
+    path: "/receipt/",
+    name: "Receipt",
+    component: () => import("@/views/ReceiptForm/index.vue"),
+    meta: { title: "Форма поступления", icon: "journal" },
   },
 
   {
@@ -125,13 +132,6 @@ export const constantRoutes = [
         name: "Marks",
         component: () => import("@/views/Marks/index"),
         meta: { title: "Журнал оценок", icon: "journal" },
-      },
-
-      {
-        path: "receipt/",
-        name: "Receipt",
-        component: () => import("@/views/ReceiptForm/index.vue"),
-        meta: { title: "Форма поступления", icon: "journal" },
       },
     ]
   },
