@@ -17,9 +17,13 @@ class BirthInfo(models.Model):
 
 
 class ContactInfo(models.Model):
-    corporate_email = models.EmailField(null=True)
-    personal_email = models.EmailField(null=True)
-    personal_phone_number = models.CharField(max_length=32, null=True)
+    corporate_email = models.EmailField(null=True, blank=True)
+    personal_email = models.EmailField(null=True, blank=True)
+    personal_phone_number = models.CharField(
+        max_length=32,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Contact Info"
