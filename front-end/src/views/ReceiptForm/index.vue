@@ -156,64 +156,10 @@ export default {
   components: {DateInput, FileInput, TextInput, SelectInput},
 
   data() {
-    const required = {required: true, message: "Обязательное поле"};
-
-    const getValidator = (regExp, msg) => ({
-      validator: (rule, value, cb) => {
-        if (value && !regExp.test(value)) {
-          cb(new Error(msg))
-        } else {
-          cb()
-        }
-      }
-    })
-
-    const mailValidator = getValidator(/@.+\..+/, 'Введите корректную почту')
-
-    const corpMailValidator =  getValidator(/[A-Za-z0-9._%+-]+@edu\.hse\.ru$/, 'Почта должна оканчиваться на @edu.hse.ru')
-
-    const phoneValidator = getValidator(/^\+?\d{11}$/, 'Введите корректный номер телефона')
-
-    const makeRequired = (fields) => fields.reduce((memo, item) => ({...memo, [item]: [required]}), {})
     const createData = (fields) => Object.keys(fields).reduce((memo, item) => ({
       ...memo,
       [item]: ''
     }), {})
-
-    const rules = {
-      about: makeRequired(['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']),
-      birthInfo: makeRequired(['date', 'country', 'city']),
-      passport: {
-        ...makeRequired(['ufms_name', 'issue_date']),
-        series: [required, getValidator(/^\d{4}$/, 'Введите серию паспорта в формате 1234')],
-        code: [required, getValidator(/^\d{6}$/, 'Введите номер паспорта в формате 567890')],
-        ufms_code: [required, getValidator(/^\d{3}-\d{3}$/, 'Введите код подразделения в формате 700-007 ')],
-      },
-      recruitmentOffice: makeRequired(['city', 'district']),
-      universityInfo: {
-        ...makeRequired(['campus', 'card_id', 'program', 'group_title']),
-        program: [required, getValidator(/^\d\d.\d\d.\d\d$/, 'Введите код программы в формате 01.02.03')]
-      },
-      contactInfo: {
-        personal_email: [mailValidator],
-        corporate_email: [required, corpMailValidator],
-        personal_phone_number: [phoneValidator]
-      },
-      mother: { personal_email: [mailValidator], personal_phone_number: [phoneValidator] },
-      father: { personal_email: [mailValidator], personal_phone_number: [phoneValidator] },
-      brothers: {
-        ...makeRequired(['surname', 'name', 'citizenship', 'date', 'country', 'city']),
-        personal_email: [mailValidator],
-        personal_phone_number: [phoneValidator]
-      },
-      sisters: {
-        ...makeRequired(['surname', 'name', 'citizenship', 'date', 'country', 'city']),
-        personal_email: [mailValidator],
-        personal_phone_number: [phoneValidator]
-      },
-      photo: {photo: [required]},
-      milspecialty: {milspecialty: [required]}
-    }
 
     return {
       studentData: {
@@ -244,13 +190,12 @@ export default {
         photo: PHOTO,
         milspecialty: MILSPECIALTY,
       },
-      rules,
 
       formSubmited: false,
       isSubmiting: false,
       headers: HEADERS_BY_STEPS,
 
-      step: STEPS.about,
+      step: STEPS.mother,
       STEPS,
       STEPS_RU,
 
@@ -275,7 +220,61 @@ export default {
     stepIndex() {
       return Object.keys(STEPS).indexOf(this.step)
     },
-    campus() { return this.studentData.universityInfo.campus }
+    campus() { return this.studentData.universityInfo.campus },
+    rules() {
+      const required = {required: true, message: "Обязательное поле"};
+
+      const getValidator = (regExp, msg) => ({
+        validator: (rule, value, cb) => {
+          if (value && !regExp.test(value)) {
+            cb(new Error(msg))
+          } else {
+            cb()
+          }
+        }
+      })
+
+      const mailValidator = getValidator(/@.+\..+/, 'Введите корректную почту')
+      const corpMailValidator =  getValidator(/[A-Za-z0-9._%+-]+@edu\.hse\.ru$/, 'Почта должна оканчиваться на @edu.hse.ru')
+      const phoneValidator = getValidator(/^\+?\d{11}$/, 'Введите корректный номер телефона')
+      const makeRequired = (fields) => fields.reduce((memo, item) => ({...memo, [item]: [required]}), {})
+
+      const relationFields = {
+        ...makeRequired(['surname', 'name', 'citizenship', 'date', 'country', 'city']),
+        personal_email: [mailValidator],
+        personal_phone_number: [phoneValidator]
+      }
+
+      const withFaterRules = Object.values(this.studentData.father).filter(Boolean).length
+      const withMotherRules = Object.values(this.studentData.mother).filter(Boolean).length
+
+      return {
+        about: makeRequired(['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']),
+        birthInfo: makeRequired(['date', 'country', 'city']),
+        passport: {
+          ...makeRequired(['ufms_name', 'issue_date']),
+          series: [required, getValidator(/^\d{4}$/, 'Введите серию паспорта в формате 1234')],
+          code: [required, getValidator(/^\d{6}$/, 'Введите номер паспорта в формате 567890')],
+          ufms_code: [required, getValidator(/^\d{3}-\d{3}$/, 'Введите код подразделения в формате 700-007 ')],
+        },
+        recruitmentOffice: makeRequired(['city', 'district']),
+        universityInfo: {
+          ...makeRequired(['campus', 'card_id', 'program', 'group_title']),
+          program: [required, getValidator(/^\d\d.\d\d.\d\d$/, 'Введите код программы в формате 01.02.03')]
+        },
+        contactInfo: {
+          personal_email: [mailValidator],
+          corporate_email: [required, corpMailValidator],
+          personal_phone_number: [phoneValidator]
+        },
+        mother: withMotherRules ? relationFields : {},
+        father: withFaterRules ? relationFields : {},
+        brothers: relationFields,
+        sisters: relationFields,
+        photo: {photo: [required]},
+        milspecialty: {milspecialty: [required]}
+      }
+    }
   },
 
   created() {
