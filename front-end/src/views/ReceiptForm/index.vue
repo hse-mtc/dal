@@ -1,41 +1,41 @@
 <template>
   <div :class="$style.root">
     <div>
-      <h2>{{ headers[stepName] }}</h2>
+      <h2>{{ headers[step] }}</h2>
 
-      <el-steps :active="+step - 1" finish-status="success">
+      <el-steps :active="stepIndex" finish-status="success">
         <el-step
-            v-for="(title, key) in STEPS_RU"
-            :key="key"
-            :title="key === stepName ? title : ''"
+          v-for="(title, key) in STEPS_RU"
+          :key="key"
+          :title="key === step ? title : ''"
         />
       </el-steps>
 
     </div>
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
         <el-form
-            ref="form"
-            :model="studentData[stepName]"
-            :rules="rules[stepName]"
-            :key="step"
+          ref="form"
+          :model="studentData[step]"
+          :rules="rules[step]"
+          :key="step"
         >
           <el-form-item
-              v-for="({component, title, props = {}}, key) in fields[stepName]"
-              :key="key"
-              :prop="key"
+            v-for="({component, title, props = {}}, key) in fields[step]"
+            :key="key"
+            :prop="key"
           >
             <component
-                :is="component"
-                :title="title"
-                v-bind="props"
-                v-model="studentData[stepName][key]"
+              :is="component"
+              :title="title"
+              v-bind="props"
+              v-model="studentData[step][key]"
             />
           </el-form-item>
         </el-form>
 
         <div
-            v-if="step === STEPS.photo && studentData.photo.photo && studentData.photo.photo.length"
-            :style="{
+          v-if="step === STEPS.photo && studentData.photo.photo && studentData.photo.photo.length"
+          :style="{
             flex: 1,
             background: 'no-repeat center / contain',
             backgroundImage: `url('${getObjUrl(studentData.photo.photo[0].raw)}')`,
@@ -47,38 +47,42 @@
       <template v-else>
         <div>
           <el-button
-              style="width: 100%"
-              icon="el-icon-plus"
-              type="primary"
-              @click="addTab"
+            style="width: 100%"
+            icon="el-icon-plus"
+            type="primary"
+            @click="addTab"
           >
-            Добавить {{ tabButtonLabel[stepName] }}
+            Добавить {{ tabButtonLabel[step] }}
           </el-button>
 
-          <el-tabs v-model="tabsIndex[stepName]" type="card" closable
-                   @tab-remove="removeTab">
+          <el-tabs
+            v-model="tabsIndex[step]"
+            type="card"
+            closable
+            @tab-remove="removeTab"
+          >
             <el-tab-pane
-                v-for="(item, index) in studentData[stepName]"
-                :key="index"
-                :label="item.name || `${tabsLabel[stepName]} ${index + 1}`"
-                :name="`${index}`"
+              v-for="(item, index) in studentData[step]"
+              :key="index"
+              :label="item.name || `${tabsLabel[step]} ${index + 1}`"
+              :name="`${index}`"
             >
               <el-form
-                  v-if="+tabsIndex[stepName] === index"
-                  ref="form"
-                  :model="item"
-                  :rules="rules[stepName]"
+                v-if="+tabsIndex[step] === index"
+                ref="form"
+                :model="item"
+                :rules="rules[step]"
               >
                 <el-form-item
-                    v-for="({component, title, props = {}}, key) in fields[stepName]"
-                    :key="key"
-                    :prop="key"
+                  v-for="({component, title, props = {}}, key) in fields[step]"
+                  :key="key"
+                  :prop="key"
                 >
                   <component
-                      :is="component"
-                      :title="title"
-                      v-bind="props"
-                      v-model="item[key]"
+                    :is="component"
+                    :title="title"
+                    v-bind="props"
+                    v-model="item[key]"
                   />
                 </el-form-item>
               </el-form>
@@ -86,20 +90,20 @@
           </el-tabs>
         </div>
 
-        <div v-if="!studentData[stepName].length">
-          Добавьте {{ tabsLabelMany[stepName] }} (при наличии)
+        <div v-if="!studentData[step].length">
+          Добавьте {{ tabsLabelMany[step] }} (при наличии)
         </div>
       </template>
 
     <div>
-      <el-button v-if="step !== 1" @click="prev">
+      <el-button v-if="step !== firstStep" @click="prev">
         Назад
       </el-button>
 
       <el-button
-          v-if="step !== STEPS.military"
-          @click="next"
-          type="primary"
+        v-if="step !== lastStep"
+        @click="next"
+        type="primary"
       >
         Дальше
       </el-button>
@@ -114,77 +118,20 @@
 import {DateInput, FileInput, TextInput, SelectInput} from '@/common/inputs'
 import allowMobileView from '@/utils/allowMobileView'
 import {addStudent} from '@/api/students'
-
-const STEPS = {
-  about: 1,
-  birthInfo: 2,
-  passport: 3,
-  universityInfo: 4,
-  recruitmentOffice: 5,
-  contactInfo: 6,
-  photo: 7,
-  mother: 8,
-  father: 9,
-  brothers: 10,
-  sisters: 11,
-  military: 12,
-}
-
-const STEPS_RU = {
-  about: 'Общее',
-  birthInfo: 'Рождение',
-  passport: 'Паспорт',
-  universityInfo: 'Университет',
-  recruitmentOffice: 'Военкомат',
-  contactInfo: 'Контакты',
-  photo: 'Фото',
-  mother: 'Мать',
-  father: 'Отец',
-  brothers: 'Братья',
-  sisters: 'Сёстры',
-  military: 'ВУС',
-}
-
-const getRelationData = (rel) => {
-  return {
-    surname: {
-      component: 'TextInput',
-      title: `Фамилия ${rel}`,
-      props: {onlyChars: true}
-    },
-    name: {
-      component: 'TextInput',
-      title: `Имя ${rel}`,
-      props: {onlyChars: true}
-    },
-    patronymic: {
-      component: 'TextInput',
-      title: `Отчество ${rel} (при наличии)`,
-      props: {onlyChars: true}
-    },
-    citizenship: {
-      component: 'TextInput',
-      title: `Гражданство ${rel}`,
-      props: {onlyChars: true, placeholder: "РФ"}
-    },
-    permanent_address: {
-      component: 'TextInput',
-      title: `Адрес постоянной регистрации ${rel}`,
-    },
-    date: {component: 'DateInput', title: `Дата рождения ${rel}`},
-    country: {
-      component: 'TextInput',
-      title: `Страна рождения ${rel}`,
-      props: {onlyChars: true}
-    },
-    city: {component: 'TextInput', title: `Город рождения ${rel}`},
-    personal_email: {component: 'TextInput', title: `Личная почта ${rel}`},
-    personal_phone_number: {
-      component: 'TextInput',
-      title: `Номер телефона ${rel}`
-    },
-  }
-}
+import {
+  ABOUT,
+  BIRTH_INFO,
+  CONTACT_INFO,
+  PASSPORT,
+  RECRUITMENT_OFFICE,
+  UNIVERSITY_INFO,
+  MILITARY,
+  PHOTO,
+  HEADERS_BY_STEPS,
+  STEPS_RU,
+  getRelationData,
+  STEPS,
+} from '@/constants/receiptForm'
 
 import {getReferenceMilSpecialties} from "@/api/reference-book";
 
@@ -194,358 +141,122 @@ export default {
 
   data() {
     const required = {required: true, message: "Обязательное поле"};
-    const mailValidator = {
+
+    const getValidator = (regExp, msg) => ({
       validator: (rule, value, cb) => {
-        if (value && !/@.+\..+/.test(value)) {
-          cb(new Error('Введите корректную почту'))
+        if (value && !regExp.test(value)) {
+          cb(new Error(msg))
         } else {
           cb()
         }
       }
-    }
-    const corpMailValidator = {
-      validator: (rule, value, cb) => {
-        if (value && !/[A-Za-z0-9._%+-]+@edu\.hse\.ru$/.test(value)) {
-          cb(new Error('Почта должна оканчиваться на @edu.hse.ru'))
-        } else {
-          cb()
-        }
-      }
-    }
-    const phoneValidator = {
-      validator: (rule, value, cb) => {
-        if (value && !/^\+?\d{11}$/.test(value)) {
-          cb(new Error('Введите корректный номер телефона'))
-        } else {
-          cb()
-        }
-      }
-    }
+    })
 
-    const about = {
-      surname: {
-        component: 'TextInput',
-        title: 'Фамилия',
-        props: {onlyChars: true, placeholder: "Чехов"},
-      },
-      name: {
-        component: 'TextInput',
-        title: 'Имя',
-        props: {onlyChars: true, placeholder: "Антон"},
-      },
-      patronymic: {
-        component: 'TextInput',
-        title: 'Отчество (при наличии)',
-        props: {onlyChars: true, placeholder: "Павлович"},
-      },
-      citizenship: {
-        component: 'TextInput',
-        title: 'Гражданство',
-        props: {onlyChars: true, placeholder: "РФ"},
-      },
-      permanent_address: {
-        component: 'TextInput',
-        title: 'Адрес постоянной регистрации'
-      },
-      surname_genitive: {
-        component: 'TextInput',
-        title: 'Фамилия в родительном падеже',
-        props: {onlyChars: true, placeholder: "Чехова"}
-      },
-      name_genitive: {
-        component: 'TextInput',
-        title: 'Имя в родительном падеже',
-        props: {onlyChars: true, placeholder: "Антона"},
-      },
-      patronymic_genitive: {
-        component: 'TextInput',
-        title: 'Отчество в родительном падеже (при наличии)',
-        props: {onlyChars: true, placeholder: "Павловича"}
-      },
-    }
+    const mailValidator = getValidator(/@.+\..+/, 'Введите корректную почту')
 
-    const birthInfo = {
-      date: {component: 'DateInput', title: 'Дата'},
-      country: {
-        component: 'TextInput',
-        title: 'Страна',
-        props: {placeholder: "Россия"},
-      },
-      city: {
-        component: 'TextInput',
-        title: 'Город',
-        props: {placeholder: "Владимир"},
-      }
-    }
+    const corpMailValidator =  getValidator(/[A-Za-z0-9._%+-]+@edu\.hse\.ru$/, 'Почта должна оканчиваться на @edu.hse.ru')
 
-    const contactInfo = {
-      corporate_email: {
-        component: 'TextInput',
-        title: 'Корпоративная почта',
-        props: {placeholder: "apchekhov@edu.hse.ru"},
-      },
-      personal_email: {
-        component: 'TextInput',
-        title: 'Личная почта',
-        props: {placeholder: "chekhov@writers.ru"},
-      },
-      personal_phone_number: {
-        component: 'TextInput',
-        title: 'Номер телефона',
-        props: {placeholder: "+79095050011"},
-      },
-    }
+    const phoneValidator = getValidator(/^\+?\d{11}$/, 'Введите корректный номер телефона')
 
-    const passport = {
-      series: {
-        component: 'TextInput',
-        title: 'Серия',
-        props: {placeholder: "1234"}
-      },
-      code: {
-        component: 'TextInput',
-        title: 'Номер',
-        props: {placeholder: "567890"}
-      },
-      ufms_name: {
-        component: 'TextInput',
-        title: 'Паспорт выдан',
-        props: {
-          placeholder: "Отделом УФМС России по гор. Таганрог по району Светлый",
-        }
-      },
-      issue_date: {component: 'DateInput', title: 'Дата выдачи'},
-      ufms_code: {
-        component: 'TextInput',
-        title: 'Код подразделения',
-        props: {placeholder: "700-007"},
-      },
-    }
-
-    const recruitmentOffice = {
-      district: {
-        component: 'TextInput',
-        title: 'района',
-        props: {placeholder: "Одинцовский"},
-      },
-      city: {
-        component: 'TextInput',
-        title: 'города',
-        props: {placeholder: "Москва"},
-      },
-    }
-
-    const universityInfo = {
-      campus: {
-        component: 'SelectInput', title: 'Кампус', props: {
-          options: [
-            {
-              value: "MO",
-              label: 'Москва',
-            },
-            {
-              value: "SP",
-              label: 'Санкт-Петербург',
-            }, {
-              value: "NN",
-              label: 'Нижний Новгород',
-            }, {
-              value: "PE",
-              label: 'Пермь',
-            },
-          ],
-        }
-      },
-      card_id: {
-        component: 'TextInput',
-        title: 'Номер студенческого билета',
-        props: { placeholder: "М123БМИЭФ321" },
-      },
-      program: {
-        component: 'TextInput',
-        title: 'Код образовательной программы',
-        props: { placeholder: "01.02.03" },
-      },
-      group: {
-        component: 'TextInput',
-        title: 'Номер группы',
-        props: { placeholder: "БИТ 123"},
-      },
-    }
-
-    const military = {
-      military: {
-        component: 'SelectInput',
-        title: 'Желаемая военная специальность',
-        props: {options: []},
-      }
-    }
+    const makeRequired = (fields) => fields.reduce((memo, item) => ({...memo, [item]: [required]}), {})
+    const createData = (fields) => Object.keys(fields).reduce((memo, item) => ({
+      ...memo,
+      [item]: ''
+    }), {})
 
     const rules = {
-      about: ['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']
-          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-      birthInfo: ['date', 'country', 'city']
-          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-      passport: ['series', 'code', 'ufms_name', 'ufms_code', 'issue_date']
-          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-      recruitmentOffice: ['city', 'district']
-          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-      universityInfo: ['campus', 'card_id', 'program', 'group_title']
-          .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
+      about: makeRequired(['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']),
+      birthInfo: makeRequired(['date', 'country', 'city']),
+      passport: {
+        ...makeRequired(['ufms_name', 'issue_date']),
+        series: [required, getValidator(/^\d{4}$/, 'Введите серию паспорта корректно')],
+        code: [required, getValidator(/^\d{6}$/, 'Введите номер паспорта корректно')],
+        ufms_code: [required, getValidator(/^\d{3}-\d{3}$/, 'Введите код отделения корректно')],
+      },
+      recruitmentOffice: makeRequired(['city', 'district']),
+      universityInfo: {
+        ...makeRequired(['campus', 'card_id', 'program', 'group_title']),
+        program: [required, getValidator(/^\d\d.\d\d.\d\d$/, 'Введите верный код программы')]
+      },
       contactInfo: {
         personal_email: [mailValidator],
         corporate_email: [required, corpMailValidator],
         personal_phone_number: [phoneValidator]
       },
-      mother: {
-        ...[/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
-            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-        ...{
-          personal_email: [mailValidator],
-          personal_phone_number: [phoneValidator]
-        }
-      },
-      father: {
-        ...[/* 'surname', 'name', 'citizenship', 'date', 'country', 'city' */]
-            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-        ...{
-          personal_email: [mailValidator],
-          personal_phone_number: [phoneValidator]
-        }
-      },
+      mother: { personal_email: [mailValidator], personal_phone_number: [phoneValidator] },
+      father: { personal_email: [mailValidator], personal_phone_number: [phoneValidator] },
       brothers: {
-        ...['surname', 'name', 'citizenship', 'date', 'country', 'city']
-            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-        ...{
-          personal_email: [mailValidator],
-          personal_phone_number: [phoneValidator]
-        }
+        ...makeRequired(['surname', 'name', 'citizenship', 'date', 'country', 'city']),
+        personal_email: [mailValidator],
+        personal_phone_number: [phoneValidator]
       },
       sisters: {
-        ...['surname', 'name', 'citizenship', 'date', 'country', 'city']
-            .reduce((memo, item) => ({...memo, [item]: [required]}), {}),
-        ...{
-          personal_email: [mailValidator],
-          personal_phone_number: [phoneValidator]
-        }
+        ...makeRequired(['surname', 'name', 'citizenship', 'date', 'country', 'city']),
+        personal_email: [mailValidator],
+        personal_phone_number: [phoneValidator]
       },
       photo: {photo: [required]},
       military: {military: [required]}
     }
+
     return {
       studentData: {
-        about: Object.keys(about).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
-        birthInfo: Object.keys(birthInfo).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
-        passport: Object.keys(passport).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
-        recruitmentOffice: Object.keys(recruitmentOffice).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
-        universityInfo: Object.keys(universityInfo).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
-        contactInfo: Object.keys(contactInfo).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
-        mother: Object.keys(getRelationData('матери')).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
-        father: Object.keys(getRelationData('отца')).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
+        about: createData(ABOUT),
+        birthInfo: createData(BIRTH_INFO),
+        passport: createData(PASSPORT),
+        recruitmentOffice: createData(RECRUITMENT_OFFICE),
+        universityInfo: createData(UNIVERSITY_INFO),
+        contactInfo: createData(CONTACT_INFO),
+        mother: createData(getRelationData('матери')),
+        father: createData(getRelationData('отца')),
         brothers: [],
         sisters: [],
         photo: {photo: null},
-        military: Object.keys(military).reduce((memo, item) => ({
-          ...memo,
-          [item]: ''
-        }), {}),
+        military: createData(MILITARY),
       },
       fields: {
-        about,
-        birthInfo,
-        passport,
-        recruitmentOffice,
-        universityInfo,
-        contactInfo,
+        about: ABOUT,
+        birthInfo: BIRTH_INFO,
+        passport: PASSPORT,
+        recruitmentOffice: RECRUITMENT_OFFICE,
+        universityInfo: UNIVERSITY_INFO,
+        contactInfo: CONTACT_INFO,
         mother: getRelationData('матери'),
         father: getRelationData('отца'),
         brothers: getRelationData('брата'),
         sisters: getRelationData('сестры'),
-        photo: {
-          photo: {
-            component: 'FileInput',
-            title: 'Загрузите фотографию',
-            props: {filesTypes: ['.png', '.jpg', '.jpeg']}
-          }
-        },
-        military,
+        photo: PHOTO,
+        military: MILITARY,
       },
+      rules,
 
-      headers: {
-        about: 'Общие сведения',
-        birthInfo: 'Информация о рождении',
-        contactInfo: 'Контактная информация',
-        passport: 'Паспортные данные',
-        recruitmentOffice: 'Состою на воинском учёте в военном комиссариате',
-        universityInfo: 'Информация о ВУЗе',
-        photo: 'Фотография',
-        mother: 'Данные о матери (При необходимости оставьте поля пустыми)',
-        father: 'Данные об отце (При необходимости оставьте поля пустыми)',
-        brothers: 'Данные о братьях',
-        sisters: 'Данные о сёстрах',
-        military: 'Желаемая военная специальность',
-      },
+      headers: HEADERS_BY_STEPS,
 
       step: STEPS.about,
       STEPS,
       STEPS_RU,
+
       tabsIndex: {
         brothers: '',
         sisters: '',
       },
 
-      tabsLabel: {
-        brothers: 'Брат',
-        sisters: 'Сестра',
-      },
-
-      tabsLabelMany: {
-        brothers: 'братьев',
-        sisters: 'сестёр',
-      },
-
-      tabButtonLabel: {
-        brothers: 'брата',
-        sisters: 'сестру',
-      },
-
-      relationsLabel: {
-        brothers: 'брата',
-        sisters: 'сёстры',
-      },
-
-      rules,
+      tabsLabel: { brothers: 'Брат', sisters: 'Сестра' },
+      tabsLabelMany: { brothers: 'братьев', sisters: 'сестёр' },
+      tabButtonLabel: { brothers: 'брата', sisters: 'сестру' },
+      relationsLabel: { brothers: 'брата', sisters: 'сёстры' },
     }
   },
 
   computed: {
-    stepName() {
-      return Object.entries(STEPS).find(([, value]) => value === this.step)[0]
+    firstStep() { return Object.keys(STEPS)[0] },
+    lastStep() {
+      const stepsNames = Object.keys(STEPS)
+      return stepsNames[stepsNames.length - 1]
     },
+    stepIndex() {
+      return Object.keys(STEPS).indexOf(this.step)
+    }
   },
 
   created() {
@@ -587,7 +298,6 @@ export default {
       let isValid = true
       const ref = this.$refs.form
 
-
       const formValidate = (valid) => {
         if (!valid && isValid) {
           this.$message({
@@ -610,15 +320,20 @@ export default {
     },
 
     async next() {
-      const {studentData, stepName} = this
-      const data = studentData[stepName]
+      const {studentData, step} = this
+      const data = studentData[step]
+
       Object.keys(data).forEach(key => {
         if (this.lodash.isString(data[key])) {
           data[key] = data[key].trim()
         }
       })
 
-      if (this.validate()) this.step += 1
+      if (this.validate()) {
+        const stepsKeys = Object.keys(STEPS)
+        const stepIndex = stepsKeys.indexOf(step)
+        this.step = stepsKeys[stepIndex + 1] || stepsKeys[stepsKeys.length - 1] 
+      }
 
       if (this.step === STEPS.military) {
         const params = {campus: this.studentData.universityInfo.campus};
@@ -628,27 +343,34 @@ export default {
       }
     },
     prev() {
-      this.step = (this.step - 1) || 1
+      const stepsKeys = Object.keys(STEPS)
+      const stepIndex = stepsKeys.indexOf(this.step)
+      const newIndex = stepIndex >= 1 ? stepIndex - 1 : 0
+      this.step = stepsKeys[newIndex]
     },
 
     addTab() {
+      const {step} = this
+
       if (this.validate()) {
-        this.studentData[this.stepName] = [
-          ...this.studentData[this.stepName],
-          Object.keys(getRelationData(this.relationsLabel[this.stepName]))
+        this.studentData[step] = [
+          ...this.studentData[step],
+          Object.keys(getRelationData(this.relationsLabel[step]))
               .reduce((memo, item) => ({...memo, [item]: ''}), {}),
         ]
-        this.tabsIndex[this.stepName] = `${this.studentData[this.stepName].length - 1}`
+        this.tabsIndex[step] = `${this.studentData[step].length - 1}`
       }
     },
     removeTab(index) {
-      const newArr = [...this.studentData[this.stepName]]
+      const {step} = this
+
+      const newArr = [...this.studentData[step]]
       newArr.splice(+index, 1)
-      this.studentData[this.stepName] = newArr
+      this.studentData[step] = newArr
       this.tabsIndex = {
         ...this.tabsIndex,
-        [this.stepName]: +this.tabsIndex[this.stepName]
-            ? `${+this.tabsIndex[this.stepName] - 1}`
+        [step]: +this.tabsIndex[step]
+            ? `${+this.tabsIndex[step] - 1}`
             : '0',
       }
     },
@@ -690,7 +412,7 @@ export default {
 
         const data = {
           ...this.studentData.about,
-          ...this.studentData.military.military,
+          ...this.studentData.military,
           birth_info: this.studentData.birthInfo,
           contact_info: this.studentData.contactInfo,
           passport: this.studentData.passport,
