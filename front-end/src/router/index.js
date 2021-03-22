@@ -54,7 +54,8 @@ export const constantRoutes = [
     path: "/receipt/",
     name: "Receipt",
     component: () => import("@/views/ReceiptForm/index.vue"),
-    meta: { title: "Форма поступления", icon: "journal" },
+    meta: { title: "Форма поступления" },
+    hidden: true,
   },
 
   {
