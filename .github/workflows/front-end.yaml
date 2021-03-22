@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   main:
-    name: "Build"
+    name: "Build, style"
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -14,6 +14,6 @@ jobs:
       - name: "Install NPM packages"
         run: npm install
       - name: "Check code style"
-        run: npx prettier --check
+        run: npx prettier --check .
       - name: "Build front end container"
         run:  docker-compose build front-end
