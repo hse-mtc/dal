@@ -197,7 +197,7 @@
 
         </el-form>
         <div class="register">Уже есть аккаунт?
-          <router-link style="color: #007bff" :to="{ path: 'login'}" replace>Войти</router-link>
+          <router-link style="color: #007bff" :to="{ name: 'Login' }" replace>Войти</router-link>
         </div>
       </div>
       <el-dialog

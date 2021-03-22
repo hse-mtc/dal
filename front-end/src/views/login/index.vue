@@ -58,7 +58,7 @@
       >
     </el-form>
     <div class="register">Еще нет аккаунта?
-      <router-link style="color: #0060CF" :to="{ path: 'register'}" replace>Зарегистрироваться</router-link>
+      <router-link style="color: #0060CF" :to="{ name: 'SignUp' }" replace>Зарегистрироваться</router-link>
     </div>
   </div>
 </template>
