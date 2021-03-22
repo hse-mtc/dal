@@ -51,9 +51,9 @@ export const constantRoutes = [
   },
   
   {
-    path: "/receipt/",
-    name: "Receipt",
-    component: () => import("@/views/ReceiptForm/index.vue"),
+    path: "/applicant-form/",
+    name: "ApplicantForm",
+    component: () => import("@/views/ApplicantForm/index.vue"),
     meta: { title: "Форма поступления" },
     hidden: true,
   },

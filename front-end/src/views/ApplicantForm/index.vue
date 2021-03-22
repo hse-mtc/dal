@@ -147,12 +147,12 @@ import {
   STEPS_RU,
   getRelationData,
   STEPS,
-} from '@/constants/receiptForm'
+} from '@/constants/applicantForm'
 
 import {getReferenceMilSpecialties} from "@/api/reference-book";
 
 export default {
-  name: 'ReceiptForm',
+  name: 'ApplicantForm',
   components: {DateInput, FileInput, TextInput, SelectInput},
 
   data() {

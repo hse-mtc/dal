@@ -9,7 +9,7 @@ export default {
   name: "App",
   data() {
     return {
-      whiteList: ['SignUp', 'Login', 'Receipt']
+      whiteList: ['SignUp', 'Login', 'ApplicantForm']
     }
   },
   computed: {
