@@ -9,5 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run:  cp tgbot/.env.example tgbot/.env
-      - name: "Build front end Docker container"
+      - name: "Navigate to front end directory"
+        run: cd front-end
+      - name: "Install NPM packages"
+        run: npm install
+      - name: "Check code style"
+        run: npx prettier --check
+      - name: "Build front end container"
         run:  docker-compose build front-end
