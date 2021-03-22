@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd front-end && npm run prettier
+cd front-end && npx prettier --check .
