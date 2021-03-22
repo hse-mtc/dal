@@ -25,7 +25,7 @@ class StudentPermission(BasicPermission):
 class AllowStudentPost(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.method == "POST"
+        return request.method == 'POST'
 
 
 @extend_schema(tags=['students'])

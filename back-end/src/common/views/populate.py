@@ -65,7 +65,7 @@ class PopulateAPIView(GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request: Request) -> Response:
-        # pylint: disable=too-many-locals
+        # pylint: disable=too-many-locals,unused-variable
 
         # ----------------------------------------------------------------------
         # Validate request

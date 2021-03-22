@@ -18,12 +18,10 @@ class Milfaculty(models.Model):
 class Milspecialty(models.Model):
     code = models.CharField(primary_key=True, max_length=20)
     milspecialty = models.CharField(max_length=150)
-    available_for = ArrayField(
-        base_field=models.CharField(
-            max_length=2,
-            choices=UniversityInfo.Campus.choices,
-        ),
-    )
+    available_for = ArrayField(base_field=models.CharField(
+        max_length=2,
+        choices=UniversityInfo.Campus.choices,
+    ))
 
     def __str__(self):
         return str(self.milspecialty)

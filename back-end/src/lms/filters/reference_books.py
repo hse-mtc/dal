@@ -20,6 +20,7 @@ class MilspecialtyFilter(FilterSet):
     )
 
     def filter_by_campus(self, queryset, name, value):
+        # pylint: disable=unused-argument
         return queryset.filter(available_for__contains=[value])
 
     class Meta:
@@ -31,11 +32,11 @@ class MilgroupFilter(FilterSet):
 
     class Meta:
         model = Milgroup
-        fields = '__all__'
+        fields = "__all__"
 
 
 class ProgramFilter(FilterSet):
 
     class Meta:
         model = Program
-        fields = '__all__'
+        fields = "__all__"

@@ -29,8 +29,8 @@ class ProgramSerializer(ModelSerializer):
 
     class Meta:
         model = Program
-        fields = '__all__'
-        extra_kwargs = {'code': {'validators': []}}
+        fields = "__all__"
+        extra_kwargs = {"code": {"validators": []}}
 
 
 class PhotoSerializer(ModelSerializer):
@@ -43,21 +43,21 @@ class PhotoSerializer(ModelSerializer):
 
     class Meta:
         model = Photo
-        exclude = ['id']
+        exclude = ["id"]
 
 
 class PassportSerializer(ModelSerializer):
 
     class Meta:
         model = Passport
-        exclude = ['id']
+        exclude = ["id"]
 
 
 class RecruitmentOfficeSerializer(ModelSerializer):
 
     class Meta:
         model = RecruitmentOffice
-        exclude = ['id']
+        exclude = ["id"]
 
 
 class UniversityInfoSerializer(ModelSerializer):
@@ -75,7 +75,7 @@ class UniversityInfoSerializer(ModelSerializer):
 
     class Meta:
         model = UniversityInfo
-        exclude = ['id']
+        exclude = ["id"]
 
 
 class StudentSerializer(WritableNestedModelSerializer):
@@ -87,10 +87,10 @@ class StudentSerializer(WritableNestedModelSerializer):
 
     class Meta:
         model = Student
-        fields = '__all__'
+        fields = "__all__"
 
     def get_fullname(self, obj):
-        return f'{obj.surname} {obj.name} {obj.patronymic}'
+        return f"{obj.surname} {obj.name} {obj.patronymic}"
 
 
 class StudentMutateSerializer(
@@ -124,8 +124,8 @@ class StudentShortSerializer(ModelSerializer):
     milgroup = MilgroupSerializer(required=False)
 
     def get_fullname(self, obj):
-        return f'{obj.surname} {obj.name} {obj.patronymic}'
+        return f"{obj.surname} {obj.name} {obj.patronymic}"
 
     class Meta:
         model = Student
-        fields = ['id', 'fullname', 'milgroup']
+        fields = ["id", "fullname", "milgroup"]

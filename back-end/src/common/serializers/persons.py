@@ -35,8 +35,8 @@ class PersonMutateSerializer(serializers.ModelSerializer):
 
 
 class RelativeSerializer(
-    WritableNestedModelSerializer,
-    PersonMutateSerializer,
+        WritableNestedModelSerializer,
+        PersonMutateSerializer,
 ):
 
     class Meta:
