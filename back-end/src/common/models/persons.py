@@ -35,18 +35,20 @@ class Person(models.Model):
     name = models.CharField(max_length=32)
     patronymic = models.CharField(max_length=32, blank=True)
 
-    citizenship = models.CharField(max_length=64, null=True)
-    permanent_address = models.CharField(max_length=128, null=True)
+    citizenship = models.CharField(max_length=64, blank=True)
+    permanent_address = models.CharField(max_length=128, blank=True)
 
     birth_info = models.ForeignKey(
         to=BirthInfo,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
     )
     contact_info = models.ForeignKey(
         to=ContactInfo,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
     )
 
     @property
