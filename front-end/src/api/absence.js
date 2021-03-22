@@ -1,10 +1,9 @@
 import request from "@/utils/request";
 import { LMS_URLS, BASE_API_URL } from "@/constants/api";
 
-const {absence: {
-  absence,
-  journal
-}} = LMS_URLS
+const {
+  absence: { absence, journal },
+} = LMS_URLS;
 
 export function getAbsence(params) {
   return request({

@@ -1,17 +1,17 @@
 <template>
   <div style="margin-top: 3rem">
-    <Documents class="documents" :isMyDocuments="true" v-on:openPaperModal="openPaperModal"/>
+    <Documents
+      class="documents"
+      :isMyDocuments="true"
+      v-on:openPaperModal="openPaperModal"
+    />
     <UpsertPaperModal
-        v-if="paperAction"
-        :action="paperAction"
-        :paper="paperToEdit"
-        v-on:closeModal="closeModal"
+      v-if="paperAction"
+      :action="paperAction"
+      :paper="paperToEdit"
+      v-on:closeModal="closeModal"
     />
-    <div
-        v-if="paperAction"
-        class="background"
-        @click="closeModal"
-    />
+    <div v-if="paperAction" class="background" @click="closeModal" />
   </div>
 </template>
 
@@ -34,18 +34,18 @@ export default {
   methods: {
     startScrolling() {
       document
-          .getElementById("main-container")
-          .classList.remove("stop-scrolling");
+        .getElementById("main-container")
+        .classList.remove("stop-scrolling");
     },
     stopScrolling() {
       document.getElementById("main-container").classList.add("stop-scrolling");
     },
     openPaperModal(action, paperToEdit = {}) {
       console.log(
-          "Open Paper Modal: action = ",
-          action,
-          " to edit = ",
-          paperToEdit
+        "Open Paper Modal: action = ",
+        action,
+        " to edit = ",
+        paperToEdit
       );
       this.paperAction = action;
       this.paperToEdit = paperToEdit;
@@ -59,8 +59,8 @@ export default {
       this.addNewCategory = false;
       this.startScrolling();
     },
-  }
-}
+  },
+};
 </script>
 
 <style scoped lang="scss">

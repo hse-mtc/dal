@@ -7,7 +7,7 @@ const localStorageService = LocalStorageService.getService();
 
 // create an axios instance
 const service = axios.create({
-  baseURL: '/',
+  baseURL: "/",
   timeout: 10000, // request timeout
   // withCredentials: true, // send cookies when cross-domain requests
 });

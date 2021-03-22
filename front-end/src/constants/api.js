@@ -1,82 +1,81 @@
-export const BASE_API_URL = 'api/'
+export const BASE_API_URL = "api/";
 
 export const AUTH_URLS = {
-  refresh: 'auth/tokens/refresh/',
-  obtain: 'auth/tokens/obtain/',
-  profile: 'auth/profile/',
-  change_password: 'auth/password/change/',
-}
+  refresh: "auth/tokens/refresh/",
+  obtain: "auth/tokens/obtain/",
+  profile: "auth/profile/",
+  change_password: "auth/password/change/",
+};
 
 export const LMS_URLS = {
   register: {
-    students: 'lms/students/',
-    teachers: 'lms/teachers/'
+    students: "lms/students/",
+    teachers: "lms/teachers/",
   },
   absence: {
-    absence: 'lms/absence/',
-    journal: 'lms/absence-journal/'
+    absence: "lms/absence/",
+    journal: "lms/absence-journal/",
   },
   encouragement: {
-    encouragement: 'lms/encouragement/'
+    encouragement: "lms/encouragement/",
   },
   lessons: {
-    lesson: 'lms/lesson/',
-    journal: 'lms/lesson-journal/'
+    lesson: "lms/lesson/",
+    journal: "lms/lesson-journal/",
   },
   marks: {
-    mark: 'lms/mark/',
-    journal: 'lms/mark-journal/',
+    mark: "lms/mark/",
+    journal: "lms/mark-journal/",
   },
   punishment: {
-    punishment: 'lms/punishment/'
+    punishment: "lms/punishment/",
   },
   reference: {
-    book: 'lms/reference-book/',
-    milgroups: 'lms/milgroups/',
-    ranks: 'lms/ranks/',
-    posts: 'lms/teacher-posts/',
-    milfaculties: 'lms/milfaculties/',
-    milspecialties: 'lms/milspecialties/'
+    book: "lms/reference-book/",
+    milgroups: "lms/milgroups/",
+    ranks: "lms/ranks/",
+    posts: "lms/teacher-posts/",
+    milfaculties: "lms/milfaculties/",
+    milspecialties: "lms/milspecialties/",
   },
   stuff: {
-    student: 'lms/student/',
-    teacher: 'lms/teacher/'
+    student: "lms/student/",
+    teacher: "lms/teacher/",
   },
   students: {
-    students: 'lms/students/'
+    students: "lms/students/",
   },
-}
+};
 
 export const DMS_URLS = {
   authors: {
-    authors: 'dms/authors/'
+    authors: "dms/authors/",
   },
   books: {
-    books: 'dms/books/',
-    favorite: 'dms/favorite-books/'
-    
+    books: "dms/books/",
+    favorite: "dms/favorite-books/",
   },
   papers: {
-    papers: 'dms/papers/'
+    papers: "dms/papers/",
   },
   materials: {
-    class: 'dms/class-materials/'
+    class: "dms/class-materials/",
   },
   tags: {
-    tags: 'dms/tags/'
+    tags: "dms/tags/",
   },
   categories: {
-    categories: 'dms/categories/'
+    categories: "dms/categories/",
   },
   publishers: {
-    publishers: 'dms/publishers/'
+    publishers: "dms/publishers/",
   },
   subjects: {
-    subjects: 'dms/subjects/',
-    sections: 'dms/sections/',
-    topics: 'dms/topics/'
+    subjects: "dms/subjects/",
+    sections: "dms/sections/",
+    topics: "dms/topics/",
   },
   statistics: {
-    statistics: 'dms/statistics/'
-  }
-}
+    statistics: "dms/statistics/",
+  },
+};

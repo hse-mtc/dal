@@ -1,11 +1,11 @@
 <template>
   <div class="change-password-container">
     <el-form
-        ref="changePasswordForm"
-        :model="changePasswordForm"
-        :rules="changePasswordRules"
-        class="change-password-form"
-        label-position="left"
+      ref="changePasswordForm"
+      :model="changePasswordForm"
+      :rules="changePasswordRules"
+      class="change-password-form"
+      label-position="left"
     >
       <div class="title-container">
         <h3 class="title">Смена пароля</h3>
@@ -13,38 +13,38 @@
 
       <el-form-item prop="password">
         <el-input
-            ref="password"
-            v-model="changePasswordForm.password"
-            placeholder="Новый пароль"
-            name="password"
-            :type="passwordType"
-            tabindex="1"
+          ref="password"
+          v-model="changePasswordForm.password"
+          placeholder="Новый пароль"
+          name="password"
+          :type="passwordType"
+          tabindex="1"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon
-              :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
           />
         </span>
       </el-form-item>
 
       <el-form-item prop="passwordAgain">
         <el-input
-            :key="passwordType"
-            ref="passwordAgain"
-            v-model="changePasswordForm.passwordAgain"
-            :type="passwordType"
-            placeholder="Повторите пароль"
-            name="passwordAgain"
-            tabindex="2"
+          :key="passwordType"
+          ref="passwordAgain"
+          v-model="changePasswordForm.passwordAgain"
+          :type="passwordType"
+          placeholder="Повторите пароль"
+          name="passwordAgain"
+          tabindex="2"
         />
       </el-form-item>
 
       <el-button
-          :loading="loading"
-          type="primary"
-          style="width: 100%; margin-bottom: 30px"
-          @click="handleChangePassword"
-      >Подтвердить</el-button
+        :loading="loading"
+        type="primary"
+        style="width: 100%; margin-bottom: 30px"
+        @click="handleChangePassword"
+        >Подтвердить</el-button
       >
     </el-form>
   </div>
@@ -118,21 +118,21 @@ export default {
         if (valid) {
           this.loading = true;
           changePassword({ password: this.changePasswordForm.password })
-              .then(() => {
-                console.log("changed");
-                this.$store
-                    .dispatch("user/resetToken")
-                    .then(() => {
-                      this.$router.push({ path: "/login" });
-                      this.loading = false;
-                    })
-                    .catch(() => {
-                      this.loading = false;
-                    });
-              })
-              .catch(() => {
-                this.loading = false;
-              });
+            .then(() => {
+              console.log("changed");
+              this.$store
+                .dispatch("user/resetToken")
+                .then(() => {
+                  this.$router.push({ path: "/login" });
+                  this.loading = false;
+                })
+                .catch(() => {
+                  this.loading = false;
+                });
+            })
+            .catch(() => {
+              this.loading = false;
+            });
         } else {
           console.log("error submit!");
           return false;

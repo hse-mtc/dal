@@ -77,11 +77,11 @@ const actions = {
   },
 
   // set token
-  setToken({commit}, token) {
+  setToken({ commit }, token) {
     return new Promise((resolve) => {
       commit("SET_TOKEN", token);
       setToken(token);
-      localStorageService.setToken({access: token, refresh: null});
+      localStorageService.setToken({ access: token, refresh: null });
       resolve();
     });
   },

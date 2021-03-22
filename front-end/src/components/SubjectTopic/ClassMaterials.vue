@@ -129,7 +129,7 @@
 
 <script>
 import CustomText from "@/common/CustomText";
-import DownloadFile from '@/common/DownloadFile/index.vue'
+import DownloadFile from "@/common/DownloadFile/index.vue";
 import { deleteMaterial } from "@/api/material";
 import { addTopicFile } from "@/api/material";
 

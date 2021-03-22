@@ -1,7 +1,9 @@
 import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
-const { stuff: { teacher } } = LMS_URLS
+const {
+  stuff: { teacher },
+} = LMS_URLS;
 
 export function getTeacher(params) {
   return request({

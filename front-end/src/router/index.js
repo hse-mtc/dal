@@ -49,7 +49,7 @@ export const constantRoutes = [
     component: () => import("@/views/ChangePassword/index"),
     hidden: true,
   },
-  
+
   {
     path: "/applicant-form/",
     name: "ApplicantForm",
@@ -59,7 +59,7 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: "/",
     redirect: "/my-materials/",
     component: Layout,
     displayInner: true,
@@ -147,7 +147,7 @@ export const constantRoutes = [
         component: () => import("@/views/AdminPanel/index"),
         meta: { title: "Панель администратора", icon: "journal" },
       },
-    ]
+    ],
   },
 
   // 404 page must be placed at the end !!!
@@ -155,13 +155,13 @@ export const constantRoutes = [
   {
     path: "**",
     component: () => import("@/views/404"),
-    hidden: true
+    hidden: true,
   },
 ];
 
 const createRouter = () =>
   new Router({
-    mode: 'history', // require service support
+    mode: "history", // require service support
     scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes,
   });
@@ -174,12 +174,12 @@ router.beforeEach((to, from, next) => {
       path: `${to.path}/`,
       params: to.params,
       query: to.query,
-      replace: true
-    })
+      replace: true,
+    });
   } else {
-    next()
+    next();
   }
-})
+});
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {

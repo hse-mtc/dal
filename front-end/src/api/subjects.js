@@ -1,10 +1,9 @@
 import request from "@/utils/request";
 import { BASE_API_URL, DMS_URLS } from "@/constants/api";
 
-const {subjects: {
-  subjects,
-  sections
-}} = DMS_URLS
+const {
+  subjects: { subjects, sections },
+} = DMS_URLS;
 
 export function getSubjects(params) {
   return request({

@@ -1,7 +1,9 @@
 import request from "@/utils/request";
 import { BASE_API_URL, DMS_URLS } from "@/constants/api";
 
-const {papers: {papers}} = DMS_URLS
+const {
+  papers: { papers },
+} = DMS_URLS;
 
 export function getPapers(params) {
   return request({

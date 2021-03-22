@@ -1,7 +1,9 @@
 import request from "@/utils/request";
 import { BASE_API_URL, DMS_URLS } from "@/constants/api";
 
-const {categories: {categories}} = DMS_URLS
+const {
+  categories: { categories },
+} = DMS_URLS;
 
 export function getPaperCategories(params) {
   return request({

@@ -324,7 +324,7 @@ export default {
           return "warning";
         case "Практическое занятие":
           return "success";
-        case "Зачет": 
+        case "Зачет":
           return "info";
         case "Экзамен":
           return "info";
@@ -338,24 +338,32 @@ export default {
       console.log(this.filter.dateRange);
       var main, other;
       var maxMonths = 6;
-      if (moment().diff(this.filter.dateRange[1]) > moment().diff(this.filter.dateRange[0])) {
+      if (
+        moment().diff(this.filter.dateRange[1]) >
+        moment().diff(this.filter.dateRange[0])
+      ) {
         main = 1;
         other = 0;
-      }
-      else {
+      } else {
         main = 0;
         other = 1;
       }
       console.log(main, other);
-      var diff = moment(this.filter.dateRange[main]).diff(this.filter.dateRange[other], 'months', true);
+      var diff = moment(this.filter.dateRange[main]).diff(
+        this.filter.dateRange[other],
+        "months",
+        true
+      );
       console.log(diff);
       if (Math.abs(diff) > maxMonths) {
-        this.filter.dateRange[other] = moment(this.filter.dateRange[main]).add(Math.sign(diff) * maxMonths, 'months').format("YYYY-MM-DD");
+        this.filter.dateRange[other] = moment(this.filter.dateRange[main])
+          .add(Math.sign(diff) * maxMonths, "months")
+          .format("YYYY-MM-DD");
         console.log(this.filter.dateRange);
       }
     },
     fetchData() {
-      console.log('wat');
+      console.log("wat");
       if (this.filter.mg > 0) {
         this.limitDateRange();
         getLessonJournal({

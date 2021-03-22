@@ -19,10 +19,10 @@ export default {
     },
   },
   mounted() {
-    this.toggleScroll(this.opened)
+    this.toggleScroll(this.opened);
   },
   destroyed() {
-    this.toggleScroll(false)
+    this.toggleScroll(false);
   },
   methods: {
     stopScrolling() {
@@ -42,11 +42,11 @@ export default {
       } else {
         this.startScrolling();
       }
-    }
+    },
   },
   watch: {
     opened(val) {
-      this.toggleScroll(val)
+      this.toggleScroll(val);
     },
   },
 };

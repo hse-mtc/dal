@@ -33,14 +33,13 @@ export default {
       return this.isTextArea ? "textarea" : "text";
     },
     value: {
-      get() { return this.modelValue },
-      set(value) {
-        this.$emit("change", this.onlyChars
-          ? value.replace(/\d/g, '')
-          : value
-        );
+      get() {
+        return this.modelValue;
       },
-    }
+      set(value) {
+        this.$emit("change", this.onlyChars ? value.replace(/\d/g, "") : value);
+      },
+    },
   },
 };
 </script>

@@ -1,7 +1,9 @@
 import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
-const { encouragement: { encouragement } } = LMS_URLS
+const {
+  encouragement: { encouragement },
+} = LMS_URLS;
 
 export function getEncouragement(params) {
   return request({

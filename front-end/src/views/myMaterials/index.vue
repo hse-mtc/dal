@@ -1,13 +1,18 @@
 <template>
   <el-row>
     <el-col :span="20" :offset="2">
-      <PageHeader title="Мои материалы"/>
-      <Statistics/>
+      <PageHeader title="Мои материалы" />
+      <Statistics />
     </el-col>
     <el-col :span="24">
       <div class="tabs">
-        <div class="tab" v-for="item in tabs" :class="{ 'active': activeTab === item.value }" :key="item.value"
-             @click="changeTab(item.value)">
+        <div
+          class="tab"
+          v-for="item in tabs"
+          :class="{ active: activeTab === item.value }"
+          :key="item.value"
+          @click="changeTab(item.value)"
+        >
           {{ item.label }}
         </div>
       </div>
@@ -30,8 +35,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import Statistics from "@/components/MyMaterials/Statistics"
+import { mapGetters } from "vuex";
+import Statistics from "@/components/MyMaterials/Statistics";
 import PageHeader from "@/common/PageHeader";
 import MyDisciplines from "@/components/MyMaterials/MyDisciplines";
 import MyDocuments from "@/components/MyMaterials/MyDocuments";
@@ -44,26 +49,26 @@ export default {
     MyDisciplines,
     MyDocuments,
     Statistics,
-    PageHeader
+    PageHeader,
   },
   computed: {
     ...mapGetters(["name"]),
   },
   data() {
     return {
-      activeTab: 'disciplines',
+      activeTab: "disciplines",
       tabs: [
-        {label: 'Дисциплины', value: 'disciplines'},
-        {label: 'Военно-научные работы', value: 'works'},
-        {label: 'Библиотека', value: 'library'},
-        {label: 'Сохраненные учебники', value: 'books'},
-      ]
+        { label: "Дисциплины", value: "disciplines" },
+        { label: "Военно-научные работы", value: "works" },
+        { label: "Библиотека", value: "library" },
+        { label: "Сохраненные учебники", value: "books" },
+      ],
     };
   },
   methods: {
     changeTab(value) {
-      this.activeTab = value
-    }
+      this.activeTab = value;
+    },
   },
 };
 </script>

@@ -16,10 +16,10 @@ const name = defaultSettings.title || "ВУЦ ВШЭ"; // page title
 const port = process.env.port || process.env.npm_config_port || 9528; // dev port
 const apiHost = process.env.VUE_APP_BACK_END_HOST || "localhost";
 const apiPort = process.env.VUE_APP_BACK_END_PORT || "9090";
-const apiUrl = process.env.VUE_APP_API_BASE_URL
-const mediaUrl = process.env.VUE_APP_MEDIA_BASE_URL
+const apiUrl = process.env.VUE_APP_API_BASE_URL;
+const mediaUrl = process.env.VUE_APP_MEDIA_BASE_URL;
 
-const isDev = process.env.NODE_ENV === 'development'
+const isDev = process.env.NODE_ENV === "development";
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -50,17 +50,17 @@ module.exports = {
         changeOrigin: true, // needed for virtual hosted sites
         ws: true, // proxy websockets
         pathRewrite: {
-          [`^/${apiUrl}`]: ''
-        }
+          [`^/${apiUrl}`]: "",
+        },
       },
       [`/${mediaUrl}`]: {
         target: `http://${apiHost}:${apiPort}/${mediaUrl}`,
         changeOrigin: true, // needed for virtual hosted sites
         ws: true, // proxy websockets
         pathRewrite: {
-          [`^/${mediaUrl}`]: ''
-        }
-      }
+          [`^/${mediaUrl}`]: "",
+        },
+      },
     },
   },
   configureWebpack: {
@@ -104,9 +104,7 @@ module.exports = {
 
     config
       // https://webpack.js.org/configuration/devtool/#development
-      .when(isDev, (config) =>
-        config.devtool("cheap-source-map")
-      );
+      .when(isDev, (config) => config.devtool("cheap-source-map"));
 
     config.when(!isDev, (config) => {
       config

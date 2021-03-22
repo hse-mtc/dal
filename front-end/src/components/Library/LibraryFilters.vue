@@ -74,7 +74,7 @@
 import { SIZES, COLORS } from "@/utils/appConsts";
 import CustomText from "@/common/CustomText";
 import { mapState } from "vuex";
-import {surnameWithInitials} from "@/utils/person";
+import { surnameWithInitials } from "@/utils/person";
 
 export default {
   name: "LibraryFilters",
@@ -83,7 +83,7 @@ export default {
     isMyLibrary: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   created() {
     this.author = this.$route.query.author

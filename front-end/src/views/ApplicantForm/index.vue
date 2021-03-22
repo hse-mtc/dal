@@ -11,7 +11,6 @@
             :title="key === step ? title : ''"
           />
         </el-steps>
-
       </div>
 
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
@@ -22,7 +21,7 @@
           :key="step"
         >
           <el-form-item
-            v-for="({component, title, props = {}}, key) in fields[step]"
+            v-for="({ component, title, props = {} }, key) in fields[step]"
             :key="key"
             :prop="key"
           >
@@ -36,12 +35,18 @@
         </el-form>
 
         <div
-          v-if="step === STEPS.photo && studentData.photo.photo && studentData.photo.photo.length"
+          v-if="
+            step === STEPS.photo &&
+            studentData.photo.photo &&
+            studentData.photo.photo.length
+          "
           :style="{
             flex: 1,
             background: 'no-repeat center / contain',
-            backgroundImage: `url('${getObjUrl(studentData.photo.photo[0].raw)}')`,
-            margin: '10px'
+            backgroundImage: `url('${getObjUrl(
+              studentData.photo.photo[0].raw
+            )}')`,
+            margin: '10px',
           }"
         />
       </template>
@@ -76,7 +81,9 @@
                 :rules="rules[step]"
               >
                 <el-form-item
-                  v-for="({component, title, props = {}}, key) in fields[step]"
+                  v-for="({ component, title, props = {} }, key) in fields[
+                    step
+                  ]"
                   :key="key"
                   :prop="key"
                 >
@@ -98,19 +105,13 @@
       </template>
 
       <div>
-        <el-button v-if="step !== firstStep" @click="prev">
-          Назад
-        </el-button>
+        <el-button v-if="step !== firstStep" @click="prev"> Назад </el-button>
 
-        <el-button
-          v-if="step !== lastStep"
-          @click="next"
-          type="primary"
-        >
+        <el-button v-if="step !== lastStep" @click="next" type="primary">
           Дальше
         </el-button>
         <el-button
-          v-else 
+          v-else
           type="primary"
           v-loading="isSubmiting"
           @click="submit"
@@ -122,18 +123,16 @@
 
     <template v-else>
       <div :class="$style.thanks">
-        <h2>
-          Форма успешно отправлена
-        </h2>
+        <h2>Форма успешно отправлена</h2>
       </div>
     </template>
   </div>
 </template>
 
 <script>
-import {DateInput, FileInput, TextInput, SelectInput} from '@/common/inputs'
-import allowMobileView from '@/utils/allowMobileView'
-import {addStudent} from '@/api/students'
+import { DateInput, FileInput, TextInput, SelectInput } from "@/common/inputs";
+import allowMobileView from "@/utils/allowMobileView";
+import { addStudent } from "@/api/students";
 import {
   ABOUT,
   BIRTH_INFO,
@@ -147,19 +146,23 @@ import {
   STEPS_RU,
   getRelationData,
   STEPS,
-} from '@/constants/applicantForm'
+} from "@/constants/applicantForm";
 
-import {getReferenceMilSpecialties} from "@/api/reference-book";
+import { getReferenceMilSpecialties } from "@/api/reference-book";
 
 export default {
-  name: 'ApplicantForm',
-  components: {DateInput, FileInput, TextInput, SelectInput},
+  name: "ApplicantForm",
+  components: { DateInput, FileInput, TextInput, SelectInput },
 
   data() {
-    const createData = (fields) => Object.keys(fields).reduce((memo, item) => ({
-      ...memo,
-      [item]: ''
-    }), {})
+    const createData = (fields) =>
+      Object.keys(fields).reduce(
+        (memo, item) => ({
+          ...memo,
+          [item]: "",
+        }),
+        {}
+      );
 
     return {
       studentData: {
@@ -169,11 +172,11 @@ export default {
         recruitmentOffice: createData(RECRUITMENT_OFFICE),
         universityInfo: createData(UNIVERSITY_INFO),
         contactInfo: createData(CONTACT_INFO),
-        mother: createData(getRelationData('матери')),
-        father: createData(getRelationData('отца')),
+        mother: createData(getRelationData("матери")),
+        father: createData(getRelationData("отца")),
         brothers: [],
         sisters: [],
-        photo: {photo: null},
+        photo: { photo: null },
         milspecialty: createData(MILSPECIALTY),
       },
       fields: {
@@ -183,10 +186,10 @@ export default {
         recruitmentOffice: RECRUITMENT_OFFICE,
         universityInfo: UNIVERSITY_INFO,
         contactInfo: CONTACT_INFO,
-        mother: getRelationData('матери'),
-        father: getRelationData('отца'),
-        brothers: getRelationData('брата'),
-        sisters: getRelationData('сестры'),
+        mother: getRelationData("матери"),
+        father: getRelationData("отца"),
+        brothers: getRelationData("брата"),
+        sisters: getRelationData("сестры"),
         photo: PHOTO,
         milspecialty: MILSPECIALTY,
       },
@@ -200,97 +203,147 @@ export default {
       STEPS_RU,
 
       tabsIndex: {
-        brothers: '',
-        sisters: '',
+        brothers: "",
+        sisters: "",
       },
 
-      tabsLabel: { brothers: 'Брат', sisters: 'Сестра' },
-      tabsLabelMany: { brothers: 'братьев', sisters: 'сестёр' },
-      tabButtonLabel: { brothers: 'брата', sisters: 'сестру' },
-      relationsLabel: { brothers: 'брата', sisters: 'сёстры' },
-    }
+      tabsLabel: { brothers: "Брат", sisters: "Сестра" },
+      tabsLabelMany: { brothers: "братьев", sisters: "сестёр" },
+      tabButtonLabel: { brothers: "брата", sisters: "сестру" },
+      relationsLabel: { brothers: "брата", sisters: "сёстры" },
+    };
   },
 
   computed: {
-    firstStep() { return Object.keys(STEPS)[0] },
+    firstStep() {
+      return Object.keys(STEPS)[0];
+    },
     lastStep() {
-      const stepsNames = Object.keys(STEPS)
-      return stepsNames[stepsNames.length - 1]
+      const stepsNames = Object.keys(STEPS);
+      return stepsNames[stepsNames.length - 1];
     },
     stepIndex() {
-      return Object.keys(STEPS).indexOf(this.step)
+      return Object.keys(STEPS).indexOf(this.step);
     },
-    campus() { return this.studentData.universityInfo.campus },
+    campus() {
+      return this.studentData.universityInfo.campus;
+    },
     rules() {
-      const required = {required: true, message: "Обязательное поле"};
+      const required = { required: true, message: "Обязательное поле" };
 
       const getValidator = (regExp, msg) => ({
         validator: (rule, value, cb) => {
           if (value && !regExp.test(value)) {
-            cb(new Error(msg))
+            cb(new Error(msg));
           } else {
-            cb()
+            cb();
           }
-        }
-      })
+        },
+      });
 
-      const mailValidator = getValidator(/@.+\..+/, 'Введите корректную почту')
-      const corpMailValidator =  getValidator(/[A-Za-z0-9._%+-]+@edu\.hse\.ru$/, 'Почта должна оканчиваться на @edu.hse.ru')
-      const phoneValidator = getValidator(/^\+?\d{11}$/, 'Введите корректный номер телефона')
-      const makeRequired = (fields) => fields.reduce((memo, item) => ({...memo, [item]: [required]}), {})
+      const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
+      const corpMailValidator = getValidator(
+        /[A-Za-z0-9._%+-]+@edu\.hse\.ru$/,
+        "Почта должна оканчиваться на @edu.hse.ru"
+      );
+      const phoneValidator = getValidator(
+        /^\+?\d{11}$/,
+        "Введите корректный номер телефона"
+      );
+      const makeRequired = (fields) =>
+        fields.reduce((memo, item) => ({ ...memo, [item]: [required] }), {});
 
       const relationFields = {
-        ...makeRequired(['surname', 'name', 'citizenship', 'date', 'country', 'city']),
+        ...makeRequired([
+          "surname",
+          "name",
+          "citizenship",
+          "date",
+          "country",
+          "city",
+        ]),
         personal_email: [mailValidator],
-        personal_phone_number: [phoneValidator]
-      }
+        personal_phone_number: [phoneValidator],
+      };
 
-      const withFaterRules = Object.values(this.studentData.father).filter(Boolean).length
-      const withMotherRules = Object.values(this.studentData.mother).filter(Boolean).length
+      const withFaterRules = Object.values(this.studentData.father).filter(
+        Boolean
+      ).length;
+      const withMotherRules = Object.values(this.studentData.mother).filter(
+        Boolean
+      ).length;
 
       return {
-        about: makeRequired(['surname', 'name', 'citizenship', 'surname_genitive', 'name_genitive']),
-        birthInfo: makeRequired(['date', 'country', 'city']),
+        about: makeRequired([
+          "surname",
+          "name",
+          "citizenship",
+          "surname_genitive",
+          "name_genitive",
+        ]),
+        birthInfo: makeRequired(["date", "country", "city"]),
         passport: {
-          ...makeRequired(['ufms_name', 'issue_date']),
-          series: [required, getValidator(/^\d{4}$/, 'Введите серию паспорта в формате 1234')],
-          code: [required, getValidator(/^\d{6}$/, 'Введите номер паспорта в формате 567890')],
-          ufms_code: [required, getValidator(/^\d{3}-\d{3}$/, 'Введите код подразделения в формате 700-007 ')],
+          ...makeRequired(["ufms_name", "issue_date"]),
+          series: [
+            required,
+            getValidator(/^\d{4}$/, "Введите серию паспорта в формате 1234"),
+          ],
+          code: [
+            required,
+            getValidator(/^\d{6}$/, "Введите номер паспорта в формате 567890"),
+          ],
+          ufms_code: [
+            required,
+            getValidator(
+              /^\d{3}-\d{3}$/,
+              "Введите код подразделения в формате 700-007 "
+            ),
+          ],
         },
-        recruitmentOffice: makeRequired(['city', 'district']),
+        recruitmentOffice: makeRequired(["city", "district"]),
         universityInfo: {
-          ...makeRequired(['campus', 'card_id', 'program', 'group_title']),
-          program: [required, getValidator(/^\d\d.\d\d.\d\d$/, 'Введите код программы в формате 01.02.03')]
+          ...makeRequired(["campus", "card_id", "program", "group_title"]),
+          program: [
+            required,
+            getValidator(
+              /^\d\d.\d\d.\d\d$/,
+              "Введите код программы в формате 01.02.03"
+            ),
+          ],
         },
         contactInfo: {
           personal_email: [mailValidator],
           corporate_email: [required, corpMailValidator],
-          personal_phone_number: [phoneValidator]
+          personal_phone_number: [phoneValidator],
         },
         mother: withMotherRules ? relationFields : {},
         father: withFaterRules ? relationFields : {},
         brothers: relationFields,
         sisters: relationFields,
-        photo: {photo: [required]},
-        milspecialty: {milspecialty: [required]}
-      }
-    }
+        photo: { photo: [required] },
+        milspecialty: { milspecialty: [required] },
+      };
+    },
   },
 
   created() {
-    allowMobileView(true)
+    allowMobileView(true);
   },
 
   destroyed() {
-    allowMobileView(false)
+    allowMobileView(false);
   },
 
   methods: {
     fillMilspecialtyOptions(data) {
-      this.fields.milspecialty.milspecialty.props.options = data.map(item => ({
-        label: item.milspecialty ? `${item.code} - ${item.milspecialty}` : item.code,
-        value: item.code,
-      }))
+      this.fields.milspecialty.milspecialty.props.options = data.map(
+        (item) => ({
+          label: item.milspecialty
+            ? `${item.code} - ${item.milspecialty}`
+            : item.code,
+          value: item.code,
+        })
+      );
     },
 
     convertFamily(data) {
@@ -309,120 +362,124 @@ export default {
           country: data.country,
           city: data.city,
         },
-      }
+      };
     },
 
     validate() {
-      let isValid = true
-      const ref = this.$refs.form
+      let isValid = true;
+      const ref = this.$refs.form;
 
       const formValidate = (valid) => {
         if (!valid && isValid) {
           this.$message({
-            type: 'error',
-            message: 'Заполните все обязательные поля',
-          })
-          isValid = false
+            type: "error",
+            message: "Заполните все обязательные поля",
+          });
+          isValid = false;
         }
-      }
+      };
 
       if (ref) {
         if (this.lodash.isArray(ref)) {
-          ref.forEach(item => item.validate(formValidate))
+          ref.forEach((item) => item.validate(formValidate));
         } else {
-          ref.validate(formValidate)
+          ref.validate(formValidate);
         }
       }
 
-      return isValid
+      return isValid;
     },
 
     next() {
-      const {studentData, step} = this
-      const data = studentData[step]
+      const { studentData, step } = this;
+      const data = studentData[step];
 
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         if (this.lodash.isString(data[key])) {
-          data[key] = data[key].trim()
+          data[key] = data[key].trim();
         }
-      })
+      });
 
       if (this.validate()) {
-        const stepsKeys = Object.keys(STEPS)
-        const stepIndex = stepsKeys.indexOf(step)
-        this.step = stepsKeys[stepIndex + 1] || stepsKeys[stepsKeys.length - 1] 
+        const stepsKeys = Object.keys(STEPS);
+        const stepIndex = stepsKeys.indexOf(step);
+        this.step = stepsKeys[stepIndex + 1] || stepsKeys[stepsKeys.length - 1];
       }
     },
 
     prev() {
-      const stepsKeys = Object.keys(STEPS)
-      const stepIndex = stepsKeys.indexOf(this.step)
-      const newIndex = stepIndex >= 1 ? stepIndex - 1 : 0
-      this.step = stepsKeys[newIndex]
+      const stepsKeys = Object.keys(STEPS);
+      const stepIndex = stepsKeys.indexOf(this.step);
+      const newIndex = stepIndex >= 1 ? stepIndex - 1 : 0;
+      this.step = stepsKeys[newIndex];
     },
 
     addTab() {
-      const {step} = this
+      const { step } = this;
 
       if (this.validate()) {
         this.studentData[step] = [
           ...this.studentData[step],
-          Object.keys(getRelationData(this.relationsLabel[step]))
-              .reduce((memo, item) => ({...memo, [item]: ''}), {}),
-        ]
-        this.tabsIndex[step] = `${this.studentData[step].length - 1}`
+          Object.keys(getRelationData(this.relationsLabel[step])).reduce(
+            (memo, item) => ({ ...memo, [item]: "" }),
+            {}
+          ),
+        ];
+        this.tabsIndex[step] = `${this.studentData[step].length - 1}`;
       }
     },
 
     removeTab(index) {
-      const {step} = this
+      const { step } = this;
 
-      const newArr = [...this.studentData[step]]
-      newArr.splice(+index, 1)
-      this.studentData[step] = newArr
+      const newArr = [...this.studentData[step]];
+      newArr.splice(+index, 1);
+      this.studentData[step] = newArr;
       this.tabsIndex = {
         ...this.tabsIndex,
-        [step]: +this.tabsIndex[step]
-            ? `${+this.tabsIndex[step] - 1}`
-            : '0',
-      }
+        [step]: +this.tabsIndex[step] ? `${+this.tabsIndex[step] - 1}` : "0",
+      };
     },
 
     getObjUrl(file) {
-      return URL.createObjectURL(file)
+      return URL.createObjectURL(file);
     },
 
     submit() {
       if (this.validate()) {
-        const family = []
+        const family = [];
 
         if (Object.values(this.studentData.father).filter(Boolean).length) {
           family.push({
             ...this.convertFamily(this.studentData.father),
-            type: 'FA',
-          })
+            type: "FA",
+          });
         }
 
         if (Object.values(this.studentData.mother).filter(Boolean).length) {
           family.push({
             ...this.convertFamily(this.studentData.mother),
-            type: 'MO',
-          })
+            type: "MO",
+          });
         }
 
-        this.studentData.brothers.forEach(brother => family.push({
-          ...this.convertFamily(brother),
-          type: 'BR',
-        }))
+        this.studentData.brothers.forEach((brother) =>
+          family.push({
+            ...this.convertFamily(brother),
+            type: "BR",
+          })
+        );
 
-        this.studentData.sisters.forEach(sister => family.push({
-          ...this.convertFamily(sister),
-          type: 'SI',
-        }))
+        this.studentData.sisters.forEach((sister) =>
+          family.push({
+            ...this.convertFamily(sister),
+            type: "SI",
+          })
+        );
 
-        const reader = new FileReader()
+        const reader = new FileReader();
 
-        console.log(this.studentData.photo.photo)
+        console.log(this.studentData.photo.photo);
 
         const data = {
           ...this.studentData.about,
@@ -432,39 +489,39 @@ export default {
           passport: this.studentData.passport,
           recruitment_office: this.studentData.recruitmentOffice,
           university_info: this.studentData.universityInfo,
-          family
-        }
+          family,
+        };
 
-        this.isSubmiting = true
+        this.isSubmiting = true;
 
         reader.onload = async () => {
-          data.image = reader.result
+          data.image = reader.result;
 
           try {
-            await addStudent(data)
-            this.formSubmited = true
+            await addStudent(data);
+            this.formSubmited = true;
           } catch (e) {
             this.$message({
-              type: 'error',
-              message: 'Не удалось отправить форму'
-            })
+              type: "error",
+              message: "Не удалось отправить форму",
+            });
           }
 
-          this.isSubmiting = false
-        }
+          this.isSubmiting = false;
+        };
 
-        reader.readAsDataURL(this.studentData.photo.photo[0].raw)
+        reader.readAsDataURL(this.studentData.photo.photo[0].raw);
       }
-    }
+    },
   },
 
   watch: {
     async campus(nextValue) {
       const { data } = await getReferenceMilSpecialties(nextValue);
-      this.fillMilspecialtyOptions(data)
-    }
-  }
-}
+      this.fillMilspecialtyOptions(data);
+    },
+  },
+};
 </script>
 
 <style lang="scss" module>

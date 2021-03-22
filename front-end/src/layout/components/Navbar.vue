@@ -13,7 +13,7 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper m-0" style="font-size: 19px">
           <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-          {{ surnameWithInitials({surname, name, patronymic}) }}
+          {{ surnameWithInitials({ surname, name, patronymic }) }}
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -34,7 +34,7 @@ import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import LocalStorageService from "@/utils/LocalStorageService";
 import Hamburger from "@/components/Hamburger";
-import {surnameWithInitials} from "@/utils/person";
+import { surnameWithInitials } from "@/utils/person";
 
 export default {
   components: {

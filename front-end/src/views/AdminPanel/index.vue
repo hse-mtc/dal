@@ -19,13 +19,11 @@ export default {
   components: {},
   data() {
     return {
-      activeTab: 'approve'
+      activeTab: "approve",
     };
   },
   methods: {
-    handleClick() {
-
-    }
+    handleClick() {},
   },
 };
 </script>

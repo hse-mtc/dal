@@ -46,12 +46,12 @@
     </template>
     <template v-else>
       <sidebar-item
-          v-for="child in item.children"
-          :key="child.path"
-          :item="child"
-          :base-path="resolvePath(child.path)"
-          class="nest-menu"
-        />
+        v-for="child in item.children"
+        :key="child.path"
+        :item="child"
+        :base-path="resolvePath(child.path)"
+        class="nest-menu"
+      />
     </template>
   </div>
 </template>

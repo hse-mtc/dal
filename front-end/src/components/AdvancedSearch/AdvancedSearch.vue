@@ -72,7 +72,7 @@ import { getAuthors } from "@/api/authors";
 import { getPublishPlaces } from "@/api/published_places";
 import moment from "moment";
 import { mapActions } from "vuex";
-import {surnameWithInitials} from "@/utils/person";
+import { surnameWithInitials } from "@/utils/person";
 
 export default {
   name: "",

@@ -32,13 +32,18 @@
               v-for="authorId in book.authors"
               :key="authorId"
             >
-              {{ surnameWithInitials(authors.filter((a) => a.id === authorId)[0]) }}
+              {{
+                surnameWithInitials(authors.filter((a) => a.id === authorId)[0])
+              }}
             </CustomText>
             <div class="additional-info">
               <CustomText
                 :custom-style="{ fontWeight: 'normal' }"
-                variant="header">
-                {{ publishers.filter((p) => p.id === book.publishers[0])[0].name }}
+                variant="header"
+              >
+                {{
+                  publishers.filter((p) => p.id === book.publishers[0])[0].name
+                }}
               </CustomText>
               <template v-if="book.page_count">
                 <img src="@/assets/icons/dot.svg" alt="" />
@@ -75,7 +80,11 @@
               >Предметы</CustomText
             >
             <div class="subjects">
-              <div class="subject" v-for="subjectId in book.subjects" :key="subjectId">
+              <div
+                class="subject"
+                v-for="subjectId in book.subjects"
+                :key="subjectId"
+              >
                 <CustomText variant="label-1" :color="COLORS.gray_4">
                   {{ getSubjectTitle(subjectId) }}
                 </CustomText>
@@ -90,11 +99,11 @@
 
 <script>
 import CustomText from "@/common/CustomText";
-import DownloadFile from '@/common/DownloadFile/index.vue'
+import DownloadFile from "@/common/DownloadFile/index.vue";
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook } from "@/api/books";
-import {mapState} from "vuex";
-import {surnameWithInitials} from "@/utils/person";
+import { mapState } from "vuex";
+import { surnameWithInitials } from "@/utils/person";
 
 export default {
   name: "Book",
@@ -104,7 +113,7 @@ export default {
       authors: (state) => state.documents.authors,
       subjects: (state) => state.subjects.subjects,
       publishers: (state) => state.documents.publishers,
-    })
+    }),
   },
   created() {
     this.fetchData();
@@ -120,8 +129,8 @@ export default {
   methods: {
     surnameWithInitials,
     getSubjectTitle(subjectId) {
-      const subject = this.subjects.find(subject => subject.id === subjectId)
-      return subject.title
+      const subject = this.subjects.find((subject) => subject.id === subjectId);
+      return subject.title;
     },
     fetchData() {
       this.loading = true;
@@ -130,7 +139,7 @@ export default {
         this.book = res.data;
         this.loading = false;
       });
-    }
+    },
   },
 };
 </script>

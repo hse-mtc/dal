@@ -20,21 +20,21 @@ export function changePassword(data) {
   return request({
     url: BASE_API_URL + AUTH_URLS.change_password,
     method: "post",
-    data
-  })
+    data,
+  });
 }
 
 export function registerStudent(data) {
   return request({
     url: BASE_API_URL + LMS_URLS.register.students,
     method: "post",
-    data
-  })
+    data,
+  });
 }
 export function registerTeacher(data) {
   return request({
     url: BASE_API_URL + LMS_URLS.register.teachers,
     method: "post",
-    data
-  })
+    data,
+  });
 }

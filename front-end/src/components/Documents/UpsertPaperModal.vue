@@ -124,7 +124,7 @@ import TagsInput from "@/components/Tags/TagsInput";
 import { patchPaper, postPaper } from "@/api/papers";
 
 import PaperForm from "@/utils/PaperForm";
-import {surnameWithInitials} from "@/utils/person";
+import { surnameWithInitials } from "@/utils/person";
 
 export default {
   name: "UpsertPaperModal",
@@ -184,11 +184,11 @@ export default {
 
   methods: {
     getAuthor(id) {
-      const author = this.authors.find(author => author.id === id)
+      const author = this.authors.find((author) => author.id === id);
       return surnameWithInitials(author);
     },
     getPublisher(id) {
-      return this.publishers.find(publisher => publisher.id === id).name
+      return this.publishers.find((publisher) => publisher.id === id).name;
     },
 
     async submitForm(name) {

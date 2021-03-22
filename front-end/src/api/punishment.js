@@ -1,7 +1,9 @@
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 import request from "@/utils/request";
 
-const { punishment: { punishment } } = LMS_URLS
+const {
+  punishment: { punishment },
+} = LMS_URLS;
 
 export function getPunishment(params) {
   return request({

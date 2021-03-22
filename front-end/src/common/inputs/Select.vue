@@ -23,7 +23,7 @@
 
 <script>
 import mixin from "./inputsMixin";
-import _isArray from 'lodash/isArray'
+import _isArray from "lodash/isArray";
 
 export default {
   mixins: [mixin],
@@ -35,39 +35,39 @@ export default {
     value: {
       get() {
         if (_isArray(this.modelValue)) {
-          return this.modelValue.map((item) => JSON.stringify(item))
+          return this.modelValue.map((item) => JSON.stringify(item));
         }
 
-        if (!this.modelValue && this.modelValue !== 0) return ''
+        if (!this.modelValue && this.modelValue !== 0) return "";
 
-        return JSON.stringify(this.modelValue)
+        return JSON.stringify(this.modelValue);
       },
       set(value) {
-        let newValue
+        let newValue;
         if (_isArray(value)) {
-          newValue = value.map((item) => JSON.parse(item))
+          newValue = value.map((item) => JSON.parse(item));
         } else {
-          newValue = JSON.parse(value)
+          newValue = JSON.parse(value);
         }
 
-        console.log(`newValue`, newValue)
-        this.$emit('change', newValue)
-      }
+        console.log(`newValue`, newValue);
+        this.$emit("change", newValue);
+      },
     },
     selectOptions() {
-      return this.options.map((option) => this.optionProps(option))
-    }
+      return this.options.map((option) => this.optionProps(option));
+    },
   },
   methods: {
     isObject(item) {
       return !this.lodash.isString(item) && !this.lodash.isNumber(item);
     },
     optionProps(item) {
-      const value = JSON.stringify(this.isObject(item) ? item.value : item)
-      const label = `${this.isObject(item) ? item.label : item}`
+      const value = JSON.stringify(this.isObject(item) ? item.value : item);
+      const label = `${this.isObject(item) ? item.label : item}`;
 
-      return { value, label }
-    }
+      return { value, label };
+    },
   },
 };
 </script>

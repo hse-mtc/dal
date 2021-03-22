@@ -57,8 +57,11 @@
         >Вход</el-button
       >
     </el-form>
-    <div class="register">Еще нет аккаунта?
-      <router-link style="color: #0060CF" :to="{ name: 'SignUp' }" replace>Зарегистрироваться</router-link>
+    <div class="register">
+      Еще нет аккаунта?
+      <router-link style="color: #0060cf" :to="{ name: 'SignUp' }" replace
+        >Зарегистрироваться</router-link
+      >
     </div>
   </div>
 </template>
@@ -89,9 +92,7 @@ export default {
         password: "",
       },
       loginRules: {
-        email: [
-          { required: true, trigger: "blur", validator: validateEmail },
-        ],
+        email: [{ required: true, trigger: "blur", validator: validateEmail }],
         password: [
           { required: true, trigger: "blur", validator: validatePassword },
         ],
@@ -259,11 +260,9 @@ $dark_gray: #889aa4;
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
-  input:-webkit-autofill:active
-  {
+  input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px #293543 inset !important;
     -webkit-text-fill-color: white !important;
   }
 }
-
 </style>

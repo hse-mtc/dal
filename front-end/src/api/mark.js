@@ -1,10 +1,9 @@
 import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
-const { marks: {
-  mark,
-  journal
-} } = LMS_URLS
+const {
+  marks: { mark, journal },
+} = LMS_URLS;
 
 export function getMark(params) {
   return request({

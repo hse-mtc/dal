@@ -1,66 +1,82 @@
 <template>
   <div class="wrapper">
     <div
-        :id="`loader__${data.id}`"
-        class="file-img"
-        @click="$router.push(`/library/book/${data.id}`)"
+      :id="`loader__${data.id}`"
+      class="file-img"
+      @click="$router.push(`/library/book/${data.id}`)"
     >
-      <div class="lds-dual-ring"/>
+      <div class="lds-dual-ring" />
       <img
-          class="file-image"
-          :src="
+        class="file-image"
+        :src="
           data.cover
             ? data.cover.image
             : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'
         "
-          alt=""
+        alt=""
       />
     </div>
     <div class="content">
-
       <div class="header">
         <div @click="$router.push(`/library/book/${data.id}`)">
-          <CustomText style="cursor: pointer" variant="header">{{
-              data.title
-            }}
+          <CustomText style="cursor: pointer" variant="header"
+            >{{ data.title }}
           </CustomText>
         </div>
-        <img v-if="data.favorite" @click="unsaveBook" src="@/assets/icons/saved.svg" alt=""/>
-        <img v-else @click="saveBook" src="@/assets/icons/not-saved.svg" alt=""/>
+        <img
+          v-if="data.favorite"
+          @click="unsaveBook"
+          src="@/assets/icons/saved.svg"
+          alt=""
+        />
+        <img
+          v-else
+          @click="saveBook"
+          src="@/assets/icons/not-saved.svg"
+          alt=""
+        />
       </div>
-      <div @click="$router.push(`/library/book/${data.id}`)" style="width: 100%">
+      <div
+        @click="$router.push(`/library/book/${data.id}`)"
+        style="width: 100%"
+      >
         <CustomText
-            style="cursor: pointer"
-            variant="sub-header"
-            :color="COLORS.gray_2"
-            :mt="SIZES.s"
-            :mb="SIZES.m"
+          style="cursor: pointer"
+          variant="sub-header"
+          :color="COLORS.gray_2"
+          :mt="SIZES.s"
+          :mb="SIZES.m"
         >
           <template v-for="item in data.authors">
-            {{getAuthor(item)}},
+            {{ getAuthor(item) }},
           </template>
           {{ data.publication_year }} г.
         </CustomText>
         <CustomText
-            style="cursor: pointer"
-            variant="paragraph"
-            :color="COLORS.black_2"
-            class="annotation"
+          style="cursor: pointer"
+          variant="paragraph"
+          :color="COLORS.black_2"
+          class="annotation"
         >
           {{ data.annotation }}
         </CustomText>
       </div>
       <div class="buttons">
-        <DownloadFile
-            :url="data.file.content"
-            :fileName="data.file.name"
-        >
-          <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">
+        <DownloadFile :url="data.file.content" :fileName="data.file.name">
+          <CustomText
+            :mt="SIZES.m"
+            :color="COLORS.darkBlue"
+            variant="paragraph"
+          >
             Скачать
           </CustomText>
         </DownloadFile>
         <div class="button" @click="onEdit">
-          <CustomText :mt="SIZES.m" :color="COLORS.darkBlue" variant="paragraph">
+          <CustomText
+            :mt="SIZES.m"
+            :color="COLORS.darkBlue"
+            variant="paragraph"
+          >
             Редактировать
           </CustomText>
         </div>
@@ -71,21 +87,21 @@
 
 <script>
 import CustomText from "@/common/CustomText";
-import DownloadFile from '@/common/DownloadFile/index.vue'
-import {COLORS, SIZES} from "@/utils/appConsts";
-import {saveFavBook, unsaveFavBook} from "@/api/books";
-import {mapState} from "vuex";
-import {surnameWithInitials} from "@/utils/person";
+import DownloadFile from "@/common/DownloadFile/index.vue";
+import { COLORS, SIZES } from "@/utils/appConsts";
+import { saveFavBook, unsaveFavBook } from "@/api/books";
+import { mapState } from "vuex";
+import { surnameWithInitials } from "@/utils/person";
 
 export default {
   name: "Book",
-  components: {CustomText, DownloadFile},
+  components: { CustomText, DownloadFile },
   props: {
     data: {
       type: Object,
-      required: true
+      required: true,
     },
-    onEdit: {type: Function}
+    onEdit: { type: Function },
   },
   data() {
     return {
@@ -101,21 +117,21 @@ export default {
   },
   methods: {
     getAuthor(id) {
-      const author = this.authors.find(author => author.id === id)
+      const author = this.authors.find((author) => author.id === id);
       return surnameWithInitials(author);
     },
     saveBook() {
-      saveFavBook({book: this.data.id}).then(() => {
-        this.data.favorite = true
-      })
+      saveFavBook({ book: this.data.id }).then(() => {
+        this.data.favorite = true;
+      });
     },
     unsaveBook() {
       unsaveFavBook(this.data.id).then(() => {
-        this.data.favorite = false
+        this.data.favorite = false;
         this.$emit("deleteFavBook", this.data.id);
-      })
-    }
-  }
+      });
+    },
+  },
 };
 </script>
 

@@ -115,46 +115,45 @@
                     </el-form>
                     <el-button-group>
                       <el-button
-                          size="mini"
-                          icon="el-icon-plus"
-                          type="primary"
-                          @click="onCreate(scope.row, d)"
-                      >Пересдача</el-button
+                        size="mini"
+                        icon="el-icon-plus"
+                        type="primary"
+                        @click="onCreate(scope.row, d)"
+                        >Пересдача</el-button
                       >
                       <el-button
-                          size="mini"
-                          icon="el-icon-edit"
-                          type="info"
-                          @click="
-                              onEdit(
-                                scope.row.marks.find((x) => x.lesson.date == d),
-                                scope.row
-                              )
-                            "
-                      >Редактировать</el-button
+                        size="mini"
+                        icon="el-icon-edit"
+                        type="info"
+                        @click="
+                          onEdit(
+                            scope.row.marks.find((x) => x.lesson.date == d),
+                            scope.row
+                          )
+                        "
+                        >Редактировать</el-button
                       >
                       <el-button
-                          size="mini"
-                          icon="el-icon-delete"
-                          type="danger"
-                          @click="
-                              handleDelete(
-                                scope.row.marks.find((x) => x.lesson.date == d)
-                                  .id
-                              )
-                            "
-                      >Удалить</el-button
+                        size="mini"
+                        icon="el-icon-delete"
+                        type="danger"
+                        @click="
+                          handleDelete(
+                            scope.row.marks.find((x) => x.lesson.date == d).id
+                          )
+                        "
+                        >Удалить</el-button
                       >
                     </el-button-group>
                     <el-tag
-                        v-for="m in scope.row.marks.find(
+                      v-for="m in scope.row.marks.find(
                         (x) => x.lesson.date == d
                       ).mark"
-                        :key="m"
-                        slot="reference"
-                        :type="tagByMark(m)"
-                        effect="dark"
-                        disable-transitions
+                      :key="m"
+                      slot="reference"
+                      :type="tagByMark(m)"
+                      effect="dark"
+                      disable-transitions
                     >
                       {{ m }}
                     </el-tag>
