@@ -9,7 +9,6 @@ User = get_user_model()
 Data = namedtuple(
     "Data",
     [
-        "username",
         "email",
         "password",
         "is_staff",
@@ -22,11 +21,10 @@ Data = namedtuple(
 
 
 def create_user(data: Data) -> (User, Profile):
-    query = User.objects.filter(username=data.username)
+    query = User.objects.filter(email=data.email)
 
     if not query.exists():
         User.objects.create_user(
-            username=data.username,
             email=data.email,
             password=data.password,
             is_staff=data.is_staff,
@@ -48,7 +46,6 @@ def create_user(data: Data) -> (User, Profile):
 def create_users() -> list[(User, Profile)]:
     users = [
         Data(
-            username="vspelyak",
             email="vspelyak@mail.com",
             password="qwerty",
             is_staff=True,
@@ -58,7 +55,6 @@ def create_users() -> list[(User, Profile)]:
             patronymic="Степанович",
         ),
         Data(
-            username="test",
             email="test@mail.com",
             password="qwerty",
             is_staff=True,
@@ -68,7 +64,6 @@ def create_users() -> list[(User, Profile)]:
             patronymic="Отчество",
         ),
         Data(
-            username="student",
             email="student@mail.com",
             password="qwerty",
             is_staff=True,
@@ -78,7 +73,6 @@ def create_users() -> list[(User, Profile)]:
             patronymic="Студентов",
         ),
         Data(
-            username="teacher",
             email="teacher@mail.com",
             password="qwerty",
             is_staff=True,
@@ -88,7 +82,6 @@ def create_users() -> list[(User, Profile)]:
             patronymic="Преподович",
         ),
         Data(
-            username="milfaculty_head",
             email="milfaculty_head@mail.com",
             password="qwerty",
             is_staff=True,
