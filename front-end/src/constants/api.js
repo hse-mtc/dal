@@ -8,6 +8,10 @@ export const AUTH_URLS = {
 }
 
 export const LMS_URLS = {
+  register: {
+    students: 'lms/students/',
+    teachers: 'lms/teachers/'
+  },
   absence: {
     absence: 'lms/absence/',
     journal: 'lms/absence-journal/'
@@ -28,6 +32,10 @@ export const LMS_URLS = {
   },
   reference: {
     book: 'lms/reference-book/',
+    milgroups: 'lms/milgroups/',
+    ranks: 'lms/ranks/',
+    posts: 'lms/teacher-posts/',
+    milfaculties: 'lms/milfaculties/',
     milspecialties: 'lms/milspecialties/'
   },
   stuff: {

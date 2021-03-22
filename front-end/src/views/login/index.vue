@@ -12,15 +12,15 @@
         <h3 class="title">Форма авторизации</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="email">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Логин"
-          name="username"
+          ref="email"
+          v-model="loginForm.email"
+          placeholder="name@mail.com"
+          name="email"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -56,24 +56,22 @@
         @click.native.prevent="handleLogin"
         >Вход</el-button
       >
-
-      <!--      <div class="tips">-->
-      <!--        <span style="margin-right:20px;">username: vspelyak</span>-->
-      <!--        <span> password: qwerty</span>-->
-      <!--      </div>-->
     </el-form>
+    <div class="register">Еще нет аккаунта?
+      <router-link style="color: #0060CF" :to="{ path: 'register'}" replace>Зарегистрироваться</router-link>
+    </div>
   </div>
 </template>
 
 <script>
-import { validUsername } from "@/utils/validate";
+import { validEmail } from "@/utils/validate";
 
 export default {
   name: "Login",
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error("Please enter the correct user name"));
+    const validateEmail = (rule, value, callback) => {
+      if (!validEmail(value)) {
+        callback(new Error("Please enter the correct email"));
       } else {
         callback();
       }
@@ -87,12 +85,12 @@ export default {
     };
     return {
       loginForm: {
-        username: "",
+        email: "",
         password: "",
       },
       loginRules: {
-        username: [
-          { required: true, trigger: "blur", validator: validateUsername },
+        email: [
+          { required: true, trigger: "blur", validator: validateEmail },
         ],
         password: [
           { required: true, trigger: "blur", validator: validatePassword },
@@ -145,13 +143,11 @@ export default {
 };
 </script>
 
-<style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
-
-$bg: #283443;
+<style lang="scss" scoped>
 $light_gray: #fff;
 $cursor: #fff;
+$bg: #2d3a4b;
+$dark_gray: #889aa4;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -167,7 +163,7 @@ $cursor: #fff;
     width: 85%;
 
     input {
-      background: transparent;
+      background: transparent !important;
       border: 0px;
       -webkit-appearance: none;
       border-radius: 0px;
@@ -178,7 +174,7 @@ $cursor: #fff;
 
       &:-webkit-autofill {
         box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
+        -webkit-text-fill-color: #293543 !important;
       }
     }
   }
@@ -190,12 +186,6 @@ $cursor: #fff;
     color: #454545;
   }
 }
-</style>
-
-<style lang="scss" scoped>
-$bg: #2d3a4b;
-$dark_gray: #889aa4;
-$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
@@ -254,4 +244,26 @@ $light_gray: #eee;
     user-select: none;
   }
 }
+
+.register {
+  color: $light_gray;
+  text-align: center;
+  margin-bottom: 40px;
+}
+/deep/.el-input__inner {
+  color: white;
+  border: none;
+  background-color: transparent !important;
+}
+/deep/.el-input {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active
+  {
+    -webkit-box-shadow: 0 0 0 30px #293543 inset !important;
+    -webkit-text-fill-color: white !important;
+  }
+}
+
 </style>
