@@ -232,6 +232,10 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 8  # 80MiB
 
 CREATE_PASSWORD_TOKEN_LIFETIME = timedelta(days=5)
 
+# Custom user model
+
+AUTH_USER_MODEL = "dal_auth.User"
+
 # Swagger settings for drf-spectacular
 
 SPECTACULAR_SETTINGS = {
