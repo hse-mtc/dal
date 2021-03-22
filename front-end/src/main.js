@@ -7,11 +7,13 @@ Vue.component("multiselect", Multiselect);
 import VueLodash from "vue-lodash";
 import lodash from "lodash";
 // name is optional
-Vue.use(VueLodash, { name: "custom", lodash: lodash });
+import VueMeta from 'vue-meta'
+Vue.use(VueMeta)
+Vue.use(VueLodash, {name: "custom", lodash: lodash});
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import locale from "element-ui/lib/locale/lang/ru-RU"; // lang i18n
-
+import 'element-ui/lib/theme-chalk/display.css';
 import "@/styles/index.scss"; // global css
 
 import App from "./App";
