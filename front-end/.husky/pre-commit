@@ -1,4 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-cd front-end && npx prettier --check .
+FRONT_END_CHANGED_FILES=$(git diff --name-only front-end)
+
+if [ -n "${FRONT_END_CHANGED_FILES}" ]; then
+  cd front-end && npx prettier --check .
+fi
