@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run:  cp tgbot/.env.example tgbot/.env
+      - run:  cp watchdoc/.env.example watchdoc/.env
       - name: "Install NPM packages"
         run: cd front-end && npm install
       - name: "Check code style"
