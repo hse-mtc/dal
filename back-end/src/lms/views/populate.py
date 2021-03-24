@@ -658,7 +658,7 @@ def create_milspecialties():
     }, {
         'code': '100182',
         'milspecialty': 'Стрелковые, командир стрелкового отделения',
-        'available_for': UniversityInfo.Campus.values,
+        'available_for': [UniversityInfo.Campus.MOSCOW.value],
     }, {
         'code': '106646-543',
         'milspecialty': 'Разведывательные, разведчик-оператор СБР, ПСНР',
