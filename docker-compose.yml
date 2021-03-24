@@ -16,6 +16,18 @@ services:
     # depends_on:
     #   - back-end
 
+  watchdoc:
+    build:
+      context: .
+      dockerfile: watchdoc/Dockerfile
+    env_file:
+      - .env
+      - watchdoc/.env
+    ports:
+      - $WATCHDOC_PORT:$WATCHDOC_PORT
+    volumes:
+      - ./watchdoc:/watchdoc
+
   back-end:
     container_name: back-end
     build:
