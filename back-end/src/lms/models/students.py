@@ -26,8 +26,9 @@ class Passport(models.Model):
 
 
 class RecruitmentOffice(models.Model):
-    city = models.CharField(max_length=32)
-    district = models.CharField(max_length=32)
+    title = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=127, blank=True)
+    district = models.CharField(max_length=127, blank=True)
 
     class Meta:
         verbose_name = 'Recruitment Office'
