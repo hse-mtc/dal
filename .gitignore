@@ -28,3 +28,12 @@ front-end/node_modules
 
 ## Files
 tgbot/.env
+
+### WatchDoc ###
+## Directories
+watchdoc/generated/*
+!watchdoc/generated/.gitkeep
+
+## Files
+watchdoc/service-account.json
+watchdoc/.env
