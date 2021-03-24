@@ -260,8 +260,14 @@ def create_passports() -> dict[str, Passport]:
 
 def create_recruitments_offices() -> dict[str, RecruitmentOffice]:
     values = [{
+        'title': 'городов Одинцово, Звенигород, Краснознаменск и '
+                 'Одинцовского городского округа',
+        'city': 'Одинцово',
+        'district': 'Одинцовский',
+    }, {
+        'title': 'Московский военкомат',
         'city': 'Москва',
-        'district': 'Центрального',
+        'district': 'ЦАО',
     }]
 
     offices = {}
