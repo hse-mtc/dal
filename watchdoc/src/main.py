@@ -22,6 +22,7 @@ wds = WatchDocService()
 def post_applicant(applicant: Applicant, background_tasks: BackgroundTasks):
     def closure():
         wds.generate_documents(applicant)
+        wds.upload_documents(applicant)
 
     background_tasks.add_task(closure)
     return "Templates are being generated, wait for the link"
