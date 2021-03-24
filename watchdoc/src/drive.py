@@ -1,5 +1,7 @@
-from googleapiclient.discovery import build
 from google.oauth2 import service_account
+
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 
 from config import (
     CREDENTIALS_PATH,
@@ -7,8 +9,10 @@ from config import (
     ADMIN_EMAIL,
 )
 
-FOLDER_MIME_TYPE: str = "application/vnd.google-apps.folder"
 DEFAULT_FILE_FIELDS: str = "id, name, webViewLink"
+
+FOLDER_MIME_TYPE: str = "application/vnd.google-apps.folder"
+DOCX_MIME_TYPE: str = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
 
 class DriveService:
@@ -76,6 +80,15 @@ class DriveService:
 
     def create_file(self, **kwargs):
         return self._service.files().create(**kwargs).execute()
+
+    def upload_docx(self, body, path, **kwargs):
+        media = MediaFileUpload(path, mimetype=DOCX_MIME_TYPE)
+        return self._service.files().create(
+            body=body,
+            media_body=media,
+            fields=DEFAULT_FILE_FIELDS,
+            **kwargs,
+        ).execute()
 
     def delete_file(self, file_id):
         return self._service.files().delete(fileId=file_id).execute()
