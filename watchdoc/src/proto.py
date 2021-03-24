@@ -54,3 +54,8 @@ class Applicant(BaseModel):
     recruitment_office: RecruitmentOffice
 
     milspecialty: Milspecialty
+
+    @property
+    def full_name(self) -> str:
+        name_parts = [self.surname, self.name, self.patronymic]
+        return " ".join([p for p in name_parts if p])
