@@ -24,7 +24,7 @@ SCOPES = [
 # Internal
 
 WATCHDOC_PORT = int(os.environ["WATCHDOC_PORT"])
-GOOGLE_AUTH_PORT = int(os.environ["GOOGLE_AUTH_PORT"])
+WATCHDOC_AUTH_PORT = int(os.environ["WATCHDOC_AUTH_PORT"])
 
 SERVICE_EMAIL = os.environ["SERVICE_EMAIL"]
 
