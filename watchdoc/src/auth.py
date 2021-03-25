@@ -3,7 +3,7 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 
 from config import (
-    GOOGLE_AUTH_PORT,
+    WATCHDOC_AUTH_PORT,
     CREDENTIALS_PATH,
     TOKENS_PATH,
     SCOPES,
@@ -25,7 +25,7 @@ def obtain_credentials():
                 SCOPES,
             )
             creds = flow.run_local_server(
-                port=GOOGLE_AUTH_PORT,
+                port=WATCHDOC_AUTH_PORT,
                 open_browser=False,
             )
 

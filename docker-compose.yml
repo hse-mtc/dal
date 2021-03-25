@@ -25,6 +25,7 @@ services:
       - watchdoc/.env
     ports:
       - $WATCHDOC_PORT:$WATCHDOC_PORT
+      # - $WATCHDOC_AUTH_PORT:$WATCHDOC_AUTH_PORT
     volumes:
       - ./watchdoc:/watchdoc
 
