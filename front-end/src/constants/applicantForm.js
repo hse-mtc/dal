@@ -122,7 +122,15 @@ export const RECRUITMENT_OFFICE = {
   city: {
     component: "TextInput",
     title: "города",
-    props: { placeholder: "Москва" },
+    props: { placeholder: "Одинцово" },
+  },
+  title: {
+    component: "TextInput",
+    title: "Полное название (как в примере)",
+    props: {
+      placeholder:
+        "городов Одинцово, Звенигород, Краснознаменск и Одинцовского городского округа",
+    },
   },
 };
 
