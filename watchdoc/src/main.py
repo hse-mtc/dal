@@ -7,7 +7,10 @@ from fastapi import (
 
 from service import WatchDocService
 from proto import Applicant
-from config import WATCHDOC_PORT
+from config import (
+    WATCHDOC_PORT,
+    DEBUG,
+)
 
 log.basicConfig(
     level="INFO",
@@ -22,7 +25,8 @@ wds = WatchDocService()
 def post_applicant(applicant: Applicant, background_tasks: BackgroundTasks):
     def closure():
         wds.generate_documents(applicant)
-        wds.upload_documents(applicant)
+        folder_link = wds.upload_documents(applicant)
+        wds.notify(applicant, folder_link)
 
     background_tasks.add_task(closure)
     return "Templates are being generated, wait for the link"
@@ -35,5 +39,5 @@ if __name__ == "__main__":
         "main:watchdoc",
         host="0.0.0.0",
         port=WATCHDOC_PORT,
-        debug=True,
+        debug=DEBUG,
     )
