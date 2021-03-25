@@ -300,7 +300,7 @@ export default {
             ),
           ],
         },
-        recruitmentOffice: makeRequired(["city", "district"]),
+        recruitmentOffice: makeRequired(["title"]),
         universityInfo: {
           ...makeRequired(["campus", "card_id", "program", "group_title"]),
           program: [

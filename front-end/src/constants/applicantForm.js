@@ -114,20 +114,11 @@ export const PASSPORT = {
 };
 
 export const RECRUITMENT_OFFICE = {
-  district: {
-    component: "TextInput",
-    title: "района",
-    props: { placeholder: "Одинцовский" },
-  },
-  city: {
-    component: "TextInput",
-    title: "города",
-    props: { placeholder: "Одинцово" },
-  },
   title: {
     component: "TextInput",
-    title: "Полное название (как в примере)",
+    title: "Состою на воинском учете в военном комиссариате...",
     props: {
+      isTextArea: true,
       placeholder:
         "городов Одинцово, Звенигород, Краснознаменск и Одинцовского городского округа",
     },
@@ -253,7 +244,7 @@ export const HEADERS_BY_STEPS = {
   birthInfo: "Информация о рождении",
   contactInfo: "Контактная информация",
   passport: "Паспортные данные",
-  recruitmentOffice: "Состою на воинском учёте в военном комиссариате",
+  recruitmentOffice: "Военный комиссариат",
   universityInfo: "Информация о ВУЗе",
   photo: "Фотография",
   mother: "Данные о матери (При необходимости оставьте ВСЕ поля пустыми)",
