@@ -36,4 +36,6 @@ watchdoc/generated/*
 
 ## Files
 watchdoc/service-account.json
+watchdoc/credentials.json
+watchdoc/tokens.json
 watchdoc/.env
