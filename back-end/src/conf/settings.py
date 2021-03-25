@@ -236,6 +236,11 @@ CREATE_PASSWORD_TOKEN_LIFETIME = timedelta(days=5)
 
 AUTH_USER_MODEL = "dal_auth.User"
 
+# WatchDoc service
+
+WATCHDOC_HOST = os.environ["WATCHDOC_HOST"]
+WATCHDOC_PORT = os.environ["WATCHDOC_PORT"]
+
 # Swagger settings for drf-spectacular
 
 SPECTACULAR_SETTINGS = {
