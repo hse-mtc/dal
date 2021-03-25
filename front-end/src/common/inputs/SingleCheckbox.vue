@@ -4,11 +4,10 @@
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
   >
-    <el-input
-      style="width: 100%; max-width: 100%"
+    <el-checkbox
       v-model="value"
-      type="number"
       v-bind="$attrs"
+      :label="checkboxLabel"
     />
   </InputsBase>
 </template>
@@ -18,6 +17,12 @@ import mixin from "./inputsMixin";
 
 export default {
   mixins: [mixin],
-  name: "NumberInput",
+  name: "SingleCheckbox",
+  props: {
+    checkboxLabel: {
+      type: String,
+      default: 'Да'
+    }
+  }
 };
 </script>

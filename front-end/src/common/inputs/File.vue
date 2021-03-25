@@ -15,7 +15,6 @@
       :on-remove="onChange"
       :accept="filesTypes.join()"
       v-bind="$attrs"
-      v-on="$listeners"
     >
       <el-button
         :disabled="value && value.length === limit"

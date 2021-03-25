@@ -11,6 +11,7 @@ export const STEPS = {
   brothers: "brothers",
   sisters: "sisters",
   milspecialty: "milspecialty",
+  agreement: 'agreement',
 };
 
 export const ABOUT = {
@@ -183,6 +184,17 @@ export const PHOTO = {
   },
 };
 
+export const AGREEMENT = {
+  agreement: {
+    component: 'SingleCheckbox',
+    title: 'Я даю согласие на обработку персональных данных',
+  },
+  isDataCorrect: {
+    component: 'SingleCheckbox',
+    title: 'Я подтверждаю правильность введенных данных',
+  }
+}
+
 export const getRelationData = (rel) => {
   return {
     surname: {
@@ -237,6 +249,7 @@ export const STEPS_RU = {
   brothers: "Братья",
   sisters: "Сёстры",
   milspecialty: "ВУС",
+  agreement: 'Соглашение',
 };
 
 export const HEADERS_BY_STEPS = {
@@ -252,4 +265,5 @@ export const HEADERS_BY_STEPS = {
   brothers: "Данные о братьях",
   sisters: "Данные о сёстрах",
   milspecialty: "Желаемая военная специальность",
+  agreement: 'Соглашение',
 };

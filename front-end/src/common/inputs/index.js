@@ -5,3 +5,4 @@ export { default as NumberInput } from "./Number.vue";
 export { default as SelectInput } from "./Select.vue";
 export { default as TagsInput } from "./Tags.vue";
 export { default as TextInput } from "./Text.vue";
+export { default as SingleCheckbox } from "./SingleCheckbox.vue";
