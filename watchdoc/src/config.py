@@ -12,13 +12,20 @@ GENERATED_DIR = BASE_DIR / "generated"
 # ------------------------------------------------------------------------------
 # Google Auth
 
-CREDENTIALS_PATH = BASE_DIR / "service-account.json"
+CREDENTIALS_PATH = BASE_DIR / "credentials.json"
+TOKENS_PATH = BASE_DIR / "tokens.json"
+
 SCOPES = [
     "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/gmail.send",
 ]
 
 # ------------------------------------------------------------------------------
 # Internal
 
-ADMIN_EMAIL = os.environ["ADMIN_EMAIL"]
 WATCHDOC_PORT = int(os.environ["WATCHDOC_PORT"])
+GOOGLE_AUTH_PORT = int(os.environ["GOOGLE_AUTH_PORT"])
+
+SERVICE_EMAIL = os.environ["SERVICE_EMAIL"]
+
+DEBUG = os.environ["DEBUG"].lower() == "true"
