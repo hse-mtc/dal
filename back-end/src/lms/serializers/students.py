@@ -155,8 +155,15 @@ class ApplicantSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            "surname", "name", "patronymic",
-            "surname_genitive", "name_genitive", "patronymic_genitive",
-            "birth_info", "contact_info", "university_info",
-            "recruitment_office", "milspecialty",
+            "surname",
+            "name",
+            "patronymic",
+            "surname_genitive",
+            "name_genitive",
+            "patronymic_genitive",
+            "birth_info",
+            "contact_info",
+            "university_info",
+            "recruitment_office",
+            "milspecialty",
         ]
