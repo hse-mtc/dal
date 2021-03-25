@@ -1,16 +1,16 @@
 <template>
   <div :class="$style.root">
-    <template v-if="!formSubmited">
+    <template v-if="!formSubmitted">
       <div>
         <h2>{{ headers[step] }}</h2>
 
-        <el-steps :active="stepIndex" finish-status="success">
+        <el-steps :active="stepIndex" finish-status="success" :align-center="true">
           <el-step
             v-for="(title, key) in STEPS_RU"
             :key="key"
-            :title="key === step ? title : ''"
           />
         </el-steps>
+        <center>{{ STEPS_RU[step] }}</center>
       </div>
 
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
@@ -113,7 +113,7 @@
         <el-button
           v-else
           type="primary"
-          v-loading="isSubmiting"
+          v-loading="isSubmitting"
           @click="submit"
         >
           Отправить форму
@@ -130,7 +130,7 @@
 </template>
 
 <script>
-import { DateInput, FileInput, TextInput, SelectInput } from "@/common/inputs";
+import { DateInput, FileInput, TextInput, SelectInput, SingleCheckbox } from "@/common/inputs";
 import allowMobileView from "@/utils/allowMobileView";
 import { addStudent } from "@/api/students";
 import {
@@ -142,6 +142,7 @@ import {
   UNIVERSITY_INFO,
   MILSPECIALTY,
   PHOTO,
+  AGREEMENT,
   HEADERS_BY_STEPS,
   STEPS_RU,
   getRelationData,
@@ -152,7 +153,7 @@ import { getReferenceMilSpecialties } from "@/api/reference-book";
 
 export default {
   name: "ApplicantForm",
-  components: { DateInput, FileInput, TextInput, SelectInput },
+  components: { DateInput, FileInput, TextInput, SelectInput, SingleCheckbox },
 
   data() {
     const createData = (fields) =>
@@ -178,6 +179,7 @@ export default {
         sisters: [],
         photo: { photo: null },
         milspecialty: createData(MILSPECIALTY),
+        agreement: createData(AGREEMENT),
       },
       fields: {
         about: ABOUT,
@@ -192,13 +194,14 @@ export default {
         sisters: getRelationData("сестры"),
         photo: PHOTO,
         milspecialty: MILSPECIALTY,
+        agreement: AGREEMENT,
       },
 
-      formSubmited: false,
-      isSubmiting: false,
+      formSubmitted: false,
+      isSubmitting: false,
       headers: HEADERS_BY_STEPS,
 
-      step: STEPS.about,
+      step: STEPS.agreement,
       STEPS,
       STEPS_RU,
 
@@ -266,6 +269,17 @@ export default {
         personal_phone_number: [phoneValidator],
       };
 
+      const fatherFields = {
+        ...relationFields
+      }
+
+      if (!this.studentData.mother.personal_phone_number) {
+        fatherFields.personal_phone_number = [{
+          required: true,
+          message: 'Укажите номер матери или отца'
+        }, phoneValidator]
+      }
+
       const withFaterRules = Object.values(this.studentData.father).filter(
         Boolean
       ).length;
@@ -317,11 +331,12 @@ export default {
           personal_phone_number: [phoneValidator],
         },
         mother: withMotherRules ? relationFields : {},
-        father: withFaterRules ? relationFields : {},
+        father: withFaterRules ? fatherFields : {},
         brothers: relationFields,
         sisters: relationFields,
         photo: { photo: [required] },
         milspecialty: { milspecialty: [required] },
+        agreement: { agreement: [required], isDataCorrect: [required] },
       };
     },
   },
@@ -492,7 +507,7 @@ export default {
           family,
         };
 
-        this.isSubmiting = true;
+        this.isSubmitting = true;
 
         reader.onload = async () => {
           data.image = reader.result;
@@ -507,7 +522,7 @@ export default {
             });
           }
 
-          this.isSubmiting = false;
+          this.isSubmitting = false;
         };
 
         reader.readAsDataURL(this.studentData.photo.photo[0].raw);
