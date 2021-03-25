@@ -1,13 +1,5 @@
-from google.oauth2 import service_account
-
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-
-from config import (
-    CREDENTIALS_PATH,
-    SCOPES,
-    ADMIN_EMAIL,
-)
 
 DEFAULT_FILE_FIELDS: str = "id, name, webViewLink"
 
@@ -22,11 +14,7 @@ class DriveService:
       ds = DriveService()
       files = ds.list_files()
     """
-    def __init__(self) -> None:
-        credentials = service_account.Credentials.from_service_account_file(
-            CREDENTIALS_PATH,
-            scopes=SCOPES,
-        )
+    def __init__(self, credentials) -> None:
         self._service = build("drive", "v3", credentials=credentials)
 
     # --------------------------------------------------------------------------
@@ -124,21 +112,6 @@ class DriveService:
                 body={
                     "role": "reader",
                     "type": "anyone",
-                },
-                file_id=folder_id,
-            )
-
-    def write_share_folder_with_admin(self, folder_id):
-        response = self.list_permissions(file_id=folder_id)
-        for perm in response["permissions"]:
-            if perm["role"] == "writer":
-                break
-        else:
-            self.create_permission(
-                body={
-                    "role": "writer",
-                    "type": "user",
-                    "emailAddress": ADMIN_EMAIL,
                 },
                 file_id=folder_id,
             )
