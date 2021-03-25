@@ -12,6 +12,8 @@ from common.models.persons import Photo
 from common.serializers.persons import (
     RelativeSerializer,
     PersonnelMutateSerializer,
+    BirthInfoSerializer,
+    ContactInfoSerializer,
 )
 
 from lms.models.common import Milgroup
@@ -22,7 +24,10 @@ from lms.models.students import (
     RecruitmentOffice,
     UniversityInfo,
 )
-from lms.serializers.common import MilgroupSerializer
+from lms.serializers.common import (
+    MilgroupSerializer,
+    MilspecialtySerializer,
+)
 
 
 class ProgramSerializer(ModelSerializer):
@@ -60,7 +65,7 @@ class RecruitmentOfficeSerializer(ModelSerializer):
         exclude = ["id"]
 
 
-class UniversityInfoSerializer(ModelSerializer):
+class UniversityInfoCreateSerializer(ModelSerializer):
     program = CharField(max_length=8)
 
     def create(self, validated_data):
@@ -72,6 +77,14 @@ class UniversityInfoSerializer(ModelSerializer):
         validated_data["program"] = query.first()
 
         return super().create(validated_data)
+
+    class Meta:
+        model = UniversityInfo
+        exclude = ["id"]
+
+
+class UniversityInfoSerializer(ModelSerializer):
+    program = ProgramSerializer(read_only=True)
 
     class Meta:
         model = UniversityInfo
@@ -105,7 +118,7 @@ class StudentMutateSerializer(
     passport = PassportSerializer(required=False)
     family = RelativeSerializer(required=False, many=True)
     recruitment_office = RecruitmentOfficeSerializer(required=False)
-    university_info = UniversityInfoSerializer(required=False)
+    university_info = UniversityInfoCreateSerializer(required=False)
 
     class Meta(PersonnelMutateSerializer.Meta):
         model = Student
@@ -129,3 +142,21 @@ class StudentShortSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = ["id", "fullname", "milgroup"]
+
+
+class ApplicantSerializer(ModelSerializer):
+    birth_info = BirthInfoSerializer(read_only=True)
+    contact_info = ContactInfoSerializer(read_only=True)
+    university_info = UniversityInfoSerializer(read_only=True)
+
+    recruitment_office = RecruitmentOfficeSerializer(read_only=True)
+    milspecialty = MilspecialtySerializer(read_only=True)
+
+    class Meta:
+        model = Student
+        fields = [
+            "surname", "name", "patronymic",
+            "surname_genitive", "name_genitive", "patronymic_genitive",
+            "birth_info", "contact_info", "university_info",
+            "recruitment_office", "milspecialty",
+        ]
