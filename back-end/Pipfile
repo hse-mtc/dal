@@ -25,6 +25,7 @@ drf-spectacular = "*"
 drf-writable-nested = "*"
 pillow = "*"
 psycopg2-binary = "*"
+requests = "*"
 uvicorn = "*"
 
 [requires]
