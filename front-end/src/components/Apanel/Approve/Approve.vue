@@ -32,7 +32,7 @@
             </template>
           </el-table-column>
           <el-table-column
-              label="Подтвердить регистрацию"
+              label="Действия с регистрацией"
               width="220">
             <template slot-scope="scope">
               <el-tooltip class="item" effect="dark" content="Сделать абитуриента студентом" placement="bottom">
@@ -42,7 +42,8 @@
                     type=""
                     circle
                     class="approve-button"
-                    @click="approve(scope.row)">
+                    @click="approve(scope.row)"
+                    :disabled="scope.row.status === 'ST'">
                 </el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="Поставить в ожидание" placement="bottom">
@@ -52,7 +53,8 @@
                     type=""
                     circle
                     class="wait-button"
-                    @click="putOnWait(scope.row)"></el-button>
+                    @click="putOnWait(scope.row)"
+                    :disabled="scope.row.status === 'AW'"></el-button>
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="Отклонить регистрацию" placement="bottom">
                 <el-button
@@ -61,7 +63,8 @@
                     type=""
                     circle
                     class="disapprove-button"
-                    @click="disapprove(scope.row)"></el-button>
+                    @click="disapprove(scope.row)"
+                    :disabled="scope.row.status === 'DE'"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -72,42 +75,71 @@
 </template>
 
 <script>
+import {getUsersToApprove, approveUser, putUserOnWait, disapproveUser} from "@/api/admin";
+import {getError, postError, deleteError} from "@/utils/message";
+
 export default {
   name: "",
   data() {
     return {
-      approveList: [
-        {
-          id: 1,
-          fullname: "Хромов Григорий Александрович",
-          milgroup: 1809,
-          status: "AP",
-        },
-        {
-          id: 2,
-          fullname: "Васюткин Вася Васильевич",
-          milgroup: 1810,
-          status: "AP",
-        },
-        {
-          id: 3,
-          fullname: "Иванов Иван Иванович",
-          milgroup: 1808,
-          status: "AP",
-        },
-      ],
-      dialogVisible: false,
+      approveList: [],
     };
   },
   created() {
-
+    getUsersToApprove()
+        .then((response) => {
+          this.approveList = response.data;
+        })
+        // TODO: when back-end is done, change fake data to error
+        // .catch((err) => getError("данных для подтверждения активации", err.response.status));
+        .catch((err) => {
+          getError("данных для подтверждения активации", err.response.status);
+          this.approveList = [
+            {
+              id: 1,
+              fullname: "Хромов Григорий Александрович",
+              milgroup: 1809,
+              status: "AP",
+            },
+            {
+              id: 2,
+              fullname: "Васюткин Вася Васильевич",
+              milgroup: 1810,
+              status: "AP",
+            },
+            {
+              id: 3,
+              fullname: "Иванов Иван Иванович",
+              milgroup: 1808,
+              status: "AP",
+            },
+          ];
+        });
   },
   methods: {
     approve(user) {
-      user.status = "ST";
+      approveUser(user.id)
+          .then(() => {
+            user.status = "ST"
+          })
+          // TODO: when back-end is done, change fake data to error
+          // .catch((err) => postError("записи об активированной регистрации", err.response.status));
+          .catch((err) => {
+            postError("записи об активированной регистрации", err.response.status);
+            user.status = "ST";
+          });
     },
     putOnWait(user) {
-      user.status = "AW";
+      putUserOnWait(user.id)
+          .then(() => {
+            user.status = "AW"
+          })
+          // TODO: when back-end is done, change fake data to error
+          // .catch((err) => postError("записи об активированной регистрации", err.response.status));
+          .catch((err) => {
+            postError("записи в списке отложенных регистраций", err.response.status);
+            user.status = "AW";
+          });
     },
     disapprove(user) {
       this.$confirm(
@@ -121,10 +153,18 @@ export default {
       )
           .then(() => {
             user.status = "DE";
+            disapproveUser(user.id)
+                .then(() => {
+                  user.status = "DE"
+                })
+                // TODO: when back-end is done, change fake data to error
+                // .catch((err) => postError("записи об активированной регистрации", err.response.status));
+                .catch((err) => {
+                  deleteError("регистрации", err.response.status);
+                  user.status = "DE";
+                });
           })
-          .catch(() => {
-            alert(2);
-          });
+          .catch(() => {});
     },
     tagByStatus(status) {
       switch (status) {
