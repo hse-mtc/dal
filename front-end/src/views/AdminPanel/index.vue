@@ -2,7 +2,7 @@
   <div class="root">
     <el-tabs v-model="activeTab" @tab-click="handleClick">
       <el-tab-pane label="Подтверждения регистрации" name="approve">
-        <Approve/>
+        <Approve />
       </el-tab-pane>
       <el-tab-pane label="Разрешения" name="permissions">
         <PermissionComponent />
@@ -16,10 +16,10 @@
 
 <script>
 import PermissionComponent from "@/components/Apanel/PermissionComponent";
-import Approve from "@/components/Apanel/Approve/Approve"
+import Approve from "@/components/Apanel/Approve/Approve";
 
 export default {
-  components: {Approve, PermissionComponent},
+  components: { Approve, PermissionComponent },
   data() {
     return {
       activeTab: "approve",

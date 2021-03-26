@@ -54,8 +54,8 @@ export function putUserOnWait(id) {
 }
 
 export function disapproveUser(id) {
-    return request({
-      url: BASE_API_URL + LMS_URLS.approve.decline + `${id}`,
-      method: "post",
-    });
+  return request({
+    url: BASE_API_URL + LMS_URLS.approve.decline + `${id}`,
+    method: "post",
+  });
 }
