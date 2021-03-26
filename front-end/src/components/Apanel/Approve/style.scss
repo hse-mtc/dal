@@ -1,0 +1,21 @@
+.el-table .success-row {
+  background: #84f599 !important;
+}
+
+.approve-button:hover {
+  background-color: rgba(103, 194, 58, .1);
+  border-color: rgba(103, 194, 58, .2);
+  color: #67C23A;
+}
+
+.wait-button:hover {
+  background-color: rgba(230, 162, 60, .1);
+  border-color: rgba(230, 162, 60, .2);
+  color: #E6A23C;
+}
+
+.disapprove-button:hover {
+  background-color: rgba(245, 108, 108, .1);
+  border-color: rgba(245, 108, 108, .2);
+  color: #F56C6C;
+}
