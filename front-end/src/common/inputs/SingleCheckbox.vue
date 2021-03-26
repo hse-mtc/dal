@@ -4,11 +4,7 @@
     :wrapperClassName="wrapperClassName"
     :titleClassName="titleClassName"
   >
-    <el-checkbox
-      v-model="value"
-      v-bind="$attrs"
-      :label="checkboxLabel"
-    />
+    <el-checkbox v-model="value" v-bind="$attrs" :label="checkboxLabel" />
   </InputsBase>
 </template>
 
@@ -21,8 +17,8 @@ export default {
   props: {
     checkboxLabel: {
       type: String,
-      default: 'Да'
-    }
-  }
+      default: "Да",
+    },
+  },
 };
 </script>

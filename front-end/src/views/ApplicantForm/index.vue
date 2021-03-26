@@ -4,11 +4,12 @@
       <div>
         <h2>{{ headers[step] }}</h2>
 
-        <el-steps :active="stepIndex" finish-status="success" :align-center="true">
-          <el-step
-            v-for="(title, key) in STEPS_RU"
-            :key="key"
-          />
+        <el-steps
+          :active="stepIndex"
+          finish-status="success"
+          :align-center="true"
+        >
+          <el-step v-for="(title, key) in STEPS_RU" :key="key" />
         </el-steps>
         <center>{{ STEPS_RU[step] }}</center>
       </div>
@@ -130,7 +131,13 @@
 </template>
 
 <script>
-import { DateInput, FileInput, TextInput, SelectInput, SingleCheckbox } from "@/common/inputs";
+import {
+  DateInput,
+  FileInput,
+  TextInput,
+  SelectInput,
+  SingleCheckbox,
+} from "@/common/inputs";
 import allowMobileView from "@/utils/allowMobileView";
 import { addStudent } from "@/api/students";
 import {
@@ -270,14 +277,17 @@ export default {
       };
 
       const fatherFields = {
-        ...relationFields
-      }
+        ...relationFields,
+      };
 
       if (!this.studentData.mother.personal_phone_number) {
-        fatherFields.personal_phone_number = [{
-          required: true,
-          message: 'Укажите номер матери или отца'
-        }, phoneValidator]
+        fatherFields.personal_phone_number = [
+          {
+            required: true,
+            message: "Укажите номер матери или отца",
+          },
+          phoneValidator,
+        ];
       }
 
       const withFaterRules = Object.values(this.studentData.father).filter(
