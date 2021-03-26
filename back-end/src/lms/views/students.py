@@ -3,7 +3,7 @@ import requests
 from rest_framework import status
 
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import BasePermission
 from rest_framework.renderers import JSONRenderer
@@ -78,3 +78,25 @@ class StudentViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         return serializer.save()
+
+
+@extend_schema(tags=['activate-students'])
+class ActivateStudentReadonlyViewSet(ReadOnlyModelViewSet):
+    permission_classes = [StudentPermission]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = StudentFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        is_teacher = hasattr(user, 'teacher')
+        is_student = hasattr(user, 'student')
+
+        milgroup = None
+
+        if is_teacher:
+            milgroup = user.teacher.milgroup
+        elif is_student:
+            milgroup = user.student.milgroup
+
+        return Student.objects.filter(milgroup=milgroup)
+
