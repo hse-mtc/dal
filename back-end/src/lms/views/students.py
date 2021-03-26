@@ -82,9 +82,11 @@ class StudentViewSet(ModelViewSet):
 
 @extend_schema(tags=['activate-students'])
 class ActivateStudentReadonlyViewSet(ReadOnlyModelViewSet):
+    queryset = Student.objects.all()
     permission_classes = [StudentPermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
+    serializer_class = StudentSerializer
 
     def get_queryset(self):
         user = self.request.user
