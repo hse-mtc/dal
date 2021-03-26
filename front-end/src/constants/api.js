@@ -50,6 +50,12 @@ export const LMS_URLS = {
     users: "lms/users/",
     permissions: "lms/users/permissions",
   },
+  approve: {
+    approve: "lms/activate-students",
+    activate: "lms/activate-students/activate/",
+    await: "lms/activate-students/await/",
+    decline: "lms/activate-students/decline/",
+  },
 };
 
 export const DMS_URLS = {
