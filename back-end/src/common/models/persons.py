@@ -28,8 +28,8 @@ class ContactInfo(models.Model):
 
 
 class Person(models.Model):
-    surname = models.CharField(max_length=32, blank=True)
-    name = models.CharField(max_length=32, blank=True)
+    surname = models.CharField(max_length=32)
+    name = models.CharField(max_length=32)
     patronymic = models.CharField(max_length=32, blank=True)
 
     citizenship = models.CharField(max_length=64, blank=True)
