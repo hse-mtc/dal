@@ -1,4 +1,4 @@
-import { login, getInfo } from "@/api/user";
+import { login, getUser } from "@/api/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
 import { resetRouter } from "@/router";
 import LocalStorageService from "../../utils/LocalStorageService";
@@ -6,21 +6,15 @@ const localStorageService = LocalStorageService.getService();
 
 const state = {
   token: getToken(),
-  name: "",
+  email: "",
 };
 
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token;
   },
-  SET_SURNAME: (state, surname) => {
-    state.surname = surname;
-  },
-  SET_NAME: (state, name) => {
-    state.name = name;
-  },
-  SET_PATRONYMIC: (state, patronymic) => {
-    state.patronymic = patronymic;
+  SET_EMAIL: (state, email) => {
+    state.email = email;
   },
 };
 
@@ -44,21 +38,17 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getUser({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token)
+      getUser(state.token)
         .then((response) => {
           const { data } = response;
-
           if (!data) {
             reject("Verification failed, please Login again.");
           }
 
-          const { surname, name, patronymic } = data;
-
-          commit("SET_SURNAME", surname);
-          commit("SET_NAME", name);
-          commit("SET_PATRONYMIC", patronymic);
+          const { email } = data;
+          commit("SET_EMAIL", email);
 
           resolve(data);
         })
@@ -71,7 +61,7 @@ const actions = {
   // user logout
   logout({ commit }) {
     commit("SET_TOKEN", "");
-    commit("SET_NAME", "");
+    commit("SET_EMAIL", "");
     removeToken();
     resetRouter();
   },

@@ -51,9 +51,6 @@ export default {
     Statistics,
     PageHeader,
   },
-  computed: {
-    ...mapGetters(["name"]),
-  },
   data() {
     return {
       activeTab: "disciplines",

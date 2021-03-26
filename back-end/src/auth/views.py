@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
 from rest_framework import permissions
@@ -16,9 +15,8 @@ from rest_framework_simplejwt.views import (
 
 from drf_spectacular.views import extend_schema
 
-from auth.models import Profile
 from auth.serializers import (
-    ProfileSerializer,
+    UserSerializer,
     TokenPairSerializer,
     CreatePasswordSerializer,
     CreatePasswordTokenSerializer,
@@ -27,16 +25,14 @@ from auth.serializers import (
 
 
 @extend_schema(tags=["auth"])
-class ProfileRetrieveAPIView(RetrieveAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+class UserRetrieveAPIView(RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
 
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        queryset = self.filter_queryset(self.get_queryset())
-        obj = get_object_or_404(queryset, user=self.request.user)
-        return obj
+        return self.request.user
 
 
 @extend_schema(tags=["auth"])

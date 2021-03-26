@@ -8,7 +8,6 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from auth.models import Profile
 from conf.settings import CREATE_PASSWORD_TOKEN_LIFETIME
 
 
@@ -32,19 +31,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ["id", "email", "groups"]
-
-
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    permissions = serializers.SerializerMethodField(read_only=True)
-
-    def get_permissions(self, obj):
-        user_perms = Permission.objects.filter(group__user=obj.user.id)
-        return user_perms.values_list("codename", flat=True)
-
-    class Meta:
-        model = Profile
-        exclude = ["id"]
 
 
 class TokenPairSerializer(serializers.Serializer):

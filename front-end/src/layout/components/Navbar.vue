@@ -13,7 +13,7 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper m-0" style="font-size: 19px">
           <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-          {{ surnameWithInitials({ surname, name, patronymic }) }}
+          {{ email }}
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -42,7 +42,7 @@ export default {
     Hamburger,
   },
   computed: {
-    ...mapGetters(["sidebar", "surname", "name", "patronymic"]),
+    ...mapGetters(["sidebar", "email"]),
     isCollapse() {
       return !this.sidebar.opened;
     },

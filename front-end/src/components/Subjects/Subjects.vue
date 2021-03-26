@@ -33,8 +33,8 @@
                 :id="item.id"
                 :annotation="item.annotation"
                 :title="item.title"
-                :isMySubject="userId === item.profile.user.id"
-                :owner="`${item.profile.surname} ${item.profile.name} ${item.profile.patronymic}`"
+                :isMySubject="userId === item.user.id"
+                :owner="`${item.user.email}`"
                 @deleted="deletedSubject"
                 @edit="editSubject"
               />

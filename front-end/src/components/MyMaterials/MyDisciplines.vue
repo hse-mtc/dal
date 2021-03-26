@@ -22,7 +22,7 @@
             :annotation="item.annotation"
             :title="item.title"
             :isMySubject="true"
-            :owner="`${item.profile.surname} ${item.profile.name} ${item.profile.patronymic}`"
+            :owner="`${item.user.email}`"
             @deleted="deletedSubject"
             @edit="editSubject"
           />

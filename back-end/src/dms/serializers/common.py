@@ -1,9 +1,6 @@
 from rest_framework import serializers
 
-from auth.serializers import (
-    ProfileSerializer,
-    UserSerializer,
-)
+from auth.serializers import UserSerializer
 
 from dms.models.common import (
     Author,
@@ -28,9 +25,7 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer(read_only=True, source="user.profile")
-    user = UserSerializer(write_only=True,
-                          default=serializers.CurrentUserDefault())
+    user = UserSerializer(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Subject

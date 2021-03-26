@@ -3,7 +3,7 @@ export const BASE_API_URL = "api/";
 export const AUTH_URLS = {
   refresh: "auth/tokens/refresh/",
   obtain: "auth/tokens/obtain/",
-  profile: "auth/profile/",
+  user: "auth/user/",
   change_password: "auth/password/change/",
 };
 

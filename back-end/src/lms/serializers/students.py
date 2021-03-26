@@ -124,7 +124,7 @@ class StudentMutateSerializer(
         model = Student
 
     def create(self, validated_data):
-        corporate_email = validated_data['contact_info']['corporate_email']
+        corporate_email = validated_data["contact_info"]["corporate_email"]
         find_student_filter = Student.objects.filter(
             contact_info__corporate_email=corporate_email)
 

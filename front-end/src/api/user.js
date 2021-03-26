@@ -9,9 +9,9 @@ export function login(data) {
   });
 }
 
-export function getInfo() {
+export function getUser() {
   return request({
-    url: BASE_API_URL + AUTH_URLS.profile,
+    url: BASE_API_URL + AUTH_URLS.user,
     method: "get",
   });
 }

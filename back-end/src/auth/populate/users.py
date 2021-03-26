@@ -2,8 +2,6 @@ from collections import namedtuple
 
 from django.contrib.auth import get_user_model
 
-from auth.models import Profile
-
 User = get_user_model()
 
 Data = namedtuple(
@@ -20,7 +18,7 @@ Data = namedtuple(
 )
 
 
-def create_user(data: Data) -> (User, Profile):
+def create_user(data: Data) -> User:
     query = User.objects.filter(email=data.email)
 
     if not query.exists():
@@ -33,17 +31,10 @@ def create_user(data: Data) -> (User, Profile):
 
     user = query.first()
 
-    profile, _ = Profile.objects.get_or_create(
-        surname=data.surname,
-        name=data.name,
-        patronymic=data.patronymic,
-        user=user,
-    )
-
-    return user, profile
+    return user
 
 
-def create_users() -> list[(User, Profile)]:
+def create_users() -> list[User]:
     users = [
         Data(
             email="vspelyak@mail.com",

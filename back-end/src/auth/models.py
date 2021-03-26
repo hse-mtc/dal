@@ -1,9 +1,6 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
-
-from common.models.persons import Person
 
 
 class UserManager(BaseUserManager):
@@ -44,12 +41,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
-
-
-class Profile(Person):
-    user = models.OneToOneField(to=get_user_model(), on_delete=models.CASCADE)
-    photo = models.URLField(blank=True)
-
-    class Meta:
-        verbose_name = "Profile"
-        verbose_name_plural = "Profiles"
