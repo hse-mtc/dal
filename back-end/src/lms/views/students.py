@@ -101,4 +101,3 @@ class ActivateStudentReadonlyViewSet(ReadOnlyModelViewSet):
             milgroup = user.student.milgroup
 
         return Student.objects.filter(milgroup=milgroup)
-
