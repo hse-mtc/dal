@@ -1,11 +1,11 @@
 <template>
-  <div>
+  <div class="root">
     <el-tabs v-model="activeTab" @tab-click="handleClick">
       <el-tab-pane label="Подтверждения регистрации" name="approve">
         <!-- ApproveComponent -->
       </el-tab-pane>
       <el-tab-pane label="Разрешения" name="permissions">
-        <!-- PermissionsComponent -->
+        <PermissionComponent />
       </el-tab-pane>
       <el-tab-pane label="Справочники" name="dictionaries">
         <!-- DictionariesComponent -->
@@ -15,8 +15,10 @@
 </template>
 
 <script>
+import PermissionComponent from "@/components/Apanel/PermissionComponent";
+
 export default {
-  components: {},
+  components: { PermissionComponent },
   data() {
     return {
       activeTab: "approve",
@@ -27,3 +29,11 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+@import "@/styles/variables.scss";
+
+.root {
+  padding: $xl;
+}
+</style>

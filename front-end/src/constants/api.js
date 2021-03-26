@@ -5,6 +5,7 @@ export const AUTH_URLS = {
   obtain: "auth/tokens/obtain/",
   user: "auth/user/",
   change_password: "auth/password/change/",
+  permissions: "auth/permissions",
 };
 
 export const LMS_URLS = {
@@ -44,6 +45,10 @@ export const LMS_URLS = {
   },
   students: {
     students: "lms/students/",
+  },
+  users: {
+    users: "lms/users/",
+    permissions: "lms/users/permissions",
   },
 };
 
