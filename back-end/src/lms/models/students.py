@@ -58,19 +58,28 @@ class Student(Personnel):
     milspecialty = models.ForeignKey(
         to=Milspecialty,
         on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
     )
 
-    passport = models.OneToOneField(to=Passport, on_delete=models.DO_NOTHING)
-    family = models.ManyToManyField(to=Relative)
+    passport = models.OneToOneField(
+        to=Passport,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    family = models.ManyToManyField(to=Relative, blank=True)
     recruitment_office = models.ForeignKey(
         to=RecruitmentOffice,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
     )
     university_info = models.ForeignKey(
         to=UniversityInfo,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
     )
 
     class Meta:
