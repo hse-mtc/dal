@@ -6,7 +6,7 @@
       clearable
       remote
       reserve-keyword
-      placeholder="Please enter a keyword"
+      placeholder="Введите имя пользователя"
       :remote-method="remoteMethod"
       :loading="loading"
       @change="selectUserHandler"
