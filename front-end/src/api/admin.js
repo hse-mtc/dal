@@ -41,21 +41,21 @@ export function getUsersToApprove() {
 
 export function approveUser(id) {
   return request({
-    url: BASE_API_URL + LMS_URLS.approve.activate + `${id}`,
+    url: BASE_API_URL + LMS_URLS.approve.activate + `${id}/`,
     method: "post",
   });
 }
 
 export function putUserOnWait(id) {
   return request({
-    url: BASE_API_URL + LMS_URLS.approve.await + `${id}`,
+    url: BASE_API_URL + LMS_URLS.approve.await + `${id}/`,
     method: "post",
   });
 }
 
 export function disapproveUser(id) {
   return request({
-    url: BASE_API_URL + LMS_URLS.approve.decline + `${id}`,
+    url: BASE_API_URL + LMS_URLS.approve.decline + `${id}/`,
     method: "post",
   });
 }
