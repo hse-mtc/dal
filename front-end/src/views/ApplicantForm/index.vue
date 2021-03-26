@@ -1,8 +1,8 @@
 <template>
   <div :class="$style.root">
     <template v-if="!formSubmitted">
-      <div>
-        <h2>{{ headers[step] }}</h2>
+      <div :class="$style.header">
+        <h2 :class="$style.title">{{ headers[step] }}</h2>
 
         <el-steps
           :active="stepIndex"
@@ -11,7 +11,6 @@
         >
           <el-step v-for="(title, key) in STEPS_RU" :key="key" />
         </el-steps>
-        <center>{{ STEPS_RU[step] }}</center>
       </div>
 
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
@@ -539,6 +538,10 @@ export default {
         reader.readAsDataURL(this.studentData.photo.photo[0].raw);
       }
     },
+
+    test(key) {
+      console.log(key)
+    }
   },
 
   watch: {
@@ -551,6 +554,14 @@ export default {
 </script>
 
 <style lang="scss" module>
+.header {
+  margin-bottom: 30px;
+
+  .title {
+    margin-bottom: 20px;
+  }
+}
+
 .root {
   display: flex;
   max-width: 600px;
