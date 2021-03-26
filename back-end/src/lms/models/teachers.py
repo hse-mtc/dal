@@ -1,6 +1,6 @@
 from django.db import models
 
-from common.models.persons import Person
+from common.models.persons import Personnel
 from lms.models.common import Milfaculty, Milgroup
 
 
@@ -26,14 +26,29 @@ class TeacherPost(models.Model):
         verbose_name_plural = 'Teacher Posts'
 
 
-class Teacher(Person):
-    milfaculty = models.ForeignKey(Milfaculty, models.DO_NOTHING)
-    rank = models.ForeignKey(Rank, models.DO_NOTHING)
-    teacher_post = models.ForeignKey(TeacherPost, models.DO_NOTHING)
-    milgroup = models.ForeignKey(Milgroup,
-                                 models.DO_NOTHING,
-                                 blank=True,
-                                 null=True)
+class Teacher(Personnel):
+    milfaculty = models.ForeignKey(Milfaculty,
+                                   models.DO_NOTHING,
+                                   null=True,
+                                   blank=True)
+    rank = models.ForeignKey(
+        Rank,
+        models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    teacher_post = models.ForeignKey(
+        TeacherPost,
+        models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    milgroup = models.ForeignKey(
+        Milgroup,
+        models.DO_NOTHING,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f'ID = {str(self.id)}\n' \
