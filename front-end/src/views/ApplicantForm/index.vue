@@ -201,7 +201,7 @@ export default {
       isSubmitting: false,
       headers: HEADERS_BY_STEPS,
 
-      step: STEPS.agreement,
+      step: STEPS.about,
       STEPS,
       STEPS_RU,
 
@@ -523,6 +523,7 @@ export default {
           }
 
           this.isSubmitting = false;
+          this.formSubmitted = true;
         };
 
         reader.readAsDataURL(this.studentData.photo.photo[0].raw);
