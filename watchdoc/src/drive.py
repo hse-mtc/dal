@@ -11,8 +11,9 @@ class DriveService:
     """Google Drive API wrapper.
 
     Usage:
-      ds = DriveService()
-      files = ds.list_files()
+        ds = DriveService()
+        response = ds.list_files()
+        files = response["files"]
     """
     def __init__(self, credentials) -> None:
         self._service = build("drive", "v3", credentials=credentials)
