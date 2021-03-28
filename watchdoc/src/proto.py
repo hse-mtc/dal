@@ -48,6 +48,9 @@ class Applicant(BaseModel):
     name_genitive: str
     patronymic_genitive: tp.Optional[str] = ""
 
+    # Base64 encoded string
+    photo: str
+
     birth_info: BirthInfo
     contact_info: ContactInfo
     university_info: UniversityInfo
