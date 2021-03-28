@@ -267,6 +267,7 @@ export default {
           "surname",
           "name",
           "citizenship",
+          "permanent_address",
           "date",
           "country",
           "city",
