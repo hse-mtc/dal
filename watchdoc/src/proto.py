@@ -14,8 +14,8 @@ class BirthInfo(BaseModel):
 
 
 class ContactInfo(BaseModel):
-    corporate_email: str
-    personal_phone_number: str
+    corporate_email: tp.Optional[str] = ""
+    personal_phone_number: tp.Optional[str] = ""
 
 
 class Person(BaseModel):
