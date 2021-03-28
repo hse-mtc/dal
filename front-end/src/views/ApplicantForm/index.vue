@@ -540,8 +540,8 @@ export default {
     },
 
     test(key) {
-      console.log(key)
-    }
+      console.log(key);
+    },
   },
 
   watch: {
