@@ -4,6 +4,7 @@ import typing as tp
 from pydantic import BaseModel
 
 from campuses import Campus
+from family import RelativeType
 
 
 class BirthInfo(BaseModel):
@@ -15,6 +16,27 @@ class BirthInfo(BaseModel):
 class ContactInfo(BaseModel):
     corporate_email: str
     personal_phone_number: str
+
+
+class Person(BaseModel):
+    surname: str
+    name: str
+    patronymic: tp.Optional[str] = ""
+
+    citizenship: str
+    permanent_address: str
+
+    birth_info: BirthInfo
+    contact_info: tp.Optional[ContactInfo] = None
+
+    @property
+    def full_name(self) -> str:
+        name_parts = [self.surname, self.name, self.patronymic]
+        return " ".join([p for p in name_parts if p])
+
+
+class Relative(Person):
+    type: RelativeType
 
 
 class Program(BaseModel):
@@ -39,11 +61,7 @@ class Milspecialty(BaseModel):
     milspecialty: str
 
 
-class Applicant(BaseModel):
-    surname: str
-    name: str
-    patronymic: tp.Optional[str] = ""
-
+class Applicant(Person):
     surname_genitive: str
     name_genitive: str
     patronymic_genitive: tp.Optional[str] = ""
@@ -51,14 +69,10 @@ class Applicant(BaseModel):
     # Base64 encoded string
     photo: str
 
-    birth_info: BirthInfo
-    contact_info: ContactInfo
+    family: list[Relative]
+
     university_info: UniversityInfo
     recruitment_office: RecruitmentOffice
 
     milspecialty: Milspecialty
 
-    @property
-    def full_name(self) -> str:
-        name_parts = [self.surname, self.name, self.patronymic]
-        return " ".join([p for p in name_parts if p])
