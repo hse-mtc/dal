@@ -24,8 +24,13 @@ wds = WatchDocService()
 @watchdoc.post("/applicants/")
 def post_applicant(applicant: Applicant, background_tasks: BackgroundTasks):
     def closure():
+        log.info("Generating documents...")
         wds.generate_documents(applicant)
+
+        log.info("Uploading documents...")
         folder_link = wds.upload_documents(applicant)
+
+        log.info("Notifying applicant...")
         wds.notify(applicant, folder_link)
 
     background_tasks.add_task(closure)
