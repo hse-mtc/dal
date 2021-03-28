@@ -3,11 +3,7 @@ import logging as log
 
 import jinja2
 
-from docx.shared import Mm
-from docxtpl import (
-    DocxTemplate,
-    InlineImage,
-)
+from docxtpl import DocxTemplate
 
 from auth import obtain_credentials
 from gmail import GmailService
@@ -29,6 +25,8 @@ from date_utils import (
 WATCHDOC_FOLDER: str = "watchdoc"
 APPLICANTS_FOLDER: str = "Абитуриенты"
 CAMPUSES_FOLDER: str = "Кампусы"
+
+DUMMY_IMAGE = TEMPLATES_DIR / "dummy.png"
 
 DOCUMENTS = [
     ("mec-application.docx", "Заявление на поступление.docx"),
@@ -65,13 +63,8 @@ class WatchDocService:
 
         for (en, rus) in DOCUMENTS:
             doc = DocxTemplate(TEMPLATES_DIR / en)
-            context["photo"] = InlineImage(
-                tpl=doc,
-                image_descriptor=str(photo_path),
-                width=Mm(30),
-                height=Mm(40),
-            )
             doc.render(context, self.jinja_env)
+            doc.replace_media(DUMMY_IMAGE, photo_path)
             doc.save(applicant_dir / rus)
 
     def upload_documents(self, applicant: Applicant):
