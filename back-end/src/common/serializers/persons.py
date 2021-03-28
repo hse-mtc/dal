@@ -26,6 +26,14 @@ class ContactInfoSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
+class PersonSerializer(serializers.ModelSerializer):
+    birth_info = BirthInfoSerializer(read_only=True)
+    contact_info = ContactInfoSerializer(read_only=True)
+
+    class Meta:
+        abstract = True
+
+
 class PersonMutateSerializer(serializers.ModelSerializer):
     birth_info = BirthInfoSerializer(required=False)
     contact_info = ContactInfoSerializer()
@@ -34,7 +42,14 @@ class PersonMutateSerializer(serializers.ModelSerializer):
         abstract = True
 
 
-class RelativeSerializer(
+class RelativeSerializer(PersonSerializer):
+
+    class Meta:
+        model = Relative
+        exclude = ["id"]
+
+
+class RelativeMutateSerializer(
         WritableNestedModelSerializer,
         PersonMutateSerializer,
 ):
