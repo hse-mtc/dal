@@ -1,8 +1,13 @@
+import base64
 import logging as log
 
 import jinja2
 
-from docxtpl import DocxTemplate
+from docx.shared import Mm
+from docxtpl import (
+    DocxTemplate,
+    InlineImage,
+)
 
 from auth import obtain_credentials
 from gmail import GmailService
@@ -28,6 +33,7 @@ CAMPUSES_FOLDER: str = "Кампусы"
 DOCUMENTS = [
     ("mec-application.docx", "Заявление на поступление.docx"),
     ("ro-reference.docx", "Направление ВК.docx"),
+    ("medical-records.docx", "Медкарта.docx"),
 ]
 
 
@@ -44,13 +50,27 @@ class WatchDocService:
         applicant_dir = GENERATED_DIR / applicant.contact_info.corporate_email
         applicant_dir.mkdir(exist_ok=True)
 
+        data = applicant.dict()
+
+        photo = data.pop("photo")
+        photo_path = applicant_dir / "photo"
+        with open(photo_path, "wb") as f:
+            f.write(base64.b64decode(photo.encode()))
+
         context = {
             "date": today(),
-            **applicant.dict(),
+            "full_name": applicant.full_name,
+            **data,
         }
 
         for (en, rus) in DOCUMENTS:
             doc = DocxTemplate(TEMPLATES_DIR / en)
+            context["photo"] = InlineImage(
+                tpl=doc,
+                image_descriptor=str(photo_path),
+                width=Mm(30),
+                height=Mm(40),
+            )
             doc.render(context, self.jinja_env)
             doc.save(applicant_dir / rus)
 
