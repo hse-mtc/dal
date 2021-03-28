@@ -3,39 +3,27 @@ from rest_framework.serializers import (
     ModelSerializer,
     ImageField,
     PrimaryKeyRelatedField,
-    CharField,
 )
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from common.models.persons import Photo
 from common.serializers.persons import (
-    RelativeSerializer,
+    RelativeMutateSerializer,
     PersonnelMutateSerializer,
-    BirthInfoSerializer,
-    ContactInfoSerializer,
 )
 
 from lms.models.common import Milgroup
-from lms.models.universities import Program
 from lms.models.students import (
     Student,
     Passport,
     RecruitmentOffice,
-    UniversityInfo,
 )
-from lms.serializers.common import (
-    MilgroupSerializer,
-    MilspecialtySerializer,
+from lms.serializers.common import MilgroupSerializer
+from lms.serializers.universities import (
+    ProgramSerializer,
+    UniversityInfoCreateSerializer,
 )
-
-
-class ProgramSerializer(ModelSerializer):
-
-    class Meta:
-        model = Program
-        fields = "__all__"
-        extra_kwargs = {"code": {"validators": []}}
 
 
 class PhotoSerializer(ModelSerializer):
@@ -65,32 +53,6 @@ class RecruitmentOfficeSerializer(ModelSerializer):
         exclude = ["id"]
 
 
-class UniversityInfoCreateSerializer(ModelSerializer):
-    program = CharField(max_length=8)
-
-    def create(self, validated_data):
-        code = validated_data.pop("program")
-        query = Program.objects.filter(code=code)
-
-        if not query.exists():
-            Program.objects.create(code=code)
-        validated_data["program"] = query.first()
-
-        return super().create(validated_data)
-
-    class Meta:
-        model = UniversityInfo
-        exclude = ["id"]
-
-
-class UniversityInfoSerializer(ModelSerializer):
-    program = ProgramSerializer(read_only=True)
-
-    class Meta:
-        model = UniversityInfo
-        exclude = ["id"]
-
-
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
     program = ProgramSerializer()
@@ -116,7 +78,7 @@ class StudentMutateSerializer(
     )
 
     passport = PassportSerializer(required=False)
-    family = RelativeSerializer(required=False, many=True)
+    family = RelativeMutateSerializer(required=False, many=True)
     recruitment_office = RecruitmentOfficeSerializer(required=False)
     university_info = UniversityInfoCreateSerializer(required=False)
 
@@ -151,28 +113,3 @@ class StudentShortSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = ["id", "fullname", "milgroup"]
-
-
-class ApplicantSerializer(ModelSerializer):
-    birth_info = BirthInfoSerializer(read_only=True)
-    contact_info = ContactInfoSerializer(read_only=True)
-    university_info = UniversityInfoSerializer(read_only=True)
-
-    recruitment_office = RecruitmentOfficeSerializer(read_only=True)
-    milspecialty = MilspecialtySerializer(read_only=True)
-
-    class Meta:
-        model = Student
-        fields = [
-            "surname",
-            "name",
-            "patronymic",
-            "surname_genitive",
-            "name_genitive",
-            "patronymic_genitive",
-            "birth_info",
-            "contact_info",
-            "university_info",
-            "recruitment_office",
-            "milspecialty",
-        ]

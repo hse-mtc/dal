@@ -21,10 +21,10 @@ from common.constants import MUTATE_ACTIONS
 
 from lms.models.students import Student
 from lms.filters.students import StudentFilter
+from lms.serializers.applicants import ApplicantSerializer
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
-    ApplicantSerializer,
 )
 
 from auth.permissions import BasicPermission
@@ -63,10 +63,12 @@ class StudentViewSet(ModelViewSet):
         instance = self.perform_create(serializer)
 
         applicant = ApplicantSerializer(instance=instance)
-        requests.post(
+        response = requests.post(
             f'http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/',
             data=JSONRenderer().render(applicant.data),
         )
+        # TODO(TmLev): remove debug print
+        print(response.json())
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data,
