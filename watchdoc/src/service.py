@@ -9,6 +9,7 @@ from auth import obtain_credentials
 from gmail import GmailService
 from drive import DriveService
 from campuses import Campus
+from family import RelativeType
 from proto import Applicant
 from config import (
     TEMPLATES_DIR,
@@ -31,7 +32,9 @@ DUMMY_IMAGE = TEMPLATES_DIR / "dummy.png"
 DOCUMENTS = [
     ("mec-application.docx", "Заявление на поступление.docx"),
     ("ro-reference.docx", "Направление ВК.docx"),
+    ("ro-reference-signed.docx", "Направление ВК (подписано).docx"),
     ("medical-records.docx", "Медкарта.docx"),
+    ("family-info.docx", "Сведения о семье.docx"),
 ]
 
 
@@ -48,6 +51,15 @@ class WatchDocService:
         applicant_dir = GENERATED_DIR / applicant.contact_info.corporate_email
         applicant_dir.mkdir(exist_ok=True)
 
+        parents = [
+            r for r in applicant.family
+            if r.type in [RelativeType.FATHER, RelativeType.MOTHER]
+        ]
+        siblings = [
+            r for r in applicant.family
+            if r.type in [RelativeType.BROTHER, RelativeType.SISTER]
+        ]
+
         data = applicant.dict()
 
         photo = data.pop("photo")
@@ -58,6 +70,8 @@ class WatchDocService:
         context = {
             "date": today(),
             "full_name": applicant.full_name,
+            "parents": parents,
+            "siblings": siblings,
             **data,
         }
 
