@@ -179,7 +179,7 @@ export const MILSPECIALTY = {
 export const PHOTO = {
   photo: {
     component: "FileInput",
-    title: "Загрузите фотографию",
+    title: "Загрузите фотографию размером 3x4",
     props: { filesTypes: [".png", ".jpg", ".jpeg"] },
   },
 };
