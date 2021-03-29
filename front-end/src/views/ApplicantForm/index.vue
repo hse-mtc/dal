@@ -282,9 +282,9 @@ export default {
           "citizenship",
           "permanent_address",
           "date",
-          "country",
-          "city",
         ]),
+        city: [required, getMaxLengthValidator(32)],
+        country: [required, getMaxLengthValidator(32)],
         personal_email: [mailValidator],
         personal_phone_number: [phoneValidator],
       };
