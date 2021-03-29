@@ -123,8 +123,8 @@
       <div :class="$style.footer">
         <p :class="$style.footerText">
           При возникновении технических трудностей обращайтесь по адресу
-          <a href="mailto:dal.mec.hse@gmail.com">dal.mec.hse@gmail.com</a>. В письме подробно опишите ситуацию и проблему,
-          с которой Вы столкнулись.
+          <a href="mailto:dal.mec.hse@gmail.com">dal.mec.hse@gmail.com</a>. В
+          письме подробно опишите ситуацию и проблему, с которой Вы столкнулись.
         </p>
       </div>
     </template>
@@ -258,6 +258,11 @@ export default {
         },
       });
 
+      const getMaxLengthValidator = (max) => ({
+        max,
+        message: `Максимальная длина поля - ${max} символов`,
+      });
+
       const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
       const corpMailValidator = getValidator(
         /[A-Za-z0-9._%+-]+@edu\.hse\.ru$/,
@@ -313,7 +318,11 @@ export default {
           "surname_genitive",
           "name_genitive",
         ]),
-        birthInfo: makeRequired(["date", "country", "city"]),
+        birthInfo: {
+          ...makeRequired(["date"]),
+          country: [required, getMaxLengthValidator(32)],
+          city: [required, getMaxLengthValidator(32)],
+        },
         passport: {
           ...makeRequired(["ufms_name", "issue_date"]),
           series: [
