@@ -119,6 +119,14 @@
           Отправить форму
         </el-button>
       </div>
+
+      <div :class="$style.footer">
+        <p :class="$style.footerText">
+          При возникновении технических трудностей обращайтесь по адресу
+          <a href="mailto:dal.mec.hse@gmail.com">dal.mec.hse@gmail.com</a>. В письме подробно опишите ситуацию и проблему,
+          с которой Вы столкнулись.
+        </p>
+      </div>
     </template>
 
     <template v-else>
@@ -566,7 +574,7 @@ export default {
 .root {
   display: flex;
   max-width: 600px;
-  min-height: 80vh;
+  min-height: 100vh;
   margin: auto;
   padding: 20px 10px;
   flex-direction: column;
@@ -578,5 +586,16 @@ export default {
   align-items: center;
   justify-content: center;
   flex: 1;
+}
+
+.footer {
+  margin-top: 35px;
+  border-top: 1px solid #cfc8c8;
+  color: #cfc8c8;
+  padding-top: 10px;
+
+  a {
+    color: #5a96d6;
+  }
 }
 </style>
