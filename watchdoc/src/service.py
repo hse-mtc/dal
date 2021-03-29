@@ -90,15 +90,11 @@ class WatchDocService:
             name=folder_name,
             parents=[self._campus_folders[campus]["id"]],
         )
-        documents_folder = self.ds.obtain_folder(
-            name="Документы",
-            parents=[applicant_folder["id"]],
-        )
 
         for (_, rus) in DOCUMENTS:
             body = {
                 "name": rus,
-                "parents": [documents_folder["id"]],
+                "parents": [applicant_folder["id"]],
             }
             self.ds.upload_docx(
                 body=body,
