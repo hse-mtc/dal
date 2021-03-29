@@ -260,7 +260,7 @@ export default {
 
       const getMaxLengthValidator = (max) => ({
         max,
-        message: `Максимальная длина поля - ${max} символов`,
+        message: `Максимальное количество символов - ${max}`,
       });
 
       const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
