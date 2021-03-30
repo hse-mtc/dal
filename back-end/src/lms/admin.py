@@ -34,7 +34,6 @@ from lms.models.lessons import (
 admin.site.register(Milfaculty)
 admin.site.register(Milspecialty)
 admin.site.register(Milgroup)
-admin.site.register(UniversityInfo)
 
 # Students
 admin.site.register(Student)
@@ -42,6 +41,7 @@ admin.site.register(RecruitmentOffice)
 
 # Universities
 admin.site.register(Program)
+admin.site.register(UniversityInfo)
 
 # Teachers
 admin.site.register(Rank)
