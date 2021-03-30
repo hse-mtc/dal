@@ -301,26 +301,46 @@ export default {
         personal_phone_number: [phoneValidator],
       };
 
-      const fatherFields = {
-        ...relationFields,
-      };
-
-      if (!this.studentData.mother.personal_phone_number) {
-        fatherFields.personal_phone_number = [
-          {
-            required: true,
-            message: "Укажите номер матери или отца",
-          },
-          phoneValidator,
-        ];
-      }
+      const withMotherRules = Object.values(this.studentData.mother).filter(
+        Boolean
+      ).length;
 
       const withFaterRules = Object.values(this.studentData.father).filter(
         Boolean
       ).length;
-      const withMotherRules = Object.values(this.studentData.mother).filter(
-        Boolean
-      ).length;
+
+      const motherFatherPhone = [
+        {
+          required: true,
+          message: withFaterRules
+            ? "Укажите номер матери или отца"
+            : "Укажите номер матери",
+        },
+        phoneValidator,
+      ]
+
+
+      let fatherFields = {}
+
+      if (!withMotherRules) {
+        if (withFaterRules) {
+          fatherFields = {
+            ...relationFields,
+            personal_phone_number: motherFatherPhone,
+          }
+        }
+      } else if (!this.studentData.mother.personal_phone_number) {
+        if (withFaterRules) {
+          fatherFields = {
+            ...relationFields,
+            personal_phone_number: motherFatherPhone,
+          }
+        } else {
+          fatherFields = {
+            personal_phone_number: motherFatherPhone,
+          }
+        }
+      }
 
       return {
         about: makeRequired([
@@ -370,7 +390,7 @@ export default {
           personal_phone_number: [phoneValidator],
         },
         mother: withMotherRules ? relationFields : {},
-        father: withFaterRules ? fatherFields : {},
+        father: fatherFields,
         brothers: relationFields,
         sisters: relationFields,
         photo: { photo: [required] },
