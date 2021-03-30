@@ -19,5 +19,5 @@ def utc_to_local(utc_dt: datetime) -> datetime:
 async def absence_report_overdue() -> bool:
     utc_now = datetime.utcnow()
     local_now = utc_to_local(utc_now).strftime('%H:%M:%S')
-    restriction_time = await get_restriction_time()
+    restriction_time = await fetch_restriction_time()
     return restriction_time >= local_now
