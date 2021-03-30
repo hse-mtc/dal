@@ -22,6 +22,7 @@ from lms.models.students import (
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.universities import (
     ProgramSerializer,
+    UniversityInfoSerializer,
     UniversityInfoCreateSerializer,
 )
 
@@ -55,7 +56,7 @@ class RecruitmentOfficeSerializer(ModelSerializer):
 
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
-    university_info = UniversityInfoCreateSerializer()
+    university_info = UniversityInfoSerializer()
     photo = PhotoSerializer(read_only=True)
 
     fullname = SerializerMethodField()
