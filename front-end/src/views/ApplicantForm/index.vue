@@ -147,6 +147,10 @@ import {
 } from "@/common/inputs";
 import allowMobileView from "@/utils/allowMobileView";
 import { addStudent } from "@/api/students";
+
+import _map from 'lodash/map'
+import _isArray from 'lodash/isArray'
+
 import {
   ABOUT,
   BIRTH_INFO,
@@ -564,9 +568,19 @@ export default {
   },
 
   watch: {
-    async campus(nextValue) {
-      const { data } = await getReferenceMilSpecialties(nextValue);
-      this.fillMilspecialtyOptions(data);
+    async step(nextValue) {
+      if (nextValue === STEPS.milspecialty) {
+        try {
+          const { data } = await getReferenceMilSpecialties(nextValue);
+          this.fillMilspecialtyOptions(data);
+        } catch (e) {
+          this.$message({
+            type: "error",
+            duration: 1000 * 5,
+            message: "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
+          });
+        }
+      }
     },
   },
 };
