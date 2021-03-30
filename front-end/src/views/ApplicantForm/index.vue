@@ -317,28 +317,27 @@ export default {
             : "Укажите номер матери",
         },
         phoneValidator,
-      ]
+      ];
 
-
-      let fatherFields = {}
+      let fatherFields = {};
 
       if (!withMotherRules) {
         if (withFaterRules) {
           fatherFields = {
             ...relationFields,
             personal_phone_number: motherFatherPhone,
-          }
+          };
         }
       } else if (!this.studentData.mother.personal_phone_number) {
         if (withFaterRules) {
           fatherFields = {
             ...relationFields,
             personal_phone_number: motherFatherPhone,
-          }
+          };
         } else {
           fatherFields = {
             personal_phone_number: motherFatherPhone,
-          }
+          };
         }
       }
 
@@ -621,7 +620,9 @@ export default {
     async step(nextValue) {
       if (nextValue === STEPS.milspecialty) {
         try {
-          const { data } = await getReferenceMilSpecialties(this.studentData.universityInfo.campus);
+          const { data } = await getReferenceMilSpecialties(
+            this.studentData.universityInfo.campus
+          );
           this.fillMilspecialtyOptions(data);
         } catch (e) {
           this.$message({
