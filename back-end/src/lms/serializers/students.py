@@ -21,7 +21,6 @@ from lms.models.students import (
 )
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.universities import (
-    ProgramSerializer,
     UniversityInfoSerializer,
     UniversityInfoCreateSerializer,
 )

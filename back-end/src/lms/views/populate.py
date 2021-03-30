@@ -1,3 +1,5 @@
+# pylint: disable=line-too-long,unused-argument,too-many-arguments,too-many-locals
+
 from datetime import (
     datetime,
     timedelta,
@@ -327,7 +329,6 @@ def create_university_infos(
     return infos
 
 
-# pylint: disable=(too-many-locals)
 def create_students(
     milgroups: dict[int, Milgroup],
     programs: dict[str, Program],
@@ -336,8 +337,6 @@ def create_students(
     recruitment_offices: dict[str, RecruitmentOffice],
     university_infos: dict[str, UniversityInfo],
 ):
-    # pylint: disable=too-many-arguments
-
     # TODO – index term, add birth_info
     # FIXME(TmLev): provide family for every student
 
@@ -473,7 +472,6 @@ def create_students(
     return students
 
 
-# pylint: disable=(too-many-locals)
 def create_absences(students: dict[str, Student], nearest_day: datetime):
     date_f = '%Y-%m-%d'
 
@@ -514,8 +512,6 @@ def create_absences(students: dict[str, Student], nearest_day: datetime):
         absence.save()
 
 
-# pylint: disable=(too-many-locals)
-# pylint: disable=(too-many-arguments)
 def create_teachers(
     milgroups: dict[int, Milgroup],
     milfaculties: dict[str, Milfaculty],
@@ -900,7 +896,6 @@ def create_absence_restriction_time():
     AbsenceTime.objects.create(absence_restriction_time=restriction_time)
 
 
-# pylint: disable=(too-many-locals)
 @api_view(['POST'])
 @permission_classes((AllowAny,))
 def lms_populate(request: Request) -> Response:

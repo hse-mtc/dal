@@ -22,7 +22,7 @@ from lms.serializers.common import (
     MilspecialtySerializer,
     MilgroupSerializer,
 )
-from lms.serializers.students import ProgramSerializer
+from lms.serializers.universities import ProgramSerializer
 from lms.serializers.teachers import TeacherPostSerializer, RankSerializer
 from lms.serializers.lessons import RoomSerializer
 from lms.serializers.absences import AbsenceTimeSerializer
