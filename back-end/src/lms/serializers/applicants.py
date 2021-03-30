@@ -5,13 +5,14 @@ from rest_framework.serializers import (
     SerializerMethodField,
 )
 
-from lms.models.students import Student
-
 from common.serializers.persons import (
     BirthInfoSerializer,
     ContactInfoSerializer,
     RelativeSerializer,
 )
+
+from lms.models.students import Student
+
 from lms.serializers.common import MilspecialtySerializer
 from lms.serializers.students import RecruitmentOfficeSerializer
 from lms.serializers.universities import UniversityInfoSerializer
