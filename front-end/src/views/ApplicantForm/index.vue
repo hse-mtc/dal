@@ -521,8 +521,6 @@ export default {
 
         const reader = new FileReader();
 
-        console.log(this.studentData.photo.photo);
-
         const data = {
           ...this.studentData.about,
           ...this.studentData.milspecialty,
@@ -533,8 +531,6 @@ export default {
           university_info: this.studentData.universityInfo,
           family,
         };
-
-        this.isSubmitting = true;
 
         reader.onload = async () => {
           data.image = reader.result;
@@ -550,15 +546,20 @@ export default {
           }
 
           this.isSubmitting = false;
-          this.formSubmitted = true;
         };
 
-        reader.readAsDataURL(this.studentData.photo.photo[0].raw);
+        try {
+          this.isSubmitting = true;
+          reader.readAsDataURL(this.studentData.photo.photo[0].raw);
+        } catch (e) {
+          this.isSubmitting = false;
+          console.error('Ошибка чтения файла:', e)
+          this.$message({
+            type: "error",
+            message: "Ошибка чтения файла",
+          });
+        }
       }
-    },
-
-    test(key) {
-      console.log(key);
     },
   },
 

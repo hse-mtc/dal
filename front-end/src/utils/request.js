@@ -83,7 +83,7 @@ service.interceptors.response.use(
       });
     } else {
       Message({
-        message: error.message,
+        message: error.response.data.detail || error.message,
         type: "error",
         duration: 5 * 1000,
       });
