@@ -543,9 +543,10 @@ export default {
             await addStudent(data);
             this.formSubmitted = true;
           } catch (e) {
-            this.$message({
-              type: "error",
-              message: "Не удалось отправить форму",
+            this.$alert(`Проверьте правильность заполненных данных, если ошибка не уйдет, отправьте текст ошибки нам на почту<br>${JSON.stringify(e.response.data, null, 4)}`, 'Не удалось отправить форму', {
+              confirmButtonText: 'OK',
+              type: 'error',
+              dangerouslyUseHTMLString: true
             });
           }
 
