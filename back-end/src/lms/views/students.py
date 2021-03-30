@@ -60,15 +60,16 @@ class StudentViewSet(ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance = self.perform_create(serializer)
+        instance: Student = self.perform_create(serializer)
 
-        applicant = ApplicantSerializer(instance=instance)
-        response = requests.post(
-            f'http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/',
-            data=JSONRenderer().render(applicant.data),
-        )
-        # TODO(TmLev): remove debug print
-        print(response.json())
+        if instance.status == Student.Status.APPLICANT:
+            applicant = ApplicantSerializer(instance=instance)
+            response = requests.post(
+                f'http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/',
+                data=JSONRenderer().render(applicant.data),
+            )
+            # TODO(TmLev): remove debug print
+            print(response.json())
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data,
