@@ -8,7 +8,7 @@ from enum import (
 
 from api.client import client
 
-from utils.auth import check_token
+from utils.auth import auth_required
 
 
 class State(Enum):
@@ -25,7 +25,7 @@ class Student:
     absence_status: str = 'Открыт'
 
 
-@check_token
+@auth_required
 async def fetch_students(milgroup: str, *args, **kwargs) -> list[Student]:
     students = []
     async with client.get(f'lms/students?milgroup={milgroup}', *args, **kwargs) as response:

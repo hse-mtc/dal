@@ -8,7 +8,7 @@ from api.student import (
     State,
 )
 
-from utils.auth import check_token
+from utils.auth import auth_required
 
 
 def create_body(student: Student) -> dict:
@@ -36,7 +36,7 @@ def absence_statistic(students: list[Student]) -> str:
     return text
 
 
-@check_token
+@auth_required
 async def post_absence(
     students: list[Student],
     *args: tp.Any,
