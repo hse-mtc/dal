@@ -541,7 +541,7 @@ export default {
 
           try {
             await addStudent(data);
-            this.formSubmited = true;
+            this.formSubmitted = true;
           } catch (e) {
             this.$message({
               type: "error",
