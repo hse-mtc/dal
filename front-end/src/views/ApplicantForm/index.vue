@@ -601,7 +601,7 @@ export default {
     async step(nextValue) {
       if (nextValue === STEPS.milspecialty) {
         try {
-          const { data } = await getReferenceMilSpecialties(nextValue);
+          const { data } = await getReferenceMilSpecialties(this.studentData.universityInfo.campus);
           this.fillMilspecialtyOptions(data);
         } catch (e) {
           this.$message({
