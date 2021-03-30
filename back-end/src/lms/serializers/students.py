@@ -55,7 +55,7 @@ class RecruitmentOfficeSerializer(ModelSerializer):
 
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
-    program = ProgramSerializer()
+    university_info = UniversityInfoCreateSerializer()
     photo = PhotoSerializer(read_only=True)
 
     fullname = SerializerMethodField()

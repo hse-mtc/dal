@@ -279,35 +279,44 @@ def create_recruitments_offices() -> dict[str, RecruitmentOffice]:
     return offices
 
 
-def create_university_infos() -> dict[str, UniversityInfo]:
+def create_university_infos(
+    programs: dict[str, Program]
+) -> dict[str, UniversityInfo]:
     values = [{
-        'id_card': 'HSE11229',
-        'group_title': 'БИТ 188',
+        'card_id': 'HSE11229',
+        'group': 'БИТ 188',
+        'program': programs['Информатика и вычислительная техника']
     }, {
-        'id_card': 'HSE1129',
-        'group_title': 'БИТ 188',
+        'card_id': 'HSE1129',
+        'group': 'БИТ 188',
+        'program': programs['Информатика и вычислительная техника']
     }, {
-        'id_card': 'HSE11319',
-        'group_title': 'БИТ 188',
+        'card_id': 'HSE11319',
+        'group': 'БИТ 188',
+        'program': programs['Информатика и вычислительная техника']
     }, {
-        'id_card': 'HSE1889',
-        'group_title': 'БИТ 188',
+        'card_id': 'HSE1889',
+        'group': 'БИТ 188',
+        'program': programs['Информатика и вычислительная техника']
     }, {
-        'id_card': 'HSE11255',
-        'group_title': 'БИТ 188',
+        'card_id': 'HSE11255',
+        'group': 'БИТ 188',
+        'program': programs['Информатика и вычислительная техника']
     }, {
-        'id_card': 'HSE1199',
-        'group_title': 'БИТ 188',
+        'card_id': 'HSE1199',
+        'group': 'БИТ 188',
+        'program': programs['Информатика и вычислительная техника']
     }, {
-        'id_card': 'HSE7779',
-        'group_title': 'БИТ 188',
+        'card_id': 'HSE7779',
+        'group': 'БИТ 188',
+        'program': programs['Информатика и вычислительная техника']
     }]
 
     infos = {}
 
     for fields in values:
         info, _ = UniversityInfo.objects.get_or_create(**fields)
-        infos[fields['id_card']] = info
+        infos[fields['card_id']] = info
 
     return infos
 
@@ -323,7 +332,7 @@ def create_students(
 ):
     # pylint: disable=too-many-arguments
 
-    # TODO – index term
+    # TODO – index term, add birth_info
     # FIXME(TmLev): provide family for every student
 
     values = [{
@@ -331,9 +340,9 @@ def create_students(
         'name': 'Григорий',
         'patronymic': 'Александрович',
         'milgroup': milgroups[1809],
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'birthdate': '2000-11-04',
-        'program': programs['Информатика и вычислительная техника'],
+        'milspecialty': milspecialties['Защита информационных технологий'],
+        # 'birthdate': '2000-11-04',
+        # 'program': programs['Информатика и вычислительная техника'],
         'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Хромова',
@@ -347,9 +356,9 @@ def create_students(
         'name': 'Артем',
         'patronymic': 'Сергеевич',
         'milgroup': milgroups[1809],
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'birthdate': '2000-02-23',
-        'program': programs['Информатика и вычислительная техника'],
+        'milspecialty': milspecialties['Защита информационных технологий'],
+        # 'birthdate': '2000-02-23',
+        # 'program': programs['Информатика и вычислительная техника'],
         'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Кацевалова',
@@ -363,9 +372,9 @@ def create_students(
         'name': 'Владислав',
         'patronymic': 'Евгеньевич',
         'milgroup': milgroups[1809],
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'birthdate': '1999-08-29',
-        'program': programs['Информатика и вычислительная техника'],
+        'milspecialty': milspecialties['Защита информационных технологий'],
+        # 'birthdate': '1999-08-29',
+        # 'program': programs['Информатика и вычислительная техника'],
         'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Исакова',
@@ -379,9 +388,9 @@ def create_students(
         'name': 'Насир',
         'patronymic': 'Ашурович',
         'milgroup': milgroups[1808],
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'birthdate': '1999-05-14',
-        'program': programs['Информатика и вычислительная техника'],
+        'milspecialty': milspecialties['Защита информационных технологий'],
+        # 'birthdate': '1999-05-14',
+        # 'program': programs['Информатика и вычислительная техника'],
         'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Алиева',
@@ -395,9 +404,9 @@ def create_students(
         'name': 'Андрей',
         'patronymic': 'Витальевич',
         'milgroup': milgroups[1812],
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'birthdate': '1999-11-12',
-        'program': programs['Информатика и вычислительная техника'],
+        'milspecialty': milspecialties['Защита информационных технологий'],
+        # 'birthdate': '1999-11-12',
+        # 'program': programs['Информатика и вычислительная техника'],
         'status': Student.Status.STUDENT.value,
         'photo': None,
         'surname_genitive': 'Куркина',
@@ -411,9 +420,9 @@ def create_students(
         'name': 'Петр',
         'patronymic': 'Сидорович',
         'milgroup': milgroups[1804],
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'birthdate': '1999-05-04',
-        'program': programs['Машиностроение'],
+        'milspecialty': milspecialties['Защита информационных технологий'],
+        # 'birthdate': '1999-05-04',
+        # 'program': programs['Машиностроение'],
         'status': Student.Status.DEDUCTED.value,
         'photo': None,
         'surname_genitive': 'Иванова',
@@ -427,9 +436,9 @@ def create_students(
         'name': 'Губарибек',
         'patronymic': 'Алкинбеков',
         'milgroup': milgroups[1801],
-        'mil_specialty': milspecialties['Защита информационных технологий'],
-        'birthdate': '1969-04-13',
-        'program': programs['Интеллектуальные системы в гуманитарной сфере'],
+        'milspecialty': milspecialties['Защита информационных технологий'],
+        # 'birthdate': '1969-04-13',
+        # 'program': programs['Интеллектуальные системы в гуманитарной сфере'],
         'status': Student.Status.GRADUATED.value,
         'photo': None,
         'surname_genitive': 'Чукмаридзе',
@@ -750,7 +759,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
     date_f = '%Y-%m-%d'
     values = [
         {
-            'lesson_type': Lesson.LessonType.LECTURE.value,
+            'lesson_type': Lesson.Type.LECTURE.value,
             'room': rooms['510'],
             'milgroup': milgroups[1809],
             'date': nearest_day.strftime(date_f),
@@ -758,7 +767,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Тактическая подготовка'],
         },
         {
-            'lesson_type': Lesson.LessonType.PRACTICE.value,
+            'lesson_type': Lesson.Type.PRACTICE.value,
             'room': rooms['Плац'],
             'milgroup': milgroups[1809],
             'date': nearest_day.strftime(date_f),
@@ -766,7 +775,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Строевая подготовка'],
         },
         {
-            'lesson_type': Lesson.LessonType.SEMINAR.value,
+            'lesson_type': Lesson.Type.SEMINAR.value,
             'room': rooms['504'],
             'milgroup': milgroups[1809],
             'date': nearest_day.strftime(date_f),
@@ -774,7 +783,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Военная топография'],
         },
         {
-            'lesson_type': Lesson.LessonType.PRACTICE.value,
+            'lesson_type': Lesson.Type.PRACTICE.value,
             'room': rooms['Плац'],
             'milgroup': milgroups[1810],
             'date': nearest_day.strftime(date_f),
@@ -782,7 +791,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Строевая подготовка'],
         },
         {
-            'lesson_type': Lesson.LessonType.SEMINAR.value,
+            'lesson_type': Lesson.Type.SEMINAR.value,
             'room': rooms['504'],
             'milgroup': milgroups[1810],
             'date': nearest_day.strftime(date_f),
@@ -790,7 +799,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Военная топография'],
         },
         {
-            'lesson_type': Lesson.LessonType.LECTURE.value,
+            'lesson_type': Lesson.Type.LECTURE.value,
             'room': rooms['510'],
             'milgroup': milgroups[1810],
             'date': nearest_day.strftime(date_f),
@@ -798,7 +807,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Тактическая подготовка'],
         },
         {
-            'lesson_type': Lesson.LessonType.LECTURE.value,
+            'lesson_type': Lesson.Type.LECTURE.value,
             'room': rooms['510'],
             'milgroup': milgroups[1809],
             'date': (nearest_day - timedelta(7)).strftime(date_f),
@@ -806,7 +815,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Тактическая подготовка'],
         },
         {
-            'lesson_type': Lesson.LessonType.PRACTICE.value,
+            'lesson_type': Lesson.Type.PRACTICE.value,
             'room': rooms['Плац'],
             'milgroup': milgroups[1809],
             'date': (nearest_day - timedelta(7)).strftime(date_f),
@@ -814,7 +823,7 @@ def create_lessons(rooms: dict[str, Room], milgroups: dict[int, Milgroup],
             'subject': subjects['Строевая подготовка'],
         },
         {
-            'lesson_type': Lesson.LessonType.SEMINAR.value,
+            'lesson_type': Lesson.Type.SEMINAR.value,
             'room': rooms['504'],
             'milgroup': milgroups[1809],
             'date': (nearest_day - timedelta(7)).strftime(date_f),
@@ -904,7 +913,7 @@ def lms_populate(request: Request) -> Response:
 
     passports = create_passports()
     offices = create_recruitments_offices()
-    infos = create_university_infos()
+    infos = create_university_infos(programs)
     students = create_students(
         milgroups,
         programs,
