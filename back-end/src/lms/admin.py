@@ -5,7 +5,7 @@ from lms.models.punishments import Punishment
 from lms.models.absences import Absence
 from lms.models.universities import (
     Program,
-    UniversityInfo
+    UniversityInfo,
 )
 from lms.models.common import (
     Milgroup,

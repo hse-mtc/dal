@@ -14,9 +14,7 @@ from common.serializers.persons import (
 )
 from lms.serializers.common import MilspecialtySerializer
 from lms.serializers.students import RecruitmentOfficeSerializer
-from lms.serializers.universities import (
-    UniversityInfoSerializer,
-)
+from lms.serializers.universities import UniversityInfoSerializer
 
 
 class ApplicantSerializer(ModelSerializer):
