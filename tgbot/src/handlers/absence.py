@@ -1,9 +1,4 @@
-import typing as tp
 import operator
-
-from collections import namedtuple
-
-from asyncio import gather
 
 from aiogram.types import Message
 from aiogram.types import ParseMode
