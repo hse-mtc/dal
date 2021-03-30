@@ -148,9 +148,6 @@ import {
 import allowMobileView from "@/utils/allowMobileView";
 import { addStudent } from "@/api/students";
 
-import _map from 'lodash/map'
-import _isArray from 'lodash/isArray'
-
 import {
   ABOUT,
   BIRTH_INFO,
