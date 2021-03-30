@@ -347,7 +347,7 @@ export default {
           program: [
             required,
             getValidator(
-              /^\d\d.\d\d.\d\d$/,
+              /^\d\d(\.\d\d){2}$/,
               "Введите код программы в формате 01.02.03"
             ),
           ],
