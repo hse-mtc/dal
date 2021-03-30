@@ -540,11 +540,19 @@ export default {
             await addStudent(data);
             this.formSubmitted = true;
           } catch (e) {
-            this.$alert(`Проверьте правильность заполненных данных, если ошибка не уйдет, отправьте текст ошибки нам на почту<br>${JSON.stringify(e.response.data, null, 4)}`, 'Не удалось отправить форму', {
-              confirmButtonText: 'OK',
-              type: 'error',
-              dangerouslyUseHTMLString: true
-            });
+            this.$alert(
+              `Проверьте правильность заполненных данных, если ошибка не уйдет, отправьте текст ошибки нам на почту<br>${JSON.stringify(
+                e.response.data,
+                null,
+                4
+              )}`,
+              "Не удалось отправить форму",
+              {
+                confirmButtonText: "OK",
+                type: "error",
+                dangerouslyUseHTMLString: true,
+              }
+            );
           }
 
           this.isSubmitting = false;
@@ -555,7 +563,7 @@ export default {
           reader.readAsDataURL(this.studentData.photo.photo[0].raw);
         } catch (e) {
           this.isSubmitting = false;
-          console.error('Ошибка чтения файла:', e)
+          console.error("Ошибка чтения файла:", e);
           this.$message({
             type: "error",
             message: "Ошибка чтения файла",
@@ -575,7 +583,8 @@ export default {
           this.$message({
             type: "error",
             duration: 1000 * 5,
-            message: "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
+            message:
+              "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
           });
         }
       }
