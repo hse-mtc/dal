@@ -285,31 +285,38 @@ def create_university_infos(
     values = [{
         'card_id': 'HSE11229',
         'group': 'БИТ 188',
-        'program': programs['Информатика и вычислительная техника']
+        'program': programs['Информатика и вычислительная техника'],
+        'campus': UniversityInfo.Campus.MOSCOW.value
     }, {
         'card_id': 'HSE1129',
         'group': 'БИТ 188',
-        'program': programs['Информатика и вычислительная техника']
+        'program': programs['Информатика и вычислительная техника'],
+        'campus': UniversityInfo.Campus.MOSCOW.value
     }, {
         'card_id': 'HSE11319',
         'group': 'БИТ 188',
-        'program': programs['Информатика и вычислительная техника']
+        'program': programs['Информатика и вычислительная техника'],
+        'campus': UniversityInfo.Campus.MOSCOW.value
     }, {
         'card_id': 'HSE1889',
         'group': 'БИТ 188',
-        'program': programs['Информатика и вычислительная техника']
+        'program': programs['Информатика и вычислительная техника'],
+        'campus': UniversityInfo.Campus.PERM.value
     }, {
         'card_id': 'HSE11255',
         'group': 'БИТ 188',
-        'program': programs['Информатика и вычислительная техника']
+        'program': programs['Информатика и вычислительная техника'],
+        'campus': UniversityInfo.Campus.NIZHNY_NOVGOROD.value
     }, {
         'card_id': 'HSE1199',
         'group': 'БИТ 188',
-        'program': programs['Информатика и вычислительная техника']
+        'program': programs['Информатика и вычислительная техника'],
+        'campus': UniversityInfo.Campus.SAINT_PETERSBURG.value
     }, {
         'card_id': 'HSE7779',
         'group': 'БИТ 188',
-        'program': programs['Информатика и вычислительная техника']
+        'program': programs['Информатика и вычислительная техника'],
+        'campus': UniversityInfo.Campus.MOSCOW.value
     }]
 
     infos = {}

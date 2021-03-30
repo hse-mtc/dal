@@ -2,8 +2,11 @@ from django.contrib import admin
 
 from lms.models.encouragements import Encouragement
 from lms.models.punishments import Punishment
-from lms.models.universities import Program
 from lms.models.absences import Absence
+from lms.models.universities import (
+    Program,
+    UniversityInfo
+)
 from lms.models.common import (
     Milgroup,
     Milfaculty,
@@ -31,6 +34,7 @@ from lms.models.lessons import (
 admin.site.register(Milfaculty)
 admin.site.register(Milspecialty)
 admin.site.register(Milgroup)
+admin.site.register(UniversityInfo)
 
 # Students
 admin.site.register(Student)
