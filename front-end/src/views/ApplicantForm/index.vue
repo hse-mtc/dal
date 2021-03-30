@@ -248,6 +248,17 @@ export default {
     },
     rules() {
       const required = { required: true, message: "Обязательное поле" };
+      const requiredBool = {
+        required: true,
+        message: "Обязательное поле",
+        validator: (rule, value, cb) => {
+          if (!value) {
+            cb(new Error("Обязательное поле"));
+          } else {
+            cb();
+          }
+        },
+      };
 
       const getValidator = (regExp, msg) => ({
         validator: (rule, value, cb) => {
@@ -364,7 +375,7 @@ export default {
         sisters: relationFields,
         photo: { photo: [required] },
         milspecialty: { milspecialty: [required] },
-        agreement: { agreement: [required], isDataCorrect: [required] },
+        agreement: { agreement: [requiredBool], isDataCorrect: [requiredBool] },
       };
     },
   },
@@ -541,16 +552,29 @@ export default {
             this.formSubmitted = true;
           } catch (e) {
             this.$alert(
-              `Проверьте правильность заполненных данных, если ошибка не уйдет, отправьте текст ошибки нам на почту<br>${JSON.stringify(
-                e.response.data,
-                null,
-                4
-              )}`,
+              "Проверьте правильность заполненных данных, если ошибка не уйдет, отправьте текст ошибки нам на почту",
               "Не удалось отправить форму",
               {
-                confirmButtonText: "OK",
+                confirmButtonText: "Скопировать текст ошибки",
                 type: "error",
                 dangerouslyUseHTMLString: true,
+                callback: async () => {
+                  try {
+                    await navigator.clipboard.writeText(
+                      JSON.stringify(e.response.data, null, 4)
+                    );
+                    this.$message({
+                      type: "success",
+                      message: "Текст скопирован",
+                    });
+                  } catch (e) {
+                    console.error("Ошибка копирования:", e);
+                    this.$message({
+                      type: "error",
+                      message: "Текст не скопирован",
+                    });
+                  }
+                },
               }
             );
           }
