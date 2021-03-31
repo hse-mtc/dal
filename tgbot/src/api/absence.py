@@ -14,8 +14,8 @@ from utils.auth import auth_required
 def create_body(student: Student) -> dict:
     return {
         'student': student.id,
-        'absence_type': student.type,
-        'absence_status': student.status,
+        'absence_type': student.absence_type,
+        'absence_status': student.absence_status,
     }
 
 
