@@ -25,8 +25,8 @@
         </div>
       </el-col>
     </el-row>
-    <el-row class="search">
-      <el-col :span="4">
+    <div class="subjectsWrapper">
+      <div class="subjectsMenu">
         <div class="parts">
           <div class="parts-all">Все разделы</div>
           <div
@@ -39,8 +39,8 @@
             {{ part.title }}
           </div>
         </div>
-      </el-col>
-      <el-col :span="19" :offset="1">
+      </div>
+      <div class="subjects">
         <SearchForMaterials placeholder="Введите название темы или документа" />
         <div class="main-parts">
           <draggable
@@ -122,8 +122,8 @@
             </transition-group>
           </draggable>
         </div>
-      </el-col>
-    </el-row>
+      </div>
+    </div>
   </el-col>
 </template>
 
