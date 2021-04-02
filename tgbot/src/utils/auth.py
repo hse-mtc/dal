@@ -26,13 +26,12 @@ def auth_required(request_method: RequestMethod):
 
 async def fetch_token() -> str:
     body = {
-        "username": os.environ["TGBOT_USERNAME"],
+        "email": os.environ["TGBOT_USERNAME"],
         "password": os.environ["TGBOT_PASSWORD"],
     }
 
     async with client.post("auth/tokens/obtain/", json=body) as resp:
         response = await resp.json()
-
     return response["access"]
 
 

@@ -11,6 +11,13 @@ from api.student import (
 from utils.auth import auth_required
 
 
+class AuthException(Exception):
+    """
+    Exception raised if request is unauthorized
+    """
+    pass
+
+
 def create_body(student: Student) -> dict:
     return {
         'student': student.id,
@@ -50,5 +57,8 @@ async def post_absence(
     for student in absent_students:
         body = create_body(student)
         tasks.append(client.post('lms/absences/', json=body, *args, **kwargs))
-    await asyncio.gather(*tasks)
+    responses = await asyncio.gather(*tasks)
+    if responses[0].status == 401:
+        raise AuthException
+
     return absence_statistic(students)
