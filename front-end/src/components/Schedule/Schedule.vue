@@ -107,14 +107,14 @@
                       <el-tag
                         :type="
                           tagByLessonType(
-                            scope.row.lessons.find((x) => x.date == d)
-                              .lesson_type
+                            scope.row.lessons.find((x) => x.date == d).type
                           )
                         "
                         disable-transitions
                       >
                         {{
-                          scope.row.lessons.find((x) => x.date == d).lesson_type
+                          scope.row.lessons.find((x) => x.date == d).type
+                            | typeFilter
                         }}
                       </el-tag>
                     </div>
@@ -157,7 +157,7 @@
               v-for="item in subjects"
               :key="item.id"
               :label="item.title"
-              :value="item"
+              :value="item.id"
             >
             </el-option>
           </el-select>
@@ -180,15 +180,15 @@
         </el-form-item>
         <el-form-item label="Тип занятия: " required>
           <el-select
-            v-model="editLesson.lesson_type"
+            v-model="editLesson.type"
             placeholder="Выберите тип занятия"
             style="display: block"
           >
             <el-option
               v-for="item in lesson_types"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.code"
+              :label="item.label"
+              :value="item.code"
             >
             </el-option>
           </el-select>
@@ -239,7 +239,7 @@ export default {
         },
         date: "",
         ordinal: 0,
-        lesson_type: "",
+        type: "",
         room: "",
       },
       filter: {
@@ -250,13 +250,12 @@ export default {
         ],
       },
       lesson_types: [
-        "Семинар",
-        "Лекция",
-        "Групповое занятие",
-        "Практическое занятие",
-        "Зачет",
-        "Экзамен",
-        "Контрольная работа",
+        { label: "Семинар", code: "SE" },
+        { label: "Лекция", code: "LE" },
+        { label: "Групповое занятие", code: "GR" },
+        { label: "Практическое занятие", code: "PR" },
+        { label: "Зачет", code: "FI" },
+        { label: "Экзамен", code: "EX" },
       ],
       rooms: ["510", "501", "502", "503", "504", "Плац"],
       milgroups: [
@@ -312,30 +311,47 @@ export default {
     this.filter.mg = this.milgroups[0].milgroup;
     this.fetchData();
   },
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "LE":
+          return "Лекция";
+        case "SE":
+          return "Семинар";
+        case "GR":
+          return "Групповое занятие";
+        case "PR":
+          return "Практическое занятие";
+        case "FI":
+          return "Зачет";
+        case "EX":
+          return "Экзамен";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   methods: {
     formatDate: (d) => moment(d).format("DD.MM.YY"),
     tagByLessonType(type) {
       switch (type) {
-        case "Лекция":
+        case "LE":
           return "primary";
-        case "Семинар":
+        case "SE":
           return "danger";
-        case "Групповое занятие":
+        case "GR":
           return "warning";
-        case "Практическое занятие":
+        case "PR":
           return "success";
-        case "Зачет":
+        case "FI":
           return "info";
-        case "Экзамен":
-          return "info";
-        case "Контрольная работа":
+        case "EX":
           return "info";
         default:
           return "info";
       }
     },
     limitDateRange() {
-      console.log(this.filter.dateRange);
       var main, other;
       var maxMonths = 6;
       if (
@@ -348,22 +364,18 @@ export default {
         main = 0;
         other = 1;
       }
-      console.log(main, other);
       var diff = moment(this.filter.dateRange[main]).diff(
         this.filter.dateRange[other],
         "months",
         true
       );
-      console.log(diff);
       if (Math.abs(diff) > maxMonths) {
         this.filter.dateRange[other] = moment(this.filter.dateRange[main])
           .add(Math.sign(diff) * maxMonths, "months")
           .format("YYYY-MM-DD");
-        console.log(this.filter.dateRange);
       }
     },
     fetchData() {
-      console.log("wat");
       if (this.filter.mg > 0) {
         this.limitDateRange();
         getLessonJournal({
@@ -389,8 +401,7 @@ export default {
       this.editLesson = {
         ordinal,
         date,
-        milgroup: { milgroup: this.filter.mg },
-        subject: {},
+        milgroup: this.filter.mg,
       };
       this.editLessonFullname = "Новое занятие";
       this.getSubjects();
@@ -398,9 +409,8 @@ export default {
     },
     onEdit(row) {
       this.editLesson = { ...row };
-      this.editLesson.milgroup = {
-        milgroup: this.editLesson.milgroup.milgroup,
-      };
+      this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
+      this.editLesson.subject = this.editLesson.subject.id;
       this.editLessonFullname = "Редактирование занятия";
       this.getSubjects();
       this.dialogVisible = true;
