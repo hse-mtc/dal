@@ -14,8 +14,6 @@ export function getEncouragement(params) {
 }
 
 export function patchEncouragement(data) {
-  data.student = { id: data.student.id };
-  data.teacher = { id: data.teacher.id };
   return request({
     url: `${BASE_API_URL}${encouragement}${data.id}/`,
     method: "patch",

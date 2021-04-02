@@ -14,8 +14,6 @@ export function getPunishment(params) {
 }
 
 export function patchPunishment(data) {
-  data.student = { id: data.student.id };
-  data.teacher = { id: data.teacher.id };
   return request({
     url: `${BASE_API_URL}${punishment}${data.id}/`,
     method: "patch",
