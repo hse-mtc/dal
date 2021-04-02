@@ -145,8 +145,8 @@ export default {
   name: "Subject",
   async mounted() {
     await this.fetchData(this.$route.params.subjectId);
-    console.log('this.$route', this.$route)
-    this.openedCards = [...this.openedCards, +this.$route.query.section]
+    console.log("this.$route", this.$route);
+    this.openedCards = [...this.openedCards, +this.$route.query.section];
   },
   data() {
     return {
@@ -234,24 +234,26 @@ export default {
       });
     },
     togglePart(id) {
-      const index = this.openedCards.indexOf(id)
+      const index = this.openedCards.indexOf(id);
 
       if (index !== -1) {
-        this.openedCards = this.openedCards.filter(item => item !== id)
+        this.openedCards = this.openedCards.filter((item) => item !== id);
       } else {
-        this.openedCards = [...this.openedCards, id]
+        this.openedCards = [...this.openedCards, id];
       }
     },
     selectPart(id, index) {
       if (this.openedCards.indexOf(id)) {
-        this.openedCards = [...this.openedCards, id]
+        this.openedCards = [...this.openedCards, id];
       }
 
-      this.$nextTick(() => this.$refs.cards[index].scrollIntoView({
-        block: "start",
-        inline: "nearest",
-        behavior: 'smooth'
-      }))
+      this.$nextTick(() =>
+        this.$refs.cards[index].scrollIntoView({
+          block: "start",
+          inline: "nearest",
+          behavior: "smooth",
+        })
+      );
     },
     async fetchData(subjectId) {
       this.subjectId = subjectId;

@@ -21,7 +21,8 @@
         >
           <div class="file-icon">
             <img
-              :src="require(`../../assets/extensions-icon/${
+              :src="
+                require(`../../assets/extensions-icon/${
                   icons[material.file.extension] || 'new-file'
                 }.svg`)
               "
@@ -136,8 +137,8 @@ import { addTopicFile } from "@/api/material";
 export default {
   components: { CustomText, DownloadFile },
   model: {
-    prop: 'opened',
-    event: 'change'
+    prop: "opened",
+    event: "change",
   },
   props: {
     topic: {
@@ -163,7 +164,7 @@ export default {
     highlight: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
@@ -198,9 +199,13 @@ export default {
       return this.displayMaterials && this.displayMaterials.length > 0;
     },
     isOpened: {
-      get() { return this.opened },
-      set(value) { this.$emit('change', value) }
-    }
+      get() {
+        return this.opened;
+      },
+      set(value) {
+        this.$emit("change", value);
+      },
+    },
   },
   mounted() {
     this.displayMaterials = [...this.materials];

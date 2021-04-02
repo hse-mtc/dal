@@ -56,10 +56,7 @@
         {{ topic.annotation }}
       </CustomText>
     </div>
-    <div
-      v-else
-      style="width: 90%; margin-top: 10px"
-    >
+    <div v-else style="width: 90%; margin-top: 10px">
       <el-input
         type="textarea"
         :autosize="{ minRows: 2, maxRows: 4 }"
@@ -71,7 +68,7 @@
 
     <div class="topic-files">
       <ClassMaterials
-        v-for="(variant, key) in (topic.class_materials || {})"
+        v-for="(variant, key) in topic.class_materials || {}"
         :key="`${topic.id}-${key}`"
         :opened="openedMaterials.includes(key)"
         :isOwner="isOwner"
@@ -93,26 +90,29 @@ import CustomText from "@/common/CustomText";
 export default {
   name: "SubjectTopic",
   components: { CustomText, ClassMaterials },
-  props: ["isOwner", 'topic', 'index'],
+  props: ["isOwner", "topic", "index"],
   data() {
     return {
       isEditing: null,
       openedMaterials: [],
-      highlight: ''
+      highlight: "",
     };
   },
   mounted() {
     if (+this.$route.query.topic === this.topic.id) {
-      this.openedMaterials = [...this.openedMaterials, this.$route.query.materialsType]
+      this.openedMaterials = [
+        ...this.openedMaterials,
+        this.$route.query.materialsType,
+      ];
       this.$refs[this.$route.query.materialsType][0].$vnode.elm.scrollIntoView({
         block: "center",
         inline: "nearest",
-        behavior: 'smooth'
-      })
+        behavior: "smooth",
+      });
 
-      this.highlight = this.$route.query.materialsType
+      this.highlight = this.$route.query.materialsType;
 
-      setTimeout(() => this.highlight = '', 2000)
+      setTimeout(() => (this.highlight = ""), 2000);
     }
   },
   methods: {
@@ -135,21 +135,23 @@ export default {
         annotation: annotation,
       };
 
-      this.$emit('change', {id: this.topic.id, newData: dataToSend})
+      this.$emit("change", { id: this.topic.id, newData: dataToSend });
       this.isEditing = null;
     },
     deleteTopic() {
-      this.$emit('delete', this.topic.id)
+      this.$emit("delete", this.topic.id);
     },
     toggleMaterialsOpen(key) {
-      const index = this.openedMaterials.indexOf(key)
+      const index = this.openedMaterials.indexOf(key);
 
       if (index !== -1) {
-        this.openedMaterials = this.openedMaterials.filter(item => item !== key)
+        this.openedMaterials = this.openedMaterials.filter(
+          (item) => item !== key
+        );
       } else {
-        this.openedMaterials = [...this.openedMaterials, key]
+        this.openedMaterials = [...this.openedMaterials, key];
       }
-    }
+    },
   },
 };
 </script>
