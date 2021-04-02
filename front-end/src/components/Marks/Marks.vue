@@ -95,14 +95,14 @@
                           :type="
                             tagByLessonType(
                               scope.row.marks.find((x) => x.lesson.date == d)
-                                .lesson.lesson_type
+                                .lesson.type
                             )
                           "
                           disable-transitions
                         >
                           {{
                             scope.row.marks.find((x) => x.lesson.date == d)
-                              .lesson.lesson_type
+                              .lesson.type | typeFilter
                           }}
                         </el-tag>
                       </el-form-item>
@@ -307,23 +307,41 @@ export default {
     this.filter.mg = this.milgroups[0].milgroup;
     this.fetchData();
   },
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "LE":
+          return "Лекция";
+        case "SE":
+          return "Семинар";
+        case "GR":
+          return "Групповое занятие";
+        case "PR":
+          return "Практическое занятие";
+        case "FI":
+          return "Зачет";
+        case "EX":
+          return "Экзамен";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   methods: {
     formatDate: (d) => moment(d).format("DD.MM.YY"),
     tagByLessonType(type) {
       switch (type) {
-        case "Лекция":
+        case "LE":
           return "primary";
-        case "Семинар":
+        case "SE":
           return "danger";
-        case "Групповое занятие":
+        case "GR":
           return "warning";
-        case "Практическое занятие":
+        case "PR":
           return "success";
-        case "Зачет":
+        case "FI":
           return "info";
-        case "Экзамен":
-          return "info";
-        case "Контрольная работа":
+        case "EX":
           return "info";
         default:
           return "info";
@@ -365,11 +383,12 @@ export default {
       this.editMark = {
         student,
         date,
-        milgroup: { milgroup: this.filter.mg },
+        milgroup: this.filter.mg,
         subject: {},
       };
       this.editMarkFullname = student.fullname;
       this.getSubjects();
+      // TODO: use on mark creation
       // this.dialogVisible = true;
     },
     onEdit(mark, student) {
@@ -379,7 +398,6 @@ export default {
         lesson: mark.lesson.id,
         mark: mark.mark,
       };
-      console.log(this.editMark);
       this.editMarkFullname = student.fullname;
       this.getSubjects();
       this.dialogVisible = true;
