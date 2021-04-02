@@ -51,7 +51,7 @@ export default {
   components: {
     CustomText,
     SubjectTopic,
-    Draggable
+    Draggable,
   },
   props: ["sectionId", "isOwner"],
   data() {
