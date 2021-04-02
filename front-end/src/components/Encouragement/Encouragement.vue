@@ -59,9 +59,9 @@
         >
           <el-option
             v-for="item in types"
-            :key="item"
-            :label="item"
-            :value="item"
+            :key="item.code"
+            :label="item.label"
+            :value="item.code"
           >
           </el-option>
         </el-select>
@@ -115,9 +115,9 @@
         <el-table-column label="Тип поощрения">
           <template slot-scope="scope">
             <el-tag
-              :type="tagByEncouragementType(scope.row.encouragement_type)"
+              :type="tagByEncouragementType(scope.row.type)"
               disable-transitions
-              >{{ scope.row.encouragement_type }}</el-tag
+              >{{ scope.row.type | typeFilter }}</el-tag
             >
           </template>
         </el-table-column>
@@ -170,7 +170,8 @@
           v-if="!(editEncouragement.id && editEncouragement.id > 0)"
         >
           <el-select
-            v-model="editEncouragement.student.id"
+            v-model="editEncouragement.student"
+            value-key="id"
             placeholder="Выберите студента"
             filterable
             style="display: block"
@@ -185,7 +186,8 @@
         </el-form-item>
         <el-form-item label="Преподаватель" required>
           <el-select
-            v-model="editEncouragement.teacher.id"
+            v-model="editEncouragement.teacher"
+            value-key="id"
             placeholder="Выберите преподавателя"
             filterable
             style="display: block"
@@ -200,15 +202,15 @@
         </el-form-item>
         <el-form-item label="Тип поощрения: " required>
           <el-select
-            v-model="editEncouragement.encouragement_type"
+            v-model="editEncouragement.type"
             placeholder="Выберите тип поощрения"
             style="display: block"
           >
             <el-option
               v-for="item in types"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.code"
+              :label="item.label"
+              :value="item.code"
             >
             </el-option>
           </el-select>
@@ -256,19 +258,18 @@ export default {
       editEncouragement: {
         id: 0,
         date: "",
-        encouragement_type: "",
+        type: "",
         reason: "",
-        student: {
-          id: 0,
-        },
-        teacher: {
-          id: 0,
-        },
+        student: 0,
+        teacher: 0,
       },
       editEncouragementFullname: null,
       dialogVisible: false,
       encouragements: [],
-      types: ["Благодарность", "Снятие взыскания"],
+      types: [
+        { label: "Благодарность", code: "EN" },
+        { label: "Снятие взыскания", code: "RE" },
+      ],
       filter: {
         search: null,
         mg: null,
@@ -327,6 +328,18 @@ export default {
   created() {
     this.onFilter();
   },
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "EN":
+          return "Благодарность";
+        case "RE":
+          return "Снятие взыскания";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   methods: {
     formatDate: (row) => moment(row.date).format("DD.MM.YY"),
     onFilter() {
@@ -335,7 +348,7 @@ export default {
           this.filter.dateRange !== null ? this.filter.dateRange[0] : null,
         date_to:
           this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
-        encouragement_type: this.filter.type,
+        type: this.filter.type,
         search: this.filter.search,
         milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
       })
@@ -346,17 +359,17 @@ export default {
     },
     tagByEncouragementType(type) {
       switch (type) {
-        case "Благодарность":
+        case "EN":
           return "";
-        case "Снятие взыскания":
+        case "RE":
           return "success";
       }
     },
     async onCreate() {
       this.editEncouragementFullname = "Новое поощрение";
       this.editEncouragement = {
-        student: { id: null },
-        teacher: { id: null },
+        student: null,
+        teacher: null,
         date: moment().format("YYYY-MM-DD"),
       };
       this.students = (await getStudent()).data;
@@ -364,10 +377,11 @@ export default {
       this.dialogVisible = true;
     },
     async onEdit(row) {
-      this.editEncouragementFullname = row.student.fullname;
-      this.editEncouragement = { ...row };
-      this.students = (await getStudent()).data;
+      this.editEncouragement = this.lodash.cloneDeep(row);
+      this.editEncouragement.student = row.student.id;
+      this.editEncouragement.teacher = row.teacher.id;
       this.teachers = (await getTeacher()).data;
+      this.editEncouragementFullname = row.student.fullname;
       this.dialogVisible = true;
     },
     handleDelete(id) {
