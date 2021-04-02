@@ -59,9 +59,9 @@
         >
           <el-option
             v-for="item in types"
-            :key="item"
-            :label="item"
-            :value="item"
+            :key="item.label"
+            :label="item.label"
+            :value="item.code"
           >
           </el-option>
         </el-select>
@@ -116,9 +116,9 @@
         <el-table-column label="Тип взыскания">
           <template slot-scope="scope">
             <el-tag
-              :type="tagByPunishmentType(scope.row.punishment_type)"
+              :type="tagByPunishmentType(scope.row.type)"
               disable-transitions
-              >{{ scope.row.punishment_type }}</el-tag
+              >{{ scope.row.type | typeFilter }}</el-tag
             >
           </template>
         </el-table-column>
@@ -194,7 +194,8 @@
           v-if="!(editPunishment.id && editPunishment.id > 0)"
         >
           <el-select
-            v-model="editPunishment.student.id"
+            v-model="editPunishment.student"
+            value-key="id"
             placeholder="Выберите студента"
             filterable
             style="display: block"
@@ -209,8 +210,8 @@
         </el-form-item>
         <el-form-item label="Преподаватель" required>
           <el-select
-            v-model="editPunishment.teacher.id"
-            placeholder="Выберите преподавателя"
+            v-model="editPunishment.teacher"
+            value-key="id"
             filterable
             style="display: block"
           >
@@ -224,15 +225,15 @@
         </el-form-item>
         <el-form-item label="Тип взыскания: " required>
           <el-select
-            v-model="editPunishment.punishment_type"
+            v-model="editPunishment.type"
             placeholder="Выберите тип взыскания"
             style="display: block"
           >
             <el-option
               v-for="item in types"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.label"
+              :label="item.label"
+              :value="item.code"
             >
             </el-option>
           </el-select>
@@ -292,7 +293,7 @@ export default {
       editPunishment: {
         id: 0,
         date: "",
-        punishment_type: "",
+        type: "",
         reason: "",
         student: {
           id: 0,
@@ -304,7 +305,10 @@ export default {
       editPunishmentFullname: null,
       dialogVisible: false,
       punishments: [],
-      types: ["Взыскание", "Выговор", "Отчисление"],
+      types: [
+        { label: "Взыскание", code: "PU" },
+        { label: "Выговор", code: "RE" },
+      ],
       filter: {
         search: null,
         mg: null,
@@ -363,6 +367,18 @@ export default {
   created() {
     this.onFilter();
   },
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "PU":
+          return "Взыскание";
+        case "RE":
+          return "Выговор";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   methods: {
     formatDate: (row) => moment(row.date).format("DD.MM.YY"),
     formatRemoveDate: (row) =>
@@ -373,7 +389,7 @@ export default {
           this.filter.dateRange !== null ? this.filter.dateRange[0] : null,
         date_to:
           this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
-        punishment_type: this.filter.type,
+        type: this.filter.type,
         search: this.filter.search,
         milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
       })
@@ -384,9 +400,7 @@ export default {
     },
     tagByPunishmentType(type) {
       switch (type) {
-        case "Отчисление":
-          return "info";
-        case "Выговор":
+        case "RE":
           return "danger";
         default:
           return "warning";
@@ -395,8 +409,8 @@ export default {
     async onCreate() {
       this.editPunishmentFullname = "Новое взыскание";
       this.editPunishment = {
-        student: { id: null },
-        teacher: { id: null },
+        student: null,
+        teacher: null,
         date: moment().format("YYYY-MM-DD"),
       };
       this.students = (await getStudent()).data;
@@ -406,6 +420,8 @@ export default {
     async onEdit(row) {
       this.editPunishmentFullname = row.student.fullname;
       this.editPunishment = { ...row };
+      this.editPunishment.student = row.student.id;
+      this.editPunishment.teacher = row.teacher.id;
       this.students = (await getStudent()).data;
       this.teachers = (await getTeacher()).data;
       this.dialogVisible = true;
@@ -473,6 +489,8 @@ export default {
         }
       ).then(() => {
         punishment.remove_date = moment().format("YYYY-MM-DD");
+        punishment.student = punishment.student.id;
+        punishment.teacher = punishment.teacher.id;
         patchPunishment(punishment)
           .then(() => {
             patchSuccess("взыскания");
