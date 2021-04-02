@@ -9,7 +9,11 @@
           finish-status="success"
           :align-center="true"
         >
-          <el-step v-for="(title, key) in STEPS_RU" :key="key" />
+          <el-step
+            v-for="(title, key) in STEPS_RU"
+            :key="key"
+            @click.native="goToStep(key)"
+          />
         </el-steps>
       </div>
 
@@ -107,7 +111,12 @@
       <div>
         <el-button v-if="step !== firstStep" @click="prev"> Назад </el-button>
 
-        <el-button v-if="step !== lastStep" @click="next" type="primary" native-type="submit">
+        <el-button
+          v-if="step !== lastStep"
+          @click="next"
+          type="primary"
+          native-type="submit"
+        >
           Дальше
         </el-button>
         <el-button
@@ -409,6 +418,12 @@ export default {
   },
 
   methods: {
+    goToStep(key) {
+      if (this.$route.hash === "#activate-god-mode") {
+        this.step = key;
+      }
+    },
+
     fillMilspecialtyOptions(data) {
       this.fields.milspecialty.milspecialty.props.options = data.map(
         (item) => ({
@@ -606,7 +621,7 @@ export default {
               type: "error",
               message: "Ошибка чтения файла",
             });
-          }
+          };
 
           this.isSubmitting = false;
         };
@@ -644,17 +659,6 @@ export default {
         }
       }
     },
-    $route(next) {
-      console.log('here!')
-      if (next.hash === '#activate-god-mode') {
-        console.log('here')
-        this.gm = true
-      } else if (this.gm) {
-        const step = STEPS[next.hash.replace('#', '')]
-
-        if (step) this.step = step
-      }
-    }
   },
 };
 </script>
