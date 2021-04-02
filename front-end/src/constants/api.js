@@ -14,22 +14,22 @@ export const LMS_URLS = {
     teachers: "lms/teachers/",
   },
   absence: {
-    absence: "lms/absence/",
+    absence: "lms/absences/",
     journal: "lms/absence-journal/",
   },
   encouragement: {
-    encouragement: "lms/encouragement/",
+    encouragement: "lms/encouragements/",
   },
   lessons: {
-    lesson: "lms/lesson/",
+    lesson: "lms/lessons/",
     journal: "lms/lesson-journal/",
   },
   marks: {
-    mark: "lms/mark/",
+    mark: "lms/marks/",
     journal: "lms/mark-journal/",
   },
   punishment: {
-    punishment: "lms/punishment/",
+    punishment: "lms/punishments/",
   },
   reference: {
     book: "lms/reference-book/",
@@ -40,8 +40,8 @@ export const LMS_URLS = {
     milspecialties: "lms/milspecialties/",
   },
   stuff: {
-    student: "lms/student/",
-    teacher: "lms/teacher/",
+    student: "lms/students/",
+    teacher: "lms/teachers/",
   },
   students: {
     students: "lms/students/",
