@@ -73,15 +73,14 @@
                       <el-tag
                         :type="
                           tagByAbsenceType(
-                            scope.row.absences.find((x) => x.date == d)
-                              .absence_type
+                            scope.row.absences.find((x) => x.date == d).type
                           )
                         "
                         disable-transitions
                       >
                         {{
-                          scope.row.absences.find((x) => x.date == d)
-                            .absence_type
+                          scope.row.absences.find((x) => x.date == d).type
+                            | absenceTypeFilter
                         }}
                       </el-tag>
                     </el-form-item>
@@ -121,14 +120,12 @@
                     slot="reference"
                     :class="
                       iconByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date == d)
-                          .absence_status
+                        scope.row.absences.find((x) => x.date == d).status
                       )
                     "
                     :style="
                       colorByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date == d)
-                          .absence_status
+                        scope.row.absences.find((x) => x.date == d).status
                       )
                     "
                   />
@@ -160,22 +157,22 @@
       >
         <el-form-item label="Тип причины: ">
           <el-select
-            v-model="editAbsence.absence_type"
+            v-model="editAbsence.type"
             placeholder="Выберите тип причины"
             style="display: block"
           >
             <el-option
               v-for="item in types"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.code"
+              :label="item.label"
+              :value="item.code"
             >
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="Статус: ">
           <el-switch
-            :value="editAbsence.absence_status == 'Закрыт'"
+            :value="editAbsence.status == 'CL'"
             active-text="Закрыт"
             inactive-text="Открыт"
             @change="changeAbsenceStatus(editAbsence)"
@@ -256,7 +253,11 @@ export default {
           moment().format("YYYY-MM-DD"),
         ],
       },
-      types: ["Уважительная", "Неуважительная", "Опоздание"],
+      types: [
+        { label: "Уважительная", code: "SE" },
+        { label: "Неуважительная", code: "NS" },
+        { label: "Опоздание", code: "LA" },
+      ],
       statuses: ["Закрыт", "Открыт"],
       milgroups: [
         {
@@ -310,16 +311,39 @@ export default {
     this.filter.mg = this.milgroups[0].milgroup;
     this.onJournal();
   },
+  filters: {
+    absenceTypeFilter(value) {
+      switch (value) {
+        case "SE":
+          return "Уважительная";
+        case "NS":
+          return "Неуважительная";
+        case "LA":
+          return "Опоздание";
+        default:
+          return "Ошибка";
+      }
+    },
+    absenceStatusFilter(value) {
+      switch (value) {
+        case "OP":
+          return "Открыт";
+        case "CL":
+          return "Закрыт";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   methods: {
     changeAbsenceStatus(absence) {
-      absence.absence_status =
-        absence.absence_status == "Закрыт" ? "Открыт" : "Закрыт";
+      absence.status = absence.status == "CL" ? "OP" : "CL";
     },
     tagByAbsenceType(type) {
       switch (type) {
-        case "Неуважительная":
+        case "NS":
           return "danger";
-        case "Опоздание":
+        case "LA":
           return "warning";
         default:
           return "success";
@@ -327,7 +351,7 @@ export default {
     },
     iconByAbsenceStatus(status) {
       switch (status) {
-        case "Открыт":
+        case "OP":
           return "el-icon-circle-close";
         default:
           return "el-icon-circle-check";
@@ -335,7 +359,7 @@ export default {
     },
     colorByAbsenceStatus(status) {
       switch (status) {
-        case "Открыт":
+        case "OP":
           return "color: red;";
         default:
           return "color: green;";
@@ -343,7 +367,7 @@ export default {
     },
     formatDate: (d) => moment(d).format("DD.MM.YY"),
     onCreate(student, date) {
-      this.editAbsence = { absence_status: "Открыт", student, date };
+      this.editAbsence = { status: "OP", student: student.id, date };
       this.editAbsenceFullname = student.fullname;
       this.dialogVisible = true;
     },
