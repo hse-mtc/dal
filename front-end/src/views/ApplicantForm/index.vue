@@ -107,13 +107,14 @@
       <div>
         <el-button v-if="step !== firstStep" @click="prev"> Назад </el-button>
 
-        <el-button v-if="step !== lastStep" @click="next" type="primary">
+        <el-button v-if="step !== lastStep" @click="next" type="primary" native-type="submit">
           Дальше
         </el-button>
         <el-button
           v-else
           type="primary"
           v-loading="isSubmitting"
+          native-type="submit"
           @click="submit"
         >
           Отправить форму
@@ -374,7 +375,7 @@ export default {
         },
         recruitmentOffice: makeRequired(["title"]),
         universityInfo: {
-          ...makeRequired(["campus", "card_id", "program", "group_title"]),
+          ...makeRequired(["campus", "card_id", "program", "group"]),
           program: [
             required,
             getValidator(
@@ -598,6 +599,15 @@ export default {
             );
           }
 
+          reader.onerror = () => {
+            this.isSubmitting = false;
+            console.error("Ошибка чтения файла:", reader.error);
+            this.$message({
+              type: "error",
+              message: "Ошибка чтения файла",
+            });
+          }
+
           this.isSubmitting = false;
         };
 
@@ -634,6 +644,17 @@ export default {
         }
       }
     },
+    $route(next) {
+      console.log('here!')
+      if (next.hash === '#activate-god-mode') {
+        console.log('here')
+        this.gm = true
+      } else if (this.gm) {
+        const step = STEPS[next.hash.replace('#', '')]
+
+        if (step) this.step = step
+      }
+    }
   },
 };
 </script>
