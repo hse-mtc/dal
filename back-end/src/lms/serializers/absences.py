@@ -53,9 +53,7 @@ class AbsenceShortSerializer(ModelSerializer):
 
     class Meta:
         model = Absence
-        fields = [
-            'id', 'date', 'absence_type', 'absence_status', 'reason', 'comment'
-        ]
+        fields = ['id', 'date', 'type', 'status', 'reason', 'comment']
 
 
 class AbsenceJournalSerializer(ModelSerializer):
