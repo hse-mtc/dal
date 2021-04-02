@@ -92,7 +92,7 @@
               <el-table-column
                 width="300px"
                 show-overflow-tooltip
-                prop="program.program"
+                prop="university_info.program.program"
                 label="Программа"
               >
               </el-table-column>
@@ -101,7 +101,11 @@
                   {{ formatDate(scope.row.birthdate) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="status" label="Статус"> </el-table-column>
+              <el-table-column prop="status" label="Статус">
+                <template slot-scope="scope">
+                  {{ scope.row.status | statusFilter }}
+                </template>
+              </el-table-column>
               <el-table-column label="" width="120px">
                 <template slot-scope="scope">
                   <el-button
@@ -174,7 +178,8 @@
               <el-table-column prop="milfaculty" label="Цикл">
               </el-table-column>
               <el-table-column prop="rank" label="Звание"> </el-table-column>
-              <el-table-column prop="post" label="Должность"> </el-table-column>
+              <el-table-column prop="teacher_post" label="Должность">
+              </el-table-column>
               <el-table-column prop="milgroup.milgroup" label="Прикр. взвод">
               </el-table-column>
               <el-table-column label="" width="120px">
@@ -257,6 +262,22 @@ export default {
   },
   created() {
     this.onFilter();
+  },
+  filters: {
+    statusFilter(value) {
+      switch (value) {
+        case "AP":
+          return "Абитуриент";
+        case "ST":
+          return "Обучающийся";
+        case "DE":
+          return "Отчислен";
+        case "GR":
+          return "Выпустился";
+        default:
+          return "Ошибка";
+      }
+    },
   },
   methods: {
     formatDate: (d) => moment(d).format("DD.MM.YYYY"),
