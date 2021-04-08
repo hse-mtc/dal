@@ -40,8 +40,10 @@ class Student(Personnel):
     class Status(models.TextChoices):
         APPLICANT = 'AP', 'абитуриент'
         STUDENT = 'ST', 'обучающийся'
-        DEDUCTED = 'DE', 'отчислен'
+        EXPELLED = 'EX', 'отчислен'
         GRADUATED = 'GR', 'выпустился'
+        AWAITING = 'AW', 'в ожидании'
+        DECLINED = 'DE', 'отклонен'
 
     status = models.CharField(
         max_length=2,
