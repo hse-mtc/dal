@@ -1,6 +1,7 @@
 import requests
 
 from rest_framework import status
+from rest_framework.decorators import action
 
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
@@ -101,3 +102,12 @@ class ActivateStudentReadonlyViewSet(ReadOnlyModelViewSet):
             milgroup = user.student.milgroup
 
         return Student.objects.filter(milgroup=milgroup)
+
+    @action(detail=True, methods=['post'])
+    def activate(self, request, pk=None):
+        student = self.get_object()
+        student.status = student.Status.STUDENT.value
+        student.save()
+
+        serializer = self.get_serializer(student)
+        return Response(serializer.data)
