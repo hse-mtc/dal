@@ -434,7 +434,7 @@ def create_students(
             'milspecialty': milspecialties['Защита информационных технологий'],
             # 'birthdate': '1999-05-04',
             # 'program': programs['Машиностроение'],
-            'status': Student.Status.DEDUCTED.value,
+            'status': Student.Status.EXPELLED.value,
             'photo': None,
             'surname_genitive': 'Иванова',
             'name_genitive': 'Петра',

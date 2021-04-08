@@ -103,11 +103,24 @@ class ActivateStudentReadonlyViewSet(ReadOnlyModelViewSet):
 
         return Student.objects.filter(milgroup=milgroup)
 
-    @action(detail=True, methods=['post'])
-    def activate(self, request, pk=None):
+    def set_status(self, status):
         student = self.get_object()
-        student.status = student.Status.STUDENT.value
+        student.status = status
         student.save()
 
         serializer = self.get_serializer(student)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def activate(self, request, pk=None):
+        return self.set_status(Student.Status.STUDENT.value)
+
+    @action(detail=True, methods=['post'])
+    def wait(self, request, pk=None):
+        return self.set_status(Student.Status.AWAITING.value)
+
+    @action(detail=True, methods=['post'])
+    def decline(self, request, pk=None):
+        return self.set_status(Student.Status.DECLINED.value)
+
+
