@@ -26,7 +26,7 @@ export function getAllPermissions() {
 
 export function saveUserPermissions(id, roles) {
   return request({
-    url: BASE_API_URL + `auth/users/${id}/permissions`,
+    url: BASE_API_URL + `auth/users/${id}/permissions/`,
     method: "post",
     data: { roles },
   });
@@ -41,21 +41,21 @@ export function getUsersToApprove() {
 
 export function approveUser(id) {
   return request({
-    url: BASE_API_URL + LMS_URLS.approve.activate + `${id}/`,
+    url: BASE_API_URL + `lms/activate-students/${id}/activate/`,
     method: "post",
   });
 }
 
 export function putUserOnWait(id) {
   return request({
-    url: BASE_API_URL + LMS_URLS.approve.await + `${id}/`,
+    url: BASE_API_URL + `lms/activate-students/${id}/wait/`,
     method: "post",
   });
 }
 
 export function disapproveUser(id) {
   return request({
-    url: BASE_API_URL + LMS_URLS.approve.decline + `${id}/`,
+    url: BASE_API_URL + `lms/activate-students/${id}/decline/`,
     method: "post",
   });
 }

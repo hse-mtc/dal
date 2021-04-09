@@ -107,31 +107,7 @@ export default {
       .then((response) => {
         this.approveList = response.data;
       })
-      // TODO: when back-end is done, change fake data to error
-      // .catch((err) => getError("данных для подтверждения активации", err.response.status));
-      .catch((err) => {
-        getError("данных для подтверждения активации", err.response.status);
-        this.approveList = [
-          {
-            id: 1,
-            fullname: "Хромов Григорий Александрович",
-            milgroup: 1809,
-            status: "AP",
-          },
-          {
-            id: 2,
-            fullname: "Васюткин Вася Васильевич",
-            milgroup: 1810,
-            status: "AP",
-          },
-          {
-            id: 3,
-            fullname: "Иванов Иван Иванович",
-            milgroup: 1808,
-            status: "AP",
-          },
-        ];
-      });
+      .catch((err) => getError("данных для подтверждения активации", err.response.status));
   },
   methods: {
     approve(user) {
@@ -139,30 +115,14 @@ export default {
         .then(() => {
           user.status = "ST";
         })
-        // TODO: when back-end is done, change fake data to error
-        // .catch((err) => postError("записи об активированной регистрации", err.response.status));
-        .catch((err) => {
-          postError(
-            "записи об активированной регистрации",
-            err.response.status
-          );
-          user.status = "ST";
-        });
+        .catch((err) => postError("записи об активированной регистрации", err.response.status));
     },
     putOnWait(user) {
       putUserOnWait(user.id)
         .then(() => {
           user.status = "AW";
         })
-        // TODO: when back-end is done, change fake data to error
-        // .catch((err) => postError("записи об активированной регистрации", err.response.status));
-        .catch((err) => {
-          postError(
-            "записи в списке отложенных регистраций",
-            err.response.status
-          );
-          user.status = "AW";
-        });
+        .catch((err) => postError("записи об активированной регистрации", err.response.status));
     },
     disapprove(user) {
       this.$confirm(
@@ -180,12 +140,7 @@ export default {
             .then(() => {
               user.status = "DE";
             })
-            // TODO: when back-end is done, change fake data to error
-            // .catch((err) => postError("записи об активированной регистрации", err.response.status));
-            .catch((err) => {
-              deleteError("регистрации", err.response.status);
-              user.status = "DE";
-            });
+            .catch((err) => postError("записи об активированной регистрации", err.response.status));
         })
         .catch(() => {});
     },

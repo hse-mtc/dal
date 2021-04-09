@@ -52,9 +52,6 @@ export const LMS_URLS = {
   },
   approve: {
     approve: "lms/activate-students/",
-    activate: "lms/activate-students/activate/",
-    await: "lms/activate-students/await/",
-    decline: "lms/activate-students/decline/",
   },
 };
 
