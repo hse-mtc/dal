@@ -45,13 +45,11 @@ export const LMS_URLS = {
   },
   students: {
     students: "lms/students/",
+    approvements: "lms/students/approvements/",
   },
   users: {
     users: "lms/users/",
     permissions: "lms/users/permissions",
-  },
-  approve: {
-    approve: "lms/activate-students/",
   },
 };
 

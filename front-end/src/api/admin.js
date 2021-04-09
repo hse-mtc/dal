@@ -34,28 +34,28 @@ export function saveUserPermissions(id, roles) {
 
 export function getUsersToApprove() {
   return request({
-    url: BASE_API_URL + LMS_URLS.approve.approve,
+    url: BASE_API_URL + LMS_URLS.students.approvements,
     method: "get",
   });
 }
 
 export function approveUser(id) {
   return request({
-    url: BASE_API_URL + `lms/activate-students/${id}/activate/`,
-    method: "post",
+    url: BASE_API_URL + LMS_URLS.students.approvements + `${id}/`,
+    method: "patch",
   });
 }
 
 export function putUserOnWait(id) {
   return request({
-    url: BASE_API_URL + `lms/activate-students/${id}/wait/`,
-    method: "post",
+    url: BASE_API_URL + LMS_URLS.students.approvements + `${id}/`,
+    method: "patch",
   });
 }
 
 export function disapproveUser(id) {
   return request({
-    url: BASE_API_URL + `lms/activate-students/${id}/decline/`,
-    method: "post",
+    url: BASE_API_URL + LMS_URLS.students.approvements + `${id}/`,
+    method: "patch",
   });
 }
