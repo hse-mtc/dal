@@ -11,7 +11,7 @@ from lms.models.lessons import Lesson
 from lms.models.marks import Mark
 from lms.models.students import Student
 from lms.models.common import Milgroup
-from lms.serializers.lessons import LessonSerializer, LessonShortSerializer
+from lms.serializers.lessons import LessonSerializer
 from lms.serializers.students import StudentShortSerializer
 
 from lms.validators import PresentInDatabaseValidator
@@ -67,11 +67,10 @@ class MarkJournalQuerySerializer(Serializer):
 
 
 class MarkShortSerializer(ModelSerializer):
-    lesson = LessonShortSerializer(read_only=True)
 
     class Meta:
         model = Mark
-        fields = ['id', 'mark', 'lesson']
+        fields = ['id', 'mark']
 
 
 class MarkJournalSerializer(ModelSerializer):

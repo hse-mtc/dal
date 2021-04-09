@@ -27,11 +27,10 @@ from lms.models.lessons import Lesson
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subjects import LessonSubjectSerializer
+from lms.serializers.lessons import LessonSerializer
 from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
                                    MarkJournalSerializer,
                                    MarkJournalQuerySerializer)
-
-from lms.functions import get_date_range
 
 from auth.permissions import BasicPermission
 
@@ -136,7 +135,13 @@ class MarkJournalView(GenericAPIView):
         date_to = datetime.fromisoformat(query_params.data['date_to'])
 
         # date_range = get_date_range(date_from, date_to, milgroup['weekday'])
-        date_range = list(set([item.date for item in Lesson.objects.filter(date__lte=date_to, date__gte=date_from, milgroup=request.query_params['milgroup'], subject=request.query_params['subject'])]))
+        lessons = Lesson.objects.filter(
+            date__lte=date_to,
+            date__gte=date_from,
+            milgroup=request.query_params['milgroup'],
+            subject=request.query_params['subject'])
+        data['lessons'] = LessonSerializer(lessons, many=True).data
+        date_range = list({item.date for item in lessons})
 
         # add dates and absences
         data['dates'] = date_range
