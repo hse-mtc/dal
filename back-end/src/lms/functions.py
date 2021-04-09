@@ -1,5 +1,10 @@
 from datetime import timedelta, datetime
 
+from django.db.models import Model
+from django.db.models import Q
+
+from rest_framework.serializers import Serializer
+
 
 def get_date_range(date_from: datetime, date_to: datetime,
                    weekday: int) -> list[str]:
@@ -21,3 +26,22 @@ def get_date_range(date_from: datetime, date_to: datetime,
         cur_date += timedelta(7)
 
     return dates
+
+
+def search_persons(model: Model, serializer: Serializer,
+                   field: str) -> list[dict]:
+    return serializer(model.objects.filter(
+        Q(name__icontains=field) | Q(surname__icontains=field) |
+        Q(patronymic__icontains=field)),
+                      many=True)
+
+
+def persons_response(data: list[dict]) -> list[dict]:
+    result = []
+    for item in data.data:
+        res = {
+            'id': item.get('user', 1),  # TODO: fix
+            'fullname': item.get('fullname', None)
+        }
+        result.append(res)
+    return result
