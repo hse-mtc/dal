@@ -83,13 +83,21 @@ class StudentViewSet(ModelViewSet):
 @extend_schema(tags=['students'])
 class ActivateStudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
+
     permission_classes = [StudentPermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
     serializer_class = StudentSerializer
 
-    def filter_queryset(self, queryset):
-        user = self.request.user
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset().filter(
+            status__in=[
+                Student.Status.APPLICANT,
+                Student.Status.DECLINED,
+                Student.Status.AWAITING,
+            ])
+
+        user = request.user
         milgroup = None
 
         if hasattr(user, 'teacher'):
@@ -97,7 +105,8 @@ class ActivateStudentViewSet(ModelViewSet):
         elif hasattr(user, 'student'):
             milgroup = user.student.milgroup
 
-        if milgroup is None:
-            return queryset
+        if milgroup is not None:
+            queryset = queryset.filter(milgroup=milgroup)
 
-        return queryset.filter(milgroup=milgroup)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)

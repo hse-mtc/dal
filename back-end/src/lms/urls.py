@@ -25,8 +25,8 @@ from lms.views.lessons import LessonViewSet, LessonJournalView
 from lms.views.marks import MarkViewSet, MarkJournalView
 
 routers = DefaultRouter()
-routers.register('students', StudentViewSet)
 routers.register('students/approvements', ActivateStudentViewSet)
+routers.register('students', StudentViewSet)
 routers.register('teachers', TeacherViewSet)
 routers.register('absences', AbsenceViewSet)
 routers.register('punishments', PunishmentViewSet)
