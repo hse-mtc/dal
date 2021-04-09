@@ -52,135 +52,99 @@
           :label="mg.milgroup"
           :name="mg.milgroup"
         >
-          <el-table
-            :data="journal.students"
-            style="width: 100%"
-            height="730"
-            :default-sort="{
-              prop: 'ordinal',
-              order: 'ascending',
-            }"
-            stripe
-            border
-          >
-            <el-table-column
-              label="ФИО"
-              prop="fullname"
-              width="250"
-              show-overflow-tooltip
-              fixed
-            />
-            <el-table-column
-              v-for="d in journal.dates"
-              :key="d"
-              :label="formatDate(d)"
-              align="center"
-              min-width="150"
-            >
-              <template slot-scope="scope">
-                <div class="mark-journal-cell">
-                  <el-popover
-                    v-if="scope.row.marks.some((x) => x.lesson.date == d)"
-                    trigger="hover"
-                    placement="top"
+          <el-row>
+            <el-col :span="22">
+              <el-table
+                :data="journal.students"
+                style="width: 100%"
+                height="730"
+                :default-sort="{
+                  prop: 'ordinal',
+                  order: 'ascending',
+                }"
+                stripe
+                border
+              >
+                <el-table-column
+                  label="ФИО"
+                  prop="fullname"
+                  width="250"
+                  show-overflow-tooltip
+                />
+                <el-table-column
+                  v-for="d in journal.dates"
+                  :key="d"
+                  :label="formatDate(d)"
+                  align="center"
+                  min-width="50"
+                >
+                  <el-table-column
+                    v-for="item in getLessonsByDate(d)"
+                    :key="item.id"
                   >
-                    <el-form
-                      label-position="right"
-                      label-width="150px"
-                      size="mini"
-                      :model="scope.row.marks.find((x) => x.lesson.date == d)"
-                    >
-                      <el-form-item label="Тип занятия: ">
-                        <el-tag
-                          :type="
-                            tagByLessonType(
-                              scope.row.marks.find((x) => x.lesson.date == d)
-                                .lesson.type
-                            )
-                          "
-                          disable-transitions
-                        >
-                          {{
-                            scope.row.marks.find((x) => x.lesson.date == d)
-                              .lesson.type | typeFilter
-                          }}
+                    <template slot="header">
+                      <div class="column-template">
+                        <span>
+                          <svg-icon icon-class="map-marker-outline" />
+                          {{ item.room }}
+                        </span>
+                        <span> {{ item.ordinal }} пара </span>
+                        <el-tag :type="item.type" disable-transitions>
+                          {{ item.type | typeFilter }}
                         </el-tag>
-                      </el-form-item>
-                      <el-form-item label="Комментарий: ">
-                        {{
-                          scope.row.marks.find((x) => x.lesson.date == d)
-                            .comment
-                        }}
-                      </el-form-item>
-                    </el-form>
-                    <el-button-group>
-                      <el-button
-                        size="mini"
-                        icon="el-icon-plus"
-                        type="primary"
-                        @click="onCreate(scope.row, d)"
-                        >Пересдача</el-button
-                      >
-                      <el-button
-                        size="mini"
-                        icon="el-icon-edit"
-                        type="info"
-                        @click="
-                          onEdit(
-                            scope.row.marks.find((x) => x.lesson.date == d),
-                            scope.row
-                          )
-                        "
-                        >Редактировать</el-button
-                      >
-                      <el-button
-                        size="mini"
-                        icon="el-icon-delete"
-                        type="danger"
-                        @click="
-                          handleDelete(
-                            scope.row.marks.find((x) => x.lesson.date == d).id
-                          )
-                        "
-                        >Удалить</el-button
-                      >
-                    </el-button-group>
-                    <el-tag
-                      v-for="m in scope.row.marks.find(
-                        (x) => x.lesson.date == d
-                      ).mark"
-                      :key="m"
-                      slot="reference"
-                      :type="tagByMark(m)"
-                      effect="dark"
-                      disable-transitions
-                    >
-                      {{ m }}
-                    </el-tag>
-                  </el-popover>
-                  <el-button
-                    v-else
-                    type="text"
-                    icon="el-icon-plus"
-                    @click="onCreate(scope.row, d)"
-                    class="create-mark-btn"
-                  />
-                </div>
-              </template>
-            </el-table-column>
-          </el-table>
+                      </div>
+                    </template>
+                    <template slot-scope="scope">
+                      <div class="mark-journal-cell">
+                        <div
+                          v-for="marks in scope.row.marks
+                            .filter((x) => x.lesson.date == d)
+                            .map((x) => x.mark)"
+                          :key="marks"
+                        >
+                          <el-tag
+                            v-for="m in marks"
+                            :key="m"
+                            :type="tagByMark(m)"
+                            effect="dark"
+                            disable-transitions
+                          >
+                            {{ m }}
+                          </el-tag>
+                        </div>
+                        <el-button
+                          type="text"
+                          icon="el-icon-plus"
+                          @click="onCreate(scope.row, d)"
+                          class="create-mark-btn"
+                        />
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table-column>
+              </el-table>
+            </el-col>
+            <el-col :span="2" class="new-lesson-col">
+              <el-button
+                type="primary"
+                icon="el-icon-plus"
+                circle
+                @click="onCreateLesson()"
+              ></el-button>
+            </el-col>
+          </el-row>
         </el-tab-pane>
       </el-tabs>
     </el-col>
     <el-dialog
       :title="editMarkFullname"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="20%"
       :before-close="handleClose"
     >
       <el-form
         label-position="right"
-        label-width="150px"
+        label-width="100px"
         size="mini"
         :model="editMark"
       >
@@ -192,20 +156,97 @@
             :max="5"
           />
         </el-form-item>
-        <el-form-item label="Комментарий: ">
-          <el-input
-            v-model="editMark.comment"
-            placeholder="Введите комментарий"
-            type="textarea"
-            :rows="2"
-          />
-        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Отмена</el-button>
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="editLessonFullname"
+      :visible.sync="lessonDialogVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-form
+        label-position="right"
+        label-width="150px"
+        size="mini"
+        :model="editLesson"
+      >
+        <el-form-item label="Дата: " required>
+          <el-date-picker
+            type="date"
+            placeholder="Выберите дату"
+            v-model="editLesson.date"
+            style="width: 100%"
+            format="dd.MM.yyyy"
+            value-format="yyyy-MM-dd"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="Номер занятия: " required>
+          <el-input-number
+            size="mini"
+            v-model="editLesson.ordinal"
+            controls-position="right"
+            :min="1"
+            :max="10"
+            style="width: 100%"
+          ></el-input-number>
+        </el-form-item>
+        <el-form-item label="Аудитория: " required>
+          <el-select
+            filterable
+            v-model="editLesson.room"
+            placeholder="Выберите аудиторию"
+            style="display: block"
+          >
+            <el-option
+              v-for="item in rooms"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Тип занятия: " required>
+          <el-select
+            v-model="editLesson.type"
+            placeholder="Выберите тип занятия"
+            style="display: block"
+          >
+            <el-option
+              v-for="item in lesson_types"
+              :key="item.code"
+              :label="item.label"
+              :value="item.code"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="lessonDialogVisible = false">Отмена</el-button>
+        <el-button type="primary" @click="handleAcceptLesson()"
+          >Применить</el-button
+        >
+      </span>
+    </el-dialog>
+
+    <el-drawer :title="drawerTitle" :visible.sync="drawer" direction="rtl">
+      <span>Hi, there!</span>
+    </el-drawer>
+
+    <el-button
+      type="primary"
+      size="large"
+      class="drawer-button"
+      icon="el-icon-arrow-left"
+      plain
+      @click="openDrawer"
+    ></el-button>
   </div>
 </template>
 
@@ -213,6 +254,7 @@
 import moment from "moment";
 import { getMarkJournal, patchMark, postMark, deleteMark } from "@/api/mark";
 import { getSubjects } from "@/api/subjects";
+import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
 import {
   getError,
   postError,
@@ -227,6 +269,25 @@ export default {
   name: "Marks",
   data() {
     return {
+      lessonDialogVisible: false,
+      editLessonFullname: "",
+      editLesson: {
+        id: 0,
+        subject: {
+          id: 0,
+          title: "",
+        },
+        milgroup: {
+          milgroup: null,
+          milfaculty: "",
+        },
+        date: "",
+        ordinal: 0,
+        type: "",
+        room: "",
+      },
+      drawer: false,
+      drawerTitle: "",
       dialogVisible: false,
       editMarkFullname: "",
       editMark: {
@@ -246,12 +307,6 @@ export default {
           moment().format("YYYY-MM-DD"),
         ],
       },
-      lesson_types: [
-        "Семинар",
-        "Лекция",
-        "Групповое занятие",
-        "Практическое занятие",
-      ],
       milgroups: [
         {
           milgroup: "1807",
@@ -266,6 +321,15 @@ export default {
           milfaculty: "ВКС",
         },
       ],
+      lesson_types: [
+        { label: "Семинар", code: "SE" },
+        { label: "Лекция", code: "LE" },
+        { label: "Групповое занятие", code: "GR" },
+        { label: "Практическое занятие", code: "PR" },
+        { label: "Зачет", code: "FI" },
+        { label: "Экзамен", code: "EX" },
+      ],
+      rooms: ["510", "501", "502", "503", "504", "Плац"],
       subjects: [],
       journal: {},
       pickerOptions: {
@@ -328,7 +392,27 @@ export default {
     },
   },
   methods: {
+    getLessonsByDate(d) {
+      const student = this.journal.students.find((x) =>
+        x.marks.some((y) => y.lesson.date === d)
+      );
+      console.log('🚀 > student', student);
+      if (student) {
+        const marks = student.marks.filter((x) => x.lesson.date === d);
+        console.log('🚀 > marks', marks);
+        if (marks) {
+          const lessons = marks.map((x) => x.lesson);
+          console.log('🚀 > lessons', lessons);
+          return lessons;
+        }
+      }
+      return [];
+    },
     formatDate: (d) => moment(d).format("DD.MM.YY"),
+    isOnlyLesson(marks) {
+      console.log(marks);
+      return marks.length === 1;
+    },
     tagByLessonType(type) {
       switch (type) {
         case "LE":
@@ -414,6 +498,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
+          this.lessonDialogVisible = false;
         })
         .catch(() => {});
     },
@@ -449,6 +534,66 @@ export default {
           })
           .catch((err) => deleteError("оценки", err.response.status));
       });
+    },
+    onCreateLesson() {
+      this.editLesson = {
+        milgroup: this.filter.mg,
+        subject: this.filter.subject_id,
+        ordinal: 1,
+        date: moment().format("YYYY-MM-DD"),
+      };
+      this.editLessonFullname = "Новое занятие";
+      this.lessonDialogVisible = true;
+    },
+    onEditLesson(row) {
+      this.editLesson = { ...row };
+      this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
+      this.editLesson.subject = this.editLesson.subject.id;
+      this.editLessonFullname = "Редактирование занятия";
+      this.getSubjects();
+      this.lessonDialogVisible = true;
+    },
+    handleAcceptLesson() {
+      console.log(this.editLesson);
+      if (this.editLesson.id) {
+        patchLesson(this.editLesson)
+          .then(() => {
+            patchSuccess("занятия");
+            this.lessonDialogVisible = false;
+            if (this.filter.mg) this.fetchData();
+          })
+          .catch((err) => patchError("занятия", err.response.status));
+      } else {
+        postLesson(this.editLesson)
+          .then(() => {
+            postSuccess("занятия");
+            this.lessonDialogVisible = false;
+            if (this.filter.mg) this.fetchData();
+          })
+          .catch((err) => postError("занятия", err.response.status));
+      }
+    },
+    handleDeleteLesson(id) {
+      this.$confirm(
+        "Вы уверены, что хотите удалить занятие?",
+        "Подтверждение",
+        {
+          confirmButtonText: "Да",
+          cancelButtonText: "Отмена",
+          type: "warning",
+        }
+      ).then(() => {
+        deleteLesson({ id })
+          .then(() => {
+            deleteSuccess("занятия");
+            if (this.filter.mg > 0) this.fetchData();
+          })
+          .catch((err) => deleteError("занятия", err.response.status));
+      });
+    },
+    openDrawer() {
+      this.drawer = true;
+      // fetch data
     },
   },
 };
