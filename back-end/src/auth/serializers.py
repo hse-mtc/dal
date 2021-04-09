@@ -32,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = ["id", "email", "permissions"]
 
-    def get_permissions(self, obj):
+    def get_permissions(self, obj) -> list[str]:
         groups = obj.groups.all()
         permissions = []
         for group in groups:
