@@ -26,11 +26,18 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    groups = GroupSerializer(many=True)
+    permissions = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ["id", "email", "groups"]
+        fields = ["id", "email", "permissions"]
+    
+    def get_permissions(self, obj):
+        groups = obj.groups.all()
+        permissions = []
+        for group in groups:
+            permissions += [perm.codename for perm in group.permissions.all()]
+        return list(set(permissions))
 
 
 class TokenPairSerializer(serializers.Serializer):
