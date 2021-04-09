@@ -198,7 +198,12 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="danger" v-if="editMarkId" @click="handleDelete(editMarkId)">Удалить</el-button>
+        <el-button
+          type="danger"
+          v-if="editMarkId"
+          @click="handleDelete(editMarkId)"
+          >Удалить</el-button
+        >
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
@@ -292,7 +297,13 @@
 
 <script>
 import moment from "moment";
-import { getMarkJournal, patchMark, postMark, putMark, deleteMark } from "@/api/mark";
+import {
+  getMarkJournal,
+  patchMark,
+  postMark,
+  putMark,
+  deleteMark,
+} from "@/api/mark";
 import { getSubjects } from "@/api/subjects";
 import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
 import {
@@ -558,15 +569,14 @@ export default {
             if (this.filter.mg) this.fetchData();
           })
           .catch((err) => postError("оценки", err.response.status));
-      }
-      else if (this.editMarkMethod === "PUT") {
+      } else if (this.editMarkMethod === "PUT") {
         putMark(this.editMark, this.editMarkId)
           .then(() => {
-              patchSuccess("оценки");
-              this.dialogVisible = false;
-              if (this.filter.mg) this.fetchData();
-            })
-            .catch((err) => patchError("оценки", err.response.status));
+            patchSuccess("оценки");
+            this.dialogVisible = false;
+            if (this.filter.mg) this.fetchData();
+          })
+          .catch((err) => patchError("оценки", err.response.status));
       }
     },
     handleDelete(id) {
