@@ -5,12 +5,7 @@
         <h1>Подтверждения регистрации</h1>
       </el-row>
       <el-row>
-        <el-table
-          :data="approveList"
-          width="300px"
-          stripe
-          :row-class-name="tableRowClassName"
-        >
+        <el-table :data="approveList" width="300px" stripe>
           <el-table-column
             prop="fullname"
             label="ФИО"
@@ -18,7 +13,12 @@
             show-overflow-tooltip
           >
           </el-table-column>
-          <el-table-column prop="milgroup" label="Взвод" sortable width="180">
+          <el-table-column
+            prop="milgroup.milgroup"
+            label="Взвод"
+            sortable
+            width="180"
+          >
           </el-table-column>
           <el-table-column label="Статус" width="180">
             <template slot-scope="scope">
@@ -87,12 +87,7 @@
 </template>
 
 <script>
-import {
-  getUsersToApprove,
-  approveUser,
-  putUserOnWait,
-  disapproveUser,
-} from "@/api/admin";
+import { getUsersToApprove, changeStudentStatus } from "@/api/admin";
 import { getError, postError, deleteError } from "@/utils/message";
 
 export default {
@@ -113,7 +108,7 @@ export default {
   },
   methods: {
     approve(user) {
-      approveUser(user.id)
+      changeStudentStatus(user.id, "ST")
         .then(() => {
           user.status = "ST";
         })
@@ -122,7 +117,7 @@ export default {
         );
     },
     putOnWait(user) {
-      putUserOnWait(user.id)
+      changeStudentStatus(user.id, "AW")
         .then(() => {
           user.status = "AW";
         })
@@ -141,8 +136,7 @@ export default {
         }
       )
         .then(() => {
-          user.status = "DE";
-          disapproveUser(user.id)
+          changeStudentStatus(user.id, "DE")
             .then(() => {
               user.status = "DE";
             })
@@ -162,7 +156,7 @@ export default {
         case "ST":
           return "success";
         case "GR":
-          return "";
+          return "info";
         case "AW":
           return "warning";
         default:
