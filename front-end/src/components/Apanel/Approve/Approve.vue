@@ -107,7 +107,9 @@ export default {
       .then((response) => {
         this.approveList = response.data;
       })
-      .catch((err) => getError("данных для подтверждения активации", err.response.status));
+      .catch((err) =>
+        getError("данных для подтверждения активации", err.response.status)
+      );
   },
   methods: {
     approve(user) {
@@ -115,14 +117,18 @@ export default {
         .then(() => {
           user.status = "ST";
         })
-        .catch((err) => postError("записи об активированной регистрации", err.response.status));
+        .catch((err) =>
+          postError("записи об активированной регистрации", err.response.status)
+        );
     },
     putOnWait(user) {
       putUserOnWait(user.id)
         .then(() => {
           user.status = "AW";
         })
-        .catch((err) => postError("записи об активированной регистрации", err.response.status));
+        .catch((err) =>
+          postError("записи об активированной регистрации", err.response.status)
+        );
     },
     disapprove(user) {
       this.$confirm(
@@ -140,7 +146,12 @@ export default {
             .then(() => {
               user.status = "DE";
             })
-            .catch((err) => postError("записи об активированной регистрации", err.response.status));
+            .catch((err) =>
+              postError(
+                "записи об активированной регистрации",
+                err.response.status
+              )
+            );
         })
         .catch(() => {});
     },
