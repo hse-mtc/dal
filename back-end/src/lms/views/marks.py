@@ -54,6 +54,40 @@ class MarkViewSet(ModelViewSet):
             return MarkMutateSerializer
         return MarkSerializer
 
+    # override POST - new mark
+    # pylint: disable=W1113
+    # pylint: disable=W0221
+    def create(self, request, *args, **kwargs):
+        request.data['mark'] = [request.data['mark']]
+        return super().create(request, *args, **kwargs)
+
+    # override PUT - add mark to array
+    # pylint: disable=W1113
+    # pylint: disable=W0221
+    def update(self, request, pk=None, *args, **kwargs):
+        request.data['mark'] = self.queryset.get(
+            id=pk).mark + [request.data['mark']]
+        return super().update(request, pk, *args, **kwargs)
+
+    # override PATCH - change last mark in array
+    # pylint: disable=W1113
+    # pylint: disable=W0221
+    def partial_update(self, request, pk=None, *args, **kwargs):
+        tmp = request.data['mark']
+        request.data['mark'] = self.queryset.get(id=pk).mark
+        request.data['mark'][-1] = tmp
+        return super().update(request, pk, partial=True, *args, **kwargs)
+
+    # override DELETE - delete last mark in array
+    # pylint: disable=W1113
+    # pylint: disable=W0221
+    def destroy(self, request, pk=None, *args, **kwargs):
+        request.data['mark'] = self.queryset.get(id=pk).mark
+        request.data['mark'].pop(-1)
+        if len(request.data['mark']) == 0:
+            return super().destroy(request, pk, *args, **kwargs)
+        return super().update(request, pk, *args, **kwargs)
+
 
 @extend_schema(tags=['mark-journal'],
                parameters=[
