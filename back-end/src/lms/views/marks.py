@@ -23,6 +23,7 @@ from lms.filters.marks import MarkFilter
 from lms.models.common import Milgroup
 from lms.models.marks import Mark
 from lms.models.students import Student
+from lms.models.lessons import Lesson
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subjects import LessonSubjectSerializer
@@ -134,7 +135,8 @@ class MarkJournalView(GenericAPIView):
         date_from = datetime.fromisoformat(query_params.data['date_from'])
         date_to = datetime.fromisoformat(query_params.data['date_to'])
 
-        date_range = get_date_range(date_from, date_to, milgroup['weekday'])
+        # date_range = get_date_range(date_from, date_to, milgroup['weekday'])
+        date_range = list(set([item.date for item in Lesson.objects.filter(date__lte=date_to, date__gte=date_from, milgroup=request.query_params['milgroup'], subject=request.query_params['subject'])]))
 
         # add dates and absences
         data['dates'] = date_range

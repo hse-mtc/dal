@@ -7,18 +7,50 @@
   margin-bottom: 15px;
 }
 
-.create-mark-btn {
-  opacity: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  height: 2rem;
-  width: 2rem;
-  align-self: center;
-}
-.mark-journal-cell:hover .create-mark-btn {
-  opacity: 1;
+.mark-journal-cell {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  &:hover .create-mark-btn {
+    opacity: 1;
+  }
+
+  .create-mark-btn {
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: 2rem;
+    width: 2rem;
+    align-self: center;
+  }
 }
 
 .my-tabs /deep/ .el-tabs__item {
   font-size: 1.4rem;
+}
+
+.column-template {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.new-lesson-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding-left: 10px;
+  padding-top: 5px;
+}
+
+.drawer-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20em;
 }
