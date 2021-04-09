@@ -1,13 +1,12 @@
 import requests
 
 from rest_framework import status
-from rest_framework.decorators import action
 
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import BasePermission
 from rest_framework.renderers import JSONRenderer
+from rest_framework.viewsets import ModelViewSet
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -81,44 +80,24 @@ class StudentViewSet(ModelViewSet):
         return serializer.save()
 
 
-@extend_schema(tags=['activate-students'])
-class ActivateStudentReadonlyViewSet(ReadOnlyModelViewSet):
+@extend_schema(tags=['students'])
+class ActivateStudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
     permission_classes = [StudentPermission]
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
     serializer_class = StudentSerializer
 
-    def get_queryset(self):
+    def filter_queryset(self, queryset):
         user = self.request.user
-        is_teacher = hasattr(user, 'teacher')
-        is_student = hasattr(user, 'student')
-
         milgroup = None
 
-        if is_teacher:
+        if hasattr(user, 'teacher'):
             milgroup = user.teacher.milgroup
-        elif is_student:
+        elif hasattr(user, 'student'):
             milgroup = user.student.milgroup
 
-        return Student.objects.filter(milgroup=milgroup)
+        if milgroup is None:
+            return queryset
 
-    def set_status(self, student_status):
-        student = self.get_object()
-        student.status = student_status
-        student.save()
-
-        serializer = self.get_serializer(student)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['post'])
-    def activate(self, _request, _pk):
-        return self.set_status(Student.Status.STUDENT.value)
-
-    @action(detail=True, methods=['post'])
-    def wait(self, _request, _pk):
-        return self.set_status(Student.Status.AWAITING.value)
-
-    @action(detail=True, methods=['post'])
-    def decline(self, _request, _pk):
-        return self.set_status(Student.Status.DECLINED.value)
+        return queryset.filter(milgroup=milgroup)

@@ -2,7 +2,7 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from lms.views.students import StudentViewSet, ActivateStudentReadonlyViewSet
+from lms.views.students import StudentViewSet, ActivateStudentViewSet
 from lms.views.teachers import TeacherViewSet
 from lms.views.absences import AbsenceViewSet, AbsenceJournalView
 from lms.views.absence_time import AbsenceTimeView
@@ -26,6 +26,7 @@ from lms.views.marks import MarkViewSet, MarkJournalView
 
 routers = DefaultRouter()
 routers.register('students', StudentViewSet)
+routers.register('students/approvements', ActivateStudentViewSet)
 routers.register('teachers', TeacherViewSet)
 routers.register('absences', AbsenceViewSet)
 routers.register('punishments', PunishmentViewSet)
@@ -42,7 +43,6 @@ routers.register('ranks', RankViewSet)
 routers.register('teacher-posts', TeacherPostViewSet)
 routers.register('rooms', RoomViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
-routers.register('activate-students', ActivateStudentReadonlyViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),
