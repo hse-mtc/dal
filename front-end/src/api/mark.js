@@ -21,10 +21,18 @@ export function getMarkJournal(params) {
   });
 }
 
-export function patchMark(data) {
+export function patchMark(data, id) {
   return request({
-    url: `${BASE_API_URL}${mark}${data.id}/`,
+    url: `${BASE_API_URL}${mark}${id}/`,
     method: "patch",
+    data,
+  });
+}
+
+export function putMark(data, id) {
+  return request({
+    url: `${BASE_API_URL}${mark}${id}/`,
+    method: "put",
     data,
   });
 }

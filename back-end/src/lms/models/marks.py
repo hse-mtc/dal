@@ -11,7 +11,7 @@ class Mark(models.Model):
         models.IntegerField(
             validators=[MaxValueValidator(5),
                         MinValueValidator(2)]))
-    lesson = models.ForeignKey(Lesson, models.DO_NOTHING)
+    lesson = models.ForeignKey(Lesson, models.CASCADE)
     student = models.ForeignKey(Student, models.DO_NOTHING)
 
     def __str__(self):
@@ -21,3 +21,4 @@ class Mark(models.Model):
     class Meta:
         verbose_name = 'Mark'
         verbose_name_plural = 'Marks'
+        unique_together = [['lesson', 'student']]

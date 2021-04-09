@@ -79,35 +79,69 @@
                   min-width="50"
                 >
                   <el-table-column
-                    v-for="item in getLessonsByDate(d)"
+                    v-for="item in journal.lessons.filter((x) => x.date === d)"
                     :key="item.id"
                   >
                     <template slot="header">
-                      <div class="column-template">
-                        <span>
-                          <svg-icon icon-class="map-marker-outline" />
-                          {{ item.room }}
-                        </span>
-                        <span> {{ item.ordinal }} пара </span>
-                        <el-tag :type="item.type" disable-transitions>
-                          {{ item.type | typeFilter }}
-                        </el-tag>
-                      </div>
+                      <el-popover placement="top" trigger="hover">
+                        <div class="header-template">
+                          <!-- <span>
+                            {{ item.topic }}
+                          </span> -->
+                          <el-tag
+                            :type="tagByLessonType(item.type)"
+                            disable-transitions
+                          >
+                            {{ item.type | typeFilter }}
+                          </el-tag>
+                          <span>
+                            <svg-icon icon-class="map-marker-outline" />
+                            {{ item.room }}
+                          </span>
+                          <div>
+                            <el-button
+                              size="mini"
+                              icon="el-icon-edit"
+                              type="info"
+                              circle
+                              @click="onEditLesson(item)"
+                            />
+                            <el-button
+                              size="mini"
+                              icon="el-icon-delete"
+                              type="danger"
+                              circle
+                              @click="handleDeleteLesson(item.id)"
+                            />
+                          </div>
+                        </div>
+                        <div slot="reference" class="header-template">
+                          <span> {{ item.ordinal }} пара </span>
+                        </div>
+                      </el-popover>
                     </template>
                     <template slot-scope="scope">
                       <div class="mark-journal-cell">
                         <div
-                          v-for="marks in scope.row.marks
-                            .filter((x) => x.lesson.date == d)
-                            .map((x) => x.mark)"
-                          :key="marks"
+                          v-for="m in getMarksByLesson(
+                            scope.row.marks,
+                            item.id
+                          )"
+                          :key="m"
                         >
                           <el-tag
-                            v-for="m in marks"
-                            :key="m"
                             :type="tagByMark(m)"
                             effect="dark"
                             disable-transitions
+                            @click="
+                              onEdit(
+                                scope.row.marks.find(
+                                  (x) => x.lesson == item.id
+                                ),
+                                scope.row
+                              )
+                            "
+                            class="is-clickable margin-x"
                           >
                             {{ m }}
                           </el-tag>
@@ -115,7 +149,13 @@
                         <el-button
                           type="text"
                           icon="el-icon-plus"
-                          @click="onCreate(scope.row, d)"
+                          @click="
+                            onCreate(
+                              scope.row,
+                              item,
+                              scope.row.marks.find((x) => x.lesson == item.id)
+                            )
+                          "
                           class="create-mark-btn"
                         />
                       </div>
@@ -158,7 +198,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Отмена</el-button>
+        <el-button type="danger" v-if="editMarkId" @click="handleDelete(editMarkId)">Удалить</el-button>
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
@@ -193,7 +233,7 @@
             :min="1"
             :max="10"
             style="width: 100%"
-          ></el-input-number>
+          />
         </el-form-item>
         <el-form-item label="Аудитория: " required>
           <el-select
@@ -252,7 +292,7 @@
 
 <script>
 import moment from "moment";
-import { getMarkJournal, patchMark, postMark, deleteMark } from "@/api/mark";
+import { getMarkJournal, patchMark, postMark, putMark, deleteMark } from "@/api/mark";
 import { getSubjects } from "@/api/subjects";
 import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
 import {
@@ -299,6 +339,8 @@ export default {
         },
         mark: 0,
       },
+      editMarkId: 0,
+      editMarkMethod: "POST",
       filter: {
         subject_id: 0,
         mg: 0,
@@ -392,25 +434,16 @@ export default {
     },
   },
   methods: {
-    getLessonsByDate(d) {
-      const student = this.journal.students.find((x) =>
-        x.marks.some((y) => y.lesson.date === d)
-      );
-      console.log('🚀 > student', student);
-      if (student) {
-        const marks = student.marks.filter((x) => x.lesson.date === d);
-        console.log('🚀 > marks', marks);
-        if (marks) {
-          const lessons = marks.map((x) => x.lesson);
-          console.log('🚀 > lessons', lessons);
-          return lessons;
-        }
+    getMarksByLesson(marks, lessonId) {
+      const m = marks.find((x) => x.lesson == lessonId);
+      if (m) {
+        const result = m.mark;
+        return result;
       }
       return [];
     },
     formatDate: (d) => moment(d).format("DD.MM.YY"),
     isOnlyLesson(marks) {
-      console.log(marks);
       return marks.length === 1;
     },
     tagByLessonType(type) {
@@ -463,27 +496,33 @@ export default {
       this.subjects = (await getSubjects()).data;
     },
 
-    onCreate(student, date) {
-      this.editMark = {
-        student,
-        date,
-        milgroup: this.filter.mg,
-        subject: {},
-      };
+    onCreate(student, lesson, mark) {
+      if (student.marks.some((x) => x.lesson == lesson.id)) {
+        this.editMarkMethod = "PUT";
+        this.editMarkId = mark.id;
+        this.editMark = {
+          mark: 5,
+        };
+      } else {
+        this.editMarkMethod = "POST";
+        this.editMarkId = null;
+        this.editMark = {
+          student: student.id,
+          lesson: lesson.id,
+          mark: 5,
+        };
+      }
+      console.log("🚀 > this.editMark ", this.editMark);
       this.editMarkFullname = student.fullname;
-      this.getSubjects();
-      // TODO: use on mark creation
-      // this.dialogVisible = true;
+      this.dialogVisible = true;
     },
     onEdit(mark, student) {
+      this.editMarkMethod = "PATCH";
       this.editMark = {
-        id: mark.id,
-        student: student.id,
-        lesson: mark.lesson.id,
-        mark: mark.mark,
+        mark: mark.mark[mark.mark.length - 1],
       };
+      this.editMarkId = mark.id;
       this.editMarkFullname = student.fullname;
-      this.getSubjects();
       this.dialogVisible = true;
     },
     handleClose() {
@@ -503,15 +542,15 @@ export default {
         .catch(() => {});
     },
     handleAccept() {
-      if (this.editMark.id) {
-        patchMark(this.editMark)
+      if (this.editMarkMethod === "PATCH") {
+        patchMark(this.editMark, this.editMarkId)
           .then(() => {
             patchSuccess("оценки");
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
           .catch((err) => patchError("оценки", err.response.status));
-      } else {
+      } else if (this.editMarkMethod === "POST") {
         postMark(this.editMark)
           .then(() => {
             postSuccess("оценки");
@@ -519,6 +558,15 @@ export default {
             if (this.filter.mg) this.fetchData();
           })
           .catch((err) => postError("оценки", err.response.status));
+      }
+      else if (this.editMarkMethod === "PUT") {
+        putMark(this.editMark, this.editMarkId)
+          .then(() => {
+              patchSuccess("оценки");
+              this.dialogVisible = false;
+              if (this.filter.mg) this.fetchData();
+            })
+            .catch((err) => patchError("оценки", err.response.status));
       }
     },
     handleDelete(id) {
@@ -530,6 +578,7 @@ export default {
         deleteMark({ id })
           .then(() => {
             deleteSuccess("оценки");
+            this.dialogVisible = false;
             if (this.filter.mg > 0) this.fetchData();
           })
           .catch((err) => deleteError("оценки", err.response.status));
@@ -550,17 +599,17 @@ export default {
       this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
       this.editLesson.subject = this.editLesson.subject.id;
       this.editLessonFullname = "Редактирование занятия";
-      this.getSubjects();
       this.lessonDialogVisible = true;
     },
     handleAcceptLesson() {
-      console.log(this.editLesson);
       if (this.editLesson.id) {
         patchLesson(this.editLesson)
           .then(() => {
             patchSuccess("занятия");
             this.lessonDialogVisible = false;
-            if (this.filter.mg) this.fetchData();
+            if (this.filter.mg) {
+              this.fetchData();
+            }
           })
           .catch((err) => patchError("занятия", err.response.status));
       } else {
