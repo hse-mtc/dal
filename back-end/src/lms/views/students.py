@@ -90,12 +90,11 @@ class ActivateStudentViewSet(ModelViewSet):
     serializer_class = StudentSerializer
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset().filter(
-            status__in=[
-                Student.Status.APPLICANT,
-                Student.Status.DECLINED,
-                Student.Status.AWAITING,
-            ])
+        queryset = self.get_queryset().filter(status__in=[
+            Student.Status.APPLICANT,
+            Student.Status.DECLINED,
+            Student.Status.AWAITING,
+        ])
 
         user = request.user
         milgroup = None
