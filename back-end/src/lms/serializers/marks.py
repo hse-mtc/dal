@@ -70,7 +70,7 @@ class MarkShortSerializer(ModelSerializer):
 
     class Meta:
         model = Mark
-        fields = ['id', 'mark']
+        fields = ['id', 'mark', 'lesson']
 
 
 class MarkJournalSerializer(ModelSerializer):

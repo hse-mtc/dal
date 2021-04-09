@@ -139,12 +139,12 @@ class MarkJournalView(GenericAPIView):
             date__lte=date_to,
             date__gte=date_from,
             milgroup=request.query_params['milgroup'],
-            subject=request.query_params['subject'])
+            subject=request.query_params['subject']).order_by('date', 'ordinal')
         data['lessons'] = LessonSerializer(lessons, many=True).data
         date_range = list({item.date for item in lessons})
 
         # add dates and absences
-        data['dates'] = date_range
+        data['dates'] = sorted(date_range)
         data['students'] = MarkJournalSerializer(Student.objects.filter(
             milgroup__milgroup=request.query_params['milgroup']),
                                                  context={

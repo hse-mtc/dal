@@ -31,7 +31,7 @@
   font-size: 1.4rem;
 }
 
-.column-template {
+.header-template {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,4 +53,13 @@
   top: 50%;
   transform: translateY(-50%);
   height: 20em;
+}
+
+.is-clickable {
+  cursor: pointer;
+}
+
+.margin-x {
+  margin-left: 2px;
+  margin-right: 2px;
 }
