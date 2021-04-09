@@ -39,23 +39,10 @@ export function getUsersToApprove() {
   });
 }
 
-export function approveUser(id) {
+export function changeStudentStatus(id, status) {
   return request({
     url: BASE_API_URL + LMS_URLS.students.approvements + `${id}/`,
     method: "patch",
-  });
-}
-
-export function putUserOnWait(id) {
-  return request({
-    url: BASE_API_URL + LMS_URLS.students.approvements + `${id}/`,
-    method: "patch",
-  });
-}
-
-export function disapproveUser(id) {
-  return request({
-    url: BASE_API_URL + LMS_URLS.students.approvements + `${id}/`,
-    method: "patch",
+    data: { status },
   });
 }
