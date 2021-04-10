@@ -14,7 +14,6 @@ from conf import settings
 
 from common.views.populate import PopulateAPIView
 
-from lms.views.populate import lms_populate
 from tgbot.views import populate as tgbot_populate
 
 urlpatterns = [
@@ -33,7 +32,6 @@ urlpatterns = [
     # Internal
     path("admin/", admin.site.urls),
     path("better-populate/", PopulateAPIView.as_view()),
-    path("populate/lms/", lms_populate),
     path("populate/tgbot/", tgbot_populate),
 ]
 
