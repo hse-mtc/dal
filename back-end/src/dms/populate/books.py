@@ -48,8 +48,7 @@ def create_books(
             book.publishers.add(random.choice(publishers))
 
         for _ in range(random.randint(1, 2)):
-            subj = random.choice(list(subjects.keys()))
-            book.subjects.add(subjects[subj])
+            book.subjects.add(random.choice(subjects))
 
         book.save()
         books.append(book)

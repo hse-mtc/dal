@@ -68,7 +68,7 @@ from lms.views.populate import (
     create_encouragements,
     create_achievement_types,
     create_achievements,
-    create_subjects,
+    create_subjects as create_lms_subjects,
     create_rooms,
     create_lessons,
     create_absence_restriction_time,
@@ -153,7 +153,7 @@ class PopulateAPIView(GenericAPIView):
                 files=files,
             )
 
-            sections = create_sections(subjects["Тактическая подготовка"])
+            sections = create_sections(subjects[0])
             topics = create_topics(sections[0])
             create_class_materials(
                 files=files,
@@ -210,7 +210,7 @@ class PopulateAPIView(GenericAPIView):
             achievement_types = create_achievement_types()
             create_achievements(achievement_types, students, nearest_day)
 
-            subjects = create_subjects()
+            subjects = create_lms_subjects()
             rooms = create_rooms()
             lessons = create_lessons(rooms, milgroups, subjects, nearest_day)
 
