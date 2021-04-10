@@ -6,13 +6,6 @@ from datetime import (
     time,
 )
 
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view
-
 from lms.models.common import (
     Milfaculty,
     Milgroup,
@@ -50,7 +43,7 @@ from lms.models.lessons import (
     Lesson,
 )
 from lms.models.marks import Mark
-from lms.functions import get_date_range
+from lms.models.uniforms import Uniform
 
 from common.models.subjects import Subject
 
@@ -894,3 +887,14 @@ def create_marks(lessons: list[Lesson], students: dict[str, Student]):
 def create_absence_restriction_time():
     restriction_time = time(hour=9, minute=15)
     AbsenceTime.objects.create(absence_restriction_time=restriction_time)
+
+
+def create_uniforms(milfaculties: dict[str, Milfaculty]):
+    for milfaculty in milfaculties.keys():
+        value = {
+            'headdress': 'CA',
+            'outerwear': 'JA',
+            'milfaculty': milfaculties[milfaculty],
+        }
+        uniform, _ = Uniform.get_or_create(**value)
+        uniform.save()
