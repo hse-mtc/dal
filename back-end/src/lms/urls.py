@@ -44,7 +44,7 @@ routers.register('ranks', RankViewSet)
 routers.register('teacher-posts', TeacherPostViewSet)
 routers.register('rooms', RoomViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
-routers.register('uniform', UniformViewSet)
+routers.register('uniforms', UniformViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),
