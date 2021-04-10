@@ -202,6 +202,9 @@
             </el-table>
           </el-row>
         </el-tab-pane>
+        <el-tab-pane name="uniform" label="Текущая форма одежды">
+          <UniformPicker />
+        </el-tab-pane>
       </el-tabs>
     </el-col>
     <AddStudentModalWindow
@@ -218,6 +221,7 @@
 import { getStudent, deleteStudent } from "@/api/student";
 import { getTeacher, deleteTeacher } from "@/api/teacher";
 import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
+import UniformPicker from "@/components/Personnel/UniformPicker/UniformPicker"
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 
@@ -225,6 +229,7 @@ export default {
   name: "",
   components: {
     AddStudentModalWindow,
+    UniformPicker,
   },
   data() {
     return {
