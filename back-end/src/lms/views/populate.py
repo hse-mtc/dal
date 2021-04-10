@@ -896,5 +896,5 @@ def create_uniforms(milfaculties: dict[str, Milfaculty]):
             'outerwear': 'JA',
             'milfaculty': milfaculties[milfaculty],
         }
-        uniform, _ = Uniform.get_or_create(**value)
+        uniform, _ = Uniform.objects.get_or_create(**value)
         uniform.save()
