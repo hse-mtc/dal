@@ -23,6 +23,7 @@ from lms.views.reference_book import (
 from lms.views.subjects import LessonSubjectViewSet
 from lms.views.lessons import LessonViewSet, LessonJournalView
 from lms.views.marks import MarkViewSet, MarkJournalView
+from lms.views.uniforms import UniformViewSet
 
 routers = DefaultRouter()
 routers.register('students/approvements', ActivateStudentViewSet)
@@ -43,6 +44,7 @@ routers.register('ranks', RankViewSet)
 routers.register('teacher-posts', TeacherPostViewSet)
 routers.register('rooms', RoomViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
+routers.register('uniform', UniformViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),
