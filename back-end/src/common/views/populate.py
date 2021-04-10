@@ -2,7 +2,6 @@
 from datetime import (
     datetime,
     timedelta,
-    time,
 )
 
 from django.contrib.auth import get_user_model
@@ -73,6 +72,7 @@ from lms.views.populate import (
     create_lessons,
     create_absence_restriction_time,
     create_marks,
+    create_uniforms,
 )
 
 from lms.functions import get_date_range
@@ -87,7 +87,7 @@ class PopulateAPIView(GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request: Request) -> Response:
-        # pylint: disable=too-many-locals,unused-variable
+        # pylint: disable=too-many-locals,unused-variable,too-many-statements
 
         # ----------------------------------------------------------------------
         # Validate request
@@ -167,7 +167,7 @@ class PopulateAPIView(GenericAPIView):
                 subjects=subjects,
             )
             create_favorite_books(books[:11],
-                                User.objects.get(email="vspelyak@mail.com"))
+                                  User.objects.get(email="vspelyak@mail.com"))
 
         # ----------------------------------------------------------------------
         # lms
@@ -184,8 +184,8 @@ class PopulateAPIView(GenericAPIView):
 
             # nearest day for 18XX milgroups
             nearest_day = datetime.strptime(
-                get_date_range(datetime.now() - timedelta(6), datetime.now(), 4)[0],
-                '%Y-%m-%d')
+                get_date_range(datetime.now() - timedelta(6), datetime.now(),
+                               4)[0], "%Y-%m-%d")
 
             passports = create_passports()
             offices = create_recruitments_offices()
@@ -217,5 +217,7 @@ class PopulateAPIView(GenericAPIView):
             create_absence_restriction_time()
 
             create_marks(lessons, students)
+
+            create_uniforms(milfaculties)
 
         return Response(status=status.HTTP_201_CREATED)
