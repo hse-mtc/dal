@@ -221,7 +221,7 @@
 import { getStudent, deleteStudent } from "@/api/student";
 import { getTeacher, deleteTeacher } from "@/api/teacher";
 import AddStudentModalWindow from "../AddStudentModalWindow/AddStudentModalWindow";
-import UniformPicker from "@/components/Personnel/UniformPicker/UniformPicker"
+import UniformPicker from "@/components/Personnel/UniformPicker/UniformPicker";
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 
