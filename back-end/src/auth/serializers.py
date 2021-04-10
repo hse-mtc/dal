@@ -6,6 +6,8 @@ from django.contrib.auth.models import (
 
 from rest_framework import serializers
 
+from drf_spectacular.utils import inline_serializer
+
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from conf.settings import CREATE_PASSWORD_TOKEN_LIFETIME
@@ -16,6 +18,15 @@ class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
         fields = ["name", "codename"]
+
+
+UserPermissionSerializerForSwagger = inline_serializer(
+    name="UserPermissionCreate",
+    fields={
+        "permissions_id":
+            serializers.ListField(child=serializers.IntegerField()),
+    },
+)
 
 
 class GroupSerializer(serializers.ModelSerializer):
