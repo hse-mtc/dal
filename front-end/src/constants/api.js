@@ -51,6 +51,9 @@ export const LMS_URLS = {
     users: "lms/users/",
     permissions: "lms/users/permissions",
   },
+  uniforms: {
+    uniforms: "lms/uniforms/",
+  },
 };
 
 export const DMS_URLS = {
