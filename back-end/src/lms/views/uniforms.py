@@ -1,4 +1,7 @@
+import requests
+
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.renderers import JSONRenderer
 from drf_spectacular.views import extend_schema
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -6,6 +9,10 @@ from lms.models.uniforms import Uniform
 from lms.serializers.uniforms import UniformSerializer, UniformMutateSerializer
 from lms.filters.uniforms import UniformFilter
 
+from conf.settings import (
+    TGBOT_PORT,
+    TGBOT_HOST,
+)
 from common.constants import MUTATE_ACTIONS
 from auth.permissions import BasicPermission
 
@@ -27,3 +34,10 @@ class UniformViewSet(ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return UniformMutateSerializer
         return UniformSerializer
+
+    def perform_update(self, serializer: UniformSerializer):
+        serializer.save()
+        requests.post(
+            f'http://{TGBOT_HOST}:{TGBOT_PORT}/uniforms/',
+            data=JSONRenderer().render(serializer.data),
+        )
