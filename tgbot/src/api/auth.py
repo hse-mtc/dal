@@ -16,7 +16,7 @@ Session = namedtuple("Session", ["id", "code", "chat_id"])
 async def fetch_session(params: dict[str, tp.Any]) -> tp.Optional[Session]:
     """Fetch session for chat. Session may not exist, hence `Optional`."""
 
-    async with client.get("tgbot/session", params=params) as response:
+    async with client.get("tgbot/session/", params=params) as response:
         data: list[dict[str, tp.Any]] = await response.json()
 
     return Session(**data[0]) if data else None
