@@ -64,29 +64,27 @@ export default {
   methods: {
     fetchUniform(milfaculty) {
       getUniforms({
-        milfaculty: milfaculty
+        milfaculty: milfaculty,
       })
-      .then((response) => {
-        if (response.data.length === 0) {
-          // Create 
-          createUniform({
-            headdress: "CA",
-            outerwear: "JA",
-            milfaculty: milfaculty,
-          })
-          .then((resp) => {
-            this.uniform = resp.data;
-          })
-          .catch((err) => {
-            postError("формы одежды", err.response.status);
-          });
-        }
-        else
-          this.uniform = response.data[0];
-      })
-      .catch((err) => {
-        getError("информации о форме одежды", err.response.status);
-      });
+        .then((response) => {
+          if (response.data.length === 0) {
+            // Create
+            createUniform({
+              headdress: "CA",
+              outerwear: "JA",
+              milfaculty: milfaculty,
+            })
+              .then((resp) => {
+                this.uniform = resp.data;
+              })
+              .catch((err) => {
+                postError("формы одежды", err.response.status);
+              });
+          } else this.uniform = response.data[0];
+        })
+        .catch((err) => {
+          getError("информации о форме одежды", err.response.status);
+        });
     },
     handleClick(obj) {
       this.fetchUniform(obj.label);
@@ -119,14 +117,14 @@ export default {
   },
   created() {
     getMilFaculties()
-    .then((response) => {
-      this.milfaculties = response.data;
-      this.fetchUniform(this.milfaculties[0].milfaculty);
-    })
-    .catch((err) => {
-      console.log(err);
-      getError("информации о циклах", err.response.status);
-    });
+      .then((response) => {
+        this.milfaculties = response.data;
+        this.fetchUniform(this.milfaculties[0].milfaculty);
+      })
+      .catch((err) => {
+        console.log(err);
+        getError("информации о циклах", err.response.status);
+      });
   },
 };
 </script>
