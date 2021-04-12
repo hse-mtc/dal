@@ -20,21 +20,34 @@ local environments are highly discouraged and will not be supported.
 
 * Docker
 * VS Code Extensions:
-  * Docker
-  * Python
   * Remote - Containers
 
 ### Steps
 
-1. Run `back-end` container in terminal from project root:
+1. Make sure Docker is running:
    ```shell script
-   docker-compose up --build back-end
+   docker info
    ```
+
+2. Open VS Code, click on the button in the bottom left corner (or use the command palette) and select `Remote-Containers: Open Folder in Container...`:
+   ![attach](images/open-folder.png)
    
-1. Open command palette and choose `Attach to running container`:
-   ![attach](images/attach.png)
-   
-1. Select `back-end` container.
+3. Choose `dal` folder.
+
+4. Now you have to select a container image for the development environment. Select `From 'docker-compose.yml'` and choose the `back-end` service as the base image:
+   ![attach](images/from-docker-compose.png)
+   ![attach](images/back-end.png)
+
+5. Wait for the containers to build. You are done! Now you can install all the necessary extensions and packages in your docker environment. If you have done everything right, your window should look like this (note the bottom left corner):
+   ![attach](images/in-dev-env.png)
+
+### PS
+
+All files on your machine are mapped to the `/workspace` folder in the container. You can change this in `./devcontainer/devcontainer.js`.
+
+It also makes sense to uncomment the `"runServices": []` field and fill the array with the services that you need for your work (by default, all services are started).
+
+:warning: **Do not remove your containers!** You should **only stop them**. Otherwise, your environment will be lost. :warning:
 
 ## PyCharm
 
