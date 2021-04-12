@@ -1,0 +1,45 @@
+.image-container {
+  position: relative;
+}
+
+img {
+  height: 700px;
+}
+
+img.above {
+  position: absolute;
+  left: 50%;
+  margin-left: -247.5px;
+}
+
+.top-left {
+  position: absolute;
+  top: 50%;
+  margin-top: -210px;
+  left: 50%;
+  margin-left: -172px; // -150-22
+}
+
+.left {
+  position: absolute;
+  top: 50%;
+  margin-top: -50px;
+  left: 50%;
+  margin-left: -222px; // -200-22
+}
+
+.top-right {
+  position: absolute;
+  top: 50%;
+  margin-top: -210px;
+  left: 50%;
+  margin-left: 128px; // 150 - 22
+}
+
+.right {
+  position: absolute;
+  top: 50%;
+  margin-top: -50px;
+  left: 50%;
+  margin-left: 178px; // 200-22
+}

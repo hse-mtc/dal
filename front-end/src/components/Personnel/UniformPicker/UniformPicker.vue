@@ -7,38 +7,38 @@
         :label="milfaculty.milfaculty"
         v-loading="milfaculty.milfaculty !== uniform.milfaculty"
       >
-        <div>
+        <div class="image-container">
+          <img src="@/assets/uniform-picker/base.svg" alt="Ошибка" />
+          <!-- Headdress -->
+          <img :src="headdressesSrc[uniform.headdress]" alt="" class="above" />
+          <!-- Outerwear -->
+          <img :src="outerwearsSrc[uniform.outerwear]" alt="" class="above" />
           <el-button
             icon="el-icon-caret-left"
             circle
             @click="cycleThroughHeaddresses"
+            class="top-left"
           ></el-button>
           <el-button
             icon="el-icon-caret-left"
             circle
+            class="left"
             @click="cycleThroughOuterwears"
           ></el-button>
-          <!-- SVG human image here -->
-          <p>
-            {{ uniform.headdress }} +
-            {{ uniform.outerwear }}
-          </p>
           <el-button
             icon="el-icon-caret-right"
             circle
             @click="cycleThroughHeaddresses"
+            class="top-right"
           ></el-button>
           <el-button
             icon="el-icon-caret-right"
             circle
             @click="cycleThroughOuterwears"
+            class="right"
           ></el-button>
         </div>
-        <el-button
-          icon="el-icon-check"
-          type="success"
-          style="margin-top: 20px"
-          @click="confirmUniform"
+        <el-button icon="el-icon-check" type="success" @click="confirmUniform"
           >Утвердить</el-button
         >
       </el-tab-pane>
@@ -58,7 +58,15 @@ export default {
       uniform: {},
       milfaculties: [],
       headdresses: ["CA", "HA"],
+      headdressesSrc: {
+        CA: require("@/assets/uniform-picker/cap.svg"),
+        HA: require("@/assets/uniform-picker/hat.svg"),
+      },
       outerwears: ["JA", "PC"],
+      outerwearsSrc: {
+        JA: "",
+        PC: require("@/assets/uniform-picker/pea-coat.svg"),
+      },
     };
   },
   methods: {
@@ -128,3 +136,7 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+@import "style";
+</style>
