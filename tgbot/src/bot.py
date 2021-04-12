@@ -1,31 +1,50 @@
+import asyncio
 import os
 import logging
+
+from aiohttp import web
 
 from aiogram import (
     Bot,
     Dispatcher,
-    executor,
 )
-
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
+import config
 
 import handlers
 import middleware
 
+from routes import uniforms
+
 
 def main() -> None:
+    # Logging
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.DEBUG if config.DEBUG else logging.INFO,
         format="[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s",
     )
 
+    # Bot
     bot = Bot(token=os.environ.get("TOKEN"))
     dp = Dispatcher(bot, storage=MemoryStorage())
 
     handlers.setup(dp)
     middleware.setup(dp)
 
-    executor.start_polling(dp, skip_updates=True)
+    # Server
+    app = web.Application()
+    app.add_routes(uniforms.routes)
+
+    # Run everything
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(dp.skip_updates())
+    loop.create_task(dp.start_polling())
+    web.run_app(
+        app=app,
+        host="0.0.0.0",
+        port=config.TGBOT_PORT,
+    )
 
 
 if __name__ == '__main__':
