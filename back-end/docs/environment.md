@@ -47,6 +47,8 @@ All files on your machine are mapped to the `/workspace` folder in the container
 
 It also makes sense to uncomment the `"runServices": []` field and fill the array with the services that you need for your work (by default, all services are started).
 
+Don't forget to run `git config --global user.name "..."` and `git config --global user.email "..."` if you want to use `git` inside the container.
+
 :warning: **Do not remove your containers!** You should **only stop them**. Otherwise, your environment will be lost. :warning:
 
 ## PyCharm
