@@ -5,25 +5,26 @@ const {
   uniforms: { uniforms },
 } = LMS_URLS;
 
-export function getUniforms() {
+export function getUniforms(params) {
   return request({
     url: BASE_API_URL + uniforms,
     method: "get",
+    params,
   });
 }
 
-export function createUniform(params) {
+export function createUniform(data) {
   return request({
     url: BASE_API_URL + uniforms,
     method: "post",
-    params,
+    data,
   });
 }
 
-export function changeUniform(params, id) {
+export function changeUniform(data, id) {
   return request({
     url: BASE_API_URL + uniforms + `${id}/`,
     method: "patch",
-    params,
+    data,
   });
 }
