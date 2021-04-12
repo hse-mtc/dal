@@ -37,7 +37,7 @@ async def get_student(message: Message, state: FSMContext) -> None:
 
     restriction_time = await fetch_restriction_time()
     await message.answer(
-        f'После того, как отметите всех студентов, нажмите\n'
+        f'После того, как отметите всех студентов, нажмите '
         f'кнопку "Отправить данные"\n\n'
         f'{bold_text(f"Время отправки ограничено до {restriction_time}!")}',
         parse_mode=MD2,
