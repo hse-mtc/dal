@@ -38,7 +38,7 @@ from common.constants import MUTATE_ACTIONS
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Book.objects \
         .prefetch_related("authors", "publishers", "subjects", "file", "user") \
-        .order_by("title")
+        .order_by("title", "id")
 
     permission_classes = [ReadOnly | IsOwner]
 
@@ -59,7 +59,9 @@ class BookViewSet(viewsets.ModelViewSet):
 
 @extend_schema(tags=["favorite-books"])
 class FavoriteBookViewSet(viewsets.ModelViewSet):
-    queryset = FavoriteBook.objects.prefetch_related("book", "user")
+    queryset = FavoriteBook.objects \
+        .prefetch_related("book", "user") \
+        .order_by("id")
 
     permission_classes = [ReadOnly | IsOwner]
     filter_backends = [DjangoFilterBackend]

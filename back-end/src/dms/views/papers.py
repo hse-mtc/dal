@@ -63,7 +63,7 @@ class TagListAPIView(generics.ListAPIView):
 class PaperViewSet(viewsets.ModelViewSet):
     queryset = Paper.objects \
         .prefetch_related("authors", "category", "publishers", "file", "tags") \
-        .order_by("-publication_date", "title")
+        .order_by("-publication_date", "title", "id")
 
     permission_classes = [ReadOnly | IsOwner]
 
