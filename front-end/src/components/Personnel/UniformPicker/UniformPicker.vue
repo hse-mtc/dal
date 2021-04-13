@@ -98,14 +98,16 @@ export default {
       this.fetchUniform(obj.label);
     },
     cycleThroughHeaddresses() {
-      var headdress_index = this.headdresses.indexOf(this.uniform.headdress);
-      headdress_index = (headdress_index + 1) % this.headdresses.length;
-      this.uniform.headdress = this.headdresses[headdress_index];
+      const nextIndex = this.headdresses.indexOf(this.uniform.headdress) + 1;
+      this.uniform.headdress = this.headdresses[
+        nextIndex % this.headdresses.length
+      ];
     },
     cycleThroughOuterwears() {
-      var outerwear_index = this.outerwears.indexOf(this.uniform.outerwear);
-      outerwear_index = (outerwear_index + 1) % this.outerwears.length;
-      this.uniform.outerwear = this.outerwears[outerwear_index];
+      const nextIndex = this.outerwears.indexOf(this.uniform.outerwear) + 1;
+      this.uniform.outerwear = this.outerwears[
+        nextIndex % this.outerwears.length
+      ];
     },
     confirmUniform() {
       changeUniform(
