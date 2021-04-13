@@ -154,7 +154,9 @@ export default {
       return this.publishers.find((publisher) => publisher.id === id).name;
     },
     loadMore() {
-      this.fetchData();
+      if (!this.loading) {
+        this.fetchData();
+      }
     },
     yearChanged(index) {
       if (index === 0) {
@@ -202,6 +204,10 @@ export default {
     },
 
     async fetchData() {
+      if (!this.$route.query.category && !this.isMyDocuments) {
+        return;
+      }
+
       if (this.documents.length < this.count || this.count === null) {
         this.loading = true;
         const authors = this.$route.query.author;
