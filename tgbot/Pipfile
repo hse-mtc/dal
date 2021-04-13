@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 aiogram = "*"
 aiohttp = {extras = ["speedups"], version = "*"}
+pytz = "*"
 
 [dev-packages]
 yapf = "*"
