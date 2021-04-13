@@ -8,7 +8,7 @@
       <div class="categories-block" v-if="categories.length">
         <el-row class="select-work">
           <el-col :span="10" :offset="2">
-            <span class="category-selected" @click="openAllCategories">
+            <span class="category-selected" @click="toggleCategorySelector">
               {{ category.title }}
             </span>
             <img
@@ -17,7 +17,7 @@
               alt="Открыть список категорий"
               class="ml-2"
               style="cursor: pointer"
-              @click="openAllCategories"
+              @click="toggleCategorySelector"
             />
           </el-col>
 
@@ -67,7 +67,7 @@
             <img
               src="../../assets/scienceWorks/cross.svg"
               alt=""
-              @click="closeSelectCategory"
+              @click="closeCategorySelector"
             />
           </el-col>
         </el-row>
@@ -155,10 +155,6 @@ export default {
   },
 
   created() {
-    this.$router.replace({
-      name: "Science Articles",
-      query: { category: "1" },
-    });
     this.fetchData();
   },
   mounted() {
@@ -209,21 +205,21 @@ export default {
       this.startScrolling();
     },
 
-    closeSelectCategory() {
-      this.modalCategories = false;
-      this.modalCategories
-        ? (document.getElementById("dark-arrow").style.transform =
-            "rotate(180deg)")
-        : (document.getElementById("dark-arrow").style.transform =
-            "rotate(0deg)");
+    rotateArrow() {
+      const arrow = document.getElementById("dark-arrow");
+      if (arrow) {
+        this.modalCategories
+          ? (arrow.style.transform = "rotate(180deg)")
+          : (arrow.style.transform = "rotate(0deg)");
+      }
     },
-    openAllCategories() {
+    closeCategorySelector() {
+      this.modalCategories = false;
+      this.rotateArrow();
+    },
+    toggleCategorySelector() {
       this.modalCategories = !this.modalCategories;
-      this.modalCategories
-        ? (document.getElementById("dark-arrow").style.transform =
-            "rotate(180deg)")
-        : (document.getElementById("dark-arrow").style.transform =
-            "rotate(0deg)");
+      this.rotateArrow();
     },
     async deleteCategory(id) {
       await this.$confirm("Вы уверены?", "Подтвердите действие", {
@@ -250,13 +246,15 @@ export default {
     },
 
     async fetchData() {
+      let categories;
       try {
-        const categories = (await getPaperCategories()).data;
-        this.setCategories(categories);
-        this.category = categories[0];
+        categories = (await getPaperCategories()).data;
       } catch (error) {
         console.log("Failed to fetch Categories: ", error);
       }
+
+      this.setCategories(categories);
+      this.selectCategory(categories[0].id);
     },
 
     selectCategory(id) {
@@ -265,12 +263,7 @@ export default {
         name: "Science Articles",
         query: { category: id.toString() },
       });
-      this.modalCategories = false;
-      this.modalCategories
-        ? (document.getElementById("dark-arrow").style.transform =
-            "rotate(180deg)")
-        : (document.getElementById("dark-arrow").style.transform =
-            "rotate(0deg)");
+      this.closeCategorySelector();
     },
   },
 };
