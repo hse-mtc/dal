@@ -181,7 +181,9 @@ export default {
   },
   methods: {
     loadMore() {
-      this.fetchData();
+      if (!this.loading) {
+        this.fetchData();
+      }
     },
     deleteFavBook(id) {
       if (this.isFavoriteBooks) {
