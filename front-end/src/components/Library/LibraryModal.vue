@@ -26,6 +26,8 @@
                 title="Год издания"
                 type="year"
                 v-model="formValues.publishDate"
+                format="yyyy"
+                value-format="yyyy"
               />
             </el-form-item>
           </el-col>

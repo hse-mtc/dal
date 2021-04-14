@@ -11,8 +11,8 @@
       :type="type"
       v-model="value"
       v-bind="$attrs"
-      format="dd.MM.yyyy"
-      value-format="yyyy-MM-dd"
+      :format="format"
+      :value-format="valueFormat"
     />
   </InputsBase>
 </template>
@@ -25,6 +25,8 @@ export default {
   name: "DateInput",
   props: {
     type: { type: String, default: "date" },
+    format: { type: String, default: "dd.MM.yyyy" },
+    valueFormat: { type: String, default: "yyyy-MM-dd" },
   },
 };
 </script>
