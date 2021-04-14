@@ -30,7 +30,7 @@
           <ElOption
             v-for="author in authors"
             :key="author.id"
-            :label="getAuthor(author.id)"
+            :label="surnameWithInitials(author)"
             :value="author.id"
           />
         </ElSelect>
@@ -45,10 +45,10 @@
           style="width: 300px"
         >
           <ElOption
-            v-for="{ id } in publishers"
+            v-for="{ id, name } in publishers"
             :key="id"
             :value="id"
-            :label="getPublisher(id)"
+            :label="name"
           />
         </ElSelect>
       </ElFormItem>
@@ -151,11 +151,11 @@ export default {
       ? new PaperForm()
       : new PaperForm(
           paper.annotation,
-          paper.authors.map((a) => a.id),
+          paper.authors,
           paper.category,
           [paper.file],
           paper.publication_date,
-          paper.publishers.map((p) => p.id),
+          paper.publishers,
           paper.tags,
           paper.title
         );
@@ -183,13 +183,7 @@ export default {
   },
 
   methods: {
-    getAuthor(id) {
-      const author = this.authors.find((author) => author.id === id);
-      return surnameWithInitials(author);
-    },
-    getPublisher(id) {
-      return this.publishers.find((publisher) => publisher.id === id).name;
-    },
+    surnameWithInitials,
 
     async submitForm(name) {
       let formValid = this.paperForm.files.length > 0;
