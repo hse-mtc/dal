@@ -46,7 +46,7 @@ class PublisherViewSet(viewsets.ModelViewSet):
 
 @extend_schema(tags=["subjects"])
 class SubjectViewSet(viewsets.ModelViewSet):
-    queryset = Subject.objects.all()
+    queryset = Subject.objects.order_by("-title", "id")
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SubjectFilter
