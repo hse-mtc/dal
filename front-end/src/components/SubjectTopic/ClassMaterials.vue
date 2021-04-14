@@ -174,7 +174,7 @@ export default {
       openedTypes: [],
       titles: {
         lectures: "Лекции",
-        seminars: "Семианры",
+        seminars: "Семинары",
         groups: "Групповые занятия",
         practices: "Практические занятия",
       },
