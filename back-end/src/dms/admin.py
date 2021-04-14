@@ -23,7 +23,11 @@ admin.site.register(Book)
 admin.site.register(FavoriteBook)
 admin.site.register(Category)
 admin.site.register(ClassMaterial)
-admin.site.register(Paper)
 admin.site.register(Publisher)
 admin.site.register(Section)
 admin.site.register(Topic)
+
+
+@admin.register(Paper)
+class PaperAdmin(admin.ModelAdmin):
+    list_filter = ["category"]
