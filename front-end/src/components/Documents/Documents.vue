@@ -31,9 +31,7 @@
             </div>
 
             <div class="ml-5" style="color: #76767a">
-              <span v-for="publisher in document.publishers" :key="publisher">
-                {{ getPublisher(publisher) }}
-              </span>
+              {{ publisherNames(document.publishers) }}
             </div>
           </div>
 
@@ -150,8 +148,11 @@ export default {
       const author = this.authors.find((author) => author.id === id);
       return surnameWithInitials(author);
     },
-    getPublisher(id) {
-      return this.publishers.find((publisher) => publisher.id === id).name;
+    publisherNames(ids) {
+      return this.publishers
+        .filter((p) => ids.includes(p.id))
+        .map((p) => p.name)
+        .join(", ");
     },
     loadMore() {
       if (!this.loading) {
