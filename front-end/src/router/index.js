@@ -147,6 +147,13 @@ export const constantRoutes = [
         component: () => import("@/views/AdminPanel/index"),
         meta: { title: "Панель администратора", icon: "journal" },
       },
+
+      {
+        path: 'applicant_documents/',
+        name: 'applicantDocuments',
+        component: () => import('@/views/ApplicantDocuments/index.vue'),
+        meta: { title: 'Учет документов абитуриентов', icon: 'table' }
+      }
     ],
   },
 
