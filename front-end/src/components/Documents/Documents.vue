@@ -234,7 +234,7 @@ export default {
           );
 
           this.documents = [...this.documents, ...data.results];
-          this.count = data.count;
+          this.count = data.count > 0 ? data.count : null;
           this.loading = false;
         } catch (error) {
           console.log("Failed to fetch Papers: ", error);

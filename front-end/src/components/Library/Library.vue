@@ -291,6 +291,8 @@ export default {
           await editBook(changingId, formData);
         } else {
           await uploadBook(formData);
+          this.books = [];
+          this.count = null;
           this.fetchData();
         }
       } catch (e) {
