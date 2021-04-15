@@ -27,6 +27,7 @@
           :isOwner="isOwner"
           class="topic"
           :index="index + 1"
+          @delete="deleteTopic"
         />
       </transition-group>
     </Draggable>
