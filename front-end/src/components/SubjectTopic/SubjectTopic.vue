@@ -117,22 +117,19 @@ export default {
   },
   methods: {
     acceptNewTopic() {
-      let title;
-      let annotation;
-
-      if (this.topic.title) {
+      if (!this.topic.title) {
         this.$message.warning("Пожалуйста, заполните название темы");
         return;
       }
 
-      if (this.topic.annotation) {
+      if (!this.topic.annotation) {
         this.$message.warning("Пожалуйста, заполните аннотацию для темы");
         return;
       }
 
       const dataToSend = {
-        title: title,
-        annotation: annotation,
+        title: this.topic.title,
+        annotation: this.topic.annotation,
       };
 
       this.$emit("change", { id: this.topic.id, newData: dataToSend });
