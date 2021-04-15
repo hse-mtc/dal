@@ -27,7 +27,7 @@ export function changePassword(data) {
 export function registerStudent(data) {
   return request({
     url: BASE_API_URL + LMS_URLS.register.students,
-    method: "post",
+    method: "patch",
     data,
   });
 }
