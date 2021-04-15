@@ -1,11 +1,11 @@
-import string
 import requests
-import secrets
+
 from django.contrib.auth import get_user_model
 
 from rest_framework import status
 from rest_framework.decorators import action
 
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import BasePermission
@@ -32,6 +32,7 @@ from lms.serializers.students import (
     StudentMutateSerializer,
 )
 
+from auth.serializers import CreatePasswordTokenSerializer
 from auth.permissions import BasicPermission
 
 
@@ -88,21 +89,18 @@ class StudentViewSet(ModelViewSet):
     def registration(self, request):
         email = request.data['email']
         milgroup = Milgroup.objects.get(pk=request.data['milgroup'])
-
-        alphabet = string.ascii_letters + string.digits
-        password = ''.join(secrets.choice(alphabet) for i in range(8))
-        user = get_user_model().objects.create_user(email=email,
-                                                    password=password)
+        user = get_user_model().objects.create_user(
+            email=email,
+            password=get_user_model().objects.make_random_password(),
+        )
 
         instance = Student.objects.filter(
             contact_info__corporate_email=email).first()
-
         instance.milgroup = milgroup
         instance.user = user
         instance.save()
 
         serializer = self.get_serializer(instance)
-
         return Response(serializer.data)
 
 
@@ -115,7 +113,7 @@ class ActivateStudentViewSet(ModelViewSet):
     filterset_class = StudentFilter
     serializer_class = StudentSerializer
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request: Request, *args, **kwargs) -> Response:
         queryset = self.get_queryset().filter(status__in=[
             Student.Status.APPLICANT,
             Student.Status.DECLINED,
@@ -134,4 +132,32 @@ class ActivateStudentViewSet(ModelViewSet):
             queryset = queryset.filter(milgroup=milgroup)
 
         serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def perform_update(self, serializer):
+        return serializer.save()
+
+    def update(self, request: Request, *args, **kwargs) -> Response:
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance,
+                                         data=request.data,
+                                         partial=partial)
+        serializer.is_valid(raise_exception=True)
+        instance: Student = self.perform_update(serializer)
+
+        if instance.status == Student.Status.STUDENT:
+            email = instance.contact_info.corporate_email
+            user = get_user_model().objects.get(email=email)
+            token = CreatePasswordTokenSerializer.get_token(user)
+
+            # TODO(TmLev): send email, link should forward to front end app
+            print(f'localhost:9528/change-password?token={str(token)}')
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            # pylint: disable=protected-access
+            instance._prefetched_objects_cache = {}
+
         return Response(serializer.data)
