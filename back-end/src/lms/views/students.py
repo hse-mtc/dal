@@ -1,6 +1,10 @@
+import string
 import requests
+import secrets
+from django.contrib.auth import get_user_model
 
 from rest_framework import status
+from rest_framework.decorators import action
 
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
@@ -18,6 +22,7 @@ from conf.settings import (
 )
 
 from common.constants import MUTATE_ACTIONS
+from lms.models.common import Milgroup
 
 from lms.models.students import Student
 from lms.filters.students import StudentFilter
@@ -78,6 +83,27 @@ class StudentViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         return serializer.save()
+
+    @action(detail=False, methods=['patch'])
+    def registration(self, request):
+        email = request.data['email']
+        milgroup = Milgroup.objects.get(pk=request.data['milgroup'])
+
+        alphabet = string.ascii_letters + string.digits
+        password = ''.join(secrets.choice(alphabet) for i in range(8))
+        user = get_user_model().objects.create_user(email=email,
+                                                    password=password)
+
+        instance = Student.objects.filter(
+            contact_info__corporate_email=email).first()
+
+        instance.milgroup = milgroup
+        instance.user = user
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+
+        return Response(serializer.data)
 
 
 @extend_schema(tags=['students'])
