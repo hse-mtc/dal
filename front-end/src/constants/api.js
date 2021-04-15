@@ -10,8 +10,8 @@ export const AUTH_URLS = {
 
 export const LMS_URLS = {
   register: {
-    students: "lms/students/",
-    teachers: "lms/teachers/",
+    students: "lms/students/registration/",
+    teachers: "lms/teachers/registration/",
   },
   absence: {
     absence: "lms/absences/",
