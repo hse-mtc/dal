@@ -20,11 +20,11 @@
           <hr class="ml-3" />
         </div>
 
-        <el-col :span="2" style="font-size: 22px" class="mt-4">
+        <el-col :span="3" style="font-size: 22px" class="mt-4">
           № {{ index + 1 }}
         </el-col>
 
-        <el-col :span="21">
+        <el-col :span="20">
           <div class="d-flex">
             <div>
               {{ document.publication_date | moment }}
