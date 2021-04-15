@@ -211,6 +211,20 @@ export default {
     this.displayMaterials = [...this.materials];
   },
   methods: {
+    titleToType(title) {
+      switch (title) {
+        case "lectures":
+          return "LE";
+        case "seminars":
+          return "SE";
+        case "groups":
+          return "GR";
+        case "practices":
+          return "PR";
+        default:
+          return "Error";
+      }
+    },
     icon(extension) {
       return Object.keys(this.icons).includes(extension)
         ? this.icons[extension]
@@ -228,7 +242,7 @@ export default {
         formData.append(
           "data",
           JSON.stringify({
-            type: this.title,
+            type: this.titleToType(this.title),
             topic: this.topic,
           })
         );
