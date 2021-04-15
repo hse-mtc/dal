@@ -21,8 +21,8 @@ class Student:
     id: int
     full_name: str
     state: State
-    absence_type: str = 'Неуважительная'
-    absence_status: str = 'Открыт'
+    absence_type: str = 'NS'
+    absence_status: str = 'OP'
 
 
 @auth_required
