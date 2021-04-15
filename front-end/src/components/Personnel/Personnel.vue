@@ -47,9 +47,9 @@
               >
                 <el-option
                   v-for="item in statuses"
-                  :key="item"
-                  :label="item"
-                  :value="item"
+                  :key="item.code"
+                  :label="item.label"
+                  :value="item.code"
                 >
                 </el-option>
               </el-select>
@@ -98,10 +98,14 @@
               </el-table-column>
               <el-table-column label="Дата рождения">
                 <template slot-scope="scope">
-                  {{ formatDate(scope.row.birthdate) }}
+                  {{ formatDate(scope.row.birth_info) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="status" label="Статус">
+              <el-table-column
+                prop="status"
+                label="Статус"
+                show-overflow-tooltip
+              >
                 <template slot-scope="scope">
                   {{ scope.row.status | statusFilter }}
                 </template>
@@ -245,7 +249,11 @@ export default {
       studentsData: [],
       teachersData: [],
       addModal: false,
-      statuses: ["Обучается", "Отчислен", "Завершил"],
+      statuses: [
+        { code: "ST", label: "Обучающийся" },
+        { code: "EX", label: "Отчислен" },
+        { code: "GR", label: "Выпустился" },
+      ],
       milgroups: [
         {
           milgroup: 1807,
@@ -275,7 +283,7 @@ export default {
           return "Абитуриент";
         case "ST":
           return "Обучающийся";
-        case "DE":
+        case "EX":
           return "Отчислен";
         case "GR":
           return "Выпустился";
@@ -285,7 +293,10 @@ export default {
     },
   },
   methods: {
-    formatDate: (d) => moment(d).format("DD.MM.YYYY"),
+    formatDate(d) {
+      if (d) return moment(d.date).format("DD.MM.YYYY");
+      return "Нет данных";
+    },
     closeModal() {
       this.addModal = false;
       document
