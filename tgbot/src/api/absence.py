@@ -21,8 +21,8 @@ class AuthException(Exception):
 def create_body(student: Student) -> dict:
     return {
         'student': student.id,
-        'absence_type': student.absence_type,
-        'absence_status': student.absence_status,
+        'type': student.absence_type,
+        'status': student.absence_status,
     }
 
 
