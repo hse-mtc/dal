@@ -18,8 +18,6 @@ from drf_spectacular.views import extend_schema
 from auth.serializers import (
     UserSerializer,
     TokenPairSerializer,
-    CreatePasswordSerializer,
-    CreatePasswordTokenSerializer,
     ChangePasswordSerializer,
 )
 
@@ -36,26 +34,6 @@ class UserRetrieveAPIView(RetrieveAPIView):
 
 
 @extend_schema(tags=["auth"])
-class CreatePasswordAPIView(generics.GenericAPIView):
-    serializer_class = CreatePasswordSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def post(self, request: Request) -> Response:
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        email = serializer.validated_data["email"]
-
-        user = get_user_model().objects.get(email=email)
-        token = CreatePasswordTokenSerializer.get_token(user)
-
-        # TODO(TmLev): send email, link should forward to front end app
-        print(f"{request.META.get('HTTP_HOST')}"
-              f"/change-password?token={str(token)}")
-
-        return Response(status=HTTP_200_OK)
-
-
-@extend_schema(tags=["auth"])
 class ChangePasswordAPIView(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -67,7 +45,6 @@ class ChangePasswordAPIView(generics.GenericAPIView):
         user = request.user
         user.set_password(password)
         user.save()
-
         return Response(status=HTTP_200_OK)
 
 
