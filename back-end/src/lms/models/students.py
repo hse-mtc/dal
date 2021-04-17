@@ -11,6 +11,7 @@ from lms.models.common import (
 )
 
 from lms.models.universities import UniversityInfo
+from lms.models.applicants import ApplicationProcess
 
 
 class Passport(models.Model):
@@ -79,6 +80,13 @@ class Student(Personnel):
     )
     university_info = models.ForeignKey(
         to=UniversityInfo,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    application_process = models.OneToOneField(
+        to=ApplicationProcess,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
