@@ -12,11 +12,35 @@ from common.serializers.persons import (
 )
 
 from lms.models.students import Student
-from lms.models.applicants import ApplicationProcess
+from lms.models.applicants import (
+    Passport,
+    RecruitmentOffice,
+    ApplicationProcess,
+)
 
 from lms.serializers.common import MilspecialtySerializer
-from lms.serializers.students import RecruitmentOfficeSerializer
 from lms.serializers.universities import UniversityInfoSerializer
+
+
+class PassportSerializer(ModelSerializer):
+
+    class Meta:
+        model = Passport
+        exclude = ["id"]
+
+
+class RecruitmentOfficeSerializer(ModelSerializer):
+
+    class Meta:
+        model = RecruitmentOffice
+        exclude = ["id"]
+
+
+class ApplicationProcessSerializer(ModelSerializer):
+
+    class Meta:
+        model = ApplicationProcess
+        exclude = ["id"]
 
 
 class ApplicantSerializer(ModelSerializer):
@@ -36,11 +60,4 @@ class ApplicantSerializer(ModelSerializer):
 
     class Meta:
         model = Student
-        exclude = ["id"]
-
-
-class ApplicationProcessSerializer(ModelSerializer):
-
-    class Meta:
-        model = ApplicationProcess
         exclude = ["id"]
