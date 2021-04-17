@@ -26,13 +26,13 @@ class ApplicationProcess(models.Model):
         choices=ProfPsySelection.choices,
         blank=True,
     )
-    preferential_right = models.BooleanField(default=False,)
-    characteristic_handed_over = models.BooleanField(default=False,)
-    criminal_record_handed_over = models.BooleanField(default=False,)
-    passport_handed_over = models.BooleanField(default=False,)
-    registration_certificate_handed_over = models.BooleanField(default=False,)
-    university_card_handed_over = models.BooleanField(default=False,)
-    application_handed_over = models.BooleanField(default=False,)
+    preferential_right = models.BooleanField(default=False)
+    characteristic_handed_over = models.BooleanField(default=False)
+    criminal_record_handed_over = models.BooleanField(default=False)
+    passport_handed_over = models.BooleanField(default=False)
+    registration_certificate_handed_over = models.BooleanField(default=False)
+    university_card_handed_over = models.BooleanField(default=False)
+    application_handed_over = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Application Process"
@@ -41,5 +41,5 @@ class ApplicationProcess(models.Model):
     def __str__(self) -> str:
         if hasattr(self, "student"):
             return f"({self.student.id}) {self.student.full_name}"
-        else:
-            return f"[{self.id}]"
+
+        return f"[{self.id}]"
