@@ -11,29 +11,11 @@ from lms.models.common import (
 )
 
 from lms.models.universities import UniversityInfo
-from lms.models.applicants import ApplicationProcess
-
-
-class Passport(models.Model):
-    series = models.CharField(max_length=4)
-    code = models.CharField(max_length=6)
-    ufms_name = models.CharField(max_length=255)
-    ufms_code = models.CharField(max_length=7)
-    issue_date = models.DateField()
-
-    class Meta:
-        verbose_name = 'Passport'
-        verbose_name_plural = 'Passports'
-
-
-class RecruitmentOffice(models.Model):
-    title = models.CharField(max_length=255, blank=True)
-    city = models.CharField(max_length=127, blank=True)
-    district = models.CharField(max_length=127, blank=True)
-
-    class Meta:
-        verbose_name = 'Recruitment Office'
-        verbose_name_plural = 'Recruitment Offices'
+from lms.models.applicants import (
+    Passport,
+    RecruitmentOffice,
+    ApplicationProcess,
+)
 
 
 class Student(Personnel):

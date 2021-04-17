@@ -7,19 +7,21 @@ from rest_framework.serializers import (
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from common.models.persons import Photo, BirthInfo
+from common.models.persons import Photo
 from common.serializers.persons import (
+    BirthInfoSerializer,
     RelativeMutateSerializer,
     PersonnelMutateSerializer,
 )
 
 from lms.models.common import Milgroup
-from lms.models.students import (
-    Student,
-    Passport,
-    RecruitmentOffice,
-)
+from lms.models.students import Student
 from lms.serializers.common import MilgroupSerializer
+from lms.serializers.applicants import (
+    PassportSerializer,
+    RecruitmentOfficeSerializer,
+    ApplicationProcessSerializer,
+)
 from lms.serializers.universities import (
     UniversityInfoSerializer,
     UniversityInfoCreateSerializer,
@@ -39,32 +41,12 @@ class PhotoSerializer(ModelSerializer):
         exclude = ["id"]
 
 
-class PassportSerializer(ModelSerializer):
-
-    class Meta:
-        model = Passport
-        exclude = ["id"]
-
-
-class RecruitmentOfficeSerializer(ModelSerializer):
-
-    class Meta:
-        model = RecruitmentOffice
-        exclude = ["id"]
-
-
-class BirthInfoSerializer(ModelSerializer):
-
-    class Meta:
-        model = BirthInfo
-        exclude = ["id"]
-
-
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
     university_info = UniversityInfoSerializer()
     photo = PhotoSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
+    application_process = ApplicationProcessSerializer(read_only=False)
 
     fullname = SerializerMethodField()
 
@@ -92,6 +74,7 @@ class StudentMutateSerializer(
 
     class Meta(PersonnelMutateSerializer.Meta):
         model = Student
+        exclude = ["application_process"]
 
     def create(self, validated_data):
         corporate_email = validated_data["contact_info"]["corporate_email"]
@@ -100,8 +83,7 @@ class StudentMutateSerializer(
 
         if find_student_filter.exists():
             instance = find_student_filter.last()
-            self.update_photo(instance, validated_data)
-            return super().update(instance, validated_data)
+            return self.update(instance, validated_data)
 
         self.create_photo(validated_data)
         return super().create(validated_data)
