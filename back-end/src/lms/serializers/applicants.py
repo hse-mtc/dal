@@ -12,6 +12,7 @@ from common.serializers.persons import (
 )
 
 from lms.models.students import Student
+from lms.models.applicants import ApplicationProcess
 
 from lms.serializers.common import MilspecialtySerializer
 from lms.serializers.students import RecruitmentOfficeSerializer
@@ -35,4 +36,11 @@ class ApplicantSerializer(ModelSerializer):
 
     class Meta:
         model = Student
+        exclude = ["id"]
+
+
+class ApplicationProcessSerializer(ModelSerializer):
+
+    class Meta:
+        model = ApplicationProcess
         exclude = ["id"]
