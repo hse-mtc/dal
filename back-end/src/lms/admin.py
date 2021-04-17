@@ -3,6 +3,7 @@ from django.contrib import admin
 from lms.models.encouragements import Encouragement
 from lms.models.punishments import Punishment
 from lms.models.absences import Absence
+from lms.models.applicants import ApplicationProcess
 from lms.models.universities import (
     Program,
     UniversityInfo,
@@ -38,6 +39,9 @@ admin.site.register(Milgroup)
 # Students
 admin.site.register(Student)
 admin.site.register(RecruitmentOffice)
+
+# Applicants
+admin.site.register(ApplicationProcess)
 
 # Universities
 admin.site.register(Program)
