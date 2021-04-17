@@ -22,11 +22,17 @@ from conf.settings import (
 )
 
 from common.constants import MUTATE_ACTIONS
-from lms.models.common import Milgroup
 
+from lms.models.common import Milgroup
+from lms.models.applicants import ApplicationProcess
 from lms.models.students import Student
+
 from lms.filters.students import StudentFilter
-from lms.serializers.applicants import ApplicantSerializer
+
+from lms.serializers.applicants import (
+    ApplicantSerializer,
+    ApplicationProcessSerializer,
+)
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
@@ -57,6 +63,8 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['surname', 'name', 'patronymic']
 
     def get_serializer_class(self):
+        if self.action == 'application':
+            return ApplicationProcessSerializer
         if self.action in MUTATE_ACTIONS:
             return StudentMutateSerializer
         return StudentSerializer
@@ -102,6 +110,29 @@ class StudentViewSet(ModelViewSet):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['patch'])
+    def application(self, request: Request, pk=None) -> Response:
+        # pylint: disable=unused-argument,invalid-name
+
+        serializer = ApplicationProcessSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        student = self.get_object()
+        if not student.application_process:
+            student.application_process = ApplicationProcess.objects.create()
+
+        updated = serializer.update(
+            instance=student.application_process,
+            validated_data=serializer.validated_data,
+        )
+        student.application_process = updated
+        student.save()
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=ApplicationProcessSerializer(instance=updated).data,
+        )
 
 
 @extend_schema(tags=['students'])
