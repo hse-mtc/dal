@@ -9,8 +9,8 @@ class Passport(models.Model):
     issue_date = models.DateField()
 
     class Meta:
-        verbose_name = 'Passport'
-        verbose_name_plural = 'Passports'
+        verbose_name = "Passport"
+        verbose_name_plural = "Passports"
 
 
 class RecruitmentOffice(models.Model):
@@ -19,8 +19,8 @@ class RecruitmentOffice(models.Model):
     district = models.CharField(max_length=127, blank=True)
 
     class Meta:
-        verbose_name = 'Recruitment Office'
-        verbose_name_plural = 'Recruitment Offices'
+        verbose_name = "Recruitment Office"
+        verbose_name_plural = "Recruitment Offices"
 
 
 class ApplicationProcess(models.Model):

@@ -19,4 +19,4 @@ class StudentFilter(FilterSet):
 
     class Meta:
         model = Student
-        fields = ['status', 'milgroup', 'campus']
+        fields = ["status", "milgroup", "campus"]
