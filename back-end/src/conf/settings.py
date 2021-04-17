@@ -262,18 +262,32 @@ SPECTACULAR_SETTINGS = {
     # Enum namings
     "ENUM_NAME_OVERRIDES": {
         # common
-        "RelativeType": "common.models.persons.Relative.Type",
+        "RelativeType":
+            "common.models.persons.Relative.Type",
 
         # dms
-        "ClassMaterialType": "dms.models.class_materials.ClassMaterial.Type",
+        "ClassMaterialType":
+            "dms.models.class_materials.ClassMaterial.Type",
 
         # lms
-        "AbsenceType": "lms.models.absences.Absence.Type",
-        "AbsenceStatus": "lms.models.absences.Absence.Status",
-        "EncouragementType": "lms.models.encouragements.Encouragement.Type",
-        "LessonType": "lms.models.lessons.Lesson.Type",
-        "PunishmentType": "lms.models.punishments.Punishment.Type",
-        "StudentStatus": "lms.models.students.Student.Status",
+        "AbsenceType":
+            "lms.models.absences.Absence.Type",
+        "AbsenceStatus":
+            "lms.models.absences.Absence.Status",
+        "EncouragementType":
+            "lms.models.encouragements.Encouragement.Type",
+        "LessonType":
+            "lms.models.lessons.Lesson.Type",
+        "PunishmentType":
+            "lms.models.punishments.Punishment.Type",
+        "StudentStatus":
+            "lms.models.students.Student.Status",
+        "UniversityCampus":
+            "lms.models.universities.UniversityInfo.Campus",
+        "MedicalExamination":
+            "lms.models.applicants.ApplicationProcess.MedicalExamination",
+        "ProfPsySelection":
+            "lms.models.applicants.ApplicationProcess.ProfPsySelection",
     },
 }
 
