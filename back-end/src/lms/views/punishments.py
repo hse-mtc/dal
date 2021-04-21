@@ -11,10 +11,10 @@ from lms.serializers.punishments import (PunishmentSerializer,
                                          PunishmentMutateSerializer)
 from lms.filters.punishments import PunishmentFilter
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class PunishmentPermission(BasicPermission):
+class PunishmentPermission(BasePermission):
     permission_class = 'auth.punishment'
 
 

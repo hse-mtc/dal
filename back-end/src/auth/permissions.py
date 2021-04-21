@@ -10,7 +10,7 @@ class DjangoModelPermissionsWithGet(permissions.DjangoModelPermissions):
         self.perms_map['GET'] = ['%(app_label)s.view_%(model_name)s']
 
 
-class BasicPermission(permissions.BasePermission):
+class BasePermission(permissions.BasePermission):
     permission_class = ''
 
     def has_permission(self, request, view):
@@ -23,5 +23,17 @@ class BasicPermission(permissions.BasePermission):
 
 class ReadOnly(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, obj):
+    def has_permission(self, request, view):
         return request.method in permissions.SAFE_METHODS
+
+
+class ReadOnlyAuthenticated(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.method in permissions.SAFE_METHODS
+
+
+class IsOwner(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return obj.user == request.user

@@ -32,10 +32,10 @@ from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
                                    MarkJournalSerializer,
                                    MarkJournalQuerySerializer)
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class MarkPermission(BasicPermission):
+class MarkPermission(BasePermission):
     permission_class = 'auth.mark'
 
 

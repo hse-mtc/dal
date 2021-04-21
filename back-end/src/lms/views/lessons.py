@@ -25,10 +25,10 @@ from lms.serializers.lessons import (LessonSerializer,
 from lms.filters.lessons import LessonFilter
 from lms.functions import get_date_range
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class LessonPermission(BasicPermission):
+class LessonPermission(BasePermission):
     permission_class = 'auth.lesson'
 
 

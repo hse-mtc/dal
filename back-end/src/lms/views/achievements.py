@@ -11,10 +11,10 @@ from lms.serializers.achievements import (AchievementSerializer,
                                           AchievementMutateSerializer)
 from lms.filters.achievements import AchievementFilter
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class AchievementPermission(BasicPermission):
+class AchievementPermission(BasePermission):
     permission_class = 'auth.achievement'
 
 

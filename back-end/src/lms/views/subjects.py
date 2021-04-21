@@ -10,10 +10,10 @@ from common.models.subjects import Subject
 from lms.serializers.subjects import LessonSubjectSerializer
 from lms.filters.subjects import LessonSubjectFilter
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class LessonSubjectPermission(BasicPermission):
+class LessonSubjectPermission(BasePermission):
     permission_class = 'auth.subject'
 
 

@@ -14,10 +14,10 @@ from conf.settings import (
     TGBOT_HOST,
 )
 from common.constants import MUTATE_ACTIONS
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class UniformPermission(BasicPermission):
+class UniformPermission(BasePermission):
     permission_class = 'auth.uniform'
 
 

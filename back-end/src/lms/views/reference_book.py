@@ -35,12 +35,12 @@ from lms.filters.reference_books import (
 )
 
 from auth.permissions import (
-    BasicPermission,
+    BasePermission,
     ReadOnly,
 )
 
 
-class ReferenceBookPermission(BasicPermission):
+class ReferenceBookPermission(BasePermission):
     permission_class = 'auth.reference_book'
 
 

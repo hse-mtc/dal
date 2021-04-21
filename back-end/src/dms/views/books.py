@@ -25,7 +25,7 @@ from dms.serializers.books import (
     FavoriteBookSerializer,
     FavoriteBookMutateSerializer,
 )
-from dms.permissions import (
+from auth.permissions import (
     IsOwner,
     ReadOnly,
 )

@@ -10,10 +10,10 @@ from lms.models.teachers import Teacher
 from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
 from lms.filters.teachers import TeacherFilter
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class TeacherPermission(BasicPermission):
+class TeacherPermission(BasePermission):
     permission_class = 'auth.teacher'
 
 
