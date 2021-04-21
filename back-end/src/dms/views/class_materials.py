@@ -10,6 +10,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
+from auth.permissions import (
+    IsOwner,
+    ReadOnly,
+)
 from dms.models.class_materials import (
     ClassMaterial,
     Section,
@@ -23,10 +27,6 @@ from dms.serializers.class_materials import (
     SectionSerializer,
     TopicRetrieveSerializer,
     TopicSerializer,
-)
-from auth.permissions import (
-    IsOwner,
-    ReadOnly,
 )
 from dms.filters import SectionFilter
 from dms.views.common import OrderUpdateAPIView

@@ -3,12 +3,12 @@ import requests
 from django.contrib.auth import get_user_model
 
 from rest_framework import status
+from rest_framework import permissions
 from rest_framework.decorators import action
 
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
-from rest_framework.permissions import BasePermission
 from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 
@@ -40,7 +40,7 @@ class StudentPermission(BasePermission):
     permission_class = 'auth.student'
 
 
-class AllowStudentPost(BasePermission):
+class AllowStudentPost(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.method == 'POST'

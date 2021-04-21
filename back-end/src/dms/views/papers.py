@@ -14,6 +14,11 @@ from taggit.models import Tag
 
 from drf_spectacular.views import extend_schema
 
+from auth.permissions import (
+    IsOwner,
+    ReadOnly,
+)
+
 from dms.models.papers import (
     Category,
     Paper,
@@ -24,10 +29,6 @@ from dms.serializers.papers import (
     PaperMutateSerializerForSwagger,
     PaperSerializer,
     TagSerializer,
-)
-from auth.permissions import (
-    IsOwner,
-    ReadOnly,
 )
 
 from dms.filters import PaperFilter
