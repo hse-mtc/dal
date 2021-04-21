@@ -162,7 +162,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
         "auth.permissions.ReadOnly",
-        # "auth.permissions.DjangoModelPermissionsWithGet",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
