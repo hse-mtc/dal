@@ -11,10 +11,10 @@ from lms.serializers.encouragements import (EncouragementSerializer,
                                             EncouragementMutateSerializer)
 from lms.filters.encouragements import EncouragementFilter
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class EncouragementPermission(BasicPermission):
+class EncouragementPermission(BasePermission):
     permission_class = 'auth.encouragement'
 
 

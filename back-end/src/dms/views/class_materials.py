@@ -24,7 +24,7 @@ from dms.serializers.class_materials import (
     TopicRetrieveSerializer,
     TopicSerializer,
 )
-from dms.permissions import (
+from auth.permissions import (
     IsOwner,
     ReadOnly,
 )

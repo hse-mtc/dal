@@ -32,10 +32,10 @@ from lms.filters.absences import AbsenceFilter
 
 from lms.functions import get_date_range
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class AbsencePermission(BasicPermission):
+class AbsencePermission(BasePermission):
     permission_class = 'auth.absence'
 
 

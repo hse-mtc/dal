@@ -25,10 +25,11 @@ from dms.serializers.papers import (
     PaperSerializer,
     TagSerializer,
 )
-from dms.permissions import (
+from auth.permissions import (
     IsOwner,
     ReadOnly,
 )
+
 from dms.filters import PaperFilter
 
 from common.parsers import MultiPartWithJSONParser

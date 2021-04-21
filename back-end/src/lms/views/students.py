@@ -33,10 +33,10 @@ from lms.serializers.students import (
 )
 
 from auth.serializers import CreatePasswordTokenSerializer
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class StudentPermission(BasicPermission):
+class StudentPermission(BasePermission):
     permission_class = 'auth.student'
 
 
