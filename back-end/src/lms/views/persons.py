@@ -14,10 +14,10 @@ from lms.serializers.students import StudentSerializer
 from lms.serializers.persons import PersonsQuerySerializer
 from lms.functions import search_persons, persons_response
 
-from auth.permissions import BasicPermission
+from auth.permissions import BasePermission
 
 
-class UserPermission(BasicPermission):
+class UserPermission(BasePermission):
     permission_class = 'auth.user'
 
 
