@@ -40,11 +40,8 @@ export const LMS_URLS = {
     milspecialties: "lms/milspecialties/",
   },
   stuff: {
-    student: "lms/students/",
-    teacher: "lms/teachers/",
-  },
-  students: {
     students: "lms/students/",
+    teachers: "lms/teachers/",
     approvements: "lms/students/approvements/",
   },
   users: {

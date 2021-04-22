@@ -156,7 +156,7 @@ import {
   SingleCheckbox,
 } from "@/common/inputs";
 import allowMobileView from "@/utils/allowMobileView";
-import { addStudent } from "@/api/students";
+import { postStudent } from "@/api/students";
 
 import {
   ABOUT,
@@ -583,7 +583,7 @@ export default {
           data.image = reader.result;
 
           try {
-            await addStudent(data);
+            await postStudent(data);
             this.formSubmitted = true;
           } catch (e) {
             this.$alert(

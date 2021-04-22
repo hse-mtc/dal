@@ -248,8 +248,8 @@ import {
 } from "@/utils/message";
 
 import moment from "moment";
-import { getStudent } from "../../api/student";
-import { getTeacher } from "../../api/teacher";
+import { getStudent } from "@/api/students";
+import { getTeacher } from "@/api/teachers";
 
 export default {
   name: "Encouragement",

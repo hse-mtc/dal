@@ -2,12 +2,12 @@ import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
 const {
-  stuff: { teacher },
+  stuff: { teachers },
 } = LMS_URLS;
 
 export function getTeacher(params) {
   return request({
-    url: BASE_API_URL + teacher,
+    url: BASE_API_URL + teachers,
     method: "get",
     params,
   });
@@ -15,7 +15,7 @@ export function getTeacher(params) {
 
 export function postTeacher(data) {
   return request({
-    url: BASE_API_URL + teacher,
+    url: BASE_API_URL + teachers,
     method: "post",
     data,
   });
@@ -23,7 +23,7 @@ export function postTeacher(data) {
 
 export function patchTeacher(data) {
   return request({
-    url: `${BASE_API_URL}${teacher}${data.id}/`,
+    url: `${BASE_API_URL}${teachers}${data.id}/`,
     method: "patch",
     data,
   });
@@ -31,7 +31,7 @@ export function patchTeacher(data) {
 
 export function deleteTeacher(id) {
   return request({
-    url: `${BASE_API_URL}${teacher}${id}/`,
+    url: `${BASE_API_URL}${teachers}${id}/`,
     method: "delete",
   });
 }
