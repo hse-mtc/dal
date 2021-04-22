@@ -26,7 +26,7 @@ def auth_required(request_method: RequestMethod):
 
 async def fetch_token() -> str:
     body = {
-        "email": os.environ["TGBOT_USERNAME"],
+        "email": os.environ["TGBOT_EMAIL"],
         "password": os.environ["TGBOT_PASSWORD"],
     }
 
