@@ -2,11 +2,11 @@ from django.db import models
 
 
 class Session(models.Model):
-    code = models.CharField(max_length=10)
+    phone = models.CharField(max_length=32)
     chat_id = models.PositiveBigIntegerField(null=True)
 
     def __str__(self):
-        return f'Code:{self.code}, Chat_id:{self.chat_id}'
+        return f'Phone:{self.code}, Chat_Id:{self.chat_id}'
 
     class Meta:
         verbose_name = 'Telegram Bot Auth Session'
