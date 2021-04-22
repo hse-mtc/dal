@@ -256,9 +256,9 @@ def create_passports() -> dict[str, Passport]:
 
 def create_contact_info() -> dict[str, ContactInfo]:
     values = [{
-        "personal_phone_number": "79608956420",
+        'personal_phone_number': '79608956420',
     }, {
-        "personal_phone_number": "78005553535"
+        'personal_phone_number': '78005553535'
     }]
 
     contacts = {}
@@ -266,7 +266,7 @@ def create_contact_info() -> dict[str, ContactInfo]:
     for value in values:
         contact, _ = ContactInfo.objects.get_or_create(**value)
         contact.save()
-        contacts[value["personal_phone_number"]] = contact
+        contacts[value['personal_phone_number']] = contact
 
     return contacts
 
@@ -340,15 +340,13 @@ def create_university_infos(
     return infos
 
 
-def create_students(
-    milgroups: dict[int, Milgroup],
-    programs: dict[str, Program],
-    milspecialties: dict[str, Milspecialty],
-    passports: dict[str, Passport],
-    recruitment_offices: dict[str, RecruitmentOffice],
-    university_infos: dict[str, UniversityInfo],
-    contact_infos: dict[str, ContactInfo]
-):
+def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
+                                                                   Program],
+                    milspecialties: dict[str, Milspecialty],
+                    passports: dict[str, Passport],
+                    recruitment_offices: dict[str, RecruitmentOffice],
+                    university_infos: dict[str, UniversityInfo],
+                    contact_infos: dict[str, ContactInfo]):
     # TODO – index term, add birth_info
     # FIXME(TmLev): provide family for every student
 
