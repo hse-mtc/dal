@@ -7,7 +7,7 @@ from rest_framework.serializers import (
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from common.models.persons import Photo, BirthInfo
+from common.models.persons import Photo, BirthInfo, ContactInfo
 from common.serializers.persons import (
     RelativeMutateSerializer,
     PersonnelMutateSerializer,
@@ -60,11 +60,19 @@ class BirthInfoSerializer(ModelSerializer):
         exclude = ["id"]
 
 
+class ContactInfoSerializer(ModelSerializer):
+
+    class Meta:
+        model = ContactInfo
+        exclude = ["id"]
+
+
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
     university_info = UniversityInfoSerializer()
     photo = PhotoSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
+    contact_info = ContactInfoSerializer(read_only=True)
 
     fullname = SerializerMethodField()
 
