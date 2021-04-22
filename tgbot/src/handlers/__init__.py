@@ -1,7 +1,8 @@
 from aiogram import Dispatcher
+from aiogram.types.message import ContentType
 
 from .auth import (
-    set_code,
+    share_contact,
     my_code,
     reset_code,
 )
@@ -17,10 +18,13 @@ from .menu import menu_handler
 
 def setup(dp: Dispatcher) -> None:
     # Register `auth` handlers
-    dp.register_message_handler(set_code, commands=["set_code"])
     dp.register_message_handler(my_code, commands=["my_code"])
     dp.register_message_handler(reset_code, commands=["reset_code"])
 
+    dp.register_message_handler(
+        share_contact,
+        content_types=ContentType.CONTACT
+    )
     # Register `absence` handlers
     dp.register_message_handler(
         menu_handler,

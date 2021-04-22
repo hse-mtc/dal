@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery
 from aiogram.dispatcher.storage import FSMContext
 from aiogram.utils.markdown import bold as bold_text
 
-from api.auth import (session_exists, fetch_user)
+from api.auth import (session_exists, fetch_user, fetch_phone)
 
 from api.student import fetch_students, State
 from api.absence import post_absence
@@ -21,8 +21,9 @@ MD2 = ParseMode.MARKDOWN_V2
 
 async def get_student(message: Message, state: FSMContext) -> None:
     chat_id = message.chat.id
+    phone = await fetch_phone(chat_id)
 
-    user = await fetch_user(chat_id)
+    user = await fetch_user(phone)
 
     students = await fetch_students(user.milgroup)
     await state.set_data(students)

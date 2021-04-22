@@ -21,18 +21,24 @@ class Student:
     id: int
     full_name: str
     state: State
+    milgroup: str
     absence_type: str = 'NS'
     absence_status: str = 'OP'
-
+    post: str = 'PL' # TODO: add StudentPosts (Platoon Leader)
 
 @auth_required
-async def fetch_students(milgroup: str, *args, **kwargs) -> list[Student]:
+async def fetch_students(milgroup: str = None, phone: str = None, *args, **kwargs) -> list[Student]:
+    if milgroup:
+        url = f'?milgroup={milgroup}'
+    elif phone:
+        url = f'?phone={phone}'
     students = []
-    async with client.get(f'lms/students?milgroup={milgroup}', *args, **kwargs) as response:
+    async with client.get(f'lms/students{url}', *args, **kwargs) as response:
         data: list[dict[str, tp.Any]] = await response.json()
     for student in data:
         students.append(
             Student(id=student['id'],
                     full_name=student['fullname'],
-                    state=State.present))
+                    state=State.present,
+                    milgroup=student['milgroup']['milgroup']))
     return students

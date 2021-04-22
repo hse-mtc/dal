@@ -5,11 +5,12 @@ from collections import namedtuple
 from aiohttp import ClientResponse
 
 from api.client import client
+from api.student import fetch_students
 
 from utils.auth import auth_required
 # ------------------------------------------------------------------------------
 
-Session = namedtuple("Session", ["id", "code", "chat_id"])
+Session = namedtuple("Session", ["id", "phone", "chat_id"])
 
 
 @auth_required
@@ -22,6 +23,14 @@ async def fetch_session(params: dict[str, tp.Any]) -> tp.Optional[Session]:
     return Session(**data[0]) if data else None
 
 
+@auth_required
+async def post_session(params: dict[str, tp.Any], *args, **kwargs) -> tp.Optional[Session]:
+    async with client.post("tgbot/session/", json=params, *args, **kwargs) as response:
+        data: list[dict[str, tp.Any]] = await response.json()
+
+    return Session(**data) if data else None
+
+
 async def session_exists(chat_id: int) -> bool:
     """Determine whether session for chat exists."""
 
@@ -30,7 +39,7 @@ async def session_exists(chat_id: int) -> bool:
     return exists
 
 
-async def fetch_code(chat_id: int) -> str:
+async def fetch_phone(chat_id: int) -> str:
     """Fetch code for **authorized** user.
 
     Contract: session must exist.
@@ -39,7 +48,7 @@ async def fetch_code(chat_id: int) -> str:
     session = await fetch_session(params={"chat_id": chat_id})
     assert session is not None
 
-    return session.code
+    return session.phone
 
 
 async def patch_session(id_: int, data: dict[str, tp.Any]) -> ClientResponse:
@@ -54,16 +63,24 @@ async def patch_session(id_: int, data: dict[str, tp.Any]) -> ClientResponse:
 AuthorizeResult = namedtuple("AuthorizeResult", ["success", "details"])
 
 
-async def authorize(chat_id: int, code: str) -> AuthorizeResult:
-    """Link chat with session using code."""
+async def authorize(chat_id: int, phone: str) -> AuthorizeResult:
+    """Link chat with session using phone."""
 
-    session = await fetch_session(params={"code": code})
+    student = await fetch_students(phone=phone)
 
-    if session is None:
-        return AuthorizeResult(success=False, details="Несуществующий код")
+    session = await fetch_session(params={"phone": phone})
 
-    if session.chat_id is not None:
-        return AuthorizeResult(success=False, details="Код уже используется")
+    if student[0].post != "PL":
+        return AuthorizeResult(success=False, details="Доступ разрешен только командирам взводов!")
+
+    if student[0].post == "PL" and not session:
+        session = await post_session(params={"phone": phone, "chat_id": chat_id})
+
+    # if session is None:
+    #     return AuthorizeResult(success=False, details="Несуществующий номер телефона")
+
+    # if session.chat_id is not None:
+    #     return AuthorizeResult(success=False, details="Номер телефона уже используется")
 
     response = await patch_session(session.id, data={"chat_id": chat_id})
     if response.status // 100 != 2:
@@ -96,5 +113,6 @@ async def deauthorize(chat_id: int) -> DeauthorizeResult:
 User = namedtuple("User", ["full_name", "milgroup"])
 
 
-async def fetch_user(chat_id: int) -> User:
-    return User(full_name="ФИО", milgroup="1809")
+async def fetch_user(phone: str) -> User:
+    student = await fetch_students(phone=phone)
+    return User(full_name=student[0].full_name, milgroup=student[0].milgroup)

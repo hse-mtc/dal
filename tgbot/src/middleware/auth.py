@@ -3,6 +3,7 @@ from aiogram.dispatcher.handler import CancelHandler
 from aiogram.types import Message
 
 from api.auth import session_exists
+from keyboards.reply import share_contact_keyboard
 
 
 class AuthMiddleware(BaseMiddleware):
@@ -12,7 +13,7 @@ class AuthMiddleware(BaseMiddleware):
 
     async def on_pre_process_message(self, message: Message, _: dict) -> None:
         # User is trying to authorize
-        if message.text.startswith("/set_code"):
+        if message.contact:
             return
 
         # User is already authorized
@@ -21,6 +22,7 @@ class AuthMiddleware(BaseMiddleware):
 
         # User is not authorized and is not trying to authorize, cancel handler
         await message.reply(
-            "Для работы с ботом необходимо авторизоваться:\n/set_code <КОД>")
+            "Для работы с ботом необходимо авторизоваться!\nПоделитесь контактом, чтобы продолжить!",
+            reply_markup=share_contact_keyboard())
 
         raise CancelHandler()

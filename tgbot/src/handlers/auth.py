@@ -4,35 +4,37 @@ from aiogram.utils.markdown import code as md_code
 
 from api.auth import (
     session_exists,
-    fetch_code,
+    fetch_phone,
     authorize,
     deauthorize,
     fetch_user,
 )
 
-from keyboards.reply import start_keyboard
+from keyboards.reply import start_keyboard, share_contact_keyboard
 
 MD2 = ParseMode.MARKDOWN_V2
 
 
-async def set_code(message: Message) -> None:
+async def share_contact(message: Message) -> None:
     chat_id = message.chat.id
+    phone = message.contact["phone_number"]
+
+    if message.contact["user_id"] != chat_id:
+        await message.reply(
+            "Поделитесь Вашим контактом, нажав на кнопку!",
+            reply_markup=share_contact_keyboard()
+        )
+
     if await session_exists(chat_id):
-        await message.reply("Вы уже авторизованы.\n"
-                            "Для сброса введите команду /reset_code")
+        await message.reply("Вы уже авторизованы!", reply_markup=start_keyboard())
         return
 
-    code = message.text.removeprefix("/set_code").strip()
-    if not code:
-        await message.reply("Код пуст, попробуйте ещё раз")
-        return
-
-    result = await authorize(chat_id, code)
+    result = await authorize(chat_id, phone)
     if not result.success:
         await message.reply("Не удалось авторизоваться.\n" f"{result.details}")
         return
 
-    user = await fetch_user(chat_id)
+    user = await fetch_user(phone)
     await message.reply(
         f"Здравия желаю, {user.full_name}!\n"
         f"Должность: командир взвода {user.milgroup}\n"
