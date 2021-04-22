@@ -1,9 +1,8 @@
 from django.urls import path
 
 from auth.views import (UserRetrieveAPIView, TokenObtainPairExtendedView,
-                        TokenRefreshExtendedView, CreatePasswordAPIView,
-                        ChangePasswordAPIView, AllPermissionView,
-                        UserPermissionView)
+                        TokenRefreshExtendedView,ChangePasswordAPIView,
+                        AllPermissionView, UserPermissionView)
 
 urlpatterns = [
     path("user/", UserRetrieveAPIView.as_view()),
