@@ -32,6 +32,7 @@ from lms.filters.students import StudentFilter
 from lms.serializers.applicants import (
     ApplicantSerializer,
     ApplicationProcessSerializer,
+    ApplicantWithApplicationSerializer,
 )
 from lms.serializers.students import (
     StudentSerializer,
@@ -63,11 +64,18 @@ class StudentViewSet(ModelViewSet):
     search_fields = ['surname', 'name', 'patronymic']
 
     def get_serializer_class(self):
+        if self.action == 'applications':
+            return ApplicantWithApplicationSerializer
         if self.action == 'application':
             return ApplicationProcessSerializer
         if self.action in MUTATE_ACTIONS:
             return StudentMutateSerializer
         return StudentSerializer
+
+    def get_queryset(self):
+        if self.action == 'applications':
+            return Student.objects.filter(status=Student.Status.APPLICANT)
+        return super().get_queryset()
 
     def create(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals
@@ -111,8 +119,15 @@ class StudentViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'])
+    def applications(self, request: Request, *args, **kwargs) -> Response:
+        """List all applicants with their applications."""
+        return super().list(request, *args, **kwargs)
+
     @action(detail=True, methods=['patch'])
     def application(self, request: Request, pk=None) -> Response:
+        """Create or edit applicant's application."""
+
         # pylint: disable=unused-argument,invalid-name
 
         serializer = ApplicationProcessSerializer(data=request.data)
