@@ -13,6 +13,7 @@
       :key="`${currentPage}-${entriesAmount}`"
       :class="$style.table"
       :data="data"
+      :start-index="(currentPage - 1) * PAGE_SIZE"
       @update="onUpdate"
     />
 
@@ -30,6 +31,7 @@
 
 <script>
 import _debounce from "lodash/debounce";
+import moment from "moment";
 
 import { getApplicationsStudents } from "@/api/students";
 import { updateStudentApplicationInfo } from "@/api/student";
@@ -52,18 +54,19 @@ export default {
       entriesAmount: 0,
       currentPage: 1,
       searchQuery: "",
-      PAGE_SIZE: 100,
+      PAGE_SIZE: 50,
     };
   },
   methods: {
-    async fetchData(page = this.currentPage) {
+    async fetchData(page) {
+      this.currentPage = page ? page : 1;
       const { data } = await getApplicationsStudents(page, this.PAGE_SIZE, {
         search: this.searchQuery,
       });
       this.data = data.results.map((item) => ({
         id: item.id,
         fullname: item.full_name,
-        birthday: item.birth_date,
+        birthday: moment(item.birth_date).format("DD.MM.yyyy"),
         passport: item.passport,
         program: item.program_code,
         faculty: item.faculty,
