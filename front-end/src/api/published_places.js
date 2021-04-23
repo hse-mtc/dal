@@ -8,3 +8,26 @@ export function getPublishPlaces(params) {
     params,
   });
 }
+
+export function deletePublishPlaces(params) {
+  return request({
+    url: `${BASE_API_URL}${DMS_URLS.publishers.publishers}${params.id}/`,
+    method: "delete",
+  });
+}
+
+export function patchPublishPlaces(data) {
+  return request({
+    url: `${BASE_API_URL}${DMS_URLS.publishers.publishers}${data.id}/`,
+    method: "patch",
+    data,
+  });
+}
+
+export function postPublishPlaces(data) {
+  return request({
+    url: `${BASE_API_URL}${DMS_URLS.publishers.publishers}`,
+    method: "post",
+    data,
+  });
+}

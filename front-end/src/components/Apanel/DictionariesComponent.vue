@@ -43,7 +43,43 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="Места публикации" name="publishers"> </el-tab-pane>
+        <el-tab-pane label="Места публикации" name="publishers">
+          <el-button
+              style="width: 100%"
+              class="addBtn"
+              type="primary"
+              icon="el-icon-plus"
+              @click="
+              onEditPublisher({
+                id: 0,
+                name: ''
+              })
+            "
+          >
+            Новое место публикации
+          </el-button>
+          <el-table :data="publishers" max-height="680" style="width: 100%" stripe>
+            <el-table-column sortable label="Имя" prop="name" />
+            <el-table-column width="120px">
+              <template slot-scope="scope">
+                <el-button
+                    size="mini"
+                    icon="el-icon-edit"
+                    type="info"
+                    circle
+                    @click="onEditPublisher(scope.row)"
+                />
+                <el-button
+                    size="mini"
+                    icon="el-icon-delete"
+                    type="danger"
+                    circle
+                    @click="handlePublisherDelete(scope.row.id)"
+                />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
     </el-col>
     <el-dialog
@@ -79,6 +115,27 @@
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title="Редактирование места публикации"
+      :visible.sync="dialogPublisherVisible"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <el-form
+        label-position="right"
+        label-width="150px"
+        size="mini"
+        :model="editPublisher"
+      >
+        <el-form-item label="Имя: ">
+          <el-input v-model="editPublisher.name" placeholder="Введите имя" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogPublisherVisible = false">Отмена</el-button>
+        <el-button type="primary" @click="handleAcceptPublisher()">Применить</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -97,14 +154,21 @@ import {
   patchSuccess,
   postSuccess,
 } from "@/utils/message";
+import {deletePublishPlaces, getPublishPlaces, patchPublishPlaces, postPublishPlaces} from "@/api/published_places";
 
 export default {
   name: "DictionariesComponent",
   data() {
     return {
       dialogVisible: false,
+      dialogPublisherVisible: false,
       activeTab: "authors",
       authors: [],
+      publishers: [],
+      editPublisher: {
+        id: 0,
+        name: ""
+      },
       editAuthor: {
         id: 0,
         surname: "",
@@ -123,10 +187,20 @@ export default {
           this.authors = response.data;
         })
         .catch((err) => getError("авторов", err.response.status));
+
+      getPublishPlaces()
+        .then((response) => {
+          this.publishers = response.data;
+        })
+        .catch((err) => getError("мест публикации", err.response.status));
     },
     onEdit(row) {
       this.editAuthor = { ...row };
       this.dialogVisible = true;
+    },
+    onEditPublisher(row) {
+      this.editPublisher = { ...row };
+      this.dialogPublisherVisible = true;
     },
     handleClose() {
       this.$confirm(
@@ -140,6 +214,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
+          this.dialogPublisherVisible = false;
         })
         .catch(() => {});
     },
@@ -155,6 +230,20 @@ export default {
             this.onFilter();
           })
           .catch((err) => deleteError("автора", err.response.status));
+      });
+    },
+    handlePublisherDelete(id) {
+      this.$confirm("Вы уверены, что хотите удалить место публикации?", "Подтверждение", {
+        confirmButtonText: "Да",
+        cancelButtonText: "Отмена",
+        type: "warning",
+      }).then(() => {
+        deletePublishPlaces({ id })
+          .then(() => {
+            deleteSuccess("место публикации");
+            this.onFilter();
+          })
+          .catch((err) => deleteError("место публикации", err.response.status));
       });
     },
     handleAccept() {
@@ -174,6 +263,25 @@ export default {
             this.onFilter();
           })
           .catch((err) => patchError("автора", err.response.status));
+      }
+    },
+    handleAcceptPublisher() {
+      if (this.editPublisher.id !== 0) {
+        patchPublishPlaces(this.editPublisher)
+          .then(() => {
+            patchSuccess("место публикации");
+            this.dialogPublisherVisible = false;
+            this.onFilter();
+          })
+          .catch((err) => patchError("место публикации", err.response.status));
+      } else {
+        postPublishPlaces(this.editPublisher)
+          .then(() => {
+            postSuccess("место публикации");
+            this.dialogPublisherVisible = false;
+            this.onFilter();
+          })
+          .catch((err) => patchError("место публикации", err.response.status));
       }
     },
   },
