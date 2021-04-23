@@ -6,7 +6,7 @@
       :prop="field"
       :label="title"
       :width="width"
-      :fixed="field === 'fullname'"
+      :fixed="['index', 'fullname'].includes(field)"
       :label-class-name="$style.label"
     >
       <template #header>
@@ -24,7 +24,11 @@
       </template>
 
       <template slot-scope="{ row, $index }">
-        <template v-if="field === 'medical_examination'">
+        <template v-if="field === 'index'">
+          <span>{{ startIndex + $index + 1 }}</span>
+        </template>
+
+        <template v-else-if="field === 'medical_examination'">
           <SelectInput
             v-model="data[$index][field]"
             :options="[
@@ -84,10 +88,18 @@ export default {
       type: Array,
       default: () => [],
     },
+    startIndex: {
+      required: true,
+      type: Number,
+    },
   },
   data() {
     return {
       fields: {
+        index: {
+          title: "№",
+          width: 35,
+        },
         fullname: {
           abbr: "ФИО",
           title: "Фамилия, имя, отчество",
