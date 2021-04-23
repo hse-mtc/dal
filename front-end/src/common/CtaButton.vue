@@ -1,5 +1,9 @@
 <template>
-  <div class="cta" :style="{border: border, color: color, background: background}" @click="onClick">
+  <div
+    class="cta"
+    :style="{ border: border, color: color, background: background }"
+    @click="onClick"
+  >
     <slot></slot>
   </div>
 </template>
@@ -10,23 +14,23 @@ export default {
   props: {
     background: {
       type: String,
-      default: '#0061D9'
+      default: "#0061D9",
     },
     color: {
       type: String,
-      default: '#fff'
+      default: "#fff",
     },
     border: {
       type: String,
-      default: 'none'
-    }
+      default: "none",
+    },
   },
   methods: {
     onClick() {
       this.$emit("click");
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -39,5 +43,4 @@ export default {
   padding: 16px 24px !important;
   cursor: pointer;
 }
-
 </style>
