@@ -322,15 +322,16 @@ export default {
     },
     onBookEdit(item) {
       this.modalData = {
-        authors: item.authors.map((item) => item.id),
-        publishers: item.publishers[0].id,
+        authors: item.authors,
+        publishers: item.publishers[0],
         publishDate: `${item.publication_year}`,
         bookName: item.title,
         annotation: item.annotation,
         pageCount: item.page_count,
-        subjects: item.subjects.map((item) => item.id),
+        subjects: item.subjects,
         bookCover: [],
       };
+
       this.showModal = true;
       this.changingId = item.id;
     },
