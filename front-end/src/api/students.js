@@ -12,18 +12,20 @@ export const addStudent = (data) =>
     data,
   });
 
-export const getStudents = (filters) => request({
-  url: BASE_API_URL + students,
-  method: 'GET',
-  data: filters
-});
+export const getStudents = (filters) =>
+  request({
+    url: BASE_API_URL + students,
+    method: "GET",
+    data: filters,
+  });
 
-export const getApplicationsStudents = (page, page_size, filters) => request({
-  url: BASE_API_URL + applications,
-  method: 'GET',
-  params: {
-    page,
-    page_size,
-    ...(filters || {})
-  },
-})
+export const getApplicationsStudents = (page, page_size, filters) =>
+  request({
+    url: BASE_API_URL + applications,
+    method: "GET",
+    params: {
+      page,
+      page_size,
+      ...(filters || {}),
+    },
+  });
