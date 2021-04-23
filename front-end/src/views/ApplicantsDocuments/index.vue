@@ -29,27 +29,29 @@
 </template>
 
 <script>
-import _debounce from 'lodash/debounce';
+import _debounce from "lodash/debounce";
 
-import { getApplicationsStudents } from '@/api/students';
-import { updateStudentApplicationInfo } from '@/api/student';
+import { getApplicationsStudents } from "@/api/students";
+import { updateStudentApplicationInfo } from "@/api/student";
 
-import { TextInput } from '@/common/inputs';
-import InfoTable from '@/components/@ApplicantsDocuments/Table.vue';
+import { TextInput } from "@/common/inputs";
+import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
 
 export default {
-  name: 'ApplicantsDocuments',
+  name: "ApplicantsDocuments",
   components: {
     InfoTable,
     TextInput,
   },
-  created() { this.fetchData(1) },
+  created() {
+    this.fetchData(1);
+  },
   data() {
     return {
       data: [],
       entriesAmount: 0,
       currentPage: 1,
-      searchQuery: '',
+      searchQuery: "",
       PAGE_SIZE: 100,
     };
   },
@@ -58,7 +60,7 @@ export default {
       const { data } = await getApplicationsStudents(page, this.PAGE_SIZE, {
         search: this.searchQuery,
       });
-      this.data = data.results.map(item => ({
+      this.data = data.results.map((item) => ({
         id: item.id,
         fullname: item.full_name,
         birthday: item.birth_date,
@@ -67,24 +69,26 @@ export default {
         faculty: item.faculty,
         ...item.application_process,
       }));
-      this.entriesAmount = data.count
+      this.entriesAmount = data.count;
     },
 
-    async onUpdate({id, key, value}) {
+    async onUpdate({ id, key, value }) {
       try {
         await updateStudentApplicationInfo(id, { [key]: value });
       } catch (e) {
-        console.error('Не удалось обновить данные студента о поступлении: ', e);
-        this.$message.error("Не удалось обновить данные, рекомендуем перезагрузить страницу");
+        console.error("Не удалось обновить данные студента о поступлении: ", e);
+        this.$message.error(
+          "Не удалось обновить данные, рекомендуем перезагрузить страницу"
+        );
       }
     },
 
-    search: _debounce(function() {
-      this.currentPage = 1
-      this.fetchData()
-    }, 750)
+    search: _debounce(function () {
+      this.currentPage = 1;
+      this.fetchData();
+    }, 750),
   },
-}
+};
 </script>
 
 <style lang="scss" module>
@@ -111,5 +115,4 @@ export default {
 .pagination {
   margin-top: 20px;
 }
-
 </style>
