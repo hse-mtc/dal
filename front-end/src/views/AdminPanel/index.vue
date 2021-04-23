@@ -8,7 +8,7 @@
         <PermissionComponent />
       </el-tab-pane>
       <el-tab-pane label="Справочники" name="dictionaries">
-        <!-- DictionariesComponent -->
+        <DictionariesComponent />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -17,9 +17,10 @@
 <script>
 import PermissionComponent from "@/components/Apanel/PermissionComponent";
 import Approve from "@/components/Apanel/Approve/Approve";
+import DictionariesComponent from "@/components/Apanel/DictionariesComponent";
 
 export default {
-  components: { Approve, PermissionComponent },
+  components: { DictionariesComponent, Approve, PermissionComponent },
   data() {
     return {
       activeTab: "approve",
