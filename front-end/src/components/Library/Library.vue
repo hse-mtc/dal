@@ -324,7 +324,7 @@ export default {
       this.modalData = {
         authors: item.authors.map((item) => item.id),
         publishers: item.publishers[0].id,
-        publishDate: item.publication_year,
+        publishDate: `${item.publication_year}`,
         bookName: item.title,
         annotation: item.annotation,
         pageCount: item.page_count,
