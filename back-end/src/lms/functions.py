@@ -39,9 +39,10 @@ def search_persons(model: Model, serializer: Serializer,
 def persons_response(data: list[dict]) -> list[dict]:
     result = []
     for item in data.data:
-        res = {
-            'id': item.get('user', 1),  # TODO: fix
-            'fullname': item.get('fullname', None)
-        }
-        result.append(res)
+        if item.get('user', None):
+            res = {
+                'id': item.get('user', 1),  # TODO: fix
+                'fullname': item.get('fullname', None)
+            }
+            result.append(res)
     return result

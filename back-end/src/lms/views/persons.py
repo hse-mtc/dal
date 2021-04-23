@@ -34,8 +34,7 @@ class PersonView(APIView):
 
     def get(self, request):
         query_params = PersonsQuerySerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         name = request.query_params['name']
 
