@@ -12,10 +12,10 @@
       v-bind="$attrs"
     >
       <el-option
-        v-for="option in selectOptions"
-        :key="option.value"
-        :label="option.label"
-        :value="option.value"
+        v-for="({label, value}) in selectOptions"
+        :key="value"
+        :value="value"
+        :label="label"
       />
     </el-select>
   </InputsBase>
@@ -23,7 +23,8 @@
 
 <script>
 import mixin from "./inputsMixin";
-import _isArray from "lodash/isArray";
+import _isObject from 'lodash/isObject'
+import _isArray from 'lodash/isArray'
 
 export default {
   mixins: [mixin],
@@ -32,42 +33,44 @@ export default {
     options: { type: Array, default: () => [] },
   },
   computed: {
+    selectOptions() {
+      return this.options.map(option => {
+        const isObj = _isObject(option);
+        const rawLabel = isObj ? option.label : option;
+
+        return {
+          label: _isObject(rawLabel) ? JSON.stringify(rawLabel) : rawLabel,
+          value: JSON.stringify(isObj ? option.value : option),
+        };
+      })
+    },
+
     value: {
       get() {
         if (_isArray(this.modelValue)) {
-          return this.modelValue.map((item) => JSON.stringify(item));
+          return this.modelValue.map(item => this.encodeValue(item));
         }
 
-        if (!this.modelValue && this.modelValue !== 0) return "";
-
-        return JSON.stringify(this.modelValue);
+        return this.encodeValue(this.modelValue);
       },
-      set(value) {
-        let newValue;
-        if (_isArray(value)) {
-          newValue = value.map((item) => JSON.parse(item));
-        } else {
-          newValue = JSON.parse(value);
+      set(newValue) {
+        if (_isArray(newValue)) {
+          this.$emit('change', newValue.map(item => this.decodeValue(item)));
         }
 
-        console.log(`newValue`, newValue);
-        this.$emit("change", newValue);
-      },
-    },
-    selectOptions() {
-      return this.options.map((option) => this.optionProps(option));
-    },
+        this.$emit('change', this.decodeValue(newValue));
+      }
+    }
   },
   methods: {
-    isObject(item) {
-      return !this.lodash.isString(item) && !this.lodash.isNumber(item);
+    encodeValue(value) {
+      if (!value && value !== 0) return value;
+      return JSON.stringify(value);
     },
-    optionProps(item) {
-      const value = JSON.stringify(this.isObject(item) ? item.value : item);
-      const label = `${this.isObject(item) ? item.label : item}`;
-
-      return { value, label };
-    },
-  },
+    decodeValue(value) {
+      if (!value && value !== 0) return value;
+      return JSON.parse(value)
+    }
+  }
 };
 </script>
