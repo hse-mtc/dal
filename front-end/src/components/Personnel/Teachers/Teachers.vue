@@ -140,8 +140,7 @@ export default {
         this.teachers = (await getTeacher(this.filter)).data;
       } catch (err) {
         getError("преподавателей", err.response.status);
-      }
-      finally {
+      } finally {
         this.loading = false;
       }
     },

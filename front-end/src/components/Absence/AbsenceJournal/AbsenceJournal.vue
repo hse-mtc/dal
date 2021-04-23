@@ -365,7 +365,9 @@ export default {
   methods: {
     async onWeekdayChanged() {
       this.loading = true;
-      this.filter.milgroup = this.milgroups.length ? this.milgroups[0].milgroup.toString() : "0";
+      this.filter.milgroup = this.milgroups.length
+        ? this.milgroups[0].milgroup.toString()
+        : "0";
       await this.onJournal();
     },
     changeAbsenceStatus(absence) {

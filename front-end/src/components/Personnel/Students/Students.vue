@@ -81,7 +81,11 @@
         </el-table-column>
         <el-table-column label="Дата рождения">
           <template slot-scope="scope">
-            {{ scope.row.birth_info ? scope.row.birth_info.date : null | dateFilter }}
+            {{
+              scope.row.birth_info
+                ? scope.row.birth_info.date
+                : null | dateFilter
+            }}
           </template>
         </el-table-column>
         <el-table-column prop="status" label="Статус" show-overflow-tooltip>
@@ -201,8 +205,7 @@ export default {
         this.students = (await getStudent(this.filter)).data;
       } catch (err) {
         getError("студентов", err.response.status);
-      }
-      finally {
+      } finally {
         this.loading = false;
       }
     },

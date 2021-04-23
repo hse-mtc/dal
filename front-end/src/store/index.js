@@ -17,7 +17,7 @@ const store = new Vuex.Store({
     user,
     subjects,
     documents,
-    reference
+    reference,
   },
   getters,
 });

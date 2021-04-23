@@ -1,4 +1,13 @@
-import { getMilFaculties, getMilGroups, getPosts, getRanks, getReferenceMilSpecialties, getAchievementTypes, getPrograms, getRooms } from "@/api/reference-book";
+import {
+  getMilFaculties,
+  getMilGroups,
+  getPosts,
+  getRanks,
+  getReferenceMilSpecialties,
+  getAchievementTypes,
+  getPrograms,
+  getRooms,
+} from "@/api/reference-book";
 
 const state = {
   milgroups: [],

@@ -4,7 +4,7 @@
       <el-row class="pageTitle">
         <h1>{{ this.$route.meta.title }}</h1>
       </el-row>
-      <el-tabs value="absences" stretch @click="onFilter" >
+      <el-tabs value="absences" stretch @click="onFilter">
         <el-tab-pane label="Пропуски" name="absences">
           <el-row class="filterRow" :gutter="20">
             <el-col :span="7">

@@ -246,7 +246,9 @@ export default {
     onSubmit() {
       this.$refs["form"].validate(async (valid) => {
         if (valid) {
-          this.form.milgroup = this.form.milgroup ? this.form.milgroup.milgroup : null;
+          this.form.milgroup = this.form.milgroup
+            ? this.form.milgroup.milgroup
+            : null;
           try {
             await patchTeacher(this.form);
             patchSuccess("студента");
