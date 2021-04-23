@@ -6,7 +6,7 @@
       :prop="field"
       :label="title"
       :width="width"
-      :fixed="field === 'fullName'"
+      :fixed="field === 'fullname'"
       :label-class-name="$style.label"
     >
       <template #header>
