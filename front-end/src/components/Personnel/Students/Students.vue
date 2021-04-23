@@ -58,6 +58,7 @@
         :data="students"
         :default-sort="{ prop: 'milgroup.milgroup', order: 'ascending' }"
         stripe
+        v-loading="loading"
       >
         <el-table-column
           width="300px"
@@ -128,10 +129,11 @@ export default {
   components: { Student },
   data() {
     return {
+      loading: false,
       filter: {
         search: null,
         milgroup: null,
-        status: null,
+        status: "ST",
       },
       students: [],
       modal: false,
@@ -183,12 +185,11 @@ export default {
   },
   methods: {
     closeModal() {
-      console.log('kek');
       this.modal = false;
       document
         .getElementById("main-container")
         .classList.remove("stop-scrolling");
-      this.editStudent = null;
+      this.editStudent = {};
     },
     openModal() {
       this.modal = true;
@@ -196,9 +197,13 @@ export default {
     },
     async onFilter() {
       try {
+        this.loading = true;
         this.students = (await getStudent(this.filter)).data;
       } catch (err) {
         getError("студентов", err.response.status);
+      }
+      finally {
+        this.loading = false;
       }
     },
     async clearFilter() {

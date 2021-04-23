@@ -37,6 +37,7 @@
         :data="teachers"
         :default-sort="{ prop: 'fullname', order: 'descending' }"
         stripe
+        v-loading="loading"
       >
         <el-table-column width="400px" prop="fullname" label="ФИО" sortable>
         </el-table-column>
@@ -80,7 +81,7 @@
 import { getTeacher, deleteTeacher } from "@/api/teachers";
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
-import Teacher from '../Teacher/Teacher';
+import Teacher from "../Teacher/Teacher";
 
 export default {
   name: "Teachers",
@@ -89,6 +90,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       filter: {
         search: null,
         milfaculty: null,
@@ -126,7 +128,7 @@ export default {
       document
         .getElementById("main-container")
         .classList.remove("stop-scrolling");
-      this.editTeacher = null;
+      this.editTeacher = {};
     },
     openModal() {
       this.modal = true;
@@ -134,9 +136,13 @@ export default {
     },
     async onFilter() {
       try {
+        this.loading = true;
         this.teachers = (await getTeacher(this.filter)).data;
       } catch (err) {
         getError("преподавателей", err.response.status);
+      }
+      finally {
+        this.loading = false;
       }
     },
     async clearFilter() {

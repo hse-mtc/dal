@@ -1,5 +1,10 @@
 <template>
-  <el-drawer :visible.sync="modal" direction="rtl" size="40%" :destroy-on-close="true">
+  <el-drawer
+    :visible.sync="modal"
+    direction="rtl"
+    size="40%"
+    :destroy-on-close="true"
+  >
     <el-form
       ref="form"
       :model="form"
@@ -64,41 +69,6 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item
-        label="Образовательная программа"
-        prop="university_info.program"
-      >
-        <el-select
-          v-model="form.university_info.program"
-          value-key="code"
-          placeholder="Выберите программу"
-          style="display: block"
-        >
-          <el-option
-            v-for="item in programs"
-            :key="item.code"
-            :label="item.program"
-            :value="item"
-          >
-            <span style="float: left">{{ item.program }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{
-              item.code
-            }}</span>
-          </el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="Дата рождения" prop="birth_info.date">
-        <el-date-picker
-          v-model="form.birth_info.date"
-          type="date"
-          placeholder="Выберите дату рождения"
-          format="DD.MM.yyyy"
-          value-format="yyyy-MM-DD"
-        >
-        </el-date-picker>
-      </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onSubmit">Отправить</el-button>
       </el-form-item>
@@ -109,6 +79,7 @@
 <script>
 import { patchStudent } from "@/api/students";
 import { patchError, patchSuccess } from "@/utils/message";
+import { getMilGroups } from "@/api/reference-book";
 
 export default {
   name: "Student",
@@ -130,14 +101,12 @@ export default {
   data() {
     return {
       form: {
-        milgroup: {},
-        university_info: {},
-        birth_info: "",
+        id: 0,
+        milgroup: null,
         surname: "",
         name: "",
         patronymic: "",
         photo: null,
-        status: "",
       },
       rules: {
         surname: [
@@ -161,63 +130,38 @@ export default {
             trigger: "change",
           },
         ],
-        university_info: {
-          program: [
-            {
-              required: true,
-              message: "Пожалуйста, выберите обр. программу",
-              trigger: "change",
-            },
-          ],
-        },
-        birth_info: {
-          birthdate: [
-            {
-              type: "string",
-              required: true,
-              message: "Пожалуйста, выберите дату рождения",
-              trigger: "change",
-            },
-          ],
-        },
       },
-      milgroups: [
-        { milgroup: 1807, milfaculty: "ВКС", weekday: 4 },
-        { milgroup: 1808, milfaculty: "ВКС", weekday: 4 },
-        { milgroup: 1809, milfaculty: "ВКС", weekday: 4 },
-        { milgroup: 1810, milfaculty: "РВСН", weekday: 4 },
-      ],
-      programs: [
-        {
-          program: "Информатика и вычислительная техника",
-          code: "09.03.01",
-        },
-        { program: "Программная инженерия", code: "09.03.04" },
-        { program: "Машиностроение", code: "15.03.01" },
-      ],
+      milgroups: [],
       statuses: ["Обучается", "Отчислен", "Завершил"],
     };
   },
   watch: {
-    student(value) {
-      this.form = value;
+    async student(value) {
+      for (var key in this.form) {
+        this.form[key] = value[key];
+      }
+      await this.fetchData();
     },
   },
   methods: {
+    async fetchData() {
+      this.milgroups = (await getMilGroups()).data;
+    },
     handleAvatarSuccess(res, file) {
       this.form.foto = URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
+      const isValidType =
+        file.type === "image/jpeg" || file.type === "image/png";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.error("Изображение должно быть формата JPG.");
+      if (!isValidType) {
+        this.$message.error("Изображение должно иметь формат jpeg или png.");
       }
       if (!isLt2M) {
         this.$message.error("Размер изображения не должен превышать 2 МБ.");
       }
-      return isJPG && isLt2M;
+      return isValidType && isLt2M;
     },
     onSubmit() {
       this.$refs["form"].validate(async (valid) => {
@@ -235,7 +179,6 @@ export default {
       });
     },
     closeModal() {
-      console.log('zhopa');
       this.$emit("closeModal");
     },
   },
