@@ -149,9 +149,9 @@ export const constantRoutes = [
       },
 
       {
-        path: 'applicant_documents/',
-        name: 'applicantDocuments',
-        component: () => import('@/views/ApplicantDocuments/index.vue'),
+        path: 'applicants_documents/',
+        name: 'applicantsDocuments',
+        component: () => import('@/views/ApplicantsDocuments/index.vue'),
         meta: { title: 'Учет документов абитуриентов', icon: 'table' }
       }
     ],
