@@ -95,11 +95,14 @@
 <script>
 import { mapState } from "vuex";
 
-import SelectInput from "@/common/inputs/Select";
-import DateInput from "@/common/inputs/Date";
-import TextInput from "@/common/inputs/Text";
-import NumberInput from "@/common/inputs/Number";
-import FileInput from "@/common/inputs/File";
+import {
+  SelectInput,
+  DateInput,
+  TextInput,
+  NumberInput,
+  FileInput,
+} from "@/common/inputs";
+
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
 
 export default {
