@@ -36,3 +36,9 @@ export function deleteStudent(id) {
     method: "delete",
   });
 }
+
+export const updateStudentApplicationInfo = (id, data) => request({
+  url: `${BASE_API_URL}${student}${id}/application/`,
+  method: 'PATCH',
+  data,
+});
