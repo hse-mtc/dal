@@ -70,9 +70,9 @@ export default {
       this.entriesAmount = data.count
     },
 
-    async onUpdate({id, field, value}) {
+    async onUpdate({id, key, value}) {
       try {
-        await updateStudentApplicationInfo(id, { [field]: value });
+        await updateStudentApplicationInfo(id, { [key]: value });
       } catch (e) {
         console.error('Не удалось обновить данные студента о поступлении: ', e);
         this.$message.error("Не удалось обновить данные, рекомендуем перезагрузить страницу");
