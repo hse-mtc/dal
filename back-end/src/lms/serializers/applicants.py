@@ -84,6 +84,7 @@ class ApplicantWithApplicationSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = [
+            "id",
             "full_name",
             "birth_date",
             "program_code",
