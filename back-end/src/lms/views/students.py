@@ -60,7 +60,7 @@ class StudentPageNumberPagination(pagination.PageNumberPagination):
 
 @extend_schema(tags=['students'])
 class StudentViewSet(ModelViewSet):
-    queryset = Student.objects.all()
+    queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
 
     permission_classes = [AllowStudentPost | StudentPermission]
     filter_backends = [DjangoFilterBackend, SearchFilter]
@@ -81,7 +81,7 @@ class StudentViewSet(ModelViewSet):
 
     def get_queryset(self):
         if self.action == 'applications':
-            return Student.objects.filter(status=Student.Status.APPLICANT)
+            return self.queryset.filter(status=Student.Status.APPLICANT)
         return super().get_queryset()
 
     def create(self, request, *args, **kwargs):
