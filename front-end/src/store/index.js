@@ -6,6 +6,7 @@ import settings from "./modules/settings";
 import user from "./modules/user";
 import subjects from "./modules/subjects";
 import documents from "./modules/documents";
+import reference from "./modules/reference";
 
 Vue.use(Vuex);
 
@@ -16,6 +17,7 @@ const store = new Vuex.Store({
     user,
     subjects,
     documents,
+    reference
   },
   getters,
 });

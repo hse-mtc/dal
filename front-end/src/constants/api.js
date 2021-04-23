@@ -38,6 +38,9 @@ export const LMS_URLS = {
     posts: "lms/teacher-posts/",
     milfaculties: "lms/milfaculties/",
     milspecialties: "lms/milspecialties/",
+    achievementTypes: "lms/achievement-types/",
+    programs: "lms/programs/",
+    rooms: "lms/rooms/",
   },
   stuff: {
     students: "lms/students/",

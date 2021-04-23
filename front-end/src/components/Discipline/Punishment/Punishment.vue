@@ -290,18 +290,7 @@ export default {
   name: "Punishment",
   data() {
     return {
-      editPunishment: {
-        id: 0,
-        date: "",
-        type: "",
-        reason: "",
-        student: {
-          id: 0,
-        },
-        teacher: {
-          id: 0,
-        },
-      },
+      editPunishment: {},
       editPunishmentFullname: null,
       dialogVisible: false,
       punishments: [],
