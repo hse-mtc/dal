@@ -45,20 +45,20 @@ from auth.permissions import BasePermission
 
 
 class StudentPermission(BasePermission):
-    permission_class = 'auth.student'
+    permission_class = "auth.student"
 
 
 class AllowStudentPost(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.method == 'POST'
+        return request.method == "POST"
 
 
 class StudentPageNumberPagination(pagination.PageNumberPagination):
     page_size_query_param = "page_size"
 
 
-@extend_schema(tags=['students'])
+@extend_schema(tags=["students"])
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
 
@@ -66,21 +66,21 @@ class StudentViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = StudentFilter
-    search_fields = ['surname', 'name', 'patronymic']
+    search_fields = ["surname", "name", "patronymic"]
 
     pagination_class = StudentPageNumberPagination
 
     def get_serializer_class(self):
-        if self.action == 'applications':
+        if self.action == "applications":
             return ApplicantWithApplicationSerializer
-        if self.action == 'application':
+        if self.action == "application":
             return ApplicationProcessSerializer
         if self.action in MUTATE_ACTIONS:
             return StudentMutateSerializer
         return StudentSerializer
 
     def get_queryset(self):
-        if self.action == 'applications':
+        if self.action == "applications":
             return self.queryset.filter(status=Student.Status.APPLICANT)
         return super().get_queryset()
 
@@ -94,7 +94,7 @@ class StudentViewSet(ModelViewSet):
         if instance.status == Student.Status.APPLICANT:
             applicant = ApplicantSerializer(instance=instance)
             response = requests.post(
-                f'http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/',
+                f"http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/",
                 data=JSONRenderer().render(applicant.data),
             )
             # TODO(TmLev): remove debug print
@@ -108,10 +108,10 @@ class StudentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save()
 
-    @action(detail=False, methods=['patch'])
+    @action(detail=False, methods=["patch"])
     def registration(self, request):
-        email = request.data['email']
-        milgroup = Milgroup.objects.get(pk=request.data['milgroup'])
+        email = request.data["email"]
+        milgroup = Milgroup.objects.get(pk=request.data["milgroup"])
         user = get_user_model().objects.create_user(
             email=email,
             password=get_user_model().objects.make_random_password(),
@@ -126,12 +126,12 @@ class StudentViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def applications(self, request: Request, *args, **kwargs) -> Response:
         """List all applicants with their applications."""
         return super().list(request, *args, **kwargs)
 
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=["patch"])
     def application(self, request: Request, pk=None) -> Response:
         """Create or edit applicant's application."""
 
@@ -157,7 +157,7 @@ class StudentViewSet(ModelViewSet):
         )
 
 
-@extend_schema(tags=['students'])
+@extend_schema(tags=["students"])
 class ActivateStudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
 
@@ -176,9 +176,9 @@ class ActivateStudentViewSet(ModelViewSet):
         user = request.user
         milgroup = None
 
-        if hasattr(user, 'teacher'):
+        if hasattr(user, "teacher"):
             milgroup = user.teacher.milgroup
-        elif hasattr(user, 'student'):
+        elif hasattr(user, "student"):
             milgroup = user.student.milgroup
 
         if milgroup is not None:
@@ -191,7 +191,7 @@ class ActivateStudentViewSet(ModelViewSet):
         return serializer.save()
 
     def update(self, request: Request, *args, **kwargs) -> Response:
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
         serializer = self.get_serializer(instance,
                                          data=request.data,
@@ -205,9 +205,9 @@ class ActivateStudentViewSet(ModelViewSet):
             token = CreatePasswordTokenSerializer.get_token(user)
 
             # TODO(TmLev): send email, link should forward to front end app
-            print(f'localhost:9528/change-password?token={str(token)}')
+            print(f"localhost:9528/change-password?token={str(token)}")
 
-        if getattr(instance, '_prefetched_objects_cache', None):
+        if getattr(instance, "_prefetched_objects_cache", None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             # pylint: disable=protected-access
