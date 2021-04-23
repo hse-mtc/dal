@@ -31,6 +31,7 @@ class CoverSerializer(serializers.ModelSerializer):
 class BookSerializer(DocumentSerializer):
     cover = CoverSerializer(read_only=True)
     favorite = serializers.SerializerMethodField()
+    user_id = serializers.IntegerField(source="user.id")
 
     def get_favorite(self, obj: Book) -> bool:
         user_id = self.context["request"].user.id
