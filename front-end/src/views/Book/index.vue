@@ -10,41 +10,45 @@
       <div class="my-loading" v-loading="loading">
         <div class="wrapper" v-if="book">
           <div :id="`loader__${book.id}`" class="file-img">
-            <div class="lds-dual-ring"/>
+            <div class="lds-dual-ring" />
             <img
-                class="file-image"
-                :src="
+              class="file-image"
+              :src="
                 book.cover
                   ? book.cover.image
                   : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'
               "
-                alt=""
+              alt=""
             />
           </div>
           <div class="content">
             <div class="content-title">
-              <CustomText variant="page-header-1" :mb="SIZES.m">{{
-                  book.title
-                }}
+              <CustomText variant="page-header-1" :mb="SIZES.m"
+                >{{ book.title }}
               </CustomText>
-              <CtaButton background="#fff" color="#0061D9" border="1px solid #0061D9" @click="handleDelete">
+              <CtaButton
+                background="#fff"
+                color="#0061D9"
+                border="1px solid #0061D9"
+                @click="handleDelete"
+              >
                 <div style="display: flex; align-items: center">
                   <img
-                      class="grow"
-                      src="@/assets/subject/close.svg"
-                      alt=""
-                      style="margin-right: 8px"
+                    class="grow"
+                    src="@/assets/subject/close.svg"
+                    alt=""
+                    style="margin-right: 8px"
                   />
                   Удалить
                 </div>
               </CtaButton>
             </div>
             <CustomText
-                :custom-style="{ fontWeight: 'normal' }"
-                variant="header"
-                :color="COLORS.gray_2"
-                v-for="authorId in book.authors"
-                :key="authorId"
+              :custom-style="{ fontWeight: 'normal' }"
+              variant="header"
+              :color="COLORS.gray_2"
+              v-for="authorId in book.authors"
+              :key="authorId"
             >
               {{
                 surnameWithInitials(authors.filter((a) => a.id === authorId)[0])
@@ -52,56 +56,52 @@
             </CustomText>
             <div class="additional-info">
               <CustomText
-                  :custom-style="{ fontWeight: 'normal' }"
-                  variant="header"
+                :custom-style="{ fontWeight: 'normal' }"
+                variant="header"
               >
                 {{
                   publishers.filter((p) => p.id === book.publishers[0])[0].name
                 }}
               </CustomText>
               <template v-if="book.page_count">
-                <img src="@/assets/icons/dot.svg" alt=""/>
+                <img src="@/assets/icons/dot.svg" alt="" />
                 <CustomText
-                    :custom-style="{ fontWeight: 'normal' }"
-                    variant="header"
-                >{{ book.page_count }} печат. страниц
-                </CustomText
-                >
+                  :custom-style="{ fontWeight: 'normal' }"
+                  variant="header"
+                  >{{ book.page_count }} печат. страниц
+                </CustomText>
               </template>
               <template v-if="book.publication_year">
-                <img src="@/assets/icons/dot.svg" alt=""/>
+                <img src="@/assets/icons/dot.svg" alt="" />
                 <CustomText
-                    :custom-style="{ fontWeight: 'normal' }"
-                    variant="header"
-                >{{ book.publication_year }} г.
-                </CustomText
-                >
+                  :custom-style="{ fontWeight: 'normal' }"
+                  variant="header"
+                  >{{ book.publication_year }} г.
+                </CustomText>
               </template>
             </div>
 
             <DownloadFile
-                class="cta"
-                :url="book.file.content"
-                :fileName="book.file.name"
+              class="cta"
+              :url="book.file.content"
+              :fileName="book.file.name"
             >
               Скачать
             </DownloadFile>
 
             <CustomText variant="header" :mt="SIZES.xxxl" :mb="SIZES.m"
-            >О книге
-            </CustomText
-            >
+              >О книге
+            </CustomText>
             <CustomText variant="paragraph">{{ book.annotation }}</CustomText>
 
             <CustomText variant="header" :mt="SIZES.xxxl" :mb="SIZES.m"
-            >Предметы
-            </CustomText
-            >
+              >Предметы
+            </CustomText>
             <div class="subjects">
               <div
-                  class="subject"
-                  v-for="subjectId in book.subjects"
-                  :key="subjectId"
+                class="subject"
+                v-for="subjectId in book.subjects"
+                :key="subjectId"
               >
                 <CustomText variant="label-1" :color="COLORS.gray_4">
                   {{ getSubjectTitle(subjectId) }}
@@ -118,15 +118,15 @@
 <script>
 import CustomText from "@/common/CustomText";
 import DownloadFile from "@/common/DownloadFile/index.vue";
-import {COLORS, SIZES} from "@/utils/appConsts";
-import {getBook, deleteBook} from "@/api/books";
-import {mapState} from "vuex";
-import {surnameWithInitials} from "@/utils/person";
+import { COLORS, SIZES } from "@/utils/appConsts";
+import { getBook, deleteBook } from "@/api/books";
+import { mapState } from "vuex";
+import { surnameWithInitials } from "@/utils/person";
 import CtaButton from "@/common/CtaButton";
 
 export default {
   name: "Book",
-  components: {CtaButton, CustomText, DownloadFile},
+  components: { CtaButton, CustomText, DownloadFile },
   computed: {
     ...mapState({
       authors: (state) => state.documents.authors,
@@ -135,9 +135,9 @@ export default {
     }),
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.prevRoute = from
-    })
+    next((vm) => {
+      vm.prevRoute = from;
+    });
   },
   created() {
     this.fetchData();
@@ -148,7 +148,7 @@ export default {
       COLORS,
       book: null,
       loading: true,
-      prevRoute: null
+      prevRoute: null,
     };
   },
   methods: {
@@ -166,28 +166,27 @@ export default {
     },
     handleDelete() {
       this.$confirm(
-          "Вы уверены, что хотите удалить эту книгу?",
-          "Подтверждение",
-          {
-            confirmButtonText: "Да",
-            cancelButtonText: "Отмена",
-            type: "warning",
-          }
+        "Вы уверены, что хотите удалить эту книгу?",
+        "Подтверждение",
+        {
+          confirmButtonText: "Да",
+          cancelButtonText: "Отмена",
+          type: "warning",
+        }
       )
-          .then(() => {
-            deleteBook(this.$route.params.id).then(() => {
-
-              this.$message({
-                type: "success",
-                message: "Удаление завершено",
-              });
-              this.$router.push(`${this.prevRoute.path}`)
+        .then(() => {
+          deleteBook(this.$route.params.id).then(() => {
+            this.$message({
+              type: "success",
+              message: "Удаление завершено",
             });
-          })
-          .catch(() => {
-            this.$message.error("Ошибка удаления")
+            this.$router.push(`${this.prevRoute.path}`);
           });
-    }
+        })
+        .catch(() => {
+          this.$message.error("Ошибка удаления");
+        });
+    },
   },
 };
 </script>

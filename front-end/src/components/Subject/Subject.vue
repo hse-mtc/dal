@@ -60,7 +60,14 @@
                 class="main-part"
                 ref="cards"
               >
-                <div class="main-part-title" style="width: 100%; display: flex; justify-content: flex-start;">
+                <div
+                  class="main-part-title"
+                  style="
+                    width: 100%;
+                    display: flex;
+                    justify-content: flex-start;
+                  "
+                >
                   <img
                     height="12"
                     class="mr-2"
