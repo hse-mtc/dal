@@ -4,8 +4,9 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import status
 from rest_framework import permissions
-from rest_framework.decorators import action
+from rest_framework import pagination
 
+from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
@@ -53,6 +54,10 @@ class AllowStudentPost(permissions.BasePermission):
         return request.method == 'POST'
 
 
+class StudentPageNumberPagination(pagination.PageNumberPagination):
+    page_size_query_param = "page_size"
+
+
 @extend_schema(tags=['students'])
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
@@ -62,6 +67,8 @@ class StudentViewSet(ModelViewSet):
 
     filterset_class = StudentFilter
     search_fields = ['surname', 'name', 'patronymic']
+
+    pagination_class = StudentPageNumberPagination
 
     def get_serializer_class(self):
         if self.action == 'applications':
