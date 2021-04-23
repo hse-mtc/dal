@@ -3,6 +3,8 @@ import base64
 from rest_framework.serializers import (
     ModelSerializer,
     SerializerMethodField,
+    DateField,
+    CharField,
 )
 
 from common.serializers.persons import (
@@ -61,3 +63,30 @@ class ApplicantSerializer(ModelSerializer):
     class Meta:
         model = Student
         exclude = ["id"]
+
+
+class ApplicantWithApplicationSerializer(ModelSerializer):
+    full_name = CharField(read_only=True)
+    birth_date = DateField(
+        source="birth_info.date",
+        read_only=True,
+    )
+    program_code = CharField(
+        source="university_info.program.code",
+        read_only=True,
+    )
+    faculty = CharField(
+        source="university_info.program.faculty",
+        read_only=True,
+    )
+    application_process = ApplicationProcessSerializer(read_only=True)
+
+    class Meta:
+        model = Student
+        fields = [
+            "full_name",
+            "birth_date",
+            "program_code",
+            "faculty",
+            "application_process",
+        ]
