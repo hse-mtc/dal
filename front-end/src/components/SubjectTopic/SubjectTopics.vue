@@ -17,6 +17,7 @@
     <Draggable
       :list="topics"
       v-bind="dragOptions"
+      :disabled="!isOwner"
       @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
     >
       <transition-group type="transition" name="flip-list">

@@ -15,8 +15,15 @@ export function getBooks(params) {
 
 export function getBook(id) {
   return request({
-    url: `${BASE_API_URL}${books}${id}`,
+    url: `${BASE_API_URL}${books}${id}/`,
     method: "get",
+  });
+}
+
+export function deleteBook(id) {
+  return request({
+    url: `${BASE_API_URL}${books}${id}/`,
+    method: "delete",
   });
 }
 
