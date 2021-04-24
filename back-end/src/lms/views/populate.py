@@ -6,6 +6,8 @@ from datetime import (
     time,
 )
 
+from django.contrib.auth import get_user_model
+
 from lms.models.common import (
     Milfaculty,
     Milgroup,
@@ -47,6 +49,7 @@ from lms.models.uniforms import Uniform
 
 from common.models.subjects import Subject
 
+User = get_user_model()
 
 def create_faculties():
     values = ['МИЭМ', 'МИЭФ', 'ФКН']
@@ -329,6 +332,7 @@ def create_students(
     passports: dict[str, Passport],
     recruitment_offices: dict[str, RecruitmentOffice],
     university_infos: dict[str, UniversityInfo],
+    users: dict[str, User]
 ):
     # TODO – index term, add birth_info
     # FIXME(TmLev): provide family for every student
@@ -349,7 +353,8 @@ def create_students(
             'patronymic_genitive': 'Александровича',
             'passport': passports['0000'],
             'recruitment_office': recruitment_offices['Москва'],
-            'university_info': university_infos['HSE11229']
+            'university_info': university_infos['HSE11229'],
+            'user': users["khromov@mail.com"]
         },
         {
             'surname': 'Кацевалов',
@@ -367,6 +372,7 @@ def create_students(
             'passport': passports['1111'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE1129'],
+            'user': users["kats@mail.com"]
         },
         {
             'surname': 'Исаков',
@@ -384,6 +390,7 @@ def create_students(
             'passport': passports['2222'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE11319'],
+            'user': users["isakov@mail.com"]
         },
         {
             'surname': 'Алиев',
@@ -401,6 +408,7 @@ def create_students(
             'passport': passports['3333'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE1889'],
+            'user': users["aliev@mail.com"]
         },
         {
             'surname': 'Куркин',
@@ -418,6 +426,7 @@ def create_students(
             'passport': passports['4444'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE11255'],
+            'user': users["kurkin@mail.com"]
         },
         {
             'surname': 'Иванов',
@@ -435,6 +444,7 @@ def create_students(
             'passport': passports['5555'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE1199'],
+            'user': users["ivanov@mail.com"]
         },
         {
             'surname': 'Чукмарикадзе',
@@ -452,6 +462,7 @@ def create_students(
             'passport': passports['6666'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE7779'],
+            'user': users["chuckmarikadze@mail.com"]
         }
     ]
 
@@ -510,6 +521,7 @@ def create_teachers(
     milfaculties: dict[str, Milfaculty],
     ranks: dict[str, Rank],
     posts: dict[str, TeacherPost],
+    users: dict[str, User]
 ):
     values = [
         {
@@ -519,7 +531,8 @@ def create_teachers(
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
             'teacher_post': posts['Преподаватель'],
-            'milgroup': milgroups[1809]
+            'milgroup': milgroups[1809],
+            'user': users["nikandrov@mail.com"]
         },
         {
             'surname': 'Репалов',
@@ -528,7 +541,8 @@ def create_teachers(
             'milfaculty': milfaculties['ВКС'],
             'rank': ranks['Подполковник'],
             'teacher_post': posts['Начальник цикла'],
-            'milgroup': milgroups[1808]
+            'milgroup': milgroups[1808],
+            'user': users["repalov@mail.com"]
         },
         {
             'surname': 'Мещеряков',
@@ -537,7 +551,8 @@ def create_teachers(
             'milfaculty': milfaculties['Сержанты'],
             'rank': ranks['Майор'],
             'teacher_post': posts['Преподаватель'],
-            'milgroup': milgroups[1806]
+            'milgroup': milgroups[1806],
+            'user': users["mesheryakov@mail.com"]
         },
         {
             'surname': 'Ковальчук',
@@ -546,7 +561,8 @@ def create_teachers(
             'milfaculty': milfaculties['Разведка'],
             'rank': ranks['Полковник'],
             'teacher_post': posts['Начальник цикла'],
-            'milgroup': milgroups[1801]
+            'milgroup': milgroups[1801],
+            'user': users["kovalchuk@mail.com"]
         },
         {
             'surname': 'Гаврилов',
@@ -555,7 +571,8 @@ def create_teachers(
             'milfaculty': milfaculties['РВСН'],
             'rank': ranks['Генерал-майор'],
             'teacher_post': posts['Преподаватель'],
-            'milgroup': None
+            'milgroup': None,
+            'user': users["gavrilov@mail.com"]
         },
     ]
 
@@ -570,6 +587,7 @@ def create_teachers(
             rank=value['rank'],
             teacher_post=value['teacher_post'],
             milgroup=value['milgroup'],
+            user=value['user']
         )
         teacher.save()
         teachers[value['surname']] = teacher

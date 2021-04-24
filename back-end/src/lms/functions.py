@@ -41,8 +41,8 @@ def persons_response(data: list[dict]) -> list[dict]:
     for item in data.data:
         if item.get('user', None):
             res = {
-                'id': item.get('user', 1),  # TODO: fix
-                'fullname': item.get('fullname', None)
+                'id': item['user'],
+                'fullname': item['fullname']
             }
             result.append(res)
     return result

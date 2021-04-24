@@ -64,6 +64,69 @@ def create_users() -> list[User]:
             patronymic="Студентов",
         ),
         Data(
+            email="isakov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Исаков",
+            name="Владислав",
+            patronymic="Евгеньевич",
+        ),
+        Data(
+            email="khromov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Хромов",
+            name="Григорий",
+            patronymic="Александрович",
+        ),
+        Data(
+            email="kats@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Кацевалов",
+            name="Артем",
+            patronymic="Сергеевич",
+        ),
+        Data(
+            email="aliev@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Алиев",
+            name="Насир",
+            patronymic="Ашурович",
+        ),
+        Data(
+            email="kurkin@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Куркин",
+            name="Андрей",
+            patronymic="Витальевич",
+        ),
+        Data(
+            email="ivanov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Иванов",
+            name="Петр",
+            patronymic="Сидорович",
+        ),
+        Data(
+            email="chuckmarikadze@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Чукмарикадзе",
+            name="Губарибек",
+            patronymic="Алкинбеков",
+        ),
+        Data(
             email="teacher@mail.com",
             password="qwerty",
             is_staff=True,
@@ -71,6 +134,51 @@ def create_users() -> list[User]:
             surname="Преподов",
             name="Препод",
             patronymic="Преподович",
+        ),
+        Data(
+            email="repalov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Репалов",
+            name="Дмитрий",
+            patronymic="Николаевич",
+        ),
+        Data(
+            email="nikandrov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Никандров",
+            name="Игорь",
+            patronymic="Владимирович",
+        ),
+        Data(
+            email="mesheryakov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Мещеряков",
+            name="Иван",
+            patronymic="Владимирович",
+        ),
+        Data(
+            email="kovalchuk@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Ковальчук",
+            name="Иван",
+            patronymic="Валентинович",
+        ),
+        Data(
+            email="gavrilov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            surname="Гаврилов",
+            name="Климент",
+            patronymic="Сергеевич",
         ),
         Data(
             email="milfaculty_head@mail.com",
@@ -83,4 +191,10 @@ def create_users() -> list[User]:
         ),
     ]
 
-    return [create_user(data) for data in users]
+    users_data = {}
+
+    for data in users:
+        user = create_user(data)
+        users_data[data.email] = user
+
+    return users_data

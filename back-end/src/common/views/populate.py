@@ -113,7 +113,7 @@ class PopulateAPIView(GenericAPIView):
         # ----------------------------------------------------------------------
         # auth
         if apps["auth"]:
-            create_users()
+            users = create_users()
 
             students, _ = Group.objects.get_or_create(name="students")
             teachers, _ = Group.objects.get_or_create(name="teachers")
@@ -197,9 +197,10 @@ class PopulateAPIView(GenericAPIView):
                 passports,
                 offices,
                 infos,
+                users
             )
 
-            teachers = create_teachers(milgroups, milfaculties, ranks, posts)
+            teachers = create_teachers(milgroups, milfaculties, ranks, posts, users)
 
             create_absences(students, nearest_day)
 
