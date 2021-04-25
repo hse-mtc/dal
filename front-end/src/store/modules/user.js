@@ -7,6 +7,7 @@ const localStorageService = LocalStorageService.getService();
 const state = {
   token: getToken(),
   email: "",
+  campuses: [],
 };
 
 const mutations = {
@@ -15,6 +16,9 @@ const mutations = {
   },
   SET_EMAIL: (state, email) => {
     state.email = email;
+  },
+  SET_CAMPUSES: (state, campuses) => {
+    state.campuses = campuses;
   },
 };
 
@@ -47,8 +51,9 @@ const actions = {
             reject("Verification failed, please Login again.");
           }
 
-          const { email } = data;
+          const { email, campuses } = data;
           commit("SET_EMAIL", email);
+          commit("SET_CAMPUSES", campuses);
 
           resolve(data);
         })
