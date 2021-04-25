@@ -3,6 +3,7 @@ from rest_framework.serializers import (
     ModelSerializer,
     ImageField,
     PrimaryKeyRelatedField,
+    BooleanField,
 )
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
@@ -71,6 +72,9 @@ class StudentMutateSerializer(
     family = RelativeMutateSerializer(required=False, many=True)
     recruitment_office = RecruitmentOfficeSerializer(required=False)
     university_info = UniversityInfoCreateSerializer(required=False)
+
+    # Send documents to `watchdoc`.
+    generate_documents = BooleanField(default=False, write_only=True)
 
     class Meta(PersonnelMutateSerializer.Meta):
         model = Student

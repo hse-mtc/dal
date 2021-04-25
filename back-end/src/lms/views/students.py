@@ -108,9 +108,10 @@ class StudentViewSet(ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        instance: Student = self.perform_create(serializer)
+        generate_documents = serializer.validated_data.pop("generate_documents")
+        instance = self.perform_create(serializer)
 
-        if instance.status == Student.Status.APPLICANT:
+        if generate_documents:
             applicant = ApplicantSerializer(instance=instance)
             response = requests.post(
                 f"http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/",

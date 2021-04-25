@@ -577,6 +577,7 @@ export default {
           recruitment_office: this.studentData.recruitmentOffice,
           university_info: this.studentData.universityInfo,
           family,
+          generate_documents: true,
         };
 
         reader.onload = async () => {
