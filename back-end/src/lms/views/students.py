@@ -84,6 +84,15 @@ class StudentViewSet(ModelViewSet):
             return self.queryset.filter(status=Student.Status.APPLICANT)
         return super().get_queryset()
 
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        if self.action == "applications":
+            campuses = self.request.user.campuses
+            queryset = queryset.filter(university_info__campus__in=campuses)
+
+        return queryset
+
     def create(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals
 
