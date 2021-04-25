@@ -30,7 +30,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["id", "email", "permissions"]
+        fields = ["id", "email", "permissions", "campuses"]
 
     def get_permissions(self, obj) -> list[str]:
         groups = obj.groups.all()
