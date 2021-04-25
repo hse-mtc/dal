@@ -43,17 +43,19 @@
         :key="`${currentPage}-${entriesAmount}`"
         :class="$style.table"
         :data="data"
-        :start-index="(currentPage - 1) * PAGE_SIZE"
+        :start-index="(currentPage - 1) * pageSize"
         @update="onUpdate"
       />
 
       <div :class="$style.pagination">
         <el-pagination
-          layout="prev, pager, next, jumper"
+          layout="sizes, prev, pager, next, jumper"
           :total="entriesAmount"
           :current-page="currentPage"
-          :page-size="PAGE_SIZE"
+          :page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
           @current-change="fetchData"
+          @size-change="onPageSizeChange"
         />
       </div>
     </div>
@@ -89,8 +91,8 @@ export default {
       data: [],
       entriesAmount: 0,
       currentPage: 1,
+      pageSize: 50,
       searchQuery: "",
-      PAGE_SIZE: 50,
       loading: false,
       selectedCampus,
     };
@@ -124,7 +126,7 @@ export default {
       this.loading = true;
       const { data } = await getApplicationsStudents(
         this.currentPage,
-        this.PAGE_SIZE,
+        this.pageSize,
         {
           search: this.searchQuery,
           campus: this.selectedCampus,
@@ -143,6 +145,11 @@ export default {
       this.loading = false;
     },
 
+    async onPageSizeChange(pageSize) {
+      this.pageSize = pageSize;
+      await this.fetchData();
+    },
+
     async onUpdate({ id, key, value }) {
       try {
         await updateStudentApplicationInfo(id, { [key]: value });
@@ -155,7 +162,6 @@ export default {
     },
 
     search: _debounce(function () {
-      this.currentPage = 1;
       this.fetchData();
     }, 750),
   },
