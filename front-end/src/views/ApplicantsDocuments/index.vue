@@ -2,29 +2,60 @@
   <div :class="$style.root">
     <h1>Прием документов</h1>
 
-    <TextInput
-      :class="$style.input"
-      v-model="searchQuery"
-      placeholder="Введите ФИО студента"
-      @change="search"
-    />
+    <div v-loading="loading">
+      <el-row class="filter-row" :gutter="20">
+        <el-col :span="10">
+          <TextInput
+            :class="$style.input"
+            v-model="searchQuery"
+            placeholder="Введите ФИО студента"
+            @change="search"
+          />
+        </el-col>
+        <el-col v-if="campuses.length > 1" :offset="6" :span="4">
+          <el-select
+            v-model="selectedCampus"
+            placeholder="Кампус"
+            @change="changeCampus"
+          >
+            <el-option
+              v-for="item in campuses"
+              :key="item"
+              :label="item | campusFilter"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
+        </el-col>
+        <el-col v-else :offset="7" :span="3">
+          <el-tag type="info" class="custom-tag">
+            {{ campuses[0] | campusFilter }}
+          </el-tag>
+        </el-col>
+        <el-col :span="4">
+          <el-tag class="custom-tag" type="info"
+            >Всего абитуриентов: {{ entriesAmount }}</el-tag
+          >
+        </el-col>
+      </el-row>
 
-    <InfoTable
-      :key="`${currentPage}-${entriesAmount}`"
-      :class="$style.table"
-      :data="data"
-      :start-index="(currentPage - 1) * PAGE_SIZE"
-      @update="onUpdate"
-    />
-
-    <div :class="$style.pagination">
-      <el-pagination
-        layout="prev, pager, next, jumper"
-        :total="entriesAmount"
-        :current-page="currentPage"
-        :page-size="PAGE_SIZE"
-        @current-change="fetchData"
+      <InfoTable
+        :key="`${currentPage}-${entriesAmount}`"
+        :class="$style.table"
+        :data="data"
+        :start-index="(currentPage - 1) * PAGE_SIZE"
+        @update="onUpdate"
       />
+
+      <div :class="$style.pagination">
+        <el-pagination
+          layout="prev, pager, next, jumper"
+          :total="entriesAmount"
+          :current-page="currentPage"
+          :page-size="PAGE_SIZE"
+          @current-change="fetchData"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -32,6 +63,7 @@
 <script>
 import _debounce from "lodash/debounce";
 import moment from "moment";
+import { mapGetters } from "vuex";
 
 import { getApplicationsStudents } from "@/api/students";
 import { updateStudentApplicationInfo } from "@/api/student";
@@ -46,23 +78,58 @@ export default {
     TextInput,
   },
   created() {
-    this.fetchData(1);
+    this.fetchData();
   },
   data() {
+    const selectedCampus =
+      this.$store.state.user.campuses.length > 0
+        ? this.$store.state.user.campuses[0]
+        : "MO";
     return {
       data: [],
       entriesAmount: 0,
       currentPage: 1,
       searchQuery: "",
       PAGE_SIZE: 50,
+      loading: false,
+      selectedCampus,
     };
   },
+  computed: {
+    ...mapGetters(["campuses"]),
+  },
+  filters: {
+    campusFilter(campus) {
+      switch (campus) {
+        case "MO":
+          return "Москва";
+        case "SP":
+          return "Санкт-Петербург";
+        case "NN":
+          return "Нижний Новгород";
+        case "PE":
+          return "Пермь";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   methods: {
-    async fetchData(page) {
+    async changeCampus(campus) {
+      this.selectedCampus = campus;
+      await this.fetchData();
+    },
+    async fetchData(page = 1) {
       this.currentPage = page ? page : 1;
-      const { data } = await getApplicationsStudents(page, this.PAGE_SIZE, {
-        search: this.searchQuery,
-      });
+      this.loading = true;
+      const { data } = await getApplicationsStudents(
+        this.currentPage,
+        this.PAGE_SIZE,
+        {
+          search: this.searchQuery,
+          campus: this.selectedCampus,
+        }
+      );
       this.data = data.results.map((item) => ({
         id: item.id,
         fullname: item.full_name,
@@ -73,6 +140,7 @@ export default {
         ...item.application_process,
       }));
       this.entriesAmount = data.count;
+      this.loading = false;
     },
 
     async onUpdate({ id, key, value }) {
@@ -107,9 +175,6 @@ export default {
     writing-mode: vertical-rl;
   }
 }
-.input {
-  margin-top: 20px;
-}
 
 .table {
   margin-top: 20px;
@@ -117,5 +182,18 @@ export default {
 
 .pagination {
   margin-top: 20px;
+}
+</style>
+
+<style lang="scss" scoped>
+.filter-row {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.custom-tag {
+  font-size: 1em;
 }
 </style>
