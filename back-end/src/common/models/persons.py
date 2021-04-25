@@ -6,8 +6,8 @@ from django.db import models
 
 class BirthInfo(models.Model):
     date = models.DateField()
-    country = models.CharField(max_length=32, null=True)
-    city = models.CharField(max_length=32, null=True)
+    country = models.CharField(max_length=64, null=True)
+    city = models.CharField(max_length=64, null=True)
 
     class Meta:
         verbose_name = "Birth Info"

@@ -305,8 +305,8 @@ export default {
           "permanent_address",
           "date",
         ]),
-        city: [required, getMaxLengthValidator(32)],
-        country: [required, getMaxLengthValidator(32)],
+        city: [required, getMaxLengthValidator(64)],
+        country: [required, getMaxLengthValidator(64)],
         personal_email: [mailValidator],
         personal_phone_number: [phoneValidator],
       };
@@ -361,8 +361,8 @@ export default {
         ]),
         birthInfo: {
           ...makeRequired(["date"]),
-          country: [required, getMaxLengthValidator(32)],
-          city: [required, getMaxLengthValidator(32)],
+          country: [required, getMaxLengthValidator(64)],
+          city: [required, getMaxLengthValidator(64)],
         },
         passport: {
           ...makeRequired(["ufms_name", "issue_date"]),
