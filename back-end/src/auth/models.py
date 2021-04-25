@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 
+from django.contrib.postgres.fields import ArrayField
+
 
 class UserManager(BaseUserManager):
 
@@ -28,11 +30,30 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
+# FIXME(TmLev): temporary solution. It *should* be imported from
+#  `lms.models.universities`, but this may lead to circular import dependency.
+#   Anyhow, this must be removed after application process is finished.
+class UniversityCampus(models.TextChoices):
+    MOSCOW = "MO", "Москва"
+    SAINT_PETERSBURG = "SP", "Санкт-Петербург"
+    NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
+    PERM = "PE", "Пермь"
+
+
 class User(AbstractUser):
     username = None
     first_name = None
     last_name = None
     email = models.EmailField("email address", unique=True)
+
+    # FIXME(TmLev): should be removed after application process is finished.
+    campuses = ArrayField(
+        base_field=models.CharField(
+            max_length=2,
+            choices=UniversityCampus.choices,
+        ),
+        default=list,
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
