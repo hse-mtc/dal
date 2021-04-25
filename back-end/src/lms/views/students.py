@@ -48,10 +48,16 @@ class StudentPermission(BasePermission):
     permission_class = "auth.student"
 
 
-class AllowStudentPost(permissions.BasePermission):
+class AllowApplicantFormPost(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.method == "POST"
+
+
+class AllowApplicationProcess(permissions.BasePermission):
+
+    def has_permission(self, request: Request, view: ModelViewSet):
+        return view.action == "applications"
 
 
 class StudentPageNumberPagination(pagination.PageNumberPagination):
@@ -62,7 +68,11 @@ class StudentPageNumberPagination(pagination.PageNumberPagination):
 class StudentViewSet(ModelViewSet):
     queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
 
-    permission_classes = [AllowStudentPost | StudentPermission]
+    permission_classes = [
+        AllowApplicantFormPost |
+        AllowApplicationProcess & permissions.IsAuthenticated |
+        StudentPermission
+    ]
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = StudentFilter
