@@ -10,6 +10,9 @@ export default {
 
 <style scoped lang="scss">
 .center {
+  padding-right: 16px;
+  padding-left: 16px;
+  text-align: center;
   font-size: 40px;
   display: flex;
   align-items: center;
