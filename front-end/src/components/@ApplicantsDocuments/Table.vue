@@ -98,7 +98,7 @@ export default {
       fields: {
         index: {
           title: "№",
-          width: 35,
+          width: 50,
         },
         fullname: {
           abbr: "ФИО",
