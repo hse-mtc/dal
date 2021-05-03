@@ -4,7 +4,7 @@
       <el-row class="pageTitle">
         <h1>{{ $route.meta.title }}</h1>
       </el-row>
-      <el-tabs v-model="activeTab" stretch @click="onFilter">
+      <el-tabs value="absences" stretch @click="onFilter">
         <el-tab-pane label="Пропуски" name="absences">
           <el-row class="filterRow" :gutter="20">
             <el-col :span="7">
@@ -89,6 +89,7 @@
           </el-row>
           <el-row>
             <el-table
+              v-loading="loading"
               :data="absences"
               :default-sort="{
                 prop: 'date',
@@ -161,7 +162,7 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Журнал" name="journal">
-          <AbsenceJournal v-if="activeTab === 'journal'" />
+          <AbsenceJournal />
         </el-tab-pane>
       </el-tabs>
     </el-col>
@@ -232,7 +233,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
-import AbsenceJournal from "@/components/AbsenceJournal/AbsenceJournal.vue";
+import AbsenceJournal from "./AbsenceJournal/AbsenceJournal.vue";
 
 export default {
   name: "Absence",
@@ -266,7 +267,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      activeTab: "absences",
+      loading: false,
       editAbsence: {
         id: 0,
         date: "",
@@ -298,29 +299,6 @@ export default {
         mg: null,
       },
       absences: [],
-      types: [
-        { label: "Уважительная", code: "SE" },
-        { label: "Неуважительная", code: "NS" },
-        { label: "Опоздание", code: "LA" },
-      ],
-      statuses: [
-        { label: "Закрыт", code: "CL" },
-        { label: "Открыт", code: "OP" },
-      ],
-      milgroups: [
-        {
-          milgroup: "1807",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1808",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1809",
-          milfaculty: "ВКС",
-        },
-      ],
       pickerOptions: {
         shortcuts: [
           {
@@ -353,6 +331,17 @@ export default {
         ],
       },
     };
+  },
+  computed: {
+    milgroups() {
+      return this.$store.state.reference.milgroups;
+    },
+    types() {
+      return this.$store.state.reference.absenceTypes;
+    },
+    statuses() {
+      return this.$store.state.reference.absenceStatuses;
+    },
   },
   created() {
     this.onFilter();
@@ -390,21 +379,38 @@ export default {
       }
     },
     formatDate: row => moment(row.date).format("DD.MM.YY"),
-    onFilter() {
-      getAbsence({
-        date_from:
-          this.filter.dateRange !== null ? this.filter.dateRange[0] : null,
-        date_to:
-          this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
-        type: this.filter.type,
-        status: this.filter.status,
-        search: this.filter.search,
-        milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
-      })
-        .then(response => {
-          this.absences = response.data;
-        })
-        .catch(err => getError("пропусков", err.response.status));
+    async fetchData() {
+      if (!this.$store.state.reference.milgroups.length) {
+        await this.$store.dispatch("reference/setMilgroups");
+      }
+      if (!this.$store.state.reference.absenceTypes.length) {
+        await this.$store.dispatch("reference/setAbsenceTypes");
+      }
+      if (!this.$store.state.reference.absenceStatuses.length) {
+        await this.$store.dispatch("reference/setAbsenceStatuses");
+      }
+    },
+    async onFilter() {
+      try {
+        this.loading = true;
+        await this.fetchData();
+        this.absences = (
+          await getAbsence({
+            date_from:
+              this.filter.dateRange !== null ? this.filter.dateRange[0] : null,
+            date_to:
+              this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
+            type: this.filter.type,
+            status: this.filter.status,
+            search: this.filter.search,
+            milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
+          })
+        ).data;
+      } catch (err) {
+        getError("пропусков", err.response.status);
+      } finally {
+        this.loading = false;
+      }
     },
     onCreate(student, date) {
       this.editAbsence = { status: "Открыт", student: student.id, date };
