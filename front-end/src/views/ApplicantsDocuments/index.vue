@@ -69,8 +69,7 @@ import _debounce from "lodash/debounce";
 import moment from "moment";
 import { mapGetters } from "vuex";
 
-import { getApplicationsStudents } from "@/api/students";
-import { updateStudentApplicationInfo } from "@/api/student";
+import { getApplicationsStudents, updateStudentApplicationInfo } from "@/api/students";
 
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";

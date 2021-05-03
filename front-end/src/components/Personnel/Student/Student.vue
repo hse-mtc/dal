@@ -1,10 +1,16 @@
 <template>
-  <div class="addModal">
+  <el-drawer
+    :visible.sync="modal"
+    direction="rtl"
+    size="40%"
+    :destroy-on-close="true"
+  >
     <el-form
       ref="form"
       :model="form"
       :rules="rules"
       label-width="250px"
+      class="form"
     >
       <el-form-item label="Фото">
         <el-upload
@@ -56,16 +62,19 @@
             :label="item.milgroup"
             :value="item"
           >
-            <span style="float: left">{{ item.milgroup }}</span>
-            <span style="float: right; color: #8492a6; font-size: 13px">{{
-              item.milfaculty
-            }}</span>
+            <span style="float: left"> {{ item.milgroup }} </span>
+            <span style="float: right; color: #8492a6; font-size: 13px">
+              {{ item.milfaculty }}
+            </span>
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="Образовательная программа" prop="program">
+      <el-form-item
+        label="Образовательная программа"
+        prop="university_info.program"
+      >
         <el-select
-          v-model="form.program"
+          v-model="form.university_info.program"
           value-key="code"
           placeholder="Выберите программу"
           style="display: block"
@@ -84,9 +93,9 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="Дата рождения" prop="birthdate">
+      <el-form-item label="Дата рождения" prop="birth_info.date">
         <el-date-picker
-          v-model="form.birthdate"
+          v-model="form.birth_info.date"
           type="date"
           placeholder="Выберите дату рождения"
           format="DD.MM.yyyy"
@@ -98,39 +107,42 @@
         <el-button type="primary" @click="onSubmit">
           Отправить
         </el-button>
-        <el-button @click="closeModal">
-          Отменить
-        </el-button>
       </el-form-item>
     </el-form>
-  </div>
+  </el-drawer>
 </template>
 
 <script>
-import { postStudent, patchStudent } from "@/api/student";
-import {
-  postError,
-  patchError,
-  postSuccess,
-  patchSuccess,
-} from "@/utils/message";
+import { patchStudent } from "@/api/students";
+import { patchError, patchSuccess } from "@/utils/message";
 
 export default {
-  name: "AddStudentModalWindow",
+  name: "Student",
+  model: {
+    prop: "show",
+    event: "show-change",
+  },
   props: {
-    student: { type: Object, required: true },
+    student: {
+      type: Object,
+      required: true,
+    },
+    show: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
       form: {
-        milgroup: null,
-        program: null,
-        birthdate: "",
+        milgroup: {},
+        university_info: {},
+        birth_info: "",
         surname: "",
         name: "",
         patronymic: "",
         photo: null,
-        status: "Обучается",
+        status: "",
       },
       rules: {
         surname: [
@@ -154,34 +166,34 @@ export default {
             trigger: "change",
           },
         ],
-        program: [
-          {
-            required: true,
-            message: "Пожалуйста, выберите обр. программу",
-            trigger: "change",
-          },
-        ],
-        birthdate: [
-          {
-            type: "string",
-            required: true,
-            message: "Пожалуйста, выберите дату рождения",
-            trigger: "change",
-          },
-        ],
+        university_info: {
+          program: [
+            {
+              required: true,
+              message: "Пожалуйста, выберите обр. программу",
+              trigger: "change",
+            },
+          ],
+        },
+        birth_info: {
+          birthdate: [
+            {
+              type: "string",
+              required: true,
+              message: "Пожалуйста, выберите дату рождения",
+              trigger: "change",
+            },
+          ],
+        },
       },
       milgroups: [
-        /* ...this.$store.getters.milgroups */ {
-          milgroup: 1807,
-          milfaculty: "ВКС",
-          weekday: 4,
-        },
+        { milgroup: 1807, milfaculty: "ВКС", weekday: 4 },
         { milgroup: 1808, milfaculty: "ВКС", weekday: 4 },
         { milgroup: 1809, milfaculty: "ВКС", weekday: 4 },
         { milgroup: 1810, milfaculty: "РВСН", weekday: 4 },
       ],
       programs: [
-        /* ...this.$store.getters.programs */ {
+        {
           program: "Информатика и вычислительная техника",
           code: "09.03.01",
         },
@@ -191,8 +203,20 @@ export default {
       statuses: ["Обучается", "Отчислен", "Завершил"],
     };
   },
-  created() {
-    if (this.student) this.form = this.student;
+  computed: {
+    modal: {
+      get() {
+        return this.show;
+      },
+      set(value) {
+        this.$emit("show-change", value);
+      },
+    },
+  },
+  watch: {
+    student(value) {
+      this.form = value;
+    },
   },
   methods: {
     handleAvatarSuccess(res, file) {
@@ -203,39 +227,30 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isJPG) {
-        this.$message.error("Avatar picture must be JPG format!");
+        this.$message.error("Изображение должно быть формата JPG.");
       }
       if (!isLt2M) {
-        this.$message.error("Avatar picture size can not exceed 2MB!");
+        this.$message.error("Размер изображения не должен превышать 2 МБ.");
       }
       return isJPG && isLt2M;
     },
     onSubmit() {
-      this.$refs.form.validate(valid => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          if (this.student) {
-            this.form.milgroup = { milgroup: this.form.milgroup.milgroup };
-            this.form.id = this.student.id;
-            patchStudent(this.form)
-              .then(() => {
-                patchSuccess("студента");
-                this.$emit("submitModal");
-                this.closeModal();
-              })
-              .catch(err => patchError("студента", err.response.status));
-          } else {
-            postStudent(this.form)
-              .then(() => {
-                postSuccess("студента");
-                this.$emit("submitModal");
-                this.closeModal();
-              })
-              .catch(err => postError("студента", err.response.status));
+          this.form.milgroup = this.form.milgroup.milgroup;
+          try {
+            await patchStudent(this.form);
+            patchSuccess("студента");
+            this.$emit("submitModal");
+            this.closeModal();
+          } catch (err) {
+            patchError("студента", err.response.status);
           }
         }
       });
     },
     closeModal() {
+      console.log("zhopa");
       this.$emit("closeModal");
     },
   },

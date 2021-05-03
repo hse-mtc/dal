@@ -5,17 +5,42 @@ const {
   students: { students, applications },
 } = LMS_URLS;
 
-export const addStudent = data => request({
-  url: BASE_API_URL + students,
-  method: "post",
-  data,
-});
-
 export const getStudents = filters => request({
   url: BASE_API_URL + students,
   method: "GET",
   data: filters,
 });
+
+export function getStudent(params) {
+  return request({
+    url: BASE_API_URL + students,
+    method: "get",
+    params,
+  });
+}
+
+export function postStudent(data) {
+  return request({
+    url: BASE_API_URL + students,
+    method: "post",
+    data,
+  });
+}
+
+export function patchStudent(data) {
+  return request({
+    url: `${BASE_API_URL}${students}${data.id}/`,
+    method: "patch",
+    data,
+  });
+}
+
+export function deleteStudent(id) {
+  return request({
+    url: `${BASE_API_URL}${students}${id}/`,
+    method: "delete",
+  });
+}
 
 export const getApplicationsStudents = (page, pageSize, filters) => request({
   url: BASE_API_URL + applications,
@@ -25,4 +50,10 @@ export const getApplicationsStudents = (page, pageSize, filters) => request({
     page_size: pageSize,
     ...(filters || {}),
   },
+});
+
+export const updateStudentApplicationInfo = (id, data) => request({
+  url: `${BASE_API_URL}${students}${id}/application/`,
+  method: "PATCH",
+  data,
 });
