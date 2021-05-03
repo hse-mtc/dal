@@ -131,7 +131,7 @@ import {
 import EventBus from "@/components/EventBus";
 
 export default {
-  name: "",
+  name: "Papers",
   components: {
     AddCategoryModalWindow,
     AdvancedSearch,
@@ -263,7 +263,7 @@ export default {
     selectCategory(id) {
       this.category = this.categories.find(category => category.id === id);
       this.$router.replace({
-        name: "Science Articles",
+        name: "Papers",
         query: { category: id.toString() },
       });
       this.closeCategorySelector();
@@ -273,5 +273,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "style";
+@import "papers";
 </style>

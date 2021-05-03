@@ -237,7 +237,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "modal-style";
+@import "upsert-modal";
 
 .paperFileUploaded /deep/ .el-upload {
   display: block !important;

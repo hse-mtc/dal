@@ -239,5 +239,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "style";
+@import "serp";
 </style>
