@@ -20,7 +20,7 @@ import { mapActions } from "vuex";
 
 import { getAuthors } from "@/api/authors";
 import { getSubjects } from "@/api/subjects";
-import { getPublishPlaces } from "@/api/published_places";
+import { getPublishers } from "@/api/publishers";
 
 import { Navbar, Sidebar, AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
@@ -67,7 +67,7 @@ export default {
       .catch(() => {
         console.log("Данные по предметам не указаны");
       });
-    getPublishPlaces()
+    getPublishers()
       .then(response => {
         this.setPublishers(response.data);
       })

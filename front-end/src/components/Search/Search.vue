@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import _omit from "lodash/omit";
+
 export default {
   name: "",
   components: {},
@@ -34,25 +36,15 @@ export default {
     search() {
       this.$router.push({
         query: {
-          text: this.$refs.searchInput.value,
-          category: this.$route.query.category,
-          publishers: this.$route.query.publishers,
-          author: this.$route.query.author,
-          start_date: this.$route.query.start_date,
-          end_date: this.$route.query.end_date,
+          search: this.$refs.searchInput.value,
+          ...this.$route.query,
         },
       });
     },
     deleteText() {
       this.$refs.searchInput.value = "";
       this.$router.push({
-        query: {
-          category: this.$route.query.category,
-          publishers: this.$route.query.publishers,
-          author: this.$route.query.author,
-          start_date: this.$route.query.start_date,
-          end_date: this.$route.query.end_date,
-        },
+        query: _omit(this.$route.query, ["search"]),
       });
     },
   },

@@ -215,27 +215,14 @@ export default {
 
       if (this.documents.length < this.count || this.count === null) {
         this.loading = true;
-        const authors = this.$route.query.author;
-        const { publishers } = this.$route.query;
-        // eslint-disable-next-line camelcase
-        const { start_date } = this.$route.query;
-        // eslint-disable-next-line camelcase
-        const { end_date } = this.$route.query;
-        const { text } = this.$route.query;
-        const { category } = this.$route.query;
 
         try {
           const { data } = await getPapers(
             this.lodash.pickBy({
-              category,
-              authors,
-              publishers,
-              start_date,
-              end_date,
-              search: text,
               limit: this.limit,
               offset: this.documents.length,
               user: this.isMyDocuments ? this.userId : undefined,
+              ...this.$route.query,
             }),
           );
 

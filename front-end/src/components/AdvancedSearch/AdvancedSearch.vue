@@ -38,17 +38,17 @@
             Размещение
           </div>
           <el-select
-            v-model="placing"
+            v-model="publisher"
             clearable
             placeholder="Все размещения"
             class="filters-select"
             @change="updateQuery"
           >
             <el-option
-              v-for="item in placings"
-              :key="item.id"
-              :value="item.id"
-              :label="item.name"
+              v-for="{ id, name } in publishers"
+              :key="id"
+              :value="id"
+              :label="name"
             />
           </el-select>
         </el-col>
@@ -75,7 +75,7 @@
 
 <script>
 import { getAuthors } from "@/api/authors";
-import { getPublishPlaces } from "@/api/published_places";
+import { getPublishers } from "@/api/publishers";
 import moment from "moment";
 import { mapActions } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
@@ -87,8 +87,8 @@ export default {
     return {
       authors: [],
       author: null,
-      placings: [],
-      placing: null,
+      publishers: [],
+      publisher: null,
       valueDate: "",
     };
   },
@@ -107,16 +107,16 @@ export default {
     }
 
     if (this.$store.getters.publishers.length === 0) {
-      getPublishPlaces()
+      getPublishers()
         .then(response => {
-          this.placings = response.data;
-          this.setPublishers(this.placings);
+          this.publishers = response.data;
+          this.setPublishers(this.publishers);
         })
         .catch(() => {
           console.log("Данные по размещениям не указаны");
         });
     } else {
-      this.placings = this.$store.getters.publishers;
+      this.publishers = this.$store.getters.publishers;
     }
   },
   methods: {
@@ -139,10 +139,10 @@ export default {
 
     updateQuery() {
       const query = {
-        author: this.author,
+        authors: this.author,
         category: this.$route.query.category,
-        publishers: this.placing,
-        text: this.$route.query.text,
+        publishers: this.publisher,
+        search: this.$route.query.search,
       };
 
       if (this.valueDate) {
