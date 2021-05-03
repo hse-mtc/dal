@@ -102,7 +102,7 @@ import { surnameWithInitials } from "@/utils/person";
 import EventBus from "../EventBus";
 
 export default {
-  name: "",
+  name: "PaperSerp",
   components: { DownloadFile },
   filters: {
     moment(date) {

@@ -1,11 +1,11 @@
 <template>
   <div style="margin-top: 3rem">
-    <Documents
+    <Serp
       class="documents"
       :is-my-documents="true"
       @openPaperModal="openPaperModal"
     />
-    <UpsertPaperModal
+    <UpsertModal
       v-if="paperAction"
       :action="paperAction"
       :paper="paperToEdit"
@@ -16,14 +16,14 @@
 </template>
 
 <script>
-import Documents from "@/components/Documents/Documents";
-import UpsertPaperModal from "@/components/Documents/UpsertPaperModal";
+import Serp from "@/components/Papers/Serp.vue";
+import UpsertModal from "@/components/Papers/UpsertModal.vue";
 
 export default {
   name: "MyDocuments",
   components: {
-    Documents,
-    UpsertPaperModal,
+    Serp,
+    UpsertModal,
   },
   data() {
     return {

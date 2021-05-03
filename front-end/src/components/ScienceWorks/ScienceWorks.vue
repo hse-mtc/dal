@@ -80,7 +80,7 @@
         <el-col :span="12" :offset="2">
           <Search placeholder="Введите ключевые слова" />
           <AdvancedSearch class="advanced-search" />
-          <Documents class="documents" @openPaperModal="openPaperModal" />
+          <Serp class="documents" @openPaperModal="openPaperModal" />
         </el-col>
 
         <el-col :offset="1" :span="8">
@@ -98,7 +98,7 @@
       v-if="addNewCategory"
       @closeModal="closeModal"
     />
-    <UpsertPaperModal
+    <UpsertModal
       v-if="paperAction"
       :action="paperAction"
       :paper="paperToEdit"
@@ -117,8 +117,8 @@
 import { mapState, mapActions } from "vuex";
 import { FunctionalCalendar } from "vue-functional-calendar";
 
-import Documents from "@/components/Documents/Documents";
-import UpsertPaperModal from "@/components/Documents/UpsertPaperModal";
+import Serp from "@/components/Papers/Serp";
+import UpsertModal from "@/components/Papers/UpsertModal";
 
 import Search from "@/components/Search/Search";
 import AdvancedSearch from "@/components/AdvancedSearch/AdvancedSearch";
@@ -135,10 +135,10 @@ export default {
   components: {
     AddCategoryModalWindow,
     AdvancedSearch,
-    Documents,
     FunctionalCalendar,
+    Serp,
     Search,
-    UpsertPaperModal,
+    UpsertModal,
   },
 
   data() {
