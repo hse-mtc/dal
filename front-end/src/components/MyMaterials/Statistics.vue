@@ -5,7 +5,7 @@
         v-for="(item, index) in Object.keys(statistics)"
         :key="index"
         class="statistics-card"
-        :style="{background: cards[item].color}"
+        :style="{ background: cards[item].color }"
       >
         <div class="statistics-card-number">
           <CustomText :color="COLORS.white" variant="header">

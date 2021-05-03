@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'has-logo': showLogo}">
+  <div :class="{ 'has-logo': showLogo }">
     <Logo v-if="showLogo" :collapse="isCollapse" />
 
     <el-scrollbar wrap-class="scrollbar-wrapper">

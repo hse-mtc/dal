@@ -1,7 +1,7 @@
 <template>
   <el-table :data="data" border>
     <el-table-column
-      v-for="({abbr, title, width}, field) in fields"
+      v-for="({ abbr, title, width }, field) in fields"
       :key="field"
       :prop="field"
       :label="title"
@@ -23,7 +23,7 @@
         </div>
       </template>
 
-      <template slot-scope="{row, $index}">
+      <template slot-scope="{ row, $index }">
         <template v-if="field === 'index'">
           <span>{{ startIndex + $index + 1 }}</span>
         </template>
@@ -34,11 +34,11 @@
           <SelectInput
             v-model="data[$index][field]"
             :options="[
-              {label: 'Годен', value: 'FI'},
-              {label: 'Годен с незначительными ограничениями', value: 'FMR'},
-              {label: 'Ограниченно годен', value: 'FLI'},
-              {label: 'Ограниченно не годен', value: 'UR'},
-              {label: 'Не годен', value: 'UN'}
+              { label: 'Годен', value: 'FI' },
+              { label: 'Годен с незначительными ограничениями', value: 'FMR' },
+              { label: 'Ограниченно годен', value: 'FLI' },
+              { label: 'Ограниченно не годен', value: 'UR' },
+              { label: 'Не годен', value: 'UN' },
             ]"
             :clearable="true"
             @change="onUpdate(row.id, field, $event)"
@@ -52,10 +52,10 @@
           <SelectInput
             v-model="data[$index][field]"
             :options="[
-              {label: 'I', value: 'FI'},
-              {label: 'II', value: 'SE'},
-              {label: 'III', value: 'TH'},
-              {label: 'IV', value: 'FO'}
+              { label: 'I', value: 'FI' },
+              { label: 'II', value: 'SE' },
+              { label: 'III', value: 'TH' },
+              { label: 'IV', value: 'FO' },
             ]"
             :clearable="true"
             @change="onUpdate(row.id, field, $event)"

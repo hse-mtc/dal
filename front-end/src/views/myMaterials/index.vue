@@ -10,7 +10,7 @@
           v-for="item in tabs"
           :key="item.value"
           class="tab"
-          :class="{active: activeTab === item.value}"
+          :class="{ active: activeTab === item.value }"
           @click="changeTab(item.value)"
         >
           {{ item.label }}

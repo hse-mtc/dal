@@ -6,7 +6,7 @@
           Учебно-методические материалы
           <CustomText
             variant="paragraph"
-            :custom-style="{color: '#0C4B9A', cursor: 'pointer'}"
+            :custom-style="{ color: '#0C4B9A', cursor: 'pointer' }"
           >
             <div @click="windowModal = true">
               + Добавить дисциплину
@@ -50,7 +50,7 @@
     </el-row>
 
     <ModalWindow :opened="windowModal" @closeModal="closeModal">
-      <CustomText :custom-style="{'font-weight': 'normal'}" variant="header">
+      <CustomText :custom-style="{ 'font-weight': 'normal' }" variant="header">
         Добавление дисциплины
       </CustomText>
       <ElForm
@@ -69,7 +69,7 @@
             v-model="subjectForm.annotation"
             placeholder="Введите текст аннотации"
             type="textarea"
-            :autosize="{minRows: 2}"
+            :autosize="{ minRows: 2 }"
           />
         </ElFormItem>
         <ElFormItem>

@@ -36,7 +36,7 @@
           height="680"
           :default-sort="{
             prop: 'fullname',
-            order: 'ascending'
+            order: 'ascending',
           }"
           stripe
           border
@@ -72,7 +72,7 @@
                       <el-tag
                         :type="
                           tagByAbsenceType(
-                            scope.row.absences.find((x) => x.date === d).type
+                            scope.row.absences.find((x) => x.date === d).type,
                           )
                         "
                         disable-transitions
@@ -97,7 +97,7 @@
                         @click="
                           onEdit(
                             scope.row.absences.find((x) => x.date === d),
-                            scope.row.fullname
+                            scope.row.fullname,
                           )
                         "
                       >
@@ -109,7 +109,7 @@
                         type="danger"
                         @click="
                           handleDelete(
-                            scope.row.absences.find((x) => x.date === d).id
+                            scope.row.absences.find((x) => x.date === d).id,
                           )
                         "
                       >
@@ -121,12 +121,12 @@
                     slot="reference"
                     :class="
                       iconByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date === d).status
+                        scope.row.absences.find((x) => x.date === d).status,
                       )
                     "
                     :style="
                       colorByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date === d).status
+                        scope.row.absences.find((x) => x.date === d).status,
                       )
                     "
                   />

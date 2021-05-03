@@ -34,7 +34,7 @@
           <el-col :offset="2" :span="20" class="categories-title">
             <el-row style="width: 100%">
               <el-col
-                v-for="{id, title} in categories"
+                v-for="{ id, title } in categories"
                 :key="id"
                 :span="12"
                 class="category-title"

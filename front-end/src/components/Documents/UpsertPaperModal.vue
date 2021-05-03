@@ -15,7 +15,7 @@
           v-model="paperForm.annotation"
           placeholder="Введите текст аннотации"
           type="textarea"
-          :autosize="{minRows: 2}"
+          :autosize="{ minRows: 2 }"
         />
       </ElFormItem>
 
@@ -45,7 +45,7 @@
           style="width: 300px"
         >
           <ElOption
-            v-for="{id, name} in publishers"
+            v-for="{ id, name } in publishers"
             :key="id"
             :value="id"
             :label="name"
@@ -69,7 +69,7 @@
           clearable
         >
           <ElOption
-            v-for="{id, title} in categories"
+            v-for="{ id, title } in categories"
             :key="id"
             :value="id"
             :label="title"
@@ -90,7 +90,7 @@
           :on-exceed="handleExceed"
           :before-remove="beforeRemove"
           :on-remove="handleRemove"
-          :class="{paperFileUploaded: paperForm.files.length}"
+          :class="{ paperFileUploaded: paperForm.files.length }"
         >
           <ElButton
             v-if="!paperForm.files.length"

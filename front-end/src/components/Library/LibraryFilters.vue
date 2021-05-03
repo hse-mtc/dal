@@ -10,7 +10,7 @@
       <div @click="clear">
         <CustomText
           variant="paragraph"
-          :custom-style="{cursor: 'pointer'}"
+          :custom-style="{ cursor: 'pointer' }"
           :color="COLORS.darkBlue"
         >
           Сбросить

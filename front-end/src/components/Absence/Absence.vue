@@ -92,7 +92,7 @@
               :data="absences"
               :default-sort="{
                 prop: 'date',
-                order: 'descending'
+                order: 'descending',
               }"
               style="width: 100%"
               max-height="680"

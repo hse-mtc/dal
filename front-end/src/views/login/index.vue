@@ -64,7 +64,7 @@
       Еще нет аккаунта?
       <router-link
         style="color: #0060cf"
-        :to="{name: 'SignUp'}"
+        :to="{ name: 'SignUp' }"
         replace
       >
         Зарегистрироваться

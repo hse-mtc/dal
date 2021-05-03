@@ -80,7 +80,7 @@
     <el-row>
       <el-table
         :data="encouragements"
-        :default-sort="{prop: 'date', order: 'descending'}"
+        :default-sort="{ prop: 'date', order: 'descending' }"
         style="width: 100%"
         max-height="680"
         stripe

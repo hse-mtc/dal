@@ -40,7 +40,7 @@
             height="730"
             :default-sort="{
               prop: 'ordinal',
-              order: 'ascending'
+              order: 'ascending',
             }"
             stripe
             border
@@ -84,7 +84,7 @@
                         circle
                         @click="
                           handleDelete(
-                            scope.row.lessons.find((x) => x.date === d).id
+                            scope.row.lessons.find((x) => x.date === d).id,
                           )
                         "
                       />
@@ -106,7 +106,7 @@
                       <el-tag
                         :type="
                           tagByLessonType(
-                            scope.row.lessons.find((x) => x.date === d).type
+                            scope.row.lessons.find((x) => x.date === d).type,
                           )
                         "
                         disable-transitions
