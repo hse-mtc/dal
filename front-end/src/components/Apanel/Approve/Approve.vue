@@ -11,15 +11,13 @@
             label="ФИО"
             sortable
             show-overflow-tooltip
-          >
-          </el-table-column>
+          />
           <el-table-column
             prop="milgroup.milgroup"
             label="Взвод"
             sortable
             width="180"
-          >
-          </el-table-column>
+          />
           <el-table-column label="Статус" width="180">
             <template slot-scope="scope">
               <el-tag :type="tagByStatus(scope.row.status)">
@@ -41,10 +39,9 @@
                   type=""
                   circle
                   class="approve-button"
-                  @click="approve(scope.row)"
                   :disabled="scope.row.status === 'ST'"
-                >
-                </el-button>
+                  @click="approve(scope.row)"
+                />
               </el-tooltip>
               <el-tooltip
                 class="item"
@@ -58,9 +55,9 @@
                   type=""
                   circle
                   class="wait-button"
-                  @click="putOnWait(scope.row)"
                   :disabled="scope.row.status === 'AW'"
-                ></el-button>
+                  @click="putOnWait(scope.row)"
+                />
               </el-tooltip>
               <el-tooltip
                 class="item"
@@ -74,9 +71,9 @@
                   type=""
                   circle
                   class="disapprove-button"
-                  @click="disapprove(scope.row)"
                   :disabled="scope.row.status === 'DE'"
-                ></el-button>
+                  @click="disapprove(scope.row)"
+                />
               </el-tooltip>
             </template>
           </el-table-column>
@@ -92,78 +89,6 @@ import { getError, postError, deleteError } from "@/utils/message";
 
 export default {
   name: "",
-  data() {
-    return {
-      approveList: [],
-    };
-  },
-  created() {
-    getUsersToApprove()
-      .then((response) => {
-        this.approveList = response.data;
-      })
-      .catch((err) =>
-        getError("данных для подтверждения активации", err.response.status)
-      );
-  },
-  methods: {
-    approve(user) {
-      changeStudentStatus(user.id, "ST")
-        .then(() => {
-          user.status = "ST";
-        })
-        .catch((err) =>
-          postError("записи об активированной регистрации", err.response.status)
-        );
-    },
-    putOnWait(user) {
-      changeStudentStatus(user.id, "AW")
-        .then(() => {
-          user.status = "AW";
-        })
-        .catch((err) =>
-          postError("записи об активированной регистрации", err.response.status)
-        );
-    },
-    disapprove(user) {
-      this.$confirm(
-        "Вы уверены, что хотите отклонить регистрацию абитуриента?",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        }
-      )
-        .then(() => {
-          changeStudentStatus(user.id, "DE")
-            .then(() => {
-              user.status = "DE";
-            })
-            .catch((err) =>
-              postError(
-                "записи об активированной регистрации",
-                err.response.status
-              )
-            );
-        })
-        .catch(() => {});
-    },
-    tagByStatus(status) {
-      switch (status) {
-        case "AP":
-          return "info";
-        case "ST":
-          return "success";
-        case "GR":
-          return "info";
-        case "AW":
-          return "warning";
-        default:
-          return "danger";
-      }
-    },
-  },
   filters: {
     filterStatus(val) {
       switch (val) {
@@ -181,6 +106,76 @@ export default {
           return "Отклонен";
         default:
           return "Ошибка";
+      }
+    },
+  },
+  data() {
+    return {
+      approveList: [],
+    };
+  },
+  created() {
+    getUsersToApprove()
+      .then(response => {
+        this.approveList = response.data;
+      })
+      .catch(err => getError("данных для подтверждения активации", err.response.status));
+  },
+  methods: {
+    approve(user) {
+      changeStudentStatus(user.id, "ST")
+        .then(() => {
+          // todo
+          // eslint-disable-next-line no-param-reassign
+          user.status = "ST";
+        })
+        .catch(err => postError("записи об активированной регистрации", err.response.status));
+    },
+    putOnWait(user) {
+      changeStudentStatus(user.id, "AW")
+        .then(() => {
+          // todo
+          // eslint-disable-next-line no-param-reassign
+          user.status = "AW";
+        })
+        .catch(err => postError("записи об активированной регистрации", err.response.status));
+    },
+    disapprove(user) {
+      this.$confirm(
+        "Вы уверены, что хотите отклонить регистрацию абитуриента?",
+        "Подтверждение",
+        {
+          confirmButtonText: "Да",
+          cancelButtonText: "Отмена",
+          type: "warning",
+        },
+      )
+        .then(() => {
+          changeStudentStatus(user.id, "DE")
+            .then(() => {
+              // todo
+              // eslint-disable-next-line no-param-reassign
+              user.status = "DE";
+            })
+            .catch(err => postError(
+              "записи об активированной регистрации",
+              err.response.status,
+            ));
+        })
+        .catch(() => {});
+    },
+    tagByStatus(status) {
+      switch (status) {
+        case "AP":
+          return "info";
+        case "ST":
+          return "success";
+        case "GR":
+          return "info";
+        case "AW":
+          return "warning";
+        default:
+          return "danger";
       }
     },
   },

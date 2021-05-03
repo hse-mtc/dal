@@ -2,13 +2,13 @@
   <div>
     <el-col :offset="2" :span="20" class="Marks">
       <el-row class="pageTitle">
-        <h1>{{ this.$route.meta.title }}</h1>
+        <h1>{{ $route.meta.title }}</h1>
       </el-row>
       <el-row class="filterRow" style="margin-bottom: 15px" :gutter="20">
         <el-col :offset="11" :span="6">
           <el-select
-            filterable
             v-model="filter.subject_id"
+            filterable
             placeholder="Дисциплина"
             style="display: block"
             @change="fetchData()"
@@ -18,8 +18,7 @@
               :key="item.id"
               :label="item.title"
               :value="item.id"
-            >
-            </el-option>
+            />
           </el-select>
         </el-col>
         <el-col :span="7">
@@ -33,18 +32,17 @@
             start-placeholder="Начальная дата"
             end-placeholder="Конечная дата"
             :picker-options="pickerOptions"
-            v-on:change="fetchData"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
-          >
-          </el-date-picker>
+            @change="fetchData"
+          />
         </el-col>
       </el-row>
       <el-tabs
-        tab-position="left"
         v-model="filter.mg"
-        @tab-click="fetchData()"
+        tab-position="left"
         class="my-tabs"
+        @tab-click="fetchData()"
       >
         <el-tab-pane
           v-for="mg in milgroups"
@@ -60,7 +58,7 @@
                 height="730"
                 :default-sort="{
                   prop: 'ordinal',
-                  order: 'ascending',
+                  order: 'ascending'
                 }"
                 stripe
                 border
@@ -133,15 +131,11 @@
                             :type="tagByMark(m)"
                             effect="dark"
                             disable-transitions
-                            @click="
-                              onEdit(
-                                scope.row.marks.find(
-                                  (x) => x.lesson == item.id
-                                ),
-                                scope.row
-                              )
-                            "
                             class="is-clickable margin-x"
+                            @click="onEdit(
+                              scope.row.marks.find((x) => x.lesson === item.id),
+                              scope.row
+                            )"
                           >
                             {{ m }}
                           </el-tag>
@@ -149,14 +143,14 @@
                         <el-button
                           type="text"
                           icon="el-icon-plus"
+                          class="create-mark-btn"
                           @click="
                             onCreate(
                               scope.row,
                               item,
-                              scope.row.marks.find((x) => x.lesson == item.id)
+                              scope.row.marks.find((x) => x.lesson === item.id)
                             )
                           "
-                          class="create-mark-btn"
                         />
                       </div>
                     </template>
@@ -170,7 +164,7 @@
                 icon="el-icon-plus"
                 circle
                 @click="onCreateLesson()"
-              ></el-button>
+              />
             </el-col>
           </el-row>
         </el-tab-pane>
@@ -199,11 +193,10 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button
-          type="danger"
           v-if="editMarkId"
+          type="danger"
           @click="handleDelete(editMarkId)"
-          >Удалить</el-button
-        >
+        >Удалить</el-button>
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
@@ -222,18 +215,18 @@
       >
         <el-form-item label="Дата: " required>
           <el-date-picker
+            v-model="editLesson.date"
             type="date"
             placeholder="Выберите дату"
-            v-model="editLesson.date"
             style="width: 100%"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
-          ></el-date-picker>
+          />
         </el-form-item>
         <el-form-item label="Номер занятия: " required>
           <el-input-number
-            size="mini"
             v-model="editLesson.ordinal"
+            size="mini"
             controls-position="right"
             :min="1"
             :max="10"
@@ -242,8 +235,8 @@
         </el-form-item>
         <el-form-item label="Аудитория: " required>
           <el-select
-            filterable
             v-model="editLesson.room"
+            filterable
             placeholder="Выберите аудиторию"
             style="display: block"
           >
@@ -252,8 +245,7 @@
               :key="item"
               :label="item"
               :value="item"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Тип занятия: " required>
@@ -263,20 +255,20 @@
             style="display: block"
           >
             <el-option
-              v-for="item in lesson_types"
+              v-for="item in lessonTypes"
               :key="item.code"
               :label="item.label"
               :value="item.code"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="lessonDialogVisible = false">Отмена</el-button>
-        <el-button type="primary" @click="handleAcceptLesson()"
-          >Применить</el-button
-        >
+        <el-button
+          type="primary"
+          @click="handleAcceptLesson()"
+        >Применить</el-button>
       </span>
     </el-dialog>
 
@@ -291,7 +283,7 @@
       icon="el-icon-arrow-left"
       plain
       @click="openDrawer"
-    ></el-button>
+    />
   </div>
 </template>
 
@@ -318,6 +310,26 @@ import {
 
 export default {
   name: "Marks",
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "LE":
+          return "Лекция";
+        case "SE":
+          return "Семинар";
+        case "GR":
+          return "Групповое занятие";
+        case "PR":
+          return "Практическое занятие";
+        case "FI":
+          return "Зачет";
+        case "EX":
+          return "Экзамен";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   data() {
     return {
       lessonDialogVisible: false,
@@ -374,7 +386,7 @@ export default {
           milfaculty: "ВКС",
         },
       ],
-      lesson_types: [
+      lessonTypes: [
         { label: "Семинар", code: "SE" },
         { label: "Лекция", code: "LE" },
         { label: "Групповое занятие", code: "GR" },
@@ -424,36 +436,16 @@ export default {
     this.filter.mg = this.milgroups[0].milgroup;
     this.fetchData();
   },
-  filters: {
-    typeFilter(value) {
-      switch (value) {
-        case "LE":
-          return "Лекция";
-        case "SE":
-          return "Семинар";
-        case "GR":
-          return "Групповое занятие";
-        case "PR":
-          return "Практическое занятие";
-        case "FI":
-          return "Зачет";
-        case "EX":
-          return "Экзамен";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   methods: {
     getMarksByLesson(marks, lessonId) {
-      const m = marks.find((x) => x.lesson == lessonId);
+      const m = marks.find(x => x.lesson === lessonId);
       if (m) {
         const result = m.mark;
         return result;
       }
       return [];
     },
-    formatDate: (d) => moment(d).format("DD.MM.YY"),
+    formatDate: d => moment(d).format("DD.MM.YY"),
     isOnlyLesson(marks) {
       return marks.length === 1;
     },
@@ -497,10 +489,10 @@ export default {
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
         })
-          .then((response) => {
+          .then(response => {
             this.journal = response.data;
           })
-          .catch((err) => getError("расписания", err.response.status));
+          .catch(err => getError("расписания", err.response.status));
       }
     },
     async getSubjects() {
@@ -508,7 +500,7 @@ export default {
     },
 
     onCreate(student, lesson, mark) {
-      if (student.marks.some((x) => x.lesson == lesson.id)) {
+      if (student.marks.some(x => x.lesson === lesson.id)) {
         this.editMarkMethod = "PUT";
         this.editMarkId = mark.id;
         this.editMark = {
@@ -544,7 +536,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       )
         .then(() => {
           this.dialogVisible = false;
@@ -560,7 +552,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => patchError("оценки", err.response.status));
+          .catch(err => patchError("оценки", err.response.status));
       } else if (this.editMarkMethod === "POST") {
         postMark(this.editMark)
           .then(() => {
@@ -568,7 +560,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => postError("оценки", err.response.status));
+          .catch(err => postError("оценки", err.response.status));
       } else if (this.editMarkMethod === "PUT") {
         putMark(this.editMark, this.editMarkId)
           .then(() => {
@@ -576,7 +568,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => patchError("оценки", err.response.status));
+          .catch(err => patchError("оценки", err.response.status));
       }
     },
     handleDelete(id) {
@@ -591,7 +583,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch((err) => deleteError("оценки", err.response.status));
+          .catch(err => deleteError("оценки", err.response.status));
       });
     },
     onCreateLesson() {
@@ -621,7 +613,7 @@ export default {
               this.fetchData();
             }
           })
-          .catch((err) => patchError("занятия", err.response.status));
+          .catch(err => patchError("занятия", err.response.status));
       } else {
         postLesson(this.editLesson)
           .then(() => {
@@ -629,7 +621,7 @@ export default {
             this.lessonDialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => postError("занятия", err.response.status));
+          .catch(err => postError("занятия", err.response.status));
       }
     },
     handleDeleteLesson(id) {
@@ -640,14 +632,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch((err) => deleteError("занятия", err.response.status));
+          .catch(err => deleteError("занятия", err.response.status));
       });
     },
     openDrawer() {

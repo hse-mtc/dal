@@ -1,6 +1,11 @@
 <template>
   <div class="addModal">
-    <el-form ref="form" :model="form" :rules="rules" label-width="250px">
+    <el-form
+      ref="form"
+      :model="form"
+      :rules="rules"
+      label-width="250px"
+    >
       <el-form-item label="Фото">
         <el-upload
           class="avatar-uploader"
@@ -9,33 +14,33 @@
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
         >
-          <img v-if="form.photo" :src="form.photo" class="avatar" />
-          <i v-else class="el-icon-picture-outline avatar-uploader-icon"></i>
+          <img v-if="form.photo" :src="form.photo" class="avatar">
+          <i v-else class="el-icon-picture-outline avatar-uploader-icon" />
         </el-upload>
       </el-form-item>
 
       <el-form-item label="Фамилия" prop="surname">
         <el-input
-          clearable
           v-model="form.surname"
+          clearable
           placeholder="Введите фамилию"
-        ></el-input>
+        />
       </el-form-item>
 
       <el-form-item label="Имя" prop="name">
         <el-input
+          v-model="form.name"
           clearable
           placeholder="Введите имя"
-          v-model="form.name"
-        ></el-input>
+        />
       </el-form-item>
 
       <el-form-item label="Отчество" prop="patronymic">
         <el-input
-          clearable
           v-model="form.patronymic"
+          clearable
           placeholder="Введите отчество"
-        ></el-input>
+        />
       </el-form-item>
 
       <el-form-item label="Взвод" prop="milgroup">
@@ -86,13 +91,16 @@
           placeholder="Выберите дату рождения"
           format="DD.MM.yyyy"
           value-format="yyyy-MM-DD"
-        >
-        </el-date-picker>
+        />
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">Отправить</el-button>
-        <el-button @click="closeModal">Отменить</el-button>
+        <el-button type="primary" @click="onSubmit">
+          Отправить
+        </el-button>
+        <el-button @click="closeModal">
+          Отменить
+        </el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -110,7 +118,7 @@ import {
 export default {
   name: "AddStudentModalWindow",
   props: {
-    student: Object,
+    student: { type: Object, required: true },
   },
   data() {
     return {
@@ -203,7 +211,7 @@ export default {
       return isJPG && isLt2M;
     },
     onSubmit() {
-      this.$refs["form"].validate((valid) => {
+      this.$refs.form.validate(valid => {
         if (valid) {
           if (this.student) {
             this.form.milgroup = { milgroup: this.form.milgroup.milgroup };
@@ -214,7 +222,7 @@ export default {
                 this.$emit("submitModal");
                 this.closeModal();
               })
-              .catch((err) => patchError("студента", err.response.status));
+              .catch(err => patchError("студента", err.response.status));
           } else {
             postStudent(this.form)
               .then(() => {
@@ -222,7 +230,7 @@ export default {
                 this.$emit("submitModal");
                 this.closeModal();
               })
-              .catch((err) => postError("студента", err.response.status));
+              .catch(err => postError("студента", err.response.status));
           }
         }
       });

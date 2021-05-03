@@ -6,8 +6,8 @@
       <el-row class="filter-row" :gutter="20">
         <el-col :span="10">
           <TextInput
-            :class="$style.input"
             v-model="searchQuery"
+            :class="$style.input"
             placeholder="Введите ФИО студента"
             @change="search"
           />
@@ -23,8 +23,7 @@
               :key="item"
               :label="item | campusFilter"
               :value="item"
-            >
-            </el-option>
+            />
           </el-select>
         </el-col>
         <el-col v-else :offset="7" :span="3">
@@ -33,9 +32,12 @@
           </el-tag>
         </el-col>
         <el-col :span="4">
-          <el-tag class="custom-tag" type="info"
-            >Всего абитуриентов: {{ entriesAmount }}</el-tag
+          <el-tag
+            class="custom-tag"
+            type="info"
           >
+            Всего абитуриентов: {{ entriesAmount }}
+          </el-tag>
         </el-col>
       </el-row>
 
@@ -79,27 +81,6 @@ export default {
     InfoTable,
     TextInput,
   },
-  created() {
-    this.fetchData();
-  },
-  data() {
-    const selectedCampus =
-      this.$store.state.user.campuses.length > 0
-        ? this.$store.state.user.campuses[0]
-        : "MO";
-    return {
-      data: [],
-      entriesAmount: 0,
-      currentPage: 1,
-      pageSize: 50,
-      searchQuery: "",
-      loading: false,
-      selectedCampus,
-    };
-  },
-  computed: {
-    ...mapGetters(["campuses"]),
-  },
   filters: {
     campusFilter(campus) {
       switch (campus) {
@@ -116,13 +97,33 @@ export default {
       }
     },
   },
+  data() {
+    const selectedCampus = this.$store.state.user.campuses.length > 0
+      ? this.$store.state.user.campuses[0]
+      : "MO";
+    return {
+      data: [],
+      entriesAmount: 0,
+      currentPage: 1,
+      pageSize: 50,
+      searchQuery: "",
+      loading: false,
+      selectedCampus,
+    };
+  },
+  computed: {
+    ...mapGetters(["campuses"]),
+  },
+  created() {
+    this.fetchData();
+  },
   methods: {
     async changeCampus(campus) {
       this.selectedCampus = campus;
       await this.fetchData();
     },
     async fetchData(page = 1) {
-      this.currentPage = page ? page : 1;
+      this.currentPage = page || 1;
       this.loading = true;
       const { data } = await getApplicationsStudents(
         this.currentPage,
@@ -130,9 +131,9 @@ export default {
         {
           search: this.searchQuery,
           campus: this.selectedCampus,
-        }
+        },
       );
-      this.data = data.results.map((item) => ({
+      this.data = data.results.map(item => ({
         id: item.id,
         fullname: item.full_name,
         birthday: moment(item.birth_date).format("DD.MM.yyyy"),
@@ -156,12 +157,12 @@ export default {
       } catch (e) {
         console.error("Не удалось обновить данные студента о поступлении: ", e);
         this.$message.error(
-          "Не удалось обновить данные, рекомендуем перезагрузить страницу"
+          "Не удалось обновить данные, рекомендуем перезагрузить страницу",
         );
       }
     },
 
-    search: _debounce(function () {
+    search: _debounce(function debouncedFetch() {
       this.fetchData();
     }, 750),
   },

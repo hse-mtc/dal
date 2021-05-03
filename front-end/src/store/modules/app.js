@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const state = {
+const initState = {
   sidebar: {
     opened: Cookies.get("sidebarStatus")
       ? !!+Cookies.get("sidebarStatus")
@@ -12,7 +12,8 @@ const state = {
 };
 
 const mutations = {
-  TOGGLE_SIDEBAR: (state) => {
+  /* eslint-disable no-param-reassign */
+  TOGGLE_SIDEBAR: state => {
     state.sidebar.opened = !state.sidebar.opened;
     state.sidebar.withoutAnimation = false;
     if (state.sidebar.opened) {
@@ -32,6 +33,7 @@ const mutations = {
   SET_USER_ID: (state, payload) => {
     state.userId = payload;
   },
+  /* eslint-enable no-param-reassign */
 };
 
 const actions = {
@@ -51,7 +53,7 @@ const actions = {
 
 export default {
   namespaced: true,
-  state,
+  state: initState,
   mutations,
   actions,
 };

@@ -12,18 +12,17 @@
           start-placeholder="Начальная дата"
           end-placeholder="Конечная дата"
           :picker-options="pickerOptions"
-          v-on:change="onJournal"
           format="dd.MM.yyyy"
           value-format="yyyy-MM-dd"
-        >
-        </el-date-picker>
+          @change="onJournal"
+        />
       </el-col>
     </el-row>
     <el-tabs
-      tab-position="left"
       v-model="filter.mg"
-      @tab-click="onJournal()"
+      tab-position="left"
       class="my-tabs"
+      @tab-click="onJournal()"
     >
       <el-tab-pane
         v-for="mg in milgroups"
@@ -37,7 +36,7 @@
           height="680"
           :default-sort="{
             prop: 'fullname',
-            order: 'ascending',
+            order: 'ascending'
           }"
           stripe
           border
@@ -59,7 +58,7 @@
             <template slot-scope="scope">
               <div class="absence-journal-cell">
                 <el-popover
-                  v-if="scope.row.absences.some((x) => x.date == d)"
+                  v-if="scope.row.absences.some((x) => x.date === d)"
                   placement="top"
                   trigger="hover"
                 >
@@ -67,28 +66,28 @@
                     label-position="right"
                     label-width="150px"
                     size="mini"
-                    :model="scope.row.absences.find((x) => x.date == d)"
+                    :model="scope.row.absences.find((x) => x.date === d)"
                   >
                     <el-form-item label="Тип причины: ">
                       <el-tag
                         :type="
                           tagByAbsenceType(
-                            scope.row.absences.find((x) => x.date == d).type
+                            scope.row.absences.find((x) => x.date === d).type
                           )
                         "
                         disable-transitions
                       >
                         {{
-                          scope.row.absences.find((x) => x.date == d).type
+                          scope.row.absences.find((x) => x.date === d).type
                             | absenceTypeFilter
                         }}
                       </el-tag>
                     </el-form-item>
                     <el-form-item label="Причина: ">
-                      {{ scope.row.absences.find((x) => x.date == d).reason }}
+                      {{ scope.row.absences.find((x) => x.date === d).reason }}
                     </el-form-item>
                     <el-form-item label="Комментарий: ">
-                      {{ scope.row.absences.find((x) => x.date == d).comment }}
+                      {{ scope.row.absences.find((x) => x.date === d).comment }}
                     </el-form-item>
                     <el-form-item>
                       <el-button
@@ -97,35 +96,37 @@
                         type="info"
                         @click="
                           onEdit(
-                            scope.row.absences.find((x) => x.date == d),
+                            scope.row.absences.find((x) => x.date === d),
                             scope.row.fullname
                           )
                         "
-                        >Редактировать</el-button
                       >
+                        Редактировать
+                      </el-button>
                       <el-button
                         size="mini"
                         icon="el-icon-delete"
                         type="danger"
                         @click="
                           handleDelete(
-                            scope.row.absences.find((x) => x.date == d).id
+                            scope.row.absences.find((x) => x.date === d).id
                           )
                         "
-                        >Удалить</el-button
                       >
+                        Удалить
+                      </el-button>
                     </el-form-item>
                   </el-form>
                   <i
                     slot="reference"
                     :class="
                       iconByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date == d).status
+                        scope.row.absences.find((x) => x.date === d).status
                       )
                     "
                     :style="
                       colorByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date == d).status
+                        scope.row.absences.find((x) => x.date === d).status
                       )
                     "
                   />
@@ -134,8 +135,8 @@
                   v-else
                   type="text"
                   icon="el-icon-plus"
-                  @click="onCreate(scope.row, d)"
                   class="create-absence-btn"
+                  @click="onCreate(scope.row, d)"
                 />
               </div>
             </template>
@@ -166,18 +167,16 @@
               :key="item.code"
               :label="item.label"
               :value="item.code"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Статус: ">
           <el-switch
-            :value="editAbsence.status == 'CL'"
+            :value="editAbsence.status === 'CL'"
             active-text="Закрыт"
             inactive-text="Открыт"
             @change="changeAbsenceStatus(editAbsence)"
-          >
-          </el-switch>
+          />
         </el-form-item>
         <el-form-item label="Причина: ">
           <el-input
@@ -223,6 +222,30 @@ import {
 export default {
   name: "Absence",
   components: {},
+  filters: {
+    absenceTypeFilter(value) {
+      switch (value) {
+        case "SE":
+          return "Уважительная";
+        case "NS":
+          return "Неуважительная";
+        case "LA":
+          return "Опоздание";
+        default:
+          return "Ошибка";
+      }
+    },
+    absenceStatusFilter(value) {
+      switch (value) {
+        case "OP":
+          return "Открыт";
+        case "CL":
+          return "Закрыт";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   data() {
     return {
       dialogVisible: false,
@@ -311,33 +334,11 @@ export default {
     this.filter.mg = this.milgroups[0].milgroup;
     this.onJournal();
   },
-  filters: {
-    absenceTypeFilter(value) {
-      switch (value) {
-        case "SE":
-          return "Уважительная";
-        case "NS":
-          return "Неуважительная";
-        case "LA":
-          return "Опоздание";
-        default:
-          return "Ошибка";
-      }
-    },
-    absenceStatusFilter(value) {
-      switch (value) {
-        case "OP":
-          return "Открыт";
-        case "CL":
-          return "Закрыт";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   methods: {
     changeAbsenceStatus(absence) {
-      absence.status = absence.status == "CL" ? "OP" : "CL";
+      // todo
+      // eslint-disable-next-line no-param-reassign
+      absence.status = absence.status === "CL" ? "OP" : "CL";
     },
     tagByAbsenceType(type) {
       switch (type) {
@@ -365,7 +366,7 @@ export default {
           return "color: green;";
       }
     },
-    formatDate: (d) => moment(d).format("DD.MM.YY"),
+    formatDate: d => moment(d).format("DD.MM.YY"),
     onCreate(student, date) {
       this.editAbsence = { status: "OP", student: student.id, date };
       this.editAbsenceFullname = student.fullname;
@@ -385,7 +386,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       )
         .then(() => {
           this.dialogVisible = false;
@@ -400,7 +401,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.onJournal();
           })
-          .catch((err) => patchError("пропуска", err.response.status));
+          .catch(err => patchError("пропуска", err.response.status));
       } else {
         postAbsence(this.editAbsence)
           .then(() => {
@@ -408,7 +409,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.onJournal();
           })
-          .catch((err) => postError("пропуска", err.response.status));
+          .catch(err => postError("пропуска", err.response.status));
       }
     },
     handleDelete(id) {
@@ -419,14 +420,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteAbsence({ id })
           .then(() => {
             deleteSuccess("пропуска");
             if (this.filter.mg) this.onJournal();
           })
-          .catch((err) => deleteError("пропуска", err.response.status));
+          .catch(err => deleteError("пропуска", err.response.status));
       });
     },
     onJournal() {
@@ -436,10 +437,10 @@ export default {
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
         })
-          .then((response) => {
+          .then(response => {
             this.journal = response.data;
           })
-          .catch((err) => getError("журнала", err.response.status));
+          .catch(err => getError("журнала", err.response.status));
       }
     },
   },

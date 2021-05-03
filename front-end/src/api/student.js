@@ -14,6 +14,8 @@ export function getStudent(params) {
 }
 
 export function postStudent(data) {
+  // todo
+  // eslint-disable-next-line no-param-reassign
   data.milgroup = { milgroup: data.milgroup.milgroup };
   return request({
     url: BASE_API_URL + student,
@@ -37,9 +39,8 @@ export function deleteStudent(id) {
   });
 }
 
-export const updateStudentApplicationInfo = (id, data) =>
-  request({
-    url: `${BASE_API_URL}${student}${id}/application/`,
-    method: "PATCH",
-    data,
-  });
+export const updateStudentApplicationInfo = (id, data) => request({
+  url: `${BASE_API_URL}${student}${id}/application/`,
+  method: "PATCH",
+  data,
+});

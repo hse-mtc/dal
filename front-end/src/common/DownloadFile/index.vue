@@ -1,5 +1,5 @@
 <template>
-  <div @click="downloadFile" :class="$style.root" :disabled="isDataLoading">
+  <div :class="$style.root" :disabled="isDataLoading" @click="downloadFile">
     <slot />
   </div>
 </template>
@@ -10,7 +10,7 @@ import request from "@/utils/request";
 export default {
   name: "DownloadFile",
   props: {
-    url: { type: String },
+    url: { type: String, default: "" },
     fileName: { type: String, default: "" },
   },
   data() {

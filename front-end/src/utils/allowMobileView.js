@@ -1,4 +1,4 @@
-export default (allow) => {
+export default allow => {
   const meta = document.querySelector("meta[name=viewport]");
   const app = document.querySelector("#app");
 

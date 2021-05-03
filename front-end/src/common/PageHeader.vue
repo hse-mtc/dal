@@ -1,7 +1,9 @@
 <template>
   <div class="header">
-    <CustomText variant="page-header">{{ title }}</CustomText>
-    <div v-if="button" @click="click" class="button">
+    <CustomText variant="page-header">
+      {{ title }}
+    </CustomText>
+    <div v-if="button" class="button" @click="click">
       {{ button }}
     </div>
   </div>
@@ -22,9 +24,11 @@ export default {
     },
     button: {
       type: String,
+      default: "",
     },
     click: {
       type: Function,
+      required: true,
     },
   },
 };

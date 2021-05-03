@@ -2,12 +2,12 @@
   <div class="mynavbar">
     <div
       class="burger"
-      @click="toggleSideBar"
       :title="isCollapse ? 'Развернуть меню' : 'Свернуть меню'"
+      @click="toggleSideBar"
     >
-      <hamburger :is-active="sidebar.opened" class="hamburger-container" />
+      <Hamburger :is-active="sidebar.opened" class="hamburger-container" />
     </div>
-    <breadcrumb class="breadcrumb-container" />
+    <Breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
@@ -52,7 +52,7 @@ export default {
     logout() {
       const localStorageService = LocalStorageService.getService();
       localStorageService.clearToken();
-      this.$router.push(`/login`);
+      this.$router.push("/login");
     },
     toggleSideBar() {
       this.$store.dispatch("app/toggleSideBar");

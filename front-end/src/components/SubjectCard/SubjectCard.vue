@@ -2,30 +2,37 @@
   <div class="root" @click="selectSubject">
     <div>
       <div class="header">
-        <CustomText @click="selectSubject" variant="header"
-          >{{ title }}
+        <CustomText
+          variant="header"
+          @click="selectSubject"
+        >
+          {{ title }}
         </CustomText>
         <div v-if="isMySubject" class="buttons">
           <img
-            @click="editSubject"
             class="grow"
             src="../../assets/subject/edit.svg"
             alt=""
-          />
+            @click="editSubject"
+          >
           <img
-            @click="deleteSubject"
             class="grow"
             src="../../assets/subject/close.svg"
             alt=""
-          />
+            @click="deleteSubject"
+          >
         </div>
       </div>
-      <CustomText class="annotation" variant="paragraph" color="#333"
-        >{{ annotation }}
+      <CustomText
+        class="annotation"
+        variant="paragraph"
+        color="#333"
+      >
+        {{ annotation }}
       </CustomText>
     </div>
     <div class="owner">
-      <img src="@/assets/subject/owner.svg" alt="" />
+      <img src="@/assets/subject/owner.svg" alt="">
       {{ owner }}
     </div>
   </div>
@@ -83,15 +90,15 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteSubject(this.id)
           .then(() => {
             this.$emit("deleted", this.id);
           })
-          .catch((err) => {
+          .catch(err => {
             console.log(
-              `delete of subject with id: ${this.id} FAILED. Error: ${err}`
+              `delete of subject with id: ${this.id} FAILED. Error: ${err}`,
             );
           });
       });

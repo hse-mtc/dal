@@ -16,18 +16,16 @@
         :key="item.id"
         :label="item.label"
         :value="item.id"
-      >
-      </el-option>
+      />
     </el-select>
 
-    <div v-if="userId" class="permission-content" v-loading="permissionLoading">
+    <div v-if="userId" v-loading="permissionLoading" class="permission-content">
       <el-transfer
         v-model="permissionValue"
         :titles="['Все роли', 'Текущие роли']"
         :data="permissionData"
         @change="changeInPermission"
-      >
-      </el-transfer>
+      />
     </div>
   </div>
 </template>
@@ -58,7 +56,7 @@ export default {
   methods: {
     changeInPermission(roles) {
       console.log(roles);
-      saveUserPermissions(this.userId, roles).catch((err) => {
+      saveUserPermissions(this.userId, roles).catch(err => {
         this.$message.error("Ошибка редактирования прав пользователя");
         console.log("[PermissionComponent Error]: ", err);
       });
@@ -66,11 +64,11 @@ export default {
     selectUserHandler(userId) {
       this.permissionLoading = true;
       getUserPermissions({ id: userId })
-        .then((res) => {
+        .then(res => {
           this.permissionLoading = false;
           this.permissionValue = res.data;
         })
-        .catch((err) => {
+        .catch(err => {
           this.$message.error("Ошибка загрузки прав пользователя");
           console.log("[PermissionComponent Error]: ", err);
           this.permissionLoading = false;
@@ -81,11 +79,11 @@ export default {
       if (query.length > 3) {
         this.loading = true;
         getUsers({ query })
-          .then((res) => {
+          .then(res => {
             this.loading = false;
             this.options = res.data;
           })
-          .catch((err) => {
+          .catch(err => {
             this.loading = false;
             console.log("[PermissionComponent Error]: ", err);
             this.$message.error("Ошибка загрузки данных о пользователях");
@@ -104,10 +102,10 @@ export default {
     },
     fetchData() {
       getAllPermissions()
-        .then((res) => {
+        .then(res => {
           this.permissionData = res.data;
         })
-        .catch((err) => {
+        .catch(err => {
           this.$message.error("Ошибка загрузки всех возможных прав доступа");
           console.log("[PermissionComponent Error]: ", err);
           this.permissionData = [

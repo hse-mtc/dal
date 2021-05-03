@@ -1,5 +1,5 @@
 <template>
-  <div :class="['class-materials', 'file-group', { highlight }]">
+  <div :class="['class-materials', 'file-group', {highlight}]">
     <div
       class="class-materials-title file-section-title"
       @click="$emit('click')"
@@ -8,16 +8,16 @@
       <img
         src="../../assets/scienceWorks/dropdown.svg"
         alt=""
-        :class="['files-dropdown', { opened: isOpened }]"
-      />
+        :class="['files-dropdown', {opened: isOpened}]"
+      >
     </div>
 
     <div v-show="isOpened">
-      <div class="files" v-if="hasMaterials">
+      <div v-if="hasMaterials" class="files">
         <div
-          class="file"
           v-for="(material, index) in displayMaterials"
           :key="index"
+          class="file"
         >
           <div class="file-icon">
             <img
@@ -30,9 +30,11 @@
               class="kebab"
               width="48px"
               height="48px"
-            />
+            >
           </div>
-          <div class="file-title">{{ material.title }}</div>
+          <div class="file-title">
+            {{ material.title }}
+          </div>
 
           <div class="file-kebab">
             <el-popover placement="bottom" trigger="click">
@@ -41,7 +43,7 @@
                   textAlign: 'center',
                   margin: 0,
                   padding: 0,
-                  fontSize: '15px',
+                  fontSize: '15px'
                 }"
               >
                 <div
@@ -53,7 +55,7 @@
                 </div>
                 <DownloadFile
                   :url="material.file.content"
-                  :fileName="material.file.name"
+                  :file-name="material.file.name"
                 >
                   Скачать
                 </DownloadFile>
@@ -68,7 +70,7 @@
                   src="../../assets/subject/greyKebab.svg"
                   alt=""
                   class="kebab"
-                />
+                >
               </div>
             </el-popover>
           </div>
@@ -87,10 +89,12 @@
         :custom-style="{
           cursor: 'pointer',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'center'
         }"
       >
-        <div @click="dialogVisible = true">+ Добавить материал</div>
+        <div @click="dialogVisible = true">
+          + Добавить материал
+        </div>
       </CustomText>
     </div>
     <el-dialog
@@ -116,7 +120,8 @@
           size="small"
           type="primary"
           style="outline: none"
-          >Добавить файл
+        >
+          Добавить файл
         </el-button>
         <div slot="tip" class="el-upload__tip" />
       </el-upload>
@@ -131,8 +136,7 @@
 <script>
 import CustomText from "@/common/CustomText";
 import DownloadFile from "@/common/DownloadFile/index.vue";
-import { deleteMaterial } from "@/api/material";
-import { addTopicFile } from "@/api/material";
+import { deleteMaterial, addTopicFile } from "@/api/material";
 
 export default {
   components: { CustomText, DownloadFile },
@@ -237,30 +241,30 @@ export default {
     saveFile() {
       this.dialogVisible = false;
       const formData = new FormData();
-      this.fileList.forEach((file) => {
+      this.fileList.forEach(file => {
         formData.append("content", file.raw);
         formData.append(
           "data",
           JSON.stringify({
             type: this.titleToType(this.title),
             topic: this.topic,
-          })
+          }),
         );
       });
-      addTopicFile(formData).then((res) => {
+      addTopicFile(formData).then(res => {
         const files = Array.isArray(res.data) ? res.data : [res.data];
 
-        files.forEach((file) => {
+        files.forEach(file => {
           this.displayMaterials.unshift(file);
         });
       });
       this.fileList = [];
     },
     handleRemoveFile(file, fileList) {
-      this.fileList = this.fileList.filter((item) => item.uid !== file.uid);
+      this.fileList = this.fileList.filter(item => item.uid !== file.uid);
     },
     handleExceed() {
-      this.$message.warning(`Вы можете выбрать максимум 3 файлов.`);
+      this.$message.warning("Вы можете выбрать максимум 3 файлов.");
     },
     beforeRemove(file, fileList) {
       return this.$confirm(`Удалить ${file.name} ?`);
@@ -276,11 +280,11 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteMaterial(id).then(() => {
           this.displayMaterials = this.displayMaterials.filter(
-            (item) => item.id !== id
+            item => item.id !== id,
           );
         });
       });

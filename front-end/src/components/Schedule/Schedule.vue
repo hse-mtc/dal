@@ -2,7 +2,7 @@
   <div>
     <el-col :offset="2" :span="20" class="Schedule">
       <el-row class="pageTitle">
-        <h1>{{ this.$route.meta.title }}</h1>
+        <h1>{{ $route.meta.title }}</h1>
       </el-row>
       <el-row class="filterRow" style="margin-bottom: 15px">
         <el-col :offset="17" :span="5">
@@ -16,18 +16,17 @@
             start-placeholder="Начальная дата"
             end-placeholder="Конечная дата"
             :picker-options="pickerOptions"
-            v-on:change="fetchData"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
-          >
-          </el-date-picker>
+            @change="fetchData"
+          />
         </el-col>
       </el-row>
       <el-tabs
-        tab-position="left"
         v-model="filter.mg"
-        @tab-click="fetchData()"
+        tab-position="left"
         class="my-tabs"
+        @tab-click="fetchData()"
       >
         <el-tab-pane
           v-for="mg in milgroups"
@@ -41,7 +40,7 @@
             height="730"
             :default-sort="{
               prop: 'ordinal',
-              order: 'ascending',
+              order: 'ascending'
             }"
             stripe
             border
@@ -64,7 +63,7 @@
               <template slot-scope="scope">
                 <div class="lesson-journal-cell">
                   <el-popover
-                    v-if="scope.row.lessons.some((x) => x.date == d)"
+                    v-if="scope.row.lessons.some((x) => x.date === d)"
                     placement="right"
                     trigger="hover"
                   >
@@ -75,7 +74,7 @@
                         type="info"
                         circle
                         @click="
-                          onEdit(scope.row.lessons.find((x) => x.date == d))
+                          onEdit(scope.row.lessons.find((x) => x.date === d))
                         "
                       />
                       <el-button
@@ -85,7 +84,7 @@
                         circle
                         @click="
                           handleDelete(
-                            scope.row.lessons.find((x) => x.date == d).id
+                            scope.row.lessons.find((x) => x.date === d).id
                           )
                         "
                       />
@@ -94,26 +93,26 @@
                       <div>
                         <svg-icon icon-class="notebook-outline" />
                         {{
-                          scope.row.lessons.find((x) => x.date == d).subject
+                          scope.row.lessons.find((x) => x.date === d).subject
                             .title
                         }}
                       </div>
 
                       <div>
                         <svg-icon icon-class="map-marker-outline" />
-                        {{ scope.row.lessons.find((x) => x.date == d).room }}
+                        {{ scope.row.lessons.find((x) => x.date === d).room }}
                       </div>
 
                       <el-tag
                         :type="
                           tagByLessonType(
-                            scope.row.lessons.find((x) => x.date == d).type
+                            scope.row.lessons.find((x) => x.date === d).type
                           )
                         "
                         disable-transitions
                       >
                         {{
-                          scope.row.lessons.find((x) => x.date == d).type
+                          scope.row.lessons.find((x) => x.date === d).type
                             | typeFilter
                         }}
                       </el-tag>
@@ -123,8 +122,8 @@
                     v-else
                     type="text"
                     icon="el-icon-plus"
-                    @click="onCreate(scope.row.ordinal, d)"
                     class="create-lesson-btn"
+                    @click="onCreate(scope.row.ordinal, d)"
                   />
                 </div>
               </template>
@@ -147,8 +146,8 @@
       >
         <el-form-item label="Дисциплина: " required>
           <el-select
-            filterable
             v-model="editLesson.subject"
+            filterable
             value-key="id"
             placeholder="Выберите дисциплину"
             style="display: block"
@@ -158,14 +157,13 @@
               :key="item.id"
               :label="item.title"
               :value="item.id"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Аудитория: " required>
           <el-select
-            filterable
             v-model="editLesson.room"
+            filterable
             placeholder="Выберите аудиторию"
             style="display: block"
           >
@@ -174,8 +172,7 @@
               :key="item"
               :label="item"
               :value="item"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Тип занятия: " required>
@@ -185,12 +182,11 @@
             style="display: block"
           >
             <el-option
-              v-for="item in lesson_types"
+              v-for="item in lessonTypes"
               :key="item.code"
               :label="item.label"
               :value="item.code"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
       </el-form>
@@ -223,6 +219,26 @@ import {
 
 export default {
   name: "Schedule",
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "LE":
+          return "Лекция";
+        case "SE":
+          return "Семинар";
+        case "GR":
+          return "Групповое занятие";
+        case "PR":
+          return "Практическое занятие";
+        case "FI":
+          return "Зачет";
+        case "EX":
+          return "Экзамен";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   data() {
     return {
       dialogVisible: false,
@@ -249,7 +265,7 @@ export default {
           moment().add(1, "months").format("YYYY-MM-DD"),
         ],
       },
-      lesson_types: [
+      lessonTypes: [
         { label: "Семинар", code: "SE" },
         { label: "Лекция", code: "LE" },
         { label: "Групповое занятие", code: "GR" },
@@ -311,28 +327,8 @@ export default {
     this.filter.mg = this.milgroups[0].milgroup;
     this.fetchData();
   },
-  filters: {
-    typeFilter(value) {
-      switch (value) {
-        case "LE":
-          return "Лекция";
-        case "SE":
-          return "Семинар";
-        case "GR":
-          return "Групповое занятие";
-        case "PR":
-          return "Практическое занятие";
-        case "FI":
-          return "Зачет";
-        case "EX":
-          return "Экзамен";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   methods: {
-    formatDate: (d) => moment(d).format("DD.MM.YY"),
+    formatDate: d => moment(d).format("DD.MM.YY"),
     tagByLessonType(type) {
       switch (type) {
         case "LE":
@@ -352,11 +348,12 @@ export default {
       }
     },
     limitDateRange() {
-      var main, other;
-      var maxMonths = 6;
+      let main; let
+        other;
+      const maxMonths = 6;
       if (
-        moment().diff(this.filter.dateRange[1]) >
-        moment().diff(this.filter.dateRange[0])
+        moment().diff(this.filter.dateRange[1])
+        > moment().diff(this.filter.dateRange[0])
       ) {
         main = 1;
         other = 0;
@@ -364,10 +361,10 @@ export default {
         main = 0;
         other = 1;
       }
-      var diff = moment(this.filter.dateRange[main]).diff(
+      const diff = moment(this.filter.dateRange[main]).diff(
         this.filter.dateRange[other],
         "months",
-        true
+        true,
       );
       if (Math.abs(diff) > maxMonths) {
         this.filter.dateRange[other] = moment(this.filter.dateRange[main])
@@ -383,18 +380,18 @@ export default {
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
         })
-          .then((response) => {
+          .then(response => {
             this.schedule = response.data;
           })
-          .catch((err) => getError("расписания", err.response.status));
+          .catch(err => getError("расписания", err.response.status));
       }
     },
     getSubjects() {
       getSubjects()
-        .then((response) => {
+        .then(response => {
           this.subjects = response.data;
         })
-        .catch((err) => getError("дисциплин", err.response.status));
+        .catch(err => getError("дисциплин", err.response.status));
     },
 
     onCreate(ordinal, date) {
@@ -423,7 +420,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       )
         .then(() => {
           this.dialogVisible = false;
@@ -438,7 +435,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => patchError("занятия", err.response.status));
+          .catch(err => patchError("занятия", err.response.status));
       } else {
         postLesson(this.editLesson)
           .then(() => {
@@ -446,7 +443,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => postError("занятия", err.response.status));
+          .catch(err => postError("занятия", err.response.status));
       }
     },
     handleDelete(id) {
@@ -457,14 +454,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch((err) => deleteError("занятия", err.response.status));
+          .catch(err => deleteError("занятия", err.response.status));
       });
     },
   },

@@ -6,21 +6,23 @@
           <div class="d-flex align-items-center">
             <img
               src="../../assets/scienceWorks/previous.svg"
-              @click="backToSubjects"
               style="position: absolute; left: -40px; cursor: pointer"
               height="22px"
               alt="назад"
-            />
+              @click="backToSubjects"
+            >
             {{ subject }}
           </div>
           <CustomText
             v-if="userId === subjectOwnerId"
-            @click="addTopic"
             variant="paragraph"
             color="#0C4B9A"
-            :custom-style="{ cursor: 'pointer' }"
+            :custom-style="{cursor: 'pointer'}"
+            @click="addTopic"
           >
-            <div @click="addTopic">+ Добавить раздел</div>
+            <div @click="addTopic">
+              + Добавить раздел
+            </div>
           </CustomText>
         </div>
       </el-col>
@@ -28,13 +30,15 @@
     <div class="subjectsWrapper">
       <div class="subjectsMenu">
         <div class="parts">
-          <div class="parts-all">Все разделы</div>
+          <div class="parts-all">
+            Все разделы
+          </div>
           <div
             v-for="(part, index) in subjectInfo"
+            :id="part.id"
             :key="part.id"
             class="part"
             @click="selectPart(part.id, index)"
-            :id="part.id"
           >
             {{ part.title }}
           </div>
@@ -46,19 +50,19 @@
           <draggable
             :list="subjectInfo"
             v-bind="dragOptions"
+            :disabled="userId !== subjectOwnerId"
             @start="dragging = true"
             @end="dragging = false"
-            :disabled="userId !== subjectOwnerId"
             @change="
-              ({ moved }) => updateOrder(moved.element.id, moved.newIndex)
+              ({moved}) => updateOrder(moved.element.id, moved.newIndex)
             "
           >
             <transition-group type="transition" name="flip-list">
               <div
                 v-for="mainPart in subjectInfo"
                 :key="mainPart.id"
-                class="main-part"
                 ref="cards"
+                class="main-part"
               >
                 <div
                   class="main-part-title"
@@ -73,7 +77,7 @@
                     class="mr-2"
                     src="../../assets/icons/drag.svg"
                     alt=""
-                  />
+                  >
 
                   <div
                     v-if="editTitleIndex !== mainPart.id"
@@ -88,42 +92,42 @@
                     @keyup.enter="acceptNewTitle(mainPart.id)"
                   >
                     <el-input
+                      v-model="mainPart.title"
                       class="title-input"
                       style="height: 30px !important"
-                      v-model="mainPart.title"
                       clearable
                     />
                   </div>
 
-                  <div class="buttons" v-if="userId === subjectOwnerId">
+                  <div v-if="userId === subjectOwnerId" class="buttons">
                     <img
                       v-if="editTitleIndex === mainPart.id"
-                      @click="acceptNewTitle(mainPart.id)"
                       class="grow"
                       src="../../assets/subject/accept.svg"
                       alt=""
-                    />
+                      @click="acceptNewTitle(mainPart.id)"
+                    >
                     <template v-else>
                       <img
-                        @click="editTitle(mainPart.id)"
                         class="grow"
                         src="../../assets/subject/edit.svg"
                         alt=""
-                      />
+                        @click="editTitle(mainPart.id)"
+                      >
                       <img
-                        @click="deleteSection(mainPart.id)"
                         class="grow"
                         src="../../assets/subject/close.svg"
                         alt=""
-                      />
+                        @click="deleteSection(mainPart.id)"
+                      >
                     </template>
                   </div>
                 </div>
 
                 <SubjectTopics
                   v-show="openedCards.includes(mainPart.id)"
-                  :sectionId="mainPart.id"
-                  :isOwner="userId === subjectOwnerId"
+                  :section-id="mainPart.id"
+                  :is-owner="userId === subjectOwnerId"
                 />
               </div>
             </transition-group>
@@ -150,10 +154,11 @@ import CustomText from "@/common/CustomText";
 
 export default {
   name: "Subject",
-  async mounted() {
-    await this.fetchData(this.$route.params.subjectId);
-    console.log("this.$route", this.$route);
-    this.openedCards = [...this.openedCards, +this.$route.query.section];
+  components: {
+    draggable,
+    CustomText,
+    SearchForMaterials,
+    SubjectTopics,
   },
   data() {
     return {
@@ -165,16 +170,10 @@ export default {
       openedCards: [],
     };
   },
-  components: {
-    draggable,
-    CustomText,
-    SearchForMaterials,
-    SubjectTopics,
-  },
   computed: {
     ...mapState({
-      subjects: (state) => state.subjects.subjects,
-      userId: (state) => state.app.userId,
+      subjects: state => state.subjects.subjects,
+      userId: state => state.app.userId,
     }),
     dragOptions() {
       return {
@@ -194,6 +193,11 @@ export default {
       },
     },
   },
+  async mounted() {
+    await this.fetchData(this.$route.params.subjectId);
+    console.log("this.$route", this.$route);
+    this.openedCards = [...this.openedCards, +this.$route.query.section];
+  },
   methods: {
     ...mapActions({
       setSubjects: "subjects/setSubjects",
@@ -206,15 +210,15 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteSection(id).then(() => {
-          this.subjectInfo = this.subjectInfo.filter((item) => item.id !== id);
+          this.subjectInfo = this.subjectInfo.filter(item => item.id !== id);
         });
       });
     },
     acceptNewTitle(id) {
-      let title = this.subjectInfo.find((item) => item.id === id).title;
+      const { title } = this.subjectInfo.find(item => item.id === id);
 
       if (!title) {
         this.$message.warning("Пожалуйста, заполните название раздела");
@@ -222,7 +226,7 @@ export default {
       }
 
       const sendData = {
-        title: title,
+        title,
         subject: this.subjectId,
       };
       editSectionTitle(id, sendData);
@@ -233,10 +237,10 @@ export default {
     },
     addTopic() {
       const dataToSend = {
-        title: `Новый раздел`,
+        title: "Новый раздел",
         subject: this.subjectId,
       };
-      addSection(dataToSend).then((res) => {
+      addSection(dataToSend).then(res => {
         this.subjectInfo.push(res.data);
       });
     },
@@ -244,7 +248,7 @@ export default {
       const index = this.openedCards.indexOf(id);
 
       if (index !== -1) {
-        this.openedCards = this.openedCards.filter((item) => item !== id);
+        this.openedCards = this.openedCards.filter(item => item !== id);
       } else {
         this.openedCards = [...this.openedCards, id];
       }
@@ -254,18 +258,16 @@ export default {
         this.openedCards = [...this.openedCards, id];
       }
 
-      this.$nextTick(() =>
-        this.$refs.cards[index].scrollIntoView({
-          block: "start",
-          inline: "nearest",
-          behavior: "smooth",
-        })
-      );
+      this.$nextTick(() => this.$refs.cards[index].scrollIntoView({
+        block: "start",
+        inline: "nearest",
+        behavior: "smooth",
+      }));
     },
     async fetchData(subjectId) {
       this.subjectId = subjectId;
       await getSubject({ id: subjectId })
-        .then((response) => {
+        .then(response => {
           this.subject = response.data.title;
           this.subjectInfo = response.data.sections;
           this.subjectOwnerId = response.data.user.id;
@@ -276,7 +278,7 @@ export default {
         });
     },
     backToSubjects() {
-      this.$router.push({ path: `/subjects/` });
+      this.$router.push({ path: "/subjects/" });
     },
     updateOrder(sectionId, newOrder) {
       changeSectionOrder(sectionId, newOrder);

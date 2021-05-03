@@ -1,4 +1,3 @@
-"use strict";
 const path = require("path");
 const defaultSettings = require("./src/settings.js");
 
@@ -36,7 +35,7 @@ module.exports = {
   lintOnSave: isDev,
   productionSourceMap: false,
   devServer: {
-    port: port,
+    port,
     open: true,
     overlay: {
       warnings: false,
@@ -66,7 +65,7 @@ module.exports = {
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
-    name: name,
+    name,
     resolve: {
       alias: {
         "@": resolve("src"),
@@ -96,7 +95,8 @@ module.exports = {
       .rule("vue")
       .use("vue-loader")
       .loader("vue-loader")
-      .tap((options) => {
+      .tap(options => {
+        // eslint-disable-next-line no-param-reassign
         options.compilerOptions.preserveWhitespace = true;
         return options;
       })
@@ -104,9 +104,11 @@ module.exports = {
 
     config
       // https://webpack.js.org/configuration/devtool/#development
-      .when(isDev, (config) => config.devtool("cheap-source-map"));
+      // eslint-disable-next-line no-shadow
+      .when(isDev, config => config.devtool("cheap-source-map"));
 
-    config.when(!isDev, (config) => {
+    // eslint-disable-next-line no-shadow
+    config.when(!isDev, config => {
       config
         .plugin("ScriptExtHtmlWebpackPlugin")
         .after("html")
@@ -128,7 +130,9 @@ module.exports = {
           },
           elementUI: {
             name: "chunk-elementUI", // split elementUI into a single package
-            priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+            // the weight needs to be larger than libs and app
+            // or it will be packaged into libs or app
+            priority: 20,
             test: /[\\/]node_modules[\\/]_?element-ui(.*)/, // in order to adapt to cnpm
           },
           commons: {

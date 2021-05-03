@@ -14,17 +14,18 @@ const service = axios.create({
 
 // request interceptor
 service.interceptors.request.use(
-  (config) => {
+  config => {
     const token = localStorageService.getAccessToken();
     if (token) {
-      config.headers["Authorization"] = "Bearer " + token;
+      // eslint-disable-next-line no-param-reassign
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
+  error => {
     console.log(error); // for debug
     return Promise.reject(error);
-  }
+  },
 );
 
 // response interceptor
@@ -39,42 +40,42 @@ service.interceptors.response.use(
    * Here is just an example
    * You can also judge the status by HTTP Status Code
    */
-  (response) => {
-    return response;
-  },
-  (error) => {
-    console.log("err" + error); // for debug
+  response => response,
+  error => {
+    console.log(`err${error}`); // for debug
     const originalRequest = error.config;
     if (
-      error.response.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url.includes("tokens/refresh") &&
-      !originalRequest.url.includes("tokens/obtain")
+      error.response.status === 401
+      // eslint-disable-next-line no-underscore-dangle
+      && !originalRequest._retry
+      && !originalRequest.url.includes("tokens/refresh")
+      && !originalRequest.url.includes("tokens/obtain")
     ) {
+      // eslint-disable-next-line no-underscore-dangle
       originalRequest._retry = true;
       const refreshToken = localStorageService.getRefreshToken();
       return updateAccess({
         refresh: refreshToken,
       })
-        .then((res) => {
+        .then(res => {
           if (res.status === 200) {
             localStorageService.setToken(res.data);
-            axios.defaults.headers.common["Authorization"] =
-              "Bearer " + res.data.access;
-            originalRequest.headers["Authorization"] =
-              "Bearer " + res.data.access;
+            axios.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
+            originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
             return axios(originalRequest);
           }
+
+          throw new Error();
         })
         .catch(() => {
           localStorageService.clearToken();
-          location.reload();
+          window.location.reload();
         });
     }
 
     if (
-      error.response.status === 401 &&
-      originalRequest.url.includes("tokens/obtain")
+      error.response.status === 401
+      && originalRequest.url.includes("tokens/obtain")
     ) {
       Message({
         message: "Логин или пароль введены неверно, попробуйте еще раз",
@@ -90,7 +91,7 @@ service.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default service;

@@ -2,7 +2,7 @@
   <div v-if="opened" class="root">
     <div style="position: relative">
       <div class="addModal" @close-modal="closeModal">
-        <slot></slot>
+        <slot />
       </div>
       <div class="background" @click="closeModal" />
     </div>
@@ -16,6 +16,11 @@ export default {
     opened: {
       type: Boolean,
       required: true,
+    },
+  },
+  watch: {
+    opened(val) {
+      this.toggleScroll(val);
     },
   },
   mounted() {
@@ -42,11 +47,6 @@ export default {
       } else {
         this.startScrolling();
       }
-    },
-  },
-  watch: {
-    opened(val) {
-      this.toggleScroll(val);
     },
   },
 };

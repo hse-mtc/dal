@@ -23,7 +23,7 @@ export function createUniform(data) {
 
 export function changeUniform(data, id) {
   return request({
-    url: BASE_API_URL + uniforms + `${id}/`,
+    url: `${BASE_API_URL + uniforms}${id}/`,
     method: "patch",
     data,
   });

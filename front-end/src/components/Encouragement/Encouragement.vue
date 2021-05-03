@@ -11,20 +11,19 @@
           start-placeholder="Начальная дата"
           end-placeholder="Конечная дата"
           :picker-options="pickerOptions"
-          v-on:change="onFilter"
-          v-on:clear="onFilter"
           format="dd.MM.yyyy"
           value-format="yyyy-MM-dd"
-        >
-        </el-date-picker>
+          @change="onFilter"
+          @clear="onFilter"
+        />
       </el-col>
       <el-col :span="6">
         <el-input
+          v-model="filter.search"
           clearable
           placeholder="Поиск..."
-          v-model="filter.search"
-          v-on:clear="onFilter"
-          v-on:keyup.native.enter="onFilter"
+          @clear="onFilter"
+          @keyup.native.enter="onFilter"
         />
       </el-col>
       <el-col :span="5">
@@ -33,8 +32,8 @@
           value-key="milgroup"
           clearable
           placeholder="Выберите взвод"
-          v-on:change="onFilter"
           style="display: block"
+          @change="onFilter"
         >
           <el-option
             v-for="item in milgroups"
@@ -54,16 +53,15 @@
           v-model="filter.type"
           clearable
           placeholder="Выберите тип поощрения"
-          v-on:change="onFilter"
           style="display: block"
+          @change="onFilter"
         >
           <el-option
             v-for="item in types"
             :key="item.code"
             :label="item.label"
             :value="item.code"
-          >
-          </el-option>
+          />
         </el-select>
       </el-col>
     </el-row>
@@ -82,7 +80,7 @@
     <el-row>
       <el-table
         :data="encouragements"
-        :default-sort="{ prop: 'date', order: 'descending' }"
+        :default-sort="{prop: 'date', order: 'descending'}"
         style="width: 100%"
         max-height="680"
         stripe
@@ -117,8 +115,9 @@
             <el-tag
               :type="tagByEncouragementType(scope.row.type)"
               disable-transitions
-              >{{ scope.row.type | typeFilter }}</el-tag
             >
+              {{ scope.row.type | typeFilter }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="reason" label="Причина" />
@@ -156,18 +155,18 @@
       >
         <el-form-item label="Дата" required>
           <el-date-picker
+            v-model="editEncouragement.date"
             type="date"
             placeholder="Выберите дату"
-            v-model="editEncouragement.date"
             style="width: 100%"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
-          ></el-date-picker>
+          />
         </el-form-item>
         <el-form-item
+          v-if="!(editEncouragement.id && editEncouragement.id > 0)"
           label="Студент"
           required
-          v-if="!(editEncouragement.id && editEncouragement.id > 0)"
         >
           <el-select
             v-model="editEncouragement.student"
@@ -181,7 +180,7 @@
               :key="st.id"
               :label="st.fullname"
               :value="st.id"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Преподаватель" required>
@@ -197,7 +196,7 @@
               :key="t.id"
               :label="t.fullname"
               :value="t.id"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Тип поощрения: " required>
@@ -211,8 +210,7 @@
               :key="item.code"
               :label="item.label"
               :value="item.code"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Причина: " required>
@@ -253,6 +251,18 @@ import { getTeacher } from "../../api/teacher";
 
 export default {
   name: "Encouragement",
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "EN":
+          return "Благодарность";
+        case "RE":
+          return "Снятие взыскания";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   data() {
     return {
       editEncouragement: {
@@ -328,20 +338,8 @@ export default {
   created() {
     this.onFilter();
   },
-  filters: {
-    typeFilter(value) {
-      switch (value) {
-        case "EN":
-          return "Благодарность";
-        case "RE":
-          return "Снятие взыскания";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   methods: {
-    formatDate: (row) => moment(row.date).format("DD.MM.YY"),
+    formatDate: row => moment(row.date).format("DD.MM.YY"),
     onFilter() {
       getEncouragement({
         date_from:
@@ -352,10 +350,10 @@ export default {
         search: this.filter.search,
         milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
       })
-        .then((response) => {
+        .then(response => {
           this.encouragements = response.data;
         })
-        .catch((err) => getError("поощрений", err.response.status));
+        .catch(err => getError("поощрений", err.response.status));
     },
     tagByEncouragementType(type) {
       switch (type) {
@@ -363,6 +361,7 @@ export default {
           return "";
         case "RE":
           return "success";
+        default: return "";
       }
     },
     async onCreate() {
@@ -392,14 +391,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteEncouragement({ id })
           .then(() => {
             deleteSuccess("поощрения");
             this.onFilter();
           })
-          .catch((err) => deleteError("поощрения", err.response.status));
+          .catch(err => deleteError("поощрения", err.response.status));
       });
     },
     handleClose() {
@@ -410,7 +409,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       )
         .then(() => {
           this.dialogVisible = false;
@@ -425,7 +424,7 @@ export default {
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch((err) => patchError("поощрения", err.response.status));
+          .catch(err => patchError("поощрения", err.response.status));
       } else {
         postEncouragement(this.editEncouragement)
           .then(() => {
@@ -433,7 +432,7 @@ export default {
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch((err) => postError("поощрения", err.response.status));
+          .catch(err => postError("поощрения", err.response.status));
       }
     },
   },

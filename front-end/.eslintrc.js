@@ -17,7 +17,9 @@ module.exports = {
     document: true,
     location: true,
   },
+  parser: "vue-eslint-parser",
   parserOptions: {
+    parser: "babel-eslint",
     ecmaVersion: 2018,
     sourceType: "module",
   },
@@ -57,6 +59,7 @@ module.exports = {
     "vue/key-spacing": "error",
     "vue/match-component-file-name": "error",
     "vue/object-curly-spacing": "error",
+    "vue/order-in-components": "error",
     "vue/max-attributes-per-line": [
       "error",
       {

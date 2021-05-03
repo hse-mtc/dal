@@ -2,19 +2,19 @@
   <InputsBase
     :title="title"
     :annotation="annotation"
-    :wrapperClassName="wrapperClassName"
-    :titleClassName="titleClassName"
-    :annotationClassName="annotationClassName"
+    :wrapper-class-name="wrapperClassName"
+    :title-class-name="titleClassName"
+    :annotation-class-name="annotationClassName"
   >
     <el-select
-      style="width: 100%; max-width: 100%"
       v-model="value"
+      style="width: 100%; max-width: 100%"
       v-bind="$attrs"
     >
       <el-option
-        v-for="{ label, value } in selectOptions"
-        :key="value"
-        :value="value"
+        v-for="{label, optionValue} in selectOptions"
+        :key="optionValue"
+        :value="optionValue"
         :label="label"
       />
     </el-select>
@@ -22,19 +22,19 @@
 </template>
 
 <script>
-import mixin from "./inputsMixin";
 import _isObject from "lodash/isObject";
 import _isArray from "lodash/isArray";
+import mixin from "./inputsMixin";
 
 export default {
-  mixins: [mixin],
   name: "SelectInput",
+  mixins: [mixin],
   props: {
     options: { type: Array, default: () => [] },
   },
   computed: {
     selectOptions() {
-      return this.options.map((option) => {
+      return this.options.map(option => {
         const isObj = _isObject(option);
         const rawLabel = isObj ? option.label : option;
 
@@ -48,7 +48,7 @@ export default {
     value: {
       get() {
         if (_isArray(this.modelValue)) {
-          return this.modelValue.map((item) => this.encodeValue(item));
+          return this.modelValue.map(item => this.encodeValue(item));
         }
 
         return this.encodeValue(this.modelValue);
@@ -57,7 +57,7 @@ export default {
         if (_isArray(newValue)) {
           this.$emit(
             "change",
-            newValue.map((item) => this.decodeValue(item))
+            newValue.map(item => this.decodeValue(item)),
           );
         }
 

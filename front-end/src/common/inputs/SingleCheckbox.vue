@@ -1,8 +1,8 @@
 <template>
   <InputsBase
     :title="title"
-    :wrapperClassName="wrapperClassName"
-    :titleClassName="titleClassName"
+    :wrapper-class-name="wrapperClassName"
+    :title-class-name="titleClassName"
   >
     <el-checkbox v-model="value" v-bind="$attrs" :label="checkboxLabel" />
   </InputsBase>
@@ -12,8 +12,8 @@
 import mixin from "./inputsMixin";
 
 export default {
-  mixins: [mixin],
   name: "SingleCheckbox",
+  mixins: [mixin],
   props: {
     checkboxLabel: {
       type: String,

@@ -1,16 +1,19 @@
 import { login, getUser } from "@/api/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
+
 import { resetRouter } from "@/router";
 import LocalStorageService from "../../utils/LocalStorageService";
+
 const localStorageService = LocalStorageService.getService();
 
-const state = {
+const initState = {
   token: getToken(),
   email: "",
   campuses: [],
 };
 
 const mutations = {
+  /* eslint-disable no-param-reassign */
   SET_TOKEN: (state, token) => {
     state.token = token;
   },
@@ -20,6 +23,7 @@ const mutations = {
   SET_CAMPUSES: (state, campuses) => {
     state.campuses = campuses;
   },
+  /* eslint-enable no-param-reassign */
 };
 
 const actions = {
@@ -27,15 +31,15 @@ const actions = {
   login({ commit }, userInfo) {
     const { email, password } = userInfo;
     return new Promise((resolve, reject) => {
-      login({ email: email.trim(), password: password })
-        .then((response) => {
+      login({ email: email.trim(), password })
+        .then(response => {
           const { data } = response;
           commit("SET_TOKEN", data.access);
           setToken(data.access);
           localStorageService.setToken(data);
           resolve();
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -45,10 +49,10 @@ const actions = {
   getUser({ commit, state }) {
     return new Promise((resolve, reject) => {
       getUser(state.token)
-        .then((response) => {
+        .then(response => {
           const { data } = response;
           if (!data) {
-            reject("Verification failed, please Login again.");
+            reject(new Error("Verification failed, please Login again."));
           }
 
           const { email, campuses } = data;
@@ -57,7 +61,7 @@ const actions = {
 
           resolve(data);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -73,7 +77,7 @@ const actions = {
 
   // set token
   setToken({ commit }, token) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       commit("SET_TOKEN", token);
       setToken(token);
       localStorageService.setToken({ access: token, refresh: null });
@@ -83,7 +87,7 @@ const actions = {
 
   // remove token
   resetToken({ commit }) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       commit("SET_TOKEN", "");
       removeToken();
       resolve();
@@ -93,7 +97,7 @@ const actions = {
 
 export default {
   namespaced: true,
-  state,
+  state: initState,
   mutations,
   actions,
 };

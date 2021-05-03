@@ -1,37 +1,37 @@
 import Vue from "vue";
 
+import moment from "moment";
+import FunctionalCalendar from "vue-functional-calendar";
+import BootstrapVue from "bootstrap-vue";
 import "normalize.css/normalize.css"; // A modern alternative to CSS resets
 import Multiselect from "vue-multiselect";
-// register globally
-Vue.component("multiselect", Multiselect);
 import VueLodash from "vue-lodash";
 import lodash from "lodash";
 // name is optional
 import VueMeta from "vue-meta";
-Vue.use(VueMeta);
-Vue.use(VueLodash, { name: "custom", lodash: lodash });
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import locale from "element-ui/lib/locale/lang/ru-RU"; // lang i18n
 import "element-ui/lib/theme-chalk/display.css";
 import "@/styles/index.scss"; // global css
 
-import App from "./App";
+import App from "./App.vue";
 import store from "./store";
 import router from "./router";
 
 import "@/icons"; // icon
 import "@/permission"; // permission control
-import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
-import moment from "moment";
+// register globally
+Vue.component("Multiselect", Multiselect);
+Vue.use(VueMeta);
+Vue.use(VueLodash, { name: "custom", lodash });
 Vue.prototype.$moment = moment;
 moment.locale("ru");
 
 Vue.use(BootstrapVue);
-import FunctionalCalendar from "vue-functional-calendar";
 Vue.use(FunctionalCalendar, {
   dayNames: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
   monthNames: [
@@ -85,9 +85,10 @@ Vue.use(ElementUI, { locale });
 
 Vue.config.productionTip = false;
 
+// eslint-disable-next-line no-new
 new Vue({
   el: "#app",
   router,
   store,
-  render: (h) => h(App),
+  render: h => h(App),
 });

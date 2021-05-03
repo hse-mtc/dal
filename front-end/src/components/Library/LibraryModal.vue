@@ -4,41 +4,43 @@
       <el-form-item v-for="(value, key) in formValues" :key="key" :prop="key">
         <SelectInput
           v-if="key === 'authors'"
+          v-model="formValues.authors"
           :options="authors"
           title="Автор"
           multiple
           filterable
-          v-model="formValues.authors"
         />
 
         <SelectInput
           v-else-if="key === 'publishers'"
+          v-model="formValues.publishers"
           :options="publishers"
           title="Издательство"
           filterable
-          v-model="formValues.publishers"
         />
 
         <template v-else-if="key === 'publishDate'">
           <el-col :span="11">
             <el-form-item prop="publishDate">
               <DateInput
+                v-model="formValues.publishDate"
                 title="Год издания"
                 type="year"
-                v-model="formValues.publishDate"
                 format="yyyy"
                 value-format="yyyy"
               />
             </el-form-item>
           </el-col>
 
-          <el-col :span="2">&nbsp;</el-col>
+          <el-col :span="2">
+&nbsp;
+          </el-col>
 
           <el-col :span="11">
             <el-form-item>
               <NumberInput
-                title="Количество страниц"
                 v-model="formValues.pageCount"
+                title="Количество страниц"
               />
             </el-form-item>
           </el-col>
@@ -46,22 +48,22 @@
 
         <TextInput
           v-else-if="key === 'bookName'"
-          title="Название книги"
           v-model="formValues.bookName"
-          isTextArea
+          title="Название книги"
+          is-text-area
         />
 
         <TextInput
           v-else-if="key === 'annotation'"
-          title="Аннотация"
           v-model="formValues.annotation"
-          isTextArea
+          title="Аннотация"
+          is-text-area
         />
 
         <SelectInput
           v-else-if="key === 'subjects'"
-          title="Предметы"
           v-model="formValues.subjects"
+          title="Предметы"
           multiple
           filterable
           :options="subjects"
@@ -69,24 +71,28 @@
 
         <FileInput
           v-else-if="key === 'bookCover'"
-          title="Загрузите обложку для книги"
           v-model="formValues.bookCover"
+          title="Загрузите обложку для книги"
           :limit="1"
-          :filesTypes="['.png', '.jpg']"
+          :files-types="['.png', '.jpg']"
         />
 
         <FileInput
           v-else-if="key === 'book'"
-          title="Загрузите текст книги"
           v-model="formValues.book"
+          title="Загрузите текст книги"
           :limit="1"
-          :filesTypes="['.pdf', '.djvu', '.epub', '.fb2', '.rtf', '.docx']"
+          :files-types="['.pdf', '.djvu', '.epub', '.fb2', '.rtf', '.docx']"
         />
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit"> Сохранить </el-button>
-        <el-button type="info" @click="close"> Закрыть </el-button>
+        <el-button type="primary" @click="onSubmit">
+          Сохранить
+        </el-button>
+        <el-button type="info" @click="close">
+          Закрыть
+        </el-button>
       </el-form-item>
     </el-form>
   </ModalWindow>
@@ -139,43 +145,41 @@ export default {
   },
   computed: {
     ...mapState({
-      authors: (state) =>
-        state.documents.authors.map((author) => ({
-          label: `${author.surname} ${author.name} ${author.patronymic}`,
-          value: author.id,
-        })),
-      subjects: (state) =>
-        state.subjects.subjects.map((subject) => ({
-          label: subject.title,
-          value: subject.id,
-        })),
-      publishers: (state) =>
-        state.documents.publishers.map((publisher) => ({
-          label: publisher.name,
-          value: publisher.id,
-        })),
+      authors: state => state.documents.authors.map(author => ({
+        label: `${author.surname} ${author.name} ${author.patronymic}`,
+        value: author.id,
+      })),
+      subjects: state => state.subjects.subjects.map(subject => ({
+        label: subject.title,
+        value: subject.id,
+      })),
+      publishers: state => state.documents.publishers.map(publisher => ({
+        label: publisher.name,
+        value: publisher.id,
+      })),
     }),
-  },
-  methods: {
-    onSubmit() {
-      this.$refs.form.validate((valid) => {
-        console.log("this.formValues.book", this.formValues.book);
-        if (!valid || (!this.isChanging && !this.formValues.book.length))
-          return false;
-
-        this.$emit("save", this.formValues);
-        this.$emit("close-modal");
-      });
-    },
-    close() {
-      this.$emit("close-modal");
-    },
   },
   watch: {
     initData(nextValue, prevValue) {
       if (!this.lodash.isEqual(nextValue, prevValue)) {
         this.formValues = this.lodash.cloneDeep(nextValue);
       }
+    },
+  },
+  methods: {
+    onSubmit() {
+      this.$refs.form.validate(valid => {
+        console.log("this.formValues.book", this.formValues.book);
+        if (!valid || (!this.isChanging && !this.formValues.book.length)) return false;
+
+        this.$emit("save", this.formValues);
+        this.$emit("close-modal");
+
+        return true;
+      });
+    },
+    close() {
+      this.$emit("close-modal");
     },
   },
 };

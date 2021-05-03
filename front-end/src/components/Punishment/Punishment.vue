@@ -11,20 +11,19 @@
           start-placeholder="Начальная дата"
           end-placeholder="Конечная дата"
           :picker-options="pickerOptions"
-          v-on:change="onFilter"
-          v-on:clear="onFilter"
           format="dd.MM.yyyy"
           value-format="yyyy-MM-dd"
-        >
-        </el-date-picker>
+          @change="onFilter"
+          @clear="onFilter"
+        />
       </el-col>
       <el-col :span="6">
         <el-input
+          v-model="filter.search"
           clearable
           placeholder="Поиск..."
-          v-model="filter.search"
-          v-on:clear="onFilter"
-          v-on:keyup.native.enter="onFilter"
+          @clear="onFilter"
+          @keyup.native.enter="onFilter"
         />
       </el-col>
       <el-col :span="5">
@@ -33,8 +32,8 @@
           value-key="milgroup"
           clearable
           placeholder="Выберите взвод"
-          v-on:change="onFilter"
           style="display: block"
+          @change="onFilter"
         >
           <el-option
             v-for="item in milgroups"
@@ -54,16 +53,15 @@
           v-model="filter.type"
           clearable
           placeholder="Выберите тип взыскания"
-          v-on:change="onFilter"
           style="display: block"
+          @change="onFilter"
         >
           <el-option
             v-for="item in types"
             :key="item.label"
             :label="item.label"
             :value="item.code"
-          >
-          </el-option>
+          />
         </el-select>
       </el-col>
     </el-row>
@@ -82,7 +80,7 @@
     <el-row>
       <el-table
         :data="punishments"
-        :default-sort="{ prop: 'date', order: 'descending' }"
+        :default-sort="{prop: 'date', order: 'descending'}"
         style="width: 100%"
         max-height="680"
         stripe
@@ -118,8 +116,9 @@
             <el-tag
               :type="tagByPunishmentType(scope.row.type)"
               disable-transitions
-              >{{ scope.row.type | typeFilter }}</el-tag
             >
+              {{ scope.row.type | typeFilter }}
+            </el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="reason" label="Причина" />
@@ -180,18 +179,18 @@
       >
         <el-form-item label="Дата" required>
           <el-date-picker
+            v-model="editPunishment.date"
             type="date"
             placeholder="Выберите дату"
-            v-model="editPunishment.date"
             style="width: 100%"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
-          ></el-date-picker>
+          />
         </el-form-item>
         <el-form-item
+          v-if="!(editPunishment.id && editPunishment.id > 0)"
           label="Студент"
           required
-          v-if="!(editPunishment.id && editPunishment.id > 0)"
         >
           <el-select
             v-model="editPunishment.student"
@@ -205,7 +204,7 @@
               :key="st.id"
               :label="st.fullname"
               :value="st.id"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Преподаватель" required>
@@ -220,7 +219,7 @@
               :key="t.id"
               :label="t.fullname"
               :value="t.id"
-            ></el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Тип взыскания: " required>
@@ -234,8 +233,7 @@
               :key="item.label"
               :label="item.label"
               :value="item.code"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Причина: " required>
@@ -246,15 +244,16 @@
         </el-form-item>
         <el-form-item>
           <el-checkbox
-            :value="editPunishment.remove_date != null"
-            @change="onRemovePunishmentCheckboxClick"
+            :value="editPunishment.remove_date !== null"
             border
-            >{{
-              editPunishment.remove_date != null
+            @change="onRemovePunishmentCheckboxClick"
+          >
+            {{
+              editPunishment.remove_date !== null
                 ? "Взыскание снято"
                 : "Взыскание НЕ снято"
-            }}</el-checkbox
-          >
+            }}
+          </el-checkbox>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -274,8 +273,6 @@ import {
 } from "@/api/punishment";
 
 import moment from "moment";
-import { getStudent } from "../../api/student";
-import { getTeacher } from "../../api/teacher";
 import {
   getError,
   postError,
@@ -285,9 +282,23 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { getStudent } from "../../api/student";
+import { getTeacher } from "../../api/teacher";
 
 export default {
   name: "Punishment",
+  filters: {
+    typeFilter(value) {
+      switch (value) {
+        case "PU":
+          return "Взыскание";
+        case "RE":
+          return "Выговор";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   data() {
     return {
       editPunishment: {
@@ -367,22 +378,9 @@ export default {
   created() {
     this.onFilter();
   },
-  filters: {
-    typeFilter(value) {
-      switch (value) {
-        case "PU":
-          return "Взыскание";
-        case "RE":
-          return "Выговор";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   methods: {
-    formatDate: (row) => moment(row.date).format("DD.MM.YY"),
-    formatRemoveDate: (row) =>
-      row.remove_date ? moment(row.remove_date).format("DD.MM.YY") : null,
+    formatDate: row => moment(row.date).format("DD.MM.YY"),
+    formatRemoveDate: row => (row.remove_date ? moment(row.remove_date).format("DD.MM.YY") : null),
     onFilter() {
       getPunishment({
         date_from:
@@ -393,10 +391,10 @@ export default {
         search: this.filter.search,
         milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
       })
-        .then((response) => {
+        .then(response => {
           this.punishments = response.data;
         })
-        .catch((err) => getError("взысканий", err.response.status));
+        .catch(err => getError("взысканий", err.response.status));
     },
     tagByPunishmentType(type) {
       switch (type) {
@@ -434,14 +432,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deletePunishment({ id })
           .then(() => {
             deleteSuccess("взыскания");
             this.onFilter();
           })
-          .catch((err) => deleteError("взыскания", err.response.status));
+          .catch(err => deleteError("взыскания", err.response.status));
       });
     },
     handleClose() {
@@ -452,7 +450,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       )
         .then(() => {
           this.dialogVisible = false;
@@ -467,7 +465,7 @@ export default {
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch((err) => patchError("взыскания", err.response.status));
+          .catch(err => patchError("взыскания", err.response.status));
       } else {
         postPunishment(this.editPunishment)
           .then(() => {
@@ -475,7 +473,7 @@ export default {
             this.dialogVisible = false;
             this.onFilter();
           })
-          .catch((err) => postError("взыскания", err.response.status));
+          .catch(err => postError("взыскания", err.response.status));
       }
     },
     onRemove(punishment) {
@@ -486,17 +484,20 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
+        // todo
+        /* eslint-disable no-param-reassign */
         punishment.remove_date = moment().format("YYYY-MM-DD");
         punishment.student = punishment.student.id;
         punishment.teacher = punishment.teacher.id;
+        /* eslint-enable no-param-reassign */
         patchPunishment(punishment)
           .then(() => {
             patchSuccess("взыскания");
             this.onFilter();
           })
-          .catch((err) => patchError("взыскания", err.response.status));
+          .catch(err => patchError("взыскания", err.response.status));
       });
     },
     onRemovePunishmentCheckboxClick() {

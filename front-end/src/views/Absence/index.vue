@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Absence from "../../components/Absence/Absence";
+import Absence from "../../components/Absence/Absence.vue";
 
 export default {
   components: {

@@ -2,14 +2,14 @@
   <div style="margin-top: 3rem">
     <Documents
       class="documents"
-      :isMyDocuments="true"
-      v-on:openPaperModal="openPaperModal"
+      :is-my-documents="true"
+      @openPaperModal="openPaperModal"
     />
     <UpsertPaperModal
       v-if="paperAction"
       :action="paperAction"
       :paper="paperToEdit"
-      v-on:closeModal="closeModal"
+      @closeModal="closeModal"
     />
     <div v-if="paperAction" class="background" @click="closeModal" />
   </div>
@@ -45,7 +45,7 @@ export default {
         "Open Paper Modal: action = ",
         action,
         " to edit = ",
-        paperToEdit
+        paperToEdit,
       );
       this.paperAction = action;
       this.paperToEdit = paperToEdit;

@@ -1,3 +1,4 @@
+import _omit from "lodash/omit";
 import request from "@/utils/request";
 import { BASE_API_URL, DMS_URLS } from "@/constants/api";
 
@@ -32,23 +33,22 @@ export function upsertSubject(data) {
     return request({
       url: `${BASE_API_URL}${subjects}${data.id}/`,
       method: "patch",
-      data: data,
-    });
-  } else {
-    delete data.id;
-    return request({
-      url: BASE_API_URL + subjects,
-      method: "post",
-      data: data,
+      data,
     });
   }
+
+  return request({
+    url: BASE_API_URL + subjects,
+    method: "post",
+    data: _omit(data, ["id"]),
+  });
 }
 
 export function editSectionTitle(id, data) {
   return request({
     url: `${BASE_API_URL}${sections}${id}/`,
     method: "patch",
-    data: data,
+    data,
   });
 }
 
@@ -66,7 +66,7 @@ export function addSection(data) {
   return request({
     url: BASE_API_URL + sections,
     method: "post",
-    data: data,
+    data,
   });
 }
 

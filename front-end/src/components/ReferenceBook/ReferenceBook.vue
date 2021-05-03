@@ -1,7 +1,7 @@
 <template>
   <el-col :offset="2" :span="20" class="ReferenceBook">
     <el-row class="pageTitle">
-      <h1>{{ this.$route.meta.title }}</h1>
+      <h1>{{ $route.meta.title }}</h1>
     </el-row>
     <el-row>
       <el-collapse>
@@ -12,32 +12,31 @@
           :name="item.ref"
         >
           <el-tag
-            :key="name"
             v-for="name in item.names"
+            :key="name"
             closable
             :disable-transitions="false"
-            @close="handleClose(item, name)"
             style="margin-bottom: 10px"
+            @close="handleClose(item, name)"
           >
             {{ name }}
           </el-tag>
           <el-input
-            class="input-new-tag"
             v-if="item.inputVisible"
-            v-model="item.inputValue"
             :ref="saveTagInput"
+            v-model="item.inputValue"
+            class="input-new-tag"
             size="mini"
+            style="margin-bottom: 10px"
             @keyup.enter.native="handleInputConfirm(item)"
             @blur="handleInputConfirm(item)"
-            style="margin-bottom: 10px"
-          >
-          </el-input>
+          />
           <el-button
             v-else
             class="button-new-tag"
             size="small"
-            @click="showInput(item)"
             style="margin-bottom: 10px"
+            @click="showInput(item)"
           >
             + Добавить
           </el-button>
@@ -91,20 +90,25 @@ export default {
       item.names.splice(item.names.indexOf(name), 1);
     },
     showInput(item) {
+      // todo
+      // eslint-disable-next-line no-param-reassign
       item.inputVisible = true;
     },
     handleInputConfirm(item) {
+      // todo
+      /* eslint-disable no-param-reassign */
       item.inputVisible = false;
       if (item.inputValue) item.names.push(item.inputValue);
       item.inputVisible = false;
       item.inputValue = null;
+      /* eslint-enable no-param-reassign */
     },
     fetchData() {
       getReferenceBooks()
-        .then((response) => {
+        .then(response => {
           this.books = response.data;
         })
-        .catch((err) => getError("справочников", err.response.status));
+        .catch(err => getError("справочников", err.response.status));
     },
   },
 };

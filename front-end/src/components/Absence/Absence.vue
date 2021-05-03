@@ -2,7 +2,7 @@
   <div>
     <el-col :offset="2" :span="20" class="Absence">
       <el-row class="pageTitle">
-        <h1>{{ this.$route.meta.title }}</h1>
+        <h1>{{ $route.meta.title }}</h1>
       </el-row>
       <el-tabs v-model="activeTab" stretch @click="onFilter">
         <el-tab-pane label="Пропуски" name="absences">
@@ -17,21 +17,20 @@
                 start-placeholder="Начальная дата"
                 end-placeholder="Конечная дата"
                 :picker-options="pickerOptions"
-                v-on:change="onFilter"
-                v-on:clear="onFilter"
                 format="dd.MM.yyyy"
                 value-format="yyyy-MM-dd"
-              >
-              </el-date-picker>
+                @change="onFilter"
+                @clear="onFilter"
+              />
             </el-col>
             <el-col :span="5">
               <el-input
+                v-model="filter.search"
                 clearable
                 placeholder="Поиск..."
-                v-model="filter.search"
-                v-on:clear="onFilter"
-                v-on:keyup.native.enter="onFilter"
-              ></el-input>
+                @clear="onFilter"
+                @keyup.native.enter="onFilter"
+              />
             </el-col>
             <el-col :span="4">
               <el-select
@@ -39,8 +38,8 @@
                 value-key="milgroup"
                 clearable
                 placeholder="Выберите взвод"
-                v-on:change="onFilter"
                 style="display: block"
+                @change="onFilter"
               >
                 <el-option
                   v-for="item in milgroups"
@@ -60,16 +59,15 @@
                 v-model="filter.type"
                 clearable
                 placeholder="Выберите тип причины"
-                v-on:change="onFilter"
                 style="display: block"
+                @change="onFilter"
               >
                 <el-option
                   v-for="item in types"
                   :key="item.code"
                   :label="item.label"
                   :value="item.code"
-                >
-                </el-option>
+                />
               </el-select>
             </el-col>
             <el-col :span="4">
@@ -77,16 +75,15 @@
                 v-model="filter.status"
                 clearable
                 placeholder="Выберите статус"
-                v-on:change="onFilter"
                 style="display: block"
+                @change="onFilter"
               >
                 <el-option
                   v-for="item in statuses"
                   :key="item.code"
                   :label="item.label"
                   :value="item.code"
-                >
-                </el-option>
+                />
               </el-select>
             </el-col>
           </el-row>
@@ -95,7 +92,7 @@
               :data="absences"
               :default-sort="{
                 prop: 'date',
-                order: 'descending',
+                order: 'descending'
               }"
               style="width: 100%"
               max-height="680"
@@ -125,8 +122,9 @@
                   <el-tag
                     :type="tagByAbsenceType(scope.row.type)"
                     disable-transitions
-                    >{{ scope.row.type | absenceTypeFilter }}</el-tag
                   >
+                    {{ scope.row.type | absenceTypeFilter }}
+                  </el-tag>
                 </template>
               </el-table-column>
               <el-table-column sortable label="Статус">
@@ -163,7 +161,7 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Журнал" name="journal">
-          <AbsenceJournal v-if="activeTab == 'journal'" />
+          <AbsenceJournal v-if="activeTab === 'journal'" />
         </el-tab-pane>
       </el-tabs>
     </el-col>
@@ -190,18 +188,16 @@
               :key="item.code"
               :label="item.label"
               :value="item.code"
-            >
-            </el-option>
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Статус: ">
           <el-switch
-            :value="editAbsence.status == 'CL'"
+            :value="editAbsence.status === 'CL'"
             active-text="Закрыт"
             inactive-text="Открыт"
             @change="changeAbsenceStatus(editAbsence)"
-          >
-          </el-switch>
+          />
         </el-form-item>
         <el-form-item label="Причина: ">
           <el-input
@@ -236,12 +232,36 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
-import AbsenceJournal from "@/components/AbsenceJournal/AbsenceJournal";
+import AbsenceJournal from "@/components/AbsenceJournal/AbsenceJournal.vue";
 
 export default {
   name: "Absence",
   components: {
     AbsenceJournal,
+  },
+  filters: {
+    absenceTypeFilter(value) {
+      switch (value) {
+        case "SE":
+          return "Уважительная";
+        case "NS":
+          return "Неуважительная";
+        case "LA":
+          return "Опоздание";
+        default:
+          return "Ошибка";
+      }
+    },
+    absenceStatusFilter(value) {
+      switch (value) {
+        case "OP":
+          return "Открыт";
+        case "CL":
+          return "Закрыт";
+        default:
+          return "Ошибка";
+      }
+    },
   },
   data() {
     return {
@@ -337,33 +357,11 @@ export default {
   created() {
     this.onFilter();
   },
-  filters: {
-    absenceTypeFilter(value) {
-      switch (value) {
-        case "SE":
-          return "Уважительная";
-        case "NS":
-          return "Неуважительная";
-        case "LA":
-          return "Опоздание";
-        default:
-          return "Ошибка";
-      }
-    },
-    absenceStatusFilter(value) {
-      switch (value) {
-        case "OP":
-          return "Открыт";
-        case "CL":
-          return "Закрыт";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   methods: {
     changeAbsenceStatus(absence) {
-      absence.status = absence.status == "CL" ? "OP" : "CL";
+      // todo
+      // eslint-disable-next-line no-param-reassign
+      absence.status = absence.status === "CL" ? "OP" : "CL";
     },
     tagByAbsenceType(type) {
       switch (type) {
@@ -391,7 +389,7 @@ export default {
           return "color: green;";
       }
     },
-    formatDate: (row) => moment(row.date).format("DD.MM.YY"),
+    formatDate: row => moment(row.date).format("DD.MM.YY"),
     onFilter() {
       getAbsence({
         date_from:
@@ -403,10 +401,10 @@ export default {
         search: this.filter.search,
         milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
       })
-        .then((response) => {
+        .then(response => {
           this.absences = response.data;
         })
-        .catch((err) => getError("пропусков", err.response.status));
+        .catch(err => getError("пропусков", err.response.status));
     },
     onCreate(student, date) {
       this.editAbsence = { status: "Открыт", student: student.id, date };
@@ -427,7 +425,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       )
         .then(() => {
           this.dialogVisible = false;
@@ -441,7 +439,7 @@ export default {
           this.dialogVisible = false;
           this.onFilter();
         })
-        .catch((err) => patchError("пропуска", err.response.status));
+        .catch(err => patchError("пропуска", err.response.status));
     },
     handleDelete(id) {
       this.$confirm(
@@ -451,14 +449,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteAbsence({ id })
           .then(() => {
             deleteSuccess("пропуска");
             this.onFilter();
           })
-          .catch((err) => deleteError("пропуска", err.response.status));
+          .catch(err => deleteError("пропуска", err.response.status));
       });
     },
   },

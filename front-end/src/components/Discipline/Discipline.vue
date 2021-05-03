@@ -2,7 +2,7 @@
   <div>
     <el-col :offset="2" :span="20" class="Discipline">
       <el-row class="pageTitle">
-        <h1>{{ this.$route.meta.title }}</h1>
+        <h1>{{ $route.meta.title }}</h1>
       </el-row>
       <el-tabs stretch>
         <el-tab-pane label="Поощрения">

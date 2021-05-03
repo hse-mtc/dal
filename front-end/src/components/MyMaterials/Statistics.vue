@@ -1,16 +1,18 @@
 <template>
   <div class="root">
-    <div class="statistics" v-if="statistics">
+    <div v-if="statistics" class="statistics">
       <div
         v-for="(item, index) in Object.keys(statistics)"
-        class="statistics-card"
-        :style="{ background: cards[item].color }"
         :key="index"
+        class="statistics-card"
+        :style="{background: cards[item].color}"
       >
         <div class="statistics-card-number">
-          <CustomText :color="COLORS.white" variant="header">{{
-            statistics[item]
-          }}</CustomText>
+          <CustomText :color="COLORS.white" variant="header">
+            {{
+              statistics[item]
+            }}
+          </CustomText>
         </div>
         <CustomText :color="COLORS.white" variant="paragraph">
           {{ cards[item].name }}
@@ -26,16 +28,12 @@ import { SIZES, COLORS } from "@/utils/appConsts";
 import { getStatistics } from "@/api/statistics";
 import CustomText from "@/common/CustomText";
 
-// TODO make one component with Subjects for ex if u have a param, than hide title and search and do a request with user id
+// TODO make one component with Subjects for ex if u have a param,
+// than hide title and search and do a request with user id
 export default {
   name: "MyMaterials",
   components: {
     CustomText,
-  },
-  computed: {
-    ...mapState({
-      userId: (state) => state.app.userId,
-    }),
   },
   data() {
     return {
@@ -49,13 +47,18 @@ export default {
       },
     };
   },
+  computed: {
+    ...mapState({
+      userId: state => state.app.userId,
+    }),
+  },
   created() {
     this.fetchData();
   },
   methods: {
     fetchData() {
       getStatistics(this.userId)
-        .then((res) => {
+        .then(res => {
           this.statistics = res.data;
         })
         .catch(() => {

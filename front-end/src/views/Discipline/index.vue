@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Discipline from "../../components/Discipline/Discipline";
+import Discipline from "../../components/Discipline/Discipline.vue";
 
 export default {
   components: {

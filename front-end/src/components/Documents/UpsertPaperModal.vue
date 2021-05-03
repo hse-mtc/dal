@@ -7,22 +7,22 @@
       label-width="180px"
     >
       <ElFormItem label="Название документа" prop="title">
-        <ElInput placeholder="Введите название" v-model="paperForm.title" />
+        <ElInput v-model="paperForm.title" placeholder="Введите название" />
       </ElFormItem>
 
       <ElFormItem label="Аннотация">
         <ElInput
-          placeholder="Введите текст аннотации"
           v-model="paperForm.annotation"
+          placeholder="Введите текст аннотации"
           type="textarea"
-          :autosize="{ minRows: 2 }"
+          :autosize="{minRows: 2}"
         />
       </ElFormItem>
 
       <ElFormItem label="Авторы">
         <ElSelect
-          placeholder="Выберите авторов"
           v-model="paperForm.authors"
+          placeholder="Выберите авторов"
           multiple
           collapse-tags
           style="width: 300px"
@@ -38,14 +38,14 @@
 
       <ElFormItem label="Размещения">
         <ElSelect
-          placeholder="Выберите журналы"
           v-model="paperForm.publishers"
+          placeholder="Выберите журналы"
           multiple
           collapse-tags
           style="width: 300px"
         >
           <ElOption
-            v-for="{ id, name } in publishers"
+            v-for="{id, name} in publishers"
             :key="id"
             :value="id"
             :label="name"
@@ -64,12 +64,12 @@
 
       <ElFormItem label="Категория документа" prop="category">
         <ElSelect
-          placeholder="Выберите категорию"
           v-model.number="paperForm.category"
+          placeholder="Выберите категорию"
           clearable
         >
           <ElOption
-            v-for="{ id, title } in categories"
+            v-for="{id, title} in categories"
             :key="id"
             :value="id"
             :label="title"
@@ -77,12 +77,12 @@
         </ElSelect>
       </ElFormItem>
 
-      <TagsInput label="Ключевые слова" v-model="paperForm.tags" />
+      <TagsInput v-model="paperForm.tags" label="Ключевые слова" />
 
       <ElFormItem label="Файл" prop="files">
         <ElUpload
-          action=""
           ref="upload"
+          action=""
           :auto-upload="false"
           :limit="1"
           :file-list="paperForm.files"
@@ -90,7 +90,7 @@
           :on-exceed="handleExceed"
           :before-remove="beforeRemove"
           :on-remove="handleRemove"
-          :class="{ paperFileUploaded: paperForm.files.length }"
+          :class="{paperFileUploaded: paperForm.files.length}"
         >
           <ElButton
             v-if="!paperForm.files.length"
@@ -107,7 +107,9 @@
         <ElButton type="primary" @click="submitForm('paperForm')">
           Отправить
         </ElButton>
-        <ElButton @click="closeModal">Отменить</ElButton>
+        <ElButton @click="closeModal">
+          Отменить
+        </ElButton>
       </ElFormItem>
     </ElForm>
   </div>
@@ -138,27 +140,25 @@ export default {
     action: {
       type: String,
       required: true,
-      validator: (value) => {
-        return ["add", "edit"].indexOf(value) > -1;
-      },
+      validator: value => ["add", "edit"].indexOf(value) > -1,
     },
   },
 
   data() {
-    const paper = this.paper;
+    const { paper } = this;
     const empty = isEmpty(paper);
     const paperForm = empty
       ? new PaperForm()
       : new PaperForm(
-          paper.annotation,
-          paper.authors,
-          paper.category,
-          [paper.file],
-          paper.publication_date,
-          paper.publishers,
-          paper.tags,
-          paper.title
-        );
+        paper.annotation,
+        paper.authors,
+        paper.category,
+        [paper.file],
+        paper.publication_date,
+        paper.publishers,
+        paper.tags,
+        paper.title,
+      );
 
     const required = { required: true, message: "Обязательное поле" };
 
@@ -174,8 +174,8 @@ export default {
   },
 
   computed: {
-    authors: (state) => state.documents.authors,
-    publishers: (state) => state.documents.publishers,
+    authors: state => state.documents.authors,
+    publishers: state => state.documents.publishers,
     today() {
       return moment().format(this.dateFormat.toUpperCase());
     },
@@ -187,9 +187,8 @@ export default {
 
     async submitForm(name) {
       let formValid = this.paperForm.files.length > 0;
-      this.$refs[name].validate((valid) => {
-        return (formValid &= valid);
-      });
+      // eslint-disable-next-line no-bitwise
+      this.$refs[name].validate(valid => { formValid &= valid; });
       if (!formValid) {
         return;
       }

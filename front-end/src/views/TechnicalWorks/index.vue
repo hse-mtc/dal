@@ -1,10 +1,12 @@
 <template>
-  <div class="center">Ведутся технические работы</div>
+  <div class="center">
+    Ведутся технические работы
+  </div>
 </template>
 
 <script>
 export default {
-  name: "index",
+  name: "Index",
 };
 </script>
 

@@ -1,10 +1,10 @@
 import Vue from "vue";
 import Router from "vue-router";
 
-Vue.use(Router);
-
 /* Layout */
 import Layout from "@/layout";
+
+Vue.use(Router);
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -167,12 +167,11 @@ export const constantRoutes = [
   },
 ];
 
-const createRouter = () =>
-  new Router({
-    mode: "history", // require service support
-    scrollBehavior: () => ({ y: 0 }),
-    routes: constantRoutes,
-  });
+const createRouter = () => new Router({
+  mode: "history", // require service support
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes,
+});
 
 const router = createRouter();
 
