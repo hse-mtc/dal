@@ -81,7 +81,7 @@ import { mapActions } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
 
 export default {
-  name: "",
+  name: "AdvancedPaperSearch",
   components: {},
   data() {
     return {
@@ -157,5 +157,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "style";
+@import "papers-advanced";
 </style>

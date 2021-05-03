@@ -5,6 +5,7 @@
       type="text"
       class="words-search"
       :placeholder="placeholder"
+      @keyup.enter="search"
     >
     <img
       src="../../assets/delete-cross.svg"

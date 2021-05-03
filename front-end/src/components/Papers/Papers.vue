@@ -94,7 +94,7 @@
       </el-row>
     </el-col>
 
-    <AddCategoryModalWindow
+    <AddCategoryModal
       v-if="addNewCategory"
       @closeModal="closeModal"
     />
@@ -120,9 +120,9 @@ import { FunctionalCalendar } from "vue-functional-calendar";
 import Serp from "@/components/Papers/Serp";
 import UpsertModal from "@/components/Papers/UpsertModal";
 
-import Search from "@/components/Search/Search";
-import AdvancedSearch from "@/components/AdvancedSearch/AdvancedSearch";
-import AddCategoryModalWindow from "@/components/AddCategoryModalWindow/AddCategoryModalWindow";
+import Search from "@/components/Search/Papers";
+import AdvancedSearch from "@/components/Search/PapersAdvanced";
+import AddCategoryModal from "@/components/Categories/AddModal";
 
 import {
   getPaperCategories,
@@ -133,7 +133,7 @@ import EventBus from "@/components/EventBus";
 export default {
   name: "Papers",
   components: {
-    AddCategoryModalWindow,
+    AddCategoryModal,
     AdvancedSearch,
     FunctionalCalendar,
     Serp,
