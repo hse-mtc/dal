@@ -1,8 +1,9 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-FRONT_END_CHANGED_FILES=$(git diff --name-only front-end)
+FRONT_END_CHANGED_FILES=$(git diff --name-only HEAD)
 
-if [ -n "${FRONT_END_CHANGED_FILES}" ]; then
-  cd front-end && npx prettier --check .
+if [[ "$FRONT_END_CHANGED_FILES" == *"front-end"* ]]; then
+  cd front-end
+  npm run lint
 fi
