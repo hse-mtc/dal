@@ -48,3 +48,24 @@ export function getPosts() {
     method: "get",
   });
 }
+
+export function getAchievementTypes() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.achievementTypes,
+    method: "get",
+  });
+}
+
+export function getPrograms() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.programs,
+    method: "get",
+  });
+}
+
+export function getRooms() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.rooms,
+    method: "get",
+  });
+}

@@ -1,7 +1,23 @@
 <template>
   <div>
     <el-row class="filterRow" style="margin-bottom: 15px">
-      <el-col :offset="17" :span="5">
+      <el-col :offset="12" :span="5">
+        <el-select
+          v-model="filter.weekday"
+          value-key="number"
+          placeholder="Выберите учебный день"
+          style="display: block"
+          @change="onWeekdayChanged"
+        >
+          <el-option
+            v-for="item in weekdays"
+            :key="item.number"
+            :label="item.name"
+            :value="item.number"
+          />
+        </el-select>
+      </el-col>
+      <el-col :offset="1" :span="5">
         <el-date-picker
           v-model="filter.dateRange"
           type="daterange"
@@ -19,7 +35,8 @@
       </el-col>
     </el-row>
     <el-tabs
-      v-model="filter.mg"
+      v-model="filter.milgroup"
+      v-loading="loading"
       tab-position="left"
       class="my-tabs"
       @tab-click="onJournal()"
@@ -27,8 +44,8 @@
       <el-tab-pane
         v-for="mg in milgroups"
         :key="mg.milgroup"
-        :label="mg.milgroup"
-        :name="mg.milgroup"
+        :label="mg.milgroup.toString()"
+        :name="mg.milgroup.toString()"
       >
         <el-table
           :data="journal.students"
@@ -249,6 +266,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      loading: false,
       editAbsence: {
         id: 0,
         date: "",
@@ -270,32 +288,13 @@ export default {
       },
       editAbsenceFullname: "",
       filter: {
-        mg: null,
+        milgroup: null,
+        weekday: null,
         dateRange: [
           moment().add(-3, "months").format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
         ],
       },
-      types: [
-        { label: "Уважительная", code: "SE" },
-        { label: "Неуважительная", code: "NS" },
-        { label: "Опоздание", code: "LA" },
-      ],
-      statuses: ["Закрыт", "Открыт"],
-      milgroups: [
-        {
-          milgroup: "1807",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1808",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1809",
-          milfaculty: "ВКС",
-        },
-      ],
       pickerOptions: {
         shortcuts: [
           {
@@ -328,13 +327,46 @@ export default {
         ],
       },
       journal: {},
+      weekdays: [
+        { number: 0, name: "Понедельник" },
+        { number: 1, name: "Вторник" },
+        { number: 2, name: "Среда" },
+        { number: 3, name: "Четверг" },
+        { number: 4, name: "Пятница" },
+        { number: 5, name: "Суббота" },
+        { number: 6, name: "Воскресенье" },
+      ],
     };
   },
-  created() {
-    this.filter.mg = this.milgroups[0].milgroup;
-    this.onJournal();
+  computed: {
+    milgroups() {
+      return this.$store.state.reference.milgroups.filter(
+        x => x.weekday === this.filter.weekday,
+      );
+    },
+    milfaculties() {
+      return this.$store.state.reference.milfaculties;
+    },
+    types() {
+      return this.$store.state.reference.absenceTypes;
+    },
+    statuses() {
+      return this.$store.state.reference.absenceStatuses;
+    },
+  },
+  async created() {
+    await this.fetchData();
+    console.log(this.milgroups);
+    this.filter.weekday = moment().day() - 1;
+    console.log("🚀 > this.filter.weekday", this.filter.weekday);
+    await this.onWeekdayChanged();
   },
   methods: {
+    async onWeekdayChanged() {
+      this.loading = true;
+      this.filter.milgroup = this.milgroups.length ? this.milgroups[0].milgroup.toString() : "0";
+      await this.onJournal();
+    },
     changeAbsenceStatus(absence) {
       // todo
       // eslint-disable-next-line no-param-reassign
@@ -399,7 +431,7 @@ export default {
           .then(() => {
             patchSuccess("пропуска");
             this.dialogVisible = false;
-            if (this.filter.mg) this.onJournal();
+            if (this.filter.milgroup) this.onJournal();
           })
           .catch(err => patchError("пропуска", err.response.status));
       } else {
@@ -407,7 +439,7 @@ export default {
           .then(() => {
             postSuccess("пропуска");
             this.dialogVisible = false;
-            if (this.filter.mg) this.onJournal();
+            if (this.filter.milgroup) this.onJournal();
           })
           .catch(err => postError("пропуска", err.response.status));
       }
@@ -425,22 +457,38 @@ export default {
         deleteAbsence({ id })
           .then(() => {
             deleteSuccess("пропуска");
-            if (this.filter.mg) this.onJournal();
+            if (this.filter.milgroup) this.onJournal();
           })
           .catch(err => deleteError("пропуска", err.response.status));
       });
     },
-    onJournal() {
-      if (this.filter.mg > 0) {
-        getAbsenceJournal({
-          milgroup: this.filter.mg,
-          date_from: this.filter.dateRange[0],
-          date_to: this.filter.dateRange[1],
-        })
-          .then(response => {
-            this.journal = response.data;
-          })
-          .catch(err => getError("журнала", err.response.status));
+    async fetchData() {
+      if (!this.$store.state.reference.milgroups.length) {
+        await this.$store.dispatch("reference/setMilgroups");
+      }
+      if (!this.$store.state.reference.absenceTypes.length) {
+        await this.$store.dispatch("reference/setAbsenceTypes");
+      }
+      if (!this.$store.state.reference.absenceStatuses.length) {
+        await this.$store.dispatch("reference/setAbsenceStatuses");
+      }
+    },
+    async onJournal() {
+      if (this.filter.milgroup > 0) {
+        try {
+          this.loading = true;
+          this.journal = (
+            await getAbsenceJournal({
+              milgroup: this.filter.milgroup,
+              date_from: this.filter.dateRange[0],
+              date_to: this.filter.dateRange[1],
+            })
+          ).data;
+        } catch (err) {
+          getError("журнала", err.response.status);
+        } finally {
+          this.loading = false;
+        }
       }
     },
   },
