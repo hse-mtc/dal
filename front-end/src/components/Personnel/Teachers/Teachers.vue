@@ -34,6 +34,7 @@
     </el-row>
     <el-row class="table">
       <el-table
+        v-loading="loading"
         max-height="600px"
         :data="teachers"
         :default-sort="{ prop: 'fullname', order: 'descending' }"
@@ -91,6 +92,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       filter: {
         search: null,
         milfaculty: null,
@@ -128,7 +130,7 @@ export default {
       document
         .getElementById("main-container")
         .classList.remove("stop-scrolling");
-      this.editTeacher = null;
+      this.editTeacher = {};
     },
     openModal() {
       this.modal = true;
@@ -136,9 +138,12 @@ export default {
     },
     async onFilter() {
       try {
+        this.loading = true;
         this.teachers = (await getTeacher(this.filter)).data;
       } catch (err) {
         getError("преподавателей", err.response.status);
+      } finally {
+        this.loading = false;
       }
     },
     async clearFilter() {

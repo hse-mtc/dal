@@ -11,15 +11,14 @@
         <el-tab-pane label="Взыскания">
           <Punishment />
         </el-tab-pane>
-        <!-- <el-tab-pane label="Журнал"> </el-tab-pane> -->
       </el-tabs>
     </el-col>
   </div>
 </template>
 
 <script>
-import Punishment from "@/components/Punishment/Punishment";
-import Encouragement from "@/components/Encouragement/Encouragement";
+import Punishment from "./Punishment/Punishment.vue";
+import Encouragement from "./Encouragement/Encouragement.vue";
 
 export default {
   name: "Discipline",
