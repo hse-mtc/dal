@@ -122,17 +122,6 @@
           </el-option>
         </el-select>
       </el-form-item>
-
-      <el-form-item label="Дата рождения" prop="birthdate">
-        <el-date-picker
-          v-model="form.birthdate"
-          type="date"
-          placeholder="Выберите дату рождения"
-          format="DD.MM.yyyy"
-          value-format="yyyy-MM-DD"
-        />
-      </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onSubmit">
           Отправить
@@ -171,8 +160,8 @@ export default {
   data() {
     return {
       form: {
-        milgroup: {},
-        birthdate: "",
+        id: 0,
+        milgroup: null,
         surname: "",
         name: "",
         patronymic: "",
@@ -180,7 +169,6 @@ export default {
         rank: "",
         teacher_post: "",
         milfaculty: "",
-        status: "",
       },
       rules: {
         surname: [
@@ -195,13 +183,6 @@ export default {
             required: true,
             message: "Пожалуйста, введите имя",
             trigger: "blur",
-          },
-        ],
-        milgroup: [
-          {
-            required: true,
-            message: "Пожалуйста, выберите взвод",
-            trigger: "change",
           },
         ],
         rank: [
@@ -225,29 +206,11 @@ export default {
             trigger: "change",
           },
         ],
-        birth_info: {
-          birthdate: [
-            {
-              type: "string",
-              required: true,
-              message: "Пожалуйста, выберите дату рождения",
-              trigger: "change",
-            },
-          ],
-        },
       },
       milgroups: [],
       milfaculties: [],
       ranks: [],
       teacher_posts: [],
-      programs: [
-        {
-          program: "Информатика и вычислительная техника",
-          code: "09.03.01",
-        },
-        { program: "Программная инженерия", code: "09.03.04" },
-        { program: "Машиностроение", code: "15.03.01" },
-      ],
       statuses: ["Обучается", "Отчислен", "Завершил"],
     };
   },
@@ -263,7 +226,9 @@ export default {
   },
   watch: {
     async teacher(value) {
-      this.form = value;
+      Object.keys(this.form).forEach(key => {
+        this.form[key] = value[key];
+      });
       await this.fetchData();
     },
   },
@@ -278,21 +243,21 @@ export default {
       this.form.foto = URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
+      const isValidType = file.type === "image/jpeg" || file.type === "image/png";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
-      if (!isJPG) {
-        this.$message.error("Изображение должно иметь формат jpeg.");
+      if (!isValidType) {
+        this.$message.error("Изображение должно иметь формат jpeg или png.");
       }
       if (!isLt2M) {
         this.$message.error("Размер изображения не должен превышать 2 МБ.");
       }
-      return isJPG && isLt2M;
+      return isValidType && isLt2M;
     },
     onSubmit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          this.form.milgroup = this.form.milgroup.milgroup;
+          this.form.milgroup = this.form.milgroup ? this.form.milgroup.milgroup : null;
           try {
             await patchTeacher(this.form);
             patchSuccess("студента");
@@ -305,7 +270,6 @@ export default {
       });
     },
     closeModal() {
-      console.log("zhopa");
       this.$emit("closeModal");
     },
   },
