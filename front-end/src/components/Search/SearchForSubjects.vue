@@ -6,18 +6,18 @@
       class="words-search"
       :placeholder="placeholder"
       @keyup.enter="search"
-    />
+    >
     <img
       src="../../assets/delete-cross.svg"
       class="delete-cross"
       alt=""
       @click="deleteText"
-    />
+    >
     <img
       src="../../assets/scienceWorks/searchIcon.svg"
       class="search-icon"
       @click="search"
-    />
+    >
   </div>
 </template>
 
@@ -25,10 +25,15 @@
 export default {
   name: "",
   components: {},
-  props: ["placeholder"],
+  props: {
+    placeholder: {
+      type: String,
+      default: "",
+    },
+  },
   mounted() {
     const query = this.$route.query.subjectsSearch;
-    this.$refs.searchInput.value = query ? query : "";
+    this.$refs.searchInput.value = query || "";
   },
   methods: {
     search() {

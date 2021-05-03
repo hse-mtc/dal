@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Students from "../../components/Personnel/Personnel";
+import Students from "../../components/Personnel/Personnel.vue";
 
 export default {
   components: {

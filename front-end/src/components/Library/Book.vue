@@ -14,31 +14,34 @@
             : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'
         "
         alt=""
-      />
+      >
     </div>
     <div class="content">
       <div class="header">
         <div @click="$router.push(`/library/book/${data.id}`)">
-          <CustomText style="cursor: pointer" variant="header"
-            >{{ data.title }}
+          <CustomText
+            style="cursor: pointer"
+            variant="header"
+          >
+            {{ data.title }}
           </CustomText>
         </div>
         <img
           v-if="data.favorite"
-          @click="unsaveBook"
           src="@/assets/icons/saved.svg"
           alt=""
-        />
+          @click="unsaveBook"
+        >
         <img
           v-else
-          @click="saveBook"
           src="@/assets/icons/not-saved.svg"
           alt=""
-        />
+          @click="saveBook"
+        >
       </div>
       <div
-        @click="$router.push(`/library/book/${data.id}`)"
         style="width: 100%"
+        @click="$router.push(`/library/book/${data.id}`)"
       >
         <CustomText
           style="cursor: pointer"
@@ -62,7 +65,7 @@
         </CustomText>
       </div>
       <div class="buttons">
-        <DownloadFile :url="data.file.content" :fileName="data.file.name">
+        <DownloadFile :url="data.file.content" :file-name="data.file.name">
           <CustomText
             :mt="SIZES.m"
             :color="COLORS.darkBlue"
@@ -101,7 +104,7 @@ export default {
       type: Object,
       required: true,
     },
-    onEdit: { type: Function },
+    onEdit: { type: Function, required: true },
   },
   data() {
     return {
@@ -112,21 +115,25 @@ export default {
   },
   computed: {
     ...mapState({
-      authors: (state) => state.documents.authors,
+      authors: state => state.documents.authors,
     }),
   },
   methods: {
     getAuthor(id) {
-      const author = this.authors.find((author) => author.id === id);
+      const author = this.authors.find(item => item.id === id);
       return surnameWithInitials(author);
     },
     saveBook() {
       saveFavBook({ book: this.data.id }).then(() => {
+        // todo
+        // eslint-disable-next-line vue/no-mutating-props
         this.data.favorite = true;
       });
     },
     unsaveBook() {
       unsaveFavBook(this.data.id).then(() => {
+        // todo
+        // eslint-disable-next-line vue/no-mutating-props
         this.data.favorite = false;
         this.$emit("deleteFavBook", this.data.id);
       });

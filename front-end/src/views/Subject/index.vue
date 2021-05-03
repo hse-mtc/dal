@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Subject from "../../components/Subject/Subject";
+import Subject from "../../components/Subject/Subject.vue";
 
 export default {
   components: {

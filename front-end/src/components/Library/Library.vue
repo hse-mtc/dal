@@ -8,7 +8,7 @@
     />
     <Modal
       v-if="showModal"
-      :initData="modalData"
+      :init-data="modalData"
       :submit-callback="fetchData"
       :is-changing="!!changingId"
       @close-modal="onClose"
@@ -24,14 +24,18 @@
       v-if="!(isMyLibrary || isFavoriteBooks)"
       :mt="SIZES.m"
       variant="paragraph"
-      >Найдено: {{ count || 0 }}</CustomText
     >
+      Найдено: {{ count || 0 }}
+    </CustomText>
     <el-row>
       <el-col :span="18">
-        <div class="sort mt-3 mb-3" v-if="!(isMyLibrary || isFavoriteBooks)">
-          <CustomText variant="sub-header" :mr="SIZES.m"
-            >Сортировать</CustomText
+        <div v-if="!(isMyLibrary || isFavoriteBooks)" class="sort mt-3 mb-3">
+          <CustomText
+            variant="sub-header"
+            :mr="SIZES.m"
           >
+            Сортировать
+          </CustomText>
           <el-select
             v-model="sort"
             placeholder="Выберите тип причины"
@@ -42,33 +46,33 @@
               :key="item.key"
               :label="item.label"
               :value="item.key"
-            >
-            </el-option>
+            />
           </el-select>
         </div>
         <div class="content">
           <div class="books">
-            <div class="book" v-for="item in books" :key="item.id">
+            <div v-for="item in books" :key="item.id" class="book">
               <Book
-                @deleteFavBook="deleteFavBook"
                 :data="item"
-                :onEdit="() => onBookEdit(item)"
+                :on-edit="() => onBookEdit(item)"
+                @deleteFavBook="deleteFavBook"
               />
             </div>
             <div v-if="books.length === 0 && isFavoriteBooks && !loading">
               <CustomText :mt="SIZES.m" variant="paragraph">
                 У вас нет сохраненных учебников, добавить их можно в разделе
-                <span class="link" @click="$router.push(`/library`)"
-                  >Библиотека</span
-                >
+                <span
+                  class="link"
+                  @click="$router.push(`/library`)"
+                >Библиотека</span>
               </CustomText>
             </div>
           </div>
         </div>
-        <div v-loading="loading" class="requests__loader"></div>
+        <div v-loading="loading" class="requests__loader" />
       </el-col>
       <el-col :span="5" :offset="1">
-        <LibraryFilters :isMyLibrary="isMyLibrary" />
+        <LibraryFilters :is-my-library="isMyLibrary" />
       </el-col>
     </el-row>
   </div>
@@ -80,7 +84,6 @@ import moment from "moment";
 import { SIZES } from "@/utils/appConsts";
 import PageHeader from "@/common/PageHeader";
 import SearchBar from "@/common/SearchBar";
-import Modal from "./LibraryModal.vue";
 import CustomText from "@/common/CustomText";
 import LibraryFilters from "@/components/Library/LibraryFilters";
 import Book from "@/components/Library/Book";
@@ -93,6 +96,7 @@ import {
 } from "@/api/books";
 import { scrollMixin } from "@/mixins/scrollMixin";
 import { mapState } from "vuex";
+import Modal from "./LibraryModal.vue";
 
 export default {
   name: "Library",
@@ -147,7 +151,7 @@ export default {
   },
   computed: {
     ...mapState({
-      userId: (state) => state.app.userId,
+      userId: state => state.app.userId,
     }),
     sort: {
       get() {
@@ -176,6 +180,18 @@ export default {
       },
     },
   },
+  watch: {
+    isFavoriteBooks() {
+      this.count = null;
+      this.books = [];
+      this.fetchData();
+    },
+    $route() {
+      this.count = null;
+      this.books = [];
+      this.fetchData();
+    },
+  },
   mounted() {
     this.fetchData();
   },
@@ -187,7 +203,7 @@ export default {
     },
     deleteFavBook(id) {
       if (this.isFavoriteBooks) {
-        this.books = this.books.filter((item) => item.id !== id);
+        this.books = this.books.filter(item => item.id !== id);
       }
     },
     fetchData() {
@@ -206,8 +222,8 @@ export default {
               limit: this.limit,
               offset: this.books.length,
               user: this.isMyLibrary ? this.userId : undefined,
-            })
-          ).then((res) => {
+            }),
+          ).then(res => {
             this.count = res.data.count;
             this.books = [...this.books, ...res.data.results];
             this.loading = false;
@@ -224,8 +240,8 @@ export default {
               limit: this.limit,
               offset: this.books.length,
               user: this.isMyLibrary ? this.userId : undefined,
-            })
-          ).then((res) => {
+            }),
+          ).then(res => {
             this.count = res.data.count;
             this.books = [...this.books, ...res.data.results];
             this.loading = false;
@@ -274,8 +290,8 @@ export default {
             publishers: data.publishers,
             subjects: data.subjects,
             page_count: data.pageCount,
-          })
-        )
+          }),
+        ),
       );
 
       if (data.bookCover.length) {
@@ -304,7 +320,7 @@ export default {
         });
         console.error(
           `Не удалось ${changingId ? "отредактировать" : "создать"} книгу:`,
-          e
+          e,
         );
       }
 
@@ -312,9 +328,7 @@ export default {
         try {
           const bookData = (await getBook(changingId)).data;
 
-          this.books = this.books.map((item) =>
-            item.id === changingId ? bookData : item
-          );
+          this.books = this.books.map(item => (item.id === changingId ? bookData : item));
         } catch (e) {
           console.warn(`не удалось отобразить новые данные: ${e}`, e);
         }
@@ -338,18 +352,6 @@ export default {
     onClose() {
       this.showModal = false;
       this.modalData = this.getInitBookData();
-    },
-  },
-  watch: {
-    isFavoriteBooks() {
-      this.count = null;
-      this.books = [];
-      this.fetchData();
-    },
-    $route() {
-      this.count = null;
-      this.books = [];
-      this.fetchData();
     },
   },
 };

@@ -11,13 +11,19 @@
           label-position="left"
         >
           <div class="title-container">
-            <h2 class="title">Даль ВУЦ</h2>
+            <h2 class="title">
+              Даль ВУЦ
+            </h2>
           </div>
 
           <div class="title-container">
-            <h3 class="sub-title">Регистрация</h3>
+            <h3 class="sub-title">
+              Регистрация
+            </h3>
           </div>
-          <div class="field-title">Корпоративная почта ВШЭ</div>
+          <div class="field-title">
+            Корпоративная почта ВШЭ
+          </div>
           <el-form-item prop="email">
             <el-input
               ref="email"
@@ -32,7 +38,9 @@
 
           <div>
             <div style="width: 45%">
-              <div class="field-title">Роль</div>
+              <div class="field-title">
+                Роль
+              </div>
               <el-form-item prop="role">
                 <el-select
                   v-model="registerForm.role"
@@ -44,13 +52,14 @@
                     :key="item.key"
                     :label="item.label"
                     :value="item.key"
-                  >
-                  </el-option>
+                  />
                 </el-select>
               </el-form-item>
             </div>
             <div v-if="registerForm.role === 'student'" style="width: 45%">
-              <div class="field-title">Взвод</div>
+              <div class="field-title">
+                Взвод
+              </div>
               <el-form-item prop="milgroup">
                 <el-select
                   v-model="registerForm.milgroup"
@@ -62,14 +71,15 @@
                     :key="item.milgroup"
                     :label="item.milgroup"
                     :value="item.milgroup"
-                  >
-                  </el-option>
+                  />
                 </el-select>
               </el-form-item>
             </div>
 
             <template v-if="registerForm.role === 'teacher'">
-              <div class="field-title">Фамилия</div>
+              <div class="field-title">
+                Фамилия
+              </div>
               <el-form-item prop="lastName">
                 <el-input
                   ref="lastName"
@@ -84,7 +94,9 @@
 
               <div class="" style="display: flex">
                 <div style="width: 45%">
-                  <div class="field-title">Имя</div>
+                  <div class="field-title">
+                    Имя
+                  </div>
                   <el-form-item prop="firstName">
                     <el-input
                       ref="firstName"
@@ -99,7 +111,9 @@
                 </div>
 
                 <div style="margin-left: 63px; width: 45%">
-                  <div class="field-title">Отчество</div>
+                  <div class="field-title">
+                    Отчество
+                  </div>
                   <el-form-item prop="patronymic">
                     <el-input
                       ref="patronymic"
@@ -114,7 +128,9 @@
                 </div>
               </div>
 
-              <div class="field-title">Цикл</div>
+              <div class="field-title">
+                Цикл
+              </div>
               <el-form-item prop="role">
                 <el-select
                   v-model="registerForm.milfaculty"
@@ -126,12 +142,13 @@
                     :key="item.milfaculty"
                     :label="item.milfaculty"
                     :value="item.milfaculty"
-                  >
-                  </el-option>
+                  />
                 </el-select>
               </el-form-item>
 
-              <div class="field-title">Звание</div>
+              <div class="field-title">
+                Звание
+              </div>
               <el-form-item prop="role">
                 <el-select
                   v-model="registerForm.rank"
@@ -143,12 +160,13 @@
                     :key="item.rank"
                     :label="item.rank"
                     :value="item.rank"
-                  >
-                  </el-option>
+                  />
                 </el-select>
               </el-form-item>
 
-              <div class="field-title">Должность</div>
+              <div class="field-title">
+                Должность
+              </div>
               <el-form-item prop="role">
                 <el-select
                   v-model="registerForm.post"
@@ -160,12 +178,13 @@
                     :key="item.teacher_post"
                     :label="item.teacher_post"
                     :value="item.teacher_post"
-                  >
-                  </el-option>
+                  />
                 </el-select>
               </el-form-item>
 
-              <div class="field-title">Прикрепленный взвод</div>
+              <div class="field-title">
+                Прикрепленный взвод
+              </div>
               <el-form-item prop="milgroup">
                 <el-select
                   v-model="registerForm.supervisedMilgroup"
@@ -177,8 +196,7 @@
                     :key="item.milgroup"
                     :label="item.milgroup"
                     :value="item.milgroup"
-                  >
-                  </el-option>
+                  />
                 </el-select>
               </el-form-item>
             </template>
@@ -190,14 +208,19 @@
             :disabled="disabledButton"
             style="width: 190px; margin-bottom: 30px; margin-top: 20px"
             @click.native.prevent="handleRegister"
-            >Зарегистрироваться
+          >
+            Зарегистрироваться
           </el-button>
         </el-form>
         <div class="register">
           Уже есть аккаунт?
-          <router-link style="color: #007bff" :to="{ name: 'Login' }" replace
-            >Войти</router-link
+          <router-link
+            style="color: #007bff"
+            :to="{name: 'Login'}"
+            replace
           >
+            Войти
+          </router-link>
         </div>
       </div>
       <el-dialog
@@ -229,6 +252,7 @@ import {
   getRanks,
 } from "@/api/reference-book";
 import { registerStudent, registerTeacher } from "@/api/user";
+
 export default {
   name: "Signup",
   data() {
@@ -273,23 +297,31 @@ export default {
     disabledButton() {
       if (this.registerForm.role === "student") {
         return (
-          !this.registerForm.role ||
-          !this.registerForm.milgroup ||
-          !this.registerForm.email
+          !this.registerForm.role
+          || !this.registerForm.milgroup
+          || !this.registerForm.email
         );
       }
       if (this.registerForm.role === "teacher") {
         return (
-          !this.registerForm.firstName ||
-          !this.registerForm.lastName ||
-          !this.registerForm.patronymic ||
-          !this.registerForm.supervisedMilgroup ||
-          !this.registerForm.post ||
-          !this.registerForm.milfaculty ||
-          !this.registerForm.rank
+          !this.registerForm.firstName
+          || !this.registerForm.lastName
+          || !this.registerForm.patronymic
+          || !this.registerForm.supervisedMilgroup
+          || !this.registerForm.post
+          || !this.registerForm.milfaculty
+          || !this.registerForm.rank
         );
       }
       return true;
+    },
+  },
+  watch: {
+    $route: {
+      handler(route) {
+        this.redirect = route.query && route.query.redirect;
+      },
+      immediate: true,
     },
   },
   mounted() {
@@ -297,21 +329,21 @@ export default {
   },
   methods: {
     fetchData() {
-      getMilGroups().then((response) => {
+      getMilGroups().then(response => {
         this.milgroups = response.data;
       });
-      getMilFaculties().then((response) => {
+      getMilFaculties().then(response => {
         this.milfaculties = response.data;
       });
-      getRanks().then((response) => {
+      getRanks().then(response => {
         this.ranks = response.data;
       });
-      getPosts().then((response) => {
+      getPosts().then(response => {
         this.posts = response.data;
       });
     },
     handleRegister() {
-      this.$refs.registerForm.validate((valid) => {
+      this.$refs.registerForm.validate(valid => {
         if (valid) {
           this.loading = true;
           if (this.registerForm.role === "student") {
@@ -320,7 +352,7 @@ export default {
               milgroup: this.registerForm.milgroup,
             };
             registerStudent(data)
-              .then((response) => {
+              .then(response => {
                 this.loading = false;
                 this.finished = true;
                 setTimeout(() => {
@@ -346,7 +378,7 @@ export default {
               rank: this.registerForm.rank,
             };
             registerTeacher(data)
-              .then((response) => {
+              .then(response => {
                 this.loading = false;
                 this.finished = true;
                 setTimeout(() => {
@@ -363,14 +395,6 @@ export default {
           }
         }
       });
-    },
-  },
-  watch: {
-    $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
-      },
-      immediate: true,
     },
   },
 };

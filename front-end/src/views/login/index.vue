@@ -9,7 +9,9 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">Форма авторизации</h3>
+        <h3 class="title">
+          Форма авторизации
+        </h3>
       </div>
 
       <el-form-item prop="email">
@@ -54,14 +56,19 @@
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         @click.native.prevent="handleLogin"
-        >Вход</el-button
       >
+        Вход
+      </el-button>
     </el-form>
     <div class="register">
       Еще нет аккаунта?
-      <router-link style="color: #0060cf" :to="{ name: 'SignUp' }" replace
-        >Зарегистрироваться</router-link
+      <router-link
+        style="color: #0060cf"
+        :to="{name: 'SignUp'}"
+        replace
       >
+        Зарегистрироваться
+      </router-link>
     </div>
   </div>
 </template>
@@ -104,7 +111,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function (route) {
+      handler(route) {
         this.redirect = route.query && route.query.redirect;
       },
       immediate: true,
@@ -122,7 +129,7 @@ export default {
       });
     },
     handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
+      this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
           this.$store
@@ -134,10 +141,10 @@ export default {
             .catch(() => {
               this.loading = false;
             });
-        } else {
-          console.log("error submit!");
-          return false;
+          return true;
         }
+        console.log("error submit!");
+        return false;
       });
     },
   },

@@ -10,7 +10,7 @@ export default class PaperForm {
     publicationDate = "",
     publishers = [],
     tags = [],
-    title = ""
+    title = "",
   ) {
     this.annotation = annotation;
     this.authors = authors;
@@ -25,9 +25,8 @@ export default class PaperForm {
   getContent(action) {
     if (action === "add" || has(this.files[0], "raw")) {
       return this.files[0].raw;
-    } else {
-      return null;
     }
+    return null;
   }
 
   getData() {

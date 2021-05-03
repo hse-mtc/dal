@@ -1,21 +1,21 @@
 <template>
   <ElFormItem :label="label">
     <ElTag
-      v-for="tag in selected"
-      :key="tag"
+      v-for="selectedTag in selected"
+      :key="selectedTag"
       closable
-      @close="handleClose(tag)"
       class="mr-2"
+      @close="handleClose(selectedTag)"
     >
-      {{ tag }}
+      {{ selectedTag }}
     </ElTag>
 
     <ElAutocomplete
       v-model="tag"
       :fetch-suggestions="suggestions"
+      class="inline-input"
       @select="handleSelect"
       @keyup.enter.native="handleSelect"
-      class="inline-input"
     />
   </ElFormItem>
 </template>
@@ -64,6 +64,8 @@ export default {
     handleSelect() {
       const tag = this.tag.trim().toLowerCase();
       if (this.tag && !this.selected.includes(tag)) {
+        // todo
+        // eslint-disable-next-line vue/no-mutating-props
         this.selected.push(tag);
       }
       this.tag = "";
@@ -74,6 +76,8 @@ export default {
     handleClose(tag) {
       const index = this.selected.indexOf(tag);
       if (index > -1) {
+        // todo
+        // eslint-disable-next-line vue/no-mutating-props
         this.selected.splice(index, 1);
       }
 
@@ -86,10 +90,9 @@ export default {
       //   2. Leave the ones that contain tag as substring.
       const asValues = this.all
         .filter(
-          (tag) =>
-            !this.selected.includes(tag) && tag.indexOf(text.toLowerCase()) > -1
+          tag => !this.selected.includes(tag) && tag.indexOf(text.toLowerCase()) > -1,
         )
-        .map((tag) => ({ value: tag }));
+        .map(tag => ({ value: tag }));
 
       cb(asValues);
     },

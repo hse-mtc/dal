@@ -7,10 +7,10 @@
       'margin-bottom': mb + 'px',
       'margin-left': ml + 'px',
       'margin-right': mr + 'px',
-      ...customStyle,
+      ...customStyle
     }"
   >
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
@@ -28,9 +28,7 @@ export default {
     },
     customStyle: {
       type: Object,
-      default: () => {
-        return {};
-      },
+      default: () => ({}),
     },
     mt: {
       type: Number,

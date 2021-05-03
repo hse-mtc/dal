@@ -8,7 +8,9 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">Смена пароля</h3>
+        <h3 class="title">
+          Смена пароля
+        </h3>
       </div>
 
       <el-form-item prop="password">
@@ -44,15 +46,17 @@
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         @click="handleChangePassword"
-        >Подтвердить</el-button
       >
+        Подтвердить
+      </el-button>
     </el-form>
   </div>
 </template>
 
 <script>
 import { changePassword } from "@/api/user";
-import jwt_decode from "jwt-decode";
+import jwtDecode from "jwt-decode";
+
 export default {
   name: "ChangePassword",
   data() {
@@ -88,9 +92,9 @@ export default {
     };
   },
   created() {
-    let token = this.$route.query.token;
+    let { token } = this.$route.query;
     try {
-      jwt_decode(token);
+      jwtDecode(token);
     } catch (ex) {
       token = null;
     }
@@ -113,30 +117,29 @@ export default {
     },
     handleChangePassword() {
       console.log(1);
-      this.$refs.changePasswordForm.validate((valid) => {
+      this.$refs.changePasswordForm.validate(async valid => {
         console.log(2);
         if (valid) {
           this.loading = true;
-          changePassword({ password: this.changePasswordForm.password })
-            .then(() => {
-              console.log("changed");
-              this.$store
-                .dispatch("user/resetToken")
-                .then(() => {
-                  this.$router.push({ path: "/login" });
-                  this.loading = false;
-                })
-                .catch(() => {
-                  this.loading = false;
-                });
-            })
-            .catch(() => {
-              this.loading = false;
-            });
-        } else {
-          console.log("error submit!");
-          return false;
+          try {
+            await changePassword({ password: this.changePasswordForm.password });
+            this.$store
+              .dispatch("user/resetToken")
+              .then(() => {
+                this.$router.push({ path: "/login" });
+                this.loading = false;
+              })
+              .catch(() => {
+                this.loading = false;
+              });
+            return true;
+          } catch (e) {
+            this.loading = false;
+            return false;
+          }
         }
+        console.log("error submit!");
+        return false;
       });
     },
   },

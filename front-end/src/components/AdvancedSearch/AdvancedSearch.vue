@@ -9,16 +9,18 @@
           src="../../assets/scienceWorks/dropdown.svg"
           alt=""
           class="my-advanced-search-arrow ml-2"
-        />
+        >
       </div>
     </div>
     <div class="filters mt-3 pt-3 pb-3" style="display: none">
       <el-row class="">
         <el-col :span="10" :offset="1">
-          <div class="filters-title pl-1">Автор</div>
+          <div class="filters-title pl-1">
+            Автор
+          </div>
           <el-select
-            clearable
             v-model="author"
+            clearable
             placeholder="Все авторы"
             class="filters-select"
             @change="updateQuery"
@@ -32,10 +34,12 @@
           </el-select>
         </el-col>
         <el-col :span="10" :offset="1">
-          <div class="filters-title pl-1">Размещение</div>
+          <div class="filters-title pl-1">
+            Размещение
+          </div>
           <el-select
-            clearable
             v-model="placing"
+            clearable
             placeholder="Все размещения"
             class="filters-select"
             @change="updateQuery"
@@ -51,7 +55,9 @@
       </el-row>
       <el-row class="mt-3">
         <el-col :offset="1" :span="10">
-          <div class="filters-title pl-1">Период публикации</div>
+          <div class="filters-title pl-1">
+            Период публикации
+          </div>
           <el-date-picker
             v-model="valueDate"
             type="daterange"
@@ -86,6 +92,33 @@ export default {
       valueDate: "",
     };
   },
+  mounted() {
+    if (this.$store.getters.authors.length === 0) {
+      getAuthors()
+        .then(response => {
+          this.authors = response.data;
+          this.setAuthors(this.authors);
+        })
+        .catch(() => {
+          console.log("Данные по авторам не указаны");
+        });
+    } else {
+      this.authors = this.$store.getters.authors;
+    }
+
+    if (this.$store.getters.publishers.length === 0) {
+      getPublishPlaces()
+        .then(response => {
+          this.placings = response.data;
+          this.setPublishers(this.placings);
+        })
+        .catch(() => {
+          console.log("Данные по размещениям не указаны");
+        });
+    } else {
+      this.placings = this.$store.getters.publishers;
+    }
+  },
   methods: {
     surnameWithInitials,
     ...mapActions({
@@ -119,34 +152,6 @@ export default {
 
       this.$router.push({ query });
     },
-  },
-
-  mounted() {
-    if (this.$store.getters.authors.length === 0) {
-      getAuthors()
-        .then((response) => {
-          this.authors = response.data;
-          this.setAuthors(this.authors);
-        })
-        .catch(() => {
-          console.log("Данные по авторам не указаны");
-        });
-    } else {
-      this.authors = this.$store.getters.authors;
-    }
-
-    if (this.$store.getters.publishers.length === 0) {
-      getPublishPlaces()
-        .then((response) => {
-          this.placings = response.data;
-          this.setPublishers(this.placings);
-        })
-        .catch(() => {
-          console.log("Данные по размещениям не указаны");
-        });
-    } else {
-      this.placings = this.$store.getters.publishers;
-    }
   },
 };
 </script>

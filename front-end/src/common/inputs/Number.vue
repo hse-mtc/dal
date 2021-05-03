@@ -1,12 +1,12 @@
 <template>
   <InputsBase
     :title="title"
-    :wrapperClassName="wrapperClassName"
-    :titleClassName="titleClassName"
+    :wrapper-class-name="wrapperClassName"
+    :title-class-name="titleClassName"
   >
     <el-input
-      style="width: 100%; max-width: 100%"
       v-model="value"
+      style="width: 100%; max-width: 100%"
       type="number"
       v-bind="$attrs"
     />
@@ -17,7 +17,7 @@
 import mixin from "./inputsMixin";
 
 export default {
-  mixins: [mixin],
   name: "NumberInput",
+  mixins: [mixin],
 };
 </script>

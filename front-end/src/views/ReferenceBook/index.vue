@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ReferenceBook from "../../components/ReferenceBook/ReferenceBook";
+import ReferenceBook from "../../components/ReferenceBook/ReferenceBook.vue";
 
 export default {
   components: {

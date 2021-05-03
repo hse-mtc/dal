@@ -195,46 +195,44 @@ export const AGREEMENT = {
   },
 };
 
-export const getRelationData = (rel) => {
-  return {
-    surname: {
-      component: "TextInput",
-      title: `Фамилия ${rel}`,
-      props: { onlyChars: true },
-    },
-    name: {
-      component: "TextInput",
-      title: `Имя ${rel}`,
-      props: { onlyChars: true },
-    },
-    patronymic: {
-      component: "TextInput",
-      title: `Отчество ${rel} (при наличии)`,
-      props: { onlyChars: true },
-    },
-    citizenship: {
-      component: "TextInput",
-      title: `Гражданство ${rel}`,
-      props: { onlyChars: true, placeholder: "РФ" },
-    },
-    permanent_address: {
-      component: "TextInput",
-      title: `Адрес постоянной регистрации ${rel}`,
-    },
-    date: { component: "DateInput", title: `Дата рождения ${rel}` },
-    country: {
-      component: "TextInput",
-      title: `Страна рождения ${rel}`,
-      props: { onlyChars: true },
-    },
-    city: { component: "TextInput", title: `Город рождения ${rel}` },
-    personal_email: { component: "TextInput", title: `Личная почта ${rel}` },
-    personal_phone_number: {
-      component: "TextInput",
-      title: `Номер телефона ${rel}`,
-    },
-  };
-};
+export const getRelationData = rel => ({
+  surname: {
+    component: "TextInput",
+    title: `Фамилия ${rel}`,
+    props: { onlyChars: true },
+  },
+  name: {
+    component: "TextInput",
+    title: `Имя ${rel}`,
+    props: { onlyChars: true },
+  },
+  patronymic: {
+    component: "TextInput",
+    title: `Отчество ${rel} (при наличии)`,
+    props: { onlyChars: true },
+  },
+  citizenship: {
+    component: "TextInput",
+    title: `Гражданство ${rel}`,
+    props: { onlyChars: true, placeholder: "РФ" },
+  },
+  permanent_address: {
+    component: "TextInput",
+    title: `Адрес постоянной регистрации ${rel}`,
+  },
+  date: { component: "DateInput", title: `Дата рождения ${rel}` },
+  country: {
+    component: "TextInput",
+    title: `Страна рождения ${rel}`,
+    props: { onlyChars: true },
+  },
+  city: { component: "TextInput", title: `Город рождения ${rel}` },
+  personal_email: { component: "TextInput", title: `Личная почта ${rel}` },
+  personal_phone_number: {
+    component: "TextInput",
+    title: `Номер телефона ${rel}`,
+  },
+});
 
 export const STEPS_RU = {
   about: "Общее",

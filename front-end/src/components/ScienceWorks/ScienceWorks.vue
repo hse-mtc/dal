@@ -2,10 +2,12 @@
   <div>
     <el-col :span="24" class="scienceWork">
       <el-row class="pageTitle">
-        <el-col :offset="2" :span="22"> Военно-научные работы </el-col>
+        <el-col :offset="2" :span="22">
+          Военно-научные работы
+        </el-col>
       </el-row>
 
-      <div class="categories-block" v-if="categories.length">
+      <div v-if="categories.length" class="categories-block">
         <el-row class="select-work">
           <el-col :span="10" :offset="2">
             <span class="category-selected" @click="toggleCategorySelector">
@@ -18,7 +20,7 @@
               class="ml-2"
               style="cursor: pointer"
               @click="toggleCategorySelector"
-            />
+            >
           </el-col>
 
           <el-col :span="7">
@@ -32,33 +34,34 @@
           <el-col :offset="2" :span="20" class="categories-title">
             <el-row style="width: 100%">
               <el-col
-                v-for="{ id, title } in categories"
+                v-for="{id, title} in categories"
                 :key="id"
                 :span="12"
                 class="category-title"
               >
                 <div>
                   <span
-                    style="cursor: pointer"
                     :id="id"
+                    style="cursor: pointer"
                     @click="selectCategory(id)"
                   >
                     {{ title }}
                   </span>
                   <img
-                    @click="deleteCategory(id)"
                     class="category-delete ml-2"
                     height="10px"
                     src="../../assets/scienceWorks/close.svg"
                     alt="Удалить категорию"
-                  />
+                    @click="deleteCategory(id)"
+                  >
                 </div>
               </el-col>
 
               <el-col :span="12" class="category-title" style="color: #0050b2">
-                <span @click="addNewPaperCategory" style="cursor: pointer"
-                  >Добавить новую категорию</span
-                >
+                <span
+                  style="cursor: pointer"
+                  @click="addNewPaperCategory"
+                >Добавить новую категорию</span>
               </el-col>
             </el-row>
           </el-col>
@@ -68,7 +71,7 @@
               src="../../assets/scienceWorks/cross.svg"
               alt=""
               @click="closeCategorySelector"
-            />
+            >
           </el-col>
         </el-row>
       </div>
@@ -77,7 +80,7 @@
         <el-col :span="12" :offset="2">
           <Search placeholder="Введите ключевые слова" />
           <AdvancedSearch class="advanced-search" />
-          <Documents class="documents" v-on:openPaperModal="openPaperModal" />
+          <Documents class="documents" @openPaperModal="openPaperModal" />
         </el-col>
 
         <el-col :offset="1" :span="8">
@@ -93,13 +96,13 @@
 
     <AddCategoryModalWindow
       v-if="addNewCategory"
-      v-on:closeModal="closeModal"
+      @closeModal="closeModal"
     />
     <UpsertPaperModal
       v-if="paperAction"
       :action="paperAction"
       :paper="paperToEdit"
-      v-on:closeModal="closeModal"
+      @closeModal="closeModal"
     />
 
     <div
@@ -154,20 +157,20 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState({
+      categories: state => state.documents.categories,
+    }),
+  },
+
   created() {
     this.fetchData();
   },
   mounted() {
     const self = this;
-    EventBus.$on("UPDATE_CATEGORY", function () {
+    EventBus.$on("UPDATE_CATEGORY", () => {
       self.fetchData();
     });
-  },
-
-  computed: {
-    ...mapState({
-      categories: (state) => state.documents.categories,
-    }),
   },
 
   methods: {
@@ -189,7 +192,7 @@ export default {
         "Open Paper Modal: action = ",
         action,
         " to edit = ",
-        paperToEdit
+        paperToEdit,
       );
       this.paperAction = action;
       this.paperToEdit = paperToEdit;
@@ -208,9 +211,9 @@ export default {
     rotateArrow() {
       const arrow = document.getElementById("dark-arrow");
       if (arrow) {
-        this.modalCategories
-          ? (arrow.style.transform = "rotate(180deg)")
-          : (arrow.style.transform = "rotate(0deg)");
+        arrow.style.transform = this.modalCategories
+          ? "rotate(180deg)"
+          : "rotate(0deg)";
       }
     },
     closeCategorySelector() {
@@ -258,7 +261,7 @@ export default {
     },
 
     selectCategory(id) {
-      this.category = this.categories.find((category) => category.id === id);
+      this.category = this.categories.find(category => category.id === id);
       this.$router.replace({
         name: "Science Articles",
         query: { category: id.toString() },

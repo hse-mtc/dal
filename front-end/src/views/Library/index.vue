@@ -14,10 +14,10 @@ export default {
   components: {
     LibraryComponent,
   },
-  computed: {},
   data() {
     return {};
   },
+  computed: {},
   methods: {},
 };
 </script>

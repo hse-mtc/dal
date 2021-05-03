@@ -22,6 +22,8 @@ export function getAbsenceJournal(params) {
 }
 
 export function patchAbsence(data) {
+  // todo
+  // eslint-disable-next-line no-param-reassign
   if (data.studentid !== undefined) data.studentid = { id: data.studentid.id };
   return request({
     url: `${BASE_API_URL}${absence}${data.id}/`,
@@ -31,6 +33,8 @@ export function patchAbsence(data) {
 }
 
 export function postAbsence(data) {
+  // todo
+  // eslint-disable-next-line no-param-reassign
   if (data.studentid !== undefined) data.studentid = { id: data.studentid.id };
   return request({
     url: BASE_API_URL + absence,

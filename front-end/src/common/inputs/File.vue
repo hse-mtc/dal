@@ -2,9 +2,9 @@
   <InputsBase
     :title="title"
     :annotation="inputAnnotation"
-    :wrapperClassName="wrapperClassName"
-    :titleClassName="titleClassName"
-    :annotationClassName="annotationClassName"
+    :wrapper-class-name="wrapperClassName"
+    :title-class-name="titleClassName"
+    :annotation-class-name="annotationClassName"
   >
     <el-upload
       action=""
@@ -31,10 +31,10 @@
 import mixin from "./inputsMixin";
 
 export default {
-  mixins: [mixin],
   name: "NumberInput",
+  mixins: [mixin],
   props: {
-    limit: { type: Number },
+    limit: { type: Number, default: 0 },
     filesTypes: { type: Array, default: () => [] },
   },
   computed: {

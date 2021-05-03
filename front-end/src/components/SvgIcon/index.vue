@@ -5,7 +5,12 @@
     class="svg-external-icon svg-icon"
     v-on="$listeners"
   />
-  <svg v-else :class="svgClass" aria-hidden="true" v-on="$listeners">
+  <svg
+    v-else
+    :class="svgClass"
+    aria-hidden="true"
+    v-on="$listeners"
+  >
     <use :href="iconName" />
   </svg>
 </template>
@@ -35,10 +40,9 @@ export default {
     },
     svgClass() {
       if (this.className) {
-        return "svg-icon " + this.className;
-      } else {
-        return "svg-icon";
+        return `svg-icon ${this.className}`;
       }
+      return "svg-icon";
     },
     styleExternalIcon() {
       return {

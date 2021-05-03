@@ -2,7 +2,9 @@
   <div :class="$style.root">
     <template v-if="!formSubmitted">
       <div :class="$style.header">
-        <h2 :class="$style.title">{{ headers[step] }}</h2>
+        <h2 :class="$style.title">
+          {{ headers[step] }}
+        </h2>
 
         <el-steps
           :active="stepIndex"
@@ -20,20 +22,20 @@
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
         <el-form
           ref="form"
+          :key="step"
           :model="studentData[step]"
           :rules="rules[step]"
-          :key="step"
         >
           <el-form-item
-            v-for="({ component, title, props = {} }, key) in fields[step]"
+            v-for="({component, title, props = {}}, key) in fields[step]"
             :key="key"
             :prop="key"
           >
             <component
               :is="component"
+              v-model="studentData[step][key]"
               :title="title"
               v-bind="props"
-              v-model="studentData[step][key]"
             />
           </el-form-item>
         </el-form>
@@ -41,8 +43,8 @@
         <div
           v-if="
             step === STEPS.photo &&
-            studentData.photo.photo &&
-            studentData.photo.photo.length
+              studentData.photo.photo &&
+              studentData.photo.photo.length
           "
           :style="{
             flex: 1,
@@ -50,7 +52,7 @@
             backgroundImage: `url('${getObjUrl(
               studentData.photo.photo[0].raw
             )}')`,
-            margin: '10px',
+            margin: '10px'
           }"
         />
       </template>
@@ -85,7 +87,7 @@
                 :rules="rules[step]"
               >
                 <el-form-item
-                  v-for="({ component, title, props = {} }, key) in fields[
+                  v-for="({component, title, props = {}}, key) in fields[
                     step
                   ]"
                   :key="key"
@@ -93,9 +95,9 @@
                 >
                   <component
                     :is="component"
+                    v-model="item[key]"
                     :title="title"
                     v-bind="props"
-                    v-model="item[key]"
                   />
                 </el-form-item>
               </el-form>
@@ -109,20 +111,22 @@
       </template>
 
       <div>
-        <el-button v-if="step !== firstStep" @click="prev"> Назад </el-button>
+        <el-button v-if="step !== firstStep" @click="prev">
+          Назад
+        </el-button>
 
         <el-button
           v-if="step !== lastStep"
-          @click="next"
           type="primary"
           native-type="submit"
+          @click="next"
         >
           Дальше
         </el-button>
         <el-button
           v-else
-          type="primary"
           v-loading="isSubmitting"
+          type="primary"
           native-type="submit"
           @click="submit"
         >
@@ -178,17 +182,22 @@ import { getReferenceMilSpecialties } from "@/api/reference-book";
 
 export default {
   name: "ApplicantForm",
-  components: { DateInput, FileInput, TextInput, SelectInput, SingleCheckbox },
+  components: {
+    DateInput,
+    FileInput,
+    TextInput,
+    SelectInput,
+    SingleCheckbox,
+  },
 
   data() {
-    const createData = (fields) =>
-      Object.keys(fields).reduce(
-        (memo, item) => ({
-          ...memo,
-          [item]: "",
-        }),
-        {}
-      );
+    const createData = fields => Object.keys(fields).reduce(
+      (memo, item) => ({
+        ...memo,
+        [item]: "",
+      }),
+      {},
+    );
 
     return {
       studentData: {
@@ -280,7 +289,7 @@ export default {
         },
       });
 
-      const getMaxLengthValidator = (max) => ({
+      const getMaxLengthValidator = max => ({
         max,
         message: `Максимальное количество символов - ${max}`,
       });
@@ -288,14 +297,16 @@ export default {
       const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
       const corpMailValidator = getValidator(
         /[A-Za-z0-9._%+-]+@edu\.hse\.ru$/,
-        "Почта должна оканчиваться на @edu.hse.ru"
+        "Почта должна оканчиваться на @edu.hse.ru",
       );
       const phoneValidator = getValidator(
         /^\+?\d{11}$/,
-        "Введите корректный номер телефона"
+        "Введите корректный номер телефона",
       );
-      const makeRequired = (fields) =>
-        fields.reduce((memo, item) => ({ ...memo, [item]: [required] }), {});
+      const makeRequired = fields => fields.reduce((memo, item) => ({
+        ...memo,
+        [item]: [required],
+      }), {});
 
       const relationFields = {
         ...makeRequired([
@@ -312,11 +323,11 @@ export default {
       };
 
       const withMotherRules = Object.values(this.studentData.mother).filter(
-        Boolean
+        Boolean,
       ).length;
 
       const withFaterRules = Object.values(this.studentData.father).filter(
-        Boolean
+        Boolean,
       ).length;
 
       const motherFatherPhone = [
@@ -378,7 +389,7 @@ export default {
             required,
             getValidator(
               /^\d{3}-\d{3}$/,
-              "Введите код подразделения в формате 700-007 "
+              "Введите код подразделения в формате 700-007 ",
             ),
           ],
         },
@@ -389,7 +400,7 @@ export default {
             required,
             getValidator(
               /^\d\d(\.\d\d){2}$/,
-              "Введите код программы в формате 01.02.03"
+              "Введите код программы в формате 01.02.03",
             ),
           ],
         },
@@ -406,6 +417,26 @@ export default {
         milspecialty: { milspecialty: [required] },
         agreement: { agreement: [requiredBool], isDataCorrect: [requiredBool] },
       };
+    },
+  },
+
+  watch: {
+    async step(nextValue) {
+      if (nextValue === STEPS.milspecialty) {
+        try {
+          const { data } = await getReferenceMilSpecialties(
+            this.studentData.universityInfo.campus,
+          );
+          this.fillMilspecialtyOptions(data);
+        } catch (e) {
+          this.$message({
+            type: "error",
+            duration: 1000 * 5,
+            message:
+              "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
+          });
+        }
+      }
     },
   },
 
@@ -426,12 +457,12 @@ export default {
 
     fillMilspecialtyOptions(data) {
       this.fields.milspecialty.milspecialty.props.options = data.map(
-        (item) => ({
+        item => ({
           label: item.milspecialty
             ? `${item.code} - ${item.milspecialty}`
             : item.code,
           value: item.code,
-        })
+        }),
       );
     },
 
@@ -458,7 +489,7 @@ export default {
       let isValid = true;
       const ref = this.$refs.form;
 
-      const formValidate = (valid) => {
+      const formValidate = valid => {
         if (!valid && isValid) {
           this.$message({
             type: "error",
@@ -470,7 +501,7 @@ export default {
 
       if (ref) {
         if (this.lodash.isArray(ref)) {
-          ref.forEach((item) => item.validate(formValidate));
+          ref.forEach(item => item.validate(formValidate));
         } else {
           ref.validate(formValidate);
         }
@@ -483,7 +514,7 @@ export default {
       const { studentData, step } = this;
       const data = studentData[step];
 
-      Object.keys(data).forEach((key) => {
+      Object.keys(data).forEach(key => {
         if (this.lodash.isString(data[key])) {
           data[key] = data[key].trim();
         }
@@ -511,7 +542,7 @@ export default {
           ...this.studentData[step],
           Object.keys(getRelationData(this.relationsLabel[step])).reduce(
             (memo, item) => ({ ...memo, [item]: "" }),
-            {}
+            {},
           ),
         ];
         this.tabsIndex[step] = `${this.studentData[step].length - 1}`;
@@ -552,19 +583,15 @@ export default {
           });
         }
 
-        this.studentData.brothers.forEach((brother) =>
-          family.push({
-            ...this.convertFamily(brother),
-            type: "BR",
-          })
-        );
+        this.studentData.brothers.forEach(brother => family.push({
+          ...this.convertFamily(brother),
+          type: "BR",
+        }));
 
-        this.studentData.sisters.forEach((sister) =>
-          family.push({
-            ...this.convertFamily(sister),
-            type: "SI",
-          })
-        );
+        this.studentData.sisters.forEach(sister => family.push({
+          ...this.convertFamily(sister),
+          type: "SI",
+        }));
 
         const reader = new FileReader();
 
@@ -580,7 +607,7 @@ export default {
           generate_documents: true,
         };
 
-        reader.onload = async () => {
+        reader.onload = async() => {
           data.image = reader.result;
 
           try {
@@ -588,30 +615,30 @@ export default {
             this.formSubmitted = true;
           } catch (e) {
             this.$alert(
-              'Проверьте правильность заполненных данных. Если проблема не решится, отправьте текст ошибки нам на почту: <a href="mailto:dal.mec.hse@gmail.com">dal.mec.hse@gmail.com</a>',
+              "Проверьте правильность заполненных данных. Если проблема не решится, отправьте текст ошибки нам на почту: <a href=\"mailto:dal.mec.hse@gmail.com\">dal.mec.hse@gmail.com</a>",
               "Не удалось отправить форму",
               {
                 confirmButtonText: "Скопировать текст ошибки",
                 type: "error",
                 dangerouslyUseHTMLString: true,
-                callback: async () => {
+                callback: async() => {
                   try {
                     await navigator.clipboard.writeText(
-                      JSON.stringify(e.response.data, null, 4)
+                      JSON.stringify(e.response.data, null, 4),
                     );
                     this.$message({
                       type: "success",
                       message: "Текст скопирован",
                     });
-                  } catch (e) {
-                    console.error("Ошибка копирования:", e);
+                  } catch (copyErr) {
+                    console.error("Ошибка копирования:", copyErr);
                     this.$message({
                       type: "error",
                       message: "Текст не скопирован",
                     });
                   }
                 },
-              }
+              },
             );
           }
 
@@ -636,26 +663,6 @@ export default {
           this.$message({
             type: "error",
             message: "Ошибка чтения файла",
-          });
-        }
-      }
-    },
-  },
-
-  watch: {
-    async step(nextValue) {
-      if (nextValue === STEPS.milspecialty) {
-        try {
-          const { data } = await getReferenceMilSpecialties(
-            this.studentData.universityInfo.campus
-          );
-          this.fillMilspecialtyOptions(data);
-        } catch (e) {
-          this.$message({
-            type: "error",
-            duration: 1000 * 5,
-            message:
-              "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
           });
         }
       }

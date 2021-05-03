@@ -6,18 +6,18 @@
       class="words-search"
       :placeholder="placeholder"
       @keyup.enter="searchHandler"
-    />
+    >
     <img
       src="@/assets/delete-cross.svg"
       class="delete-cross"
       alt=""
       @click="deleteHandler"
-    />
+    >
     <img
       src="@/assets/scienceWorks/searchIcon.svg"
       class="search-icon"
       @click="searchHandler"
-    />
+    >
   </div>
 </template>
 
@@ -32,10 +32,18 @@ export default {
     },
     delete: {
       type: Function,
+      required: true,
     },
     search: {
       type: Function,
       required: true,
+    },
+  },
+  watch: {
+    $route() {
+      if (this.$route.query.search) {
+        this.$refs.searchInput.value = this.$route.query.search;
+      }
     },
   },
   mounted() {
@@ -51,13 +59,6 @@ export default {
       this.$refs.searchInput.value = "";
       if (this.delete) {
         this.delete();
-      }
-    },
-  },
-  watch: {
-    $route() {
-      if (this.$route.query.search) {
-        this.$refs.searchInput.value = this.$route.query.search;
       }
     },
   },

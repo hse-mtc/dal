@@ -1,12 +1,12 @@
 <template>
   <Select
+    v-model="value"
     :title="title"
     :annotation="annotation"
-    :wrapperClassName="wrapperClassName"
-    :titleClassName="titleClassName"
-    :annotationClassName="annotationClassName"
+    :wrapper-class-name="wrapperClassName"
+    :title-class-name="titleClassName"
+    :annotation-class-name="annotationClassName"
     :options="tags"
-    v-model="value"
     multiple
     filterable
     allow-create
@@ -20,9 +20,9 @@ import mixin from "./inputsMixin";
 import Select from "./Select.vue";
 
 export default {
-  mixins: [mixin],
   name: "TagsInput",
   components: { Select },
+  mixins: [mixin],
   props: {
     tags: { type: Array, default: () => [] },
   },
@@ -34,8 +34,8 @@ export default {
       this.$emit(
         "change",
         values
-          .map((item) => item.trim().toLowerCase())
-          .filter((item) => Boolean(item))
+          .map(item => item.trim().toLowerCase())
+          .filter(item => Boolean(item)),
       );
     },
   },

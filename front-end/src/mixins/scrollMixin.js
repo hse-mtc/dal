@@ -10,12 +10,12 @@ export const scrollMixin = {
     window.removeEventListener("scroll", this.onScroll);
   },
   methods: {
-    onScroll: throttle(function () {
-      const top = getCoords(this.$el).top;
+    onScroll: throttle(function throttledOnScroll() {
+      const { top } = getCoords(this.$el);
       const delta = 100;
       if (
-        window.pageYOffset + window.document.documentElement.clientHeight >=
-        this.$el.clientHeight + top - delta
+        window.pageYOffset + window.document.documentElement.clientHeight
+        >= this.$el.clientHeight + top - delta
       ) {
         this.loadMore();
       }

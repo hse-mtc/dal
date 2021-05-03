@@ -7,10 +7,10 @@
     <el-col :span="24">
       <div class="tabs">
         <div
-          class="tab"
           v-for="item in tabs"
-          :class="{ active: activeTab === item.value }"
           :key="item.value"
+          class="tab"
+          :class="{active: activeTab === item.value}"
           @click="changeTab(item.value)"
         >
           {{ item.label }}
@@ -25,10 +25,10 @@
         <MyDocuments />
       </div>
       <div v-if="activeTab === 'library'">
-        <Library :isMyLibrary="true" />
+        <Library :is-my-library="true" />
       </div>
       <div v-if="activeTab === 'books'">
-        <Library :isFavoriteBooks="true" />
+        <Library :is-favorite-books="true" />
       </div>
     </el-col>
   </el-row>

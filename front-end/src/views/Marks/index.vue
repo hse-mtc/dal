@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Marks from "../../components/Marks/Marks";
+import Marks from "../../components/Marks/Marks.vue";
 
 export default {
   components: {

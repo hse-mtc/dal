@@ -1,10 +1,11 @@
-const state = {
+const initState = {
   subjects: [],
 };
 
 const mutations = {
+  /* eslint-disable no-param-reassign */
   UPSERT_SUBJECT: (state, payload) => {
-    const index = state.subjects.findIndex((e) => e.id === payload.id);
+    const index = state.subjects.findIndex(e => e.id === payload.id);
 
     if (index === -1) {
       state.subjects.push(payload);
@@ -16,8 +17,9 @@ const mutations = {
     state.subjects = payload;
   },
   DELETE_SUBJECT: (state, id) => {
-    state.subjects = state.subjects.filter((subject) => subject.id !== id);
+    state.subjects = state.subjects.filter(subject => subject.id !== id);
   },
+  /* eslint-enable no-param-reassign */
 };
 
 const actions = {
@@ -34,7 +36,7 @@ const actions = {
 
 export default {
   namespaced: true,
-  state,
+  state: initState,
   mutations,
   actions,
 };

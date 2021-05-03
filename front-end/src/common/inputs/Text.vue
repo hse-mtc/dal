@@ -2,17 +2,17 @@
   <InputsBase
     :title="title"
     :annotation="annotation"
-    :wrapperClassName="wrapperClassName"
-    :titleClassName="titleClassName"
-    :annotationClassName="annotationClassName"
+    :wrapper-class-name="wrapperClassName"
+    :title-class-name="titleClassName"
+    :annotation-class-name="annotationClassName"
   >
     <el-input
-      style="width: 100%; max-width: 100%"
       v-model="value"
+      style="width: 100%; max-width: 100%"
       :type="type"
       v-bind="$attrs"
-      v-on="$listeners"
       :placeholder="placeholder"
+      v-on="$listeners"
     />
   </InputsBase>
 </template>
@@ -21,8 +21,8 @@
 import mixin from "./inputsMixin";
 
 export default {
-  mixins: [mixin],
   name: "TextInput",
+  mixins: [mixin],
   props: {
     isTextArea: { type: Boolean, default: false },
     onlyChars: { type: Boolean, default: false },

@@ -8,23 +8,27 @@
  * @param {string} cFormat
  * @returns {string | null}
  */
-export function parseTime(time, cFormat) {
+export function parseTime(rawTime, cFormat) {
   if (arguments.length === 0) {
     return null;
   }
+
   const format = cFormat || "{y}-{m}-{d} {h}:{i}:{s}";
   let date;
-  if (typeof time === "object") {
-    date = time;
+  let time;
+
+  if (typeof rawTime === "object") {
+    date = rawTime;
   } else {
     if (typeof time === "string" && /^[0-9]+$/.test(time)) {
-      time = parseInt(time);
+      time = parseInt(rawTime, 10);
     }
     if (typeof time === "number" && time.toString().length === 10) {
-      time = time * 1000;
+      time = rawTime * 1000;
     }
     date = new Date(time);
   }
+
   const formatObj = {
     y: date.getFullYear(),
     m: date.getMonth() + 1,
@@ -34,7 +38,8 @@ export function parseTime(time, cFormat) {
     s: date.getSeconds(),
     a: date.getDay(),
   };
-  const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
+
+  const timeStr = format.replace(/{([ymdhisa])+}/g, (result, key) => {
     const value = formatObj[key];
     // Note: getDay() returns 0 on Sunday
     if (key === "a") {
@@ -42,7 +47,8 @@ export function parseTime(time, cFormat) {
     }
     return value.toString().padStart(2, "0");
   });
-  return time_str;
+
+  return timeStr;
 }
 
 /**
@@ -50,9 +56,11 @@ export function parseTime(time, cFormat) {
  * @param {string} option
  * @returns {string}
  */
-export function formatTime(time, option) {
-  if (("" + time).length === 10) {
-    time = parseInt(time) * 1000;
+export function formatTime(rawTime, option) {
+  let time;
+
+  if ((`${rawTime}`).length === 10) {
+    time = parseInt(time, 10) * 1000;
   } else {
     time = +time;
   }
@@ -63,29 +71,28 @@ export function formatTime(time, option) {
 
   if (diff < 30) {
     return "刚刚";
-  } else if (diff < 3600) {
+  } if (diff < 3600) {
     // less 1 hour
-    return Math.ceil(diff / 60) + "分钟前";
-  } else if (diff < 3600 * 24) {
-    return Math.ceil(diff / 3600) + "小时前";
-  } else if (diff < 3600 * 24 * 2) {
+    return `${Math.ceil(diff / 60)}分钟前`;
+  } if (diff < 3600 * 24) {
+    return `${Math.ceil(diff / 3600)}小时前`;
+  } if (diff < 3600 * 24 * 2) {
     return "1天前";
   }
   if (option) {
     return parseTime(time, option);
-  } else {
-    return (
-      d.getMonth() +
-      1 +
-      "月" +
-      d.getDate() +
-      "日" +
-      d.getHours() +
-      "时" +
-      d.getMinutes() +
-      "分"
-    );
   }
+  return (
+    `${d.getMonth()
+      + 1
+    }月${
+      d.getDate()
+    }日${
+      d.getHours()
+    }时${
+      d.getMinutes()
+    }分`
+  );
 }
 
 /**
@@ -98,12 +105,12 @@ export function param2Obj(url) {
     return {};
   }
   return JSON.parse(
-    '{"' +
+    `{"${
       decodeURIComponent(search)
-        .replace(/"/g, '\\"')
-        .replace(/&/g, '","')
-        .replace(/=/g, '":"')
-        .replace(/\+/g, " ") +
-      '"}'
+        .replace(/"/g, "\\\"")
+        .replace(/&/g, "\",\"")
+        .replace(/=/g, "\":\"")
+        .replace(/\+/g, " ")
+    }"}`,
   );
 }

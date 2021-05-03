@@ -5,12 +5,12 @@
       class="drawer-bg"
       @click="handleClickOutside"
     />
-    <sidebar class="sidebar-container" />
-    <div class="main-container" id="main-container">
-      <div :class="{ 'fixed-header': fixedHeader }">
-        <navbar />
+    <Sidebar class="sidebar-container" />
+    <div id="main-container" class="main-container">
+      <div :class="{'fixed-header': fixedHeader}">
+        <Navbar />
       </div>
-      <app-main />
+      <AppMain />
     </div>
   </div>
 </template>
@@ -33,29 +33,6 @@ export default {
     AppMain,
   },
   mixins: [ResizeMixin],
-  mounted() {
-    getAuthors()
-      .then((response) => {
-        this.setAuthors(response.data);
-      })
-      .catch(() => {
-        console.log("Данные по авторам не указаны");
-      });
-    getSubjects()
-      .then((response) => {
-        this.setSubjects(response.data);
-      })
-      .catch(() => {
-        console.log("Данные по предметам не указаны");
-      });
-    getPublishPlaces()
-      .then((response) => {
-        this.setPublishers(response.data);
-      })
-      .catch(() => {
-        console.log("Данные по издательствам не указаны");
-      });
-  },
   computed: {
     sidebar() {
       return this.$store.state.app.sidebar;
@@ -74,6 +51,29 @@ export default {
         mobile: this.device === "mobile",
       };
     },
+  },
+  mounted() {
+    getAuthors()
+      .then(response => {
+        this.setAuthors(response.data);
+      })
+      .catch(() => {
+        console.log("Данные по авторам не указаны");
+      });
+    getSubjects()
+      .then(response => {
+        this.setSubjects(response.data);
+      })
+      .catch(() => {
+        console.log("Данные по предметам не указаны");
+      });
+    getPublishPlaces()
+      .then(response => {
+        this.setPublishers(response.data);
+      })
+      .catch(() => {
+        console.log("Данные по издательствам не указаны");
+      });
   },
   methods: {
     ...mapActions({

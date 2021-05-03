@@ -1,8 +1,8 @@
 <template>
-  <div :class="{ [wrapperClassName]: wrapperClassName }">
+  <div :class="{[wrapperClassName]: wrapperClassName}">
     <span
       v-if="title"
-      :class="[$style.title, { [titleClassName]: titleClassName }]"
+      :class="[$style.title, {[titleClassName]: titleClassName}]"
     >
       {{ title }}
     </span>
@@ -10,7 +10,7 @@
       v-if="annotation"
       :class="[
         $style.annotation,
-        { [annotationClassName]: annotationClassName },
+        {[annotationClassName]: annotationClassName}
       ]"
     >
       {{ annotation }}
@@ -23,8 +23,8 @@
 export default {
   name: "InputsBase",
   props: {
-    title: { default: null },
-    annotation: { default: null },
+    title: { type: String, default: null },
+    annotation: { type: String, default: null },
     wrapperClassName: { type: String, default: "" },
     titleClassName: { type: String, default: "" },
     annotationClassName: { type: String, default: "" },

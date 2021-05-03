@@ -26,7 +26,7 @@ export function getAllPermissions() {
 
 export function saveUserPermissions(id, roles) {
   return request({
-    url: BASE_API_URL + `auth/users/${id}/permissions/`,
+    url: `${BASE_API_URL}auth/users/${id}/permissions/`,
     method: "post",
     data: { roles },
   });
@@ -41,7 +41,7 @@ export function getUsersToApprove() {
 
 export function changeStudentStatus(id, status) {
   return request({
-    url: BASE_API_URL + LMS_URLS.students.approvements + `${id}/`,
+    url: `${BASE_API_URL + LMS_URLS.students.approvements}${id}/`,
     method: "patch",
     data: { status },
   });

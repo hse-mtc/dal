@@ -5,18 +5,18 @@
       type="text"
       class="words-search"
       :placeholder="placeholder"
-    />
+    >
     <img
       src="../../assets/delete-cross.svg"
       class="delete-cross"
       alt=""
       @click="deleteText"
-    />
+    >
     <img
       src="../../assets/scienceWorks/searchIcon.svg"
       class="search-icon"
       @click="search"
-    />
+    >
   </div>
 </template>
 
@@ -24,7 +24,12 @@
 export default {
   name: "",
   components: {},
-  props: ["placeholder"],
+  props: {
+    placeholder: {
+      type: String,
+      default: "",
+    },
+  },
   methods: {
     search() {
       this.$router.push({

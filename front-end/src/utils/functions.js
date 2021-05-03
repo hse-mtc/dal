@@ -1,7 +1,7 @@
 import { MessageBox } from "element-ui";
 
 export function getCoords(elem) {
-  let box = elem.getBoundingClientRect();
+  const box = elem.getBoundingClientRect();
 
   return {
     top: box.top + window.pageYOffset,
@@ -11,8 +11,8 @@ export function getCoords(elem) {
 
 export function handleClose(done) {
   MessageBox.confirm("Уверены?")
-    .then((_) => {
+    .then(_ => {
       done();
     })
-    .catch((_) => {});
+    .catch(_ => {});
 }

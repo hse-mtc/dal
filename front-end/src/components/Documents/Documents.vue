@@ -15,9 +15,9 @@
           v-if="yearChanged(index)"
           class="cool-hr d-flex align-items-center"
         >
-          <hr class="mr-3" />
+          <hr class="mr-3">
           {{ year(document) }}
-          <hr class="ml-3" />
+          <hr class="ml-3">
         </div>
 
         <el-col :span="3" style="font-size: 22px" class="mt-4">
@@ -35,7 +35,9 @@
             </div>
           </div>
 
-          <div class="document-card-title">{{ document.title }}</div>
+          <div class="document-card-title">
+            {{ document.title }}
+          </div>
 
           <div
             v-for="author in document.authors"
@@ -57,7 +59,7 @@
             >
               <DownloadFile
                 :url="document.file.content"
-                :fileName="document.file.name"
+                :file-name="document.file.name"
               >
                 Скачать
               </DownloadFile>
@@ -74,14 +76,16 @@
               class="d-flex justify-content-center"
               style="width: 10px; cursor: pointer"
             >
-              <img src="../../assets/scienceWorks/popover.svg" alt="" />
+              <img src="../../assets/scienceWorks/popover.svg" alt="">
             </div>
           </el-popover>
         </el-col>
       </el-row>
     </div>
-    <div v-else-if="!loading" class="my-document">Документы не найдены</div>
-    <div v-loading="loading" class="requests__loader"></div>
+    <div v-else-if="!loading" class="my-document">
+      Документы не найдены
+    </div>
+    <div v-loading="loading" class="requests__loader" />
   </div>
 </template>
 
@@ -91,41 +95,27 @@ import moment from "moment";
 import { getPapers } from "@/api/papers";
 import { deleteDocument } from "@/api/delete";
 
-import EventBus from "../EventBus";
 import { scrollMixin } from "@/mixins/scrollMixin";
 import DownloadFile from "@/common/DownloadFile/index.vue";
 import { mapState } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
+import EventBus from "../EventBus";
 
 export default {
   name: "",
   components: { DownloadFile },
+  filters: {
+    moment(date) {
+      return moment(date).format("DD MMMM YYYY");
+    },
+  },
+  mixins: [scrollMixin],
   props: {
     isMyDocuments: {
       type: Boolean,
       default: false,
     },
   },
-  computed: {
-    ...mapState({
-      userId: (state) => state.app.userId,
-      authors: (state) => state.documents.authors,
-      publishers: (state) => state.documents.publishers,
-    }),
-  },
-  filters: {
-    moment: function (date) {
-      return moment(date).format("DD MMMM YYYY");
-    },
-  },
-  watch: {
-    $route() {
-      this.count = null;
-      this.documents = [];
-      this.fetchData();
-    },
-  },
-  mixins: [scrollMixin],
   data() {
     return {
       count: null,
@@ -134,6 +124,20 @@ export default {
       documents: [],
       paperToEdit: {},
     };
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.app.userId,
+      authors: state => state.documents.authors,
+      publishers: state => state.documents.publishers,
+    }),
+  },
+  watch: {
+    $route() {
+      this.count = null;
+      this.documents = [];
+      this.fetchData();
+    },
   },
   async mounted() {
     await this.fetchData();
@@ -145,13 +149,13 @@ export default {
   methods: {
     moment,
     getAuthor(id) {
-      const author = this.authors.find((author) => author.id === id);
+      const author = this.authors.find(item => item.id === id);
       return surnameWithInitials(author);
     },
     publisherNames(ids) {
       return this.publishers
-        .filter((p) => ids.includes(p.id))
-        .map((p) => p.name)
+        .filter(p => ids.includes(p.id))
+        .map(p => p.name)
         .join(", ");
     },
     loadMore() {
@@ -175,7 +179,7 @@ export default {
     },
 
     editPaper(id) {
-      const paperToEdit = this.documents.find((paper) => paper.id === id);
+      const paperToEdit = this.documents.find(paper => paper.id === id);
       this.$emit("openPaperModal", "edit", paperToEdit);
     },
 
@@ -195,7 +199,7 @@ export default {
 
       this.documents = this.lodash.filter(
         this.documents,
-        (paper) => paper.id !== id
+        paper => paper.id !== id,
       );
 
       this.$message({
@@ -212,11 +216,13 @@ export default {
       if (this.documents.length < this.count || this.count === null) {
         this.loading = true;
         const authors = this.$route.query.author;
-        const publishers = this.$route.query.publishers;
-        const start_date = this.$route.query.start_date;
-        const end_date = this.$route.query.end_date;
-        const text = this.$route.query.text;
-        const category = this.$route.query.category;
+        const { publishers } = this.$route.query;
+        // eslint-disable-next-line camelcase
+        const { start_date } = this.$route.query;
+        // eslint-disable-next-line camelcase
+        const { end_date } = this.$route.query;
+        const { text } = this.$route.query;
+        const { category } = this.$route.query;
 
         try {
           const { data } = await getPapers(
@@ -230,7 +236,7 @@ export default {
               limit: this.limit,
               offset: this.documents.length,
               user: this.isMyDocuments ? this.userId : undefined,
-            })
+            }),
           );
 
           this.documents = [...this.documents, ...data.results];

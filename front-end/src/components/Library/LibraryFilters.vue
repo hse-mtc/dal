@@ -2,23 +2,28 @@
   <div class="filters">
     <div class="filters-header">
       <div class="d-flex align-items-center">
-        <img src="@/assets/icons/filter.svg" alt="" />
-        <CustomText variant="sub-header" :ml="SIZES.xs">Фильтры</CustomText>
+        <img src="@/assets/icons/filter.svg" alt="">
+        <CustomText variant="sub-header" :ml="SIZES.xs">
+          Фильтры
+        </CustomText>
       </div>
       <div @click="clear">
         <CustomText
           variant="paragraph"
-          :custom-style="{ cursor: 'pointer' }"
+          :custom-style="{cursor: 'pointer'}"
           :color="COLORS.darkBlue"
-          >Сбросить
+        >
+          Сбросить
         </CustomText>
       </div>
     </div>
-    <div class="filter" v-if="!isMyLibrary">
-      <div class="filters-title pl-1 mb-2">Автор</div>
+    <div v-if="!isMyLibrary" class="filter">
+      <div class="filters-title pl-1 mb-2">
+        Автор
+      </div>
       <el-select
-        clearable
         v-model="author"
+        clearable
         placeholder="Все авторы"
         class="filters-select"
         @change="updateQuery"
@@ -33,10 +38,12 @@
     </div>
 
     <div class="filter">
-      <div class="filters-title pl-1 mb-2">Год издания</div>
+      <div class="filters-title pl-1 mb-2">
+        Год издания
+      </div>
       <el-select
-        clearable
         v-model="year"
+        clearable
         placeholder="Все года"
         class="filters-select"
         @change="updateQuery"
@@ -51,10 +58,12 @@
     </div>
 
     <div class="filter">
-      <div class="filters-title pl-1 mb-2">Предмет</div>
+      <div class="filters-title pl-1 mb-2">
+        Предмет
+      </div>
       <el-select
-        clearable
         v-model="subject"
+        clearable
         placeholder="Все предметы"
         class="filters-select"
         @change="updateQuery"
@@ -85,6 +94,26 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      SIZES,
+      COLORS,
+      author: undefined,
+      year: undefined,
+      years: Array(
+        new Date().getUTCFullYear() - (new Date().getUTCFullYear() - 100),
+      )
+        .fill("")
+        .map((v, idx) => new Date().getUTCFullYear() - idx),
+      subject: undefined,
+    };
+  },
+  computed: {
+    ...mapState({
+      authors: state => state.documents.authors,
+      subjects: state => state.subjects.subjects,
+    }),
+  },
   created() {
     this.author = this.$route.query.author
       ? Number(this.$route.query.author)
@@ -113,31 +142,6 @@ export default {
       this.year = undefined;
       this.updateQuery();
     },
-  },
-  computed: {
-    ...mapState({
-      authors: (state) => state.documents.authors,
-      subjects: (state) => state.subjects.subjects,
-    }),
-  },
-  data() {
-    return {
-      SIZES,
-      COLORS,
-      author: undefined,
-      year: undefined,
-      years: Array(
-        new Date().getUTCFullYear() - (new Date().getUTCFullYear() - 100)
-      )
-        .fill("")
-        .map((v, idx) => new Date().getUTCFullYear() - idx),
-      subject: undefined,
-    };
-  },
-  watch: {
-    // $route() {
-    //   console.log(this.$route.query)
-    // },
   },
 };
 </script>

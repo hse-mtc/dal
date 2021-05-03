@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ScienceWorks from "../../components/ScienceWorks/ScienceWorks";
+import ScienceWorks from "../../components/ScienceWorks/ScienceWorks.vue";
 
 export default {
   components: {

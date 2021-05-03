@@ -1,10 +1,10 @@
 <template>
   <div
     class="cta"
-    :style="{ border: border, color: color, background: background }"
+    :style="{border: border, color: color, background: background}"
     @click="onClick"
   >
-    <slot></slot>
+    <slot />
   </div>
 </template>
 

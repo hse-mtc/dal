@@ -19,7 +19,9 @@
             style="width: 100%"
           />
         </el-col>
-        <el-col :span="2" class="line">-</el-col>
+        <el-col :span="2" class="line">
+          -
+        </el-col>
         <el-col :span="11">
           <el-time-picker
             v-model="form.date2"
@@ -50,8 +52,12 @@
         <el-input v-model="form.desc" type="textarea" />
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">Create</el-button>
-        <el-button @click="onCancel">Cancel</el-button>
+        <el-button type="primary" @click="onSubmit">
+          Create
+        </el-button>
+        <el-button @click="onCancel">
+          Cancel
+        </el-button>
       </el-form-item>
     </el-form>
   </div>

@@ -16,7 +16,7 @@ export function addTopics(data) {
   return request({
     url: BASE_API_URL + topics,
     method: "post",
-    data: data,
+    data,
   });
 }
 
@@ -31,7 +31,7 @@ export function editTopics(id, data) {
   return request({
     url: `${BASE_API_URL}${topics}${id}/`,
     method: "patch",
-    data: data,
+    data,
   });
 }
 

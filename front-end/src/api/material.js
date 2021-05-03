@@ -14,6 +14,6 @@ export function addTopicFile(data) {
   return request({
     url: BASE_API_URL + classMaterials,
     method: "post",
-    data: data,
+    data,
   });
 }

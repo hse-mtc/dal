@@ -2,9 +2,8 @@
   <el-breadcrumb class="app-breadcrumb" separator="/">
     <transition-group name="breadcrumb">
       <el-breadcrumb-item v-for="(item, index) in levelList" :key="item.path">
-        <!--        <span v-if="item.redirect==='noRedirect'||index==levelList.length-1" class="no-redirect">{{ item.meta.title }}</span>-->
         <span
-          v-if="item.redirect === 'noRedirect' || index == levelList.length - 1"
+          v-if="item.redirect === 'noRedirect' || index === levelList.length - 1"
           class=""
         >
           {{ item.meta.title }}
@@ -36,7 +35,7 @@ export default {
     getBreadcrumb() {
       // only show routes with meta.title
       const matched = this.$route.matched.filter(
-        (item) => item.meta && item.meta.title
+        item => item.meta && item.meta.title,
       );
       const first = matched[0];
 
@@ -45,7 +44,7 @@ export default {
       // }
 
       this.levelList = matched.filter(
-        (item) => item.meta && item.meta.title && item.meta.breadcrumb !== false
+        item => item.meta && item.meta.title && item.meta.breadcrumb !== false,
       );
     },
     isDashboard(route) {
@@ -60,7 +59,7 @@ export default {
     pathCompile(path) {
       // To solve this problem https://github.com/PanJiaChen/vue-element-admin/issues/561
       const { params } = this.$route;
-      var toPath = pathToRegexp.compile(path);
+      const toPath = pathToRegexp.compile(path);
       return toPath(params);
     },
     handleLink(item) {
