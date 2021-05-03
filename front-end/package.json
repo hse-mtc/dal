@@ -11,7 +11,6 @@
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
     "test:ci": "npm run lint && npm run test:unit",
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
-    "prettier": "npx prettier --write .",
     "prepare": "cd .. && husky install front-end/.husky",
     "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint"
@@ -65,7 +64,6 @@
     "husky": "^5.2.0",
     "mockjs": "1.0.1-beta3",
     "node-sass": "^4.14.1",
-    "prettier": "2.1.2",
     "runjs": "^4.3.2",
     "sass-loader": "^7.1.0",
     "script-ext-html-webpack-plugin": "2.1.3",

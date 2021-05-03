@@ -13,6 +13,6 @@ jobs:
       - name: "Install NPM packages"
         run: cd front-end && npm install
       - name: "Check code style"
-        run: cd front-end && npx prettier --check .
+        run: cd front-end && npm run lint .
       - name: "Build front end container"
         run:  docker-compose build front-end
