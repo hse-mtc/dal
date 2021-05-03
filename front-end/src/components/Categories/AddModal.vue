@@ -20,10 +20,10 @@
 <script>
 import { addPaperCategories } from "@/api/paper_categories";
 
-import EventBus from "../EventBus";
+import EventBus from "@/components/EventBus";
 
 export default {
-  name: "AddCategoryModalWindow",
+  name: "AddModal",
 
   data() {
     return {
