@@ -216,7 +216,7 @@
           Уже есть аккаунт?
           <router-link
             style="color: #007bff"
-            :to="{name: 'Login'}"
+            :to="{ name: 'Login' }"
             replace
           >
             Войти

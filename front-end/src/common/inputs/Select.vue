@@ -12,7 +12,7 @@
       v-bind="$attrs"
     >
       <el-option
-        v-for="{label, optionValue} in selectOptions"
+        v-for="{ label, optionValue } in selectOptions"
         :key="optionValue"
         :value="optionValue"
         :label="label"

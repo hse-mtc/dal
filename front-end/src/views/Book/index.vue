@@ -52,7 +52,7 @@
             <CustomText
               v-for="authorId in book.authors"
               :key="authorId"
-              :custom-style="{fontWeight: 'normal'}"
+              :custom-style="{ fontWeight: 'normal' }"
               variant="header"
               :color="COLORS.gray_2"
             >
@@ -62,7 +62,7 @@
             </CustomText>
             <div class="additional-info">
               <CustomText
-                :custom-style="{fontWeight: 'normal'}"
+                :custom-style="{ fontWeight: 'normal' }"
                 variant="header"
               >
                 {{
@@ -72,7 +72,7 @@
               <template v-if="book.page_count">
                 <img src="@/assets/icons/dot.svg" alt="">
                 <CustomText
-                  :custom-style="{fontWeight: 'normal'}"
+                  :custom-style="{ fontWeight: 'normal' }"
                   variant="header"
                 >
                   {{ book.page_count }} печат. страниц
@@ -81,7 +81,7 @@
               <template v-if="book.publication_year">
                 <img src="@/assets/icons/dot.svg" alt="">
                 <CustomText
-                  :custom-style="{fontWeight: 'normal'}"
+                  :custom-style="{ fontWeight: 'normal' }"
                   variant="header"
                 >
                   {{ book.publication_year }} г.

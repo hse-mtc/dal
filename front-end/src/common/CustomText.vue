@@ -7,7 +7,7 @@
       'margin-bottom': mb + 'px',
       'margin-left': ml + 'px',
       'margin-right': mr + 'px',
-      ...customStyle
+      ...customStyle,
     }"
   >
     <slot />

@@ -4,7 +4,7 @@
       <CustomText
         variant="paragraph"
         color="#FFF"
-        :custom-style="{fontWeight: 600}"
+        :custom-style="{ fontWeight: 600 }"
       >
         Добавить тему
       </CustomText>
@@ -18,7 +18,7 @@
       :list="topics"
       v-bind="dragOptions"
       :disabled="!isOwner"
-      @change="({moved}) => updateOrder(moved.element.id, moved.newIndex)"
+      @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
     >
       <transition-group type="transition" name="flip-list">
         <SubjectTopic

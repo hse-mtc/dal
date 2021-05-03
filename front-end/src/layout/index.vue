@@ -7,7 +7,7 @@
     />
     <Sidebar class="sidebar-container" />
     <div id="main-container" class="main-container">
-      <div :class="{'fixed-header': fixedHeader}">
+      <div :class="{ 'fixed-header': fixedHeader }">
         <Navbar />
       </div>
       <AppMain />

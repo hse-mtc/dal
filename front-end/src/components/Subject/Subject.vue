@@ -17,7 +17,7 @@
             v-if="userId === subjectOwnerId"
             variant="paragraph"
             color="#0C4B9A"
-            :custom-style="{cursor: 'pointer'}"
+            :custom-style="{ cursor: 'pointer' }"
             @click="addTopic"
           >
             <div @click="addTopic">
@@ -54,7 +54,7 @@
             @start="dragging = true"
             @end="dragging = false"
             @change="
-              ({moved}) => updateOrder(moved.element.id, moved.newIndex)
+              ({ moved }) => updateOrder(moved.element.id, moved.newIndex)
             "
           >
             <transition-group type="transition" name="flip-list">

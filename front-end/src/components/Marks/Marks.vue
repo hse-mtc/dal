@@ -58,7 +58,7 @@
                 height="730"
                 :default-sort="{
                   prop: 'ordinal',
-                  order: 'ascending'
+                  order: 'ascending',
                 }"
                 stripe
                 border
@@ -123,7 +123,7 @@
                         <div
                           v-for="m in getMarksByLesson(
                             scope.row.marks,
-                            item.id
+                            item.id,
                           )"
                           :key="m"
                         >
@@ -134,7 +134,7 @@
                             class="is-clickable margin-x"
                             @click="onEdit(
                               scope.row.marks.find((x) => x.lesson === item.id),
-                              scope.row
+                              scope.row,
                             )"
                           >
                             {{ m }}
@@ -148,7 +148,7 @@
                             onCreate(
                               scope.row,
                               item,
-                              scope.row.marks.find((x) => x.lesson === item.id)
+                              scope.row.marks.find((x) => x.lesson === item.id),
                             )
                           "
                         />

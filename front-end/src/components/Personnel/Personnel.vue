@@ -75,7 +75,7 @@
             <el-table
               max-height="600px"
               :data="studentsData"
-              :default-sort="{prop: 'milgroup.milgroup', order: 'ascending'}"
+              :default-sort="{ prop: 'milgroup.milgroup', order: 'ascending' }"
               stripe
             >
               <el-table-column
@@ -172,7 +172,7 @@
             <el-table
               max-height="600px"
               :data="teachersData"
-              :default-sort="{prop: 'milgroup.milgroup', order: 'ascending'}"
+              :default-sort="{ prop: 'milgroup.milgroup', order: 'ascending' }"
               stripe
             >
               <el-table-column width="400px" prop="fullname" label="ФИО" />

@@ -1,5 +1,5 @@
 <template>
-  <div :class="['class-materials', 'file-group', {highlight}]">
+  <div :class="['class-materials', 'file-group', { highlight }]">
     <div
       class="class-materials-title file-section-title"
       @click="$emit('click')"
@@ -8,7 +8,7 @@
       <img
         src="../../assets/scienceWorks/dropdown.svg"
         alt=""
-        :class="['files-dropdown', {opened: isOpened}]"
+        :class="['files-dropdown', { opened: isOpened }]"
       >
     </div>
 
@@ -43,7 +43,7 @@
                   textAlign: 'center',
                   margin: 0,
                   padding: 0,
-                  fontSize: '15px'
+                  fontSize: '15px',
                 }"
               >
                 <div
@@ -89,7 +89,7 @@
         :custom-style="{
           cursor: 'pointer',
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }"
       >
         <div @click="dialogVisible = true">

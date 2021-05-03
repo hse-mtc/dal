@@ -27,7 +27,7 @@
           :rules="rules[step]"
         >
           <el-form-item
-            v-for="({component, title, props = {}}, key) in fields[step]"
+            v-for="({ component, title, props = {} }, key) in fields[step]"
             :key="key"
             :prop="key"
           >
@@ -50,9 +50,9 @@
             flex: 1,
             background: 'no-repeat center / contain',
             backgroundImage: `url('${getObjUrl(
-              studentData.photo.photo[0].raw
+              studentData.photo.photo[0].raw,
             )}')`,
-            margin: '10px'
+            margin: '10px',
           }"
         />
       </template>
@@ -63,6 +63,7 @@
             style="width: 100%"
             icon="el-icon-plus"
             type="primary"
+            :style="{ sdhbchbsc: 3 }"
             @click="addTab"
           >
             Добавить {{ tabButtonLabel[step] }}
@@ -87,7 +88,7 @@
                 :rules="rules[step]"
               >
                 <el-form-item
-                  v-for="({component, title, props = {}}, key) in fields[
+                  v-for="({ component, title, props = {} }, key) in fields[
                     step
                   ]"
                   :key="key"

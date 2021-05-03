@@ -60,7 +60,7 @@
       <el-input
         v-model="annotation"
         type="textarea"
-        :autosize="{minRows: 2, maxRows: 4}"
+        :autosize="{ minRows: 2, maxRows: 4 }"
         class="title-input"
         clearable
       />

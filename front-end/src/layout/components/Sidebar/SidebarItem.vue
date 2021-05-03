@@ -11,7 +11,7 @@
         <AppLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
           <el-menu-item
             :index="resolvePath(onlyOneChild.path)"
-            :class="{'submenu-title-noDropdown': !isNest}"
+            :class="{ 'submenu-title-noDropdown': !isNest }"
           >
             <Item
               :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
