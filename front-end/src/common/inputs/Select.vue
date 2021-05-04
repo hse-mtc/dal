@@ -40,7 +40,7 @@ export default {
 
         return {
           label: _isObject(rawLabel) ? JSON.stringify(rawLabel) : rawLabel,
-          value: JSON.stringify(isObj ? option.value : option),
+          optionValue: JSON.stringify(isObj ? option.value : option),
         };
       });
     },
@@ -59,9 +59,9 @@ export default {
             "change",
             newValue.map(item => this.decodeValue(item)),
           );
+        } else {
+          this.$emit("change", this.decodeValue(newValue));
         }
-
-        this.$emit("change", this.decodeValue(newValue));
       },
     },
   },
