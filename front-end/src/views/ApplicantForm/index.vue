@@ -153,6 +153,8 @@
 </template>
 
 <script>
+import _pick from "lodash/pick";
+
 import {
   DateInput,
   FileInput,
@@ -180,6 +182,7 @@ import {
 } from "@/constants/applicantForm";
 
 import { getReferenceMilSpecialties } from "@/api/reference-book";
+import copyToClipboard from "@/utils/copyToClipboard";
 
 export default {
   name: "ApplicantForm",
@@ -201,21 +204,24 @@ export default {
     );
 
     return {
-      studentData: {
-        about: createData(ABOUT),
-        birthInfo: createData(BIRTH_INFO),
-        passport: createData(PASSPORT),
-        recruitmentOffice: createData(RECRUITMENT_OFFICE),
-        universityInfo: createData(UNIVERSITY_INFO),
-        contactInfo: createData(CONTACT_INFO),
-        mother: createData(getRelationData("матери")),
-        father: createData(getRelationData("отца")),
-        brothers: [],
-        sisters: [],
-        photo: { photo: null },
-        milspecialty: createData(MILSPECIALTY),
-        agreement: createData(AGREEMENT),
-      },
+      studentData: __DEV__ && "fill" in this.$route.query
+        // eslint-disable-next-line global-require
+        ? require("@/constants/applicantForm").devInitData
+        : {
+          about: createData(ABOUT),
+          birthInfo: createData(BIRTH_INFO),
+          passport: createData(PASSPORT),
+          recruitmentOffice: createData(RECRUITMENT_OFFICE),
+          universityInfo: createData(UNIVERSITY_INFO),
+          contactInfo: createData(CONTACT_INFO),
+          mother: createData(getRelationData("матери")),
+          father: createData(getRelationData("отца")),
+          brothers: [],
+          sisters: [],
+          photo: { photo: null },
+          milspecialty: createData(MILSPECIALTY),
+          agreement: createData(AGREEMENT),
+        },
       fields: {
         about: ABOUT,
         birthInfo: BIRTH_INFO,
@@ -423,6 +429,11 @@ export default {
 
   watch: {
     async step(nextValue) {
+      window.scrollTo({
+        left: 0,
+        top: 0,
+      });
+
       if (nextValue === STEPS.milspecialty) {
         try {
           const { data } = await getReferenceMilSpecialties(
@@ -623,16 +634,16 @@ export default {
                 type: "error",
                 dangerouslyUseHTMLString: true,
                 callback: async() => {
-                  try {
-                    await navigator.clipboard.writeText(
-                      JSON.stringify(e.response.data, null, 4),
-                    );
+                  const dataToCopy = e.response
+                    ? _pick(e.response, ["config", "data"])
+                    : e.config;
+
+                  if (await copyToClipboard(JSON.stringify(dataToCopy, null, 4))) {
                     this.$message({
                       type: "success",
                       message: "Текст скопирован",
                     });
-                  } catch (copyErr) {
-                    console.error("Ошибка копирования:", copyErr);
+                  } else {
                     this.$message({
                       type: "error",
                       message: "Текст не скопирован",

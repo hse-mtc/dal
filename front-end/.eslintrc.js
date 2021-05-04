@@ -16,6 +16,8 @@ module.exports = {
     window: true,
     document: true,
     location: true,
+    __DEV__: true,
+    __PROD__: true,
   },
   parser: "vue-eslint-parser",
   parserOptions: {

@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const path = require("path");
 const defaultSettings = require("./src/settings.js");
 
@@ -71,6 +72,12 @@ module.exports = {
         "@": resolve("src"),
       },
     },
+    plugins: [
+      new webpack.DefinePlugin({
+        __DEV__: isDev,
+        __PROD__: !isDev,
+      }),
+    ],
   },
   chainWebpack(config) {
     config.plugins.delete("preload"); // TODO: need test

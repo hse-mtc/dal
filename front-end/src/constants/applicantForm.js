@@ -61,12 +61,18 @@ export const BIRTH_INFO = {
   country: {
     component: "TextInput",
     title: "Страна",
-    props: { placeholder: "Россия" },
+    props: {
+      placeholder: "Россия",
+      annotation: "не более 64х символов",
+    },
   },
   city: {
     component: "TextInput",
     title: "Город",
-    props: { placeholder: "Владимир" },
+    props: {
+      placeholder: "Владимир",
+      annotation: "не более 64х символов",
+    },
   },
 };
 
@@ -224,9 +230,18 @@ export const getRelationData = rel => ({
   country: {
     component: "TextInput",
     title: `Страна рождения ${rel}`,
-    props: { onlyChars: true },
+    props: {
+      onlyChars: true,
+      annotation: "не более 64х символов",
+    },
   },
-  city: { component: "TextInput", title: `Город рождения ${rel}` },
+  city: {
+    component: "TextInput",
+    title: `Город рождения ${rel}`,
+    props: {
+      annotation: "не более 64х символов",
+    },
+  },
   personal_email: { component: "TextInput", title: `Личная почта ${rel}` },
   personal_phone_number: {
     component: "TextInput",
@@ -264,4 +279,75 @@ export const HEADERS_BY_STEPS = {
   sisters: "Данные о сёстрах",
   milspecialty: "Желаемая военная специальность",
   agreement: "Соглашение",
+};
+
+export const devInitData = {
+  about: {
+    surname: "Фамилия",
+    name: "Имя",
+    patronymic: "Отчество",
+    citizenship: "Гражданство",
+    permanent_address: "Адрес постоянной регистрации",
+    surname_genitive: "Фамилия в родительном падеже",
+    name_genitive: "Имя в родительном падеже",
+    patronymic_genitive: "Отчество в родительном падеже",
+  },
+  birthInfo: {
+    date: "2021-04-06",
+    country: "Страна",
+    city: "Город",
+  },
+  passport: {
+    series: "1234",
+    code: "123456",
+    ufms_name: "Паспорт выдан",
+    issue_date: "2021-04-20",
+    ufms_code: "010-191",
+  },
+  recruitmentOffice: { title: "Состою на воинском учете в военном комиссариате" },
+  universityInfo: {
+    campus: "MO",
+    card_id: "Номер студенческого билета",
+    program: "01.12.12",
+    group: "БИВ123",
+  },
+  contactInfo: {
+    corporate_email: "test@edu.hse.ru",
+    personal_email: "test@mail.ru",
+    personal_phone_number: "+12345678900",
+  },
+  mother: {
+    surname: "Фамилия матери",
+    name: "Имя матери",
+    patronymic: "Отчество матери",
+    citizenship: "Гражданство матери",
+    permanent_address: "Адрес постоянной регистрации матери",
+    date: "2021-05-25",
+    country: "Страна рождения матери",
+    city: "Город рождения матери",
+    personal_email: "test@mail.ru",
+    personal_phone_number: "",
+  },
+  father: {
+    surname: "Фамилия отца",
+    name: "Имя отца",
+    patronymic: "Отчество отца",
+    citizenship: "Гражданство отца",
+    permanent_address: "Адрес постоянной регистрации отца",
+    date: "2021-04-28",
+    country: "Страна рождения отца",
+    city: "Город рождения отца",
+    personal_email: "test@dkcmsdc.sdcjnis",
+    personal_phone_number: "+12345678765",
+  },
+  brothers: [],
+  sisters: [],
+  photo: {
+    photo: null,
+  },
+  milspecialty: { milspecialty: "106646-543" },
+  agreement: {
+    agreement: true,
+    isDataCorrect: true,
+  },
 };
