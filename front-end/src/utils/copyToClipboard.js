@@ -9,15 +9,14 @@ const fallbackCopyTextToClipboard = text => {
   textArea.focus();
   textArea.select();
 
-  let isSuccess;
-
-  try {
-    const successful = document.execCommand("copy");
-    isSuccess = successful === "successful";
-  } catch (err) {
-    console.error("fallback: Не удалось скопировать в буфер", err);
-    isSuccess = false;
-  }
+  const isSuccess = (() => {
+    try {
+      return document.execCommand("copy") === "successful";
+    } catch (err) {
+      console.error("fallback: Не удалось скопировать в буфер", err);
+      return false;
+    }
+  })();
 
   document.body.removeChild(textArea);
 

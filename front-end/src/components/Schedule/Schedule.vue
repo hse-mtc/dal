@@ -348,9 +348,10 @@ export default {
       }
     },
     limitDateRange() {
-      let main; let
-        other;
+      let main;
+      let other;
       const maxMonths = 6;
+
       if (
         moment().diff(this.filter.dateRange[1])
         > moment().diff(this.filter.dateRange[0])
