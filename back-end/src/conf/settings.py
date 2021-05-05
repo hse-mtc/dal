@@ -224,9 +224,12 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
-# File max size
+# Max size for request data and files
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 8  # 80MiB
+BYTES_IN_MEGABYTE = 1024 * 1024
+# Data may contain base64 images
+DATA_UPLOAD_MAX_MEMORY_SIZE = 80 * BYTES_IN_MEGABYTE  # 80 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 80 * BYTES_IN_MEGABYTE  # 80 MB
 
 # Token lifetime for password creation
 
