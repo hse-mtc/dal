@@ -154,6 +154,7 @@
 
 <script>
 import _pick from "lodash/pick";
+import _omit from "lodash/omit";
 
 import {
   DateInput,
@@ -636,7 +637,9 @@ export default {
                 callback: async() => {
                   const dataToCopy = e.response
                     ? _pick(e.response, ["config", "data"])
-                    : e.config;
+                    : { config: e.config };
+
+                  dataToCopy.config.data = _omit(JSON.parse(dataToCopy.config.data), ["image"]);
 
                   if (await copyToClipboard(JSON.stringify(dataToCopy, null, 4))) {
                     this.$message({
