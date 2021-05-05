@@ -11,7 +11,7 @@ const fallbackCopyTextToClipboard = text => {
 
   const isSuccess = (() => {
     try {
-      return document.execCommand("copy") === "successful";
+      return document.execCommand("copy");
     } catch (err) {
       console.error("fallback: Не удалось скопировать в буфер", err);
       return false;
