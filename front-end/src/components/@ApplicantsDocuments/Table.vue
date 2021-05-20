@@ -46,7 +46,7 @@
           <!-- eslint-enable vue/no-mutating-props -->
         </template>
 
-        <template v-else-if="fieZld === 'prof_psy_selection'">
+        <template v-else-if="field === 'prof_psy_selection'">
           <!-- todo -->
           <!-- eslint-disable vue/no-mutating-props -->
           <SelectInput
