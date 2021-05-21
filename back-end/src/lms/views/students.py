@@ -192,7 +192,7 @@ class StudentViewSet(ModelViewSet):
     def generate_excel(self, students):
         """Generate an Excel file with information about the students."""
 
-        workbook = xlsxwriter.Workbook('/back-end/media/excel/export.xlsx')
+        workbook = xlsxwriter.Workbook('/tmp/export.xlsx')
 
         for milspecialty in Milspecialty.objects.all():
             worksheet = workbook.add_worksheet(milspecialty.code)
@@ -286,7 +286,7 @@ class StudentViewSet(ModelViewSet):
         students = self.queryset.filter(status='AP',
                                         university_info__campus=campus)
         self.generate_excel(students)
-        with open('/back-end/media/excel/export.xlsx', 'rb') as file:
+        with open('/tmp/export.xlsx', 'rb') as file:
             return Response(file.read(),
                             headers={
                                 'Content-Disposition':
