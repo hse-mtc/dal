@@ -27,6 +27,7 @@ pillow = "*"
 psycopg2-binary = "*"
 requests = "*"
 uvicorn = "*"
+xlsxwriter = "*"
 
 [requires]
 python_version = "3.9.1"
