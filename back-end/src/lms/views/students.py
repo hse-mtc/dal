@@ -245,7 +245,7 @@ class StudentViewSet(ModelViewSet):
                         'preferential_right', 'characteristic_handed_over',
                         'criminal_record_handed_over', 'passport_handed_over',
                         'registration_certificate_handed_over',
-                        'university_card_handed_over', 'application_handed_over',
+                        'university_card_handed_over', 'application_handed_over'
                 ]:
                     row_data.append(
                         ('Да' if getattr(student.application_process, field)
