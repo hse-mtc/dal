@@ -240,24 +240,16 @@ class StudentViewSet(ModelViewSet):
                      get_medical_examination_display(), center_f),
                     (student.application_process.get_prof_psy_selection_display(
                     ), center_f),
-                    ('Да' if student.application_process.preferential_right else
-                     'Нет', center_f),
-                    ('Да'
-                     if student.application_process.characteristic_handed_over
-                     else 'Нет', center_f),
-                    ('Да'
-                     if student.application_process.criminal_record_handed_over
-                     else 'Нет', center_f),
-                    ('Да' if student.application_process.passport_handed_over
-                     else 'Нет', center_f),
-                    ('Да' if student.application_process.
-                     registration_certificate_handed_over else 'Нет', center_f),
-                    ('Да'
-                     if student.application_process.university_card_handed_over
-                     else 'Нет', center_f),
-                    ('Да' if student.application_process.application_handed_over
-                     else 'Нет', center_f),
                 ]
+                for field in [
+                        'preferential_right', 'characteristic_handed_over',
+                        'criminal_record_handed_over', 'passport_handed_over',
+                        'registration_certificate_handed_over',
+                        'university_card_handed_over', 'application_handed_over',
+                ]:
+                    row_data.append(
+                        ('Да' if getattr(student.application_process, field)
+                         else 'Нет', center_f))
                 # write student info to the sheet
                 for col, (data, cell_format) in enumerate(row_data):
                     worksheet.write(i, col, data, cell_format)
