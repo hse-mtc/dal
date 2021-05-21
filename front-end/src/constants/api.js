@@ -47,6 +47,7 @@ export const LMS_URLS = {
     teachers: "lms/teachers/",
     approvements: "lms/students/approvements/",
     applications: "lms/students/applications/",
+    applicationsExport: "lms/students/applications/export/",
   },
   users: {
     users: "lms/users/",

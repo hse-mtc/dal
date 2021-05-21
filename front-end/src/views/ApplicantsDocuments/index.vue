@@ -4,13 +4,18 @@
 
     <div v-loading="loading">
       <el-row class="filter-row" :gutter="20">
-        <el-col :span="10">
+        <el-col :span="8">
           <TextInput
             v-model="searchQuery"
             :class="$style.input"
             placeholder="Введите ФИО студента"
             @change="search"
           />
+        </el-col>
+        <el-col :span="2">
+          <el-button type="success" plain @click="getExcel">
+            <i class="el-icon-download" /> Экспорт в Excel
+          </el-button>
         </el-col>
         <el-col v-if="campuses.length > 1" :offset="6" :span="4">
           <el-select
@@ -69,7 +74,7 @@ import _debounce from "lodash/debounce";
 import moment from "moment";
 import { mapGetters } from "vuex";
 
-import { getApplicationsStudents, updateStudentApplicationInfo } from "@/api/students";
+import { getApplicationsStudents, updateStudentApplicationInfo, getApplicationsExcelDownloadLink } from "@/api/students";
 
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
@@ -117,6 +122,9 @@ export default {
     this.fetchData();
   },
   methods: {
+    getExcel() {
+      window.location.href = getApplicationsExcelDownloadLink(this.selectedCampus);
+    },
     async changeCampus(campus) {
       this.selectedCampus = campus;
       await this.fetchData();
