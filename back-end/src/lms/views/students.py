@@ -198,21 +198,41 @@ class StudentViewSet(ModelViewSet):
             center_f = workbook.add_format({'align': 'center'})
             date_f = workbook.add_format({'num_format': 'dd.mm.yyyy', 'align': 'center'})
             # define columns
-            worksheet.write(0, 0, 'ФИО', column_f)
-            worksheet.set_column(0, 0, 30)
-            worksheet.write(0, 1, 'ВУС', column_f)
-            worksheet.write(0, 2, 'Гражданство', column_f)
-            worksheet.set_column(2, 2, 15)
-            worksheet.write(0, 3, 'Дата рождения', column_f)
-            worksheet.set_column(3, 3, 15)
+            columns = ['ФИО', 'ВУС', 'Гражданство', 'Дата рождения', 'Кампус', 'Факультет', 'Код ОП', 'ОП', 'Группа', 'Военкомат', 'РМО', 'РППО', 'ПП', 'Хар-ка', 'СН', 'Паспорт', 'ПС', 'СБ', 'Заявление']
+            worksheet.write_row(0, 0, columns)
+            worksheet.set_row(0, cell_format=column_f)
+            worksheet.set_column(0, 0, 30)  # ФИО
+            worksheet.set_column(2, 2, 15)  # Гражданство
+            worksheet.set_column(3, 3, 15)  # Дата рождения
+            worksheet.set_column(7, 7, 35)  # ОП
+            worksheet.set_column(9, 9, 30)  # Военкомат
 
             # add student info to the worksheet
             for j, student in enumerate(students.filter(milspecialty=milspecialty)):
                 i = j + 1  # start indexation from 1 to skip column names
-                worksheet.write(i, 0, student.full_name, center_f)
-                worksheet.write(i, 1, milspecialty.code, center_f)
-                worksheet.write(i, 2, student.citizenship, center_f)
-                worksheet.write_datetime(i, 3, student.birth_info.date, date_f)
+                row_data = [
+                    (student.full_name, center_f),
+                    (milspecialty.code, center_f),
+                    (student.citizenship, center_f),
+                    (student.birth_info.date, date_f),
+                    (student.university_info.get_campus_display(), center_f),
+                    (student.university_info.program.faculty.faculty, center_f),
+                    (student.university_info.program.code, center_f),
+                    (student.university_info.program.program, center_f),
+                    (student.university_info.group, center_f),
+                    ('{}, {}, {}'.format(student.recruitment_office.title, student.recruitment_office.city, student.recruitment_office.district), center_f),
+                    (student.application_process.get_medical_examination_display(), center_f),
+                    (student.application_process.get_prof_psy_selection_display(), center_f),
+                    ('Да' if student.application_process.preferential_right else 'Нет', center_f),
+                    ('Да' if student.application_process.characteristic_handed_over else 'Нет', center_f),
+                    ('Да' if student.application_process.criminal_record_handed_over else 'Нет', center_f),
+                    ('Да' if student.application_process.passport_handed_over else 'Нет', center_f),
+                    ('Да' if student.application_process.registration_certificate_handed_over else 'Нет', center_f),
+                    ('Да' if student.application_process.university_card_handed_over else 'Нет', center_f),
+                    ('Да' if student.application_process.application_handed_over else 'Нет', center_f),
+                ]
+                for col, (data, cell_format) in enumerate(row_data):
+                    worksheet.write(i, col, data, cell_format)
         
         workbook.close()
         
