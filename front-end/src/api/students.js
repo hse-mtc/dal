@@ -2,7 +2,7 @@ import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
 const {
-  stuff: { students, applications },
+  stuff: { students, applications, applicationsExport },
 } = LMS_URLS;
 
 export const getStudents = filters => request({
@@ -57,3 +57,7 @@ export const updateStudentApplicationInfo = (id, data) => request({
   method: "PATCH",
   data,
 });
+
+export function getApplicationsExcelDownloadLink(campus) {
+  return `${BASE_API_URL}${applicationsExport}/?campus=${campus}`;
+}
