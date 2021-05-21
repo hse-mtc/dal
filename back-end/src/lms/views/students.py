@@ -6,12 +6,13 @@ from rest_framework import status
 from rest_framework import permissions
 from rest_framework import pagination
 
-from rest_framework.decorators import action
+from rest_framework.decorators import action, renderer_classes
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.renderers import BaseRenderer
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -42,6 +43,15 @@ from lms.serializers.students import (
 
 from auth.serializers import CreatePasswordTokenSerializer
 from auth.permissions import BasePermission
+
+class XLSXRenderer(BaseRenderer):
+    media_type = 'application/xlsx'
+    format = 'xlsx'
+    charset = None
+    render_style = 'binary'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data
 
 
 class StudentPermission(BasePermission):
@@ -175,6 +185,14 @@ class StudentViewSet(ModelViewSet):
             status=status.HTTP_200_OK,
             data=ApplicationProcessSerializer(instance=updated).data,
         )
+
+    @action(methods=["get"], detail=False, renderer_classes=[XLSXRenderer])
+    def export(self, request: Request) -> Response:
+        with open('/back-end/media/excel/test.xlsx', 'rb') as file:
+            return Response(file.read(),
+                            headers={'Content-Disposition': 'attachment; filename=export.xlsx'},
+                            content_type='application/xlsx',
+                            status=status.HTTP_200_OK)
 
 
 @extend_schema(tags=["students"])
