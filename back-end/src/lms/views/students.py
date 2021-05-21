@@ -14,6 +14,8 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
 
+import xlsxwriter
+
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
@@ -25,7 +27,7 @@ from conf.settings import (
 
 from common.constants import MUTATE_ACTIONS
 
-from lms.models.common import Milgroup
+from lms.models.common import Milgroup, Milspecialty
 from lms.models.applicants import ApplicationProcess
 from lms.models.students import Student
 
@@ -186,9 +188,28 @@ class StudentViewSet(ModelViewSet):
             data=ApplicationProcessSerializer(instance=updated).data,
         )
 
+    def generate_excel(self, students):
+        workbook = xlsxwriter.Workbook('/back-end/media/excel/export.xlsx')
+        for milspecialty in Milspecialty.objects.all():
+            worksheet = workbook.add_worksheet(milspecialty.code)
+            # define formats
+            bold = workbook.add_format({'bold': True})
+            # define columns
+            worksheet.write(0, 0, 'ФИО', bold)
+            worksheet.set_column('A:A', 30)
+
+            # add student info to the worksheet
+            for j, student in enumerate(students.filter(milspecialty=milspecialty)):
+                i = j + 1  # start indexation from 1 to skip column names
+                worksheet.write(i, 0, student.full_name)
+        
+        workbook.close()
+        
     @action(methods=["get"], detail=False, renderer_classes=[XLSXRenderer])
     def export(self, request: Request) -> Response:
-        with open('/back-end/media/excel/test.xlsx', 'rb') as file:
+        students = self.queryset.filter(status='AP')
+        self.generate_excel(students)
+        with open('/back-end/media/excel/export.xlsx', 'rb') as file:
             return Response(file.read(),
                             headers={'Content-Disposition': 'attachment; filename=export.xlsx'},
                             content_type='application/xlsx',
