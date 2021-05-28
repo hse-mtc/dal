@@ -1,3 +1,6 @@
+import string
+import random
+
 import requests
 
 from django.contrib.auth import get_user_model
@@ -189,10 +192,17 @@ class StudentViewSet(ModelViewSet):
             data=ApplicationProcessSerializer(instance=updated).data,
         )
 
-    def generate_excel(self, students):
-        """Generate an Excel file with information about the students."""
+    def generate_excel(self, students) -> str:
+        """
+        Generate an Excel file with information about the students.
 
-        workbook = xlsxwriter.Workbook('/tmp/export.xlsx')
+        :return: path to the generated excel file
+        """
+        filename = ''.join(
+            random.choices(string.ascii_letters + string.digits, k=128))
+        filename = f'/tmp/{filename}.xlsx'
+
+        workbook = xlsxwriter.Workbook(filename)
 
         for milspecialty in Milspecialty.objects.all():
             worksheet = workbook.add_worksheet(milspecialty.code)
@@ -226,35 +236,53 @@ class StudentViewSet(ModelViewSet):
                     (student.full_name, center_f),
                     (milspecialty.code, center_f),
                     (student.citizenship, center_f),
-                    (student.birth_info.date, date_f),
-                    (student.university_info.get_campus_display(), center_f),
-                    (student.university_info.program.faculty.faculty, center_f),
-                    (student.university_info.program.code, center_f),
-                    (student.university_info.program.program, center_f),
-                    (student.university_info.group, center_f),
-                    ('{}, {}, {}'.format(student.recruitment_office.title,
-                                         student.recruitment_office.city,
-                                         student.recruitment_office.district),
-                     center_f),
-                    (student.application_process.
-                     get_medical_examination_display(), center_f),
-                    (student.application_process.get_prof_psy_selection_display(
-                    ), center_f),
                 ]
-                for field in [
-                        'preferential_right', 'characteristic_handed_over',
-                        'criminal_record_handed_over', 'passport_handed_over',
-                        'registration_certificate_handed_over',
-                        'university_card_handed_over', 'application_handed_over'
-                ]:
-                    row_data.append(
-                        ('Да' if getattr(student.application_process, field)
-                         else 'Нет', center_f))
+                if student.birth_info is not None:
+                    row_data.append((student.birth_info.date, date_f))
+                else:
+                    row_data.append(('', center_f))
+                if student.university_info is not None:
+                    row_data += [
+                        (student.university_info.get_campus_display(),
+                         center_f),
+                        (student.university_info.program.faculty.faculty,
+                         center_f),
+                        (student.university_info.program.code, center_f),
+                        (student.university_info.program.program, center_f),
+                        (student.university_info.group, center_f),
+                        ('{}, {}, {}'.format(
+                            student.recruitment_office.title,
+                            student.recruitment_office.city,
+                            student.recruitment_office.district), center_f),
+                    ]
+                else:
+                    row_data += [('', center_f)] * 6
+                if student.application_process is not None:
+                    row_data += [
+                        (student.application_process.
+                         get_medical_examination_display(), center_f),
+                        (student.application_process.
+                         get_prof_psy_selection_display(), center_f),
+                    ]
+                    for field in [
+                            'preferential_right', 'characteristic_handed_over',
+                            'criminal_record_handed_over',
+                            'passport_handed_over',
+                            'registration_certificate_handed_over',
+                            'university_card_handed_over',
+                            'application_handed_over'
+                    ]:
+                        row_data.append(
+                            ('Да' if getattr(student.application_process, field)
+                             else 'Нет', center_f))
+                else:
+                    row_data += [('', center_f)] * 9
                 # write student info to the sheet
                 for col, (data, cell_format) in enumerate(row_data):
                     worksheet.write(i, col, data, cell_format)
 
         workbook.close()
+        return filename
 
     @extend_schema(parameters=[
         OpenApiParameter(name='campus',
@@ -277,8 +305,8 @@ class StudentViewSet(ModelViewSet):
         campus = request.query_params['campus']
         students = self.queryset.filter(status='AP',
                                         university_info__campus=campus)
-        self.generate_excel(students)
-        with open('/tmp/export.xlsx', 'rb') as file:
+        filename = self.generate_excel(students)
+        with open(filename, 'rb') as file:
             return Response(file.read(),
                             headers={
                                 'Content-Disposition':
