@@ -11,7 +11,7 @@ from dms.models.common import (
 
 def upload_to(instance, filename):
     # pylint: disable=unused-argument
-    return f"files/{instance.id}/"
+    return f"files/{instance.id}"
 
 
 class File(models.Model):

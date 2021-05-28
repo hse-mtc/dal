@@ -15,7 +15,7 @@ from common.models.subjects import Subject
 
 def upload_to(instance, filename):
     # pylint: disable=unused-argument
-    return f"covers/{instance.id}/"
+    return f"covers/{instance.id}"
 
 
 class Cover(models.Model):

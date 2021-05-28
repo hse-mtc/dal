@@ -82,7 +82,7 @@ class Relative(Person):
 
 def upload_to(instance, filename):
     # pylint: disable=unused-argument
-    return f"photos/{instance.id}/"
+    return f"photos/{instance.id}"
 
 
 class Photo(models.Model):
