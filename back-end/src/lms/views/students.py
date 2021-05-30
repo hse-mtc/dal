@@ -1,6 +1,3 @@
-import string
-import random
-
 import requests
 
 from django.contrib.auth import get_user_model
@@ -17,8 +14,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
 
-import xlsxwriter
-
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema, OpenApiParameter
@@ -30,9 +25,12 @@ from conf.settings import (
 
 from common.constants import MUTATE_ACTIONS
 
-from lms.models.common import Milgroup, Milspecialty
 from lms.models.applicants import ApplicationProcess
 from lms.models.students import Student
+from lms.models.common import (
+    Milgroup,
+    Milspecialty,
+)
 
 from lms.filters.students import StudentFilter
 
@@ -46,43 +44,45 @@ from lms.serializers.students import (
     StudentMutateSerializer,
 )
 
+from lms.utils.export import generate_excel
+
 from auth.serializers import CreatePasswordTokenSerializer
 from auth.permissions import BasePermission
 
 
 class XLSXRenderer(BaseRenderer):
-    media_type = 'application/xlsx'
-    format = 'xlsx'
+    media_type = "application/xlsx"
+    format = "xlsx"
     charset = None
-    render_style = 'binary'
+    render_style = "binary"
 
     def render(self, data, accepted_media_type=None, renderer_context=None):
         return data
 
 
 class StudentPermission(BasePermission):
-    permission_class = 'auth.student'
+    permission_class = "auth.student"
 
 
 class AllowApplicantFormPost(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.method == 'POST'
+        return request.method == "POST"
 
 
 class AllowApplicationProcess(permissions.BasePermission):
 
     def has_permission(self, request: Request, view: ModelViewSet):
-        return view.action == 'applications'
+        return view.action == "applications"
 
 
 class StudentPageNumberPagination(pagination.PageNumberPagination):
-    page_size_query_param = 'page_size'
+    page_size_query_param = "page_size"
 
 
-@extend_schema(tags=['students'])
+@extend_schema(tags=["students"])
 class StudentViewSet(ModelViewSet):
-    queryset = Student.objects.order_by('surname', 'name', 'patronymic', 'id')
+    queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
 
     permission_classes = [
         AllowApplicantFormPost |
@@ -92,28 +92,28 @@ class StudentViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = StudentFilter
-    search_fields = ['surname', 'name', 'patronymic']
+    search_fields = ["surname", "name", "patronymic"]
 
     pagination_class = StudentPageNumberPagination
 
     def get_serializer_class(self):
-        if self.action == 'applications':
+        if self.action == "applications":
             return ApplicantWithApplicationSerializer
-        if self.action == 'application':
+        if self.action == "application":
             return ApplicationProcessSerializer
         if self.action in MUTATE_ACTIONS:
             return StudentMutateSerializer
         return StudentSerializer
 
     def get_queryset(self):
-        if self.action == 'applications':
+        if self.action == "applications":
             return self.queryset.filter(status=Student.Status.APPLICANT)
         return super().get_queryset()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
 
-        if self.action == 'applications':
+        if self.action == "applications":
             campuses = self.request.user.campuses
             queryset = queryset.filter(university_info__campus__in=campuses)
 
@@ -124,13 +124,13 @@ class StudentViewSet(ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        generate_documents = serializer.validated_data.pop('generate_documents')
+        generate_documents = serializer.validated_data.pop("generate_documents")
         instance = self.perform_create(serializer)
 
         if generate_documents:
             applicant = ApplicantSerializer(instance=instance)
             response = requests.post(
-                f'http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/',
+                f"http://{WATCHDOC_HOST}:{WATCHDOC_PORT}/applicants/",
                 data=JSONRenderer().render(applicant.data),
             )
             # TODO(TmLev): remove debug print
@@ -144,10 +144,10 @@ class StudentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save()
 
-    @action(detail=False, methods=['patch'])
+    @action(detail=False, methods=["patch"])
     def registration(self, request):
-        email = request.data['email']
-        milgroup = Milgroup.objects.get(pk=request.data['milgroup'])
+        email = request.data["email"]
+        milgroup = Milgroup.objects.get(pk=request.data["milgroup"])
         user = get_user_model().objects.create_user(
             email=email,
             password=get_user_model().objects.make_random_password(),
@@ -162,12 +162,12 @@ class StudentViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def applications(self, request: Request, *args, **kwargs) -> Response:
         """List all applicants with their applications."""
         return super().list(request, *args, **kwargs)
 
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=["patch"])
     def application(self, request: Request, pk=None) -> Response:
         """Create or edit applicant's application."""
 
@@ -192,131 +192,49 @@ class StudentViewSet(ModelViewSet):
             data=ApplicationProcessSerializer(instance=updated).data,
         )
 
-    def generate_excel(self, students) -> str:
-        """
-        Generate an Excel file with information about the students.
-
-        :return: path to the generated excel file
-        """
-        filename = ''.join(
-            random.choices(string.ascii_letters + string.digits, k=128))
-        filename = f'/tmp/{filename}.xlsx'
-
-        workbook = xlsxwriter.Workbook(filename)
-
-        for milspecialty in Milspecialty.objects.all():
-            worksheet = workbook.add_worksheet(milspecialty.code)
-            # define formats
-            column_f = workbook.add_format({'bold': True, 'align': 'center'})
-            center_f = workbook.add_format({'align': 'center'})
-            date_f = workbook.add_format({
-                'num_format': 'dd.mm.yyyy',
-                'align': 'center'
-            })
-            # define columns
-            columns = [
-                'ФИО', 'ВУС', 'Гражданство', 'Дата рождения', 'Кампус',
-                'Факультет', 'Код ОП', 'ОП', 'Группа', 'Военкомат', 'РМО',
-                'РППО', 'ПП', 'Хар-ка', 'СН', 'Паспорт', 'ПС', 'СБ', 'Заявление'
-            ]
-            worksheet.write_row(0, 0, columns)
-            worksheet.set_row(0, cell_format=column_f)
-            worksheet.set_column(0, 0, 30)  # ФИО
-            worksheet.set_column(2, 2, 15)  # Гражданство
-            worksheet.set_column(3, 3, 15)  # Дата рождения
-            worksheet.set_column(7, 7, 35)  # ОП
-            worksheet.set_column(9, 9, 30)  # Военкомат
-
-            # add student info to the worksheet
-            for j, student in enumerate(
-                    students.filter(milspecialty=milspecialty)):
-                i = j + 1  # start indexation from 1 to skip column names
-                # student info
-                row_data = [
-                    (student.full_name, center_f),
-                    (milspecialty.code, center_f),
-                    (student.citizenship, center_f),
-                ]
-                if student.birth_info is not None:
-                    row_data.append((student.birth_info.date, date_f))
-                else:
-                    row_data.append(('', center_f))
-                if student.university_info is not None:
-                    row_data += [
-                        (student.university_info.get_campus_display(),
-                         center_f),
-                        (student.university_info.program.faculty.faculty,
-                         center_f),
-                        (student.university_info.program.code, center_f),
-                        (student.university_info.program.program, center_f),
-                        (student.university_info.group, center_f),
-                        ('{}, {}, {}'.format(
-                            student.recruitment_office.title,
-                            student.recruitment_office.city,
-                            student.recruitment_office.district), center_f),
-                    ]
-                else:
-                    row_data += [('', center_f)] * 6
-                if student.application_process is not None:
-                    row_data += [
-                        (student.application_process.
-                         get_medical_examination_display(), center_f),
-                        (student.application_process.
-                         get_prof_psy_selection_display(), center_f),
-                    ]
-                    for field in [
-                            'preferential_right', 'characteristic_handed_over',
-                            'criminal_record_handed_over',
-                            'passport_handed_over',
-                            'registration_certificate_handed_over',
-                            'university_card_handed_over',
-                            'application_handed_over'
-                    ]:
-                        row_data.append(
-                            ('Да' if getattr(student.application_process, field)
-                             else 'Нет', center_f))
-                else:
-                    row_data += [('', center_f)] * 9
-                # write student info to the sheet
-                for col, (data, cell_format) in enumerate(row_data):
-                    worksheet.write(i, col, data, cell_format)
-
-        workbook.close()
-        return filename
-
     @extend_schema(parameters=[
-        OpenApiParameter(name='campus',
-                         description='Filter by campus',
+        OpenApiParameter(name="campus",
+                         description="Filter by campus",
                          required=True,
                          type=str)
     ])
-    @action(methods=['get'],
-            url_path='applications/export',
+    @action(methods=["get"],
+            url_path="applications/export",
             detail=False,
             renderer_classes=[XLSXRenderer])
     def applications_export(self, request: Request) -> Response:
         """
         Send an excel file with info about applicants.
-        Applicants are sorted by campus, specified in request query params.
+        Applicants are filtered by campus, specified in request query params.
         """
 
-        if 'campus' not in request.query_params:
+        if "campus" not in request.query_params:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        campus = request.query_params['campus']
-        students = self.queryset.filter(status='AP',
-                                        university_info__campus=campus)
-        filename = self.generate_excel(students)
-        with open(filename, 'rb') as file:
-            return Response(file.read(),
-                            headers={
-                                'Content-Disposition':
-                                    'attachment; filename=export.xlsx'
-                            },
-                            content_type='application/xlsx',
-                            status=status.HTTP_200_OK)
+
+        campus = request.query_params["campus"]
+        students = self.queryset.filter(
+            status=Student.Status.APPLICANT,
+            university_info__campus=campus,
+        )
+        milspecialties = Milspecialty.objects.filter(
+            available_for__contains=[campus])
+
+        path = generate_excel(students, milspecialties)
+        with open(path, "rb") as file:
+            export = file.read()
+        path.unlink(missing_ok=True)
+
+        return Response(
+            export,
+            headers={
+                "Content-Disposition": "attachment; filename=export.xlsx",
+            },
+            content_type="application/xlsx",
+            status=status.HTTP_200_OK,
+        )
 
 
-@extend_schema(tags=['students'])
+@extend_schema(tags=["students"])
 class ActivateStudentViewSet(ModelViewSet):
     queryset = Student.objects.all()
 
@@ -335,9 +253,9 @@ class ActivateStudentViewSet(ModelViewSet):
         user = request.user
         milgroup = None
 
-        if hasattr(user, 'teacher'):
+        if hasattr(user, "teacher"):
             milgroup = user.teacher.milgroup
-        elif hasattr(user, 'student'):
+        elif hasattr(user, "student"):
             milgroup = user.student.milgroup
 
         if milgroup is not None:
@@ -350,7 +268,7 @@ class ActivateStudentViewSet(ModelViewSet):
         return serializer.save()
 
     def update(self, request: Request, *args, **kwargs) -> Response:
-        partial = kwargs.pop('partial', False)
+        partial = kwargs.pop("partial", False)
         instance = self.get_object()
         serializer = self.get_serializer(instance,
                                          data=request.data,
@@ -364,10 +282,10 @@ class ActivateStudentViewSet(ModelViewSet):
             token = CreatePasswordTokenSerializer.get_token(user)
 
             # TODO(TmLev): send email, link should forward to front end app
-            print(f'localhost:9528/change-password?token={str(token)}')
+            print(f"localhost:9528/change-password?token={str(token)}")
 
-        if getattr(instance, '_prefetched_objects_cache', None):
-            # If 'prefetch_related' has been applied to a queryset, we need to
+        if getattr(instance, "_prefetched_objects_cache", None):
+            # If "prefetch_related" has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             # pylint: disable=protected-access
             instance._prefetched_objects_cache = {}
