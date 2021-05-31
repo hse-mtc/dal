@@ -9,6 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run:  cp .env.example .env
+      - run:  cp back-end/.env.example back-end/.env
       - run:  cp tgbot/.env.example tgbot/.env
       - run:  cp watchdoc/.env.example watchdoc/.env
       - name: "Build back-end container"
