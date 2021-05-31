@@ -1,0 +1,96 @@
+version: "3"
+
+# Typical order of declarations for every service:
+# - image
+# - container_name
+# - build
+# - env_file
+# - ports
+# - command
+# - restart
+# - volumes
+# - depends_on
+
+services:
+  postgres:
+    image: postgres:13-alpine
+    env_file:
+      - .env
+    restart: always
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    command: daemon --config=/ofelia/config.ini
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./ofelia:/ofelia:ro
+    # depends_on:
+    #   - back-end
+
+  watchdoc:
+    build:
+      context: .
+      dockerfile: watchdoc/Dockerfile
+    env_file:
+      - .env
+      - watchdoc/.env
+    ports:
+      # - $WATCHDOC_PORT:$WATCHDOC_PORT
+      # - $WATCHDOC_AUTH_PORT:$WATCHDOC_AUTH_PORT
+    restart: always
+    volumes:
+      - ./watchdoc:/watchdoc
+
+  back-end:
+    container_name: back-end
+    build:
+      context: .
+      dockerfile: back-end/docker/image/prod.dockerfile
+    env_file:
+      - .env
+      - back-end/.env
+    ports:
+      # - $BACK_END_PORT:$BACK_END_PORT
+    command: >
+      sh -c "/tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:$BACK_END_PORT"
+    restart: always
+    volumes:
+      - ./back-end:/back-end
+    depends_on:
+      - postgres
+
+  front-end:
+    build:
+      context: .
+      dockerfile: front-end/Dockerfile
+      args:
+        - VUE_APP_BACK_END_HOST=$BACK_END_HOST
+        - VUE_APP_BACK_END_PORT=$BACK_END_PORT
+    env_file:
+      - .env
+    ports:
+      - $FRONT_END_PORT:443
+    command: >
+      sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
+             nginx -g \"daemon off;\""
+    restart: always
+    volumes:
+      - ./nginx/prod.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt:/etc/letsencrypt
+    # depends_on:
+    #   - back-end
+
+  tgbot:
+    container_name: tgbot
+    build:
+      context: .
+      dockerfile: tgbot/Dockerfile
+    env_file:
+      - .env
+      - tgbot/.env
+    restart: always
+    # depends_on:
+    #   - back-end

@@ -1,15 +1,27 @@
 version: "3"
 
+# Typical order of declarations for every service:
+# - image
+# - container_name
+# - build
+# - env_file
+# - ports
+# - command
+# - restart
+# - volumes
+# - depends_on
+
 services:
   postgres:
     image: postgres:13-alpine
-    restart: always
     env_file:
       - .env
+    restart: unless-stopped
 
   ofelia:
     image: mcuadros/ofelia:latest
     command: daemon --config=/ofelia/config.ini
+    restart: unless-stopped
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./ofelia:/ofelia:ro
@@ -26,6 +38,7 @@ services:
     ports:
       - $WATCHDOC_PORT:$WATCHDOC_PORT
       # - $WATCHDOC_AUTH_PORT:$WATCHDOC_AUTH_PORT
+    restart: unless-stopped
     volumes:
       - ./watchdoc:/watchdoc
 
@@ -33,21 +46,21 @@ services:
     container_name: back-end
     build:
       context: .
-      dockerfile: back-end/docker/image/Dockerfile
+      dockerfile: back-end/docker/image/dev.dockerfile
     env_file:
       - .env
       - back-end/.env
-    depends_on:
-      - postgres
     ports:
       - $BACK_END_PORT:$BACK_END_PORT
     command: >
       sh -c "/tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:$BACK_END_PORT"
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./back-end:/back-end
+    depends_on:
+      - postgres
 
   front-end:
     build:
@@ -58,16 +71,16 @@ services:
         - VUE_APP_BACK_END_PORT=$BACK_END_PORT
     env_file:
       - .env
-    depends_on:
-      - back-end
     ports:
       - $FRONT_END_PORT:80
     command: >
       sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
              nginx -g \"daemon off;\""
-    restart: always
+    restart: unless-stopped
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/dev.conf:/etc/nginx/nginx.conf
+    # depends_on:
+    #   - back-end
 
   tgbot:
     container_name: tgbot
@@ -77,9 +90,8 @@ services:
     env_file:
       - .env
       - tgbot/.env
-    # depends_on:
-    #   - back-end
-    command: python src/bot.py
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./tgbot:/tgbot
+    # depends_on:
+    #   - back-end
