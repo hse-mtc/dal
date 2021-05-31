@@ -1,4 +1,4 @@
-# Python image
+# Base Python image
 FROM python:3.9.1-buster
 
 # Update system and install backup utilities
@@ -15,12 +15,12 @@ ENV PYTHONUNBUFFERED 1
 # Help Python with imports
 ENV PYTHONPATH "src:${PYTHONPATH}"
 
-# Copy Pipfile[.lock]
+# Copy pipenv manifests
 COPY back-end/Pipfile* ./
 
-# Install pipenv and packages
+# Install pipenv & dependencies
 RUN pip install pipenv && \
-    pipenv install --system --deploy --dev
+    pipenv install --system --dev
 
 # Copy tools
 COPY tools /tools
