@@ -8,9 +8,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
+      - run:  cp .env.example .env
       - run:  cp tgbot/.env.example tgbot/.env
       - run:  cp watchdoc/.env.example watchdoc/.env
-      - name: "Build back end Docker container"
+      - name: "Build back-end container"
         run:  docker-compose build back-end
       - name: "Run Postgres in background"
         run:  docker-compose up -d postgres
