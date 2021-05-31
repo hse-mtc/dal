@@ -1,4 +1,4 @@
-# Python image
+# Base Python image
 FROM python:3.9.1-buster
 
 # Set environment variables
@@ -8,12 +8,15 @@ ENV PYTHONUNBUFFERED 1
 # Set working directory
 WORKDIR /tgbot
 
-# Copy Pipfile[.lock]
+# Copy pipenv manifests
 COPY tgbot/Pipfile* ./
 
-# Install pipenv and packages
+# Install pipenv & packages
 RUN pip install pipenv && \
     pipenv install --system --deploy --dev
 
 # Copy everything else
 COPY tgbot/ .
+
+# Run bot & server
+CMD ["python", "src/bot.py"]
