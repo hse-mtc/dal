@@ -18,15 +18,28 @@ from lms.models.applicants import (
 )
 
 
+class StudentPost(models.Model):
+    title = models.CharField(primary_key=True,
+                             max_length=100,
+                             default="Студент")
+
+    class Meta:
+        verbose_name = "Student Post"
+        verbose_name_plural = "Student Posts"
+
+    def __str__(self) -> str:
+        return str(self.title)
+
+
 class Student(Personnel):
 
     class Status(models.TextChoices):
-        APPLICANT = 'AP', 'абитуриент'
-        STUDENT = 'ST', 'обучающийся'
-        EXPELLED = 'EX', 'отчислен'
-        GRADUATED = 'GR', 'выпустился'
-        AWAITING = 'AW', 'в ожидании'
-        DECLINED = 'DE', 'отклонен'
+        APPLICANT = "AP", "абитуриент"
+        STUDENT = "ST", "обучающийся"
+        EXPELLED = "EX", "отчислен"
+        GRADUATED = "GR", "выпустился"
+        AWAITING = "AW", "в ожидании"
+        DECLINED = "DE", "отклонен"
 
     status = models.CharField(
         max_length=2,
@@ -74,9 +87,14 @@ class Student(Personnel):
         blank=True,
     )
 
+    student_post = models.ForeignKey(to=StudentPost,
+                                     on_delete=models.DO_NOTHING,
+                                     null=True,
+                                     blank=True)
+
     class Meta:
-        verbose_name = 'Student'
-        verbose_name_plural = 'Students'
+        verbose_name = "Student"
+        verbose_name_plural = "Students"
 
     def __str__(self):
-        return f'ID = {self.id}, full name = {self.full_name}'
+        return f"ID = {self.id}, full name = {self.full_name}"
