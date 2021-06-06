@@ -16,7 +16,7 @@ from common.serializers.persons import (
 )
 
 from lms.models.common import Milgroup
-from lms.models.students import Student
+from lms.models.students import Student, StudentPost
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.applicants import (
     PassportSerializer,
@@ -40,6 +40,13 @@ class PhotoSerializer(ModelSerializer):
     class Meta:
         model = Photo
         exclude = ["id"]
+
+
+class StudentPostSerializer(ModelSerializer):
+
+    class Meta:
+        model = StudentPost
+        fields = "__all__"
 
 
 class StudentSerializer(WritableNestedModelSerializer):

@@ -50,30 +50,14 @@ from dms.populate.books import (
 )
 
 from lms.views.populate import (
-    create_faculties,
-    create_programs,
-    create_milfaculties,
-    create_milspecialties,
-    create_milgroups,
-    create_ranks,
-    create_posts,
-    create_passports,
-    create_recruitments_offices,
-    create_university_infos,
-    create_students,
-    create_teachers,
-    create_absences,
-    create_punishments,
-    create_encouragements,
-    create_achievement_types,
-    create_achievements,
-    create_subjects as create_lms_subjects,
-    create_rooms,
-    create_lessons,
-    create_absence_restriction_time,
-    create_marks,
-    create_uniforms,
-)
+    create_faculties, create_programs, create_milfaculties,
+    create_milspecialties, create_milgroups, create_ranks, create_posts,
+    create_passports, create_recruitments_offices, create_university_infos,
+    create_students, create_teachers, create_absences, create_punishments,
+    create_encouragements, create_achievement_types, create_achievements,
+    create_subjects as create_lms_subjects, create_rooms, create_lessons,
+    create_absence_restriction_time, create_marks, create_uniforms,
+    create_student_posts)
 
 from lms.functions import get_date_range
 
@@ -190,14 +174,9 @@ class PopulateAPIView(GenericAPIView):
             passports = create_passports()
             offices = create_recruitments_offices()
             infos = create_university_infos(programs)
-            students = create_students(
-                milgroups,
-                programs,
-                milspecialties,
-                passports,
-                offices,
-                infos,
-            )
+            student_posts = create_student_posts()
+            students = create_students(milgroups, programs, milspecialties,
+                                       passports, offices, infos, student_posts)
 
             teachers = create_teachers(milgroups, milfaculties, ranks, posts)
 

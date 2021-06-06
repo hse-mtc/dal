@@ -16,6 +16,7 @@ from lms.models.lessons import Room
 from lms.models.absences import AbsenceTime
 from lms.models.achievements import AchievementType
 from lms.models.universities import Program
+from lms.models.students import StudentPost
 
 from lms.serializers.common import (
     MilfacultySerializer,
@@ -27,6 +28,7 @@ from lms.serializers.teachers import TeacherPostSerializer, RankSerializer
 from lms.serializers.lessons import RoomSerializer
 from lms.serializers.absences import AbsenceTimeSerializer
 from lms.serializers.achievements import AchievementTypeSerializer
+from lms.serializers.students import StudentPostSerializer
 
 from lms.filters.reference_books import (
     MilspecialtyFilter,
@@ -57,6 +59,7 @@ class ReferenceBookView(ListAPIView):
         'rooms': (Room, RoomSerializer),
         'absence_time': (AbsenceTime, AbsenceTimeSerializer),
         'achievement_type': (AchievementType, AchievementTypeSerializer),
+        'student_post': (StudentPost, StudentPostSerializer)
     }
 
     def list(self, request, *args, **kwargs):
@@ -148,5 +151,13 @@ class AbsenceTimeViewSet(ModelViewSet):
 class AchievementTypeViewSet(ModelViewSet):
     serializer_class = AchievementTypeSerializer
     queryset = AchievementType.objects.all()
+
+    permission_classes = [ReferenceBookPermission]
+
+
+@extend_schema(tags=['reference-book'])
+class StudentPostViewSet(ModelViewSet):
+    serializer_class = StudentPostSerializer
+    queryset = StudentPost.objects.all()
 
     permission_classes = [ReferenceBookPermission]
