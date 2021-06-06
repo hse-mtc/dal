@@ -83,13 +83,6 @@
           column-key="milfaculty"
         />
         <PrimeColumn
-          :field="row => row.university_info.program.program"
-          header="Программа"
-          header-style="width: 300px"
-          body-style="width: 300px"
-          column-key="program"
-        />
-        <PrimeColumn
           :field="row => dateFilter(row.birth_info && row.birth_info.date)"
           header="Дата рождения"
           column-key="birthday"
@@ -123,12 +116,6 @@
         </PrimeColumn>
       </PrimeTable>
     </el-row>
-    <Student
-      v-model="modal"
-      :student="editStudent"
-      @closeModal="closeModal"
-      @submitModal="clearFilter"
-    />
   </div>
 </template>
 
@@ -136,11 +123,29 @@
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 import { getStudent, deleteStudent } from "@/api/students";
-import Student from "../Student/Student.vue";
 
 export default {
   name: "Students",
-  components: { Student },
+  filters: {
+    statusFilter(value) {
+      switch (value) {
+        case "AP":
+          return "Абитуриент";
+        case "ST":
+          return "Обучающийся";
+        case "EX":
+          return "Отчислен";
+        case "GR":
+          return "Выпустился";
+        default:
+          return "Ошибка";
+      }
+    },
+    dateFilter(value) {
+      if (value) return moment(value).format("DD.MM.YYYY");
+      return "Нет данных";
+    },
+  },
   data() {
     return {
       loading: false,
@@ -150,7 +155,6 @@ export default {
         status: "ST",
       },
       students: [],
-      modal: false,
       statuses: [
         { code: "ST", label: "Обучающийся" },
         { code: "EX", label: "Отчислен" },
@@ -171,24 +175,12 @@ export default {
         },
       ],
       milfaculties: ["Разведка", "Сержанты", "ВКС", "РВСН"],
-      editStudent: {},
     };
   },
   async created() {
     await this.onFilter();
   },
   methods: {
-    closeModal() {
-      this.modal = false;
-      document
-        .getElementById("main-container")
-        .classList.remove("stop-scrolling");
-      this.editStudent = {};
-    },
-    openModal() {
-      this.modal = true;
-      document.getElementById("main-container").classList.add("stop-scrolling");
-    },
     async onFilter() {
       try {
         this.loading = true;
@@ -224,9 +216,8 @@ export default {
         }
       });
     },
-    onEdit(row) {
-      this.editStudent = { ...row };
-      this.openModal();
+    onEdit(studentId) {
+      this.$router.push({ name: "Student", params: { studentId } });
     },
     milgroupField(row) {
       return row.milgroup.milgroup;

@@ -137,6 +137,21 @@ export const constantRoutes = [
       },
 
       {
+        path: "student/:studentId",
+        name: "Student",
+        component: () => import("@/views/Personnel/Student"),
+        meta: { title: "Студент" },
+        hidden: true,
+      },
+      {
+        path: "teacher/:teacherId",
+        name: "Teacher",
+        component: () => import("@/views/Personnel/Teacher"),
+        meta: { title: "Преподаватель" },
+        hidden: true,
+      },
+
+      {
         path: "absence/",
         name: "Absence",
         component: () => import("@/views/Absence/index"),

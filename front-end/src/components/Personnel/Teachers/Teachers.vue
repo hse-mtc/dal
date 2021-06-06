@@ -95,12 +95,6 @@
         </PrimeColumn>
       </PrimeTable>
     </el-row>
-    <Teacher
-      v-model="modal"
-      :teacher="editTeacher"
-      @closeModal="closeModal"
-      @submitModal="clearFilter"
-    />
   </div>
 </template>
 
@@ -112,9 +106,6 @@ import Teacher from "../Teacher/Teacher.vue";
 
 export default {
   name: "Teachers",
-  components: {
-    Teacher,
-  },
   data() {
     return {
       loading: false,
@@ -123,7 +114,6 @@ export default {
         milfaculty: null,
       },
       teachers: [],
-      modal: false,
       milgroups: [
         {
           milgroup: 1807,
@@ -149,17 +139,6 @@ export default {
     formatDate(d) {
       if (d) return moment(d.date).format("DD.MM.YYYY");
       return "Нет данных";
-    },
-    closeModal() {
-      this.modal = false;
-      document
-        .getElementById("main-container")
-        .classList.remove("stop-scrolling");
-      this.editTeacher = {};
-    },
-    openModal() {
-      this.modal = true;
-      document.getElementById("main-container").classList.add("stop-scrolling");
     },
     async onFilter() {
       try {
@@ -196,9 +175,8 @@ export default {
         }
       });
     },
-    onEdit(row) {
-      this.editTeacher = { ...row };
-      this.openModal();
+    onEdit(teacherId) {
+      this.$router.push({ name: "Teacher", params: { teacherId } });
     },
   },
 };

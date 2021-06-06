@@ -13,6 +13,13 @@ export function getTeacher(params) {
   });
 }
 
+export function findTeacher(id) {
+  return request({
+    url: `${BASE_API_URL}${teachers}${id}/`,
+    method: "get",
+  });
+}
+
 export function postTeacher(data) {
   return request({
     url: BASE_API_URL + teachers,
