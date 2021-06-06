@@ -19,6 +19,13 @@ export function getStudent(params) {
   });
 }
 
+export function findStudent(id) {
+  return request({
+    url: `${BASE_API_URL}${students}${id}/`,
+    method: "get",
+  });
+}
+
 export function postStudent(data) {
   return request({
     url: BASE_API_URL + students,

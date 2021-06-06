@@ -1,15 +1,30 @@
 <template>
-  <el-drawer
-    :visible.sync="modal"
-    direction="rtl"
-    size="40%"
-    :destroy-on-close="true"
+  <el-col
+    v-loading="loading"
+    :offset="2"
+    :span="20"
+    class="student"
   >
+    <el-row class="pageTitle">
+      <el-col>
+        <div v-if="$route.params.studentId" class="d-flex align-items-center">
+          <img
+            src="@/assets/scienceWorks/previous.svg"
+            style="position: absolute; left: -40px; cursor: pointer"
+            height="22px"
+            alt="назад"
+            @click="backToPersonnel"
+          >
+          {{ fullname }}
+        </div>
+      </el-col>
+    </el-row>
     <el-form
       ref="form"
       :model="form"
       :rules="rules"
-      label-width="250px"
+      label-width="150px"
+      :label-position="$route.params.studentId ? 'left' : 'right'"
       class="form"
     >
       <el-form-item label="Фото">
@@ -34,11 +49,7 @@
       </el-form-item>
 
       <el-form-item label="Имя" prop="name">
-        <el-input
-          v-model="form.name"
-          clearable
-          placeholder="Введите имя"
-        />
+        <el-input v-model="form.name" clearable placeholder="Введите имя" />
       </el-form-item>
 
       <el-form-item label="Отчество" prop="patronymic">
@@ -71,36 +82,23 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">
-          Отправить
+          Сохранить
         </el-button>
       </el-form-item>
     </el-form>
-  </el-drawer>
+  </el-col>
 </template>
 
 <script>
-import { patchStudent } from "@/api/students";
-import { patchError, patchSuccess } from "@/utils/message";
+import { patchStudent, findStudent } from "@/api/students";
+import { patchError, patchSuccess, getError } from "@/utils/message";
 import { getMilGroups } from "@/api/reference-book";
 
 export default {
   name: "Student",
-  model: {
-    prop: "show",
-    event: "show-change",
-  },
-  props: {
-    student: {
-      type: Object,
-      required: true,
-    },
-    show: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
+      loading: false,
       form: {
         id: 0,
         milgroup: null,
@@ -137,26 +135,28 @@ export default {
     };
   },
   computed: {
-    modal: {
-      get() {
-        return this.show;
-      },
-      set(value) {
-        this.$emit("show-change", value);
-      },
+    fullname() {
+      return this.form.fullname;
     },
   },
-  watch: {
-    async student(value) {
-      Object.keys(this.form).forEach(key => {
-        this.form[key] = value[key];
-      });
-      await this.fetchData();
-    },
+  async created() {
+    console.log(this.$route.params.studentId);
+    await this.fetchData();
   },
   methods: {
     async fetchData() {
       this.milgroups = (await getMilGroups()).data;
+      const id = this.$route.params.studentId;
+      if (id) {
+        try {
+          this.loading = true;
+          this.form = (await findStudent(id)).data;
+        } catch {
+          getError("студента");
+        } finally {
+          this.loading = false;
+        }
+      }
     },
     handleAvatarSuccess(res, file) {
       this.form.foto = URL.createObjectURL(file.raw);
@@ -180,16 +180,14 @@ export default {
           try {
             await patchStudent(this.form);
             patchSuccess("студента");
-            this.$emit("submitModal");
-            this.closeModal();
           } catch (err) {
             patchError("студента", err.response.status);
           }
         }
       });
     },
-    closeModal() {
-      this.$emit("closeModal");
+    backToPersonnel() {
+      this.$router.push({ path: "/personnel/" });
     },
   },
 };
