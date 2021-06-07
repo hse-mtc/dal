@@ -26,6 +26,7 @@ def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
         "num_format": "dd.mm.yyyy",
         "align": "center",
     })
+    mean_grade = workbook.add_format({"align": "center", "num_format": "#,##0.00"})
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
@@ -39,6 +40,7 @@ def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
                 student=student,
                 align_center=align_center,
                 russian_date=russian_date,
+                mean_grade=mean_grade,
             )
             for col, (data, cell_format) in enumerate(cells):
                 worksheet.write(row, col, data, cell_format)
@@ -56,6 +58,7 @@ def _fill_header(
         "Дата рождения",
         "Код ОП",
         "Кампус",
+        "Ср. балл",
         "РМО",
         "РППО",
         "ПП",
@@ -72,13 +75,14 @@ def _fill_header(
     worksheet.set_column(0, 0, 30)  # ФИО
     worksheet.set_column(1, 1, 15)  # Дата рождения
     worksheet.set_column(3, 3, 15)  # Кампус
-    worksheet.set_column(4, 4, 34)  # РМО
+    worksheet.set_column(5, 5, 34)  # РМО
 
 
 def _make_student_row(
     student: Student,
     align_center: xlsxwriter.workbook.Format,
     russian_date: xlsxwriter.workbook.Format,
+    mean_grade: xlsxwriter.workbook.Format,
 ) -> list[...]:
     row = [(student.full_name, align_center)]
 
@@ -97,6 +101,8 @@ def _make_student_row(
 
     if student.application_process is not None:
         row += [
+            (student.application_process.mean_grade,
+             mean_grade),
             (student.application_process.get_medical_examination_display(),
              align_center),
             (student.application_process.get_prof_psy_selection_display(),
