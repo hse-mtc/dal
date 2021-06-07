@@ -60,7 +60,7 @@
           :total="entriesAmount"
           :current-page="currentPage"
           :page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
+          :page-sizes="[5, 10, 20]"
           @current-change="fetchData"
           @size-change="onPageSizeChange"
         />
@@ -109,7 +109,7 @@ export default {
       data: [],
       entriesAmount: 0,
       currentPage: 1,
-      pageSize: 50,
+      pageSize: 10,
       searchQuery: "",
       loading: false,
       selectedCampus,

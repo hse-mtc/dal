@@ -28,6 +28,16 @@
           <span>{{ startIndex + $index + 1 }}</span>
         </template>
 
+        <template v-else-if="field === 'mean_grade'">
+          <el-input
+            v-model="data[$index][field]"
+            style="width: 100%; max-width: 100%"
+            type="number"
+            :controls="false"
+            @blur="checkGrade(row.id, field, $index, field)"
+          />
+        </template>
+
         <template v-else-if="field === 'medical_examination'">
           <!-- todo -->
           <!-- eslint-disable vue/no-mutating-props -->
@@ -121,6 +131,11 @@ export default {
         program: {
           abbr: "КС",
           title: "Код специальности (направление подготовки)",
+          width: 100,
+        },
+        mean_grade: {
+          title: "Средний балл",
+          width: 100,
         },
         medical_examination: {
           abbr: "РМО",
@@ -135,23 +150,28 @@ export default {
         preferential_right: {
           abbr: "ПП",
           title: "Преимущественное право",
+          width: 100,
         },
         characteristic_handed_over: {
           abbr: "Хар-ка",
           title: "Характеристика",
+          width: 100,
         },
         criminal_record_handed_over: {
           abbr: "СН",
           title: "Справка о несудимости",
+          width: 100,
         },
         passport_handed_over: { title: "Паспорт", width: 100 },
         registration_certificate_handed_over: {
           abbr: "ПС",
           title: "Приписное свидетельство",
+          width: 100,
         },
         university_card_handed_over: {
           abbr: "СБ",
           title: "Студенческий билет",
+          width: 100,
         },
         application_handed_over: {
           title: "Заявление",
@@ -175,6 +195,16 @@ export default {
     };
   },
   methods: {
+    checkGrade(id, key, index, field) {
+      let value = this.data[index][field];
+      if (value > 10)
+        value = 10;
+      if (value < 0)
+        value = 0;
+      value = Math.round(value * 100) / 100;
+      this.data[index][field] = value;
+      this.onUpdate(id, key, value);
+    },
     onUpdate(id, key, value) {
       this.$emit("update", { id, key, value });
     },
@@ -185,5 +215,14 @@ export default {
 <style lang="scss" module>
 .label {
   word-break: break-word !important;
+}
+
+// hide number input controls
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+input[type="number"]{
+  -moz-appearance: textfield;
 }
 </style>
