@@ -19,9 +19,7 @@ from lms.models.applicants import (
 
 
 class StudentPost(models.Model):
-    title = models.CharField(primary_key=True,
-                             max_length=100,
-                             default="Студент")
+    title = models.CharField(unique=True, max_length=100, default="Студент")
 
     class Meta:
         verbose_name = "Student Post"
