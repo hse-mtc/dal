@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"name": "Root",
+			"path": ".."
+		},
+		{
+			"name": "Back-end",
+			"path": "../back-end"
+		},
+		{
+			"name": "Front-end",
+			"path": "../front-end"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "/usr/local/bin/python"
+	}
+}
