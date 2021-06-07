@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class Passport(models.Model):
@@ -56,7 +57,8 @@ class ApplicationProcess(models.Model):
     university_card_handed_over = models.BooleanField(default=False)
     application_handed_over = models.BooleanField(default=False)
 
-    mean_grade = models.DecimalField(max_digits=4, decimal_places=2, default=0)
+    mean_grade = models.DecimalField(max_digits=4, decimal_places=2, default=0, validators=[MinValueValidator(0), MaxValueValidator(10)])
+
 
     class Meta:
         verbose_name = "Application Process"
