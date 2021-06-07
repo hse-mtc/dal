@@ -16,8 +16,12 @@ from lms.models.universities import (
     Program,
     UniversityInfo,
 )
-from lms.models.students import (Student, Passport, RecruitmentOffice,
-                                 StudentPost)
+from lms.models.students import (
+    Student,
+    Passport,
+    RecruitmentOffice,
+    StudentPost
+)
 from lms.models.teachers import (
     Rank,
     TeacherPost,
