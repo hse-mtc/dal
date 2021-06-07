@@ -26,7 +26,10 @@ def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
         "num_format": "dd.mm.yyyy",
         "align": "center",
     })
-    mean_grade = workbook.add_format({"align": "center", "num_format": "#,##0.00"})
+    mean_grade = workbook.add_format({
+        "align": "center",
+        "num_format": "#,##0.00"
+    })
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
@@ -101,8 +104,7 @@ def _make_student_row(
 
     if student.application_process is not None:
         row += [
-            (student.application_process.mean_grade,
-             mean_grade),
+            (student.application_process.mean_grade, mean_grade),
             (student.application_process.get_medical_examination_display(),
              align_center),
             (student.application_process.get_prof_psy_selection_display(),
