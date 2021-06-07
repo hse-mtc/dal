@@ -20,7 +20,7 @@ from lms.models.students import (
     Student,
     Passport,
     RecruitmentOffice,
-    StudentPost
+    StudentPost,
 )
 from lms.models.teachers import (
     Rank,
