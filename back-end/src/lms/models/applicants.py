@@ -56,6 +56,8 @@ class ApplicationProcess(models.Model):
     university_card_handed_over = models.BooleanField(default=False)
     application_handed_over = models.BooleanField(default=False)
 
+    mean_grade = models.DecimalField(max_digits=4, decimal_places=2, default=0)
+
     class Meta:
         verbose_name = "Application Process"
         verbose_name_plural = "Application Processes"
