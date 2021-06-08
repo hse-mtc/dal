@@ -119,31 +119,31 @@ export default {
     // TODO(gakhromov): remove this check when permissions are done
     const userEmail = this.$store.state.user.email;
     let fields = {
-        index: {
-          title: "№",
-          width: 50,
-        },
-        fullname: {
-          abbr: "ФИО",
-          title: "Фамилия, имя, отчество",
-          width: 300,
-        },
-        birthday: {
-          title: "Дата рождения",
-          width: 100,
-        },
-        program: {
-          abbr: "КС",
-          title: "Код специальности (направление подготовки)",
-          width: 100,
-        },
-        mean_grade: {
-          title: "Средний балл",
-          width: 100,
-        },
+      index: {
+        title: "№",
+        width: 50,
+      },
+      fullname: {
+        abbr: "ФИО",
+        title: "Фамилия, имя, отчество",
+        width: 300,
+      },
+      birthday: {
+        title: "Дата рождения",
+        width: 100,
+      },
+      program: {
+        abbr: "КС",
+        title: "Код специальности (направление подготовки)",
+        width: 100,
+      },
+      mean_grade: {
+        title: "Средний балл",
+        width: 100,
+      },
     };
-      
-    if (! userEmail.includes("study.office"))
+
+    if (!userEmail.includes("study.office")) {
       fields = {
         ...fields,
         medical_examination: {
@@ -186,7 +186,8 @@ export default {
           title: "Заявление",
           width: 100,
         },
-      }
+      };
+    }
 
     return {
       fields,

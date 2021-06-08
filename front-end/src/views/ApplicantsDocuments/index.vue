@@ -13,8 +13,11 @@
           />
         </el-col>
         <el-col :span="4">
-          <el-select v-model="selectedProgram" clearable placeholder="Выберите код ОП"
-              @change="changeProgram"
+          <el-select
+            v-model="selectedProgram"
+            clearable
+            placeholder="Выберите код ОП"
+            @change="changeProgram"
           >
             <el-option
               v-for="item in programs"
@@ -54,7 +57,7 @@
             :title="'Всего абитуриентов: ' + entriesAmount"
           />
         </el-col>
-        <el-col :span="4">
+        <el-col v-if="!isStudyOffice" :span="4">
           <el-button type="success" plain @click="getExcel">
             <i class="el-icon-download" /> Экспорт в Excel
           </el-button>
@@ -130,7 +133,7 @@ export default {
       searchQuery: "",
       loading: false,
       selectedCampus,
-      selectedProgram: null,
+      selectedProgram: this.$route.query.program,
     };
   },
   computed: {
@@ -142,6 +145,10 @@ export default {
     this.fetchData();
   },
   methods: {
+    isStudyOffice() {
+      // TODO(gakhromov): remove this check when permissions are done
+      return this.$store.state.user.email.includes("study.office");
+    },
     getExcel() {
       window.location.href = getApplicationsExcelDownloadLink(this.selectedCampus);
     },
@@ -150,6 +157,7 @@ export default {
     },
     async changeProgram(program) {
       this.selectedProgram = program;
+      this.$router.push({ query: { program } });
       await this.fetchData();
     },
     async changeCampus(campus) {
