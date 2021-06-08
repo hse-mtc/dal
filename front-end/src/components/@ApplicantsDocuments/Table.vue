@@ -29,6 +29,8 @@
         </template>
 
         <template v-else-if="field === 'mean_grade'">
+          <!-- todo -->
+          <!-- eslint-disable vue/no-mutating-props -->
           <el-input
             v-model="data[$index][field]"
             style="width: 100%; max-width: 100%"
@@ -36,6 +38,7 @@
             :controls="false"
             @blur="checkGrade(row.id, field, $index, field)"
           />
+          <!-- eslint-enable vue/no-mutating-props -->
         </template>
 
         <template v-else-if="field === 'medical_examination'">
@@ -197,12 +200,13 @@ export default {
   methods: {
     checkGrade(id, key, index, field) {
       let value = this.data[index][field];
-      if (value > 10)
-        value = 10;
-      if (value < 0)
-        value = 0;
+      if (value > 10) value = 10;
+      if (value < 0) value = 0;
       value = Math.round(value * 100) / 100;
+      // todo
+      /* eslint-disable vue/no-mutating-props */
       this.data[index][field] = value;
+      /* eslint-enable vue/no-mutating-props */
       this.onUpdate(id, key, value);
     },
     onUpdate(id, key, value) {
