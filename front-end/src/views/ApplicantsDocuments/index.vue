@@ -13,7 +13,9 @@
           />
         </el-col>
         <el-col :span="4">
-          <el-select v-model="selectedProgram" clearable placeholder="Выберите код ОП">
+          <el-select v-model="selectedProgram" clearable placeholder="Выберите код ОП"
+              @change="changeProgram"
+          >
             <el-option
               v-for="item in programs"
               :key="item.code"
@@ -145,6 +147,10 @@ export default {
     },
     async fetchPrograms() {
       this.programs = (await getPrograms()).data;
+    },
+    async changeProgram(program) {
+      this.selectedProgram = program;
+      await this.fetchData();
     },
     async changeCampus(campus) {
       this.selectedCampus = campus;
