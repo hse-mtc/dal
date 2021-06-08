@@ -1,6 +1,7 @@
 from django_filters.rest_framework import (
     FilterSet,
     ChoiceFilter,
+    CharFilter,
 )
 
 from lms.models.students import Student
@@ -12,6 +13,7 @@ class StudentFilter(FilterSet):
         choices=UniversityInfo.Campus.choices,
         method="filter_by_campus",
     )
+    program = CharFilter(field_name="university_info__program__code")
 
     def filter_by_campus(self, queryset, name, value):
         # pylint: disable=unused-argument
