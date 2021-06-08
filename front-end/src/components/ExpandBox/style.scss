@@ -1,0 +1,59 @@
+$border-radius: 20px;
+$border-color: rgb(197, 197, 197);
+$animation-time: 0.2s;
+
+.expand-box {
+  background: #fff;
+  width: 100%;
+
+  &:not(.no-expand) {
+    .header {
+      cursor: pointer;
+    }
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: $animation-time;
+    padding: 10px 20px;
+    font-size: 20px;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+
+    .icon {
+      transition: $animation-time;
+    }
+  }
+
+  .body {
+    transform-origin: top;
+    border-width: 0 1px 1px;
+    border-style: solid;
+    border-color: $border-color;
+    padding: 20px;
+    border-radius: 0 0 $border-radius $border-radius;
+  }
+
+  &.expanded {
+    .header {
+      border-radius: $border-radius $border-radius 0 0;
+
+      .icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+.expand-enter-to,
+.expand-leave-active {
+  transition: all $animation-time;
+  transform: scaleY(1);
+}
+.expand-enter,
+.expand-leave-to {
+  opacity: 0;
+  transform: scaleY(0);
+}
