@@ -162,6 +162,16 @@ class StudentViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    @extend_schema(parameters=[
+        OpenApiParameter(name="campus",
+                         description="Filter by campus",
+                         required=True,
+                         type=str),
+        OpenApiParameter(name="program",
+                         description="Filter by program code",
+                         required=False,
+                         type=str),
+    ])
     @action(detail=False, methods=["get"])
     def applications(self, request: Request, *args, **kwargs) -> Response:
         """List all applicants with their applications."""
