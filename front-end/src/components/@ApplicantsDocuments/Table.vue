@@ -116,8 +116,9 @@ export default {
     },
   },
   data() {
-    return {
-      fields: {
+    // TODO(gakhromov): remove this check when permissions are done
+    const userEmail = this.$store.state.user.email;
+    let fields = {
         index: {
           title: "№",
           width: 50,
@@ -140,6 +141,11 @@ export default {
           title: "Средний балл",
           width: 100,
         },
+    };
+      
+    if (! userEmail.includes("study.office"))
+      fields = {
+        ...fields,
         medical_examination: {
           abbr: "РМО",
           title: "Результаты медицинского освидетельствования",
@@ -180,12 +186,10 @@ export default {
           title: "Заявление",
           width: 100,
         },
-        faculty: {
-          title: "Факультет",
-          width: 100,
-        },
-      },
+      }
 
+    return {
+      fields,
       checkboxesFields: [
         "preferential_right",
         "characteristic_handed_over",
