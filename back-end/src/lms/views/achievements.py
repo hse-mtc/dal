@@ -15,7 +15,7 @@ from auth.permissions import BasePermission
 
 
 class AchievementPermission(BasePermission):
-    permission_class = 'auth.achievement'
+    permission_class = 'achievement'
 
 
 @extend_schema(tags=['achievements'])

@@ -29,7 +29,7 @@ from auth.permissions import BasePermission
 
 
 class LessonPermission(BasePermission):
-    permission_class = 'auth.lesson'
+    permission_class = 'lesson'
 
 
 @extend_schema(tags=['lessons'])

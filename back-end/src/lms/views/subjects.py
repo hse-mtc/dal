@@ -14,7 +14,7 @@ from auth.permissions import BasePermission
 
 
 class LessonSubjectPermission(BasePermission):
-    permission_class = 'auth.subject'
+    permission_class = 'subject'
 
 
 @extend_schema(tags=['lms-subjects'])

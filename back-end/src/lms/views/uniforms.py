@@ -18,7 +18,7 @@ from auth.permissions import BasePermission
 
 
 class UniformPermission(BasePermission):
-    permission_class = 'auth.uniform'
+    permission_class = 'uniform'
 
 
 @extend_schema(tags=['uniforms'])

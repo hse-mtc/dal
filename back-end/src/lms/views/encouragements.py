@@ -15,7 +15,7 @@ from auth.permissions import BasePermission
 
 
 class EncouragementPermission(BasePermission):
-    permission_class = 'auth.encouragement'
+    permission_class = 'encouragement'
 
 
 @extend_schema(tags=['encouragements'])

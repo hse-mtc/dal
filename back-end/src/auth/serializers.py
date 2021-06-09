@@ -1,14 +1,15 @@
 from django.contrib.auth import get_user_model
-from auth.models import (
-    Group,
-    Permission,
-)
 
 from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from conf.settings import CREATE_PASSWORD_TOKEN_LIFETIME
+
+from auth.models import (
+    Group,
+    Permission,
+)
 
 
 class PermissionSerializer(serializers.ModelSerializer):
