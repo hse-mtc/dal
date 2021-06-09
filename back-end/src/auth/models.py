@@ -55,9 +55,12 @@ class Permission(models.Model):
     method = models.CharField(max_length=100)
 
     name = models.CharField(max_length=255)
-    codename = models.CharField(max_length=100, unique=True)
 
     objects = PermissionManager()
+
+    @property
+    def codename(self):
+        return ".".join([self.viewset, self.method, self.scope])
 
     class Meta:
         verbose_name = "Permission"
