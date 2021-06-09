@@ -15,7 +15,7 @@ from auth.permissions import BasePermission
 
 
 class PunishmentPermission(BasePermission):
-    permission_class = 'auth.punishment'
+    permission_class = 'punishment'
 
 
 @extend_schema(tags=['punishments'])

@@ -16,21 +16,27 @@ def create_permissions_for_view(view_name, view_name_rus):
         "all": (0, " (всех данных)"),
     }
 
-
     permissions = []
     for method in methods_str:
         for scope in scopes_str:
             permissions.append({
-                    "viewset": view_name,
-                    "method": method,
-                    "scope": scopes_str[scope][0],
-                    "codename": "_".join([view_name, method, scope]),
-                    "name": "".join([view_name_rus, methods_str[method], scopes_str[scope][1]]),
-                })
+                "viewset":
+                    view_name,
+                "method":
+                    method,
+                "scope":
+                    scopes_str[scope][0],
+                "codename":
+                    "_".join([view_name, method, scope]),
+                "name":
+                    "".join([
+                        view_name_rus, methods_str[method], scopes_str[scope][1]
+                    ]),
+            })
     return permissions
 
 
-def create_permissions(content_type):
+def create_permissions():
     values = []
     values += create_permissions_for_view("student", "Студенты")
     values += create_permissions_for_view("teacher", "Учителя")

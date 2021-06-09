@@ -36,7 +36,7 @@ from auth.permissions import BasePermission
 
 
 class AbsencePermission(BasePermission):
-    permission_class = 'auth.absence'
+    permission_class = 'absence'
 
 
 @extend_schema(tags=['absences'])

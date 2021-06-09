@@ -14,7 +14,7 @@ from auth.permissions import BasePermission
 
 
 class TeacherPermission(BasePermission):
-    permission_class = 'auth.teacher'
+    permission_class = 'teacher'
 
 
 @extend_schema(tags=['teachers'])

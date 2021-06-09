@@ -36,7 +36,7 @@ from auth.permissions import BasePermission
 
 
 class MarkPermission(BasePermission):
-    permission_class = 'auth.mark'
+    permission_class = 'mark'
 
 
 @extend_schema(tags=['marks'])

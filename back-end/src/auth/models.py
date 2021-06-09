@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import (
-    AbstractUser, 
+    AbstractUser,
     GroupManager,
     PermissionManager,
 )
@@ -43,16 +43,17 @@ class UniversityCampus(models.TextChoices):
     NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
     PERM = "PE", "Пермь"
 class Permission(models.Model):
+
     class Scopes(models.IntegerChoices):
-        ALL = 0, 'all'
-        MILFACULTY = 10, 'milfaculty'
-        MILGROUP = 20, 'milgroup'
-        SELF = 30, 'self'
+        ALL = 0, "all"
+        MILFACULTY = 10, "milfaculty"
+        MILGROUP = 20, "milgroup"
+        SELF = 30, "self"
 
     scope = models.IntegerField(choices=Scopes.choices)
     viewset = models.CharField(max_length=100)
     method = models.CharField(max_length=100)
-    
+
     name = models.CharField(max_length=255)
     codename = models.CharField(max_length=100, unique=True)
 
@@ -109,8 +110,8 @@ class User(AbstractUser):
         verbose_name="groups",
         blank=True,
         help_text=
-            "The groups this user belongs to. A user will get all permissions "
-            "granted to each of their groups.",
+        "The groups this user belongs to. A user will get all permissions "
+        "granted to each of their groups.",
         related_name="user_set",
         related_query_name="user",
     )
@@ -123,22 +124,28 @@ class User(AbstractUser):
         related_query_name="user",
     )
 
+    # pylint: disable=arguments-differ
     def get_group_permissions(self):
         permissions = Permission.objects.none()
         for group in self.groups.all():
             permissions = permissions.union(group.permissions.all())
         return permissions
 
+    # pylint: disable=arguments-differ
     def get_all_permissions(self):
         return self.permissions.union(self.get_group_permissions())
 
+    # pylint: disable=arguments-differ
     def has_perm(self, permission_class, method):
-        permissions = self.get_all_permissions().filter(viewset=permission_class, method=method.lower())
-        return len(permissions) > 0
-    
+        perms = self.get_all_permissions().values()
+        perms = [
+            perm for perm in perms if (perm["viewset"] == permission_class) and
+            (perm["method"] == method.lower())
+        ]
+        return len(perms) > 0
+
     def get_scope(self, permission_class, method):
-        permissions = self.get_all_permissions().filter(viewset=permission_class, method=method.lower())
-        
+        pass
 
     def __str__(self):
         return self.email
