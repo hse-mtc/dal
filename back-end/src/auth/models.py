@@ -42,6 +42,8 @@ class UniversityCampus(models.TextChoices):
     SAINT_PETERSBURG = "SP", "Санкт-Петербург"
     NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
     PERM = "PE", "Пермь"
+
+
 class Permission(models.Model):
 
     class Scopes(models.IntegerChoices):
@@ -60,7 +62,7 @@ class Permission(models.Model):
 
     @property
     def codename(self):
-        return ".".join([self.viewset, self.method, self.scope])
+        return ".".join([self.viewset, self.method, self.get_scope_display()])
 
     class Meta:
         verbose_name = "Permission"

@@ -10,10 +10,10 @@ def create_permissions_for_view(view_name, view_name_rus):
     }
 
     scopes_str = {
-        "self": (30, ", связанных с пользователем"),
-        "milgroup": (20, " о взоде, связанным с пользователем"),
-        "milfaculty": (10, " о цикле, связанным с пользователем"),
-        "all": (0, " (всех данных)"),
+        "self": (int(Permission.Scopes.SELF), ", связанных с пользователем"),
+        "milgroup": (int(Permission.Scopes.MILGROUP), " о взоде, связанным с пользователем"),
+        "milfaculty": (int(Permission.Scopes.MILFACULTY), " о цикле, связанным с пользователем"),
+        "all": (int(Permission.Scopes.ALL), " (всех данных)"),
     }
 
     permissions = []
@@ -69,8 +69,12 @@ def get_student_permissions():
         "mark.get.self",
         "reference_book.get.all",
     ]
-
-    return [Permission.objects.get(codename=val) for val in values]
+    res = []
+    for val in values:
+        viewset, method, scope = val.split('.')
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(Permission.objects.get(viewset=viewset, method=method, scope=int(getattr(Permission.Scopes, scope.upper()))))
+    return res
 
 
 def get_teacher_permissions():
@@ -102,7 +106,12 @@ def get_teacher_permissions():
         "reference_book.get.all",
     ]
 
-    return [Permission.objects.get(codename=val) for val in values]
+    res = []
+    for val in values:
+        viewset, method, scope = val.split('.')
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(Permission.objects.get(viewset=viewset, method=method, scope=int(getattr(Permission.Scopes, scope.upper()))))
+    return res
 
 
 def get_milfaculty_head_permissions():
@@ -146,4 +155,9 @@ def get_milfaculty_head_permissions():
         "reference_book.get.all",
     ]
 
-    return [Permission.objects.get(codename=val) for val in values]
+    res = []
+    for val in values:
+        viewset, method, scope = val.split('.')
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(Permission.objects.get(viewset=viewset, method=method, scope=int(getattr(Permission.Scopes, scope.upper()))))
+    return res
