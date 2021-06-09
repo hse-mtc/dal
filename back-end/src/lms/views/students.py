@@ -61,7 +61,7 @@ class XLSXRenderer(BaseRenderer):
 
 
 class StudentPermission(BasePermission):
-    permission_class = "auth.student"
+    permission_class = "student"
 
 
 class AllowApplicantFormPost(permissions.BasePermission):

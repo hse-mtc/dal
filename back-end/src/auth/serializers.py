@@ -13,10 +13,12 @@ from auth.models import (
 
 
 class PermissionSerializer(serializers.ModelSerializer):
+    scope_display = serializers.CharField(source="get_scope_display")
 
     class Meta:
         model = Permission
-        fields = "__all__"
+        # using __all__ does not display codename
+        fields = ["id", "method", "viewset", "scope", "scope_display", "codename", "name"]
 
 
 class GroupSerializer(serializers.ModelSerializer):
