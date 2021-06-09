@@ -42,6 +42,46 @@ class UniversityCampus(models.TextChoices):
     SAINT_PETERSBURG = "SP", "Санкт-Петербург"
     NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
     PERM = "PE", "Пермь"
+class Permission(models.Model):
+    class Scopes(models.IntegerChoices):
+        ALL = 0, 'all'
+        MILFACULTY = 10, 'milfaculty'
+        MILGROUP = 20, 'milgroup'
+        SELF = 30, 'self'
+
+    scope = models.IntegerField(choices=Scopes.choices)
+    viewset = models.CharField(max_length=100)
+    method = models.CharField(max_length=100)
+    
+    name = models.CharField(max_length=255)
+    codename = models.CharField(max_length=100, unique=True)
+
+    objects = PermissionManager()
+
+    class Meta:
+        verbose_name = "Permission"
+        verbose_name_plural = "Permissions"
+
+    def __str__(self):
+        return str(self.name)
+
+
+class Group(models.Model):
+    permissions = models.ManyToManyField(
+        Permission,
+        verbose_name="permissions",
+        blank=True,
+    )
+    name = models.CharField("name", max_length=150, unique=True)
+
+    objects = GroupManager()
+
+    class Meta:
+        verbose_name = "Group"
+        verbose_name_plural = "Groups"
+
+    def __str__(self):
+        return self.name
 
 
 class User(AbstractUser):
@@ -92,6 +132,13 @@ class User(AbstractUser):
     def get_all_permissions(self):
         return self.permissions.union(self.get_group_permissions())
 
+    def has_perm(self, permission_class, method):
+        permissions = self.get_all_permissions().filter(viewset=permission_class, method=method.lower())
+        return len(permissions) > 0
+    
+    def get_scope(self, permission_class, method):
+        permissions = self.get_all_permissions().filter(viewset=permission_class, method=method.lower())
+        
 
     def __str__(self):
         return self.email
