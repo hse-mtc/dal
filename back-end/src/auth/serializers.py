@@ -18,7 +18,10 @@ class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
         # using __all__ does not display codename
-        fields = ["id", "method", "viewset", "scope", "scope_display", "codename", "name"]
+        fields = [
+            "id", "method", "viewset", "scope", "scope_display", "codename",
+            "name"
+        ]
 
 
 class GroupSerializer(serializers.ModelSerializer):

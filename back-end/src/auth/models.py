@@ -139,7 +139,7 @@ class User(AbstractUser):
     # pylint: disable=arguments-differ
     def get_all_permissions(self):
         return self.permissions.union(self.get_group_permissions())
-    
+
     def _filter_permissions(self, permission_class, method):
         perms = self.get_all_permissions().values()
         return [
@@ -154,9 +154,8 @@ class User(AbstractUser):
     def get_perm_scope(self, permission_class, method):
         perms = self._filter_permissions(permission_class, method)
         if len(perms) > 0:
-            return min(perms, key=lambda perm: perm['scope'])['scope']
+            return min(perms, key=lambda perm: perm["scope"])["scope"]
         return None
-        
 
     def __str__(self):
         return self.email
