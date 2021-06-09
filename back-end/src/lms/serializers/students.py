@@ -16,7 +16,11 @@ from common.serializers.persons import (
 )
 
 from lms.models.common import Milgroup
-from lms.models.students import Student, StudentPost
+from lms.models.students import (
+    Student,
+    StudentPost,
+    StudentSkill,
+)
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.applicants import (
     PassportSerializer,
@@ -49,12 +53,20 @@ class StudentPostSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class StudentSkillSerializer(ModelSerializer):
+
+    class Meta:
+        model = StudentSkill
+        fields = "__all__"
+
+
 class StudentSerializer(WritableNestedModelSerializer):
     milgroup = MilgroupSerializer()
     university_info = UniversityInfoSerializer()
     photo = PhotoSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
     application_process = ApplicationProcessSerializer(read_only=False)
+    student_skills = StudentSkillSerializer(many=True)
 
     fullname = SerializerMethodField()
 

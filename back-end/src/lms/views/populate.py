@@ -1,5 +1,6 @@
 # pylint: disable=line-too-long,unused-argument,too-many-arguments,too-many-locals
 
+import random
 from datetime import (
     datetime,
     timedelta,
@@ -21,6 +22,7 @@ from lms.models.students import (
     Passport,
     RecruitmentOffice,
     StudentPost,
+    StudentSkill,
 )
 from lms.models.teachers import (
     Rank,
@@ -213,6 +215,19 @@ def create_student_posts() -> dict[str, StudentPost]:
     return student_posts
 
 
+def create_student_skills() -> dict[str, StudentSkill]:
+    values = ['Футбол', 'Гитара', 'Кац']
+
+    student_skills = {}
+
+    for value in values:
+        student_skill, _ = StudentSkill.objects.get_or_create(title=value)
+        student_skill.save()
+        student_skills[value] = student_skill
+
+    return student_skills
+
+
 def create_passports() -> dict[str, Passport]:
     values = [{
         'series': '0000',
@@ -342,7 +357,8 @@ def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
                     passports: dict[str, Passport],
                     recruitment_offices: dict[str, RecruitmentOffice],
                     university_infos: dict[str, UniversityInfo],
-                    student_posts: dict[str, StudentPost]):
+                    student_posts: dict[str, StudentPost],
+                    student_skills: dict[str, StudentSkill]):
     # TODO – index term, add birth_info
     # FIXME(TmLev): provide family for every student
 
@@ -363,7 +379,7 @@ def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
             'passport': passports['0000'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE11229'],
-            'student_post': student_posts['Редколлегия']
+            'student_post': student_posts['Редколлегия'],
         },
         {
             'surname': 'Кацевалов',
@@ -381,7 +397,7 @@ def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
             'passport': passports['1111'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE1129'],
-            'student_post': student_posts['Редколлегия']
+            'student_post': student_posts['Редколлегия'],
         },
         {
             'surname': 'Исаков',
@@ -399,7 +415,7 @@ def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
             'passport': passports['2222'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE11319'],
-            'student_post': student_posts['Заместитель командира взвода']
+            'student_post': student_posts['Заместитель командира взвода'],
         },
         {
             'surname': 'Алиев',
@@ -417,7 +433,7 @@ def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
             'passport': passports['3333'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE1889'],
-            'student_post': student_posts['Редколлегия']
+            'student_post': student_posts['Редколлегия'],
         },
         {
             'surname': 'Куркин',
@@ -469,7 +485,7 @@ def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
             'passport': passports['6666'],
             'recruitment_office': recruitment_offices['Москва'],
             'university_info': university_infos['HSE7779'],
-            'student_post': student_posts['Командир взвода']
+            'student_post': student_posts['Командир взвода'],
         }
     ]
 
@@ -477,6 +493,8 @@ def create_students(milgroups: dict[int, Milgroup], programs: dict[str,
 
     for fields in values:
         student, _ = Student.objects.get_or_create(**fields)
+        random_student_skills = random.sample(list(student_skills.values()), 2)
+        student.student_skills.add(*random_student_skills)
         student.save()
         students[fields['surname']] = student
 

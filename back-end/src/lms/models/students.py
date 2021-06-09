@@ -29,6 +29,17 @@ class StudentPost(models.Model):
         return str(self.title)
 
 
+class StudentSkill(models.Model):
+    title = models.CharField(unique=True, max_length=200)
+
+    class Meta:
+        verbose_name = "Student Skill"
+        verbose_name_plural = "Student Skills"
+
+    def __str__(self) -> str:
+        return str(self.title)
+
+
 class Student(Personnel):
 
     class Status(models.TextChoices):
@@ -85,10 +96,13 @@ class Student(Personnel):
         blank=True,
     )
 
-    student_post = models.ForeignKey(to=StudentPost,
-                                     on_delete=models.DO_NOTHING,
-                                     null=True,
-                                     blank=True)
+    student_post = models.ForeignKey(
+        to=StudentPost,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+    )
+    student_skills = models.ManyToManyField(to=StudentSkill, blank=True)
 
     class Meta:
         verbose_name = "Student"
