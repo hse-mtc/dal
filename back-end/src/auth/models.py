@@ -1,5 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import (
+    AbstractUser, 
+    GroupManager,
+    PermissionManager,
+)
 from django.contrib.auth.base_user import BaseUserManager
 
 from django.contrib.postgres.fields import ArrayField
@@ -59,6 +63,35 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    groups = models.ManyToManyField(
+        Group,
+        verbose_name="groups",
+        blank=True,
+        help_text=
+            "The groups this user belongs to. A user will get all permissions "
+            "granted to each of their groups.",
+        related_name="user_set",
+        related_query_name="user",
+    )
+    permissions = models.ManyToManyField(
+        Permission,
+        verbose_name="user permissions",
+        blank=True,
+        help_text="Specific permissions for this user.",
+        related_name="user_set",
+        related_query_name="user",
+    )
+
+    def get_group_permissions(self):
+        permissions = Permission.objects.none()
+        for group in self.groups.all():
+            permissions = permissions.union(group.permissions.all())
+        return permissions
+
+    def get_all_permissions(self):
+        return self.permissions.union(self.get_group_permissions())
+
 
     def __str__(self):
         return self.email

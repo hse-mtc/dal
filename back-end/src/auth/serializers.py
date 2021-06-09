@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import (
+from auth.models import (
     Group,
     Permission,
 )
@@ -15,7 +15,7 @@ class PermissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Permission
-        fields = ["name", "codename"]
+        fields = "__all__"
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -33,11 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id", "email", "permissions", "campuses"]
 
     def get_permissions(self, obj) -> list[str]:
-        groups = obj.groups.all()
-        permissions = []
-        for group in groups:
-            permissions += [perm.codename for perm in group.permissions.all()]
-        return list(set(permissions))
+        return PermissionSerializer(obj.get_all_permissions(), many=True).data
 
 
 class TokenPairSerializer(serializers.Serializer):
