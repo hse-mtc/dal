@@ -10,10 +10,10 @@ def create_permissions_for_view(view_name, view_name_rus):
     }
 
     scopes_str = {
-        "self": ", связанных с пользователем",
-        "milgroup": " о взоде, связанным с пользователем",
-        "milfaculty": " о цикле, связанным с пользователем",
-        "all": " (всех данных)",
+        "self": (30, ", связанных с пользователем"),
+        "milgroup": (20, " о взоде, связанным с пользователем"),
+        "milfaculty": (10, " о цикле, связанным с пользователем"),
+        "all": (0, " (всех данных)"),
     }
 
 
@@ -23,9 +23,9 @@ def create_permissions_for_view(view_name, view_name_rus):
             permissions.append({
                     "viewset": view_name,
                     "method": method,
-                    "scope": scope,
+                    "scope": scopes_str[scope][0],
                     "codename": "_".join([view_name, method, scope]),
-                    "name": "".join([view_name_rus, methods_str[method], scopes_str[scope]]),
+                    "name": "".join([view_name_rus, methods_str[method], scopes_str[scope][1]]),
                 })
     return permissions
 
