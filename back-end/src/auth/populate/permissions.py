@@ -11,8 +11,10 @@ def create_permissions_for_view(view_name, view_name_rus):
 
     scopes_str = {
         "self": (int(Permission.Scopes.SELF), ", связанных с пользователем"),
-        "milgroup": (int(Permission.Scopes.MILGROUP), " о взоде, связанным с пользователем"),
-        "milfaculty": (int(Permission.Scopes.MILFACULTY), " о цикле, связанным с пользователем"),
+        "milgroup": (int(Permission.Scopes.MILGROUP),
+                     " о взоде, связанным с пользователем"),
+        "milfaculty": (int(Permission.Scopes.MILFACULTY),
+                       " о цикле, связанным с пользователем"),
         "all": (int(Permission.Scopes.ALL), " (всех данных)"),
     }
 
@@ -71,9 +73,14 @@ def get_student_permissions():
     ]
     res = []
     for val in values:
-        viewset, method, scope = val.split('.')
+        viewset, method, scope = val.split(".")
         # We can't use .get(codename=val) here as codename is stored at runtime
-        res.append(Permission.objects.get(viewset=viewset, method=method, scope=int(getattr(Permission.Scopes, scope.upper()))))
+        res.append(
+            Permission.objects.get(viewset=viewset,
+                                   method=method,
+                                   scope=int(
+                                       getattr(Permission.Scopes,
+                                               scope.upper()))))
     return res
 
 
@@ -108,9 +115,14 @@ def get_teacher_permissions():
 
     res = []
     for val in values:
-        viewset, method, scope = val.split('.')
+        viewset, method, scope = val.split(".")
         # We can't use .get(codename=val) here as codename is stored at runtime
-        res.append(Permission.objects.get(viewset=viewset, method=method, scope=int(getattr(Permission.Scopes, scope.upper()))))
+        res.append(
+            Permission.objects.get(viewset=viewset,
+                                   method=method,
+                                   scope=int(
+                                       getattr(Permission.Scopes,
+                                               scope.upper()))))
     return res
 
 
@@ -157,7 +169,12 @@ def get_milfaculty_head_permissions():
 
     res = []
     for val in values:
-        viewset, method, scope = val.split('.')
+        viewset, method, scope = val.split(".")
         # We can't use .get(codename=val) here as codename is stored at runtime
-        res.append(Permission.objects.get(viewset=viewset, method=method, scope=int(getattr(Permission.Scopes, scope.upper()))))
+        res.append(
+            Permission.objects.get(viewset=viewset,
+                                   method=method,
+                                   scope=int(
+                                       getattr(Permission.Scopes,
+                                               scope.upper()))))
     return res

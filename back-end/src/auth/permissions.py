@@ -8,7 +8,8 @@ class BasePermission(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
         # check for method permission
-        return request.user.has_general_perm(self.permission_class, request.method)
+        return request.user.has_general_perm(self.permission_class,
+                                             request.method)
 
 
 class ReadOnly(permissions.BasePermission):
