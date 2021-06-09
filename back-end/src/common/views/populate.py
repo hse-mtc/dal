@@ -5,7 +5,6 @@ from datetime import (
 )
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import status
@@ -20,6 +19,7 @@ from common.serializers.populate import PopulateSerializer
 # ------------------------------------------------------------------------------
 # Populate imports
 
+from auth.models import Group
 from auth.populate.users import create_users
 from auth.populate.permissions import (
     create_permissions,

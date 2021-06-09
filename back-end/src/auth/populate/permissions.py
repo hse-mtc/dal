@@ -1,30 +1,33 @@
-from django.contrib.auth.models import Permission
+from auth.models import Permission
 
 
 def create_permissions_for_view(view_name, view_name_rus):
-    get_str = ": получение данных"
-    post_str = ": добавление данных"
-    patch_str = ": редактирование данных"
-    delete_str = ": удаление данных"
+    methods_str = {
+        "get": ": получение данных",
+        "post": ": добавление данных",
+        "patch": ": редактирование данных",
+        "delete": ": удаление данных",
+    }
 
-    return [
-        {
-            "codename": view_name + "_get",
-            "name": view_name_rus + get_str,
-        },
-        {
-            "codename": view_name + "_post",
-            "name": view_name_rus + post_str,
-        },
-        {
-            "codename": view_name + "_patch",
-            "name": view_name_rus + patch_str,
-        },
-        {
-            "codename": view_name + "_delete",
-            "name": view_name_rus + delete_str,
-        },
-    ]
+    scopes_str = {
+        "self": ", связанных с пользователем",
+        "milgroup": " о взоде, связанным с пользователем",
+        "milfaculty": " о цикле, связанным с пользователем",
+        "all": " (всех данных)",
+    }
+
+
+    permissions = []
+    for method in methods_str:
+        for scope in scopes_str:
+            permissions.append({
+                    "viewset": view_name,
+                    "method": method,
+                    "scope": scope,
+                    "codename": "_".join([view_name, method, scope]),
+                    "name": "".join([view_name_rus, methods_str[method], scopes_str[scope]]),
+                })
+    return permissions
 
 
 def create_permissions(content_type):
@@ -42,24 +45,26 @@ def create_permissions(content_type):
 
     for val in values:
         Permission.objects.get_or_create(
+            viewset=val["viewset"],
+            method=val["method"],
+            scope=val["scope"],
             codename=val["codename"],
             name=val["name"],
-            content_type=content_type,
         )
 
 
 def get_student_permissions():
     values = [
-        "student_get",
-        "teacher_get",
-        "absence_get",
-        "achievement_get",
-        "encouragement_get",
-        "punishment_get",
-        "subject_get",
-        "lesson_get",
-        "mark_get",
-        "reference_book_get",
+        "student_get_self",
+        "teacher_get_all",
+        "absence_get_self",
+        "achievement_get_self",
+        "encouragement_get_self",
+        "punishment_get_self",
+        "subject_get_all",
+        "lesson_get_all",
+        "mark_get_self",
+        "reference_book_get_all",
     ]
 
     return [Permission.objects.get(codename=val) for val in values]
@@ -67,31 +72,31 @@ def get_student_permissions():
 
 def get_teacher_permissions():
     values = [
-        "student_get",
-        "teacher_get",
-        "absence_get",
-        "achievement_get",
-        "achievement_post",
-        "achievement_patch",
-        "encouragement_get",
-        "encouragement_post",
-        "encouragement_patch",
-        "punishment_get",
-        "punishment_post",
-        "punishment_patch",
-        "subject_get",
-        "subject_post",
-        "subject_patch",
-        "subject_delete",
-        "lesson_get",
-        "lesson_post",
-        "lesson_patch",
-        "lesson_delete",
-        "mark_get",
-        "mark_post",
-        "mark_patch",
-        "mark_delete",
-        "reference_book_get",
+        "student_get_milfaculty",
+        "teacher_get_all",
+        "absence_get_milfaculty",
+        "achievement_get_milfaculty",
+        "achievement_post_milfaculty",
+        "achievement_patch_milfaculty",
+        "encouragement_get_self",
+        "encouragement_post_self",
+        "encouragement_patch_self",
+        "punishment_get_self",
+        "punishment_post_self",
+        "punishment_patch_self",
+        "subject_get_all",
+        "subject_post_all",
+        "subject_patch_self",
+        "subject_delete_self",
+        "lesson_get_all",
+        "lesson_post_self",
+        "lesson_patch_self",
+        "lesson_delete_self",
+        "mark_get_self",
+        "mark_post_self",
+        "mark_patch_self",
+        "mark_delete_self",
+        "reference_book_get_all",
     ]
 
     return [Permission.objects.get(codename=val) for val in values]
@@ -99,46 +104,43 @@ def get_teacher_permissions():
 
 def get_milfaculty_head_permissions():
     values = [
-        "student_get",
-        "student_post",
-        "student_patch",
-        "student_delete",
-        "teacher_get",
-        "teacher_post",
-        "teacher_patch",
-        "teacher_delete",
-        "absence_get",
-        "absence_post",
-        "absence_patch",
-        "absence_delete",
-        "achievement_get",
-        "achievement_post",
-        "achievement_patch",
-        "achievement_delete",
-        "encouragement_get",
-        "encouragement_post",
-        "encouragement_patch",
-        "encouragement_delete",
-        "punishment_get",
-        "punishment_post",
-        "punishment_patch",
-        "punishment_delete",
-        "subject_get",
-        "subject_post",
-        "subject_patch",
-        "subject_delete",
-        "lesson_get",
-        "lesson_post",
-        "lesson_patch",
-        "lesson_delete",
-        "mark_get",
-        "mark_post",
-        "mark_patch",
-        "mark_delete",
-        "reference_book_get",
-        "reference_book_post",
-        "reference_book_patch",
-        "reference_book_delete",
+        "student_get_milfaculty",
+        "student_post_milfaculty",
+        "student_patch_milfaculty",
+        "student_delete_milfaculty",
+        "teacher_get_all",
+        "teacher_post_milfaculty",
+        "teacher_patch_milfaculty",
+        "teacher_delete_milfaculty",
+        "absence_get_milfaculty",
+        "absence_post_milfaculty",
+        "absence_patch_milfaculty",
+        "absence_delete_milfaculty",
+        "achievement_get_milfaculty",
+        "achievement_post_milfaculty",
+        "achievement_patch_milfaculty",
+        "achievement_delete_milfaculty",
+        "encouragement_get_milfaculty",
+        "encouragement_post_milfaculty",
+        "encouragement_patch_milfaculty",
+        "encouragement_delete_milfaculty",
+        "punishment_get_milfaculty",
+        "punishment_post_milfaculty",
+        "punishment_patch_milfaculty",
+        "punishment_delete_milfaculty",
+        "subject_get_all",
+        "subject_post_all",
+        "subject_patch_all",
+        "subject_delete_all",
+        "lesson_get_all",
+        "lesson_post_milfaculty",
+        "lesson_patch_milfaculty",
+        "lesson_delete_milfaculty",
+        "mark_get_milfaculty",
+        "mark_post_milfaculty",
+        "mark_patch_milfaculty",
+        "mark_delete_milfaculty",
+        "reference_book_get_all",
     ]
 
     return [Permission.objects.get(codename=val) for val in values]
