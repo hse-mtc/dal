@@ -4,6 +4,7 @@ import moment from "moment";
 import FunctionalCalendar from "vue-functional-calendar";
 import BootstrapVue from "bootstrap-vue";
 import "normalize.css/normalize.css"; // A modern alternative to CSS resets
+import Maska from "maska";
 import Multiselect from "vue-multiselect";
 import VueLodash from "vue-lodash";
 import lodash from "lodash";
@@ -24,7 +25,7 @@ import "./elementUIApply";
 import "./primeApply";
 
 Vue.component("Multiselect", Multiselect);
-
+Vue.use(Maska);
 Vue.use(VueMeta);
 Vue.use(VueLodash, { name: "custom", lodash });
 
