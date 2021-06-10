@@ -1,3 +1,4 @@
+from django.db.models.query import QuerySet
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 
@@ -31,3 +32,12 @@ class TeacherViewSet(ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return TeacherMutateSerializer
         return TeacherSerializer
+    
+    def get_queryset(self):
+        scope = self.request.user.get_perm_scope(TeacherPermission.permission_class, self.request.method)
+        if scope >= 30:  # self
+            res = self.queryset.filter(user=self.request.user)
+            if res.count() > 0:
+                return res[0]
+            return QuerySet()
+        return self.queryset
