@@ -12,7 +12,7 @@ pytest-django = "6.2.4"
 yapf = "0.31"
 
 [packages]
-django = "3.2.3"
+django = "3.2.4"
 django-cors-headers = "3.7"
 django-dbbackup = "3.3"
 django-extra-fields = "3.0"
