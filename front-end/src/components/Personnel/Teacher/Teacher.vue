@@ -148,7 +148,7 @@ import { patchError, patchSuccess, getError } from "@/utils/message";
 import {
   getMilFaculties,
   getMilGroups,
-  getPosts,
+  getTeacherPosts,
   getRanks,
 } from "@/api/reference-book";
 
@@ -225,7 +225,7 @@ export default {
       this.milgroups = (await getMilGroups()).data;
       this.milfaculties = (await getMilFaculties()).data;
       this.ranks = (await getRanks()).data;
-      this.teacher_posts = (await getPosts()).data;
+      this.teacher_posts = (await getTeacherPosts()).data;
       const id = this.$route.params.teacherId;
       if (id) {
         try {

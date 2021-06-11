@@ -174,7 +174,7 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in posts"
+                    v-for="item in teacherPosts"
                     :key="item.teacher_post"
                     :label="item.teacher_post"
                     :value="item.teacher_post"
@@ -248,7 +248,7 @@ import { validCorEmail } from "@/utils/validate";
 import {
   getMilFaculties,
   getMilGroups,
-  getPosts,
+  getTeacherPosts,
   getRanks,
 } from "@/api/reference-book";
 import { registerStudent, registerTeacher } from "@/api/user";
@@ -279,7 +279,7 @@ export default {
       milgroups: [],
       milfaculties: [],
       ranks: [],
-      posts: [],
+      teacherPosts: [],
       roles: [
         { label: "Студент", key: "student" },
         { label: "Преподаватель", key: "teacher" },
@@ -338,8 +338,8 @@ export default {
       getRanks().then(response => {
         this.ranks = response.data;
       });
-      getPosts().then(response => {
-        this.posts = response.data;
+      getTeacherPosts().then(response => {
+        this.teacherPosts = response.data;
       });
     },
     handleRegister() {

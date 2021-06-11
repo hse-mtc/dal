@@ -1,7 +1,8 @@
 import {
   getMilFaculties,
   getMilGroups,
-  getPosts,
+  getStudentPosts,
+  getTeacherPosts,
   getRanks,
   getReferenceMilSpecialties,
   getAchievementTypes,
@@ -12,7 +13,9 @@ import {
 const initState = {
   milgroups: [],
   ranks: [],
-  posts: [],
+  studentStatuses: [],
+  studentPosts: [],
+  teacherPosts: [],
   milfaculties: [],
   milspecialties: [],
   achievementTypes: [],
@@ -30,8 +33,14 @@ const mutations = {
   SET_RANKS: (state, payload) => {
     state.ranks = payload;
   },
-  SET_POSTS: (state, payload) => {
-    state.posts = payload;
+  SET_STUDENT_STATUSES: (state, payload) => {
+    state.studentStatuses = payload;
+  },
+  SET_STUDENT_POSTS: (state, payload) => {
+    state.studentPosts = payload;
+  },
+  SET_TEACHER_POSTS: (state, payload) => {
+    state.studentPosts = payload;
   },
   SET_MILFACULTIES: (state, payload) => {
     state.milfaculties = payload;
@@ -58,39 +67,47 @@ const mutations = {
 };
 
 const actions = {
-  async setMilgroups({ commit }) {
+  async fetchMilgroups({ commit }) {
     const { data } = await getMilGroups();
     commit("SET_MILGROUPS", data);
   },
-  async setRanks({ commit }) {
+  async fetchRanks({ commit }) {
     const { data } = await getRanks();
     commit("SET_RANKS", data);
   },
-  async setPosts({ commit }) {
-    const { data } = await getPosts();
-    commit("SET_POSTS", data);
+  async fetchStudentStatuses({ commit }) {
+    const data = ["AP", "ST", "EX", "GR"];
+    commit("SET_STUDENT_STATUSES", data);
   },
-  async setMilfaculties({ commit }) {
+  async fetchStudentPosts({ commit }) {
+    const { data } = await getStudentPosts();
+    commit("SET_STUDENT_POSTS", data);
+  },
+  async fetchTeacherPosts({ commit }) {
+    const { data } = await getTeacherPosts();
+    commit("SET_TEACHER_POSTS", data);
+  },
+  async fetchMilfaculties({ commit }) {
     const { data } = await getMilFaculties();
     commit("SET_MILFACULTIES", data);
   },
-  async setMilspecialties({ commit }) {
+  async fetchMilspecialties({ commit }) {
     const { data } = await getReferenceMilSpecialties();
     commit("SET_MILSPECIALTIES", data);
   },
-  async setAchievementTypes({ commit }) {
+  async fetchAchievementTypes({ commit }) {
     const { data } = await getAchievementTypes();
     commit("SET_ACHIEVEMENT_TYPES", data);
   },
-  async setPrograms({ commit }) {
+  async fetchPrograms({ commit }) {
     const { data } = await getPrograms();
     commit("SET_PROGRAMS", data);
   },
-  async setRooms({ commit }) {
+  async fetchRooms({ commit }) {
     const { data } = await getRooms();
     commit("SET_ROOMS", data);
   },
-  async setAbsenceTypes({ commit }) {
+  async fetchAbsenceTypes({ commit }) {
     const data = [
       { label: "Уважительная", code: "SE" },
       { label: "Неуважительная", code: "NS" },
@@ -98,7 +115,7 @@ const actions = {
     ];
     commit("SET_ABSENCE_TYPES", data);
   },
-  async setAbsenceStatuses({ commit }) {
+  async fetchAbsenceStatuses({ commit }) {
     const data = [
       { label: "Закрыт", code: "CL" },
       { label: "Открыт", code: "OP" },

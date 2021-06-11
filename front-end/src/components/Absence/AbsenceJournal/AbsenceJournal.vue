@@ -466,13 +466,13 @@ export default {
     },
     async fetchData() {
       if (!this.$store.state.reference.milgroups.length) {
-        await this.$store.dispatch("reference/setMilgroups");
+        await this.$store.dispatch("reference/fetchMilgroups");
       }
       if (!this.$store.state.reference.absenceTypes.length) {
-        await this.$store.dispatch("reference/setAbsenceTypes");
+        await this.$store.dispatch("reference/fetchAbsenceTypes");
       }
       if (!this.$store.state.reference.absenceStatuses.length) {
-        await this.$store.dispatch("reference/setAbsenceStatuses");
+        await this.$store.dispatch("reference/fetchAbsenceStatuses");
       }
     },
     async onJournal() {
