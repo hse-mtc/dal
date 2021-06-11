@@ -8,7 +8,11 @@
         :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload"
       >
-        <img v-if="displayInfo.photo.image" :src="displayInfo.photo.image" class="avatar">
+        <img
+          v-if="displayInfo.photo"
+          :src="displayInfo.photo.image"
+          class="avatar"
+        >
         <i v-else class="el-icon-picture-outline avatar-uploader-icon" />
       </el-upload>
       <el-form
@@ -50,31 +54,84 @@
         </el-form-item>
         <el-form-item label="Дата рождения:">
           <transition name="el-fade-in" mode="out-in">
-            <el-input v-if="modify" v-model="modifyInfo.birth_info.date" v-maska="'##.##.####'" />
+            <el-input
+              v-if="modify"
+              v-model="modifyInfo.birth_info.date"
+              v-maska="'##.##.####'"
+            />
             <span v-else class="field-value">
-              {{ displayInfo.birth_info.date }}
+              {{ displayInfo.birth_info ? displayInfo.birth_info.date : "---" }}
             </span>
           </transition>
         </el-form-item>
         <el-form-item label="Статус:">
           <transition name="el-fade-in" mode="out-in">
-            <el-input v-if="modify" v-model="modifyInfo.status" />
-            <span v-else class="field-value"> {{ displayInfo.status }} </span>
+            <el-select
+              v-if="modify"
+              v-model="modifyInfo.status"
+              value-key="status"
+              style="display: block"
+            >
+              <el-option
+                v-for="item in studentStatuses"
+                :key="item"
+                :label="item | statusFilter"
+                :value="item"
+              />
+            </el-select>
+            <span v-else class="field-value">
+              {{ displayInfo.status | statusFilter }}
+            </span>
           </transition>
         </el-form-item>
         <el-form-item label="Пост:">
           <transition name="el-fade-in" mode="out-in">
-            <el-input v-if="modify" v-model="modifyInfo.student_post" />
+            <el-select
+              v-if="modify"
+              v-model="modifyInfo.student_post"
+              value-key="student_post"
+              style="display: block"
+            >
+              <el-option
+                v-for="item in studentPosts"
+                :key="item.id"
+                :label="item.title"
+                :value="item.id"
+              />
+            </el-select>
             <span v-else class="field-value">
-              {{ displayInfo.student_post }}
+              {{
+                studentPosts.some((x) => x.id === displayInfo.student_post)
+                  ? studentPosts.find((x) => x.id === displayInfo.student_post)
+                    .title
+                  : "---"
+              }}
             </span>
           </transition>
         </el-form-item>
         <el-form-item label="Взвод:">
           <transition name="el-fade-in" mode="out-in">
-            <el-input v-if="modify" v-model="modifyInfo.milgroup.milgroup" />
+            <el-select
+              v-if="modify"
+              v-model="modifyInfo.milgroup.milgroup"
+              value-key="milgroup"
+              style="display: block"
+            >
+              <el-option
+                v-for="item in milgroups"
+                :key="item.milgroup"
+                :label="item.milgroup"
+                :value="item.milgroup"
+              >
+                <span style="float: left">{{ item.milgroup }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{
+                  item.milfaculty
+                }}</span>
+              </el-option>
+            </el-select>
             <span v-else class="field-value">
               {{ displayInfo.milgroup.milgroup }}
+              <sub> {{ displayInfo.milgroup.milfaculty }} </sub>
             </span>
           </transition>
         </el-form-item>
@@ -97,49 +154,78 @@
 
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
+import { mapActions, mapState } from "vuex";
+import { findStudent, patchStudent } from "@/api/students";
+import { getError, patchError } from "@/utils/message";
 
 export default {
   name: "StudentGeneral",
   components: { ExpandBox },
+  filters: {
+    statusFilter(value) {
+      switch (value) {
+        case "AP":
+          return "Абитуриент";
+        case "ST":
+          return "Обучающийся";
+        case "EX":
+          return "Отчислен";
+        case "GR":
+          return "Выпустился";
+        default:
+          return "Ошибка";
+      }
+    },
+  },
   data() {
     return {
       modify: false,
       displayInfo: {},
       modifyInfo: {},
       loading: false,
+      id: this.$route.params.studentId,
     };
   },
-  created() {
-    this.fetchData();
+  computed: {
+    ...mapState("reference", ["milgroups", "studentPosts", "studentStatuses"]),
+  },
+  async created() {
+    await this.fetchInfo();
+    await this.fetchMilgroups();
+    await this.fetchStudentPosts();
+    await this.fetchStudentStatuses();
   },
   methods: {
-    fetchData() {
-      this.displayInfo = {
-        photo: {
-          image: null,
-        },
-        fullname: "Кацевалов Артем Сергеевич",
-        birth_info: {
-          date: "23.02.2000",
-        },
-        status: "AP",
-        student_post: "",
-        milgroup: {
-          milgroup: 1809,
-          milfaculty: "ВКС",
-        },
-        contact_info: {
-          phone: "8 (915) 472-16-20",
-        },
-      };
+    ...mapActions("reference", [
+      "fetchMilgroups",
+      "fetchStudentPosts",
+      "fetchStudentStatuses",
+    ]),
+    async fetchInfo() {
+      try {
+        this.loading = true;
+        this.displayInfo = (await findStudent(this.id)).data;
+      } catch (err) {
+        getError("информации о студенте", err);
+      } finally {
+        this.loading = false;
+      }
     },
     startModify() {
       this.modify = true;
       this.modifyInfo = { ...this.displayInfo };
     },
-    save() {
-      this.displayInfo = this.modifyInfo;
-      this.modify = false;
+    async save() {
+      try {
+        this.loading = true;
+        await patchStudent(this.modifyInfo);
+        this.displayInfo = this.modifyInfo;
+        this.modify = false;
+      } catch {
+        patchError("информации о студенте");
+      } finally {
+        this.loading = false;
+      }
     },
     handleAvatarSuccess(res, file) {
       this.form.foto = URL.createObjectURL(file.raw);
