@@ -11,6 +11,7 @@ from lms.models.teachers import Teacher
 from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
 from lms.filters.teachers import TeacherFilter
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
@@ -36,7 +37,7 @@ class TeacherViewSet(ModelViewSet):
     def get_queryset(self):
         scope = self.request.user.get_perm_scope(
             TeacherPermission.permission_class, self.request.method)
-        if scope >= 30:  # self
+        if scope >= Permission.Scopes.SELF:  # self
             res = self.queryset.filter(user=self.request.user)
             if res.count() > 0:
                 return res

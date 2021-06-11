@@ -140,19 +140,20 @@ class User(AbstractUser):
     def get_all_permissions(self):
         return self.permissions.union(self.get_group_permissions())
 
-    def _filter_permissions(self, permission_class, method):
+    def _filter_permissions(self, viewset, method):
         perms = self.get_all_permissions().values()
+        # using .filter() is not possible after union
         return [
-            perm for perm in perms if (perm["viewset"] == permission_class) and
+            perm for perm in perms if (perm["viewset"] == viewset) and
             (perm["method"] == method.lower())
         ]
 
-    def has_general_perm(self, permission_class, method):
-        perms = self._filter_permissions(permission_class, method)
+    def has_general_perm(self, viewset, method):
+        perms = self._filter_permissions(viewset, method)
         return len(perms) > 0
 
-    def get_perm_scope(self, permission_class, method):
-        perms = self._filter_permissions(permission_class, method)
+    def get_perm_scope(self, viewset, method):
+        perms = self._filter_permissions(viewset, method)
         if len(perms) > 0:
             return min(perms, key=lambda perm: perm["scope"])["scope"]
         return None

@@ -24,6 +24,15 @@ class PermissionSerializer(serializers.ModelSerializer):
         ]
 
 
+class PermissionRequestSerializer(serializers.ModelSerializer):
+    # specifying this as codename is a property field
+    codename = serializers.CharField()
+
+    class Meta:
+        model = Permission
+        fields = ["codename"]
+
+
 class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:

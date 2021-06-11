@@ -15,13 +15,13 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.views import extend_schema
 
 from auth.models import Permission
 
 from auth.serializers import (
     UserSerializer,
+    PermissionRequestSerializer,
     TokenPairSerializer,
     ChangePasswordSerializer,
 )
@@ -45,38 +45,57 @@ class UserControlViewSet(viewsets.ModelViewSet):
 
     permission_classes = []
 
-    @extend_schema(parameters=[
-        OpenApiParameter(name="permission",
-                         description="Permission code",
-                         required=True,
-                         type=str),
-    ])
-    @action(detail=True, methods=["post", "delete"])
-    def permissions(self, request: Request) -> Response:
+    @extend_schema(request=PermissionRequestSerializer)
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="permissions",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def post_permissions(self, request: Request, pk=None) -> Response:
         """
-        Modify user permissions
+        Add user permissions
         """
-        if "permission" not in request.query_params:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        data = PermissionRequestSerializer(data=request.data)
+        if not data.is_valid():
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        viewset, method, scope = request.query_params["permission"].split(".")
+        viewset, method, scope = request.data["codename"].split(".")
         scope = int(getattr(Permission.Scopes, scope.upper()))
         user = self.get_object()
 
-        if request.method == "POST":
-            permission = Permission.objects.filter(viewset=viewset,
-                                                   method=method,
-                                                   scope=scope)
-            if permission.count() == 0:
-                return Response(status=status.HTTP_400_BAD_REQUEST,
-                                data="There is no such permission")
-            permission = permission[0]
-            # adding the same permission does nothing,
-            # so no need to check for existing permissions
-            user.permissions.add(permission)
-            return Response(status=status.HTTP_200_OK, data="Ok")
+        permission = Permission.objects.filter(viewset=viewset,
+                                               method=method,
+                                               scope=scope)
+        if permission.count() == 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST,
+                            data="There is no such permission")
+        permission = permission[0]
+        # adding the same permission does nothing,
+        # so no need to check for existing permissions
+        user.permissions.add(permission)
+        return Response(status=status.HTTP_200_OK, data="Ok")
 
-        # request.method == "DELETE":
+    @extend_schema(parameters=[PermissionRequestSerializer])
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path="permissions",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def delete_permissions(self, request: Request, pk=None) -> Response:
+        """
+        Delete user permissions
+        """
+        query_params = PermissionRequestSerializer(data=request.query_params)
+        if not query_params.is_valid():
+            return Response(query_params.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        viewset, method, scope = request.query_params["codename"].split(".")
+        scope = int(getattr(Permission.Scopes, scope.upper()))
+        user = self.get_object()
+
         permission = user.permissions.filter(viewset=viewset,
                                              method=method,
                                              scope=scope)
