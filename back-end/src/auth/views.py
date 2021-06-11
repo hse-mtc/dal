@@ -17,10 +17,13 @@ from rest_framework_simplejwt.views import (
 
 from drf_spectacular.views import extend_schema
 
-from auth.models import Permission
+from auth.models import Permission, Group
 
 from auth.serializers import (
     UserSerializer,
+    UserDetailedSerializer,
+    GroupSerializer,
+    GroupShortSerializer,
     PermissionRequestSerializer,
     TokenPairSerializer,
     ChangePasswordSerializer,
@@ -41,7 +44,7 @@ class UserRetrieveAPIView(RetrieveAPIView):
 @extend_schema(tags=["auth"])
 class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = get_user_model().objects.all()
-    serializer_class = UserSerializer
+    serializer_class = UserDetailedSerializer
 
     permission_classes = []
 
@@ -52,7 +55,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         url_path="permissions",
     )
     # pylint: disable=invalid-name, unused-argument
-    def post_permissions(self, request: Request, pk=None) -> Response:
+    def add_permissions(self, request: Request, pk=None) -> Response:
         """Add user permissions."""
         data = PermissionRequestSerializer(data=request.data)
         if not data.is_valid():
@@ -102,6 +105,59 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         permission = permission[0]
         user.permissions.remove(permission)
         return Response(status=status.HTTP_200_OK, data="Ok")
+
+    @extend_schema(request=GroupShortSerializer)
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="groups",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def add_groups(self, request: Request, pk=None) -> Response:
+        """Add user to groups."""
+        data = GroupShortSerializer(data=request.data)
+        if data.is_valid():
+            # if such group exists, it violates the unique constraint
+            # and, thus, is invalid. That's what we need to check.
+            # If data is valid, such group does not exist -> bad request
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        groupname = request.data["name"]
+        user = self.get_object()
+
+        group = Group.objects.get(name=groupname)
+        # adding the same group does nothing,
+        # so no need to check for existing groups
+        user.groups.add(group)
+        return Response(status=status.HTTP_200_OK, data="Ok")
+
+    @extend_schema(parameters=[GroupShortSerializer])
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path="groups",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def delete_groups(self, request: Request, pk=None) -> Response:
+        """Delete user from a group."""
+
+        groupname = request.query_params["name"]
+        user = self.get_object()
+
+        group = user.groups.filter(name=groupname)
+        if group.count() == 0:
+            return Response(status=status.HTTP_400_BAD_REQUEST,
+                            data="There is no such group in user groups")
+        group = group[0]
+        user.groups.remove(group)
+        return Response(status=status.HTTP_200_OK, data="Ok")
+
+
+@extend_schema(tags=["auth"])
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = []
 
 
 @extend_schema(tags=["auth"])

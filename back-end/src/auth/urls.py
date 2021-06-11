@@ -4,6 +4,7 @@ from rest_framework.routers import DefaultRouter
 from auth.views import (
     UserRetrieveAPIView,
     UserControlViewSet,
+    GroupViewSet,
     TokenObtainPairExtendedView,
     TokenRefreshExtendedView,
     ChangePasswordAPIView,
@@ -11,6 +12,7 @@ from auth.views import (
 
 routers = DefaultRouter()
 routers.register("user/control", UserControlViewSet)
+routers.register("groups", GroupViewSet)
 
 urlpatterns = [
     path("", include(routers.urls)),
