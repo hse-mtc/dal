@@ -34,6 +34,14 @@ class PermissionRequestSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
+    permissions = PermissionSerializer(many=True)
+
+    class Meta:
+        model = Group
+        fields = ["name", "permissions"]
+
+
+class GroupShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
@@ -41,15 +49,25 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    permissions = serializers.SerializerMethodField(read_only=True)
-    groups = GroupSerializer(many=True)
+    """Display main user info and all permissions."""
+    all_permissions = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ["id", "email", "all_permissions", "campuses", "groups"]
+
+    def get_all_permissions(self, obj) -> list[str]:
+        return PermissionSerializer(obj.get_all_permissions(), many=True).data
+
+
+class UserDetailedSerializer(serializers.ModelSerializer):
+    """Display main user info, user permissions and groups."""
+    permissions = PermissionSerializer(many=True)
+    groups = GroupShortSerializer(many=True)
 
     class Meta:
         model = get_user_model()
         fields = ["id", "email", "permissions", "campuses", "groups"]
-
-    def get_permissions(self, obj) -> list[str]:
-        return PermissionSerializer(obj.get_all_permissions(), many=True).data
 
 
 class TokenPairSerializer(serializers.Serializer):
