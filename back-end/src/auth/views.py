@@ -67,8 +67,8 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         user = self.get_object()
 
         permission = Permission.objects.get(viewset=viewset,
-                                               method=method,
-                                               scope=scope)
+                                            method=method,
+                                            scope=scope)
         # adding the same permission does nothing,
         # so no need to check for existing permissions
         user.permissions.add(permission)
@@ -166,7 +166,9 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
         if not data.is_valid():
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
         # validate permissions
-        perms = [{"codename": codename} for codename in data.data["permissions"]]
+        perms = [{
+            "codename": codename
+        } for codename in data.data["permissions"]]
         validation = PermissionRequestSerializer(data=perms, many=True)
         if not validation.is_valid():
             return Response(validation.errors, status.HTTP_400_BAD_REQUEST)
@@ -174,15 +176,73 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
         # create group and add permissions if everything is ok
         group = Group.objects.create(name=data.data["name"])
 
+        permissions_lst = []
         for codename in data.data["permissions"]:
             viewset, method, scope = codename.split(".")
             scope = int(getattr(Permission.Scopes, scope.upper()))
             permission = Permission.objects.get(viewset=viewset,
                                                 method=method,
                                                 scope=scope)
-            group.permissions.add(permission)
+            permissions_lst.append(permission)
+        group.permissions.add(*permissions_lst)
 
         return Response(GroupSerializer(group).data)
+
+    @extend_schema(parameters=[PermissionRequestSerializer])
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="permissions",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def add_permissions(self, request: Request, pk=None) -> Response:
+        """Add group permissions."""
+        data = PermissionRequestSerializer(data=request.data)
+        if not data.is_valid():
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        viewset, method, scope = data.data["codename"].split(".")
+        scope = int(getattr(Permission.Scopes, scope.upper()))
+        group = self.get_object()
+
+        permission = Permission.objects.get(viewset=viewset,
+                                            method=method,
+                                            scope=scope)
+        # adding the same permission does nothing,
+        # so no need to check for existing permissions
+        group.permissions.add(permission)
+        return Response(status=status.HTTP_200_OK)
+
+    @extend_schema(parameters=[PermissionRequestSerializer])
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path="permissions",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def delete_permissions(self, request: Request, pk=None) -> Response:
+        """Delete group permissions."""
+        query_params = PermissionRequestSerializer(data=request.query_params)
+        if not query_params.is_valid():
+            return Response(query_params.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        viewset, method, scope = query_params.data["codename"].split(".")
+        scope = int(getattr(Permission.Scopes, scope.upper()))
+        group = self.get_object()
+
+        permission = group.permissions.filter(viewset=viewset,
+                                              method=method,
+                                              scope=scope)
+        if permission.count() == 0:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    "detail": "There is no such permission in group permissions"
+                })
+        permission = permission[0]
+        group.permissions.remove(permission)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(tags=["auth"])
