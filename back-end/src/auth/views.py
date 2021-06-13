@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 
-from rest_framework import permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.decorators import action
@@ -24,6 +24,7 @@ from auth.serializers import (
     UserDetailedSerializer,
     GroupSerializer,
     GroupShortSerializer,
+    GroupModifySerializer,
     PermissionRequestSerializer,
     TokenPairSerializer,
     ChangePasswordSerializer,
@@ -41,7 +42,7 @@ class UserRetrieveAPIView(RetrieveAPIView):
         return self.request.user
 
 
-@extend_schema(tags=["auth"])
+@extend_schema(tags=["permissions"])
 class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserDetailedSerializer
@@ -70,12 +71,12 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
                                                scope=scope)
         if permission.count() == 0:
             return Response(status=status.HTTP_400_BAD_REQUEST,
-                            data="There is no such permission")
+                            data={"detail": "There is no such permission"})
         permission = permission[0]
         # adding the same permission does nothing,
         # so no need to check for existing permissions
         user.permissions.add(permission)
-        return Response(status=status.HTTP_200_OK, data="Ok")
+        return Response(status=status.HTTP_200_OK)
 
     @extend_schema(parameters=[PermissionRequestSerializer])
     @action(
@@ -101,10 +102,12 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         if permission.count() == 0:
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data="There is no such permission in user permissions")
+                data={
+                    "detail": "There is no such permission in user permissions"
+                })
         permission = permission[0]
         user.permissions.remove(permission)
-        return Response(status=status.HTTP_200_OK, data="Ok")
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(request=GroupShortSerializer)
     @action(
@@ -129,7 +132,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         # adding the same group does nothing,
         # so no need to check for existing groups
         user.groups.add(group)
-        return Response(status=status.HTTP_200_OK, data="Ok")
+        return Response(status=status.HTTP_200_OK)
 
     @extend_schema(parameters=[GroupShortSerializer])
     @action(
@@ -146,18 +149,39 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
 
         group = user.groups.filter(name=groupname)
         if group.count() == 0:
-            return Response(status=status.HTTP_400_BAD_REQUEST,
-                            data="There is no such group in user groups")
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": "There is no such group in user groups"})
         group = group[0]
         user.groups.remove(group)
-        return Response(status=status.HTTP_200_OK, data="Ok")
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-@extend_schema(tags=["auth"])
-class GroupViewSet(viewsets.ModelViewSet):
+@extend_schema(tags=["permissions"])
+class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
+                   mixins.DestroyModelMixin, viewsets.GenericViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = []
+
+    @extend_schema(request=GroupModifySerializer)
+    def create(self, request: Request) -> Response:
+        data = GroupModifySerializer(data=request.data)
+        if not data.is_valid():
+            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        group = Group.objects.create(name=data.data["name"])
+
+        for codename in data.data["permissions"]:
+            viewset, method, scope = codename.split(".")
+            scope = int(getattr(Permission.Scopes, scope.upper()))
+            permission = Permission.objects.get(viewset=viewset,
+                                                method=method,
+                                                scope=scope)
+
+            group.permissions.add(permission)
+
+        return Response(GroupSerializer(group).data)
 
 
 @extend_schema(tags=["auth"])
