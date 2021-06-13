@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from rest_framework import serializers
 
@@ -27,6 +28,23 @@ class PermissionSerializer(serializers.ModelSerializer):
 class PermissionRequestSerializer(serializers.ModelSerializer):
     # specifying this as codename is a property field
     codename = serializers.CharField()
+
+    def validate(self, attrs):
+        if attrs["codename"].count(".") != 2:
+            raise ValidationError(f"Incorrect codename template for \"{attrs['codename']}\"")
+
+        viewset, method, scope = attrs["codename"].split(".")
+        
+        if scope.upper() not in Permission.Scopes.names:
+            raise ValidationError(f"Scope \"{scope}\" does not exist (permission \"{attrs['codename']}\"")
+        scope = int(getattr(Permission.Scopes, scope.upper()))
+        
+        permission = Permission.objects.filter(viewset=viewset, method=method, scope=scope)
+
+        if permission.count() == 0:
+            raise ValidationError(f"Permission \"{attrs['codename']}\" does not exist")
+            
+        return super().validate(attrs)
 
     class Meta:
         model = Permission
