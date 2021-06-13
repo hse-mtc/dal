@@ -38,7 +38,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Group
-        fields = ["name", "permissions"]
+        fields = ["id", "name", "permissions"]
 
 
 class GroupShortSerializer(serializers.ModelSerializer):
@@ -50,6 +50,18 @@ class GroupShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ["name"]
+
+
+class GroupModifySerializer(serializers.ModelSerializer):
+
+    class StringListField(serializers.ListField):
+        child = serializers.CharField()
+
+    permissions = StringListField()
+
+    class Meta:
+        model = Group
+        fields = ["name", "permissions"]
 
 
 class UserSerializer(serializers.ModelSerializer):
