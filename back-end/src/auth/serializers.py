@@ -31,19 +31,26 @@ class PermissionRequestSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["codename"].count(".") != 2:
-            raise ValidationError(f"Incorrect codename template for \"{attrs['codename']}\"")
+            raise ValidationError(
+                f"Incorrect codename template for \"{attrs['codename']}\"")
 
         viewset, method, scope = attrs["codename"].split(".")
-        
+
         if scope.upper() not in Permission.Scopes.names:
-            raise ValidationError(f"Scope \"{scope}\" does not exist (permission \"{attrs['codename']}\"")
+            raise ValidationError(
+                f"Scope \"{scope}\" does not exist " \
+                f"(permission \"{attrs['codename']}\""
+            )
         scope = int(getattr(Permission.Scopes, scope.upper()))
-        
-        permission = Permission.objects.filter(viewset=viewset, method=method, scope=scope)
+
+        permission = Permission.objects.filter(viewset=viewset,
+                                               method=method,
+                                               scope=scope)
 
         if permission.count() == 0:
-            raise ValidationError(f"Permission \"{attrs['codename']}\" does not exist")
-            
+            raise ValidationError(
+                f"Permission \"{attrs['codename']}\" does not exist")
+
         return super().validate(attrs)
 
     class Meta:

@@ -29,6 +29,12 @@ urlpatterns = [
             "post": "add_groups",
             "delete": "delete_groups"
         })),
+    path(
+        "group/<int:pk>/permissions/",
+        GroupViewSet.as_view({
+            "post": "add_permissions",
+            "delete": "delete_permissions"
+        })),
     path("", include(routers.urls)),
     path("user/", UserRetrieveAPIView.as_view()),
     path("tokens/obtain/", TokenObtainPairExtendedView.as_view()),
