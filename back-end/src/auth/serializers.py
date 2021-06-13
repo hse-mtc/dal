@@ -43,6 +43,10 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class GroupShortSerializer(serializers.ModelSerializer):
 
+    def to_representation(self, instance):
+        """Represent a list of groups as a list of strings."""
+        return instance.name
+
     class Meta:
         model = Group
         fields = ["name"]
@@ -54,7 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["id", "email", "all_permissions", "campuses", "groups"]
+        fields = ["id", "email", "all_permissions", "campuses"]
 
     def get_all_permissions(self, obj) -> list[str]:
         return PermissionSerializer(obj.get_all_permissions(), many=True).data
