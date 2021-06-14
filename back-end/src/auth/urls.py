@@ -21,7 +21,7 @@ urlpatterns = [
          UserControlViewSet.as_view({
              "patch": "transfer_permissions",
          })),
-    path("user-control/<int:pk>/permissions/clear/",
+    path("user-control/<int:pk>/permissions/all/",
          UserControlViewSet.as_view({
              "delete": "clear_permissions",
          })),

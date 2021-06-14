@@ -183,7 +183,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
     @action(
         detail=True,
         methods=["delete"],
-        url_path="permissions/clear",
+        url_path="permissions/all",
     )
     # pylint: disable=invalid-name, unused-argument
     def clear_permissions(self, request: Request, pk=None) -> Response:
