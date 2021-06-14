@@ -35,6 +35,7 @@ class TeacherViewSet(ModelViewSet):
             return TeacherMutateSerializer
         return TeacherSerializer
 
+    # pylint: disable=too-many-return-statements
     def get_queryset(self):
         if self.request.user.is_superuser:
             return self.queryset
@@ -68,5 +69,5 @@ class TeacherViewSet(ModelViewSet):
 
         if scope >= Permission.Scopes.ALL:
             return self.queryset
- 
+
         return QuerySet()
