@@ -1,5 +1,4 @@
 from django.db.models.query import QuerySet
-from rest_framework import request
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 
@@ -43,7 +42,8 @@ class TeacherViewSet(ModelViewSet):
         scope = self.request.user.get_perm_scope(
             TeacherPermission.permission_class, self.request.method)
 
-        if scope >= Permission.Scopes.SELF:
+        # milgroup+ scopes (milgroup and self) are treated as self
+        if scope >= Permission.Scopes.MILGROUP:
             res = self.queryset.filter(user=self.request.user)
             if res.count() == 0:
                 return QuerySet()
