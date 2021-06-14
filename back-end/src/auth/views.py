@@ -72,7 +72,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         # adding the same permission does nothing,
         # so no need to check for existing permissions
         user.permissions.add(permission)
-        return Response(status=status.HTTP_200_OK)
+        return Response(UserDetailedSerializer(user).data)
 
     @extend_schema(parameters=[PermissionRequestSerializer])
     @action(
@@ -128,7 +128,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         # adding the same group does nothing,
         # so no need to check for existing groups
         user.groups.add(group)
-        return Response(status=status.HTTP_200_OK)
+        return Response(UserDetailedSerializer(user).data)
 
     @extend_schema(parameters=[GroupShortSerializer])
     @action(
@@ -149,6 +149,48 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
                 data={"detail": "There is no such group in user groups"})
         group = group[0]
         user.groups.remove(group)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(request=GroupShortSerializer)
+    @action(
+        detail=True,
+        methods=["patch"],
+        url_path="transfer-permissions",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def transfer_permissions(self, request: Request, pk=None) -> Response:
+        """
+        Transfer group permissions to user permissions
+        and delete user from group.
+        """
+        groupname = request.data["name"]
+        user = self.get_object()
+
+        group = user.groups.filter(name=groupname)
+        if group.count() == 0:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={"detail": "There is no such group in user groups"})
+        group = group[0]
+        # add group permissions
+        # adding the same permission does nothing,
+        # so no need to check for existing permissions
+        user.permissions.add(*group.permissions.all())
+        # remove user from group
+        user.groups.remove(group)
+        return Response(UserDetailedSerializer(user).data)
+
+    @action(
+        detail=True,
+        methods=["delete"],
+        url_path="permissions/clear",
+    )
+    # pylint: disable=invalid-name, unused-argument
+    def clear_permissions(self, request: Request, pk=None) -> Response:
+        """Delete all user permissions."""
+        user = self.get_object()
+
+        user.permissions.remove(*user.permissions.all())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -188,7 +230,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
 
         return Response(GroupSerializer(group).data)
 
-    @extend_schema(parameters=[PermissionRequestSerializer])
+    @extend_schema(request=PermissionRequestSerializer)
     @action(
         detail=True,
         methods=["post"],
@@ -211,7 +253,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
         # adding the same permission does nothing,
         # so no need to check for existing permissions
         group.permissions.add(permission)
-        return Response(status=status.HTTP_200_OK)
+        return Response(GroupSerializer(group).data)
 
     @extend_schema(parameters=[PermissionRequestSerializer])
     @action(
