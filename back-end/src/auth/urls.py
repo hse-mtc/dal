@@ -17,6 +17,14 @@ routers.register("user-control", UserControlViewSet)
 routers.register("group", GroupViewSet)
 
 urlpatterns = [
+    path("user-control/<int:pk>/transfer-permissions/",
+         UserControlViewSet.as_view({
+             "patch": "transfer_permissions",
+         })),
+    path("user-control/<int:pk>/permissions/clear/",
+         UserControlViewSet.as_view({
+             "delete": "clear_permissions",
+         })),
     path(
         "user-control/<int:pk>/permissions/",
         UserControlViewSet.as_view({
