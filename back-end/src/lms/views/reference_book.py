@@ -111,7 +111,7 @@ class MilgroupViewSet(ModelViewSet):
 @extend_schema(tags=['reference-book'])
 class ProgramViewSet(ModelViewSet):
     serializer_class = ProgramSerializer
-    queryset = Program.objects.all()
+    queryset = Program.objects.order_by('code')
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
