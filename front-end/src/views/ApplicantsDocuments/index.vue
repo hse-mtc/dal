@@ -16,6 +16,7 @@
           <el-select
             v-model="selectedProgram"
             clearable
+            filterable
             placeholder="Выберите код ОП"
             @change="changeProgram"
           >
