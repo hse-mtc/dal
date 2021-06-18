@@ -138,6 +138,10 @@ export default {
     };
   },
   computed: {
+    isStudyOffice() {
+      // TODO(gakhromov): remove this check when permissions are done
+      return this.$store.state.user.email.includes("study.office");
+    },
     ...mapGetters(["campuses"]),
   },
   created() {
@@ -146,10 +150,6 @@ export default {
     this.fetchData();
   },
   methods: {
-    isStudyOffice() {
-      // TODO(gakhromov): remove this check when permissions are done
-      return this.$store.state.user.email.includes("study.office");
-    },
     getExcel() {
       window.location.href = getApplicationsExcelDownloadLink(this.selectedCampus);
     },
