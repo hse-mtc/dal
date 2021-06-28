@@ -83,14 +83,6 @@
           <Serp class="documents" @openPaperModal="openPaperModal" />
         </el-col>
 
-        <!--        <el-col :offset="1" :span="8">-->
-        <!--          <FunctionalCalendar-->
-        <!--            v-model="calendarData"-->
-        <!--            :is-date-range="true"-->
-        <!--            :change-month-function="true"-->
-        <!--            :change-year-function="true"-->
-        <!--          />-->
-        <!--        </el-col>-->
       </el-row>
     </el-col>
 
@@ -115,7 +107,6 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-// import { FunctionalCalendar } from "vue-functional-calendar";
 
 import Serp from "@/components/Papers/Serp";
 import UpsertModal from "@/components/Papers/UpsertModal";
@@ -135,7 +126,6 @@ export default {
   components: {
     AddCategoryModal,
     AdvancedSearch,
-    // FunctionalCalendar,
     Serp,
     Search,
     UpsertModal,
