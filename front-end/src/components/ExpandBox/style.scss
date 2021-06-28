@@ -5,10 +5,20 @@ $animation-time: 0.2s;
 .expand-box {
   background: #fff;
   width: 100%;
+  border-radius: $border-radius;
 
   &:not(.no-expand) {
     .header {
       cursor: pointer;
+    }
+  }
+
+  &:hover {
+    .header {
+      box-shadow: rgba(100, 100, 111, 0.2) 0px -8px 35px 0px;
+    }
+    .body {
+      box-shadow: rgba(100, 100, 111, 0.2) 0px 8px 35px 0px;
     }
   }
 
@@ -34,6 +44,7 @@ $animation-time: 0.2s;
     border-color: $border-color;
     padding: 20px;
     border-radius: 0 0 $border-radius $border-radius;
+    transition: $animation-time;
   }
 
   &.expanded {

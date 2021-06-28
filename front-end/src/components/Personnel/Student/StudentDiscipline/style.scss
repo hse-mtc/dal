@@ -1,0 +1,26 @@
+.discipline-info {
+  .discipline-table {
+    /deep/ .el-table {
+      &::before {
+        height: 0;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+    }
+
+    .title {
+      font-weight: 500;
+      font-size: 1.2rem;
+      margin-left: 5px;
+      margin-bottom: 5px;
+    }
+
+    .separator {
+      height: 1px;
+      background: #EBEEF5;
+      margin: 10px -20px;
+    }
+  }
+}

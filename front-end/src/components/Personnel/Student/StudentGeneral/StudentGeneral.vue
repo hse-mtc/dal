@@ -155,7 +155,7 @@
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import { mapActions, mapState } from "vuex";
-import { findStudent, patchStudent } from "@/api/students";
+import { findStudentBasic, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 
 export default {
@@ -204,7 +204,7 @@ export default {
     async fetchInfo() {
       try {
         this.loading = true;
-        this.displayInfo = (await findStudent(this.id)).data;
+        this.displayInfo = (await findStudentBasic(this.id)).data;
       } catch (err) {
         getError("информации о студенте", err);
       } finally {
