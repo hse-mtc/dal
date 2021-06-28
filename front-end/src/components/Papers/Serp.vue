@@ -193,6 +193,7 @@ export default {
       try {
         await deleteDocument(id);
       } catch (error) {
+        // TODO(TmLev): better error handling.
         console.log("Failed to delete Paper: ", error);
         return;
       }
@@ -201,6 +202,7 @@ export default {
         this.documents,
         paper => paper.id !== id,
       );
+      this.count -= 1;
 
       this.$message({
         type: "success",
