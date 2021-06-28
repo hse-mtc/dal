@@ -9,7 +9,7 @@
       <el-row
         v-for="(document, index) in documents"
         :key="document.id"
-        class="document-card mt-3 mb-4"
+        class="document-card"
       >
         <div
           v-if="yearChanged(index)"
@@ -20,11 +20,7 @@
           <hr class="ml-3">
         </div>
 
-        <el-col :span="3" style="font-size: 22px" class="mt-4">
-          № {{ index + 1 }}
-        </el-col>
-
-        <el-col :span="20">
+        <el-col :span="23">
           <div class="d-flex">
             <div>
               {{ document.publication_date | moment }}
@@ -40,15 +36,26 @@
           </div>
 
           <div
-            v-for="author in document.authors"
-            :key="author"
             class="document-card-authors"
           >
-            {{ getAuthor(author) }}
+            <span
+              v-for="(author, authorIndex) in document.authors"
+              :key="author"
+            >{{ `${authorIndex > 0 ? ', ' : ''} ${getAuthor(author)}` }}</span>
           </div>
 
           <div class="document-card-annotation">
             {{ document.annotation }}
+          </div>
+
+          <div class="document-card-tags">
+            <el-tag
+              v-for="(tag, tagIndex) in document.tags"
+              :key="tagIndex"
+              class="document-card-tag"
+            >
+              {{ tag }}
+            </el-tag>
           </div>
         </el-col>
 

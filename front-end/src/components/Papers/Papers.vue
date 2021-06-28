@@ -77,20 +77,20 @@
       </div>
 
       <el-row class="search">
-        <el-col :span="12" :offset="2">
+        <el-col :span="16" :offset="2">
           <Search placeholder="Введите ключевые слова" />
           <AdvancedSearch class="advanced-search" />
           <Serp class="documents" @openPaperModal="openPaperModal" />
         </el-col>
 
-        <el-col :offset="1" :span="8">
-          <FunctionalCalendar
-            v-model="calendarData"
-            :is-date-range="true"
-            :change-month-function="true"
-            :change-year-function="true"
-          />
-        </el-col>
+        <!--        <el-col :offset="1" :span="8">-->
+        <!--          <FunctionalCalendar-->
+        <!--            v-model="calendarData"-->
+        <!--            :is-date-range="true"-->
+        <!--            :change-month-function="true"-->
+        <!--            :change-year-function="true"-->
+        <!--          />-->
+        <!--        </el-col>-->
       </el-row>
     </el-col>
 
@@ -115,7 +115,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import { FunctionalCalendar } from "vue-functional-calendar";
+// import { FunctionalCalendar } from "vue-functional-calendar";
 
 import Serp from "@/components/Papers/Serp";
 import UpsertModal from "@/components/Papers/UpsertModal";
@@ -135,7 +135,7 @@ export default {
   components: {
     AddCategoryModal,
     AdvancedSearch,
-    FunctionalCalendar,
+    // FunctionalCalendar,
     Serp,
     Search,
     UpsertModal,

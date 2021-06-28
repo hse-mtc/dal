@@ -3,6 +3,8 @@
 }
 
 .cool-hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
   hr {
     border: 0.5px solid #d9d9de;
     width: 90%;
@@ -10,6 +12,8 @@
 }
 
 .document-card {
+  margin-bottom: 40px;
+
   &-title {
     font-size: 22px;
     color: #0050b2;
@@ -17,14 +21,74 @@
   }
 
   &-authors {
-    color: #333333;
     font-size: 18px;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 22px;
+    color: #858587;
   }
 
   &-annotation {
     margin-top: 7px;
-    color: #333333;
+    color: #2E3746;
     font-size: 18px;
+    /* hide text if it more than N lines  */
+    overflow: hidden;
+    /* for set '...' in absolute position */
+    position: relative;
+    /* use this value to count block height */
+    line-height: 1.2em;
+    /* max-height = line-height (1.2) * lines max number (3) */
+    max-height: 3.6em;
+    /* fix problem when last visible word doesn't adjoin right side  */
+    text-align: justify;
+    /* place for '...' */
+    margin-right: -1em;
+    padding-right: 1em;
+  }
+  /* create the ... */
+  &-annotation:before {
+    /* points in the end */
+    content: '...';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of block */
+    right: 0;
+    bottom: 0;
+  }
+  /* hide ... if we have text, which is less than or equal to max lines */
+  &-annotation:after {
+    /* points in the end */
+    content: '';
+    /* absolute position */
+    position: absolute;
+    /* set position to right bottom corner of text */
+    right: 0;
+    /* set width and height */
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    /* bg color = bg color under block */
+    background: white;
+  }
+
+  &-tags {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  &-tag {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+    border: none;
+    color: #0050CF;
+    background: rgba(0,80,207, 0.1);
+    border-radius: 4px;
   }
 }
 
