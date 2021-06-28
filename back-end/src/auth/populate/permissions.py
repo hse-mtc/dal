@@ -13,6 +13,7 @@ def get_student_permissions():
         "lesson.get.all",
         "mark.get.self",
         "reference_book.get.all",
+        "uniform.get.milfaculty",
     ]
     res = []
     for val in values:
@@ -54,6 +55,7 @@ def get_teacher_permissions():
         "mark.patch.self",
         "mark.delete.self",
         "reference_book.get.all",
+        "uniform.get.all",
     ]
 
     res = []
@@ -108,6 +110,7 @@ def get_milfaculty_head_permissions():
         "mark.patch.milfaculty",
         "mark.delete.milfaculty",
         "reference_book.get.all",
+        "uniform.get.all",
     ]
 
     res = []
