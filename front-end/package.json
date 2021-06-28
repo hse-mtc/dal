@@ -11,7 +11,7 @@
     "test:ci": "npm run lint && npm run test:unit",
     "test:unit": "jest --clearCache && vue-cli-service test:unit",
     "prepare": "cd .. && husky install front-end/.husky",
-    "lint": "vue-cli-service lint --fix",
+    "lint": "vue-cli-service lint --no-fix",
     "lint:fix": "vue-cli-service lint"
   },
   "dependencies": {
