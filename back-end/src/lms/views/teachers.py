@@ -13,13 +13,17 @@ from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
 from lms.filters.teachers import TeacherFilter
 
 from auth.models import Permission
-from auth.permissions import BasePermission, register_view_permissions
+from auth.permissions import BasePermission
 
 
 class TeacherPermission(BasePermission):
     permission_class = "teacher"
-
-register_view_permissions("teacher", "Учителя", scopes=["all", "milfaculty", "self"])
+    view_name_rus = "Учителя"
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.MILFACULTY,
+        Permission.Scopes.SELF,
+    ]
 
 
 @extend_schema(tags=["teachers"])
