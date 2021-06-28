@@ -84,7 +84,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Пост:">
+        <el-form-item label="Должность:">
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
@@ -228,7 +228,7 @@ export default {
       }
     },
     handleAvatarSuccess(res, file) {
-      this.form.foto = URL.createObjectURL(file.raw);
+      this.modifyInfo.photo.image = URL.createObjectURL(file.raw);
     },
     beforeAvatarUpload(file) {
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
