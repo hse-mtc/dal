@@ -82,7 +82,6 @@
           <AdvancedSearch class="advanced-search" />
           <Serp class="documents" @openPaperModal="openPaperModal" />
         </el-col>
-
       </el-row>
     </el-col>
 

@@ -6,7 +6,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">
+        <el-button :disabled="form.title.trim() === ''" type="primary" @click="onSubmit">
           Добавить
         </el-button>
         <el-button @click="closeModal">
@@ -21,6 +21,8 @@
 import { addPaperCategories } from "@/api/paper_categories";
 
 import EventBus from "@/components/EventBus";
+import { mapState } from "vuex";
+import { Message } from "element-ui";
 
 export default {
   name: "AddModal",
@@ -33,10 +35,20 @@ export default {
     };
   },
 
+  computed: {
+    ...mapState({
+      categories: state => state.documents.categories,
+    }),
+  },
+
   methods: {
     async onSubmit() {
       const title = this.form.title.trim();
-      if (title === "") {
+      if (this.categories.find(category => category.title.trim().toLowerCase() === title.trim().toLowerCase())) {
+        Message({
+          message: "Такая категория уже существует",
+          type: "error",
+        });
         return;
       }
 
