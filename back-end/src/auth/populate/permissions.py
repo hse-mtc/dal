@@ -1,63 +1,6 @@
 from auth.models import Permission
 
 
-def create_permissions_for_view(view_name, view_name_rus):
-    methods_str = {
-        "get": ": получение данных",
-        "post": ": добавление данных",
-        "patch": ": редактирование данных",
-        "delete": ": удаление данных",
-    }
-
-    scopes_str = {
-        "self": (int(Permission.Scopes.SELF), ", связанных с пользователем"),
-        "milgroup": (int(Permission.Scopes.MILGROUP),
-                     " о взоде, связанным с пользователем"),
-        "milfaculty": (int(Permission.Scopes.MILFACULTY),
-                       " о цикле, связанным с пользователем"),
-        "all": (int(Permission.Scopes.ALL), " (всех данных)"),
-    }
-
-    permissions = []
-    for method in methods_str:
-        for scope in scopes_str:
-            permissions.append({
-                "viewset":
-                    view_name,
-                "method":
-                    method,
-                "scope":
-                    scopes_str[scope][0],
-                "name":
-                    "".join([
-                        view_name_rus, methods_str[method], scopes_str[scope][1]
-                    ]),
-            })
-    return permissions
-
-
-def create_permissions():
-    values = []
-    values += create_permissions_for_view("student", "Студенты")
-    values += create_permissions_for_view("teacher", "Учителя")
-    values += create_permissions_for_view("absence", "Пропуски")
-    values += create_permissions_for_view("achievement", "Достижения")
-    values += create_permissions_for_view("encouragement", "Поощрения")
-    values += create_permissions_for_view("punishment", "Взыскания")
-    values += create_permissions_for_view("subject", "Предметы")
-    values += create_permissions_for_view("lesson", "Расписание занятий")
-    values += create_permissions_for_view("mark", "Оценки")
-    values += create_permissions_for_view("reference_book", "Справочные данные")
-
-    for val in values:
-        Permission.objects.get_or_create(
-            viewset=val["viewset"],
-            method=val["method"],
-            scope=val["scope"],
-            name=val["name"],
-        )
-
-
 def get_student_permissions():
     values = [
         "student.get.self",
