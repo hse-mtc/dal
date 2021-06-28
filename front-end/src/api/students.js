@@ -26,6 +26,13 @@ export function findStudent(id) {
   });
 }
 
+export function findStudentExtra(id) {
+  return request({
+    url: `${BASE_API_URL}${students}${id}/extra`,
+    method: "get",
+  });
+}
+
 export function postStudent(data) {
   return request({
     url: BASE_API_URL + students,
@@ -37,6 +44,14 @@ export function postStudent(data) {
 export function patchStudent(data) {
   return request({
     url: `${BASE_API_URL}${students}${data.id}/`,
+    method: "patch",
+    data,
+  });
+}
+
+export function patchStudentExtra(data) {
+  return request({
+    url: `${BASE_API_URL}${students}${data.id}/extra`,
     method: "patch",
     data,
   });
