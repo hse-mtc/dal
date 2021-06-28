@@ -128,3 +128,33 @@ class StudentShortSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = ["id", "fullname", "milgroup"]
+
+
+class StudentBasicInfoSerializer(ModelSerializer):
+    fullname = SerializerMethodField()
+    milgroup = MilgroupSerializer()
+    photo = PhotoSerializer()
+    student_post = StudentPostSerializer()
+    contact_info = ContactInfoSerializer()
+
+    def get_fullname(self, obj):
+        return f"{obj.surname} {obj.name} {obj.patronymic}"
+
+    class Meta:
+        model = Student
+        fields = [
+            "id", "fullname", "milgroup", "photo", "student_post",
+            "contact_info", "status"
+        ]
+
+
+class StudentExtraInfoSerializer(ModelSerializer):
+    contact_info = ContactInfoSerializer()
+    passport = PassportSerializer()
+
+    class Meta:
+        model = Student
+        fields = [
+            "id", "contact_info", "milspecialty", "university_info",
+            "citizenship", "permanent_address", "passport"
+        ]
