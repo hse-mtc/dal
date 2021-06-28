@@ -18,6 +18,20 @@ export function getStudent(params) {
     params,
   });
 }
+export function getStudentBasic(params) {
+  return request({
+    url: `${BASE_API_URL}/${students}/basic/`,
+    method: "get",
+    params,
+  });
+}
+
+export function findStudentBasic(id) {
+  return request({
+    url: `${BASE_API_URL}${students}basic/${id}`,
+    method: "get",
+  });
+}
 
 export function findStudent(id) {
   return request({
@@ -26,9 +40,16 @@ export function findStudent(id) {
   });
 }
 
+export function findStudentSkills(id) {
+  return request({
+    url: `${BASE_API_URL}${students}${id}/skills`,
+    method: "get",
+  });
+}
+
 export function findStudentExtra(id) {
   return request({
-    url: `${BASE_API_URL}${students}${id}/extra`,
+    url: `${BASE_API_URL}${students}extra/${id}/`,
     method: "get",
   });
 }
@@ -44,14 +65,6 @@ export function postStudent(data) {
 export function patchStudent(data) {
   return request({
     url: `${BASE_API_URL}${students}${data.id}/`,
-    method: "patch",
-    data,
-  });
-}
-
-export function patchStudentExtra(data) {
-  return request({
-    url: `${BASE_API_URL}${students}${data.id}/extra`,
     method: "patch",
     data,
   });

@@ -31,6 +31,9 @@ export const LMS_URLS = {
   punishment: {
     punishment: "lms/punishments/",
   },
+  achievement: {
+    achievement: "lms/achievements/",
+  },
   reference: {
     book: "lms/reference-book/",
     milgroups: "lms/milgroups/",

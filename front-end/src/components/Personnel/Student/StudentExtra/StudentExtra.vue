@@ -57,14 +57,14 @@
             <el-select
               v-if="modify"
               v-model="modifyInfo.milspecialty"
-              value-key="status"
+              value-key="code"
               style="display: block"
             >
               <el-option
                 v-for="item in milspecialties"
-                :key="item"
-                :label="item"
-                :value="item"
+                :key="item.code"
+                :label="item.milspecialty"
+                :value="item.code"
               />
             </el-select>
             <span v-else class="field-value">
@@ -80,7 +80,11 @@
               v-maska="'#### ######'"
             />
             <span v-else class="field-value">
-              {{ displayInfo.birth_info ? displayInfo.passport : "---" }}
+              {{
+                displayInfo.passport
+                  ? `${displayInfo.passport.series} ${displayInfo.passport.code}`
+                  : "---"
+              }}
             </span>
           </transition>
         </el-form-item>
@@ -88,7 +92,7 @@
           <transition name="el-fade-in" mode="out-in">
             <el-input v-if="modify" v-model="modifyInfo.citizenship" />
             <span v-else class="field-value">
-              {{ displayInfo.birth_info ? displayInfo.citizenship : "---" }}
+              {{ displayInfo.citizenship ? displayInfo.citizenship : "---" }}
             </span>
           </transition>
         </el-form-item>
@@ -96,7 +100,9 @@
           <transition name="el-fade-in" mode="out-in">
             <el-input v-if="modify" v-model="modifyInfo.permanent_address" />
             <span v-else class="field-value">
-              {{ displayInfo.birth_info ? displayInfo.permanent_address : "---" }}
+              {{
+                displayInfo.permanent_address ? displayInfo.permanent_address : "---"
+              }}
             </span>
           </transition>
         </el-form-item>
@@ -120,7 +126,7 @@
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import { mapActions, mapState } from "vuex";
-import { findStudentExtra, patchStudentExtra } from "@/api/students";
+import { findStudentExtra, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 
 export default {
@@ -129,7 +135,12 @@ export default {
   data() {
     return {
       modify: false,
-      displayInfo: {},
+      displayInfo: {
+        contact_info: {},
+        university_info: {
+          program: {},
+        },
+      },
       modifyInfo: {},
       loading: false,
       id: this.$route.params.studentId,
@@ -138,17 +149,13 @@ export default {
   computed: {
     ...mapState("reference", ["programs", "milspecialties"]),
   },
-  async created() {
-    await this.fetchInfo();
-    await this.fetchMilgroups();
-    await this.fetchStudentPosts();
-    await this.fetchStudentStatuses();
-  },
   methods: {
-    ...mapActions("reference", [
-      "fetchPrograms",
-      "fetchMilspecialties",
-    ]),
+    ...mapActions("reference", ["fetchPrograms", "fetchMilspecialties"]),
+    async fetch() {
+      await this.fetchInfo();
+      await this.fetchPrograms();
+      await this.fetchMilspecialties();
+    },
     async fetchInfo() {
       try {
         this.loading = true;
@@ -161,12 +168,17 @@ export default {
     },
     startModify() {
       this.modify = true;
-      this.modifyInfo = { ...this.displayInfo };
+      this.modifyInfo = {
+        ...this.displayInfo,
+        passport: `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`,
+      };
     },
     async save() {
       try {
         this.loading = true;
-        await patchStudentExtra(this.modifyInfo);
+        const [series, code] = this.modifyInfo.passport;
+        this.modifyInfo.passport = { series, code };
+        await patchStudent(this.modifyInfo);
         this.displayInfo = this.modifyInfo;
         this.modify = false;
       } catch {
@@ -175,9 +187,9 @@ export default {
         this.loading = false;
       }
     },
-    toggled(expanded) {
+    async toggled(expanded) {
       if (expanded) {
-        this.fetchInfo();
+        await this.fetch();
       }
     },
   },

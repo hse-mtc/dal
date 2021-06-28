@@ -123,7 +123,7 @@
 <script>
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
-import { getStudent, deleteStudent } from "@/api/students";
+import { getStudentBasic, deleteStudent } from "@/api/students";
 
 export default {
   name: "Students",
@@ -185,7 +185,7 @@ export default {
     async onFilter() {
       try {
         this.loading = true;
-        this.students = (await getStudent(this.filter)).data;
+        this.students = (await getStudentBasic(this.filter)).data;
       } catch (err) {
         getError("студентов", err.response.status);
       } finally {
