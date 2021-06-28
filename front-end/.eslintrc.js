@@ -27,6 +27,9 @@ module.exports = {
   },
   plugins: ["vue"],
   rules: {
+    "max-len": ["error", {
+      code: 120, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true,
+    }],
     "no-console": "off",
     "no-unused-vars": 0,
     "import/no-cycle": 0,
