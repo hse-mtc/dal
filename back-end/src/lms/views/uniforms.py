@@ -17,13 +17,17 @@ from conf.settings import (
     TGBOT_HOST,
 )
 from common.constants import MUTATE_ACTIONS
-from auth.permissions import BasePermission, register_view_permissions
+from auth.models import Permission
+from auth.permissions import BasePermission
 
 
 class UniformPermission(BasePermission):
     permission_class = 'uniform'
-
-register_view_permissions('uniform', 'Форма одежды', scopes=['all', 'milfaculty'])
+    view_name_rus = 'Форма одежды'
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.MILFACULTY,
+    ]
 
 
 @extend_schema(tags=['uniforms'])
@@ -46,15 +50,15 @@ class UniformViewSet(ModelViewSet):
             f'http://{TGBOT_HOST}:{TGBOT_PORT}/uniforms/',
             data=JSONRenderer().render(serializer.data),
         )
-    
+
     # pylint: disable=too-many-return-statements
     def get_queryset(self):
         if self.request.user.is_superuser:
             return self.queryset
-        
+
         scope = self.request.user.get_perm_scope(
             UniformPermission.permission_class, self.request.method)
-        
+
         if scope == Permission.Scopes.MILFACULTY:
             milfaculty = None
             # check is user is a teacher
@@ -72,7 +76,7 @@ class UniformViewSet(ModelViewSet):
                 milfaculty = user_teacher[0].milfaculty
             return self.queryset.filter(milfaculty=milfaculty)
 
-        is scope == Permission.Scopes.ALL:
+        if scope == Permission.Scopes.ALL:
             return self.queryset
 
         return QuerySet()
