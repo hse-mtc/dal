@@ -12,7 +12,7 @@ from dms.models.common import (
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
 
     class Meta:
         verbose_name = "Category"
