@@ -2,7 +2,12 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
-from lms.views.students import StudentViewSet, ActivateStudentViewSet
+from lms.views.students import (
+    StudentViewSet,
+    ActivateStudentViewSet,
+    StudentBasicInfoViewSet,
+    StudentExtraInfoViewSet,
+)
 from lms.views.teachers import TeacherViewSet
 from lms.views.absences import AbsenceViewSet, AbsenceJournalView
 from lms.views.absence_time import AbsenceTimeView
@@ -30,6 +35,8 @@ from lms.views.personnel import SearchPersonnelUsersViewSet
 
 routers = DefaultRouter()
 routers.register('students/approvements', ActivateStudentViewSet)
+routers.register('students/basic', StudentBasicInfoViewSet)
+routers.register('students/extra', StudentExtraInfoViewSet)
 routers.register('students', StudentViewSet)
 routers.register('teachers', TeacherViewSet)
 routers.register('absences', AbsenceViewSet)
