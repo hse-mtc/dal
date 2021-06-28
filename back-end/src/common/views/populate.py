@@ -21,7 +21,6 @@ from common.serializers.populate import PopulateSerializer
 from auth.models import Group
 from auth.populate.users import create_users
 from auth.populate.permissions import (
-    create_permissions,
     get_student_permissions,
     get_teacher_permissions,
     get_milfaculty_head_permissions,
@@ -121,8 +120,6 @@ class PopulateAPIView(GenericAPIView):
             teachers, _ = Group.objects.get_or_create(name="teachers")
             milfaculty_heads, _ = Group.objects.get_or_create(
                 name="milfaculty_heads")
-
-            create_permissions()
 
             students.permissions.set(get_student_permissions())
             teachers.permissions.set(get_teacher_permissions())

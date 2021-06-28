@@ -13,11 +13,13 @@ from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
 from lms.filters.teachers import TeacherFilter
 
 from auth.models import Permission
-from auth.permissions import BasePermission
+from auth.permissions import BasePermission, register_view_permissions
 
 
 class TeacherPermission(BasePermission):
     permission_class = "teacher"
+
+register_view_permissions("teacher", "Учителя", scopes=["all", "milfaculty", "self"])
 
 
 @extend_schema(tags=["teachers"])
@@ -43,14 +45,13 @@ class TeacherViewSet(ModelViewSet):
         scope = self.request.user.get_perm_scope(
             TeacherPermission.permission_class, self.request.method)
 
-        # milgroup+ scopes (milgroup and self) are treated as self
-        if scope >= Permission.Scopes.MILGROUP:
+        if scope == Permission.Scopes.SELF:
             res = self.queryset.filter(user=self.request.user)
             if res.count() == 0:
                 return QuerySet()
             return res
 
-        if scope >= Permission.Scopes.MILFACULTY:
+        if scope == Permission.Scopes.MILFACULTY:
             milfaculty = None
             # check is user is a teacher
             user_teacher = self.queryset.filter(user=self.request.user)
@@ -67,7 +68,7 @@ class TeacherViewSet(ModelViewSet):
                 milfaculty = user_teacher[0].milfaculty
             return self.queryset.filter(milfaculty=milfaculty)
 
-        if scope >= Permission.Scopes.ALL:
+        if scope == Permission.Scopes.ALL:
             return self.queryset
 
         return QuerySet()
