@@ -16,9 +16,13 @@ from dms.models.papers import (
 
 @pytest.fixture(scope="function")
 def category_data():
-    return {
-        "title": "category",
-    }
+
+    def call_me(index: int = 0) -> dict:
+        return {
+            "title": f"category_{index}",
+        }
+
+    return call_me
 
 
 @pytest.fixture(scope="function")
@@ -51,10 +55,10 @@ def test_trailing_slash_redirect(client):
 
 @pytest.mark.django_db
 def test_post_categories_creates_new_category(client, category_data):
-    first = client.post("/api/dms/categories/", category_data)
+    first = client.post("/api/dms/categories/", category_data(1))
     assert first.status_code == 201
 
-    second = client.post("/api/dms/categories/", category_data)
+    second = client.post("/api/dms/categories/", category_data(2))
     assert second.status_code == 201
 
     assert first.data["id"] != second.data["id"]
@@ -65,8 +69,8 @@ def test_get_categories_returns_list(client, category_data):
     # pylint: disable=too-many-locals
 
     count = 3
-    for _ in range(count):
-        Category.objects.create(**category_data)
+    for i in range(count):
+        Category.objects.create(**category_data(i))
 
     response = client.get("/api/dms/categories/")
     assert response.status_code == 200
@@ -77,23 +81,25 @@ def test_get_categories_returns_list(client, category_data):
     min_id = min(response.data, key=id_getter)["id"]
 
     for id_, category in enumerate(response.data, start=min_id):
-        category_data["id"] = id_
-        assert category == category_data
+        data = category_data(id_ - min_id)
+        data["id"] = id_
+        assert category == data
 
 
 @pytest.mark.django_db
 def test_get_category_by_id_returns_single_category(client, category_data):
-    id_ = Category.objects.create(**category_data).id
-    category_data["id"] = id_
+    data = category_data()
+    id_ = Category.objects.create(**data).id
+    data["id"] = id_
 
     response = client.get(f"/api/dms/categories/{id_}/")
     assert response.status_code == 200
-    assert response.data == category_data
+    assert response.data == data
 
 
 @pytest.mark.django_db
 def test_delete_category_removes_category_from_db(client, category_data):
-    id_ = Category.objects.create(**category_data).id
+    id_ = Category.objects.create(**category_data()).id
 
     response = client.delete(f"/api/dms/categories/{id_}/")
     assert response.status_code == 204
@@ -103,7 +109,7 @@ def test_delete_category_removes_category_from_db(client, category_data):
 
 @pytest.mark.django_db
 def test_delete_category_with_papers_fails(client, category_data, file, user):
-    category = Category.objects.create(**category_data)
+    category = Category.objects.create(**category_data())
     paper = Paper.objects.create(
         file=file,
         category=category,
@@ -117,3 +123,6 @@ def test_delete_category_with_papers_fails(client, category_data, file, user):
 
     response = client.delete(f"/api/dms/categories/{category.id}/")
     assert response.status_code == 204
+
+
+# TODO(TmLev): test Category.title uniqueness.
