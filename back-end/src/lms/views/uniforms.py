@@ -1,4 +1,3 @@
-from django.db.models.query import QuerySet
 import requests
 
 from rest_framework.viewsets import ModelViewSet
@@ -68,7 +67,7 @@ class UniformViewSet(ModelViewSet):
                 user_student = Student.objects.filter(user=self.request.user)
                 if user_student.count() == 0:
                     # return nothing is user is not a student or a teacher
-                    return QuerySet()
+                    return self.queryset.none()
                 # get student milfacuty
                 milfaculty = user_student[0].milgroup.milfaculty
             else:
@@ -79,4 +78,4 @@ class UniformViewSet(ModelViewSet):
         if scope == Permission.Scopes.ALL:
             return self.queryset
 
-        return QuerySet()
+        return self.queryset.none()

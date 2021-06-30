@@ -1,4 +1,3 @@
-from django.db.models.query import QuerySet
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 
@@ -52,7 +51,7 @@ class TeacherViewSet(ModelViewSet):
         if scope == Permission.Scopes.SELF:
             res = self.queryset.filter(user=self.request.user)
             if res.count() == 0:
-                return QuerySet()
+                return self.queryset.none()
             return res
 
         if scope == Permission.Scopes.MILFACULTY:
@@ -64,7 +63,7 @@ class TeacherViewSet(ModelViewSet):
                 user_student = Student.objects.filter(user=self.request.user)
                 if user_student.count() == 0:
                     # return nothing is user is not a student or a teacher
-                    return QuerySet()
+                    return self.queryset.none()
                 # get student milfacuty
                 milfaculty = user_student[0].milgroup.milfaculty
             else:
@@ -75,4 +74,4 @@ class TeacherViewSet(ModelViewSet):
         if scope == Permission.Scopes.ALL:
             return self.queryset
 
-        return QuerySet()
+        return self.queryset.none()
