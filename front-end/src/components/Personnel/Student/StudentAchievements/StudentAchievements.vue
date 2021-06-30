@@ -63,7 +63,7 @@ export default {
       try {
         this.loading = true;
         this.achievements = (await getAchievement({ student: this.id })).data;
-        this.skills = (await findStudentSkills(this.id)).data;
+        this.skills = (await findStudentSkills(this.id)).data.student_skills;
       } catch (err) {
         getError("информации о достижениях студента", err);
       } finally {

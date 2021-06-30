@@ -101,14 +101,14 @@
             <el-select
               v-if="modify"
               v-model="modifyInfo.student_post"
-              value-key="student_post"
+              value-key="id"
               style="display: block"
             >
               <el-option
                 v-for="item in studentPosts"
                 :key="item.id"
                 :label="item.title"
-                :value="item.id"
+                :value="item"
               />
             </el-select>
             <span v-else class="field-value">
@@ -159,7 +159,7 @@
             />
             <span v-else class="field-value">
               {{
-                displayInfo.contact_info
+                displayInfo.contact_info && displayInfo.contact_info.phone
                   ? displayInfo.contact_info.phone
                   : "---"
               }}
@@ -213,8 +213,6 @@ export default {
     await this.fetchInfo();
     await this.fetchMilgroups();
     await this.fetchStudentPosts();
-    console.log(this.displayInfo.student_post);
-    console.log(this.studentPosts);
     await this.fetchStudentStatuses();
   },
   methods: {
@@ -223,7 +221,7 @@ export default {
       "fetchStudentPosts",
       "fetchStudentStatuses",
     ]),
-    formatDate: row => moment(row.date).format("DD.MM.YYYY"),
+    formatDate: date => moment(date).format("DD.MM.YYYY"),
     async fetchInfo() {
       try {
         this.loading = true;
@@ -250,12 +248,20 @@ export default {
     async save() {
       try {
         this.loading = true;
+        const [
+          surname,
+          name,
+          ...patronymicArray
+        ] = this.modifyInfo.fullname.split(" ");
+        const patronymic = patronymicArray.join(" ");
         const requestBody = {
           ...this.modifyInfo,
           milgroup: this.modifyInfo.milgroup.milgroup,
           student_post: this.modifyInfo.student_post.id,
+          surname,
+          name,
+          patronymic,
         };
-        console.log("🚀 > requestBody", requestBody);
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;
