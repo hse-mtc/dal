@@ -42,7 +42,7 @@ export function findStudent(id) {
 
 export function findStudentSkills(id) {
   return request({
-    url: `${BASE_API_URL}${students}${id}/skills`,
+    url: `${BASE_API_URL}${students}skills/${id}/`,
     method: "get",
   });
 }
