@@ -4,10 +4,9 @@
     :wrapper-class-name="wrapperClassName"
     :title-class-name="titleClassName"
   >
-    <el-input
+    <el-input-number
       v-model="value"
       style="width: 100%; max-width: 100%"
-      type="number"
       v-bind="$attrs"
     />
   </InputsBase>
