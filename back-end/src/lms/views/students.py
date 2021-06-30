@@ -42,6 +42,7 @@ from lms.serializers.applicants import (
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
+    StudentSkillsSerializer,
     StudentBasicInfoSerializer,
     StudentExtraInfoSerializer,
 )
@@ -318,3 +319,9 @@ class StudentBasicInfoViewSet(ReadOnlyModelViewSet):
 class StudentExtraInfoViewSet(ReadOnlyModelViewSet):
     queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
     serializer_class = StudentExtraInfoSerializer
+
+
+@extend_schema(tags=["students"])
+class StudentSkillsView(ReadOnlyModelViewSet):
+    queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
+    serializer_class = StudentSkillsSerializer
