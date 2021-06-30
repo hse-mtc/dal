@@ -136,6 +136,7 @@ class StudentBasicInfoSerializer(ModelSerializer):
     photo = PhotoSerializer()
     student_post = StudentPostSerializer()
     contact_info = ContactInfoSerializer()
+    birth_info = BirthInfoSerializer()
 
     def get_fullname(self, obj):
         return f"{obj.surname} {obj.name} {obj.patronymic}"
@@ -144,7 +145,7 @@ class StudentBasicInfoSerializer(ModelSerializer):
         model = Student
         fields = [
             "id", "fullname", "milgroup", "photo", "student_post",
-            "contact_info", "status"
+            "contact_info", "status", "birth_info"
         ]
 
 
