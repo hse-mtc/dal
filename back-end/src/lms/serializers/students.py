@@ -151,6 +151,7 @@ class StudentBasicInfoSerializer(ModelSerializer):
 class StudentExtraInfoSerializer(ModelSerializer):
     contact_info = ContactInfoSerializer()
     passport = PassportSerializer()
+    university_info = UniversityInfoSerializer()
 
     class Meta:
         model = Student
@@ -158,3 +159,11 @@ class StudentExtraInfoSerializer(ModelSerializer):
             "id", "contact_info", "milspecialty", "university_info",
             "citizenship", "permanent_address", "passport"
         ]
+
+
+class StudentSkillsSerializer(ModelSerializer):
+    student_skills = StudentSkillSerializer(many=True)
+
+    class Meta:
+        model = Student
+        fields = ["student_skills"]
