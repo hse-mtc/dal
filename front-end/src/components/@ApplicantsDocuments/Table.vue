@@ -1,13 +1,18 @@
 <template>
-  <el-table :data="data" border>
-    <el-table-column
+  <PrimeTable
+    :value="data"
+    class="p-datatable-gridlines p-datatable-striped"
+    frozen-width="400px"
+    auto-layout
+    scrollable
+  >
+    <PrimeColumn
       v-for="({ abbr, title, width }, field) in fields"
       :key="field"
-      :prop="field"
-      :label="title"
-      :width="width"
-      :fixed="['index', 'fullname'].includes(field)"
-      :label-class-name="$style.label"
+      :field="field"
+      :header-style="`width: ${width}px; height: 120px`"
+      :body-style="`width: ${width}px; height: 90px`"
+      :frozen="['index', 'fullname'].includes(field)"
     >
       <template #header>
         <div>
@@ -23,7 +28,7 @@
         </div>
       </template>
 
-      <template slot-scope="{ row, $index }">
+      <template #body="{ data: row, index: $index }">
         <template v-if="field === 'index'">
           <span>{{ startIndex + $index + 1 }}</span>
         </template>
@@ -91,8 +96,8 @@
           {{ row[field] }}
         </template>
       </template>
-    </el-table-column>
-  </el-table>
+    </PrimeColumn>
+  </PrimeTable>
 </template>
 
 <script>
@@ -130,7 +135,7 @@ export default {
       },
       birthday: {
         title: "Дата рождения",
-        width: 100,
+        width: 120,
       },
       program: {
         abbr: "КС",
@@ -184,7 +189,7 @@ export default {
         },
         application_handed_over: {
           title: "Заявление",
-          width: 100,
+          width: 120,
         },
       };
     }
