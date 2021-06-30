@@ -7,6 +7,7 @@ from lms.views.students import (
     ActivateStudentViewSet,
     StudentBasicInfoViewSet,
     StudentExtraInfoViewSet,
+    StudentSkillsView,
 )
 from lms.views.teachers import TeacherViewSet
 from lms.views.absences import AbsenceViewSet, AbsenceJournalView
@@ -32,11 +33,13 @@ from lms.views.lessons import LessonViewSet, LessonJournalView
 from lms.views.marks import MarkViewSet, MarkJournalView
 from lms.views.uniforms import UniformViewSet
 from lms.views.personnel import SearchPersonnelUsersViewSet
+from lms.views.dashboard import StudentPerformanceView
 
 routers = DefaultRouter()
 routers.register('students/approvements', ActivateStudentViewSet)
 routers.register('students/basic', StudentBasicInfoViewSet)
 routers.register('students/extra', StudentExtraInfoViewSet)
+routers.register('students/skills', StudentSkillsView)
 routers.register('students', StudentViewSet)
 routers.register('teachers', TeacherViewSet)
 routers.register('absences', AbsenceViewSet)
@@ -66,4 +69,5 @@ urlpatterns = [
     path('lesson-journal/', LessonJournalView.as_view()),
     path('mark-journal/', MarkJournalView.as_view()),
     path('absence-time/', AbsenceTimeView.as_view()),
+    path('students/<int:pk>/performance', StudentPerformanceView.as_view())
 ]
