@@ -40,7 +40,7 @@
             show-overflow-tooltip
           />
         </el-table>
-        <div class="separator" />
+        <!-- <div class="separator" /> -->
       </div>
     </div>
   </ExpandBox>

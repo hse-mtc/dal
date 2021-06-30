@@ -2,6 +2,13 @@
   <ExpandBox title="Умения и достижения" @toggled="toggled">
     <div class="achievements-info">
       <div class="achievements-table">
+        <span class="title"> Умения </span>
+        <el-table :data="skills" max-height="200" size="mini">
+          <el-table-column prop="title" label="Наименование" />
+        </el-table>
+        <div class="separator" />
+      </div>
+      <div class="achievements-table">
         <span class="title"> Достижения </span>
         <el-table :data="achievements" max-height="200" size="mini">
           <el-table-column prop="date" label="Дата" :formatter="formatDate" />
@@ -13,13 +20,6 @@
             </template>
           </el-table-column>
           <el-table-column prop="text" label="Описание" show-overflow-tooltip />
-        </el-table>
-        <div class="separator" />
-      </div>
-      <div class="achievements-table">
-        <span class="title"> Умения </span>
-        <el-table :data="skills" max-height="200" size="mini">
-          <el-table-column prop="title" label="Наименование" />
         </el-table>
         <div class="separator" />
       </div>
