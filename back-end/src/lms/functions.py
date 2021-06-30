@@ -1,4 +1,27 @@
 from datetime import timedelta, datetime
+from lms.models.students import Student
+from lms.models.teachers import Teacher
+
+
+def get_user_from_request(request):
+    """
+    Get user from request.
+    Returns empty string and None if user is not
+    a teacher or a student.
+
+    :param request: REST/HTTP request
+    :return: user_type (str), user (User object)
+    """
+    # check if user is a teacher or a student
+    user = Teacher.objects.filter(user=request.user)
+    user_type = 'teacher'
+    if user.count() == 0:
+        # check if user is a student
+        user = Student.objects.filter(user=request.user)
+        user_type = 'student'
+        if user.count() == 0:
+            return '', None
+    return user_type, user.first()
 
 
 def get_date_range(date_from: datetime, date_to: datetime,
