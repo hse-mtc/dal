@@ -54,13 +54,25 @@
         </el-form-item>
         <el-form-item label="Дата рождения:">
           <transition name="el-fade-in" mode="out-in">
-            <el-input
+            <el-date-picker
               v-if="modify"
               v-model="modifyInfo.birth_info.date"
-              v-maska="'##.##.####'"
+              type="date"
+              style="width: 100%;"
+              :picker-options="{
+                disabledDate(time) {
+                  return time.getTime() > Date.now();
+                },
+              }"
+              format="dd.MM.yyyy"
+              value-format="yyyy-MM-dd"
             />
             <span v-else class="field-value">
-              {{ displayInfo.birth_info ? displayInfo.birth_info.date : "---" }}
+              {{
+                displayInfo.birth_info
+                  ? formatDate(displayInfo.birth_info.date)
+                  : "---"
+              }}
             </span>
           </transition>
         </el-form-item>
@@ -101,9 +113,8 @@
             </el-select>
             <span v-else class="field-value">
               {{
-                studentPosts.some((x) => x.id === displayInfo.student_post)
-                  ? studentPosts.find((x) => x.id === displayInfo.student_post)
-                    .title
+                displayInfo.student_post
+                  ? displayInfo.student_post.title
                   : "---"
               }}
             </span>
@@ -130,8 +141,12 @@
               </el-option>
             </el-select>
             <span v-else class="field-value">
-              {{ displayInfo.milgroup.milgroup }}
-              <sub> {{ displayInfo.milgroup.milfaculty }} </sub>
+              {{ displayInfo.milgroup ? displayInfo.milgroup.milgroup : "---" }}
+              <sub>
+                {{
+                  displayInfo.milgroup ? displayInfo.milgroup.milfaculty : "---"
+                }}
+              </sub>
             </span>
           </transition>
         </el-form-item>
@@ -143,7 +158,11 @@
               v-maska="'# (###) ###-##-##'"
             />
             <span v-else class="field-value">
-              {{ displayInfo.contact_info.phone }}
+              {{
+                displayInfo.contact_info
+                  ? displayInfo.contact_info.phone
+                  : "---"
+              }}
             </span>
           </transition>
         </el-form-item>
@@ -157,6 +176,7 @@ import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import { mapActions, mapState } from "vuex";
 import { findStudentBasic, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
+import moment from "moment";
 
 export default {
   name: "StudentGeneral",
@@ -193,6 +213,8 @@ export default {
     await this.fetchInfo();
     await this.fetchMilgroups();
     await this.fetchStudentPosts();
+    console.log(this.displayInfo.student_post);
+    console.log(this.studentPosts);
     await this.fetchStudentStatuses();
   },
   methods: {
@@ -201,6 +223,7 @@ export default {
       "fetchStudentPosts",
       "fetchStudentStatuses",
     ]),
+    formatDate: row => moment(row.date).format("DD.MM.YYYY"),
     async fetchInfo() {
       try {
         this.loading = true;
@@ -214,11 +237,26 @@ export default {
     startModify() {
       this.modify = true;
       this.modifyInfo = { ...this.displayInfo };
+      if (!this.modifyInfo.birth_info) {
+        this.$set(this.modifyInfo, "birth_info", { date: "" });
+      }
+      if (!this.modifyInfo.milgroup) {
+        this.$set(this.modifyInfo, "milgroup", {});
+      }
+      if (!this.modifyInfo.contact_info) {
+        this.$set(this.modifyInfo, "contact_info", {});
+      }
     },
     async save() {
       try {
         this.loading = true;
-        await patchStudent(this.modifyInfo);
+        const requestBody = {
+          ...this.modifyInfo,
+          milgroup: this.modifyInfo.milgroup.milgroup,
+          student_post: this.modifyInfo.student_post.id,
+        };
+        console.log("🚀 > requestBody", requestBody);
+        await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;
       } catch {
