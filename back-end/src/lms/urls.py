@@ -69,5 +69,5 @@ urlpatterns = [
     path('lesson-journal/', LessonJournalView.as_view()),
     path('mark-journal/', MarkJournalView.as_view()),
     path('absence-time/', AbsenceTimeView.as_view()),
-    path('students/<int:pk>/performance', StudentPerformanceView.as_view())
+    path('students/<int:pk>/performance/', StudentPerformanceView.as_view())
 ]
