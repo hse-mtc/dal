@@ -7,8 +7,12 @@ import "normalize.css/normalize.css"; // A modern alternative to CSS resets
 import Multiselect from "vue-multiselect";
 import VueLodash from "vue-lodash";
 import lodash from "lodash";
-// name is optional
 import VueMeta from "vue-meta";
+
+import PrimeTable from "primevue/datatable";
+import PrimeColumn from "primevue/column";
+import PrimeColumnGroup from "primevue/columngroup";
+
 import "@/styles/index.scss"; // global css
 
 import App from "./App.vue";
@@ -19,14 +23,21 @@ import "@/icons"; // icon
 import "@/permission"; // permission control
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
+import "primevue/resources/themes/saga-blue/theme.css";
+// import "primevue/resources/primevue.min.css";
 
 import "./elementUIApply";
 
-// register globally
 Vue.component("Multiselect", Multiselect);
+Vue.component("PrimeTable", PrimeTable);
+Vue.component("PrimeColumn", PrimeColumn);
+// Vue.component("PrimeTable", PrimeColumnGroup);
+
 Vue.use(VueMeta);
 Vue.use(VueLodash, { name: "custom", lodash });
+
 Vue.prototype.$moment = moment;
+
 moment.locale("ru");
 
 Vue.use(BootstrapVue);
