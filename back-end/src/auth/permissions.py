@@ -6,7 +6,7 @@ from auth.models import Permission
 class BasePermission(permissions.BasePermission):
     permission_class = ""
     view_name_rus = ""
-    methods = ["get", "post", "patch", "delete"]
+    methods = ["get", "put", "post", "patch", "delete"]
     scopes = [
         Permission.Scopes.SELF,
         Permission.Scopes.MILFACULTY,
