@@ -76,7 +76,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Паспорт:">
+        <el-form-item label="Серия и номер паспорта:">
           <transition name="el-fade-in" mode="out-in">
             <el-input
               v-if="modify"
@@ -88,6 +88,54 @@
                 displayInfo.passport
                   ? `${displayInfo.passport.series} ${displayInfo.passport.code}`
                   : "---"
+              }}
+            </span>
+          </transition>
+        </el-form-item>
+        <el-form-item label="Место выдачи паспорта:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-input v-if="modify" v-model="modifyInfo.ufms_name" />
+            <span v-else class="field-value">
+              {{
+                displayInfo.passport ? displayInfo.passport.ufms_name : "---"
+              }}
+            </span>
+          </transition>
+        </el-form-item>
+        <el-form-item label="Дата выдачи паспорта:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-date-picker
+              v-if="modify"
+              v-model="modifyInfo.issue_date"
+              type="date"
+              style="width: 100%;"
+              :picker-options="{
+                disabledDate(time) {
+                  return time.getTime() > Date.now();
+                },
+              }"
+              format="dd.MM.yyyy"
+              value-format="yyyy-MM-dd"
+            />
+            <span v-else class="field-value">
+              {{
+                displayInfo.passport
+                  ? formatDate(displayInfo.passport.issue_date)
+                  : "---"
+              }}
+            </span>
+          </transition>
+        </el-form-item>
+        <el-form-item label="Код подразделения:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-input
+              v-if="modify"
+              v-model="modifyInfo.ufms_code"
+              v-maska="'###-###'"
+            />
+            <span v-else class="field-value">
+              {{
+                displayInfo.passport ? displayInfo.passport.ufms_code : "---"
               }}
             </span>
           </transition>
@@ -138,6 +186,7 @@ import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import { mapActions, mapState } from "vuex";
 import { findStudentExtra, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
+import moment from "moment";
 
 export default {
   name: "StudentExtra",
@@ -161,6 +210,7 @@ export default {
   },
   methods: {
     ...mapActions("reference", ["fetchPrograms", "fetchMilspecialties"]),
+    formatDate: date => moment(date).format("DD.MM.YYYY"),
     async fetch() {
       await this.fetchInfo();
       await this.fetchPrograms();
@@ -183,6 +233,9 @@ export default {
         passport: this.displayInfo.passport
           ? `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`
           : "",
+        ufms_name: this.displayInfo.passport.ufms_name,
+        ufms_code: this.displayInfo.passport.ufms_code,
+        issue_date: this.displayInfo.passport.issue_date,
       };
       if (!this.modifyInfo.university_info) {
         this.$set(this.modifyInfo, "university_info", { program: {} });
@@ -191,9 +244,24 @@ export default {
     async save() {
       try {
         this.loading = true;
-        const [series, code] = this.modifyInfo.passport;
-        this.modifyInfo.passport = { series, code };
-        await patchStudent(this.modifyInfo);
+        const [series, code] = this.modifyInfo.passport.split(" ");
+        // eslint-disable-next-line camelcase
+        const { ufms_name, ufms_code, issue_date } = this.modifyInfo;
+        const requestBody = {
+          ...this.modifyInfo,
+          passport: {
+            series,
+            code,
+            ufms_name,
+            ufms_code,
+            issue_date,
+          },
+          university_info: {
+            program: this.modifyInfo.university_info.program.code,
+          },
+        };
+        console.log("🚀 > requestBody", requestBody);
+        await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;
       } catch {

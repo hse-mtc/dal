@@ -4,8 +4,8 @@
       <el-table-column prop="discipline" label="Дисциплина" />
       <el-table-column label="Средний балл">
         <template #default="{ row }">
-          <el-tag :type="tagVariantByMean(row.mean)">
-            {{ row.mean }}
+          <el-tag :type="tagVariantByAverageMark(row.average_mark)">
+            {{ row.average_mark }}
           </el-tag>
         </template>
       </el-table-column>
@@ -22,45 +22,28 @@
 
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
+import { findStudentPerformance } from "@/api/students";
+import { getError } from "@/utils/message";
 
 export default {
   name: "StudentPerformance",
   components: { ExpandBox },
   data() {
     return {
-      performance: [
-        {
-          discipline: "ТСП",
-          mean: 5,
-          absences: 3,
-        },
-        {
-          discipline: "ВСП",
-          mean: 2,
-          absences: 1,
-        },
-        {
-          discipline: "СП",
-          mean: 3.5,
-          absences: 2,
-        },
-        {
-          discipline: "ОП",
-          mean: 4.3,
-          absences: 0,
-        },
-      ],
+      performance: [],
+      loading: false,
+      id: this.$route.params.studentId,
     };
   },
   methods: {
-    tagVariantByMean(mean) {
-      if (mean >= 4.5) {
+    tagVariantByAverageMark(average) {
+      if (average >= 4.5) {
         return "primary";
       }
-      if (mean >= 3.5) {
+      if (average >= 3.5) {
         return "success";
       }
-      if (mean >= 2.5) {
+      if (average >= 2.5) {
         return "warning";
       }
       return "danger";
@@ -74,10 +57,19 @@ export default {
       }
       return "danger";
     },
-    fetchData() {},
+    async fetchInfo() {
+      try {
+        this.loading = true;
+        this.performance = (await findStudentPerformance(this.id)).data;
+      } catch (err) {
+        getError("информации об успеваемости студента", err);
+      } finally {
+        this.loading = false;
+      }
+    },
     toggled(expanded) {
       if (expanded) {
-        this.fetchData();
+        this.fetchInfo();
       }
     },
   },

@@ -47,6 +47,13 @@ export function findStudentSkills(id) {
   });
 }
 
+export function findStudentPerformance(id) {
+  return request({
+    url: `${BASE_API_URL}${students}${id}/performance`,
+    method: "get",
+  });
+}
+
 export function findStudentExtra(id) {
   return request({
     url: `${BASE_API_URL}${students}extra/${id}/`,
