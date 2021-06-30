@@ -66,7 +66,6 @@ export default {
       return "danger";
     },
     tagVariantByAbsences(absences) {
-      console.log("🚀 > absences", absences);
       if (absences === 0) {
         return "success";
       }

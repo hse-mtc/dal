@@ -6,7 +6,7 @@
         class="form"
         :model="modifyInfo"
         label-position="right"
-        label-width="150px"
+        label-width="250px"
         size="mini"
         :disabled="loading"
       >
@@ -32,7 +32,7 @@
             </template>
           </transition>
         </el-form-item>
-        <el-form-item label="ОП:">
+        <el-form-item label="Образовательная программа:">
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
@@ -48,7 +48,11 @@
               />
             </el-select>
             <span v-else class="field-value">
-              {{ displayInfo.university_info.program.program }}
+              {{
+                displayInfo.university_info.program
+                  ? displayInfo.university_info.program.program
+                  : "---"
+              }}
             </span>
           </transition>
         </el-form-item>
@@ -101,7 +105,9 @@
             <el-input v-if="modify" v-model="modifyInfo.permanent_address" />
             <span v-else class="field-value">
               {{
-                displayInfo.permanent_address ? displayInfo.permanent_address : "---"
+                displayInfo.permanent_address
+                  ? displayInfo.permanent_address
+                  : "---"
               }}
             </span>
           </transition>
@@ -114,7 +120,11 @@
               v-maska="'X*@S*.X*'"
             />
             <span v-else class="field-value">
-              {{ displayInfo.contact_info.email }}
+              {{
+                displayInfo.contact_info
+                  ? displayInfo.contact_info.email
+                  : "---"
+              }}
             </span>
           </transition>
         </el-form-item>
@@ -170,8 +180,13 @@ export default {
       this.modify = true;
       this.modifyInfo = {
         ...this.displayInfo,
-        passport: `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`,
+        passport: this.displayInfo.passport
+          ? `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`
+          : "",
       };
+      if (!this.modifyInfo.university_info) {
+        this.$set(this.modifyInfo, "university_info", { program: {} });
+      }
     },
     async save() {
       try {
