@@ -7,7 +7,7 @@
       <el-tabs value="absences" stretch @click="onFilter">
         <el-tab-pane label="Пропуски" name="absences">
           <el-row class="filterRow" :gutter="20">
-            <el-col :span="7">
+            <el-col :span="8">
               <el-date-picker
                 v-model="filter.dateRange"
                 type="daterange"
@@ -19,11 +19,12 @@
                 :picker-options="pickerOptions"
                 format="dd.MM.yyyy"
                 value-format="yyyy-MM-dd"
+                style="width: auto"
                 @change="onFilter"
                 @clear="onFilter"
               />
             </el-col>
-            <el-col :span="5">
+            <el-col :span="4">
               <el-input
                 v-model="filter.search"
                 clearable
