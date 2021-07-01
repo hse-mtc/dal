@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from lms.models.uniforms import Uniform
 from lms.serializers.uniforms import UniformSerializer, UniformMutateSerializer
 from lms.filters.uniforms import UniformFilter
-from lms.views.views import BasicQuerysetScoping
+from lms.mixins import QuerysetScopingMixin
 
 from conf.settings import (
     TGBOT_PORT,
@@ -29,7 +29,7 @@ class UniformPermission(BasePermission):
 
 
 @extend_schema(tags=['uniforms'])
-class UniformViewSet(BasicQuerysetScoping, ModelViewSet):
+class UniformViewSet(QuerysetScopingMixin, ModelViewSet):
     queryset = Uniform.objects.all()
 
     permission_classes = [UniformPermission]
@@ -58,3 +58,10 @@ class UniformViewSet(BasicQuerysetScoping, ModelViewSet):
         else:
             return self.queryset.none()
         return self.queryset.filter(milfaculty=milfaculty)
+
+    def handle_scope_milfaculty_on_create(self, data, user_type, user):
+        if user_type == 'student':
+            return data['milfaculty'] == user.milgroup.milfaculty.milfaculty
+        if user_type == 'teacher':
+            return data['milfaculty'] == user.milfaculty.milfaculty
+        return False
