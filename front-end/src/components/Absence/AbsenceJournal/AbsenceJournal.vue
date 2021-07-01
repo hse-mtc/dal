@@ -64,10 +64,12 @@
             field="fullname"
             header="ФИО"
             frozen
+            column-key="fullname"
           />
           <PrimeColumn
             v-for="d in journal.dates"
             :key="d"
+            :column-key="d"
             :header="formatDate(d)"
             header-style="width: 100px"
             body-style="width: 100px; height: 90px"

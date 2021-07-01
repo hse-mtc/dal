@@ -12,11 +12,13 @@
         >
           <PrimeColumn
             field="fullname"
+            column-key="fullname"
             header="ФИО"
             sortable
           />
           <PrimeColumn
             :field="row => row.milgroup.milgroup"
+            column-key="milgroup"
             header="Взвод"
             sortable
           />
@@ -24,6 +26,7 @@
             header="Статус"
             sortable
             field="status"
+            column-key="status"
           >
             <template #body="{ data }">
               <el-tag :type="tagByStatus(data.status)">
@@ -33,6 +36,7 @@
           </PrimeColumn>
           <PrimeColumn
             header="Действия с регистрацией"
+            column-key="buttons"
           >
             <template #body="{ data }">
               <el-tooltip
