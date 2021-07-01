@@ -89,7 +89,7 @@
         :custom-style="{
           cursor: 'pointer',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'flex-end',
         }"
       >
         <div @click="dialogVisible = true">
