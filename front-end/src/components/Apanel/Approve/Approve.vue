@@ -5,28 +5,36 @@
         <h1>Подтверждения регистрации</h1>
       </el-row>
       <el-row>
-        <el-table :data="approveList" width="300px" stripe>
-          <el-table-column
-            prop="fullname"
-            label="ФИО"
+        <PrimeTable
+          :value="approveList"
+          auto-layout
+          class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        >
+          <PrimeColumn
+            field="fullname"
+            header="ФИО"
             sortable
-            show-overflow-tooltip
           />
-          <el-table-column
-            prop="milgroup.milgroup"
-            label="Взвод"
+          <PrimeColumn
+            :field="row => row.milgroup.milgroup"
+            header="Взвод"
             sortable
-            width="180"
           />
-          <el-table-column label="Статус" width="180">
-            <template slot-scope="scope">
-              <el-tag :type="tagByStatus(scope.row.status)">
-                {{ scope.row.status | filterStatus }}
+          <PrimeColumn
+            header="Статус"
+            sortable
+            field="status"
+          >
+            <template #body="{ data }">
+              <el-tag :type="tagByStatus(data.status)">
+                {{ data.status | filterStatus }}
               </el-tag>
             </template>
-          </el-table-column>
-          <el-table-column label="Действия с регистрацией" width="220">
-            <template slot-scope="scope">
+          </PrimeColumn>
+          <PrimeColumn
+            header="Действия с регистрацией"
+          >
+            <template #body="{ data }">
               <el-tooltip
                 class="item"
                 effect="dark"
@@ -39,7 +47,7 @@
                   type=""
                   circle
                   class="approve-button"
-                  :disabled="scope.row.status === 'ST'"
+                  :disabled="data.status === 'ST'"
                   @click="approve(scope.row)"
                 />
               </el-tooltip>
@@ -55,8 +63,8 @@
                   type=""
                   circle
                   class="wait-button"
-                  :disabled="scope.row.status === 'AW'"
-                  @click="putOnWait(scope.row)"
+                  :disabled="data.status === 'AW'"
+                  @click="putOnWait(data)"
                 />
               </el-tooltip>
               <el-tooltip
@@ -71,13 +79,19 @@
                   type=""
                   circle
                   class="disapprove-button"
-                  :disabled="scope.row.status === 'DE'"
+                  :disabled="data.status === 'DE'"
                   @click="disapprove(scope.row)"
                 />
               </el-tooltip>
             </template>
-          </el-table-column>
-        </el-table>
+          </PrimeColumn>
+
+          <template #empty>
+            <center>
+              Нет новых пользователей
+            </center>
+          </template>
+        </PrimeTable>
       </el-row>
     </el-col>
   </div>
