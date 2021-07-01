@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-row class="filterRow" style="margin-bottom: 15px">
-      <el-col :offset="12" :span="5">
+    <el-row class="filterRow">
+      <el-col :span="5">
         <el-select
           v-model="filter.weekday"
           value-key="number"
@@ -17,7 +17,7 @@
           />
         </el-select>
       </el-col>
-      <el-col :offset="1" :span="5">
+      <el-col :offset="1" :span="8">
         <el-date-picker
           v-model="filter.dateRange"
           type="daterange"
@@ -30,6 +30,7 @@
           :picker-options="pickerOptions"
           format="dd.MM.yyyy"
           value-format="yyyy-MM-dd"
+          style="width: auto"
           @change="onJournal"
         />
       </el-col>
@@ -47,35 +48,34 @@
         :label="mg.milgroup.toString()"
         :name="mg.milgroup.toString()"
       >
-        <el-table
-          :data="journal.students"
-          style="width: 100%"
-          height="680"
-          :default-sort="{
-            prop: 'fullname',
-            order: 'ascending',
-          }"
-          stripe
-          border
+        <PrimeTable
+          :value="journal.students"
+          scrollable
+          scroll-height="680px"
+          sort-field="fullname"
+          :sort-order="1"
+          class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+          frozen-width="300px"
         >
-          <el-table-column
+          <PrimeColumn
             width="250"
-            prop="fullname"
-            label="ФИО"
-            show-overflow-tooltip
-            fixed
+            header-style="width: 250px"
+            body-style="width: 250px; height: 90px"
+            field="fullname"
+            header="ФИО"
+            frozen
           />
-          <el-table-column
+          <PrimeColumn
             v-for="d in journal.dates"
             :key="d"
-            :label="formatDate(d)"
-            align="center"
-            min-width="100"
+            :header="formatDate(d)"
+            header-style="width: 100px"
+            body-style="width: 100px; height: 90px"
           >
-            <template slot-scope="scope">
+            <template #body="{ data }">
               <div class="absence-journal-cell">
                 <el-popover
-                  v-if="scope.row.absences.some((x) => x.date === d)"
+                  v-if="data.absences.some((x) => x.date === d)"
                   placement="top"
                   trigger="hover"
                 >
@@ -83,28 +83,28 @@
                     label-position="right"
                     label-width="150px"
                     size="mini"
-                    :model="scope.row.absences.find((x) => x.date === d)"
+                    :model="data.absences.find((x) => x.date === d)"
                   >
                     <el-form-item label="Тип причины: ">
                       <el-tag
                         :type="
                           tagByAbsenceType(
-                            scope.row.absences.find((x) => x.date === d).type,
+                            data.absences.find((x) => x.date === d).type,
                           )
                         "
                         disable-transitions
                       >
                         {{
-                          scope.row.absences.find((x) => x.date === d).type
+                          data.absences.find((x) => x.date === d).type
                             | absenceTypeFilter
                         }}
                       </el-tag>
                     </el-form-item>
                     <el-form-item label="Причина: ">
-                      {{ scope.row.absences.find((x) => x.date === d).reason }}
+                      {{ data.absences.find((x) => x.date === d).reason }}
                     </el-form-item>
                     <el-form-item label="Комментарий: ">
-                      {{ scope.row.absences.find((x) => x.date === d).comment }}
+                      {{ data.absences.find((x) => x.date === d).comment }}
                     </el-form-item>
                     <el-form-item>
                       <el-button
@@ -113,8 +113,8 @@
                         type="info"
                         @click="
                           onEdit(
-                            scope.row.absences.find((x) => x.date === d),
-                            scope.row.fullname,
+                            data.absences.find((x) => x.date === d),
+                            data.fullname,
                           )
                         "
                       >
@@ -126,7 +126,7 @@
                         type="danger"
                         @click="
                           handleDelete(
-                            scope.row.absences.find((x) => x.date === d).id,
+                            data.absences.find((x) => x.date === d).id,
                           )
                         "
                       >
@@ -138,12 +138,12 @@
                     slot="reference"
                     :class="
                       iconByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date === d).status,
+                        data.absences.find((x) => x.date === d).status,
                       )
                     "
                     :style="
                       colorByAbsenceStatus(
-                        scope.row.absences.find((x) => x.date === d).status,
+                        data.absences.find((x) => x.date === d).status,
                       )
                     "
                   />
@@ -153,12 +153,12 @@
                   type="text"
                   icon="el-icon-plus"
                   class="create-absence-btn"
-                  @click="onCreate(scope.row, d)"
+                  @click="onCreate(data, d)"
                 />
               </div>
             </template>
-          </el-table-column>
-        </el-table>
+          </PrimeColumn>
+        </PrimeTable>
       </el-tab-pane>
     </el-tabs>
     <el-dialog
