@@ -450,6 +450,9 @@ export default {
           .catch(err => postError("поощрения", err.response.status));
       }
     },
+    dateField(row) {
+      return this.formatDate(row.date);
+    },
   },
 };
 </script>
