@@ -56,6 +56,64 @@
             </span>
           </transition>
         </el-form-item>
+        <el-form-item label="Кампус:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-select
+              v-if="modify"
+              v-model="modifyInfo.university_info.campus"
+              value-key="code"
+              style="display: block"
+            >
+              <el-option
+                v-for="item in campuses"
+                :key="item.code"
+                :label="item.title"
+                :value="item.code"
+              />
+            </el-select>
+            <span v-else class="field-value">
+              {{
+                campuses.some(
+                  (x) => x.code === displayInfo.university_info.campus,
+                )
+                  ? campuses.find(
+                    (x) => x.code === displayInfo.university_info.campus,
+                  ).title
+                  : "---"
+              }}
+            </span>
+          </transition>
+        </el-form-item>
+        <el-form-item label="Учебная группа:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-input
+              v-if="modify"
+              v-model="modifyInfo.university_info.group"
+            />
+            <span v-else class="field-value">
+              {{
+                displayInfo.university_info
+                  ? displayInfo.university_info.group
+                  : "---"
+              }}
+            </span>
+          </transition>
+        </el-form-item>
+        <el-form-item label="Номер студенческого билета:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-input
+              v-if="modify"
+              v-model="modifyInfo.university_info.card_id"
+            />
+            <span v-else class="field-value">
+              {{
+                displayInfo.university_info
+                  ? displayInfo.university_info.card_id
+                  : "---"
+              }}
+            </span>
+          </transition>
+        </el-form-item>
         <el-form-item label="Военная специальность:">
           <transition name="el-fade-in" mode="out-in">
             <el-select
@@ -80,7 +138,7 @@
           <transition name="el-fade-in" mode="out-in">
             <el-input
               v-if="modify"
-              v-model="modifyInfo.passport"
+              v-model="modifyInfo.passport.seriesAndCode"
               v-maska="'#### ######'"
             />
             <span v-else class="field-value">
@@ -94,7 +152,7 @@
         </el-form-item>
         <el-form-item label="Место выдачи паспорта:">
           <transition name="el-fade-in" mode="out-in">
-            <el-input v-if="modify" v-model="modifyInfo.ufms_name" />
+            <el-input v-if="modify" v-model="modifyInfo.passport.ufms_name" />
             <span v-else class="field-value">
               {{
                 displayInfo.passport ? displayInfo.passport.ufms_name : "---"
@@ -106,7 +164,7 @@
           <transition name="el-fade-in" mode="out-in">
             <el-date-picker
               v-if="modify"
-              v-model="modifyInfo.issue_date"
+              v-model="modifyInfo.passport.issue_date"
               type="date"
               style="width: 100%;"
               :picker-options="{
@@ -130,7 +188,7 @@
           <transition name="el-fade-in" mode="out-in">
             <el-input
               v-if="modify"
-              v-model="modifyInfo.ufms_code"
+              v-model="modifyInfo.passport.ufms_code"
               v-maska="'###-###'"
             />
             <span v-else class="field-value">
@@ -199,10 +257,29 @@ export default {
         university_info: {
           program: {},
         },
+        passport: {},
       },
       modifyInfo: {},
       loading: false,
       id: this.$route.params.studentId,
+      campuses: [
+        {
+          code: "MO",
+          title: "Москва",
+        },
+        {
+          code: "SP",
+          title: "Санкт-Петербург",
+        },
+        {
+          code: "NN",
+          title: "Нижний Новгород",
+        },
+        {
+          code: "PE",
+          title: "Пермь",
+        },
+      ],
     };
   },
   computed: {
@@ -228,38 +305,27 @@ export default {
     },
     startModify() {
       this.modify = true;
-      this.modifyInfo = {
-        ...this.displayInfo,
-        passport: this.displayInfo.passport
-          ? `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`
-          : "",
-        ufms_name: this.displayInfo.passport.ufms_name,
-        ufms_code: this.displayInfo.passport.ufms_code,
-        issue_date: this.displayInfo.passport.issue_date,
-      };
+      this.modifyInfo = { ...this.displayInfo };
       if (!this.modifyInfo.university_info) {
         this.$set(this.modifyInfo, "university_info", { program: {} });
       }
+      if (!this.modifyInfo.passport) {
+        this.$set(this.modifyInfo, "passport", {});
+      }
+      this.modifyInfo.passport.seriesAndCode = this.displayInfo.passport
+        ? `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`
+        : "";
     },
     async save() {
       try {
         this.loading = true;
-        const [series, code] = this.modifyInfo.passport.split(" ");
-        // eslint-disable-next-line camelcase
-        const { ufms_name, ufms_code, issue_date } = this.modifyInfo;
-        const requestBody = {
-          ...this.modifyInfo,
-          passport: {
-            series,
-            code,
-            ufms_name,
-            ufms_code,
-            issue_date,
-          },
-          university_info: {
-            program: this.modifyInfo.university_info.program.code,
-          },
-        };
+        const [series, code] = this.modifyInfo.passport.seriesAndCode.split(
+          " ",
+        );
+        this.modifyInfo.passport.series = series;
+        this.modifyInfo.passport.code = code;
+        const requestBody = { ...this.modifyInfo };
+        requestBody.university_info.program = this.modifyInfo.university_info.program.code;
         console.log("🚀 > requestBody", requestBody);
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;

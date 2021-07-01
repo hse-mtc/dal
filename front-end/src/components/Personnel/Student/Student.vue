@@ -19,8 +19,8 @@
     </div>
     <div class="row">
       <div class="column">
-        <StudentExtra />
         <StudentDiscipline />
+        <StudentExtra />
       </div>
       <div class="column">
         <StudentAchievements />
