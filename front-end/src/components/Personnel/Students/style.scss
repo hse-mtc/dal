@@ -1,3 +1,7 @@
 .filter {
   margin: 20px;
 }
+
+/deep/ .el-table__row {
+  cursor: pointer;
+}

@@ -218,7 +218,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Почта:">
+        <el-form-item label="E-mail:">
           <transition name="el-fade-in" mode="out-in">
             <el-input
               v-if="modify"
