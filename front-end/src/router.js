@@ -3,6 +3,7 @@ import Router from "vue-router";
 
 /* Layout */
 import Layout from "@/layout";
+import AppMain from "@/layout/components/AppMain";
 
 Vue.use(Router);
 
@@ -80,25 +81,46 @@ export const constantRoutes = [
       },
 
       {
-        path: "subjects/",
-        name: "Subjects",
-        component: () => import("@/views/Subjects/index"),
-        meta: { title: "Учебно-методические материалы", icon: "book" },
-      },
-      {
-        path: "subjects/:subjectId/",
-        hidden: true,
-        name: "Subject",
-        component: () => import("@/views/Subject/index"),
-        meta: { title: "Учебно-методические материалы" },
-      },
-
-      {
         path: "library/",
         name: "Library",
         component: () => import("@/views/Library/index"),
         meta: { title: "Электронная библиотека", icon: "books" },
       },
+
+      {
+        path: "discipline-control/",
+        name: "DisciplineControl",
+        meta: { title: "Учебные дисциплины", icon: "book" },
+        component: AppMain,
+        children: [
+          {
+            path: "subjects/",
+            name: "Subjects",
+            component: () => import("@/views/Subjects/index"),
+            meta: { title: "Методические материалы", icon: "presentation" },
+          },
+          {
+            path: "subjects/:subjectId/",
+            hidden: true,
+            name: "Subject",
+            component: () => import("@/views/Subject/index"),
+            meta: { title: "Учебно-методические материалы" },
+          },
+          {
+            path: "schedule/",
+            name: "Schedule",
+            component: () => import("@/views/Schedule/index"),
+            meta: { title: "Расписание занятий", icon: "calendar" },
+          },
+          {
+            path: "marks/",
+            name: "Marks",
+            component: () => import("@/views/Marks/index"),
+            meta: { title: "Журнал оценок", icon: "journal" },
+          },
+        ],
+      },
+
       {
         path: "library/book/:id/",
         name: "Book",
@@ -126,20 +148,6 @@ export const constantRoutes = [
         name: "Discipline",
         component: () => import("@/views/Discipline/index"),
         meta: { title: "Дисциплинарная практика", icon: "cross" },
-      },
-
-      {
-        path: "schedule/",
-        name: "Schedule",
-        component: () => import("@/views/Schedule/index"),
-        meta: { title: "Расписание занятий", icon: "calendar" },
-      },
-
-      {
-        path: "marks/",
-        name: "Marks",
-        component: () => import("@/views/Marks/index"),
-        meta: { title: "Журнал оценок", icon: "journal" },
       },
 
       {

@@ -278,7 +278,7 @@ export default {
         });
     },
     backToSubjects() {
-      this.$router.push({ path: "/subjects/" });
+      this.$router.push({ name: "Subjects" });
     },
     updateOrder(sectionId, newOrder) {
       changeSectionOrder(sectionId, newOrder);

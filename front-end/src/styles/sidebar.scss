@@ -89,8 +89,14 @@
       color: $subMenuActiveText !important;
     }
 
+    & .nest-menu .el-submenu > .el-submenu__title {
+      padding-left: 16px !important;
+    }
+
     & .nest-menu .el-submenu > .el-submenu__title,
     & .el-submenu .el-menu-item {
+      display: flex;
+      align-items: center;
       min-width: $sideBarWidth !important;
       background-color: $subMenuBg !important;
 
@@ -123,6 +129,10 @@
           flex: none;
         }
       }
+    }
+
+    & .nest-menu .el-submenu > .el-submenu__title {
+      padding-left: 0 !important;
     }
 
     .el-submenu {
