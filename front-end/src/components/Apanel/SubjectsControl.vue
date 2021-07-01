@@ -97,6 +97,7 @@ import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
 import { SIZES } from "@/utils/appConsts";
 import { sortBy, isEqual } from "lodash";
+import { Message } from "element-ui";
 
 export default {
   name: "SubjectsControl",
@@ -130,9 +131,6 @@ export default {
     subjects: {
       deep: true,
       handler() {
-        console.log("[STORE]: ", this.subjects);
-        console.log("[LOCAL]: ", this.localSubjects);
-        console.log("============");
         if (!isEqual(sortBy(this.subjects), sortBy(this.localSubjects))) {
           this.localSubjects = [...this.subjects];
         }
@@ -156,7 +154,10 @@ export default {
             this.localSubjects = [...this.subjects];
           })
           .catch(() => {
-            console.log("Данные по предметам не указаны");
+            Message({
+              message: "Данные по предметам не указаны",
+              type: "error",
+            });
           });
       } else {
         this.localSubjects = [...this.subjects];
@@ -172,7 +173,10 @@ export default {
               this.closeModal();
             })
             .catch(() => {
-              console.log("Ошибка отправки формы");
+              Message({
+                message: "Ошибка отправки формы",
+                type: "error",
+              });
             });
         }
       });
@@ -204,10 +208,13 @@ export default {
       ).then(() => {
         deleteSubject(id)
           .then(() => {
-            console.log("[ID]: ", id);
             this.deleteSubject(id);
           })
           .catch(err => {
+            Message({
+              message: "Удаление не удалось",
+              type: "error",
+            });
             console.log(
               `delete of subject with id: ${this.id} FAILED. Error: ${err}`,
             );
