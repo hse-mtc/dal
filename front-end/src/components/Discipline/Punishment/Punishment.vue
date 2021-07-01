@@ -78,62 +78,63 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-table
-        :data="punishments"
-        :default-sort="{ prop: 'date', order: 'descending' }"
-        style="width: 100%"
-        max-height="680"
-        stripe
+      <PrimeTable
+        :value="punishments"
+        :sort-field="formatDate"
+        :sort-order="-1"
+        scrollable
+        scroll-height="680"
+        class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
       >
-        <el-table-column
+        <PrimeColumn
           sortable
-          label="Дата"
-          sort-by="date"
-          width="100"
-          prop="date"
-          :formatter="formatDate"
+          header="Дата"
+          :field="formatDate"
         />
-        <el-table-column
-          prop="student.fullname"
+        <PrimeColumn
+          :field="row => row.student.fullname"
           sortable
-          show-overflow-tooltip
-          label="Студент"
+          header="Студент"
         />
-        <el-table-column
-          prop="teacher.fullname"
+        <PrimeColumn
+          :field="row => row.teacher.fullname"
           sortable
-          show-overflow-tooltip
-          label="Преподаватель"
+          header="Преподаватель"
         />
-        <el-table-column
-          prop="student.milgroup.milgroup"
+        <PrimeColumn
+          :field="row => row.student.milgroup.milgroup"
           sortable
-          label="Взвод"
-          width="100"
+          header="Взвод"
+          header-style="width: 100px"
+          body-style="width: 100px"
         />
-        <el-table-column label="Тип взыскания">
-          <template slot-scope="scope">
+        <PrimeColumn
+          header="Тип взыскания"
+        >
+          <template #body="{ data }">
             <el-tag
-              :type="tagByPunishmentType(scope.row.type)"
+              :type="tagByPunishmentType(data.type)"
               disable-transitions
             >
-              {{ scope.row.type | typeFilter }}
+              {{ data.type | typeFilter }}
             </el-tag>
           </template>
-        </el-table-column>
-        <el-table-column prop="reason" label="Причина" />
-        <el-table-column
+        </PrimeColumn>
+        <PrimeColumn field="reason" header="Причина" />
+        <PrimeColumn
           sortable
-          label="Дата снятия"
-          sort-by="remove_date"
-          width="130"
-          prop="remove_date"
-          :formatter="formatRemoveDate"
+          header="Дата снятия"
+          header-style="width: 130px"
+          body-style="width: 130px"
+          :field="formatRemoveDate"
         />
-        <el-table-column width="150px">
-          <template slot-scope="scope">
+        <PrimeColumn
+          header-style="width: 150px"
+          body-style="width: 150px"
+        >
+          <template #body="{ data }">
             <el-tooltip
-              v-if="!scope.row.remove_date"
+              v-if="!data.remove_date"
               class="item"
               effect="dark"
               content="Снять взыскание"
@@ -144,7 +145,7 @@
                 icon="el-icon-remove-outline"
                 type="warning"
                 circle
-                @click="onRemove(scope.row)"
+                @click="onRemove(data)"
               />
             </el-tooltip>
             <el-button
@@ -152,18 +153,18 @@
               icon="el-icon-edit"
               type="info"
               circle
-              @click="onEdit(scope.row, scope.row.student.fullname)"
+              @click="onEdit(data)"
             />
             <el-button
               size="mini"
               icon="el-icon-delete"
               type="danger"
               circle
-              @click="handleDelete(scope.row.id)"
+              @click="handleDelete(data.id)"
             />
           </template>
-        </el-table-column>
-      </el-table>
+        </PrimeColumn>
+      </PrimeTable>
     </el-row>
     <el-dialog
       :title="editPunishmentFullname"
