@@ -7,6 +7,7 @@ from drf_spectacular.views import extend_schema
 from common.constants import MUTATE_ACTIONS
 
 from lms.models.encouragements import Encouragement
+from lms.models.students import Student
 from lms.serializers.encouragements import (EncouragementSerializer,
                                             EncouragementMutateSerializer)
 from lms.filters.encouragements import EncouragementFilter
@@ -49,20 +50,41 @@ class EncouragementViewSet(QuerysetScopingMixin, ModelViewSet):
         # are given to students of milfaculty == teacher/student milfaculty
         res = self.queryset.filter(
             student__milgroup__milfaculty=user.milfaculty)
-        if res.count() == 0:
-            return self.queryset.none()
         return res
+
+    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+        student = Student.objects.filter(id=data['student'])
+        if student.count() == 0:
+            return False
+        if user_type == 'student':
+            return user.milgroup.milfaculty.milfaculty == student[
+                0].milgroup.milfaculty.milfaculty
+        if user_type == 'teacher':
+            return user.milfaculty.milfaculty == student[
+                0].milgroup.milfaculty.milfaculty
+        return False
 
     def handle_scope_milgroup(self, user_type, user):
         # we are only interested in encouragements that
         # are given to students of milgroup == teacher/student milgroup
         res = self.queryset.filter(student__milgroup=user.milgroup)
-        if res.count() == 0:
-            return self.queryset.none()
         return res
+
+    def allow_scope_milgroup_on_create(self, data, user_type, user):
+        student = Student.objects.filter(id=data['student'])
+        if student.count() == 0:
+            return False
+        if user_type in ('student', 'teacher'):
+            return user.milgroup.milgroup == student[0].milgroup.milgroup
+        return False
 
     def handle_scope_self(self, user_type, user):
         res = self.queryset.filter(**{user_type: user})
-        if res.count() == 0:
-            return self.queryset.none()
         return res
+
+    def allow_scope_self_on_create(self, data, user_type, user):
+        if user_type == 'student':
+            return data['student'] == user.id
+        if user_type == 'teacher':
+            return data['teacher'] == user.id
+        return False

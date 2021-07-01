@@ -63,18 +63,18 @@ class QuerysetScopingMixin:
     # (applies to POST)
 
     # pylint: disable=unused-argument
-    def handle_scope_milfaculty_on_create(self, data: dict, user_type: str,
-                                          user: User) -> bool:
+    def allow_scope_milfaculty_on_create(self, data: dict, user_type: str,
+                                         user: User) -> bool:
         return False
 
     # pylint: disable=unused-argument
-    def handle_scope_milgroup_on_create(self, data: dict, user_type: str,
-                                        user: User) -> bool:
+    def allow_scope_milgroup_on_create(self, data: dict, user_type: str,
+                                       user: User) -> bool:
         return False
 
     # pylint: disable=unused-argument
-    def handle_scope_self_on_create(self, data: dict, user_type: str,
-                                    user: User) -> bool:
+    def allow_scope_self_on_create(self, data: dict, user_type: str,
+                                   user: User) -> bool:
         return False
 
     # pylint: disable=too-many-return-statements
@@ -95,13 +95,13 @@ class QuerysetScopingMixin:
             return False
 
         if scope == Permission.Scopes.MILFACULTY:
-            return self.handle_scope_milfaculty_on_create(data, user_type, user)
+            return self.allow_scope_milfaculty_on_create(data, user_type, user)
 
         if scope == Permission.Scopes.MILGROUP:
-            return self.handle_scope_milgroup_on_create(data, user_type, user)
+            return self.allow_scope_milgroup_on_create(data, user_type, user)
 
         if scope == Permission.Scopes.SELF:
-            return self.handle_scope_self_on_create(data, user_type, user)
+            return self.allow_scope_self_on_create(data, user_type, user)
 
         return False
 
