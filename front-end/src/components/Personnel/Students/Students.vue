@@ -111,7 +111,7 @@
               icon="el-icon-delete"
               type="danger"
               circle
-              @click="onDelete($event, scope.row.id)"
+              @click="onDelete($event, data.id)"
             />
           </template>
         </PrimeColumn>
@@ -127,26 +127,6 @@ import { getStudentBasic, deleteStudent } from "@/api/students";
 
 export default {
   name: "Students",
-  filters: {
-    statusFilter(value) {
-      switch (value) {
-        case "AP":
-          return "Абитуриент";
-        case "ST":
-          return "Обучающийся";
-        case "EX":
-          return "Отчислен";
-        case "GR":
-          return "Выпустился";
-        default:
-          return "Ошибка";
-      }
-    },
-    dateFilter(value) {
-      if (value) return moment(value).format("DD.MM.YYYY");
-      return "Нет данных";
-    },
-  },
   data() {
     return {
       loading: false,
