@@ -34,14 +34,14 @@ export function saveUserPermissions(id, roles) {
 
 export function getUsersToApprove() {
   return request({
-    url: BASE_API_URL + LMS_URLS.students.approvements,
+    url: BASE_API_URL + LMS_URLS.staff.approvements,
     method: "get",
   });
 }
 
 export function changeStudentStatus(id, status) {
   return request({
-    url: `${BASE_API_URL + LMS_URLS.students.approvements}${id}/`,
+    url: `${BASE_API_URL + LMS_URLS.staff.approvements}${id}/`,
     method: "patch",
     data: { status },
   });

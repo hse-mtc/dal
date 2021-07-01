@@ -42,7 +42,7 @@ export const LMS_URLS = {
     programs: "lms/programs/",
     rooms: "lms/rooms/",
   },
-  stuff: {
+  staff: {
     students: "lms/students/",
     teachers: "lms/teachers/",
     approvements: "lms/students/approvements/",
