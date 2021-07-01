@@ -29,21 +29,30 @@ from lms.models.absences import Absence
 from lms.models.students import Student
 
 from lms.filters.absences import AbsenceFilter
-
 from lms.functions import get_date_range
+from lms.mixins import StudentTeacherQuerysetScopingMixin
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class AbsencePermission(BasePermission):
     permission_class = 'absence'
+    view_name_rus = 'Пропуски'
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.MILFACULTY,
+        Permission.Scopes.MILGROUP,
+        Permission.Scopes.SELF,
+    ]
 
 
 @extend_schema(tags=['absences'])
-class AbsenceViewSet(ModelViewSet):
+class AbsenceViewSet(StudentTeacherQuerysetScopingMixin, ModelViewSet):
     queryset = Absence.objects.all()
 
     permission_classes = [AbsencePermission]
+    scoped_permission_class = AbsencePermission
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = AbsenceFilter
