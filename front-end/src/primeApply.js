@@ -6,8 +6,12 @@ import "primeicons/primeicons.css";
 
 import PrimeTable from "primevue/datatable";
 import PrimeColumn from "primevue/column";
+import PrimeColumnGroup from "primevue/columngroup";
+import PrimeRow from "primevue/row";
 import PrimeNumberInput from "primevue/inputnumber";
 
 Vue.component("PrimeTable", PrimeTable);
 Vue.component("PrimeColumn", PrimeColumn);
+Vue.component("PrimeColumnGroup", PrimeColumnGroup);
+Vue.component("PrimeRow", PrimeRow);
 Vue.component("PrimeNumberInput", PrimeNumberInput);

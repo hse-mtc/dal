@@ -52,77 +52,98 @@
         >
           <el-row>
             <el-col :span="22">
-              <el-table
-                :data="journal.students"
-                style="width: 100%"
-                height="730"
-                :default-sort="{
-                  prop: 'ordinal',
-                  order: 'ascending',
-                }"
-                stripe
-                border
+              <PrimeTable
+                :value="journal.students"
+                scroll-height="730"
+                scrollable
+                sort-field="ordinal"
+                :sort-order="1"
+                class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
               >
-                <el-table-column
-                  label="ФИО"
-                  prop="fullname"
+                <PrimeColumnGroup type="header">
+                  <PrimeRow>
+                    <PrimeColumn
+                      header="ФИО"
+                      :rowspan="2"
+                      column-key="fullname-header"
+                    />
+                    <PrimeColumn
+                      v-for="d in journal.dates"
+                      :key="d"
+                      :column-key="`${d}-header`"
+                      :header="formatDate(d)"
+                      header-style="text-align: center"
+                      :colspan="journal.lessons.filter((x) => x.date === d).length"
+                    />
+                  </PrimeRow>
+
+                  <PrimeRow>
+                    <template v-for="d in journal.dates">
+                      <PrimeColumn
+                        v-for="item in journal.lessons.filter((x) => x.date === d)"
+                        :key="`${item.id}-header`"
+                      >
+                        <template #header>
+                          <el-popover placement="top" trigger="hover">
+                            <div class="header-template">
+                              <!-- <span>
+                              {{ item.topic }}
+                            </span> -->
+                              <el-tag
+                                :type="tagByLessonType(item.type)"
+                                disable-transitions
+                              >
+                                {{ item.type | typeFilter }}
+                              </el-tag>
+                              <span>
+                                <svg-icon icon-class="map-marker-outline" />
+                                {{ item.room }}
+                              </span>
+                              <div>
+                                <el-button
+                                  size="mini"
+                                  icon="el-icon-edit"
+                                  type="info"
+                                  circle
+                                  @click="onEditLesson(item)"
+                                />
+                                <el-button
+                                  size="mini"
+                                  icon="el-icon-delete"
+                                  type="danger"
+                                  circle
+                                  @click="handleDeleteLesson(item.id)"
+                                />
+                              </div>
+                            </div>
+                            <div slot="reference" class="header-template">
+                              <span> {{ item.ordinal }} пара </span>
+                            </div>
+                          </el-popover>
+                        </template>
+                      </PrimeColumn>
+                    </template>
+                  </PrimeRow>
+                </PrimeColumnGroup>
+
+                <PrimeColumn
+                  header="ФИО"
+                  field="fullname"
                   width="250"
-                  show-overflow-tooltip
+                  column-key="fullname"
                 />
-                <el-table-column
+                <template
                   v-for="d in journal.dates"
-                  :key="d"
-                  :label="formatDate(d)"
-                  align="center"
-                  min-width="50"
                 >
-                  <el-table-column
+                  <PrimeColumn
                     v-for="item in journal.lessons.filter((x) => x.date === d)"
                     :key="item.id"
                   >
-                    <template slot="header">
-                      <el-popover placement="top" trigger="hover">
-                        <div class="header-template">
-                          <!-- <span>
-                            {{ item.topic }}
-                          </span> -->
-                          <el-tag
-                            :type="tagByLessonType(item.type)"
-                            disable-transitions
-                          >
-                            {{ item.type | typeFilter }}
-                          </el-tag>
-                          <span>
-                            <svg-icon icon-class="map-marker-outline" />
-                            {{ item.room }}
-                          </span>
-                          <div>
-                            <el-button
-                              size="mini"
-                              icon="el-icon-edit"
-                              type="info"
-                              circle
-                              @click="onEditLesson(item)"
-                            />
-                            <el-button
-                              size="mini"
-                              icon="el-icon-delete"
-                              type="danger"
-                              circle
-                              @click="handleDeleteLesson(item.id)"
-                            />
-                          </div>
-                        </div>
-                        <div slot="reference" class="header-template">
-                          <span> {{ item.ordinal }} пара </span>
-                        </div>
-                      </el-popover>
-                    </template>
-                    <template slot-scope="scope">
+                    <template #body="{ data }">
                       <div class="mark-journal-cell">
                         <div
                           v-for="m in getMarksByLesson(
-                            scope.row.marks,
+                            data.marks,
                             item.id,
                           )"
                           :key="m"
@@ -133,8 +154,8 @@
                             disable-transitions
                             class="is-clickable margin-x"
                             @click="onEdit(
-                              scope.row.marks.find((x) => x.lesson === item.id),
-                              scope.row,
+                              data.marks.find((x) => x.lesson === item.id),
+                              data,
                             )"
                           >
                             {{ m }}
@@ -146,17 +167,17 @@
                           class="create-mark-btn"
                           @click="
                             onCreate(
-                              scope.row,
+                              data,
                               item,
-                              scope.row.marks.find((x) => x.lesson === item.id),
+                              data.marks.find((x) => x.lesson === item.id),
                             )
                           "
                         />
                       </div>
                     </template>
-                  </el-table-column>
-                </el-table-column>
-              </el-table>
+                  </PrimeColumn>
+                </template>
+              </PrimeTable>
             </el-col>
             <el-col :span="2" class="new-lesson-col">
               <el-button
