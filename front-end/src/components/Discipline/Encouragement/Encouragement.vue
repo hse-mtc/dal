@@ -354,7 +354,7 @@ export default {
     this.onFilter();
   },
   methods: {
-    formatDate: row => moment(row.date).format("DD.MM.YY"),
+    dateField: row => moment(row.date).format("DD.MM.YY"),
     onFilter() {
       getEncouragement({
         date_from:
@@ -449,9 +449,6 @@ export default {
           })
           .catch(err => postError("поощрения", err.response.status));
       }
-    },
-    dateField(row) {
-      return this.formatDate(row.date);
     },
   },
 };

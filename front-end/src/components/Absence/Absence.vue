@@ -406,7 +406,7 @@ export default {
           return "color: green;";
       }
     },
-    formatDate: row => moment(row.date).format("DD.MM.YY"),
+    dateField: row => moment(row.date).format("DD.MM.YY"),
     async fetchData() {
       if (!this.$store.state.reference.milgroups.length) {
         await this.$store.dispatch("reference/setMilgroups");
@@ -492,9 +492,6 @@ export default {
           })
           .catch(err => deleteError("пропуска", err.response.status));
       });
-    },
-    dateField(row) {
-      return this.formatDate(row.date);
     },
   },
 };
