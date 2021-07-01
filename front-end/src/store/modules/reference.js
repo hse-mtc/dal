@@ -8,6 +8,7 @@ import {
   getAchievementTypes,
   getPrograms,
   getRooms,
+  getSkills,
 } from "@/api/reference-book";
 
 const initState = {
@@ -23,6 +24,7 @@ const initState = {
   rooms: [],
   absenceTypes: [],
   absenceStatuses: [],
+  skills: [],
 };
 
 const mutations = {
@@ -62,6 +64,9 @@ const mutations = {
   },
   SET_ABSENCE_STATUSES: (state, payload) => {
     state.absenceStatuses = payload;
+  },
+  SET_SKILLS: (state, payload) => {
+    state.skills = payload;
   },
   /* eslint-enable no-param-reassign */
 };
@@ -106,6 +111,10 @@ const actions = {
   async fetchRooms({ commit }) {
     const { data } = await getRooms();
     commit("SET_ROOMS", data);
+  },
+  async fetchSkills({ commit }) {
+    const { data } = await getSkills();
+    commit("SET_SKILLS", data);
   },
   async fetchAbsenceTypes({ commit }) {
     const data = [

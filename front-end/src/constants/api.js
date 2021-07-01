@@ -45,6 +45,7 @@ export const LMS_URLS = {
     achievementTypes: "lms/achievement-types/",
     programs: "lms/programs/",
     rooms: "lms/rooms/",
+    skills: "lms/student-skills/",
   },
   staff: {
     students: "lms/students/",

@@ -76,3 +76,10 @@ export function getRooms() {
     method: "get",
   });
 }
+
+export function getSkills() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.skills,
+    method: "get",
+  });
+}

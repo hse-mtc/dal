@@ -29,9 +29,9 @@ export function postAchievement(data) {
   });
 }
 
-export function deleteAchievement(params) {
+export function deleteAchievement(id) {
   return request({
-    url: `${BASE_API_URL}${achievement}${params.id}/`,
+    url: `${BASE_API_URL}${achievement}${id}/`,
     method: "delete",
   });
 }
