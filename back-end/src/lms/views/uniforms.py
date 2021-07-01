@@ -59,7 +59,7 @@ class UniformViewSet(QuerysetScopingMixin, ModelViewSet):
             return self.queryset.none()
         return self.queryset.filter(milfaculty=milfaculty)
 
-    def handle_scope_milfaculty_on_create(self, data, user_type, user):
+    def allow_scope_milfaculty_on_create(self, data, user_type, user):
         if user_type == 'student':
             return data['milfaculty'] == user.milgroup.milfaculty.milfaculty
         if user_type == 'teacher':
