@@ -33,11 +33,30 @@
         </div>
       </template>
 
-      <template
-        v-if="field === 'index'"
-        #body="{ index }"
-      >
-        {{ startIndex + index + 1 }}
+      <template #body="{ data: row, index: $index }">
+        <template v-if="field === 'index'">
+          {{ startIndex + $index + 1 }}
+        </template>
+
+        <template v-else-if="field === 'medical_examination'">
+          {{ row[field] | getSelectLabel(medicalExaminationOptions) }}
+        </template>
+
+        <template v-else-if="field === 'prof_psy_selection'">
+          {{ row[field] | getSelectLabel(profPsySelection) }}
+        </template>
+
+        <template v-else-if="checkboxesFields.includes(field)">
+          {{ row[field] ? 'Есть' : 'Нет' }}
+        </template>
+
+        <template v-else-if="field === 'mean_grade'">
+          {{ (+row[field]).toFixed(2) }}
+        </template>
+
+        <template v-else>
+          {{ row[field] }}
+        </template>
       </template>
 
       <template
