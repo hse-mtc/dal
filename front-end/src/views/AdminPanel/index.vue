@@ -10,6 +10,9 @@
       <el-tab-pane label="Справочники" name="dictionaries">
         <!-- DictionariesComponent -->
       </el-tab-pane>
+      <el-tab-pane label="Управление дисциплинами" name="subjects">
+        <SubjectsControl />
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -17,9 +20,10 @@
 <script>
 import PermissionComponent from "@/components/Apanel/PermissionComponent";
 import Approve from "@/components/Apanel/Approve/Approve";
+import SubjectsControl from "@/components/Apanel/SubjectsControl";
 
 export default {
-  components: { Approve, PermissionComponent },
+  components: { Approve, PermissionComponent, SubjectsControl },
   data() {
     return {
       activeTab: "approve",

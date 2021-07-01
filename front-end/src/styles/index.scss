@@ -177,3 +177,7 @@ div:focus {
 .el-transfer-panel__list {
   height: 500px;
 }
+
+.el-table .cell {
+  word-break: break-word;
+}

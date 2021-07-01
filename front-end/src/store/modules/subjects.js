@@ -10,7 +10,9 @@ const mutations = {
     if (index === -1) {
       state.subjects.push(payload);
     } else {
-      state.subjects[index] = payload;
+      const tempSubject = state.subjects;
+      tempSubject[index] = payload;
+      state.subjects = [...tempSubject];
     }
   },
   SET_SUBJECTS: (state, payload) => {
@@ -19,7 +21,6 @@ const mutations = {
   DELETE_SUBJECT: (state, id) => {
     state.subjects = state.subjects.filter(subject => subject.id !== id);
   },
-  /* eslint-enable no-param-reassign */
 };
 
 const actions = {
