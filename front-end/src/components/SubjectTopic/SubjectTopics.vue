@@ -1,14 +1,16 @@
 <template>
   <div class="topics">
-    <el-button v-if="isOwner" class="add-theme" @click="addTopic">
+    <div v-if="isOwner" class="add-theme">
       <CustomText
         variant="paragraph"
-        color="#FFF"
-        :custom-style="{ fontWeight: 600 }"
+        color="#0C4B9A"
+        :custom-style="{ cursor: 'pointer' }"
       >
-        Добавить тему
+        <div @click="addTopic">
+          + Добавить тему
+        </div>
       </CustomText>
-    </el-button>
+    </div>
     <div v-if="topics.length === 0" class="pt-2 pl-2">
       <CustomText v-if="!isOwner" variant="paragraph">
         Этот раздел пока пуст
@@ -114,7 +116,7 @@ export default {
         annotation: "Введите аннотацию",
       };
       addTopics(dataToSend).then(res => {
-        this.topics.push(res.data);
+        this.topics.unshift(res.data);
       });
     },
     updateOrder(topicId, newOrder) {

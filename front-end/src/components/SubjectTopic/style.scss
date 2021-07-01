@@ -5,11 +5,9 @@
   font-weight: lighter;
 
   .add-theme {
-    background: $darkBlue;
-    width: 100%;
-    padding-top: $m;
-    padding-bottom: $m;
     margin-top: $l;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .topic {
