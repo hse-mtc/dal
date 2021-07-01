@@ -92,7 +92,7 @@
             <PrimeTable
               v-loading="loading"
               :value="absences"
-              sort-field="date"
+              :sort-field="dateField"
               :sort-order="-1"
               scrollable
               scroll-height="680px"
@@ -101,7 +101,7 @@
               <PrimeColumn
                 sortable
                 header="Дата"
-                :field="row => formatDate(row.date)"
+                :field="dateField"
                 column-key="date"
                 header-style="width: 100px"
                 body-style="width: 100px"
@@ -109,7 +109,6 @@
               <PrimeColumn
                 :field="(row) => row.student.fullname"
                 sortable
-                show-overflow-tooltip
                 header="ФИО"
                 column-key="fullname"
               />
@@ -493,6 +492,9 @@ export default {
           })
           .catch(err => deleteError("пропуска", err.response.status));
       });
+    },
+    dateField(row) {
+      return this.formatDate(row.date);
     },
   },
 };
