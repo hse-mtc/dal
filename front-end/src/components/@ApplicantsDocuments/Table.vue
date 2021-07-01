@@ -6,6 +6,7 @@
     auto-layout
     scrollable
     edit-mode="cell"
+    scroll-height="60vh"
     @cell-edit-init="savePrevValue"
   >
     <PrimeColumn
