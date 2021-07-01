@@ -49,6 +49,12 @@
     height: $avatar-height;
     display: block;
     object-fit: cover;
+
+    transition: 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
   }
 }
 

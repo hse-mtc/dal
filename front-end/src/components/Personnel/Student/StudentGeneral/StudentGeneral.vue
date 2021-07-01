@@ -2,10 +2,10 @@
   <ExpandBox title="О студенте" no-expand>
     <div class="general-info">
       <el-upload
+        v-loading="loading"
         class="avatar-uploader"
-        action="https://jsonplaceholder.typicode.com/posts/"
+        action="/api/lms/students/"
         :show-file-list="false"
-        :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload"
       >
         <img
@@ -13,7 +13,7 @@
           :src="displayInfo.photo.image"
           class="avatar"
         >
-        <i v-else class="el-icon-picture-outline avatar-uploader-icon" />
+        <i v-else class="el-icon-user avatar-uploader-icon" />
       </el-upload>
       <el-form
         ref="form"
@@ -271,20 +271,35 @@ export default {
         this.loading = false;
       }
     },
-    handleAvatarSuccess(res, file) {
-      this.modifyInfo.photo.image = URL.createObjectURL(file.raw);
-    },
     beforeAvatarUpload(file) {
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
       const isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isValidType) {
         this.$message.error("Изображение должно иметь формат jpeg или png.");
+        return false;
       }
       if (!isLt2M) {
         this.$message.error("Размер изображения не должен превышать 2 МБ.");
+        return false;
       }
-      return isValidType && isLt2M;
+
+      const reader = new FileReader();
+      reader.onloadend = async() => {
+        try {
+          const base64 = reader.result;
+          this.loading = true;
+          await patchStudent({ id: this.id, image: base64 });
+          await this.fetchInfo();
+        } catch {
+          patchError("фотографии студента");
+        } finally {
+          this.loading = false;
+        }
+      };
+      reader.readAsDataURL(file);
+
+      return true;
     },
   },
 };

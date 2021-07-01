@@ -111,7 +111,7 @@
               icon="el-icon-delete"
               type="danger"
               circle
-              @click="onDelete(data)"
+              @click="onDelete($event, scope.row.id)"
             />
           </template>
         </PrimeColumn>
@@ -198,7 +198,8 @@ export default {
       });
       await this.onFilter();
     },
-    onDelete(id) {
+    onDelete(e, id) {
+      e.stopPropagation();
       this.$confirm(
         "Вы уверены, что хотите удалить студента?",
         "Подтверждение",
@@ -217,8 +218,8 @@ export default {
         }
       });
     },
-    onEdit(studentId) {
-      this.$router.push({ name: "Student", params: { studentId } });
+    onEdit(student) {
+      this.$router.push({ name: "Student", params: { studentId: student.id } });
     },
     milgroupField(row) {
       return row.milgroup.milgroup;
