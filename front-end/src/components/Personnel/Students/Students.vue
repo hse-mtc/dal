@@ -54,57 +54,66 @@
       </el-col>
     </el-row>
     <el-row class="table">
-      <el-table
+      <PrimeTable
         v-loading="loading"
-        max-height="600px"
-        :data="students"
-        :default-sort="{ prop: 'milgroup.milgroup', order: 'ascending' }"
-        stripe
+        scrollable
+        scroll-height="600px"
+        :value="students"
+        :sort-field="milgroupField"
+        :sort-order="1"
+        class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
       >
-        <el-table-column
-          width="300px"
+        <PrimeColumn
+          field="fullname"
+          header="ФИО"
           sortable
-          show-overflow-tooltip
-          prop="fullname"
-          label="ФИО"
+          header-style="width: 300px"
+          body-style="width: 300px"
         />
-        <el-table-column sortable prop="milgroup.milgroup" label="Взвод" />
-        <el-table-column prop="milgroup.milfaculty" label="Цикл" />
-        <el-table-column
-          width="300px"
-          show-overflow-tooltip
-          prop="university_info.program.program"
-          label="Программа"
+        <PrimeColumn
+          sortable
+          :field="milgroupField"
+          header="Взвод"
         />
-        <el-table-column label="Дата рождения">
-          <template slot-scope="scope">
-            {{ scope.row.birth_info ? scope.row.birth_info.date : null | dateFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="status" label="Статус" show-overflow-tooltip>
-          <template slot-scope="scope">
-            {{ scope.row.status | statusFilter }}
-          </template>
-        </el-table-column>
-        <el-table-column label="" width="120px">
-          <template slot-scope="scope">
+        <PrimeColumn
+          :field="row => row.milgroup.milfaculty"
+          header="Цикл"
+        />
+        <PrimeColumn
+          :field="row => row.university_info.program.program"
+          header="Программа"
+          header-style="width: 300px"
+          body-style="width: 300px"
+        />
+        <PrimeColumn
+          :field="row => dateFilter(row.birth_info && row.birth_info.date)"
+          header="Дата рождения"
+        />
+        <PrimeColumn
+          :field="row => statusFilter(row.status)"
+          header="Статус"
+          header-style="width: 150px"
+          body-style="width: 150px"
+        />
+        <PrimeColumn>
+          <template #body="{ data }">
             <el-button
               size="mini"
               icon="el-icon-edit"
               type="info"
               circle
-              @click="onEdit(scope.row)"
+              @click="onEdit(data)"
             />
             <el-button
               size="mini"
               icon="el-icon-delete"
               type="danger"
               circle
-              @click="onDelete(scope.row.id)"
+              @click="onDelete(data)"
             />
           </template>
-        </el-table-column>
-      </el-table>
+        </PrimeColumn>
+      </PrimeTable>
     </el-row>
     <Student
       v-model="modal"
@@ -124,26 +133,6 @@ import Student from "../Student/Student.vue";
 export default {
   name: "Students",
   components: { Student },
-  filters: {
-    statusFilter(value) {
-      switch (value) {
-        case "AP":
-          return "Абитуриент";
-        case "ST":
-          return "Обучающийся";
-        case "EX":
-          return "Отчислен";
-        case "GR":
-          return "Выпустился";
-        default:
-          return "Ошибка";
-      }
-    },
-    dateFilter(value) {
-      if (value) return moment(value).format("DD.MM.YYYY");
-      return "Нет данных";
-    },
-  },
   data() {
     return {
       loading: false,
@@ -230,6 +219,27 @@ export default {
     onEdit(row) {
       this.editStudent = { ...row };
       this.openModal();
+    },
+    milgroupField(row) {
+      return row.milgroup.milgroup;
+    },
+    dateFilter(value) {
+      if (value) return moment(value).format("DD.MM.YYYY");
+      return "Нет данных";
+    },
+    statusFilter(value) {
+      switch (value) {
+        case "AP":
+          return "Абитуриент";
+        case "ST":
+          return "Обучающийся";
+        case "EX":
+          return "Отчислен";
+        case "GR":
+          return "Выпустился";
+        default:
+          return "Ошибка";
+      }
     },
   },
 };
