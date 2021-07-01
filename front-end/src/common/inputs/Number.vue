@@ -4,9 +4,10 @@
     :wrapper-class-name="wrapperClassName"
     :title-class-name="titleClassName"
   >
-    <el-input-number
+    <PrimeNumberInput
       v-model="value"
-      style="width: 100%; max-width: 100%"
+      mode="decimal"
+      :input-class="$style.input"
       v-bind="$attrs"
     />
   </InputsBase>
@@ -20,3 +21,9 @@ export default {
   mixins: [mixin],
 };
 </script>
+
+<style lang="scss" module>
+.input {
+  width: 100%;
+}
+</style>
