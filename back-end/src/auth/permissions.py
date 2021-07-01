@@ -8,9 +8,6 @@ class BasePermission(permissions.BasePermission):
     view_name_rus = ""
     methods = ["get", "put", "post", "patch", "delete"]
     scopes = [
-        Permission.Scopes.SELF,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.MILGROUP,
         Permission.Scopes.ALL,
     ]
 
