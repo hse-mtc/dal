@@ -88,77 +88,105 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-table
+            <PrimeTable
               v-loading="loading"
-              :data="absences"
-              :default-sort="{
-                prop: 'date',
-                order: 'descending',
-              }"
-              style="width: 100%"
-              max-height="680"
-              stripe
+              :value="absences"
+              sort-field="date"
+              :sort-order="-1"
+              scrollable
+              scroll-height="680px"
+              class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
             >
-              <el-table-column
+              <PrimeColumn
                 sortable
-                label="Дата"
-                width="100"
-                prop="date"
-                :formatter="formatDate"
+                header="Дата"
+                :field="row => formatDate(row.date)"
+                column-key="date"
+                header-style="width: 100px"
+                body-style="width: 100px"
               />
-              <el-table-column
-                prop="student.fullname"
+              <PrimeColumn
+                :field="(row) => row.student.fullname"
                 sortable
                 show-overflow-tooltip
-                label="ФИО"
+                header="ФИО"
+                column-key="fullname"
               />
-              <el-table-column
-                prop="student.milgroup.milgroup"
+              <PrimeColumn
+                :field="row => row.student.milgroup.milgroup"
                 sortable
-                label="Взвод"
-                width="100"
+                header="Взвод"
+                header-style="width: 100px"
+                body-style="width: 100px"
+                column-key="milgroup"
               />
-              <el-table-column sortable label="Тип причины">
-                <template slot-scope="scope">
+
+              <PrimeColumn
+                sortable
+                header="Тип причины"
+                column-key="type"
+                field="type"
+              >
+                <template #body="{ data: { type } }">
                   <el-tag
-                    :type="tagByAbsenceType(scope.row.type)"
+                    :type="tagByAbsenceType(type)"
                     disable-transitions
                   >
-                    {{ scope.row.type | absenceTypeFilter }}
+                    {{ type | absenceTypeFilter }}
                   </el-tag>
                 </template>
-              </el-table-column>
-              <el-table-column sortable label="Статус">
-                <template slot-scope="scope">
+              </PrimeColumn>
+
+              <PrimeColumn
+                sortable
+                header="Статус"
+                column-key="status"
+                field="status"
+              >
+                <template #body="{ data: { status } }">
                   <i
                     slot="reference"
-                    :class="iconByAbsenceStatus(scope.row.status)"
-                    :style="colorByAbsenceStatus(scope.row.status)"
+                    :class="iconByAbsenceStatus(status)"
+                    :style="colorByAbsenceStatus(status)"
                   />
-                  {{ scope.row.status | absenceStatusFilter }}
+                  {{ status | absenceStatusFilter }}
                 </template>
-              </el-table-column>
-              <el-table-column prop="reason" sortable label="Причина" />
-              <el-table-column prop="comment" label="Комментарий" />
-              <el-table-column width="120px">
-                <template slot-scope="scope">
+              </PrimeColumn>
+
+              <PrimeColumn
+                field="reason"
+                sortable
+                column-key="reason"
+                header="Причина"
+              />
+              <PrimeColumn
+                field="comment"
+                column-key="comment"
+                header="Комментарий"
+              />
+              <PrimeColumn
+                column-key="buttons"
+                header-style="width: 120px"
+                body-style="width: 120px"
+              >
+                <template #body="{ data }">
                   <el-button
                     size="mini"
                     icon="el-icon-edit"
                     type="info"
                     circle
-                    @click="onEdit(scope.row, scope.row.student.fullname)"
+                    @click="onEdit(data, data.student.fullname)"
                   />
                   <el-button
                     size="mini"
                     icon="el-icon-delete"
                     type="danger"
                     circle
-                    @click="handleDelete(scope.row.id)"
+                    @click="handleDelete(data.id)"
                   />
                 </template>
-              </el-table-column>
-            </el-table>
+              </PrimeColumn>
+            </PrimeTable>
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Журнал" name="journal">
