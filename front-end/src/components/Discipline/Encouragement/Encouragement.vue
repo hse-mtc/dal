@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row class="filterRow" :gutter="20">
-      <el-col :span="7">
+      <el-col :span="8">
         <el-date-picker
           v-model="filter.dateRange"
           type="daterange"
@@ -13,11 +13,12 @@
           :picker-options="pickerOptions"
           format="dd.MM.yyyy"
           value-format="yyyy-MM-dd"
+          style="width: auto"
           @change="onFilter"
           @clear="onFilter"
         />
       </el-col>
-      <el-col :span="6">
+      <el-col :span="5">
         <el-input
           v-model="filter.search"
           clearable
@@ -78,68 +79,82 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-table
-        :data="encouragements"
-        :default-sort="{ prop: 'date', order: 'descending' }"
-        style="width: 100%"
-        max-height="680"
-        stripe
+      <PrimeTable
+        :value="encouragements"
+        :sort-field="dateField"
+        :sort-order="-1"
+        scrollable
+        scroll-height="680px"
+        class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
       >
-        <el-table-column
+        <PrimeColumn
           sortable
-          label="Дата"
-          width="100"
-          prop="date"
-          :formatter="formatDate"
+          header="Дата"
+          header-style="width: 100px"
+          body-style="width: 100px"
+          :field="dateField"
+          column-key="date"
         />
-        <el-table-column
-          prop="student.fullname"
+        <PrimeColumn
+          :field="row => row.student.fullname"
+          column-key="student.fullname"
           sortable
-          show-overflow-tooltip
-          label="Студент"
+          header="Студент"
         />
-        <el-table-column
-          prop="teacher.fullname"
+        <PrimeColumn
+          :field="row => row.teacher.fullname"
           sortable
-          show-overflow-tooltip
-          label="Преподаватель"
+          header="Преподаватель"
+          column-key="teacher.fullname"
         />
-        <el-table-column
-          prop="student.milgroup.milgroup"
+        <PrimeColumn
+          :field="row => row.student.milgroup.milgroup"
+          column-key="milgroup"
           sortable
-          label="Взвод"
-          width="100"
+          header="Взвод"
+          header-style="width: 100px"
+          body-style="width: 100px"
         />
-        <el-table-column label="Тип поощрения">
-          <template slot-scope="scope">
+        <PrimeColumn
+          header="Тип поощрения"
+          column-key="type"
+        >
+          <template #body="{ data }">
             <el-tag
-              :type="tagByEncouragementType(scope.row.type)"
+              :type="tagByEncouragementType(data.type)"
               disable-transitions
             >
-              {{ scope.row.type | typeFilter }}
+              {{ data.type | typeFilter }}
             </el-tag>
           </template>
-        </el-table-column>
-        <el-table-column prop="reason" label="Причина" />
-        <el-table-column width="120px">
-          <template slot-scope="scope">
+        </PrimeColumn>
+        <PrimeColumn
+          field="reason"
+          header="Причина"
+        />
+        <PrimeColumn
+          header-style="width: 120px"
+          body-style="width: 120px"
+          column-key="buttons"
+        >
+          <template #body="{ data }">
             <el-button
               size="mini"
               icon="el-icon-edit"
               type="info"
               circle
-              @click="onEdit(scope.row, scope.row.student.fullname)"
+              @click="onEdit(data)"
             />
             <el-button
               size="mini"
               icon="el-icon-delete"
               type="danger"
               circle
-              @click="handleDelete(scope.row.id)"
+              @click="handleDelete(data.id)"
             />
           </template>
-        </el-table-column>
-      </el-table>
+        </PrimeColumn>
+      </PrimeTable>
     </el-row>
     <el-dialog
       :title="editEncouragementFullname"
@@ -434,6 +449,9 @@ export default {
           })
           .catch(err => postError("поощрения", err.response.status));
       }
+    },
+    dateField(row) {
+      return this.formatDate(row.date);
     },
   },
 };
