@@ -493,6 +493,9 @@ export default {
           .catch(err => deleteError("пропуска", err.response.status));
       });
     },
+    dateField(row) {
+      return this.formatDate(row.date);
+    },
   },
 };
 </script>
