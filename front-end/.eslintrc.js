@@ -78,5 +78,6 @@ module.exports = {
     "object-curly-spacing": ["error", "always"],
     "func-names": ["error", "as-needed"],
     "lines-between-class-members": ["error", "always", { exceptAfterSingleLine: true }],
+    "class-methods-use-this": 0,
   },
 };
