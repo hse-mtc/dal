@@ -70,7 +70,7 @@
         :class="$style.table"
         :data="data"
         :start-index="(currentPage - 1) * pageSize"
-        @update="onUpdate"
+        :on-change="onUpdate"
       />
 
       <div :class="$style.pagination">
@@ -198,11 +198,13 @@ export default {
     async onUpdate({ id, key, value }) {
       try {
         await updateStudentApplicationInfo(id, { [key]: value });
+        return true;
       } catch (e) {
         console.error("Не удалось обновить данные студента о поступлении: ", e);
         this.$message.error(
           "Не удалось обновить данные, рекомендуем перезагрузить страницу",
         );
+        return false;
       }
     },
 
