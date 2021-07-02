@@ -24,8 +24,6 @@ import {
   Select,
   Option,
   Button,
-  Table,
-  TableColumn,
   DatePicker,
   TimePicker,
   Popover,
@@ -62,8 +60,6 @@ Vue.use(Input);
 Vue.use(Select);
 Vue.use(Option);
 Vue.use(Checkbox);
-Vue.use(Table);
-Vue.use(TableColumn);
 Vue.use(Popover);
 Vue.use(Row);
 Vue.use(Col);
