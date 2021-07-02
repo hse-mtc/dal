@@ -29,5 +29,10 @@ export default {
       ],
     };
   },
+  watch: {
+    width(nextWidth) {
+      document.getElementById("#app").style.minWidth = nextWidth;
+    },
+  },
 };
 </script>
