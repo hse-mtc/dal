@@ -6,72 +6,88 @@ from aiogram.types import CallbackQuery
 from aiogram.dispatcher.storage import FSMContext
 from aiogram.utils.markdown import bold as bold_text
 
-from api.auth import (session_exists, fetch_user)
-
-from api.student import fetch_students, State
+from api.auth import fetch_phone
 from api.absence import post_absence
+from api.student import (
+    fetch_students,
+    State,
+    Student,
+)
 
 from keyboards.inline import student_absence_keyboard
-from keyboards.reply import absence_keyboard, menu_keyboard
+from keyboards.button_texts import ButtonText
+from keyboards.reply import (
+    report_absence_keyboard,
+    main_menu_keyboard,
+)
 
 from utils.time import absence_report_overdue, fetch_restriction_time
 
 MD2 = ParseMode.MARKDOWN_V2
 
 
-async def get_student(message: Message, state: FSMContext) -> None:
-    chat_id = message.chat.id
+async def list_milgroup(message: Message, state: FSMContext) -> None:
+    # TODO(TmLev): save user to local storage to prevent excessive requests.
+    phone = await fetch_phone(chat_id=message.chat.id)
+    user = await fetch_students(many=False, params={"phone": phone})
 
-    user = await fetch_user(chat_id)
+    students = await fetch_students(params={"milgroup": user.milgroup.milgroup})
+    students.sort(key=operator.attrgetter("fullname"))
 
-    students = await fetch_students(user.milgroup)
-    await state.set_data(students)
+    students_by_id = {student.id: student for student in students}
+    await state.set_data(students_by_id)
 
-    # TODO: now we have no idea how to sort list with Student objects
-    # inside `gather`. We need to collect `message.anwser` tasks and pull
-    # it into `gather`. But it have to be sorted.
-    # This is not final realisation.
-    for student in sorted(students, key=operator.attrgetter('full_name')):
-        await message.answer(student.full_name,
-                             reply_markup=student_absence_keyboard(student.id))
+    for student in students:
+        await message.answer(
+            student.fullname,
+            reply_markup=student_absence_keyboard(student.id),
+        )
 
     restriction_time = await fetch_restriction_time()
     await message.answer(
-        f'После того, как отметите всех студентов, нажмите '
-        f'кнопку "Отправить данные"\n\n'
-        f'{bold_text(f"Время отправки ограничено до {restriction_time}!")}',
+        bold_text(f"Время отправки ограничено до {restriction_time}."),
         parse_mode=MD2,
-        reply_markup=absence_keyboard()
+        reply_markup=report_absence_keyboard(),
     )
 
 
-async def callback_query_process(callback_query: CallbackQuery,
-                                 state: FSMContext) -> None:
-    data = callback_query.data
-    message = callback_query.message
-
-    student_state, student_id = map(int, data.split())
-
-    students = await state.get_data()
-    for student in students:
-        if student_id == student.id:
-            student.state = State(student_state)
-
-    await state.set_data(students)
-
-    await message.edit_reply_markup(
-        reply_markup=student_absence_keyboard(student_id, student_state))
+list_milgroup.handler_filters = [
+    lambda message: message.text == ButtonText.LIST_MILGROUP.value,
+]
 
 
-async def send_absence(message: Message, state: FSMContext) -> None:
+async def toggle_student_absence_status(
+    callback_query: CallbackQuery,
+    state: FSMContext,
+) -> None:
+    new_state, id_ = map(int, callback_query.data.split())
+    students_by_id = await state.get_data()
+    students_by_id[id_].state = State(new_state)
+    await state.set_data(students_by_id)
+    await callback_query.message.edit_reply_markup(
+        reply_markup=student_absence_keyboard(id_, new_state),)
+
+
+toggle_student_absence_status.handler_filters = [
+    lambda callback: True,
+]
+
+
+async def report_absence(message: Message, state: FSMContext) -> None:
     if not await absence_report_overdue():
         restriction_time = await fetch_restriction_time()
         await message.answer(
-            f'Товарищ командир взвода, время отправки ограничено ' \
-            f'до {restriction_time}!',
-            reply_markup=menu_keyboard()
+            f"Время отправки ограничено до {restriction_time}.",
+            reply_markup=main_menu_keyboard(),
         )
         return
-    students = await state.get_data()
+
+    students_by_id: dict[int, Student] = await state.get_data()
+    students = [student for _, student in students_by_id.items()]
     message_text = await post_absence(students)
-    await message.answer(message_text, reply_markup=menu_keyboard())
+    await message.answer(message_text, reply_markup=main_menu_keyboard())
+
+
+report_absence.handler_filters = [
+    lambda message: message.text == ButtonText.REPORT_ABSENCE.value,
+]
