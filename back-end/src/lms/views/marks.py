@@ -32,6 +32,7 @@ from lms.serializers.lessons import LessonSerializer
 from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
                                    MarkJournalSerializer,
                                    MarkJournalQuerySerializer)
+from lms.functions import milgroup_allowed_by_scope
 from lms.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
@@ -204,6 +205,17 @@ class MarkJournalView(GenericAPIView):
         milgroup = MilgroupSerializer(
             Milgroup.objects.get(
                 milgroup=request.query_params['milgroup'])).data
+
+        # this check restricts all journal access if scope == SELF
+        # TODO(@gakhromov): mb allow scope == SELF for journal requests
+        if not milgroup_allowed_by_scope(milgroup, request, MarkPermission):
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+
         data['milgroup'] = milgroup
 
         subject_query = Subject.objects.get(id=request.query_params['subject'])

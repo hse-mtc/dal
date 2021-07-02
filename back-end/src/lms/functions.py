@@ -1,6 +1,12 @@
 from datetime import timedelta, datetime
+
+from rest_framework.request import Request
+
 from lms.models.students import Student
 from lms.models.teachers import Teacher
+
+from auth.models import Permission
+from auth.permissions import BasePermission
 
 
 def get_user_from_request(request):
@@ -22,6 +28,51 @@ def get_user_from_request(request):
         if user.count() == 0:
             return '', None
     return user_type, user.first()
+
+
+# pylint: disable=too-many-return-statements
+def milgroup_allowed_by_scope(milgroup: dict, request: Request,
+                              permission_class: BasePermission) -> bool:
+    """
+    Check if specified milgroup is compatible with permission scope.
+    Used in Journal views.
+
+    :param milgroup: serialized milgroup
+    (query param in journal get request)
+    :param request: request
+    :param permission_class: Scoped permission class
+
+    :return: bool: allowed (True) or not allowed (False)
+    """
+    if request.user.is_superuser:
+        return True
+
+    scope = request.user.get_perm_scope(permission_class.permission_class,
+                                        request.method)
+
+    if scope == Permission.Scopes.ALL:
+        return True
+
+    # check if user is a teacher ot a student
+    user_type, user = get_user_from_request(request)
+    if user is None:
+        return False
+
+    if scope == Permission.Scopes.MILFACULTY:
+        if user_type == 'student':
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == 'teacher':
+            milfaculty = user.milfaculty
+        else:
+            return False
+        return milgroup['milfaculty'] == milfaculty.milfaculty
+
+    if scope == Permission.Scopes.MILGROUP:
+        if user_type in ('student', 'teacher'):
+            return milgroup['milgroup'] == user.milgroup.milgroup
+        return False
+
+    return False
 
 
 def get_date_range(date_from: datetime, date_to: datetime,

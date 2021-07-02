@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -23,7 +24,7 @@ from lms.serializers.lessons import (LessonSerializer,
                                      LessonJournalQuerySerializer,
                                      LessonMutateSerializer)
 from lms.filters.lessons import LessonFilter
-from lms.functions import get_date_range
+from lms.functions import get_date_range, milgroup_allowed_by_scope
 from lms.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
@@ -117,6 +118,17 @@ class LessonJournalView(GenericAPIView):
         milgroup = MilgroupSerializer(
             Milgroup.objects.get(
                 milgroup=request.query_params['milgroup'])).data
+
+        # this check restricts all journal access if scope == SELF
+        # TODO(@gakhromov): mb allow scope == SELF for journal requests
+        if not milgroup_allowed_by_scope(milgroup, request, LessonPermission):
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+
         data['milgroup'] = milgroup
 
         # calculate dates
