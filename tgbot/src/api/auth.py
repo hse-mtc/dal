@@ -5,48 +5,77 @@ from collections import namedtuple
 from aiohttp import ClientResponse
 
 from api.client import client
+from api.student import fetch_students
 
-from utils.auth import auth_required
 # ------------------------------------------------------------------------------
 
-Session = namedtuple("Session", ["id", "code", "chat_id"])
+Session = namedtuple("Session", ["id", "phone", "chat_id"])
 
 
-@auth_required
-async def fetch_session(params: dict[str, tp.Any]) -> tp.Optional[Session]:
+async def fetch_session(
+    params: dict[str, tp.Any],
+    *args: tp.Any,
+    **kwargs: tp.Any,
+) -> tp.Optional[Session]:
     """Fetch session for chat. Session may not exist, hence `Optional`."""
 
-    async with client.get("tgbot/session/", params=params) as response:
-        data: list[dict[str, tp.Any]] = await response.json()
-
+    method = "tgbot/session/"
+    response = await client.get(method, params=params, *args, **kwargs)
+    data: list[dict[str, tp.Any]] = await response.json()
     return Session(**data[0]) if data else None
 
 
-async def session_exists(chat_id: int) -> bool:
+async def post_session(
+    body: dict[str, tp.Any],
+    *args: tp.Any,
+    **kwargs: tp.Any,
+) -> Session:
+    """Create new session."""
+
+    method = "tgbot/session/"
+    response = await client.post(method, json=body, *args, **kwargs)
+    data: dict[str, tp.Any] = await response.json()
+    return Session(**data)
+
+
+async def patch_session(
+    id_: int,
+    data: dict[str, tp.Any],
+    *args: tp.Any,
+    **kwargs: tp.Any,
+) -> ClientResponse:
+    """Patch some fields of session."""
+
+    method = f"tgbot/session/{id_}/"
+    response = await client.patch(method, json=data, *args, **kwargs)
+    return response
+
+
+async def session_exists(
+    chat_id: int,
+    *args: tp.Any,
+    **kwargs: tp.Any,
+) -> bool:
     """Determine whether session for chat exists."""
 
-    session = await fetch_session(params={"chat_id": chat_id})
+    session = await fetch_session(params={"chat_id": chat_id}, *args, **kwargs)
     exists = session and session.chat_id == chat_id
     return exists
 
 
-async def fetch_code(chat_id: int) -> str:
-    """Fetch code for **authorized** user.
+async def fetch_phone(
+    chat_id: int,
+    *args: tp.Any,
+    **kwargs: tp.Any,
+) -> str:
+    """Fetch phone for **authorized** user.
 
     Contract: session must exist.
     """
 
-    session = await fetch_session(params={"chat_id": chat_id})
+    session = await fetch_session(params={"chat_id": chat_id}, *args, **kwargs)
     assert session is not None
-
-    return session.code
-
-
-async def patch_session(id_: int, data: dict[str, tp.Any]) -> ClientResponse:
-    """Patch some fields of session."""
-
-    async with client.patch(f"tgbot/session/{id_}/", json=data) as response:
-        return response
+    return session.phone
 
 
 # ------------------------------------------------------------------------------
@@ -54,21 +83,22 @@ async def patch_session(id_: int, data: dict[str, tp.Any]) -> ClientResponse:
 AuthorizeResult = namedtuple("AuthorizeResult", ["success", "details"])
 
 
-async def authorize(chat_id: int, code: str) -> AuthorizeResult:
-    """Link chat with session using code."""
+async def authorize(chat_id: int, phone: str) -> AuthorizeResult:
+    """Link chat with session using phone."""
 
-    session = await fetch_session(params={"code": code})
+    params = {"phone": phone}
+    student = await fetch_students(many=False, params=params)
+    session = await fetch_session(params=params)
 
-    if session is None:
-        return AuthorizeResult(success=False, details="Несуществующий код")
+    if not student.is_milgroup_commander():
+        return AuthorizeResult(
+            success=False,
+            details="Доступ разрешён только командирам взводов.",
+        )
 
-    if session.chat_id is not None:
-        return AuthorizeResult(success=False, details="Код уже используется")
-
-    response = await patch_session(session.id, data={"chat_id": chat_id})
-    if response.status // 100 != 2:
-        details = f"Ошибка сервиса авторизации: {response.reason}"
-        return AuthorizeResult(success=False, details=details)
+    params["chat_id"] = chat_id
+    if student.is_milgroup_commander() and not session:
+        await post_session(body=params)
 
     return AuthorizeResult(success=True, details="")
 
@@ -89,12 +119,3 @@ async def deauthorize(chat_id: int) -> DeauthorizeResult:
         return DeauthorizeResult(success=False, details=details)
 
     return DeauthorizeResult(success=True, details="")
-
-
-# ------------------------------------------------------------------------------
-
-User = namedtuple("User", ["full_name", "milgroup"])
-
-
-async def fetch_user(chat_id: int) -> User:
-    return User(full_name="ФИО", milgroup="1809")

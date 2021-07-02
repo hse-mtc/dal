@@ -8,47 +8,42 @@ from api.student import (
     State,
 )
 
-from utils.auth import auth_required
-
-
-def create_body(student: Student) -> dict:
-    return {
-        'student': student.id,
-        'absence_type': student.type,
-        'absence_status': student.status,
-    }
-
 
 def absence_statistic(students: list[Student]) -> str:
-    absent_students = [i for i in students if i.state == State.absent]
-    text = f'''
-Список студентов отправлен!
+    absent_students = [s for s in students if s.state == State.ABSENT]
+    absent_students.sort(key=operator.attrgetter("fullname"))
+
+    text = f"""
+Список студентов отправлен.
 
 По списку: {len(students)}
 Налицо: {len(students) - len(absent_students)}
 Отсутствуют: {len(absent_students)}
+"""
 
-ФИО отсутствующих студентов:
-'''
-    for student in sorted(absent_students,
-                          key=operator.attrgetter('full_name')):
-        text = '\n'.join([text, student.full_name])
+    # Someone is missing.
+    if len(absent_students) > 0:
+        text += "\nФИО отсутствующих студентов:\n"
+        text += "\n".join([s.fullname for s in absent_students])
+
     return text
 
 
-@auth_required
-async def post_absence(
-    students: list[Student],
-    *args: tp.Any,
-    **kwargs: tp.Any
-) -> str:
+async def post_absence(students: list[Student], *args: tp.Any,
+                       **kwargs: tp.Any) -> str:
     absent_students = [
         student for student in students
-        if student.state.value == State.absent.value
+        if student.state.value == State.ABSENT.value
     ]
-    tasks = []
-    for student in absent_students:
-        body = create_body(student)
-        tasks.append(client.post('lms/absences/', json=body, *args, **kwargs))
-    await asyncio.gather(*tasks)
+
+    pending_responses = [
+        client.post(
+            "lms/absences/",
+            json=student.to_body(),
+            *args,
+            **kwargs,
+        ) for student in absent_students
+    ]
+    await asyncio.gather(*pending_responses)
+
     return absence_statistic(students)
