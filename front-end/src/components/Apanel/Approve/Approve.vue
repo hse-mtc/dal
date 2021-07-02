@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-col :offset="2" :span="20">
+    <el-col :offset="1" :span="22">
       <el-row class="pageTitle">
         <h1>Подтверждения регистрации</h1>
       </el-row>

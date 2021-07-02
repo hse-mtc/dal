@@ -4,9 +4,9 @@ export default allow => {
 
   if (allow) {
     meta.content = "width=device-width, initial-scale=1";
-    app.style = "min-width: none";
+    app.style.minWidth = "none";
   } else {
     meta.content = "width=1200, initial-scale=1";
-    app.style = "min-width: 1200px";
+    app.style.minWidth = "1200px";
   }
 };

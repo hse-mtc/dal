@@ -1,5 +1,5 @@
 <template>
-  <el-col :offset="2" :span="20" class="ReferenceBook">
+  <el-col :offset="1" :span="22" class="ReferenceBook">
     <el-row class="pageTitle">
       <h1>{{ $route.meta.title }}</h1>
     </el-row>

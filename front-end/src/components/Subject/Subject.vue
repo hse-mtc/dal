@@ -1,5 +1,5 @@
 <template>
-  <el-col :offset="2" :span="20" class="scienceWork">
+  <el-col :offset="1" :span="22" class="scienceWork">
     <el-row class="pageTitle">
       <el-col>
         <div class="d-flex align-items-center justify-content-between">
