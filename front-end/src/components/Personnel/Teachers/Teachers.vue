@@ -33,42 +33,67 @@
       </el-col>
     </el-row>
     <el-row class="table">
-      <el-table
+      <PrimeTable
         v-loading="loading"
-        max-height="600px"
-        :data="teachers"
-        :default-sort="{ prop: 'fullname', order: 'descending' }"
-        stripe
+        :value="teachers"
+        scrollable
+        scroll-height="600px"
+        sort-field="fullname"
+        :sort-order="-1"
+        class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
       >
-        <el-table-column
-          width="400px"
-          prop="fullname"
-          label="ФИО"
+        <PrimeColumn
+          field="fullname"
+          header="ФИО"
           sortable
+          column-key="fullname"
+          header-style="width: 400px"
+          body-style="width: 400px"
         />
-        <el-table-column prop="milfaculty" label="Цикл" sortable />
-        <el-table-column prop="rank" label="Звание" />
-        <el-table-column prop="teacher_post" label="Должность" />
-        <el-table-column prop="milgroup.milgroup" label="Прикр. взвод" />
-        <el-table-column label="" width="120px">
-          <template slot-scope="scope">
+        <PrimeColumn
+          field="milfaculty"
+          header="Цикл"
+          sortable
+          column-key="milfaculty"
+        />
+        <PrimeColumn
+          field="rank"
+          header="Звание"
+          column-key="rank"
+        />
+        <PrimeColumn
+          field="teacher_post"
+          header="Должность"
+          column-key="teacherPost"
+        />
+        <PrimeColumn
+          :field="row => row.milgroup && row.milgroup.milgroup"
+          header="Прикр. взвод"
+          column-key="milgroup"
+        />
+        <PrimeColumn
+          header-style="width: 120px"
+          body-style="width: 120px"
+          column-key="buttons"
+        >
+          <template #body="{ data }">
             <el-button
               size="mini"
               icon="el-icon-edit"
               type="info"
               circle
-              @click="onEdit(scope.row)"
+              @click="onEdit(data)"
             />
             <el-button
               size="mini"
               icon="el-icon-delete"
               type="danger"
               circle
-              @click="onDelete(scope.row.id)"
+              @click="onDelete(data.id)"
             />
           </template>
-        </el-table-column>
-      </el-table>
+        </PrimeColumn>
+      </PrimeTable>
     </el-row>
     <Teacher
       v-model="modal"
