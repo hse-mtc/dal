@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
@@ -31,19 +32,31 @@ from lms.serializers.lessons import LessonSerializer
 from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
                                    MarkJournalSerializer,
                                    MarkJournalQuerySerializer)
+from lms.mixins import QuerySetScopingMixin
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class MarkPermission(BasePermission):
     permission_class = 'mark'
+    view_name_rus = 'Оценки'
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.MILFACULTY,
+        Permission.Scopes.MILGROUP,
+        Permission.Scopes.SELF,
+    ]
 
 
 @extend_schema(tags=['marks'])
-class MarkViewSet(ModelViewSet):
+class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
+    # pylint: disable=too-many-public-methods
     queryset = Mark.objects.all()
 
     permission_classes = [MarkPermission]
+    scoped_permission_class = MarkPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = MarkFilter
@@ -65,8 +78,15 @@ class MarkViewSet(ModelViewSet):
     # pylint: disable=W1113
     # pylint: disable=W0221
     def update(self, request, pk=None, *args, **kwargs):
-        request.data['mark'] = self.queryset.get(
-            id=pk).mark + [request.data['mark']]
+        qs = self.get_queryset()
+        if qs.count() == 0:
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+        request.data['mark'] = qs.get(id=pk).mark + [request.data['mark']]
         return super().update(request, pk, *args, **kwargs)
 
     # override PATCH - change last mark in array
@@ -74,7 +94,15 @@ class MarkViewSet(ModelViewSet):
     # pylint: disable=W0221
     def partial_update(self, request, pk=None, *args, **kwargs):
         tmp = request.data['mark']
-        request.data['mark'] = self.queryset.get(id=pk).mark
+        qs = self.get_queryset()
+        if qs.count() == 0:
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+        request.data['mark'] = qs.get(id=pk).mark
         request.data['mark'][-1] = tmp
         return super().update(request, pk, partial=True, *args, **kwargs)
 
@@ -82,11 +110,63 @@ class MarkViewSet(ModelViewSet):
     # pylint: disable=W1113
     # pylint: disable=W0221
     def destroy(self, request, pk=None, *args, **kwargs):
-        request.data['mark'] = self.queryset.get(id=pk).mark
+        qs = self.get_queryset()
+        if qs.count() == 0:
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+        request.data['mark'] = qs.get(id=pk).mark
         request.data['mark'].pop(-1)
         if len(request.data['mark']) == 0:
             return super().destroy(request, pk, *args, **kwargs)
         return super().update(request, pk, *args, **kwargs)
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == 'student':
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == 'teacher':
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(student__milgroup__milfaculty=milfaculty)
+
+    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+        # no need to check student existance,
+        # as permission check occurs after
+        # serializer validation
+        student = Student.objects.get(id=data['student'])
+        if user_type == 'student':
+            return student.milgroup.milfaculty == user.milgroup.milfaculty
+        if user_type == 'teacher':
+            return student.milgroup.milfaculty == user.milfaculty
+        return False
+
+    def handle_scope_milgroup(self, user_type, user):
+        if user_type in ('student', 'teacher'):
+            return self.queryset.filter(student__milgroup=user.milgroup)
+        return self.queryset.none()
+
+    def allow_scope_milgroup_on_create(self, data, user_type, user):
+        # no need to check student existance,
+        # as permission check occurs after
+        # serializer validation
+        student = Student.objects.get(id=data['student'])
+        if user_type in ('student', 'teacher'):
+            return student.milgroup == user.milgroup
+        return False
+
+    def handle_scope_self(self, user_type, user):
+        if user_type == 'student':
+            return self.queryset.filter(student=user)
+        return self.queryset.none()
+
+    def allow_scope_self_on_create(self, data, user_type, user):
+        if user_type == 'student':
+            return data['student'] == user.id
+        return False
 
 
 @extend_schema(tags=['mark-journal'],

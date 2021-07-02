@@ -10,19 +10,30 @@ from lms.models.punishments import Punishment
 from lms.serializers.punishments import (PunishmentSerializer,
                                          PunishmentMutateSerializer)
 from lms.filters.punishments import PunishmentFilter
+from lms.mixins import StudentTeacherQuerySetScopingMixin
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class PunishmentPermission(BasePermission):
     permission_class = 'punishment'
+    view_name_rus = 'Взыскания'
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.MILFACULTY,
+        Permission.Scopes.MILGROUP,
+        Permission.Scopes.SELF,
+    ]
 
 
 @extend_schema(tags=['punishments'])
-class PunishmentViewSet(ModelViewSet):
+class PunishmentViewSet(StudentTeacherQuerySetScopingMixin, ModelViewSet):
     queryset = Punishment.objects.all()
 
     permission_classes = [PunishmentPermission]
+    scoped_permission_classes = PunishmentPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = PunishmentFilter
