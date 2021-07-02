@@ -24,19 +24,28 @@ from lms.serializers.lessons import (LessonSerializer,
                                      LessonMutateSerializer)
 from lms.filters.lessons import LessonFilter
 from lms.functions import get_date_range
+from lms.mixins import QuerySetScopingMixin
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class LessonPermission(BasePermission):
     permission_class = 'lesson'
+    view_name_rus = 'Расписание занятий'
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.MILFACULTY,
+        Permission.Scopes.MILGROUP,
+    ]
 
 
 @extend_schema(tags=['lessons'])
-class LessonViewSet(ModelViewSet):
+class LessonViewSet(QuerySetScopingMixin, ModelViewSet):
     queryset = Lesson.objects.all()
 
     permission_classes = [LessonPermission]
+    scoped_permission_class = LessonPermission
     filter_backends = [DjangoFilterBackend]
 
     filterset_class = LessonFilter
@@ -45,6 +54,35 @@ class LessonViewSet(ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return LessonMutateSerializer
         return LessonSerializer
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == 'student':
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == 'teacher':
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(milgroup__milfaculty=milfaculty)
+
+    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+        # this milgroup must exist as permission check occurs after
+        # the serializer validation
+        milgroup = Milgroup.objects.get(milgroup=data['milgroup'])
+        if user_type == 'student':
+            return milgroup.milfaculty == user.milgroup.milfaculty
+        if user_type == 'teacher':
+            return milgroup.milfaculty == user.milfaculty
+        return False
+
+    def handle_scope_milgroup(self, user_type, user):
+        if user_type in ('student', 'teacher'):
+            return self.queryset.filter(milgroup=user.milgroup)
+        return self.queryset.none()
+
+    def allow_scope_milgroup_on_create(self, data, user_type, user):
+        if user_type in ('student', 'teacher'):
+            return data['milgroup'] == user.milgroup.milgroup
+        return False
 
 
 @extend_schema(tags=['lesson-journal'],
