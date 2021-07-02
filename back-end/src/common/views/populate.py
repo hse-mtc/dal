@@ -75,6 +75,7 @@ from lms.views.populate import (
     create_uniforms,
     create_student_posts,
     create_student_skills,
+    create_contact_infos,
 )
 
 from lms.functions import get_date_range
@@ -194,9 +195,18 @@ class PopulateAPIView(GenericAPIView):
             infos = create_university_infos(programs)
             student_posts = create_student_posts()
             student_skills = create_student_skills()
-            students = create_students(milgroups, programs, milspecialties,
-                                       passports, offices, infos, student_posts,
-                                       student_skills)
+            contacts = create_contact_infos()
+            students = create_students(
+                milgroups,
+                programs,
+                milspecialties,
+                passports,
+                offices,
+                infos,
+                student_posts,
+                student_skills,
+                contacts,
+            )
 
             teachers = create_teachers(milgroups, milfaculties, ranks, posts)
 
