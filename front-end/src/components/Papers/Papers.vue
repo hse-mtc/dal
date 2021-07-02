@@ -31,7 +31,7 @@
         </el-row>
 
         <el-row v-if="modalCategories" class="categories-selector">
-          <el-col :offset="2" :span="20" class="categories-title">
+          <el-col :offset="1" :span="22" class="categories-title">
             <el-row style="width: 100%">
               <el-col
                 v-for="{ id, title } in categories"
