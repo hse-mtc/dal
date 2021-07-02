@@ -34,36 +34,30 @@
           :label="mg.milgroup"
           :name="mg.milgroup"
         >
-          <el-table
-            :data="schedule.ordinals"
-            style="width: 100%"
-            height="730"
-            :default-sort="{
-              prop: 'ordinal',
-              order: 'ascending',
-            }"
-            stripe
-            border
+          <PrimeTable
+            :value="schedule.ordinals"
+            scroll-height="730px"
+            sort-field="ordinal"
+            :sort-order="1"
+            class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
           >
-            <el-table-column
-              label="№"
-              prop="ordinal"
-              align="center"
-              width="40"
-              fixed
+            <PrimeColumn
+              header="№"
+              field="ordinal"
+              frozen
+              column-key="ordinal"
             />
-            <el-table-column
+            <PrimeColumn
               v-for="d in schedule.dates"
               :key="d"
-              :label="formatDate(d)"
-              align="center"
+              :column-key="d"
+              :header="formatDate(d)"
               min-width="250"
-              show-overflow-tooltip
             >
-              <template slot-scope="scope">
+              <template #body="{ data }">
                 <div class="lesson-journal-cell">
                   <el-popover
-                    v-if="scope.row.lessons.some((x) => x.date === d)"
+                    v-if="data.lessons.some((x) => x.date === d)"
                     placement="right"
                     trigger="hover"
                   >
@@ -73,48 +67,32 @@
                         icon="el-icon-edit"
                         type="info"
                         circle
-                        @click="
-                          onEdit(scope.row.lessons.find((x) => x.date === d))
-                        "
+                        @click="onEdit(data.lessons.find((x) => x.date === d))"
                       />
                       <el-button
                         size="mini"
                         icon="el-icon-delete"
                         type="danger"
                         circle
-                        @click="
-                          handleDelete(
-                            scope.row.lessons.find((x) => x.date === d).id,
-                          )
-                        "
+                        @click="handleDelete(data.lessons.find((x) => x.date === d).id)"
                       />
                     </div>
                     <div slot="reference">
                       <div>
                         <svg-icon icon-class="notebook-outline" />
-                        {{
-                          scope.row.lessons.find((x) => x.date === d).subject
-                            .title
-                        }}
+                        {{ data.lessons.find((x) => x.date === d).subject.title }}
                       </div>
 
                       <div>
                         <svg-icon icon-class="map-marker-outline" />
-                        {{ scope.row.lessons.find((x) => x.date === d).room }}
+                        {{ data.lessons.find((x) => x.date === d).room }}
                       </div>
 
                       <el-tag
-                        :type="
-                          tagByLessonType(
-                            scope.row.lessons.find((x) => x.date === d).type,
-                          )
-                        "
+                        :type="tagByLessonType(data.lessons.find((x) => x.date === d).type)"
                         disable-transitions
                       >
-                        {{
-                          scope.row.lessons.find((x) => x.date === d).type
-                            | typeFilter
-                        }}
+                        {{ data.lessons.find((x) => x.date === d).type | typeFilter }}
                       </el-tag>
                     </div>
                   </el-popover>
@@ -123,12 +101,12 @@
                     type="text"
                     icon="el-icon-plus"
                     class="create-lesson-btn"
-                    @click="onCreate(scope.row.ordinal, d)"
+                    @click="onCreate(data.ordinal, d)"
                   />
                 </div>
               </template>
-            </el-table-column>
-          </el-table>
+            </PrimeColumn>
+          </PrimeTable>
         </el-tab-pane>
       </el-tabs>
     </el-col>
