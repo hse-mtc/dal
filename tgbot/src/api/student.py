@@ -8,31 +8,62 @@ from enum import (
 
 from api.client import client
 
-from utils.auth import auth_required
-
 
 class State(Enum):
-    absent = auto()
-    present = auto()
+    ABSENT = auto()
+    PRESENT = auto()
+
+
+@dataclass
+class Milgroup:
+    milgroup: str
+    milfaculty: str
+    weekday: int
 
 
 @dataclass
 class Student:
     id: int
-    full_name: str
+    fullname: str
     state: State
-    absence_type: str = 'Неуважительная'
-    absence_status: str = 'Открыт'
+    milgroup: tp.Optional[Milgroup] = None
+    absence_type: str = "NS"
+    absence_status: str = "OP"
+    post: str = "PL"  # TODO(vladisa88): add StudentPosts (Platoon Leader)
+
+    def is_milgroup_commander(self) -> bool:
+        # TODO(vladisa88): `PL` may change to something else in the future.
+        return self.post == "PL"
+
+    @staticmethod
+    def from_raw(body: dict[str, tp.Any]) -> "Student":
+        return Student(
+            id=body["id"],
+            fullname=body["fullname"],
+            milgroup=Milgroup(**body["milgroup"]),
+            state=State.PRESENT,
+        )
+
+    def to_body(self) -> dict[str, tp.Any]:
+        return {
+            "student": self.id,
+            "absence_type": self.absence_type,
+            "absence_status": self.absence_status,
+        }
 
 
-@auth_required
-async def fetch_students(milgroup: str, *args, **kwargs) -> list[Student]:
-    students = []
-    async with client.get(f'lms/students?milgroup={milgroup}', *args, **kwargs) as response:
-        data: list[dict[str, tp.Any]] = await response.json()
-    for student in data:
-        students.append(
-            Student(id=student['id'],
-                    full_name=student['fullname'],
-                    state=State.present))
-    return students
+async def fetch_students(
+    *args: tp.Any,
+    many: bool = True,
+    **kwargs: tp.Any,
+) -> tp.Union[Student, list[Student]]:
+    """Fetch students filtering by params."""
+
+    response = await client.get("lms/students/", *args, **kwargs)
+    data: list[dict[str, tp.Any]] = await response.json()
+    students = [Student.from_raw(body) for body in data]
+
+    if many:
+        return students
+    else:
+        return students[0]
