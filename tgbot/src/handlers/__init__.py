@@ -1,43 +1,43 @@
 from aiogram import Dispatcher
-
-from .auth import (
-    set_code,
-    my_code,
-    reset_code,
-)
-
-from .absence import (
-    get_student,
-    callback_query_process,
-    send_absence,
-)
+from aiogram.types.message import ContentType
 
 from .menu import menu_handler
 
+from .auth import share_contact
+
+from .absence import (
+    list_milgroup,
+    toggle_student_absence_status,
+    report_absence,
+)
+
 
 def setup(dp: Dispatcher) -> None:
-    # Register `auth` handlers
-    dp.register_message_handler(set_code, commands=["set_code"])
-    dp.register_message_handler(my_code, commands=["my_code"])
-    dp.register_message_handler(reset_code, commands=["reset_code"])
-
-    # Register `absence` handlers
+    # Register `menu`.
     dp.register_message_handler(
         menu_handler,
-        lambda message: message.text and message.text == 'Главное меню',
+        *menu_handler.handler_filters,
     )
+
+    # Register `auth` handlers.
     dp.register_message_handler(
-        get_student,
-        lambda message: message.text and message.text == 'Расход',
+        share_contact,
+        content_types=ContentType.CONTACT,
+    )
+
+    # Register `absence` handlers.
+    dp.register_message_handler(
+        list_milgroup,
+        *list_milgroup.handler_filters,
         state='*',
     )
     dp.register_callback_query_handler(
-        callback_query_process,
-        lambda callback: True,
+        toggle_student_absence_status,
+        *toggle_student_absence_status.handler_filters,
         state='*',
     )
     dp.register_message_handler(
-        send_absence,
-        lambda message: message.text and message.text == 'Отправить данные',
+        report_absence,
+        *report_absence.handler_filters,
         state='*',
     )
