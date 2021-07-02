@@ -2,8 +2,11 @@ from django.contrib import admin
 
 from lms.models.encouragements import Encouragement
 from lms.models.punishments import Punishment
-from lms.models.absences import Absence
 from lms.models.applicants import ApplicationProcess
+from lms.models.absences import (
+    Absence,
+    AbsenceTime,
+)
 from lms.models.universities import (
     Program,
     UniversityInfo,
@@ -58,6 +61,7 @@ admin.site.register(Lesson)
 
 # Absences
 admin.site.register(Absence)
+admin.site.register(AbsenceTime)
 
 # Encouragements
 admin.site.register(Encouragement)
