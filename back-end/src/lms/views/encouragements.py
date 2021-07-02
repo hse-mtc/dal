@@ -10,7 +10,7 @@ from lms.models.encouragements import Encouragement
 from lms.serializers.encouragements import (EncouragementSerializer,
                                             EncouragementMutateSerializer)
 from lms.filters.encouragements import EncouragementFilter
-from lms.mixins import StudentTeacherQuerysetScopingMixin
+from lms.mixins import StudentTeacherQuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -28,7 +28,7 @@ class EncouragementPermission(BasePermission):
 
 
 @extend_schema(tags=['encouragements'])
-class EncouragementViewSet(StudentTeacherQuerysetScopingMixin, ModelViewSet):
+class EncouragementViewSet(StudentTeacherQuerySetScopingMixin, ModelViewSet):
     queryset = Encouragement.objects.all()
 
     permission_classes = [EncouragementPermission]
