@@ -9,16 +9,13 @@ from lms.functions import get_user_from_request
 from auth.models import Permission, User
 
 
-class QuerysetScopingMixin:
+class QuerySetScopingMixin:
 
     scoped_permission_class = None
 
     # Scoping for getting the queryset
     # (applies to GET (all or by id),
     # PUT, PATCH AND DELETE)
-
-    def handle_scope_all(self) -> QuerySet:
-        return self.queryset
 
     # pylint: disable=unused-argument
     def handle_scope_milfaculty(self, user_type: str, user: User) -> QuerySet:
@@ -47,7 +44,7 @@ class QuerysetScopingMixin:
             self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scopes.ALL:
-            return self.handle_scope_all()
+            return self.queryset
 
         # check if user is a teacher ot a student
         user_type, user = get_user_from_request(self.request)
@@ -130,7 +127,7 @@ class QuerysetScopingMixin:
             status=status.HTTP_403_FORBIDDEN)
 
 
-class StudentTeacherQuerysetScopingMixin(QuerysetScopingMixin):
+class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
 
     def handle_scope_milfaculty(self, user_type, user):
         if user_type == "student":
