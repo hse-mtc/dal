@@ -53,6 +53,7 @@ class AbsenceViewSet(StudentTeacherQuerySetScopingMixin, ModelViewSet):
 
     permission_classes = [AbsencePermission]
     scoped_permission_class = AbsencePermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = AbsenceFilter

@@ -46,6 +46,7 @@ class LessonViewSet(QuerySetScopingMixin, ModelViewSet):
 
     permission_classes = [LessonPermission]
     scoped_permission_class = LessonPermission
+
     filter_backends = [DjangoFilterBackend]
 
     filterset_class = LessonFilter
