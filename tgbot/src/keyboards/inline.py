@@ -7,17 +7,18 @@ from api.student import State
 
 
 def student_absence_keyboard(
-        student_id: int,
-        selected_button: int = State.present.value) -> InlineKeyboardMarkup:
+    student_id: int,
+    selected_button: int = State.PRESENT.value,
+) -> InlineKeyboardMarkup:
     base_text = {
-        State.present.value: ('Присутствует ✅', 'Отсутствует'),
-        State.absent.value: ('Присутствует', 'Отсутствует ✅')
+        State.PRESENT.value: ('Присутствует ✅', 'Отсутствует'),
+        State.ABSENT.value: ('Присутствует', 'Отсутствует ✅')
     }
     present_text, absent_text = base_text[selected_button]
     present = InlineKeyboardButton(
-        present_text, callback_data=f'{State.present.value} {student_id}')
+        present_text, callback_data=f'{State.PRESENT.value} {student_id}')
     absent = InlineKeyboardButton(
-        absent_text, callback_data=f'{State.absent.value} {student_id}')
+        absent_text, callback_data=f'{State.ABSENT.value} {student_id}')
 
     buttons = [present, absent]
 

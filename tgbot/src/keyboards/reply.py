@@ -1,29 +1,43 @@
+import typing as tp
+
 from aiogram.types import (
     ReplyKeyboardMarkup,
     KeyboardButton,
 )
 
+from keyboards.button_texts import ButtonText
 
-def base_keyboard(button_text: list[str]) -> ReplyKeyboardMarkup:
+
+def base_keyboard(
+    button_text: list[str],
+    **kwargs: tp.Any,
+) -> ReplyKeyboardMarkup:
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 
     for text in button_text:
-        button = KeyboardButton(text)
+        button = KeyboardButton(text, **kwargs)
         keyboard.add(button)
-        if text == 'Главное меню':
+        if text == ButtonText.MAIN_MENU.value:
             return keyboard
 
-    keyboard.add('Главное меню')
+    keyboard.add(ButtonText.MAIN_MENU.value)
     return keyboard
 
 
-def start_keyboard() -> ReplyKeyboardMarkup:
-    return base_keyboard(['Расход'])
+def list_milgroup_keyboard() -> ReplyKeyboardMarkup:
+    return base_keyboard([ButtonText.LIST_MILGROUP.value])
 
 
-def absence_keyboard() -> ReplyKeyboardMarkup:
-    return base_keyboard(['Отправить данные'])
+def report_absence_keyboard() -> ReplyKeyboardMarkup:
+    return base_keyboard([ButtonText.REPORT_ABSENCE.value])
 
 
-def menu_keyboard() -> ReplyKeyboardMarkup:
-    return base_keyboard(['Главное меню'])
+def main_menu_keyboard() -> ReplyKeyboardMarkup:
+    return base_keyboard([ButtonText.MAIN_MENU.value])
+
+
+def share_contact_keyboard() -> ReplyKeyboardMarkup:
+    return base_keyboard(
+        [ButtonText.SHARE_CONTACT.value],
+        request_contact=True,
+    )
