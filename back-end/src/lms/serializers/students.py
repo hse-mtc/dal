@@ -13,6 +13,7 @@ from common.serializers.persons import (
     BirthInfoSerializer,
     RelativeMutateSerializer,
     PersonnelMutateSerializer,
+    ContactInfoSerializer,
 )
 
 from lms.models.common import Milgroup
@@ -66,6 +67,7 @@ class StudentSerializer(WritableNestedModelSerializer):
     photo = PhotoSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
     application_process = ApplicationProcessSerializer(read_only=False)
+    contact_info = ContactInfoSerializer(read_only=True)
     student_skills = StudentSkillSerializer(many=True)
 
     fullname = SerializerMethodField()
