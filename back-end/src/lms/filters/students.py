@@ -13,6 +13,10 @@ class StudentFilter(FilterSet):
         choices=UniversityInfo.Campus.choices,
         method="filter_by_campus",
     )
+
+    # TODO(TmLev): consider different formats, strip +7/8/7 from beginning.
+    phone = CharFilter(field_name="contact_info__personal_phone_number")
+
     program = CharFilter(field_name="university_info__program__code")
     student_skill = CharFilter(field_name="student_skills__title",
                                lookup_expr="icontains")
