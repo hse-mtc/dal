@@ -39,8 +39,8 @@ class AbsenceTime(models.Model):
     absence_restriction_time = models.TimeField()
 
     def __str__(self):
-        return self.absence_restriction_time
+        return self.absence_restriction_time.strftime('%X')
 
     class Meta:
         verbose_name = 'Absence Time'
-        verbose_name_plural = 'Abcense Time'
+        verbose_name_plural = 'Absence Time'
