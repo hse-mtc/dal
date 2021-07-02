@@ -37,14 +37,18 @@ def main() -> None:
     app.add_routes(uniforms.routes)
 
     # Run everything
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(dp.skip_updates())
-    loop.create_task(dp.start_polling())
-    web.run_app(
-        app=app,
-        host="0.0.0.0",
-        port=config.TGBOT_PORT,
-    )
+    while True:
+        try:
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(dp.skip_updates())
+            loop.create_task(dp.start_polling())
+            web.run_app(
+                app=app,
+                host="0.0.0.0",
+                port=config.TGBOT_PORT,
+            )
+        except Exception as e:
+            print(f"Error: {e}")
 
 
 if __name__ == '__main__':
