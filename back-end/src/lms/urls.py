@@ -26,6 +26,7 @@ from lms.views.subjects import LessonSubjectViewSet
 from lms.views.lessons import LessonViewSet, LessonJournalView
 from lms.views.marks import MarkViewSet, MarkJournalView
 from lms.views.uniforms import UniformViewSet
+from lms.views.personnel import SearchPersonnelUsersViewSet
 
 routers = DefaultRouter()
 routers.register('students/approvements', ActivateStudentViewSet)
@@ -49,6 +50,7 @@ routers.register('achievement-types', AchievementTypeViewSet)
 routers.register('uniforms', UniformViewSet)
 routers.register('student-posts', StudentPostViewSet)
 routers.register('student-skills', StudentSkillViewSet)
+routers.register('personnel-users', SearchPersonnelUsersViewSet)
 
 urlpatterns = [
     path('', include(routers.urls)),
