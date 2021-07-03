@@ -5,6 +5,8 @@ from rest_framework.routers import DefaultRouter
 from lms.views.students import (
     StudentViewSet,
     ActivateStudentViewSet,
+)
+from lms.views.dashboard import (
     StudentBasicInfoViewSet,
     StudentExtraInfoViewSet,
     StudentSkillsView,
