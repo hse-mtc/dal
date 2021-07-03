@@ -65,15 +65,22 @@
               style="text-align: center; margin: 0; padding: 0; font-size: 15px"
             >
               <DownloadFile
+                v-if="$route.query.category !== 'bin'"
                 :url="document.file.content"
                 :file-name="document.file.name"
               >
                 Скачать
               </DownloadFile>
-              <div style="cursor: pointer" @click="editPaper(document.id)">
+              <div v-if="$route.query.category !== 'bin'" style="cursor: pointer" @click="editPaper(document.id)">
                 Редактировать
               </div>
-              <div style="cursor: pointer" @click="deletePaper(document.id)">
+              <div v-if="$route.query.category !== 'bin'" style="cursor: pointer" @click="moveToBin(document.id)">
+                Переместить в корзину
+              </div>
+              <div v-if="$route.query.category === 'bin'" style="cursor: pointer" @click="restore(document.id)">
+                Восстановить
+              </div>
+              <div v-if="$route.query.category === 'bin'" style="cursor: pointer" @click="deletePaper(document.id)">
                 Удалить
               </div>
             </div>
@@ -99,7 +106,7 @@
 <script>
 import moment from "moment";
 
-import { getPapers } from "@/api/papers";
+import { getPapers, patchPaper } from "@/api/papers";
 import { deleteDocument } from "@/api/delete";
 
 import { scrollMixin } from "@/mixins/scrollMixin";
@@ -185,6 +192,48 @@ export default {
       return moment(document.publication_date).year();
     },
 
+    async restore(id) {
+      try {
+        await patchPaper(id, { bin: false });
+        this.removePaperFromList(id);
+        this.$message({
+          type: "success",
+          message: "Документ восстановлен",
+        });
+      } catch (error) {
+        console.log("[ERROR]: ", error);
+        this.$message({
+          type: "error",
+          message: "Не удалось восстановить файл",
+        });
+      }
+    },
+
+    async moveToBin(id) {
+      try {
+        await patchPaper(id, { bin: true });
+        this.removePaperFromList(id);
+        this.$message({
+          type: "success",
+          message: "Документ перемещен в корзину",
+        });
+      } catch (error) {
+        console.log("[ERROR]: ", error);
+        this.$message({
+          type: "error",
+          message: "Не удалось переместить файл в корзину",
+        });
+      }
+    },
+
+    removePaperFromList(id) {
+      this.documents = this.lodash.filter(
+        this.documents,
+        paper => paper.id !== id,
+      );
+      this.count -= 1;
+    },
+
     editPaper(id) {
       const paperToEdit = this.documents.find(paper => paper.id === id);
       this.$emit("openPaperModal", "edit", paperToEdit);
@@ -205,11 +254,7 @@ export default {
         return;
       }
 
-      this.documents = this.lodash.filter(
-        this.documents,
-        paper => paper.id !== id,
-      );
-      this.count -= 1;
+      this.removePaperFromList(id);
 
       this.$message({
         type: "success",
