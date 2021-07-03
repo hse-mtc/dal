@@ -16,6 +16,17 @@ class PaperFilter(filters.FilterSet):
                                     lookup_expr="gte")
     end_date = filters.DateFilter(field_name="publication_date",
                                   lookup_expr="lte")
+    category = filters.CharFilter(method="filter_by_category")
+
+    def filter_by_category(self, queryset, name, value):
+        # pylint: disable=unused-argument
+
+        if value == "bin":
+            return queryset.filter(is_binned=True)
+
+        # TODO(TmLev): `int(value)` may throw on text inputs, although `value`
+        #   should be an integer that represents category id.
+        return queryset.filter(is_binned=False).filter(category=int(value))
 
     class Meta:
         model = Paper

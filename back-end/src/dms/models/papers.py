@@ -28,6 +28,7 @@ class Paper(Document):
     publication_date = models.DateField(default=datetime.date.today)
     publishers = models.ManyToManyField(to=Publisher, blank=True)
     tags = TaggableManager(blank=True)
+    is_binned = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Paper"
