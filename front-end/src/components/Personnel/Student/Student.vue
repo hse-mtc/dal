@@ -9,7 +9,7 @@
             height="22px"
             alt="назад"
             @click="backToPersonnel"
-          />
+          >
           Студент
         </div>
       </el-col>

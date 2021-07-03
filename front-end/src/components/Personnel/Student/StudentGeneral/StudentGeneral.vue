@@ -263,6 +263,7 @@ export default {
           surname,
           name,
           patronymic,
+          photo: undefined,
         };
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
