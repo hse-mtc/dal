@@ -17,7 +17,7 @@
             sortable
           />
           <PrimeColumn
-            :field="row => row.milgroup.milgroup"
+            :field="row => row.milgroup && row.milgroup.milgroup"
             column-key="milgroup"
             header="Взвод"
             sortable
