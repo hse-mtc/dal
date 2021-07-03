@@ -170,6 +170,32 @@ export const constantRoutes = [
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
         meta: { title: "Панель администратора", icon: "journal" },
+        children: [
+          {
+            path: "approve/",
+            alias: "",
+            name: "approve",
+            component: () => import("@/components/Apanel/Approve/Approve.vue"),
+            meta: { title: "Подтверждения" },
+          },
+          {
+            path: "permissions/",
+            name: "permissions",
+            component: () => import("@/components/Apanel/PermissionComponent.vue"),
+            meta: { title: "Права" },
+          },
+          {
+            path: "dictionaries/",
+            name: "dictionaries",
+            // component: () => import("@/components/dictionaries")
+          },
+          {
+            path: "subjects/",
+            name: "subjects",
+            component: () => import("@/components/Apanel/SubjectsControl.vue"),
+            meta: { title: "Предметы" },
+          },
+        ],
       },
 
       {

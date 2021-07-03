@@ -1,103 +1,101 @@
 <template>
   <div>
-    <el-col :offset="1" :span="22">
-      <el-row class="pageTitle">
-        <h1>Подтверждения регистрации</h1>
-      </el-row>
-      <el-row>
-        <PrimeTable
-          :value="approveList"
-          auto-layout
-          class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+    <el-row class="pageTitle">
+      <h1>Подтверждения регистрации</h1>
+    </el-row>
+    <el-row>
+      <PrimeTable
+        :value="approveList"
+        auto-layout
+        class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+      >
+        <PrimeColumn
+          field="fullname"
+          column-key="fullname"
+          header="ФИО"
+          sortable
+        />
+        <PrimeColumn
+          :field="row => row.milgroup && row.milgroup.milgroup"
+          column-key="milgroup"
+          header="Взвод"
+          sortable
+        />
+        <PrimeColumn
+          header="Статус"
+          sortable
+          field="status"
+          column-key="status"
         >
-          <PrimeColumn
-            field="fullname"
-            column-key="fullname"
-            header="ФИО"
-            sortable
-          />
-          <PrimeColumn
-            :field="row => row.milgroup && row.milgroup.milgroup"
-            column-key="milgroup"
-            header="Взвод"
-            sortable
-          />
-          <PrimeColumn
-            header="Статус"
-            sortable
-            field="status"
-            column-key="status"
-          >
-            <template #body="{ data }">
-              <el-tag :type="tagByStatus(data.status)">
-                {{ data.status | filterStatus }}
-              </el-tag>
-            </template>
-          </PrimeColumn>
-          <PrimeColumn
-            header="Действия с регистрацией"
-            column-key="buttons"
-          >
-            <template #body="{ data }">
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="Сделать абитуриента студентом"
-                placement="bottom"
-              >
-                <el-button
-                  size="medium"
-                  icon="el-icon-user"
-                  type=""
-                  circle
-                  class="approve-button"
-                  :disabled="data.status === 'ST'"
-                  @click="approve(scope.row)"
-                />
-              </el-tooltip>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="Поставить в ожидание"
-                placement="bottom"
-              >
-                <el-button
-                  size="medium"
-                  icon="el-icon-tickets"
-                  type=""
-                  circle
-                  class="wait-button"
-                  :disabled="data.status === 'AW'"
-                  @click="putOnWait(data)"
-                />
-              </el-tooltip>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="Отклонить регистрацию"
-                placement="bottom"
-              >
-                <el-button
-                  size="medium"
-                  icon="el-icon-close"
-                  type=""
-                  circle
-                  class="disapprove-button"
-                  :disabled="data.status === 'DE'"
-                  @click="disapprove(scope.row)"
-                />
-              </el-tooltip>
-            </template>
-          </PrimeColumn>
-
-          <template #empty>
-            <center>
-              Нет новых пользователей
-            </center>
+          <template #body="{ data }">
+            <el-tag :type="tagByStatus(data.status)">
+              {{ data.status | filterStatus }}
+            </el-tag>
           </template>
-        </PrimeTable>
-      </el-row>
-    </el-col>
+        </PrimeColumn>
+        <PrimeColumn
+          header="Действия с регистрацией"
+          column-key="buttons"
+        >
+          <template #body="{ data }">
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Сделать абитуриента студентом"
+              placement="bottom"
+            >
+              <el-button
+                size="medium"
+                icon="el-icon-user"
+                type=""
+                circle
+                class="approve-button"
+                :disabled="data.status === 'ST'"
+                @click="approve(scope.row)"
+              />
+            </el-tooltip>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Поставить в ожидание"
+              placement="bottom"
+            >
+              <el-button
+                size="medium"
+                icon="el-icon-tickets"
+                type=""
+                circle
+                class="wait-button"
+                :disabled="data.status === 'AW'"
+                @click="putOnWait(data)"
+              />
+            </el-tooltip>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Отклонить регистрацию"
+              placement="bottom"
+            >
+              <el-button
+                size="medium"
+                icon="el-icon-close"
+                type=""
+                circle
+                class="disapprove-button"
+                :disabled="data.status === 'DE'"
+                @click="disapprove(scope.row)"
+              />
+            </el-tooltip>
+          </template>
+        </PrimeColumn>
+
+        <template #empty>
+          <center>
+            Нет новых пользователей
+          </center>
+        </template>
+      </PrimeTable>
+    </el-row>
   </div>
 </template>
 
