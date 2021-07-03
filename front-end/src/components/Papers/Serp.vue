@@ -194,7 +194,10 @@ export default {
 
     async restore(id) {
       try {
-        await patchPaper(id, { bin: false });
+        const data = { is_binned: false };
+        const formData = new FormData();
+        formData.set("data", JSON.stringify(data));
+        await patchPaper(id, formData);
         this.removePaperFromList(id);
         this.$message({
           type: "success",
@@ -211,7 +214,10 @@ export default {
 
     async moveToBin(id) {
       try {
-        await patchPaper(id, { bin: true });
+        const data = { is_binned: true };
+        const formData = new FormData();
+        formData.set("data", JSON.stringify(data));
+        await patchPaper(id, formData);
         this.removePaperFromList(id);
         this.$message({
           type: "success",
