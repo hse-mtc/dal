@@ -45,7 +45,9 @@ from lms.serializers.students import (
 )
 
 from lms.utils.export import generate_excel
+from lms.mixins import QuerySetScopingMixin
 
+from auth.models import Permission
 from auth.serializers import CreatePasswordTokenSerializer
 from auth.permissions import BasePermission
 
@@ -62,6 +64,16 @@ class XLSXRenderer(BaseRenderer):
 
 class StudentPermission(BasePermission):
     permission_class = "student"
+    view_name_rus = "Студенты"
+    # do not allow student creation in this permission,
+    # as it is handled by the applicant's form procedures
+    methods = ["get", "put", "patch", "delete"]
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.MILFACULTY,
+        Permission.Scopes.MILGROUP,
+        Permission.Scopes.SELF,
+    ]
 
 
 class AllowApplicantFormPost(permissions.BasePermission):
@@ -81,7 +93,8 @@ class StudentPageNumberPagination(pagination.PageNumberPagination):
 
 
 @extend_schema(tags=["students"])
-class StudentViewSet(ModelViewSet):
+class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
+    # pylint: disable=too-many-public-methods
     queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
 
     permission_classes = [
@@ -89,6 +102,8 @@ class StudentViewSet(ModelViewSet):
         AllowApplicationProcess & permissions.IsAuthenticated |
         StudentPermission
     ]
+    scoped_permission_class = StudentPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = StudentFilter
@@ -109,6 +124,25 @@ class StudentViewSet(ModelViewSet):
         if self.action == "applications":
             return self.queryset.filter(status=Student.Status.APPLICANT)
         return super().get_queryset()
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == "student":
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == "teacher":
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(milgroup__milfaculty=milfaculty)
+
+    def handle_scope_milgroup(self, user_type, user):
+        if user_type in ("student", "teacher"):
+            return self.queryset.filter(milgroup=user.milgroup)
+        return self.queryset.none()
+
+    def handle_scope_self(self, user_type, user):
+        if user_type == "student":
+            return self.queryset.filter(user=user)
+        return self.queryset.none()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -144,7 +178,10 @@ class StudentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save()
 
-    @action(detail=False, methods=["patch"])
+    # TODO(@gakhromov): insert required permissions in actions
+    @action(detail=False,
+            methods=["patch"],
+            permission_classes=[AllowApplicantFormPost])
     def registration(self, request):
         email = request.data["email"]
         milgroup = Milgroup.objects.get(pk=request.data["milgroup"])
