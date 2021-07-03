@@ -44,7 +44,8 @@ export default {
   methods: {
     async onSubmit() {
       const title = this.form.title.trim();
-      if (this.categories.find(category => category.title.trim().toLowerCase() === title.trim().toLowerCase())) {
+      const usedCategories = [...this.categories.map(category => category.title.trim().toLowerCase()), "Корзина"];
+      if (usedCategories.includes(title.trim().toLowerCase())) {
         Message({
           message: "Такая категория уже существует",
           type: "error",
