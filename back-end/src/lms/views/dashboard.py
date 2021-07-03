@@ -56,7 +56,7 @@ class StudentPerformanceView(APIView):
         # find all marks for subject
         for mark in marks:
             student_subject_marks.setdefault(mark.lesson.subject.title,
-                                             []).append(*mark.mark)
+                                             []).extend(mark.mark)
         for lesson in lessons:
             subject_dates.setdefault(lesson.subject.title,
                                      []).append(lesson.date)
