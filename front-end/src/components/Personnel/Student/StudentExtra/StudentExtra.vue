@@ -261,7 +261,6 @@ export default {
       },
       modifyInfo: {},
       loading: false,
-      id: this.$route.params.studentId,
       campuses: [
         {
           code: "MO",
@@ -284,6 +283,9 @@ export default {
   },
   computed: {
     ...mapState("reference", ["programs", "milspecialties"]),
+    id() {
+      return this.$route.params.studentId;
+    },
   },
   methods: {
     ...mapActions("reference", ["fetchPrograms", "fetchMilspecialties"]),
@@ -326,7 +328,6 @@ export default {
         this.modifyInfo.passport.code = code;
         const requestBody = { ...this.modifyInfo };
         requestBody.university_info.program = this.modifyInfo.university_info.program.code;
-        console.log("🚀 > requestBody", requestBody);
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;

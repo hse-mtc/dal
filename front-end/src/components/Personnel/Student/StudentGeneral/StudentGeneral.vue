@@ -1,5 +1,5 @@
 <template>
-  <ExpandBox title="О студенте" no-expand>
+  <ExpandBox title="О студенте" non-expandable>
     <div class="general-info">
       <el-upload
         v-loading="loading"
@@ -203,10 +203,12 @@ export default {
       displayInfo: {},
       modifyInfo: {},
       loading: false,
-      id: this.$route.params.studentId,
     };
   },
   computed: {
+    id() {
+      return this.$route.params.studentId;
+    },
     ...mapState("reference", ["milgroups", "studentPosts", "studentStatuses"]),
   },
   async created() {

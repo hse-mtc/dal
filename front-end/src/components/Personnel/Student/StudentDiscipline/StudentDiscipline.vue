@@ -40,7 +40,6 @@
             show-overflow-tooltip
           />
         </el-table>
-        <!-- <div class="separator" /> -->
       </div>
     </div>
   </ExpandBox>
@@ -62,8 +61,12 @@ export default {
       currentPunishments: [],
       removedPunishments: [],
       loading: false,
-      id: this.$route.params.studentId,
     };
+  },
+  computed: {
+    id() {
+      return this.$route.params.studentId;
+    },
   },
   methods: {
     formatDate: row => moment(row.date).format("DD.MM.YYYY"),

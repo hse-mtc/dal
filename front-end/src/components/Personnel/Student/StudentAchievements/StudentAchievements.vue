@@ -138,7 +138,11 @@
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import moment from "moment";
-import { getAchievement, postAchievement, deleteAchievement } from "@/api/achievement";
+import {
+  getAchievement,
+  postAchievement,
+  deleteAchievement,
+} from "@/api/achievement";
 import { getError, postError, deleteError } from "@/utils/message";
 import { patchStudent, findStudentSkills } from "@/api/students";
 import { mapActions, mapState } from "vuex";
@@ -151,7 +155,6 @@ export default {
       achievements: [],
       skills: [],
       loading: false,
-      id: this.$route.params.studentId,
       selectVisible: false,
       newSkillValue: "",
       dialogVisible: false,
@@ -159,6 +162,9 @@ export default {
     };
   },
   computed: {
+    id() {
+      return this.$route.params.studentId;
+    },
     ...mapState({
       skillsOptions: state => state.reference.skills,
       achievementTypes: state => state.reference.achievementTypes,
