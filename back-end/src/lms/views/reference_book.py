@@ -47,6 +47,7 @@ from auth.permissions import (
 
 class ReferenceBookPermission(BasePermission):
     permission_class = 'reference_book'
+    view_name_rus = 'Справочные данные'
 
 
 @extend_schema(tags=['reference-book'])
