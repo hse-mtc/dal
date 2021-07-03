@@ -15,44 +15,45 @@
       </el-col>
     </el-row>
 
-    <el-table
-      :data="localSubjects"
-      style="width: 100%"
+    <PrimeTable
+      :value="localSubjects"
+      auto-layout
+      class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
     >
-      <el-table-column
-        fixed
-        prop="title"
-        label="Название"
+      <PrimeColumn
+        field="title"
+        header="Название"
         width="250"
-        style="word-break: break-word;"
+        column-key="title"
       />
-      <el-table-column
-        prop="annotation"
-        label="Аннотация"
+      <PrimeColumn
+        field="annotation"
+        header="Аннотация"
+        column-key="annotation"
       />
-      <el-table-column
-        fixed="right"
-        label="Управление"
+      <PrimeColumn
+        header="Управление"
         width="120"
+        column-key="buttons"
       >
-        <template slot-scope="scope">
+        <template #body="{ data }">
           <div class="buttons">
             <img
               class="grow"
               src="../../assets/subject/edit.svg"
               alt=""
-              @click="editSubject(scope.row.id)"
+              @click="editSubject(data.id)"
             >
             <img
               class="grow"
               src="../../assets/subject/close.svg"
               alt=""
-              @click="deleteSubjectHandler(scope.row.id)"
+              @click="deleteSubjectHandler(data.id)"
             >
           </div>
         </template>
-      </el-table-column>
-    </el-table>
+      </PrimeColumn>
+    </PrimeTable>
 
     <ModalWindow :opened="windowModal" @closeModal="closeModal">
       <CustomText :mb="SIZES.m" :custom-style="{ 'font-weight': 'normal' }" variant="header">
