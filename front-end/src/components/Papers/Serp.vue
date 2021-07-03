@@ -74,10 +74,18 @@
               <div v-if="$route.query.category !== 'bin'" style="cursor: pointer" @click="editPaper(document.id)">
                 Редактировать
               </div>
-              <div v-if="$route.query.category !== 'bin'" style="cursor: pointer" @click="moveToBin(document.id)">
+              <div
+                v-if="$route.query.category !== 'bin'"
+                style="cursor: pointer"
+                @click="toggleBinStatus(document.id, true)"
+              >
                 Переместить в корзину
               </div>
-              <div v-if="$route.query.category === 'bin'" style="cursor: pointer" @click="restore(document.id)">
+              <div
+                v-if="$route.query.category === 'bin'"
+                style="cursor: pointer"
+                @click="toggleBinStatus(document.id, false)"
+              >
                 Восстановить
               </div>
               <div v-if="$route.query.category === 'bin'" style="cursor: pointer" @click="deletePaper(document.id)">
@@ -192,42 +200,26 @@ export default {
       return moment(document.publication_date).year();
     },
 
-    async restore(id) {
+    async toggleBinStatus(id, status) {
       try {
-        const data = { is_binned: false };
+        const data = { is_binned: status };
         const formData = new FormData();
         formData.set("data", JSON.stringify(data));
         await patchPaper(id, formData);
         this.removePaperFromList(id);
         this.$message({
           type: "success",
-          message: "Документ восстановлен",
+          message: status
+            ? "Документ перемещен в корзину"
+            : "Документ восстановлен",
         });
       } catch (error) {
         console.log("[ERROR]: ", error);
         this.$message({
           type: "error",
-          message: "Не удалось восстановить файл",
-        });
-      }
-    },
-
-    async moveToBin(id) {
-      try {
-        const data = { is_binned: true };
-        const formData = new FormData();
-        formData.set("data", JSON.stringify(data));
-        await patchPaper(id, formData);
-        this.removePaperFromList(id);
-        this.$message({
-          type: "success",
-          message: "Документ перемещен в корзину",
-        });
-      } catch (error) {
-        console.log("[ERROR]: ", error);
-        this.$message({
-          type: "error",
-          message: "Не удалось переместить файл в корзину",
+          message: status
+            ? "Не удалось переместить файл в корзину"
+            : "Не удалось восстановить файл",
         });
       }
     },

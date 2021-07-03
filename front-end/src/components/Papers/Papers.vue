@@ -41,7 +41,7 @@
               >
                 <div>
                   <span
-                      v-if="id !== 'bin'"
+                    v-if="id !== 'bin'"
                     :id="id"
                     style="cursor: pointer"
                     @click="selectCategory(id)"
@@ -49,7 +49,7 @@
                     {{ title }}
                   </span>
                   <img
-                      v-if="id !== 'bin'"
+                    v-if="id !== 'bin'"
                     class="category-delete ml-2"
                     height="10px"
                     src="../../assets/scienceWorks/close.svg"
@@ -57,7 +57,7 @@
                     @click="deleteCategory(id)"
                   >
                   <span
-                      v-if="id === 'bin'"
+                    v-if="id === 'bin'"
                     style="cursor: pointer; color: #858587"
                     @click="selectCategory('bin')"
                   >
