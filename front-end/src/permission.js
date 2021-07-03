@@ -5,7 +5,6 @@ import getPageTitle from "@/utils/get-page-title";
 import LocalStorageService from "@/utils/LocalStorageService";
 
 import router from "./router";
-import store from "./store";
 
 const localStorageService = LocalStorageService.getService();
 
@@ -30,23 +29,7 @@ router.beforeEach(async(to, from, next) => {
       next({ path: "/" });
       NProgress.done();
     } else {
-      const hasGetUserInfo = store.getters.name;
-      if (hasGetUserInfo) {
-        next();
-      } else {
-        try {
-          // get user info
-          await store.dispatch("user/getUser");
-
-          next();
-        } catch (error) {
-          // remove token and go to login page to re-login
-          await store.dispatch("user/resetToken");
-          Message.error(error || "Has Error");
-          next(`/login?redirect=${to.path}`);
-          NProgress.done();
-        }
-      }
+      next();
     }
     /* has no token */
   } else if (whiteList.indexOf(to.path) !== -1) {
