@@ -21,3 +21,13 @@ def get_date_range(date_from: datetime, date_to: datetime,
         cur_date += timedelta(7)
 
     return dates
+
+
+def get_current_semester_range() -> tuple[datetime, datetime]:
+    first_semester_months = list(range(9, 13))
+    current_date = datetime.now()
+    current_month = current_date.month
+    current_year = current_date.year
+    if current_month in first_semester_months:
+        return datetime(current_year, 9, 1), datetime(current_year, 12, 31)
+    return datetime(current_year, 1, 1), datetime(current_year, 8, 31)
