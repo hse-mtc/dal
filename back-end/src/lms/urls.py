@@ -35,7 +35,6 @@ from lms.views.lessons import LessonViewSet, LessonJournalView
 from lms.views.marks import MarkViewSet, MarkJournalView
 from lms.views.uniforms import UniformViewSet
 from lms.views.personnel import SearchPersonnelUsersViewSet
-from lms.views.dashboard import StudentPerformanceView
 
 routers = DefaultRouter()
 routers.register('students/approvements', ActivateStudentViewSet)
