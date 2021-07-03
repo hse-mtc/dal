@@ -7,7 +7,7 @@ __pycache__
 .ipynb_checkpoints
 
 ## Files
-.env*
+.env
 .DS_Store
 .python-version
 
