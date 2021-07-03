@@ -1,44 +1,40 @@
 <template>
-  <div class="root">
-    <el-tabs v-model="activeTab" @tab-click="handleClick">
-      <el-tab-pane label="Подтверждения регистрации" name="approve">
-        <Approve />
-      </el-tab-pane>
-      <el-tab-pane label="Разрешения" name="permissions">
-        <PermissionComponent />
-      </el-tab-pane>
-      <el-tab-pane label="Справочники" name="dictionaries">
-        <!-- DictionariesComponent -->
-      </el-tab-pane>
-      <el-tab-pane label="Учебные дисциплины" name="subjects">
-        <SubjectsControl />
-      </el-tab-pane>
-    </el-tabs>
+  <div :class="$style.root">
+    <PrimeTabMenu :model="tabs">
+      <el-tab-pane label="Подтверждения регистрации" name="approve" />
+      <el-tab-pane label="Разрешения" name="permissions" />
+      <el-tab-pane label="Справочники" name="dictionaries" />
+      <el-tab-pane label="Учебные дисциплины" name="subjects" />
+    </PrimeTabMenu>
+
+    <router-view :class="$style.page" />
   </div>
 </template>
 
 <script>
-import PermissionComponent from "@/components/Apanel/PermissionComponent";
-import Approve from "@/components/Apanel/Approve/Approve";
-import SubjectsControl from "@/components/Apanel/SubjectsControl";
+import { Component } from "vue-property-decorator";
 
-export default {
-  components: { Approve, PermissionComponent, SubjectsControl },
-  data() {
-    return {
-      activeTab: "approve",
-    };
-  },
-  methods: {
-    handleClick() {},
-  },
-};
+@Component({
+  name: "AdminPanelPage",
+})
+class AdminPanelPage {
+  tabs = [
+    { label: "Подтверждения регистрации", to: "/apanel/approve/" },
+    { label: "Разрешения", to: "/apanel/permissions/" },
+    { label: "Справочники", to: "/apanel/dictionaries/" },
+    { label: "Учебные дисциплины", to: "/apanel/subjects/" },
+  ]
+}
+
+export default AdminPanelPage;
 </script>
 
-<style scoped lang="scss">
-@import "@/styles/variables.scss";
-
+<style lang="scss" module>
 .root {
-  padding: $xl;
+  margin: 50px;
+}
+
+.page {
+  margin-top: 50px;
 }
 </style>
