@@ -9,7 +9,7 @@ from lms.models.punishments import Punishment
 
 
 class PunishmentFilter(FilterSet):
-    removed = BooleanFilter(method='filter_by_removed_punishment',)
+    removed = BooleanFilter(method='filter_by_removed_punishment')
 
     milgroup = NumberFilter(field_name='student__milgroup__milgroup')
 
