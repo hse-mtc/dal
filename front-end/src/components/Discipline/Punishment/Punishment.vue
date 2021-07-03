@@ -90,16 +90,19 @@
           sortable
           header="Дата"
           :field="formatDate"
+          column-key="date"
         />
         <PrimeColumn
           :field="row => row.student.fullname"
           sortable
           header="Студент"
+          column-key="fullname"
         />
         <PrimeColumn
           :field="row => row.teacher.fullname"
           sortable
           header="Преподаватель"
+          column-key="teacher"
         />
         <PrimeColumn
           :field="row => row.student.milgroup.milgroup"
@@ -107,9 +110,11 @@
           header="Взвод"
           header-style="width: 100px"
           body-style="width: 100px"
+          column-key="milgroup"
         />
         <PrimeColumn
           header="Тип взыскания"
+          column-key="type"
         >
           <template #body="{ data }">
             <el-tag
@@ -120,17 +125,23 @@
             </el-tag>
           </template>
         </PrimeColumn>
-        <PrimeColumn field="reason" header="Причина" />
+        <PrimeColumn
+          field="reason"
+          header="Причина"
+          column-key="reason"
+        />
         <PrimeColumn
           sortable
           header="Дата снятия"
           header-style="width: 130px"
           body-style="width: 130px"
           :field="formatRemoveDate"
+          column-key="remove-date"
         />
         <PrimeColumn
           header-style="width: 150px"
           body-style="width: 150px"
+          column-key="buttons"
         >
           <template #body="{ data }">
             <el-tooltip
