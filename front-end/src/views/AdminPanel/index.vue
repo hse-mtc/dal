@@ -10,7 +10,7 @@
       <el-tab-pane label="Справочники" name="dictionaries">
         <!-- DictionariesComponent -->
       </el-tab-pane>
-      <el-tab-pane label="Управление дисциплинами" name="subjects">
+      <el-tab-pane label="Учебные дисциплины" name="subjects">
         <SubjectsControl />
       </el-tab-pane>
     </el-tabs>
