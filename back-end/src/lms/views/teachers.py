@@ -7,9 +7,9 @@ from drf_spectacular.views import extend_schema
 from common.constants import MUTATE_ACTIONS
 
 from lms.models.teachers import Teacher
-from lms.models.students import Student
 from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
 from lms.filters.teachers import TeacherFilter
+from lms.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -26,10 +26,12 @@ class TeacherPermission(BasePermission):
 
 
 @extend_schema(tags=["teachers"])
-class TeacherViewSet(ModelViewSet):
+class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
     queryset = Teacher.objects.all()
 
     permission_classes = [TeacherPermission]
+    scoped_permission_class = TeacherPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = TeacherFilter
@@ -40,38 +42,30 @@ class TeacherViewSet(ModelViewSet):
             return TeacherMutateSerializer
         return TeacherSerializer
 
-    # pylint: disable=too-many-return-statements
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return self.queryset
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == "student":
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == "teacher":
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(milfaculty=milfaculty)
 
-        scope = self.request.user.get_perm_scope(
-            TeacherPermission.permission_class, self.request.method)
+    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+        if user_type == "student":
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == "teacher":
+            milfaculty = user.milfaculty
+        else:
+            return False
+        return data["milfaculty"] == milfaculty.milfaculty
 
-        if scope == Permission.Scopes.SELF:
-            res = self.queryset.filter(user=self.request.user)
-            if res.count() == 0:
-                return self.queryset.none()
-            return res
-
-        if scope == Permission.Scopes.MILFACULTY:
-            milfaculty = None
-            # check is user is a teacher
-            user_teacher = self.queryset.filter(user=self.request.user)
-            if user_teacher.count() == 0:
-                # check if user is a student
-                user_student = Student.objects.filter(user=self.request.user)
-                if user_student.count() == 0:
-                    # return nothing is user is not a student or a teacher
-                    return self.queryset.none()
-                # get student milfacuty
-                milfaculty = user_student[0].milgroup.milfaculty
-            else:
-                # get teacher milfaculty
-                milfaculty = user_teacher[0].milfaculty
-            return self.queryset.filter(milfaculty=milfaculty)
-
-        if scope == Permission.Scopes.ALL:
-            return self.queryset
-
+    def handle_scope_self(self, user_type, user):
+        if user_type == "teacher":
+            return self.queryset.filter(user=self.request.user)
         return self.queryset.none()
+
+    def allow_scope_self_on_create(self, data, user_type, user):
+        if user_type == "teacher":
+            return data["user"] == user.id
+        return False
