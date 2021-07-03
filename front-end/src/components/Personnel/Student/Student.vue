@@ -9,7 +9,7 @@
             height="22px"
             alt="назад"
             @click="backToPersonnel"
-          >
+          />
           Студент
         </div>
       </el-col>
@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     backToPersonnel() {
-      this.$router.push("Personnel");
+      this.$router.push({ name: "Personnel" });
     },
   },
 };
