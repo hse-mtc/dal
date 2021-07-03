@@ -1,6 +1,9 @@
 import axios from "axios";
+import _debounce from "lodash/debounce";
 import { Message } from "element-ui";
 import { updateAccess } from "@/api/tokens";
+import { AUTH_URLS } from "@/constants/api";
+import router from "@/router";
 import LocalStorageService from "./LocalStorageService";
 
 const localStorageService = LocalStorageService.getService();
@@ -12,7 +15,6 @@ const service = axios.create({
   // withCredentials: true, // send cookies when cross-domain requests
 });
 
-// request interceptor
 service.interceptors.request.use(
   config => {
     const token = localStorageService.getAccessToken();
@@ -20,77 +22,64 @@ service.interceptors.request.use(
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
   },
-  error => {
-    console.log(error); // for debug
-    return Promise.reject(error);
-  },
+  error => Promise.reject(error),
 );
 
-// response interceptor
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-   */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => response,
-  error => {
-    console.log(`err${error}`); // for debug
+  async error => {
     const originalRequest = error.config;
-    if (
-      error.response.status === 401
-      // eslint-disable-next-line no-underscore-dangle
-      && !originalRequest._retry
-      && !originalRequest.url.includes("tokens/refresh")
-      && !originalRequest.url.includes("tokens/obtain")
-    ) {
-      // eslint-disable-next-line no-underscore-dangle
-      originalRequest._retry = true;
+
+    if (originalRequest.url.includes(AUTH_URLS.refresh)) {
+      console.error("Не удалось обновить аксесс токен");
+    } else if (originalRequest.url.includes(AUTH_URLS.obtain)) {
+      Message({
+        message: "Почта или пароль введены неверно, попробуйте еще раз",
+        type: "error",
+        duration: 5 * 1000,
+      });
+
+      console.error("Не удалось авторизоваться");
+    } else if (error.response.status === 401) {
       const refreshToken = localStorageService.getRefreshToken();
-      return updateAccess({
-        refresh: refreshToken,
-      })
-        .then(res => {
-          if (res.status === 200) {
-            localStorageService.setToken(res.data);
-            axios.defaults.headers.common.Authorization = `Bearer ${res.data.access}`;
-            originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
-            return axios(originalRequest);
-          }
 
-          throw new Error();
-        })
-        .catch(() => {
-          localStorageService.clearToken();
-          window.location.reload();
+      try {
+        if (refreshToken) {
+          const { data } = await updateAccess({ refresh: refreshToken });
+          localStorageService.setToken(data);
+
+          return service(originalRequest);
+        }
+
+        console.error("Отсутствует рефреш токен");
+      } catch (e) {
+        console.error("Ошибка обновления токена:", e);
+      }
+
+      localStorageService.clearToken();
+
+      const { name, fullPath } = router.currentRoute;
+      console.log("fullPath", fullPath);
+      if (name !== "Login") {
+        router.push({
+          name: "Login",
+          query: {
+            redirect: fullPath,
+          },
         });
+
+        Message({
+          message: "Ошибка авторизации",
+          type: "error",
+          duration: 5 * 1000,
+        });
+      }
     }
 
-    if (
-      error.response.status === 401
-      && originalRequest.url.includes("tokens/obtain")
-    ) {
-      Message({
-        message: "Логин или пароль введены неверно, попробуйте еще раз",
-        type: "error",
-        duration: 5 * 1000,
-      });
-    } else {
-      Message({
-        message: error.response.data.detail || error.message,
-        type: "error",
-        duration: 5 * 1000,
-      });
-    }
-
-    return Promise.reject(error);
+    throw error;
   },
 );
 
