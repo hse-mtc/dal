@@ -69,33 +69,41 @@
           sortable
           header-style="width: 300px"
           body-style="width: 300px"
+          column-key="fullname"
         />
         <PrimeColumn
           sortable
           :field="milgroupField"
           header="Взвод"
+          column-key="milgroup"
         />
         <PrimeColumn
           :field="row => row.milgroup.milfaculty"
           header="Цикл"
+          column-key="milfaculty"
         />
         <PrimeColumn
           :field="row => row.university_info.program.program"
           header="Программа"
           header-style="width: 300px"
           body-style="width: 300px"
+          column-key="program"
         />
         <PrimeColumn
           :field="row => dateFilter(row.birth_info && row.birth_info.date)"
           header="Дата рождения"
+          column-key="birthday"
         />
         <PrimeColumn
           :field="row => statusFilter(row.status)"
           header="Статус"
           header-style="width: 150px"
           body-style="width: 150px"
+          column-key="status"
         />
-        <PrimeColumn>
+        <PrimeColumn
+          column-key="buttons"
+        >
           <template #body="{ data }">
             <el-button
               size="mini"
