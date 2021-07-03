@@ -11,7 +11,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework.renderers import JSONRenderer
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -42,9 +42,6 @@ from lms.serializers.applicants import (
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
-    StudentSkillsSerializer,
-    StudentBasicInfoSerializer,
-    StudentExtraInfoSerializer,
 )
 
 from lms.utils.export import generate_excel
@@ -304,24 +301,3 @@ class ActivateStudentViewSet(ModelViewSet):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
-
-
-# TODO (@vladisa88) to @gakhromov: move applications to `applications.py` file
-
-
-@extend_schema(tags=["students"])
-class StudentBasicInfoViewSet(ReadOnlyModelViewSet):
-    queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
-    serializer_class = StudentBasicInfoSerializer
-
-
-@extend_schema(tags=["students"])
-class StudentExtraInfoViewSet(ReadOnlyModelViewSet):
-    queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
-    serializer_class = StudentExtraInfoSerializer
-
-
-@extend_schema(tags=["students"])
-class StudentSkillsView(ReadOnlyModelViewSet):
-    queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
-    serializer_class = StudentSkillsSerializer
