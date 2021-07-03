@@ -1,8 +1,8 @@
 <template>
-  <div class="expand-box" :class="{ expanded: expanded, 'no-expand': noExpand }">
+  <div class="expand-box" :class="{ expanded: expanded, 'non-expandable': nonExpandable }">
     <div class="header" @click="toggle">
       <span class="title">{{ title }}</span>
-      <SvgIcon v-if="!noExpand" icon-class="chevron-down" class="icon" />
+      <SvgIcon v-if="!nonExpandable" icon-class="chevron-down" class="icon" />
     </div>
     <transition name="expand">
       <div v-show="expanded" class="body">
@@ -17,16 +17,16 @@ export default {
   name: "ExpandBox",
   props: {
     title: { type: String, required: true },
-    noExpand: { type: Boolean, default: false },
+    nonExpandable: { type: Boolean, default: false },
   },
   data() {
     return {
-      expanded: this.noExpand,
+      expanded: this.nonExpandable,
     };
   },
   methods: {
     toggle() {
-      if (!this.noExpand) {
+      if (!this.nonExpandable) {
         this.expanded = !this.expanded;
         this.$emit("toggled", this.expanded);
       }

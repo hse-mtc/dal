@@ -48,7 +48,7 @@ export default {
   },
   methods: {
     backToPersonnel() {
-      this.$router.push({ path: "/personnel/" });
+      this.$router.push("Personnel");
     },
   },
 };

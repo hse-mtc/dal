@@ -32,8 +32,12 @@ export default {
     return {
       performance: [],
       loading: false,
-      id: this.$route.params.studentId,
     };
+  },
+  computed: {
+    id() {
+      return this.$route.params.studentId;
+    },
   },
   methods: {
     tagVariantByAverageMark(average) {
