@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from rest_framework.response import Response
-from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.filters import (
@@ -33,6 +33,18 @@ from auth.permissions import (
 from common.parsers import MultiPartWithJSONParser
 from common.constants import MUTATE_ACTIONS
 
+from auth.models import Permission
+from auth.permissions import BasePermission
+
+
+class BookPermission(BasePermission):
+    permission_class = "book"
+    view_name_rus = "Книги"
+    scopes = [
+        Permission.Scopes.ALL,
+        Permission.Scopes.SELF,
+    ]
+
 
 @extend_schema(request=BookMutateSerializerForSwagger, tags=["books"])
 class BookViewSet(viewsets.ModelViewSet):
@@ -40,7 +52,8 @@ class BookViewSet(viewsets.ModelViewSet):
         .prefetch_related("authors", "publishers", "subjects", "file", "user") \
         .order_by("title", "id")
 
-    permission_classes = [ReadOnly | IsOwner]
+    permission_classes = [BookPermission]
+    scoped_permission_class = BookPermission
 
     filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
     filterset_class = BookFilter
@@ -55,6 +68,49 @@ class BookViewSet(viewsets.ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return BookMutateSerializer
         return BookSerializer
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scopes.ALL:
+            return self.queryset
+
+        if scope == Permission.Scopes.SELF:
+            return self.queryset.filter(user=self.request.user)
+
+        return self.queryset.none()
+
+    def is_creation_allowed_by_scope(self, data):
+        if self.request.user.is_superuser:
+            return True
+
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scopes.ALL:
+            return True
+
+        if scope == Permission.Scopes.SELF:
+            return self.request.user.id == data["user"]
+        return False
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # check scoping
+        if self.is_creation_allowed_by_scope(request.data):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED,
+                            headers=headers)
+        return Response(
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN)
 
 
 @extend_schema(tags=["favorite-books"])
@@ -79,4 +135,4 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         # pylint: disable=unused-argument,invalid-name,arguments-differ
         favorite = FavoriteBook.objects.filter(book__id=pk)
         favorite.delete()
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
