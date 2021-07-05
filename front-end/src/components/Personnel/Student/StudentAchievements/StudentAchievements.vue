@@ -167,7 +167,7 @@ import {
 } from "@/api/achievement";
 import { getError, postError, deleteError } from "@/utils/message";
 import { patchStudent, findStudentSkills } from "@/api/students";
-import { mapActions, mapState } from "vuex";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "StudentAchievements",
@@ -187,10 +187,8 @@ export default {
     id() {
       return this.$route.params.studentId;
     },
-    ...mapState({
-      skillsOptions: state => state.reference.skills,
-      achievementTypes: state => state.reference.achievementTypes,
-    }),
+    skillsOptions() { return ReferenceModule.skills; },
+    achievementTypes() { return ReferenceModule.achievementTypes; },
     skillsOptionsFiltered() {
       return this.skillsOptions.filter(
         x => !this.skills.some(y => x.id === y),
@@ -198,7 +196,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions("reference", ["fetchSkills", "fetchAchievementTypes"]),
     dateField: row => (moment(row.date).isValid()
       ? moment(row.date).format("DD.MM.YYYY")
       : "---"),
@@ -215,8 +212,8 @@ export default {
     async fetchInfo() {
       try {
         this.loading = true;
-        await this.fetchSkills();
-        await this.fetchAchievementTypes();
+        await ReferenceModule.fetchSkills();
+        await ReferenceModule.fetchAchievementTypes();
         this.achievements = (await getAchievement({ student: this.id })).data;
         this.skills = (
           await findStudentSkills(this.id)

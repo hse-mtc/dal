@@ -173,10 +173,10 @@
 
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
-import { mapActions, mapState } from "vuex";
 import { findStudentBasic, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "StudentGeneral",
@@ -209,20 +209,17 @@ export default {
     id() {
       return this.$route.params.studentId;
     },
-    ...mapState("reference", ["milgroups", "studentPosts", "studentStatuses"]),
+    milgroups() { return ReferenceModule.milgroups; },
+    studentPosts() { return ReferenceModule.studentPosts; },
+    studentStatuses() { return ReferenceModule.studentStatuses; },
   },
   async created() {
     await this.fetchInfo();
-    await this.fetchMilgroups();
-    await this.fetchStudentPosts();
-    await this.fetchStudentStatuses();
+    await ReferenceModule.fetchMilgroups();
+    await ReferenceModule.fetchStudentPosts();
+    await ReferenceModule.fetchStudentStatuses();
   },
   methods: {
-    ...mapActions("reference", [
-      "fetchMilgroups",
-      "fetchStudentPosts",
-      "fetchStudentStatuses",
-    ]),
     formatDate: date => moment(date).format("DD.MM.YYYY"),
     async fetchInfo() {
       try {

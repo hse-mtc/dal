@@ -148,7 +148,7 @@ class Papers {
   modalCategories = false
   addNewCategory = false
 
-  get categories() { return [...DocumentsModule.categories, { title: "Корзина", id: "bin" }] } }
+  get categories() { return [...DocumentsModule.categories, { title: "Корзина", id: "bin" }]; }
 
   created() {
     this.selectCategory(this.categories[0]);
