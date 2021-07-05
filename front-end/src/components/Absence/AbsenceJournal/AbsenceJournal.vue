@@ -237,6 +237,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "Absence",
@@ -344,18 +345,18 @@ export default {
   },
   computed: {
     milgroups() {
-      return this.$store.state.reference.milgroups.filter(
+      return ReferenceModule.milgroups.filter(
         x => x.weekday === this.filter.weekday,
       );
     },
     milfaculties() {
-      return this.$store.state.reference.milfaculties;
+      return ReferenceModule.milfaculties;
     },
     types() {
-      return this.$store.state.reference.absenceTypes;
+      return ReferenceModule.absenceTypes;
     },
     statuses() {
-      return this.$store.state.reference.absenceStatuses;
+      return ReferenceModule.absenceStatuses;
     },
   },
   async created() {
@@ -469,14 +470,14 @@ export default {
       });
     },
     async fetchData() {
-      if (!this.$store.state.reference.milgroups.length) {
-        await this.$store.dispatch("reference/fetchMilgroups");
+      if (!ReferenceModule.milgroups.length) {
+        await ReferenceModule.fetchMilgroups();
       }
-      if (!this.$store.state.reference.absenceTypes.length) {
-        await this.$store.dispatch("reference/fetchAbsenceTypes");
+      if (!ReferenceModule.absenceTypes.length) {
+        await ReferenceModule.fetchAbsenceTypes();
       }
-      if (!this.$store.state.reference.absenceStatuses.length) {
-        await this.$store.dispatch("reference/fetchAbsenceStatuses");
+      if (!ReferenceModule.absenceStatuses.length) {
+        await ReferenceModule.fetchAbsenceStatuses();
       }
     },
     async onJournal() {

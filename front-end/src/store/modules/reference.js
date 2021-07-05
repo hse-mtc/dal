@@ -1,4 +1,13 @@
 import {
+  VuexModule,
+  Module,
+  Mutation,
+  Action,
+} from "vuex-module-decorators";
+
+import store from "@/store";
+
+import {
   getMilFaculties,
   getMilGroups,
   getStudentPosts,
@@ -11,131 +20,162 @@ import {
   getSkills,
 } from "@/api/reference-book";
 
-const initState = {
-  milgroups: [],
-  ranks: [],
-  studentStatuses: [],
-  studentPosts: [],
-  teacherPosts: [],
-  milfaculties: [],
-  milspecialties: [],
-  achievementTypes: [],
-  programs: [],
-  rooms: [],
-  absenceTypes: [],
-  absenceStatuses: [],
-  skills: [],
-};
+@Module({ store, name: "reference", namespaced: true })
+class Reference extends VuexModule {
+  milgroups = []
+  ranks = []
+  studentStatuses = []
+  studentPosts = []
+  teacherPosts = []
+  milfaculties = []
+  milspecialties = []
+  achievementTypes = []
+  programs = []
+  rooms = []
+  absenceTypes = []
+  absenceStatuses = []
+  skills = []
 
-const mutations = {
-  /* eslint-disable no-param-reassign */
-  SET_MILGROUPS: (state, payload) => {
-    state.milgroups = payload;
-  },
-  SET_RANKS: (state, payload) => {
-    state.ranks = payload;
-  },
-  SET_STUDENT_STATUSES: (state, payload) => {
-    state.studentStatuses = payload;
-  },
-  SET_STUDENT_POSTS: (state, payload) => {
-    state.studentPosts = payload;
-  },
-  SET_TEACHER_POSTS: (state, payload) => {
-    state.studentPosts = payload;
-  },
-  SET_MILFACULTIES: (state, payload) => {
-    state.milfaculties = payload;
-  },
-  SET_MILSPECIALTIES: (state, payload) => {
-    state.milspecialties = payload;
-  },
-  SET_ACHIEVEMENT_TYPES: (state, payload) => {
-    state.achievementTypes = payload;
-  },
-  SET_PROGRAMS: (state, payload) => {
-    state.programs = payload;
-  },
-  SET_ROOMS: (state, payload) => {
-    state.rooms = payload;
-  },
-  SET_ABSENCE_TYPES: (state, payload) => {
-    state.absenceTypes = payload;
-  },
-  SET_ABSENCE_STATUSES: (state, payload) => {
-    state.absenceStatuses = payload;
-  },
-  SET_SKILLS: (state, payload) => {
-    state.skills = payload;
-  },
-  /* eslint-enable no-param-reassign */
-};
+  @Mutation
+  SET_MILGROUPS(payload) {
+    this.milgroups = payload;
+  }
 
-const actions = {
-  async fetchMilgroups({ commit }) {
-    const { data } = await getMilGroups();
-    commit("SET_MILGROUPS", data);
-  },
-  async fetchRanks({ commit }) {
-    const { data } = await getRanks();
-    commit("SET_RANKS", data);
-  },
-  async fetchStudentStatuses({ commit }) {
-    const data = ["AP", "ST", "EX", "GR"];
-    commit("SET_STUDENT_STATUSES", data);
-  },
-  async fetchStudentPosts({ commit }) {
-    const { data } = await getStudentPosts();
-    commit("SET_STUDENT_POSTS", data);
-  },
-  async fetchTeacherPosts({ commit }) {
-    const { data } = await getTeacherPosts();
-    commit("SET_TEACHER_POSTS", data);
-  },
-  async fetchMilfaculties({ commit }) {
-    const { data } = await getMilFaculties();
-    commit("SET_MILFACULTIES", data);
-  },
-  async fetchMilspecialties({ commit }) {
-    const { data } = await getReferenceMilSpecialties();
-    commit("SET_MILSPECIALTIES", data);
-  },
-  async fetchAchievementTypes({ commit }) {
-    const { data } = await getAchievementTypes();
-    commit("SET_ACHIEVEMENT_TYPES", data);
-  },
-  async fetchPrograms({ commit }) {
-    const { data } = await getPrograms();
-    commit("SET_PROGRAMS", data);
-  },
-  async fetchRooms({ commit }) {
-    const { data } = await getRooms();
-    commit("SET_ROOMS", data);
-  },
-  async fetchSkills({ commit }) {
-    const { data } = await getSkills();
-    commit("SET_SKILLS", data);
-  },
-  async fetchAbsenceTypes({ commit }) {
+  @Mutation
+  SET_RANKS(payload) {
+    this.ranks = payload;
+  }
+
+  @Mutation
+  SET_STUDENT_STATUSES(payload) {
+    this.studentStatuses = payload;
+  }
+
+  @Mutation
+  SET_STUDENT_POSTS(payload) {
+    this.studentPosts = payload;
+  }
+
+  @Mutation
+  SET_TEACHER_POSTS(payload) {
+    this.studentPosts = payload;
+  }
+
+  @Mutation
+  SET_MILFACULTIES(payload) {
+    this.milfaculties = payload;
+  }
+
+  @Mutation
+  SET_MILSPECIALTIES(payload) {
+    this.milspecialties = payload;
+  }
+
+  @Mutation
+  SET_ACHIEVEMENT_TYPES(payload) {
+    this.achievementTypes = payload;
+  }
+
+  @Mutation
+  SET_PROGRAMS(payload) {
+    this.programs = payload;
+  }
+
+  @Mutation
+  SET_ROOMS(payload) {
+    this.rooms = payload;
+  }
+
+  @Mutation
+  SET_ABSENCE_TYPES(payload) {
+    this.absenceTypes = payload;
+  }
+
+  @Mutation
+  SET_ABSENCE_STATUSES(payload) {
+    this.absenceStatuses = payload;
+  }
+
+  @Mutation
+  SET_SKILLS(payload) {
+    this.skills = payload;
+  }
+
+  @Action({ commit: "SET_MILGROUPS" })
+  async fetchMilgroups() {
+    return (await getMilGroups()).data;
+  }
+
+  @Action({ commit: "SET_RANKS" })
+  async fetchRanks() {
+    return (await getRanks()).data;
+  }
+
+  @Action({ commit: "SET_STUDENT_STATUSES" })
+  async fetchStudentStatuses() {
+    return ["AP", "ST", "EX", "GR"];
+  }
+
+  @Action({ commit: "SET_STUDENT_POSTS" })
+  async fetchStudentPosts() {
+    return (await getStudentPosts()).data;
+  }
+
+  @Action({ commit: "SET_TEACHER_POSTS" })
+  async fetchTeacherPosts() {
+    return (await getTeacherPosts()).data;
+  }
+
+  @Action({ commit: "SET_MILFACULTIES" })
+  async fetchMilfaculties() {
+    return (await getMilFaculties()).data;
+  }
+
+  @Action({ commit: "SET_MILSPECIALTIES" })
+  async fetchMilspecialties() {
+    return (await getReferenceMilSpecialties()).data;
+  }
+
+  @Action({ commit: "SET_ACHIEVEMENT_TYPES" })
+  async fetchAchievementTypes() {
+    return (await getAchievementTypes()).data;
+  }
+
+  @Action({ commit: "SET_PROGRAMS" })
+  async fetchPrograms() {
+    return (await getPrograms()).data;
+  }
+
+  @Action({ commit: "SET_ROOMS" })
+  async fetchRooms() {
+    return (await getRooms()).data;
+  }
+
+  @Action({ commit: "SET_SKILLS" })
+  async fetchSkills() {
+    return (await getSkills()).data;
+  }
+
+  @Action({ commit: "SET_ABSENCE_TYPES" })
+  async fetchAbsenceTypes() {
     const data = [
       { label: "Уважительная", code: "SE" },
       { label: "Неуважительная", code: "NS" },
       { label: "Опоздание", code: "LA" },
     ];
-    commit("SET_ABSENCE_TYPES", data);
-  },
-  async fetchAbsenceStatuses({ commit }) {
+
+    return data;
+  }
+
+  @Action({ commit: "SET_ABSENCE_STATUSES" })
+  async fetchAbsenceStatuses() {
     const data = [
       { label: "Закрыт", code: "CL" },
       { label: "Открыт", code: "OP" },
     ];
-    commit("SET_ABSENCE_STATUSES", data);
-  },
-};
 
-export default {
-  namespaced: true,
-  state: initState,
-  mutations,
-  actions,
-};
+    return data;
+  }
+}
+
+export default Reference;
