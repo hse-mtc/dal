@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import mixins, viewsets
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.decorators import action
