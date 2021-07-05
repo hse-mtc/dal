@@ -63,6 +63,9 @@
         :sort-field="milgroupField"
         :sort-order="1"
         class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        :row-class="() => 'clickable'"
+        row-hover
+        @row-click="onEdit"
       >
         <PrimeColumn
           field="fullname"
@@ -79,17 +82,17 @@
           column-key="milgroup"
         />
         <PrimeColumn
-          :field="row => row.milgroup.milfaculty"
+          :field="(row) => row.milgroup.milfaculty"
           header="Цикл"
           column-key="milfaculty"
         />
         <PrimeColumn
-          :field="row => dateFilter(row.birth_info && row.birth_info.date)"
+          :field="(row) => dateFilter(row.birth_info && row.birth_info.date)"
           header="Дата рождения"
           column-key="birthday"
         />
         <PrimeColumn
-          :field="row => statusFilter(row.status)"
+          :field="(row) => statusFilter(row.status)"
           header="Статус"
           header-style="width: 150px"
           body-style="width: 150px"
@@ -97,15 +100,10 @@
         />
         <PrimeColumn
           column-key="buttons"
+          header-style="width: 50px"
+          body-style="width: 50px"
         >
           <template #body="{ data }">
-            <el-button
-              size="mini"
-              icon="el-icon-edit"
-              type="info"
-              circle
-              @click="onEdit(data)"
-            />
             <el-button
               size="mini"
               icon="el-icon-delete"
@@ -198,8 +196,9 @@ export default {
         }
       });
     },
-    onEdit(student) {
-      this.$router.push({ name: "Student", params: { studentId: student.id } });
+    onEdit({ data }) {
+      console.log("🚀 > data", data);
+      this.$router.push({ name: "Student", params: { studentId: data.id } });
     },
     milgroupField(row) {
       return row.milgroup.milgroup;

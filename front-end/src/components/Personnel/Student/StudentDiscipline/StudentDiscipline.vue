@@ -3,43 +3,67 @@
     <div class="discipline-info">
       <div class="discipline-table">
         <span class="title"> Поощрения </span>
-        <el-table :data="encouragements" max-height="200" size="mini">
-          <el-table-column prop="date" label="Дата" :formatter="formatDate" />
-          <el-table-column
-            prop="reason"
-            label="Причина"
-            show-overflow-tooltip
+        <PrimeTable
+          :value="encouragements"
+          scrollable
+          scroll-height="200px"
+          class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        >
+          <PrimeColumn column-key="date" header="Дата" :field="dateField" />
+          <PrimeColumn
+            column-key="reason"
+            header="Причина"
+            :field="(row) => row.reason"
           />
-        </el-table>
+          <template #empty>
+            Нет данных.
+          </template>
+        </PrimeTable>
         <div class="separator" />
       </div>
       <div class="discipline-table">
         <span class="title"> Текущие взыскания </span>
-        <el-table :data="currentPunishments" max-height="200" size="mini">
-          <el-table-column prop="date" label="Дата" :formatter="formatDate" />
-          <el-table-column
-            prop="reason"
-            label="Причина"
-            show-overflow-tooltip
+        <PrimeTable
+          :value="currentPunishments"
+          scrollable
+          scroll-height="200px"
+          class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        >
+          <PrimeColumn column-key="date" header="Дата" :field="dateField" />
+          <PrimeColumn
+            column-key="reason"
+            header="Причина"
+            :field="(row) => row.reason"
           />
-        </el-table>
+          <template #empty>
+            Нет данных.
+          </template>
+        </PrimeTable>
         <div class="separator" />
       </div>
       <div class="discipline-table">
         <span class="title"> Снятые взыскания </span>
-        <el-table :data="removedPunishments" max-height="200" size="mini">
-          <el-table-column prop="date" label="Дата" :formatter="formatDate" />
-          <el-table-column
-            prop="remove_date"
-            label="Дата снятия"
-            :formatter="formatDate"
+        <PrimeTable
+          :value="removedPunishments"
+          scrollable
+          scroll-height="200px"
+          class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        >
+          <PrimeColumn column-key="date" header="Дата" :field="dateField" />
+          <PrimeColumn
+            column-key="remove_date"
+            header="Дата снятия"
+            :field="dateField"
           />
-          <el-table-column
-            prop="reason"
-            label="Причина"
-            show-overflow-tooltip
+          <PrimeColumn
+            column-key="reason"
+            header="Причина"
+            :field="(row) => row.reason"
           />
-        </el-table>
+          <template #empty>
+            Нет данных.
+          </template>
+        </PrimeTable>
       </div>
     </div>
   </ExpandBox>
@@ -69,7 +93,7 @@ export default {
     },
   },
   methods: {
-    formatDate: row => moment(row.date).format("DD.MM.YYYY"),
+    dateField: row => moment(row.date).format("DD.MM.YYYY"),
     async fetchInfo() {
       try {
         this.loading = true;
