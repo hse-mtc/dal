@@ -2,7 +2,7 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import viewsets
-from rest_framework.status import HTTP_200_OK
+from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
@@ -29,25 +29,49 @@ from dms.serializers.common import (
 
 from common.models.subjects import Subject
 
+from auth.models import Permission
+from auth.permissions import BasePermission
+
+
+class AuthorPermission(BasePermission):
+    permission_class = "authors"
+    view_name_rus = "Авторы"
+
 
 @extend_schema(tags=["authors"])
 class AuthorViewSet(viewsets.ModelViewSet):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [AuthorPermission]
+
+
+class PublisherPermission(BasePermission):
+    permission_class = "publishers"
+    view_name_rus = "Места публикаций"
 
 
 @extend_schema(tags=["publishers"])
 class PublisherViewSet(viewsets.ModelViewSet):
     queryset = Publisher.objects.all()
     serializer_class = PublisherSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [PublisherPermission]
 
+
+class SubjectPermission(BasePermission):
+    permission_class = "subjects"
+    view_name_rus = "Учебные дисциплины"
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.SELF,
+    ]
 
 @extend_schema(tags=["subjects"])
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.order_by("-title", "id")
-    permission_classes = [permissions.AllowAny]
+
+    permission_classes = [SubjectPermission]
+    scoped_permission_class = SubjectPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SubjectFilter
     search_fields = ["title", "annotation"]
@@ -56,15 +80,65 @@ class SubjectViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return SubjectRetrieveSerializer
         return SubjectSerializer
+    
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
 
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scope.ALL:
+            return self.queryset
+
+        if scope == Permission.Scope.SELF:
+            return self.queryset.filter(user=self.request.user)
+
+        return self.queryset.none()
+
+    def is_creation_allowed_by_scope(self, data):
+        if self.request.user.is_superuser:
+            return True
+
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scope.ALL:
+            return True
+
+        if scope == Permission.Scope.SELF:
+            return self.request.user.id == data["user"]
+        return False
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # check scoping
+        if self.is_creation_allowed_by_scope(request.data):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED,
+                            headers=headers)
+        return Response(
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN)
 
 class OrderUpdateAPIView(generics.GenericAPIView, mixins.UpdateModelMixin):
-    permission_classes = [permissions.AllowAny]
     serializer_class = OrderUpdateSerializer
     lookup_field = "id"
 
     def patch(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+
+class StatisticsPermission(BasePermission):
+    permission_class = "statistics"
+    view_name_rus = "Статистика"
+    methods = ["get"]
+    scopes = [
+        Permission.Scope.SELF,
+    ]
 
 
 @extend_schema(tags=["statistics"],
@@ -76,7 +150,8 @@ class OrderUpdateAPIView(generics.GenericAPIView, mixins.UpdateModelMixin):
                ])
 class StatisticsAPIView(generics.GenericAPIView):
     # pylint: disable-msg=too-many-locals
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [StatisticsPermission]
+    scoped_permission_class = StatisticsPermission
 
     def get(self, request, uid):
         start_date = request.GET.get("start_date", "")
@@ -99,4 +174,4 @@ class StatisticsAPIView(generics.GenericAPIView):
             "subject_count": subject_filter.count()
         }
 
-        return Response(data, status=HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
