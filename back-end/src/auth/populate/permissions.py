@@ -23,7 +23,7 @@ def get_student_permissions():
             Permission.objects.get(viewset=viewset,
                                    method=method,
                                    scope=int(
-                                       getattr(Permission.Scopes,
+                                       getattr(Permission.Scope,
                                                scope.upper()))))
     return res
 
@@ -63,7 +63,7 @@ def get_teacher_permissions():
             Permission.objects.get(viewset=viewset,
                                    method=method,
                                    scope=int(
-                                       getattr(Permission.Scopes,
+                                       getattr(Permission.Scope,
                                                scope.upper()))))
     return res
 
@@ -115,6 +115,6 @@ def get_milfaculty_head_permissions():
             Permission.objects.get(viewset=viewset,
                                    method=method,
                                    scope=int(
-                                       getattr(Permission.Scopes,
+                                       getattr(Permission.Scope,
                                                scope.upper()))))
     return res

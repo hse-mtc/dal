@@ -69,10 +69,10 @@ class StudentPermission(BasePermission):
     # as it is handled by the applicant's form procedures
     methods = ["get", "put", "patch", "delete"]
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.MILGROUP,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
     ]
 
 
@@ -87,9 +87,9 @@ class ActivatePermission(BasePermission):
     view_name_rus = "Подтверждение регистрации"
     methods = ["get", "put", "patch"]
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.MILGROUP,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
     ]
 
 

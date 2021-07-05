@@ -37,8 +37,8 @@ class BookPermission(BasePermission):
     permission_class = "book"
     view_name_rus = "Книги"
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.SELF,
     ]
 
 
@@ -46,7 +46,7 @@ class FavoriteBookPermission(BasePermission):
     permission_class = "favorite-book"
     view_name_rus = "Любимые книги"
     scopes = [
-        Permission.Scopes.SELF,
+        Permission.Scope.SELF,
     ]
 
 
@@ -80,10 +80,10 @@ class BookViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return self.queryset
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.queryset.filter(user=self.request.user)
 
         return self.queryset.none()
@@ -95,10 +95,10 @@ class BookViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return True
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.request.user.id == data["user"]
         return False
 
@@ -144,7 +144,7 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.queryset.filter(user=self.request.user)
 
         return self.queryset.none()
@@ -156,7 +156,7 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.request.user.id == data["user"]
         return False
 

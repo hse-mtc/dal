@@ -46,13 +46,13 @@ class UniversityCampus(models.TextChoices):
 
 class Permission(models.Model):
 
-    class Scopes(models.IntegerChoices):
+    class Scope(models.IntegerChoices):
         ALL = 0, "all"
         MILFACULTY = 10, "milfaculty"
         MILGROUP = 20, "milgroup"
         SELF = 30, "self"
 
-    scope = models.IntegerField(choices=Scopes.choices)
+    scope = models.IntegerField(choices=Scope.choices)
     viewset = models.CharField(max_length=100)
     method = models.CharField(max_length=100)
 

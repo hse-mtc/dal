@@ -41,10 +41,10 @@ class AbsencePermission(BasePermission):
     permission_class = 'absence'
     view_name_rus = 'Пропуски'
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.MILGROUP,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
     ]
 
 

@@ -8,7 +8,7 @@ class BasePermission(permissions.BasePermission):
     view_name_rus = ""
     methods = ["get", "put", "post", "patch", "delete"]
     scopes = [
-        Permission.Scopes.ALL,
+        Permission.Scope.ALL,
     ]
 
     def has_permission(self, request, view):

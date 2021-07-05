@@ -21,10 +21,10 @@ class AchievementPermission(BasePermission):
     permission_class = 'achievement'
     view_name_rus = 'Достижения'
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.MILGROUP,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
     ]
 
 

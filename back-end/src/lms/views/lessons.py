@@ -35,9 +35,9 @@ class LessonPermission(BasePermission):
     permission_class = 'lesson'
     view_name_rus = 'Расписание занятий'
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.MILGROUP,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
     ]
 
 

@@ -23,8 +23,8 @@ class UniformPermission(BasePermission):
     permission_class = 'uniform'
     view_name_rus = 'Форма одежды'
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
     ]
 
 

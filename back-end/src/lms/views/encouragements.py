@@ -20,10 +20,10 @@ class EncouragementPermission(BasePermission):
     permission_class = 'encouragement'
     view_name_rus = 'Поощрения'
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.MILGROUP,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
     ]
 
 
