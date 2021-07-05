@@ -160,6 +160,20 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
             return self.request.user.id == data["user"]
         return False
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # check scoping
+        if self.is_creation_allowed_by_scope(request.data):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED,
+                            headers=headers)
+        return Response(
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN)
+
     def destroy(self, request, *args, pk=None, **kwargs):
         # pylint: disable=unused-argument,invalid-name,arguments-differ
         favorite = FavoriteBook.objects.filter(book__id=pk)
