@@ -18,9 +18,6 @@ class LessonSubjectPermission(BasePermission):
     permission_class = 'subject'
     view_name_rus = 'Занятия в расписании'
     methods = ['get']
-    scopes = [
-        Permission.Scopes.ALL,
-    ]
 
 
 @extend_schema(tags=['lms-subjects'])

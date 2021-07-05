@@ -19,9 +19,9 @@ class TeacherPermission(BasePermission):
     permission_class = "teacher"
     view_name_rus = "Учителя"
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.MILFACULTY,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.SELF,
     ]
 
 

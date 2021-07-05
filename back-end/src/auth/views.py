@@ -63,7 +63,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
         viewset, method, scope = data.data["codename"].split(".")
-        scope = int(getattr(Permission.Scopes, scope.upper()))
+        scope = int(getattr(Permission.Scope, scope.upper()))
         user = self.get_object()
 
         permission = Permission.objects.get(viewset=viewset,
@@ -89,7 +89,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
 
         viewset, method, scope = query_params.data["codename"].split(".")
-        scope = int(getattr(Permission.Scopes, scope.upper()))
+        scope = int(getattr(Permission.Scope, scope.upper()))
         user = self.get_object()
 
         permission = user.permissions.filter(viewset=viewset,
@@ -221,7 +221,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
         permissions_lst = []
         for codename in data.data["permissions"]:
             viewset, method, scope = codename.split(".")
-            scope = int(getattr(Permission.Scopes, scope.upper()))
+            scope = int(getattr(Permission.Scope, scope.upper()))
             permission = Permission.objects.get(viewset=viewset,
                                                 method=method,
                                                 scope=scope)
@@ -244,7 +244,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
             return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
         viewset, method, scope = data.data["codename"].split(".")
-        scope = int(getattr(Permission.Scopes, scope.upper()))
+        scope = int(getattr(Permission.Scope, scope.upper()))
         group = self.get_object()
 
         permission = Permission.objects.get(viewset=viewset,
@@ -270,7 +270,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
                             status=status.HTTP_400_BAD_REQUEST)
 
         viewset, method, scope = query_params.data["codename"].split(".")
-        scope = int(getattr(Permission.Scopes, scope.upper()))
+        scope = int(getattr(Permission.Scope, scope.upper()))
         group = self.get_object()
 
         permission = group.permissions.filter(viewset=viewset,

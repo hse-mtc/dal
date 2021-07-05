@@ -17,10 +17,10 @@ class Command(BaseCommand):
         }
 
         scopes_str = {
-            Permission.Scopes.SELF: ", связанных с пользователем",
-            Permission.Scopes.MILGROUP: " о взводе, связанным с пользователем",
-            Permission.Scopes.MILFACULTY: " о цикле, связанным с пользователем",
-            Permission.Scopes.ALL: " (всех данных)",
+            Permission.Scope.SELF: ", связанных с пользователем",
+            Permission.Scope.MILGROUP: " о взводе, связанным с пользователем",
+            Permission.Scope.MILFACULTY: " о цикле, связанным с пользователем",
+            Permission.Scope.ALL: " (всех данных)",
         }
 
         permissions = []

@@ -36,12 +36,12 @@ class PermissionRequestSerializer(serializers.ModelSerializer):
 
         viewset, method, scope = attrs["codename"].split(".")
 
-        if scope.upper() not in Permission.Scopes.names:
+        if scope.upper() not in Permission.Scope.names:
             raise ValidationError(
                 f"Scope \"{scope}\" does not exist " \
                 f"(permission \"{attrs['codename']}\""
             )
-        scope = int(getattr(Permission.Scopes, scope.upper()))
+        scope = int(getattr(Permission.Scope, scope.upper()))
 
         permission = Permission.objects.filter(viewset=viewset,
                                                method=method,

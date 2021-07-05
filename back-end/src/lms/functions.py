@@ -50,7 +50,7 @@ def milgroup_allowed_by_scope(milgroup: dict, request: Request,
     scope = request.user.get_perm_scope(permission_class.permission_class,
                                         request.method)
 
-    if scope == Permission.Scopes.ALL:
+    if scope == Permission.Scope.ALL:
         return True
 
     # check if user is a teacher ot a student
@@ -58,7 +58,7 @@ def milgroup_allowed_by_scope(milgroup: dict, request: Request,
     if user is None:
         return False
 
-    if scope == Permission.Scopes.MILFACULTY:
+    if scope == Permission.Scope.MILFACULTY:
         if user_type == 'student':
             milfaculty = user.milgroup.milfaculty
         elif user_type == 'teacher':
@@ -67,7 +67,7 @@ def milgroup_allowed_by_scope(milgroup: dict, request: Request,
             return False
         return milgroup['milfaculty'] == milfaculty.milfaculty
 
-    if scope == Permission.Scopes.MILGROUP:
+    if scope == Permission.Scope.MILGROUP:
         if user_type in ('student', 'teacher'):
             return milgroup['milgroup'] == user.milgroup.milgroup
         return False

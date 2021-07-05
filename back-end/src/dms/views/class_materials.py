@@ -38,8 +38,8 @@ class SectionPermission(BasePermission):
     permission_class = "section"
     view_name_rus = "Разделы учебных дисциплин"
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.SELF,
     ]
 
 
@@ -52,8 +52,8 @@ class TopicPermission(BasePermission):
     permission_class = "topic"
     view_name_rus = "Темы учебных дисциплин"
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.SELF,
     ]
 
 
@@ -66,8 +66,8 @@ class ClassMaterialPermission(BasePermission):
     permission_class = "class-material"
     view_name_rus = "Учебно-методические материалы"
     scopes = [
-        Permission.Scopes.ALL,
-        Permission.Scopes.SELF,
+        Permission.Scope.ALL,
+        Permission.Scope.SELF,
     ]
 
 
@@ -94,10 +94,10 @@ class SectionViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return self.queryset
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.queryset.filter(subject__user=self.request.user)
 
         return self.queryset.none()
@@ -109,10 +109,10 @@ class SectionViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return True
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             subject = Subject.objects.get(id=data["subject"])
             return self.request.user == subject.user
         return False
@@ -156,10 +156,10 @@ class TopicViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return self.queryset
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.queryset.filter(
                 section__subject__user=self.request.user)
 
@@ -172,10 +172,10 @@ class TopicViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return True
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             section = Section.objects.get(id=data["section"])
             return self.request.user == section.subject.user
         return False
@@ -229,10 +229,10 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return self.queryset
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.queryset.filter(
                 topic__section__subject__user=self.request.user)
 
@@ -245,10 +245,10 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return True
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             topic = Topic.objects.get(id=data["topic"])
             return self.request.user == topic.section.subject.user
         return False

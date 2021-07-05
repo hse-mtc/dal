@@ -43,7 +43,7 @@ class QuerySetScopingMixin:
         scope = self.request.user.get_perm_scope(
             self.scoped_permission_class.permission_class, self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return self.queryset
 
         # check if user is a teacher ot a student
@@ -52,13 +52,13 @@ class QuerySetScopingMixin:
             # return nothing if user is not a student or a teacher
             return self.queryset.none()
 
-        if scope == Permission.Scopes.MILFACULTY:
+        if scope == Permission.Scope.MILFACULTY:
             return self.handle_scope_milfaculty(user_type, user)
 
-        if scope == Permission.Scopes.MILGROUP:
+        if scope == Permission.Scope.MILGROUP:
             return self.handle_scope_milgroup(user_type, user)
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.handle_scope_self(user_type, user)
 
         return self.queryset.none()
@@ -89,7 +89,7 @@ class QuerySetScopingMixin:
         scope = self.request.user.get_perm_scope(
             self.scoped_permission_class.permission_class, self.request.method)
 
-        if scope == Permission.Scopes.ALL:
+        if scope == Permission.Scope.ALL:
             return True
 
         # check if user is a teacher ot a student
@@ -98,13 +98,13 @@ class QuerySetScopingMixin:
             # return False if user is not a student or a teacher
             return False
 
-        if scope == Permission.Scopes.MILFACULTY:
+        if scope == Permission.Scope.MILFACULTY:
             return self.allow_scope_milfaculty_on_create(data, user_type, user)
 
-        if scope == Permission.Scopes.MILGROUP:
+        if scope == Permission.Scope.MILGROUP:
             return self.allow_scope_milgroup_on_create(data, user_type, user)
 
-        if scope == Permission.Scopes.SELF:
+        if scope == Permission.Scope.SELF:
             return self.allow_scope_self_on_create(data, user_type, user)
 
         return False
