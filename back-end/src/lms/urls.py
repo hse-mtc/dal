@@ -9,6 +9,7 @@ from lms.views.students import (
 from lms.views.dashboard import (
     StudentBasicInfoViewSet,
     StudentExtraInfoViewSet,
+    StudentPerformanceView,
     StudentSkillsView,
 )
 from lms.views.teachers import TeacherViewSet
