@@ -1,43 +1,97 @@
-const initState = {
-  subjects: [],
-};
+import {
+  VuexModule,
+  Module,
+  Mutation,
+  Action,
+} from "vuex-module-decorators";
 
-const mutations = {
-  /* eslint-disable no-param-reassign */
-  UPSERT_SUBJECT: (state, payload) => {
-    const index = state.subjects.findIndex(e => e.id === payload.id);
+import store, { SubjectsModule } from "@/store";
+import { deleteSubject, getSubjects, upsertSubject } from "@/api/subjects";
+
+@Module({ store, name: "subjects", namespaced: true })
+class Subjects extends VuexModule {
+  _subjectsList = []
+  _subjectsLoaded = false
+
+  @Mutation
+  SET_IS_LOADED(value) {
+    this._subjectsLoaded = value;
+  }
+
+  @Mutation
+  UPSERT_SUBJECT(payload) {
+    const index = this._subjectsList.findIndex(e => e.id === payload.id);
 
     if (index === -1) {
-      state.subjects.push(payload);
+      this._subjectsList.push(payload);
     } else {
-      const tempSubject = state.subjects;
+      const tempSubject = this._subjectsList;
       tempSubject[index] = payload;
-      state.subjects = [...tempSubject];
+      this._subjectsList = [...tempSubject];
     }
-  },
-  SET_SUBJECTS: (state, payload) => {
-    state.subjects = payload;
-  },
-  DELETE_SUBJECT: (state, id) => {
-    state.subjects = state.subjects.filter(subject => subject.id !== id);
-  },
-};
+  }
 
-const actions = {
-  setSubjects({ commit }, subjects) {
-    commit("SET_SUBJECTS", subjects);
-  },
-  deleteSubject({ commit }, id) {
-    commit("DELETE_SUBJECT", id);
-  },
-  upsertSubject({ commit }, subject) {
-    commit("UPSERT_SUBJECT", subject);
-  },
-};
+  @Mutation
+  SET_SUBJECTS(payload) {
+    this._subjectsList = payload;
+  }
 
-export default {
-  namespaced: true,
-  state: initState,
-  mutations,
-  actions,
-};
+  @Mutation
+  DELETE_SUBJECT(id) {
+    this._subjectsList = this._subjectsList.filter(subject => subject.id !== id);
+  }
+
+  @Action({ commit: "SET_SUBJECTS" })
+  setSubjects(subjects) {
+    return subjects;
+  }
+
+  @Action
+  async fetchSubjects() {
+    try {
+      const { data } = await getSubjects();
+      this.setSubjects(data);
+      this.SET_IS_LOADED(true);
+    } catch (e) {
+      console.error("Не удалось загрузить данные предментов");
+    }
+  }
+
+  @Action
+  async deleteSubject(id) {
+    try {
+      await deleteSubject(id);
+
+      this.setSubjects(this._subjectsList.filter(item => item.id !== id));
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось удалить предмет:", e);
+
+      return false;
+    }
+  }
+
+  @Action
+  async upsertSubject(newData) {
+    try {
+      const { data } = await upsertSubject(newData);
+      this.UPSERT_SUBJECT(data);
+      return true;
+    } catch (e) {
+      console.error("Не удалось обновить предмет:", e);
+
+      return false;
+    }
+  }
+
+  get subjects() {
+    if (!this._subjectsLoaded) {
+      SubjectsModule.fetchSubjects();
+    }
+
+    return this._subjectsList;
+  }
+}
+
+export default Subjects;

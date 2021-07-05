@@ -82,9 +82,8 @@
 <script>
 import { SIZES, COLORS } from "@/utils/appConsts";
 import CustomText from "@/common/CustomText";
-import { mapState } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
-import { DocumentsModule } from "@/store";
+import { DocumentsModule, SubjectsModule } from "@/store";
 
 export default {
   name: "LibraryFilters",
@@ -110,9 +109,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      subjects: state => state.subjects.subjects,
-    }),
+    subjects() { return SubjectsModule.subjects; },
     authors() { return DocumentsModule.authors; },
   },
   created() {

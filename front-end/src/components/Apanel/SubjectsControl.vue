@@ -16,7 +16,7 @@
     </el-row>
 
     <PrimeTable
-      :value="localSubjects"
+      :value="subjects"
       auto-layout
       class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
     >
@@ -92,138 +92,101 @@
 </template>
 
 <script>
-import { deleteSubject, getSubjects, upsertSubject } from "@/api/subjects";
-import { mapActions, mapState } from "vuex";
+import { Component } from "vue-property-decorator";
+import { mapState } from "vuex";
+import { Message } from "element-ui";
+
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
 import { SIZES } from "@/utils/appConsts";
-import { sortBy, isEqual } from "lodash";
-import { Message } from "element-ui";
+import { SubjectsModule } from "@/store";
 
-export default {
+@Component({
   name: "SubjectsControl",
   components: {
     CustomText,
     ModalWindow,
   },
-  data() {
-    return {
-      SIZES,
-      localSubjects: [],
-      windowModal: false,
-      subjectForm: {
-        id: null,
-        title: "",
-        annotation: "",
-      },
-      rules: {
-        title: [{ required: true, message: "Обязательное поле" }],
-        annotation: [{ required: true, message: "Обязательное поле" }],
-      },
-    };
-  },
   computed: {
     ...mapState({
       userId: state => state.app.userId,
-      subjects: state => state.subjects.subjects,
     }),
   },
-  watch: {
-    subjects: {
-      deep: true,
-      handler() {
-        if (!isEqual(sortBy(this.subjects), sortBy(this.localSubjects))) {
-          this.localSubjects = [...this.subjects];
-        }
-      },
-    },
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    ...mapActions({
-      setSubjects: "subjects/setSubjects",
-      deleteSubject: "subjects/deleteSubject",
-      upsertSubject: "subjects/upsertSubject",
-    }),
-    fetchData() {
-      if (this.subjects.length === 0) {
-        getSubjects()
-          .then(response => {
-            this.setSubjects(response.data);
-            this.localSubjects = [...this.subjects];
-          })
-          .catch(() => {
-            Message({
-              message: "Данные по предметам не указаны",
-              type: "error",
-            });
+})
+class SubjectsControl {
+  SIZES = SIZES
+  windowModal = false
+  subjectForm = {
+    id: null,
+    title: "",
+    annotation: "",
+  }
+
+  rules = {
+    title: [{ required: true, message: "Обязательное поле" }],
+    annotation: [{ required: true, message: "Обязательное поле" }],
+  }
+
+  get subjects() { return SubjectsModule.subjects; }
+
+  submitForm(name) {
+    this.$refs[name].validate(async valid => {
+      if (valid) {
+        if (await SubjectsModule.upsertSubject(this.subjectForm)) {
+          this.closeModal();
+        } else {
+          Message({
+            message: "Ошибка отправки формы",
+            type: "error",
           });
-      } else {
-        this.localSubjects = [...this.subjects];
+        }
       }
-    },
-    submitForm(name) {
-      this.$refs[name].validate(valid => {
-        if (valid) {
-          upsertSubject(this.subjectForm)
-            .then(res => {
-              console.log(1);
-              this.upsertSubject(res.data);
-              this.closeModal();
-            })
-            .catch(() => {
-              Message({
-                message: "Ошибка отправки формы",
-                type: "error",
-              });
-            });
-        }
+    });
+  }
+
+  editSubject(id) {
+    const { title, annotation } = this.subjects.find(
+      subject => subject.id === id,
+    );
+    this.subjectForm = { id, title, annotation };
+    this.windowModal = true;
+  }
+
+  closeModal() {
+    this.subjectForm = {
+      id: null,
+      title: "",
+      annotation: "",
+    };
+    this.windowModal = false;
+  }
+
+  async deleteSubjectHandler(id) {
+    await this.$confirm(
+      "Вы уверены, что хотите удалить дисциплину? Это действие не обратимо. Это повлечет за собой удаление всех данных об оценках и расписании, связанных с этой дисциплиной.",
+      "Подтверждение",
+      {
+        confirmButtonText: "Да",
+        cancelButtonText: "Отмена",
+        type: "warning",
+      },
+    );
+
+    if (await SubjectsModule.deleteSubject(id)) {
+      Message({
+        message: "Предмет удален",
+        type: "success",
       });
-    },
-    editSubject(id) {
-      const { title, annotation } = this.subjects.find(
-        subject => subject.id === id,
-      );
-      this.subjectForm = { id, title, annotation };
-      this.windowModal = true;
-    },
-    closeModal() {
-      this.subjectForm = {
-        id: null,
-        title: "",
-        annotation: "",
-      };
-      this.windowModal = false;
-    },
-    deleteSubjectHandler(id) {
-      this.$confirm(
-        "Вы уверены, что хотите удалить дисциплину? Это действие не обратимо. Это повлечет за собой удаление всех данных об оценках и расписании, связанных с этой дисциплиной.",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        },
-      ).then(() => {
-        deleteSubject(id)
-          .then(() => {
-            this.deleteSubject(id);
-          })
-          .catch(err => {
-            Message({
-              message: "Удаление не удалось",
-              type: "error",
-            });
-            console.log(
-              `delete of subject with id: ${this.id} FAILED. Error: ${err}`,
-            );
-          });
+    } else {
+      Message({
+        message: "Удаление не удалось",
+        type: "error",
       });
-    },
-  },
-};
+    }
+  }
+}
+
+export default SubjectsControl;
 </script>
 
 <style scoped lang="scss">

@@ -42,57 +42,41 @@
 </template>
 
 <script>
-import { getSubjects } from "@/api/subjects";
+import { Component } from "vue-property-decorator";
 import SubjectCard from "@/components/SubjectCard/SubjectCard";
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 import SearchForSubjects from "@/components/Search/SearchForSubjects";
+import { SubjectsModule } from "@/store";
 
-export default {
-  name: "",
+@Component({
+  name: "Subjects",
   components: {
     SubjectCard,
     SearchForSubjects,
   },
-  data() {
-    return {};
-  },
   computed: {
     ...mapState({
       userId: state => state.app.userId,
-      subjects: state => state.subjects.subjects,
     }),
-    filteredSubjects() {
-      if (this.$route.query.subjectsSearch) {
-        const { subjectsSearch } = this.$route.query;
-        if (subjectsSearch.trim()) {
-          return this.subjects
-            .filter(item => item.title.toUpperCase().includes(subjectsSearch.toUpperCase()));
-        }
-        return this.subjects;
+  },
+})
+class Subjects {
+  get subjects() { return SubjectsModule.subjects; }
+
+  get filteredSubjects() {
+    if (this.$route.query.subjectsSearch) {
+      const { subjectsSearch } = this.$route.query;
+      if (subjectsSearch.trim()) {
+        return this.subjects
+          .filter(item => item.title.toUpperCase().includes(subjectsSearch.toUpperCase()));
       }
       return this.subjects;
-    },
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    ...mapActions({
-      setSubjects: "subjects/setSubjects",
-    }),
-    fetchData() {
-      if (this.subjects.length === 0) {
-        getSubjects()
-          .then(response => {
-            this.setSubjects(response.data);
-          })
-          .catch(() => {
-            console.log("Данные по предметам не указаны");
-          });
-      }
-    },
-  },
-};
+    }
+    return this.subjects;
+  }
+}
+
+export default Subjects;
 </script>
 
 <style scoped lang="scss">
