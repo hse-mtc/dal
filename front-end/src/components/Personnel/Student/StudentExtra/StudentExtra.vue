@@ -241,10 +241,10 @@
 
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
-import { mapActions, mapState } from "vuex";
 import { findStudentExtra, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "StudentExtra",
@@ -282,18 +282,18 @@ export default {
     };
   },
   computed: {
-    ...mapState("reference", ["programs", "milspecialties"]),
+    programs() { return ReferenceModule.programs; },
+    milspecialties() { return ReferenceModule.milspecialties; },
     id() {
       return this.$route.params.studentId;
     },
   },
   methods: {
-    ...mapActions("reference", ["fetchPrograms", "fetchMilspecialties"]),
     formatDate: date => moment(date).format("DD.MM.YYYY"),
     async fetch() {
       await this.fetchInfo();
-      await this.fetchPrograms();
-      await this.fetchMilspecialties();
+      await ReferenceModule.fetchPrograms();
+      await ReferenceModule.fetchMilspecialties();
     },
     async fetchInfo() {
       try {
