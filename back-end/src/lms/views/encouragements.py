@@ -17,7 +17,7 @@ from auth.permissions import BasePermission
 
 
 class EncouragementPermission(BasePermission):
-    permission_class = 'encouragement'
+    permission_class = 'encouragements'
     view_name_rus = 'Поощрения'
     scopes = [
         Permission.Scope.ALL,

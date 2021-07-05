@@ -16,7 +16,7 @@ from auth.permissions import BasePermission
 
 
 class TeacherPermission(BasePermission):
-    permission_class = "teacher"
+    permission_class = "teachers"
     view_name_rus = "Учителя"
     scopes = [
         Permission.Scope.ALL,

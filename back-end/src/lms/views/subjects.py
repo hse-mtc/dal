@@ -14,7 +14,7 @@ from auth.permissions import BasePermission
 
 
 class LessonSubjectPermission(BasePermission):
-    permission_class = 'subject'
+    permission_class = 'lesson-subjects'
     view_name_rus = 'Занятия в расписании'
     methods = ['get']
 

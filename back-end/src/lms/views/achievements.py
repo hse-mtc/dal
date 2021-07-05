@@ -18,7 +18,7 @@ from auth.permissions import BasePermission
 
 
 class AchievementPermission(BasePermission):
-    permission_class = 'achievement'
+    permission_class = 'achievements'
     view_name_rus = 'Достижения'
     scopes = [
         Permission.Scope.ALL,

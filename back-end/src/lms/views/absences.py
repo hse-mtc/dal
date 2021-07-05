@@ -38,7 +38,7 @@ from auth.permissions import BasePermission
 
 
 class AbsencePermission(BasePermission):
-    permission_class = 'absence'
+    permission_class = 'absences'
     view_name_rus = 'Пропуски'
     scopes = [
         Permission.Scope.ALL,

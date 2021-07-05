@@ -63,7 +63,7 @@ class XLSXRenderer(BaseRenderer):
 
 
 class StudentPermission(BasePermission):
-    permission_class = "student"
+    permission_class = "students"
     view_name_rus = "Студенты"
     # do not allow student creation in this permission,
     # as it is handled by the applicant's form procedures
@@ -77,13 +77,13 @@ class StudentPermission(BasePermission):
 
 
 class ApplicantPermission(BasePermission):
-    permission_class = "applicant"
+    permission_class = "applicants"
     view_name_rus = "Абитуриенты"
     methods = ["get", "post", "patch"]
 
 
 class ActivatePermission(BasePermission):
-    permission_class = "activate-student"
+    permission_class = "activate-students"
     view_name_rus = "Подтверждение регистрации"
     methods = ["get", "put", "patch"]
     scopes = [
