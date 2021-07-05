@@ -18,8 +18,6 @@
 <script>
 import { mapActions } from "vuex";
 
-import { getSubjects } from "@/api/subjects";
-
 import { AppModule, SettingsModule } from "@/store";
 import { Navbar, Sidebar, AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
@@ -52,19 +50,10 @@ export default {
     },
   },
   mounted() {
-    getSubjects()
-      .then(response => {
-        this.setSubjects(response.data);
-      })
-      .catch(() => {
-        console.log("Данные по предметам не указаны");
-      });
-
     this.getUser();
   },
   methods: {
     ...mapActions({
-      setSubjects: "subjects/setSubjects",
       getUser: "user/getUser",
     }),
     handleClickOutside() {
