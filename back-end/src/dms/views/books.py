@@ -25,16 +25,12 @@ from dms.serializers.books import (
     FavoriteBookSerializer,
     FavoriteBookMutateSerializer,
 )
-from auth.permissions import (
-    IsOwner,
-    ReadOnly,
-)
-
-from common.parsers import MultiPartWithJSONParser
-from common.constants import MUTATE_ACTIONS
 
 from auth.models import Permission
 from auth.permissions import BasePermission
+
+from common.parsers import MultiPartWithJSONParser
+from common.constants import MUTATE_ACTIONS
 
 
 class BookPermission(BasePermission):
@@ -42,6 +38,14 @@ class BookPermission(BasePermission):
     view_name_rus = "Книги"
     scopes = [
         Permission.Scopes.ALL,
+        Permission.Scopes.SELF,
+    ]
+
+
+class FavoriteBookPermission(BasePermission):
+    permission_class = "favorite-book"
+    view_name_rus = "Любимые книги"
+    scopes = [
         Permission.Scopes.SELF,
     ]
 
@@ -119,7 +123,9 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         .prefetch_related("book", "user") \
         .order_by("id")
 
-    permission_classes = [ReadOnly | IsOwner]
+    permission_classes = [FavoriteBookPermission]
+    scoped_permission_class = FavoriteBookPermission
+
     filter_backends = [DjangoFilterBackend]
 
     filterset_class = FavoriteBookFilter
@@ -130,6 +136,29 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return FavoriteBookMutateSerializer
         return FavoriteBookSerializer
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scopes.SELF:
+            return self.queryset.filter(user=self.request.user)
+
+        return self.queryset.none()
+
+    def is_creation_allowed_by_scope(self, data):
+        if self.request.user.is_superuser:
+            return True
+
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scopes.SELF:
+            return self.request.user.id == data["user"]
+        return False
 
     def destroy(self, request, *args, pk=None, **kwargs):
         # pylint: disable=unused-argument,invalid-name,arguments-differ
