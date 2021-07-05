@@ -44,9 +44,8 @@
 <script>
 import { Component } from "vue-property-decorator";
 import SubjectCard from "@/components/SubjectCard/SubjectCard";
-import { mapState } from "vuex";
 import SearchForSubjects from "@/components/Search/SearchForSubjects";
-import { SubjectsModule } from "@/store";
+import { AppModule, SubjectsModule } from "@/store";
 
 @Component({
   name: "Subjects",
@@ -55,9 +54,7 @@ import { SubjectsModule } from "@/store";
     SearchForSubjects,
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
+    userId() { return AppModule.userId; },
   },
 })
 class Subjects {

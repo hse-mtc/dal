@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import Statistics from "@/components/MyMaterials/Statistics";
 import PageHeader from "@/common/PageHeader";
 import MyDisciplines from "@/components/MyMaterials/MyDisciplines";

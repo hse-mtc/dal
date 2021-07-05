@@ -1,7 +1,9 @@
+import { AppModule } from "@/store";
+
 export default {
   computed: {
     device() {
-      return this.$store.state.app.device;
+      return AppModule.device;
     },
   },
   mounted() {

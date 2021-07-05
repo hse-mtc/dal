@@ -48,8 +48,8 @@ import {
   getTopics,
   changeTopicOrder,
 } from "@/api/topic";
-import { mapState } from "vuex";
 import Draggable from "vuedraggable";
+import { AppModule } from "@/store";
 import SubjectTopic from "./SubjectTopic.vue";
 
 export default {
@@ -69,9 +69,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
+    userId() { return AppModule.userId; },
     dragOptions() {
       return {
         animation: 200,

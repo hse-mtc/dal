@@ -56,6 +56,7 @@
 <script>
 import { changePassword } from "@/api/user";
 import jwtDecode from "jwt-decode";
+import { UserModule } from "@/store";
 
 export default {
   name: "ChangePassword",
@@ -102,7 +103,7 @@ export default {
       this.$router.push({ path: "/" });
       return;
     }
-    this.$store.dispatch("user/setToken", token);
+    UserModule.setToken(token);
   },
   methods: {
     showPwd() {
@@ -123,8 +124,7 @@ export default {
           this.loading = true;
           try {
             await changePassword({ password: this.changePasswordForm.password });
-            this.$store
-              .dispatch("user/resetToken")
+            UserModule.resetToken()
               .then(() => {
                 this.$router.push({ path: "/login" });
                 this.loading = false;

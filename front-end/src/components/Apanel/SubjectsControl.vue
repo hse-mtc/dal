@@ -93,24 +93,18 @@
 
 <script>
 import { Component } from "vue-property-decorator";
-import { mapState } from "vuex";
 import { Message } from "element-ui";
 
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
 import { SIZES } from "@/utils/appConsts";
-import { SubjectsModule } from "@/store";
+import { AppModule, SubjectsModule } from "@/store";
 
 @Component({
   name: "SubjectsControl",
   components: {
     CustomText,
     ModalWindow,
-  },
-  computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
   },
 })
 class SubjectsControl {
@@ -128,6 +122,7 @@ class SubjectsControl {
   }
 
   get subjects() { return SubjectsModule.subjects; }
+  get userId() { return AppModule.userId; }
 
   submitForm(name) {
     this.$refs[name].validate(async valid => {

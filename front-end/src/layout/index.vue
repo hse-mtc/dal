@@ -16,9 +16,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
-import { AppModule, SettingsModule } from "@/store";
+import { AppModule, SettingsModule, UserModule } from "@/store";
 import { Navbar, Sidebar, AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 
@@ -50,12 +48,9 @@ export default {
     },
   },
   mounted() {
-    this.getUser();
+    UserModule.getUser();
   },
   methods: {
-    ...mapActions({
-      getUser: "user/getUser",
-    }),
     handleClickOutside() {
       AppModule.closeSideBar({ withoutAnimation: false });
     },
