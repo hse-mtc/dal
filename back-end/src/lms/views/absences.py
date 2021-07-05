@@ -7,11 +7,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-)
-
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -87,8 +82,7 @@ class AbsenceJournalView(GenericAPIView):
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
         query_params = AbsenceJournalQuerySerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         # final json
         data = {}
@@ -127,4 +121,4 @@ class AbsenceJournalView(GenericAPIView):
             },
             many=True).data
 
-        return Response(data, status=HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)

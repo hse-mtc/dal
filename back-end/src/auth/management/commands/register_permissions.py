@@ -41,12 +41,7 @@ class Command(BaseCommand):
                 })
 
         for val in permissions:
-            Permission.objects.get_or_create(
-                viewset=val["viewset"],
-                method=val["method"],
-                scope=val["scope"],
-                name=val["name"],
-            )
+            Permission.objects.get_or_create(**val)
 
     def handle(self, *args, **options):
         # Info about permissions that must be saved in db could

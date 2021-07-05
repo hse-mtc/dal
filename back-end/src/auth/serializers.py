@@ -47,7 +47,7 @@ class PermissionRequestSerializer(serializers.ModelSerializer):
                                                method=method,
                                                scope=scope)
 
-        if permission.count() == 0:
+        if not permission.exists():
             raise ValidationError(
                 f"Permission \"{attrs['codename']}\" does not exist")
 

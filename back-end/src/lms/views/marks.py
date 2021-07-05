@@ -7,11 +7,6 @@ from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-)
-
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
@@ -80,7 +75,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=W0221
     def update(self, request, pk=None, *args, **kwargs):
         qs = self.get_queryset()
-        if qs.count() == 0:
+        if not qs.exists():
             return Response(
                 {
                     'detail':
@@ -96,7 +91,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     def partial_update(self, request, pk=None, *args, **kwargs):
         tmp = request.data['mark']
         qs = self.get_queryset()
-        if qs.count() == 0:
+        if not qs.exists():
             return Response(
                 {
                     'detail':
@@ -112,7 +107,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=W0221
     def destroy(self, request, pk=None, *args, **kwargs):
         qs = self.get_queryset()
-        if qs.count() == 0:
+        if not qs.exists():
             return Response(
                 {
                     'detail':
@@ -195,8 +190,7 @@ class MarkJournalView(GenericAPIView):
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
         query_params = MarkJournalQuerySerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         # final json
         data = {}
@@ -247,4 +241,4 @@ class MarkJournalView(GenericAPIView):
                                                  },
                                                  many=True).data
 
-        return Response(data, status=HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
