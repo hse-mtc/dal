@@ -3,7 +3,9 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "experimentalDecorators": true,
+    "importHelpers": true
   },
   "exclude": ["node_modules", "dist"]
 }
