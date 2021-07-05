@@ -17,9 +17,11 @@ const localStorageService = LocalStorageService.getService();
 
 @Module({ store, name: "user", namespaced: true })
 class User extends VuexModule {
-  token = getToken()
-  email = ""
-  campuses = []
+  token = getToken();
+  email = "";
+  campuses = [];
+  personType = "";
+  personId = 0;
 
   @Mutation
   SET_TOKEN(token) {
@@ -34,6 +36,16 @@ class User extends VuexModule {
   @Mutation
   SET_CAMPUSES(campuses) {
     this.campuses = campuses;
+  }
+
+  @Mutation
+  SET_PERSON_TYPE(type) {
+    this.personType = type;
+  }
+
+  @Mutation
+  SET_PERSON_ID(id) {
+    this.personId = id;
   }
 
   @Action
@@ -54,9 +66,14 @@ class User extends VuexModule {
       throw new Error("Verification failed, please Login again.");
     }
 
-    const { email, campuses } = data;
+    const {
+      // eslint-disable-next-line camelcase
+      email, campuses, person_type, person_id,
+    } = data;
     this.SET_EMAIL(email);
     this.SET_CAMPUSES(campuses);
+    this.SET_PERSON_TYPE(person_type);
+    this.SET_PERSON_ID(person_id);
   }
 
   @Action

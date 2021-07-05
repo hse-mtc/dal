@@ -75,7 +75,7 @@ export default {
         this.loading = true;
         this.performance = (await findStudentPerformance(this.id)).data;
       } catch (err) {
-        getError("информации об успеваемости студента", err);
+        getError("информации об успеваемости студента", err.response.status);
       } finally {
         this.loading = false;
       }

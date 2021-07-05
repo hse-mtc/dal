@@ -3,193 +3,228 @@
     v-loading="loading"
     :offset="2"
     :span="20"
-    class="teacher"
+    class="teacher-page"
   >
-    <el-row class="pageTitle">
-      <el-col>
-        <div v-if="$route.params.teacherId" class="d-flex align-items-center">
-          <img
-            src="@/assets/scienceWorks/previous.svg"
-            style="position: absolute; left: -40px; cursor: pointer"
-            height="22px"
-            alt="назад"
-            @click="backToPersonnel"
-          >
-          {{ fullname }}
-        </div>
-      </el-col>
-    </el-row>
-    <el-form
-      ref="form"
-      :model="form"
-      :rules="rules"
-      label-width="150px"
-      :label-position="$route.params.teacherId ? 'left' : 'right'"
-      class="form"
-    >
-      <el-form-item label="Фото">
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
+    <div class="page-title">
+      <div v-if="$route.params.teacherId" class="d-flex align-items-center">
+        <img
+          src="@/assets/scienceWorks/previous.svg"
+          style="position: absolute; left: -40px; cursor: pointer"
+          height="22px"
+          alt="назад"
+          @click="backToPersonnel"
         >
-          <img v-if="form.photo" :src="form.photo" class="avatar">
-          <i v-else class="el-icon-picture-outline avatar-uploader-icon" />
-        </el-upload>
-      </el-form-item>
-
-      <el-form-item label="Фамилия" prop="surname">
-        <el-input
-          v-model="form.surname"
-          clearable
-          placeholder="Введите фамилию"
-        />
-      </el-form-item>
-
-      <el-form-item label="Имя" prop="name">
-        <el-input v-model="form.name" clearable placeholder="Введите имя" />
-      </el-form-item>
-
-      <el-form-item label="Отчество" prop="patronymic">
-        <el-input
-          v-model="form.patronymic"
-          clearable
-          placeholder="Введите отчество"
-        />
-      </el-form-item>
-
-      <el-form-item label="Звание" prop="rank">
-        <el-select
-          v-model="form.rank"
-          value-key="rank"
-          placeholder="Выберите звание"
-          style="display: block"
-        >
-          <el-option
-            v-for="item in ranks"
-            :key="item.rank"
-            :label="item.rank"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="Должность" prop="teacher_post">
-        <el-select
-          v-model="form.teacher_post"
-          value-key="teacher_post"
-          placeholder="Выберите должность"
-          style="display: block"
-        >
-          <!-- eslint-disable vue/camelcase -->
-          <el-option
-            v-for="item in teacher_posts"
-            :key="item.teacher_post"
-            :label="item.teacher_post"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="Цикл" prop="milfaculty">
-        <el-select
-          v-model="form.milfaculty"
-          value-key="milfaculty"
-          placeholder="Выберите цикл"
-          style="display: block"
-        >
-          <el-option
-            v-for="item in milfaculties"
-            :key="item.milfaculty"
-            :label="item.milfaculty"
-            :value="item"
-          />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item
-        v-if="form.milfaculty"
-        label="Прикрепленный взвод"
-        prop="milgroup"
-      >
-        <el-select
-          v-model="form.milgroup"
-          value-key="milgroup"
-          placeholder="Выберите прикрепленный взвод"
-          style="display: block"
-        >
-          <el-option
-            v-for="item in milgroups"
-            :key="item.milgroup"
-            :label="item.milgroup"
-            :value="item"
-          >
-            <span style="float: left"> {{ item.milgroup }} </span>
-            <span style="float: right; color: #8492a6; font-size: 13px">
-              {{ item.milfaculty }}
-            </span>
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">
-          Сохранить
+        {{ isProfile ? "Мой профиль" : "Преподаватель" }}
+      </div>
+      <div v-if="isProfile">
+        <el-button type="primary">
+          Сменить пароль
         </el-button>
-      </el-form-item>
-    </el-form>
+      </div>
+    </div>
+    <div class="row">
+      <ExpandBox title="Основное" non-expandable>
+        <div class="teacher-info">
+          <el-upload
+            v-loading="loading"
+            class="avatar-uploader"
+            action="/api/lms/students/"
+            :show-file-list="false"
+            :before-upload="beforeAvatarUpload"
+          >
+            <img
+              v-if="displayInfo.photo"
+              :src="displayInfo.photo.image"
+              class="avatar"
+            >
+            <i v-else class="el-icon-user avatar-uploader-icon" />
+          </el-upload>
+          <el-form
+            ref="form"
+            class="form"
+            :model="modifyInfo"
+            :rules="rules"
+            label-width="150px"
+            label-position="right"
+            size="mini"
+            :disabled="loading"
+          >
+            <el-form-item class="actions">
+              <transition name="el-fade-in" mode="out-in">
+                <div v-if="modify">
+                  <el-button type="primary" plain @click="save">
+                    Сохранить
+                  </el-button>
+                  <el-button type="warning" plain @click="modify = false">
+                    Отмена
+                  </el-button>
+                </div>
+                <template v-else>
+                  <el-button
+                    type="info"
+                    plain
+                    icon="el-icon-edit"
+                    @click="startModify"
+                  >
+                    Редактировать
+                  </el-button>
+                </template>
+              </transition>
+            </el-form-item>
+            <el-form-item label="ФИО:">
+              <transition name="el-fade-in" mode="out-in">
+                <el-input v-if="modify" v-model="modifyInfo.fullname" />
+                <span v-else class="field-value">
+                  {{ displayInfo.fullname }}
+                </span>
+              </transition>
+            </el-form-item>
+            <el-form-item label="Дата рождения:">
+              <transition name="el-fade-in" mode="out-in">
+                <el-date-picker
+                  v-if="modify"
+                  v-model="modifyInfo.birth_info.date"
+                  type="date"
+                  style="width: 100%;"
+                  :picker-options="{
+                    disabledDate(time) {
+                      return time.getTime() > Date.now();
+                    },
+                  }"
+                  format="dd.MM.yyyy"
+                  value-format="yyyy-MM-dd"
+                />
+                <span v-else class="field-value">
+                  {{
+                    displayInfo.birth_info
+                      ? formatDate(displayInfo.birth_info.date)
+                      : "---"
+                  }}
+                </span>
+              </transition>
+            </el-form-item>
+            <el-form-item label="Звание" prop="rank">
+              <transition name="el-fade-in" mode="out-in">
+                <el-select
+                  v-if="modify"
+                  v-model="modifyInfo.rank"
+                  value-key="rank"
+                  style="display: block"
+                >
+                  <el-option
+                    v-for="item in ranks"
+                    :key="item.rank"
+                    :label="item.rank"
+                    :value="item"
+                  />
+                </el-select>
+                <span v-else class="field-value">
+                  {{ displayInfo.rank }}
+                </span>
+              </transition>
+            </el-form-item>
+
+            <el-form-item label="Должность" prop="teacher_post">
+              <transition name="el-fade-in" mode="out-in">
+                <el-select
+                  v-if="modify"
+                  v-model="modifyInfo.teacher_post"
+                  value-key="teacher_post"
+                  style="display: block"
+                >
+                  <!-- eslint-disable vue/camelcase -->
+                  <el-option
+                    v-for="item in teacherPosts"
+                    :key="item.teacher_post"
+                    :label="item.teacher_post"
+                    :value="item"
+                  />
+                </el-select>
+                <span v-else class="field-value">
+                  {{ displayInfo.teacher_post }}
+                </span>
+              </transition>
+            </el-form-item>
+
+            <el-form-item label="Цикл" prop="milfaculty">
+              <transition name="el-fade-in" mode="out-in">
+                <el-select
+                  v-if="modify"
+                  v-model="modifyInfo.milfaculty"
+                  value-key="milfaculty"
+                  style="display: block"
+                >
+                  <el-option
+                    v-for="item in milfaculties"
+                    :key="item.milfaculty"
+                    :label="item.milfaculty"
+                    :value="item"
+                  />
+                </el-select>
+                <span v-else class="field-value">
+                  {{ displayInfo.milfaculty }}
+                </span>
+              </transition>
+            </el-form-item>
+
+            <el-form-item label="Прикрепленный взвод" prop="milgroup">
+              <transition name="el-fade-in" mode="out-in">
+                <el-select
+                  v-if="modify"
+                  v-model="modifyInfo.milgroup.milgroup"
+                  value-key="milgroup"
+                  style="display: block"
+                >
+                  <el-option
+                    v-for="item in milgroups"
+                    :key="item.milgroup"
+                    :label="item.milgroup"
+                    :value="item.milgroup"
+                  >
+                    <span style="float: left">{{ item.milgroup }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">
+                      {{ item.milfaculty }}
+                    </span>
+                  </el-option>
+                </el-select>
+                <span v-else class="field-value">
+                  {{
+                    displayInfo.milgroup ? displayInfo.milgroup.milgroup : "---"
+                  }}
+                  <sub>
+                    {{
+                      displayInfo.milgroup
+                        ? displayInfo.milgroup.milfaculty
+                        : ""
+                    }}
+                  </sub>
+                </span>
+              </transition>
+            </el-form-item>
+          </el-form>
+        </div>
+      </ExpandBox>
+    </div>
   </el-col>
 </template>
 
 <script>
 import { patchTeacher, findTeacher } from "@/api/teachers";
 import { patchError, patchSuccess, getError } from "@/utils/message";
-import {
-  getMilFaculties,
-  getMilGroups,
-  getTeacherPosts,
-  getRanks,
-} from "@/api/reference-book";
+import { mapState, mapActions } from "vuex";
+import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
+import moment from "moment";
 
 export default {
   name: "Teacher",
+  components: { ExpandBox },
   data() {
     return {
       loading: false,
-      form: {
-        id: 0,
-        milgroup: null,
-        surname: "",
-        name: "",
-        patronymic: "",
-        photo: null,
-        rank: "",
-        teacher_post: "",
-        milfaculty: "",
-      },
+      modify: false,
+      displayInfo: {},
+      modifyInfo: {},
       rules: {
-        surname: [
-          {
-            required: true,
-            message: "Пожалуйста, введите фамилию",
-            trigger: "blur",
-          },
-        ],
-        name: [
-          {
-            required: true,
-            message: "Пожалуйста, введите имя",
-            trigger: "blur",
-          },
-        ],
-        rank: [
-          {
-            required: true,
-            message: "Пожалуйста, выберите звание",
-            trigger: "change",
-          },
-        ],
         teacher_post: [
           {
             required: true,
@@ -205,41 +240,97 @@ export default {
           },
         ],
       },
-      milgroups: [],
-      milfaculties: [],
-      ranks: [],
-      teacher_posts: [],
-      statuses: ["Обучается", "Отчислен", "Завершил"],
     };
   },
   computed: {
-    fullname() {
-      return this.form.fullname;
+    ...mapState("user", ["personType", "personId"]),
+    ...mapState("reference", [
+      "milgroups",
+      "milfaculties",
+      "ranks",
+      "teacherPosts",
+    ]),
+    id() {
+      return this.$route.params.teacherId;
+    },
+    isProfile() {
+      return (
+        this.personType === "teacher" && this.personId === parseInt(this.id, 10)
+      );
     },
   },
   async created() {
-    await this.fetchData();
+    await this.fetchMilgroups();
+    await this.fetchMilfaculties();
+    await this.fetchTeacherPosts();
+    await this.fetchRanks();
+    await this.fetchInfo();
   },
   methods: {
-    async fetchData() {
-      this.milgroups = (await getMilGroups()).data;
-      this.milfaculties = (await getMilFaculties()).data;
-      this.ranks = (await getRanks()).data;
-      this.teacher_posts = (await getTeacherPosts()).data;
+    ...mapActions("reference", [
+      "fetchMilgroups",
+      "fetchMilfaculties",
+      "fetchTeacherPosts",
+      "fetchRanks",
+    ]),
+    formatDate: date => moment(date).format("DD.MM.YYYY"),
+    async fetchInfo() {
       const id = this.$route.params.teacherId;
       if (id) {
         try {
           this.loading = true;
-          this.form = (await findTeacher(id)).data;
-        } catch {
-          getError("преподавтеля");
+          this.displayInfo = (await findTeacher(id)).data;
+        } catch (err) {
+          getError("преподавателя", err.response.status);
         } finally {
           this.loading = false;
         }
       }
     },
-    handleAvatarSuccess(res, file) {
-      this.form.foto = URL.createObjectURL(file.raw);
+    startModify() {
+      this.modify = true;
+      this.modifyInfo = { ...this.displayInfo };
+      if (!this.modifyInfo.birth_info) {
+        this.$set(this.modifyInfo, "birth_info", { date: "" });
+      }
+      if (!this.modifyInfo.milgroup) {
+        this.$set(this.modifyInfo, "milgroup", {});
+      }
+      if (!this.modifyInfo.contact_info) {
+        this.$set(this.modifyInfo, "contact_info", {});
+      }
+    },
+    async save() {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          try {
+            this.loading = true;
+            const [
+              surname,
+              name,
+              ...patronymicArray
+            ] = this.modifyInfo.fullname.split(" ");
+            const patronymic = patronymicArray.join(" ");
+            const requestBody = {
+              ...this.modifyInfo,
+              milgroup: this.modifyInfo.milgroup.milgroup,
+              teacher_post: this.modifyInfo.teacher_post.id,
+              rank: this.modifyInfo.rank.id,
+              surname,
+              name,
+              patronymic,
+              photo: undefined,
+            };
+            await patchTeacher(requestBody);
+            this.displayInfo = this.modifyInfo;
+            this.modify = false;
+          } catch (err) {
+            patchError("информации о преподавателе", err.response.status);
+          } finally {
+            this.loading = false;
+          }
+        }
+      });
     },
     beforeAvatarUpload(file) {
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
@@ -247,29 +338,32 @@ export default {
 
       if (!isValidType) {
         this.$message.error("Изображение должно иметь формат jpeg или png.");
+        return false;
       }
       if (!isLt2M) {
         this.$message.error("Размер изображения не должен превышать 2 МБ.");
+        return false;
       }
-      return isValidType && isLt2M;
-    },
-    onSubmit() {
-      this.$refs.form.validate(async valid => {
-        if (valid) {
-          this.form.milgroup = this.form.milgroup
-            ? this.form.milgroup.milgroup
-            : null;
-          try {
-            await patchTeacher(this.form);
-            patchSuccess("преподавателя");
-          } catch (err) {
-            patchError("преподавателя", err.response.status);
-          }
+
+      const reader = new FileReader();
+      reader.onloadend = async() => {
+        try {
+          const base64 = reader.result;
+          this.loading = true;
+          await patchTeacher({ id: this.id, image: base64 });
+          await this.fetchInfo();
+        } catch (err) {
+          patchError("фотографии преподавателя", err.response.status);
+        } finally {
+          this.loading = false;
         }
-      });
+      };
+      reader.readAsDataURL(file);
+
+      return true;
     },
     backToPersonnel() {
-      this.$router.push({ path: "/personnel/" });
+      this.$router.push({ name: "Personnel" });
     },
   },
 };

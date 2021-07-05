@@ -107,7 +107,7 @@ export default {
           await getPunishment({ student: this.id, removed: true })
         ).data;
       } catch (err) {
-        getError("информации о дисциплине студента", err);
+        getError("информации о дисциплине студента", err.response.status);
       } finally {
         this.loading = false;
       }

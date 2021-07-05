@@ -1,5 +1,5 @@
 <template>
-  <ExpandBox title="О студенте" non-expandable>
+  <ExpandBox title="Основное" non-expandable>
     <div class="general-info">
       <el-upload
         v-loading="loading"
@@ -214,10 +214,10 @@ export default {
     studentStatuses() { return ReferenceModule.studentStatuses; },
   },
   async created() {
-    await this.fetchInfo();
     await ReferenceModule.fetchMilgroups();
     await ReferenceModule.fetchStudentPosts();
     await ReferenceModule.fetchStudentStatuses();
+    await this.fetchInfo();
   },
   methods: {
     formatDate: date => moment(date).format("DD.MM.YYYY"),
@@ -226,7 +226,7 @@ export default {
         this.loading = true;
         this.displayInfo = (await findStudentBasic(this.id)).data;
       } catch (err) {
-        getError("информации о студенте", err);
+        getError("информации о студенте", err.response.status);
       } finally {
         this.loading = false;
       }
@@ -265,8 +265,8 @@ export default {
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;
-      } catch {
-        patchError("информации о студенте");
+      } catch (err) {
+        patchError("информации о студенте", err.response.status);
       } finally {
         this.loading = false;
       }
@@ -291,8 +291,8 @@ export default {
           this.loading = true;
           await patchStudent({ id: this.id, image: base64 });
           await this.fetchInfo();
-        } catch {
-          patchError("фотографии студента");
+        } catch (err) {
+          patchError("фотографии студента", err.response.status);
         } finally {
           this.loading = false;
         }

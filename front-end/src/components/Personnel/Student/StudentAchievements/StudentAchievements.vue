@@ -219,7 +219,7 @@ export default {
           await findStudentSkills(this.id)
         ).data.student_skills.map(x => x.id);
       } catch (err) {
-        getError("информации о достижениях студента", err);
+        getError("информации о достижениях студента", err.response.status);
       } finally {
         this.loading = false;
       }
@@ -264,8 +264,8 @@ export default {
         await postAchievement(this.editAchievement);
         this.dialogVisible = false;
         await this.fetchInfo();
-      } catch {
-        postError("достижения студента");
+      } catch (err) {
+        postError("достижения студента", err.response.status);
       } finally {
         this.loading = false;
       }
@@ -275,8 +275,8 @@ export default {
         this.loading = true;
         await deleteAchievement(id);
         await this.fetchInfo();
-      } catch {
-        deleteError("достижения студента");
+      } catch (err) {
+        deleteError("достижения студента", err.response.status);
       } finally {
         this.loading = false;
       }

@@ -300,7 +300,7 @@ export default {
         this.loading = true;
         this.displayInfo = (await findStudentExtra(this.id)).data;
       } catch (err) {
-        getError("дополнительной информации о студенте", err);
+        getError("дополнительной информации о студенте", err.response.status);
       } finally {
         this.loading = false;
       }
@@ -331,8 +331,8 @@ export default {
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;
-      } catch {
-        patchError("дополнительной информации о студенте");
+      } catch (err) {
+        patchError("дополнительной информации о студенте", err.response.status);
       } finally {
         this.loading = false;
       }

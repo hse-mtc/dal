@@ -175,8 +175,8 @@ export default {
         }
       });
     },
-    onEdit(teacherId) {
-      this.$router.push({ name: "Teacher", params: { teacherId } });
+    onEdit(teacher) {
+      this.$router.push({ name: "Teacher", params: { teacherId: teacher.id } });
     },
   },
 };
