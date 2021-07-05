@@ -1,5 +1,4 @@
 from rest_framework import generics
-from rest_framework import permissions
 from rest_framework import viewsets
 
 from rest_framework.filters import SearchFilter
@@ -14,7 +13,6 @@ from taggit.models import Tag
 
 from drf_spectacular.views import extend_schema
 
-from auth.models import Permission
 from auth.permissions import BasePermission
 
 from dms.models.papers import (

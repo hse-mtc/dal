@@ -10,7 +10,6 @@ from common.models.subjects import Subject
 from lms.serializers.subjects import LessonSubjectSerializer
 from lms.filters.subjects import LessonSubjectFilter
 
-from auth.models import Permission
 from auth.permissions import BasePermission
 
 

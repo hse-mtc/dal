@@ -1,6 +1,5 @@
 from rest_framework import generics
 from rest_framework import mixins
-from rest_framework import permissions
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.filters import SearchFilter
@@ -26,6 +25,7 @@ from dms.serializers.common import (
     PublisherSerializer,
     SubjectSerializer,
 )
+from dms.mixins import QuerySetScopingByUserMixin
 
 from common.models.subjects import Subject
 
@@ -65,8 +65,9 @@ class SubjectPermission(BasePermission):
         Permission.Scope.SELF,
     ]
 
+
 @extend_schema(tags=["subjects"])
-class SubjectViewSet(viewsets.ModelViewSet):
+class SubjectViewSet(QuerySetScopingByUserMixin, viewsets.ModelViewSet):
     queryset = Subject.objects.order_by("-title", "id")
 
     permission_classes = [SubjectPermission]
@@ -80,49 +81,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return SubjectRetrieveSerializer
         return SubjectSerializer
-    
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return self.queryset
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
-
-        if scope == Permission.Scope.ALL:
-            return self.queryset
-
-        if scope == Permission.Scope.SELF:
-            return self.queryset.filter(user=self.request.user)
-
-        return self.queryset.none()
-
-    def is_creation_allowed_by_scope(self, data):
-        if self.request.user.is_superuser:
-            return True
-
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
-
-        if scope == Permission.Scope.ALL:
-            return True
-
-        if scope == Permission.Scope.SELF:
-            return self.request.user.id == data["user"]
-        return False
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        # check scoping
-        if self.is_creation_allowed_by_scope(request.data):
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED,
-                            headers=headers)
-        return Response(
-            {"detail": "You do not have permission to perform this action."},
-            status=status.HTTP_403_FORBIDDEN)
 
 class OrderUpdateAPIView(generics.GenericAPIView, mixins.UpdateModelMixin):
     serializer_class = OrderUpdateSerializer
