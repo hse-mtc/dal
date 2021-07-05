@@ -28,3 +28,4 @@ export default store;
 export const AppModule = getModule(app, store);
 export const DocumentsModule = getModule(documents, store);
 export const ReferenceModule = getModule(reference, store);
+export const SettingsModule = getModule(settings, store);
