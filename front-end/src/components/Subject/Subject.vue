@@ -150,9 +150,8 @@ import {
   changeSectionOrder,
   getSubject,
 } from "@/api/subjects";
-import { mapState } from "vuex";
 import CustomText from "@/common/CustomText";
-import { SubjectsModule } from "@/store";
+import { AppModule, SubjectsModule } from "@/store";
 
 @Component({
   name: "Subject",
@@ -163,9 +162,7 @@ import { SubjectsModule } from "@/store";
     SubjectTopics,
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
+    userId() { return AppModule.userId; },
   },
 })
 class MyDisciplines {

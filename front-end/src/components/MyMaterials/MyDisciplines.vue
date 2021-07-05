@@ -35,11 +35,11 @@
 
 <script>
 import { Component } from "vue-property-decorator";
-import { mapState } from "vuex";
 import { getSubjects } from "@/api/subjects";
 import CustomText from "@/common/CustomText";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import SubjectCard from "@/components/SubjectCard/SubjectCard.vue";
+import { AppModule } from "@/store";
 
 @Component({
   name: "MyDisciplines",
@@ -49,9 +49,7 @@ import SubjectCard from "@/components/SubjectCard/SubjectCard.vue";
     SubjectCard,
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
+    userId() { return AppModule.userId; },
   },
 })
 class MyDisciplines {

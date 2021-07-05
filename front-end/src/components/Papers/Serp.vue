@@ -123,9 +123,8 @@ import { deleteDocument } from "@/api/delete";
 
 import { scrollMixin } from "@/mixins/scrollMixin";
 import DownloadFile from "@/common/DownloadFile/index.vue";
-import { mapState } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
-import { DocumentsModule } from "@/store";
+import { AppModule, DocumentsModule } from "@/store";
 import EventBus from "../EventBus";
 
 export default {
@@ -153,9 +152,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
+    userId() { return AppModule.userId; },
     authors() { return DocumentsModule.authors; },
     publishers() { return DocumentsModule.publishers; },
   },

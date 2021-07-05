@@ -116,7 +116,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import moment from "moment";
 import isEmpty from "lodash/isEmpty";
 
@@ -176,12 +175,12 @@ export default {
 
   computed: {
     authors() { return DocumentsModule.authors; },
+    categories() { return DocumentsModule.categories; },
     publishers() { return DocumentsModule.publishers; },
 
     today() {
       return moment().format(this.dateFormat.toUpperCase());
     },
-    ...mapGetters(["authors", "categories", "publishers"]),
   },
 
   methods: {

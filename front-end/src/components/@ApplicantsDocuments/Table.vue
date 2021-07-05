@@ -85,6 +85,7 @@
 <script>
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { SelectInput, SingleCheckbox, NumberInput } from "@/common/inputs";
+import { UserModule } from "@/store";
 
 const fields = {
   index: {
@@ -195,7 +196,7 @@ class ApplicantsDocuments extends Vue {
   // undefined, so as not to be reactive
   currentEditingValue = undefined
 
-  fields = this.$store.state.user.email.includes("study.office")
+  fields = UserModule.email.includes("study.office")
     ? fields
     : {
       ...fields,
