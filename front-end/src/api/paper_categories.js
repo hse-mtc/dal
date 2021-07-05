@@ -5,11 +5,10 @@ const {
   categories: { categories },
 } = DMS_URLS;
 
-export function getPaperCategories(params) {
+export function getPaperCategories() {
   return request({
     url: BASE_API_URL + categories,
     method: "get",
-    params,
   });
 }
 

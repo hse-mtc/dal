@@ -93,8 +93,8 @@ import CustomText from "@/common/CustomText";
 import DownloadFile from "@/common/DownloadFile/index.vue";
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { saveFavBook, unsaveFavBook } from "@/api/books";
-import { mapState } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
+import { DocumentsModule } from "@/store";
 
 export default {
   name: "Book",
@@ -114,9 +114,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      authors: state => state.documents.authors,
-    }),
+    authors() { return DocumentsModule.authors; },
   },
   methods: {
     getAuthor(id) {

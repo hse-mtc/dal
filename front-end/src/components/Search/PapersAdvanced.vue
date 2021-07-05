@@ -74,86 +74,52 @@
 </template>
 
 <script>
-import { getAuthors } from "@/api/authors";
-import { getPublishers } from "@/api/publishers";
+import { Component } from "vue-property-decorator";
 import moment from "moment";
-import { mapActions } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
 
-export default {
+@Component({
   name: "AdvancedPaperSearch",
-  components: {},
-  data() {
-    return {
-      authors: [],
-      author: null,
-      publishers: [],
-      publisher: null,
-      valueDate: "",
+})
+class AdvancedPaperSearch {
+  authors = []
+  author = null
+  publishers = []
+  publisher = null
+  valueDate = ""
+
+  surnameWithInitials = surnameWithInitials
+
+  advancedClick() {
+    const filters = document.querySelector(".filters");
+    const array = document.querySelector(".my-advanced-search-arrow");
+    if (filters.style.display === "none") {
+      filters.style.display = "block";
+      array.style.transform = "rotate(180deg)";
+    } else {
+      filters.style.display = "none";
+      array.style.transform = "rotate(0deg)";
+    }
+  }
+
+  updateQuery() {
+    const query = {
+      authors: this.author,
+      category: this.$route.query.category,
+      publishers: this.publisher,
+      search: this.$route.query.search,
     };
-  },
-  mounted() {
-    if (this.$store.getters.authors.length === 0) {
-      getAuthors()
-        .then(response => {
-          this.authors = response.data;
-          this.setAuthors(this.authors);
-        })
-        .catch(() => {
-          console.log("Данные по авторам не указаны");
-        });
-    } else {
-      this.authors = this.$store.getters.authors;
+
+    if (this.valueDate) {
+      query.start_date = moment(this.valueDate[0]).format("YYYY-MM-DD");
+      query.end_date = moment(this.valueDate[1]).format("YYYY-MM-DD");
     }
 
-    if (this.$store.getters.publishers.length === 0) {
-      getPublishers()
-        .then(response => {
-          this.publishers = response.data;
-          this.setPublishers(this.publishers);
-        })
-        .catch(() => {
-          console.log("Данные по размещениям не указаны");
-        });
-    } else {
-      this.publishers = this.$store.getters.publishers;
-    }
-  },
-  methods: {
-    surnameWithInitials,
-    ...mapActions({
-      setAuthors: "documents/setAuthors",
-      setPublishers: "documents/setPublishers",
-    }),
-    advancedClick() {
-      const filters = document.querySelector(".filters");
-      const array = document.querySelector(".my-advanced-search-arrow");
-      if (filters.style.display === "none") {
-        filters.style.display = "block";
-        array.style.transform = "rotate(180deg)";
-      } else {
-        filters.style.display = "none";
-        array.style.transform = "rotate(0deg)";
-      }
-    },
+    this.$router.push({ query });
+  }
+}
 
-    updateQuery() {
-      const query = {
-        authors: this.author,
-        category: this.$route.query.category,
-        publishers: this.publisher,
-        search: this.$route.query.search,
-      };
-
-      if (this.valueDate) {
-        query.start_date = moment(this.valueDate[0]).format("YYYY-MM-DD");
-        query.end_date = moment(this.valueDate[1]).format("YYYY-MM-DD");
-      }
-
-      this.$router.push({ query });
-    },
-  },
-};
+export default AdvancedPaperSearch;
 </script>
 
 <style scoped lang="scss">
