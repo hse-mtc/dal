@@ -140,7 +140,7 @@ class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
 
     def allow_scope_milfaculty_on_create(self, data, user_type, user):
         student = Student.objects.filter(id=data["student"])
-        if student.count() == 0:
+        if not student.exists():
             return False
         if user_type == "student":
             return user.milgroup.milfaculty.milfaculty == student[
@@ -155,7 +155,7 @@ class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
 
     def allow_scope_milgroup_on_create(self, data, user_type, user):
         student = Student.objects.filter(id=data["student"])
-        if student.count() == 0:
+        if not student.exists():
             return False
         if user_type in ("student", "teacher"):
             return user.milgroup.milgroup == student[0].milgroup.milgroup

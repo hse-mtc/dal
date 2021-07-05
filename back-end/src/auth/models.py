@@ -154,9 +154,7 @@ class User(AbstractUser):
 
     def get_perm_scope(self, viewset, method):
         perms = self._filter_permissions(viewset, method)
-        if len(perms) > 0:
-            return min(perms, key=lambda perm: perm["scope"])["scope"]
-        return None
+        return min([p["scope"] for p in perms]) if perms else None
 
     def __str__(self):
         return self.email

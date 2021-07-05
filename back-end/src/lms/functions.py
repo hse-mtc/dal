@@ -19,15 +19,13 @@ def get_user_from_request(request):
     :return: user_type (str), user (User object)
     """
     # check if user is a teacher or a student
-    user = Teacher.objects.filter(user=request.user)
-    user_type = 'teacher'
-    if user.count() == 0:
-        # check if user is a student
-        user = Student.objects.filter(user=request.user)
-        user_type = 'student'
-        if user.count() == 0:
-            return '', None
-    return user_type, user.first()
+    candidates = [Teacher, Student]
+
+    for candidate in candidates:
+        if (user := candidate.objects.filter(user=request.user)).exists():
+            return candidate.__name__.lower(), user.first()
+
+    return '', None
 
 
 # pylint: disable=too-many-return-statements

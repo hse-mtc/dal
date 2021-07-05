@@ -104,7 +104,7 @@ def test_delete_category_removes_category_from_db(client, category_data):
     response = client.delete(f"/api/dms/categories/{id_}/")
     assert response.status_code == 204
 
-    assert Category.objects.count() == 0
+    assert not Category.objects.exists()
 
 
 @pytest.mark.django_db

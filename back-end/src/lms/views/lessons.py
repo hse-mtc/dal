@@ -6,11 +6,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-)
-
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema, OpenApiParameter
@@ -108,8 +103,7 @@ class LessonJournalView(GenericAPIView):
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
         query_params = LessonJournalQuerySerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         # final json
         data = {}
@@ -155,4 +149,4 @@ class LessonJournalView(GenericAPIView):
 
         data['ordinals'] = ordinals
 
-        return Response(data, status=HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)

@@ -61,7 +61,7 @@ class AchievementViewSet(QuerySetScopingMixin, ModelViewSet):
         else:
             return False
         student = Student.objects.filter(id=data['student'])
-        if student.count() == 0:
+        if not student.exists():
             return False
         return milfaculty == student[0].milgroup.milfaculty.milfaculty
 
@@ -76,7 +76,7 @@ class AchievementViewSet(QuerySetScopingMixin, ModelViewSet):
             milgroup = user.milgroup.milgroup
 
             student = Student.objects.filter(id=data['student'])
-            if student.count() == 0:
+            if not student.exists():
                 return False
             return milgroup == student[0].milgroup.milgroup
         return False

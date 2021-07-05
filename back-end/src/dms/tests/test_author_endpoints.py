@@ -115,4 +115,4 @@ def test_delete_author_removes_author_from_db(client, author_data):
     response = client.delete(f"/api/dms/authors/{id_}/")
     assert response.status_code == 204
 
-    assert Author.objects.count() == 0
+    assert not Author.objects.exists()

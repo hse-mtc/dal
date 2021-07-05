@@ -10,11 +10,11 @@ from auth.views import (
     ChangePasswordAPIView,
 )
 
-routers = DefaultRouter()
+router = DefaultRouter()
 # Using routers.register does not register DELETE and POST
 # actions properly, so I register them by hand
-routers.register("user-control", UserControlViewSet)
-routers.register("group", GroupViewSet)
+router.register("user-control", UserControlViewSet)
+router.register("group", GroupViewSet)
 
 urlpatterns = [
     path("user-control/<int:pk>/transfer-permissions/",
@@ -43,7 +43,7 @@ urlpatterns = [
             "post": "add_permissions",
             "delete": "delete_permissions"
         })),
-    path("", include(routers.urls)),
+    path("", include(router.urls)),
     path("user/", UserRetrieveAPIView.as_view()),
     path("tokens/obtain/", TokenObtainPairExtendedView.as_view()),
     path("tokens/refresh/", TokenRefreshExtendedView.as_view()),

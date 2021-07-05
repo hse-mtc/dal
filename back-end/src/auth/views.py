@@ -64,8 +64,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
     def add_permissions(self, request: Request, pk=None) -> Response:
         """Add user permissions."""
         data = PermissionRequestSerializer(data=request.data)
-        if not data.is_valid():
-            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+        data.is_valid(raise_exception=True)
 
         viewset, method, scope = data.data["codename"].split(".")
         scope = int(getattr(Permission.Scope, scope.upper()))
@@ -89,9 +88,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
     def delete_permissions(self, request: Request, pk=None) -> Response:
         """Delete user permissions."""
         query_params = PermissionRequestSerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         viewset, method, scope = query_params.data["codename"].split(".")
         scope = int(getattr(Permission.Scope, scope.upper()))
@@ -100,7 +97,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         permission = user.permissions.filter(viewset=viewset,
                                              method=method,
                                              scope=scope)
-        if permission.count() == 0:
+        if not permission.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={
@@ -124,7 +121,9 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
             # if such group exists, it violates the unique constraint
             # and, thus, is invalid. That's what we need to check.
             # If data is valid, such group does not exist -> bad request
-            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": f"Group \"{data['name']}\" does not exist."},
+                status=status.HTTP_400_BAD_REQUEST)
 
         groupname = data.data["name"]
         user = self.get_object()
@@ -148,7 +147,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         user = self.get_object()
 
         group = user.groups.filter(name=groupname)
-        if group.count() == 0:
+        if not group.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": "There is no such group in user groups"})
@@ -172,7 +171,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
         user = self.get_object()
 
         group = user.groups.filter(name=groupname)
-        if group.count() == 0:
+        if not group.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={"detail": "There is no such group in user groups"})
@@ -210,8 +209,8 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
     def create(self, request: Request) -> Response:
         # validate group name
         data = GroupModifySerializer(data=request.data)
-        if not data.is_valid():
-            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+        data.is_valid(raise_exception=True)
+
         # validate permissions
         perms = [{
             "codename": codename
@@ -245,8 +244,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
     def add_permissions(self, request: Request, pk=None) -> Response:
         """Add group permissions."""
         data = PermissionRequestSerializer(data=request.data)
-        if not data.is_valid():
-            return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+        data.is_valid(raise_exception=True)
 
         viewset, method, scope = data.data["codename"].split(".")
         scope = int(getattr(Permission.Scope, scope.upper()))
@@ -270,9 +268,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
     def delete_permissions(self, request: Request, pk=None) -> Response:
         """Delete group permissions."""
         query_params = PermissionRequestSerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         viewset, method, scope = query_params.data["codename"].split(".")
         scope = int(getattr(Permission.Scope, scope.upper()))
@@ -281,7 +277,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
         permission = group.permissions.filter(viewset=viewset,
                                               method=method,
                                               scope=scope)
-        if permission.count() == 0:
+        if not permission.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
                 data={
