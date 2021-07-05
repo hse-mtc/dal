@@ -20,7 +20,7 @@ import { mapActions } from "vuex";
 
 import { getSubjects } from "@/api/subjects";
 
-import { AppModule } from "@/store";
+import { AppModule, SettingsModule } from "@/store";
 import { Navbar, Sidebar, AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 
@@ -34,13 +34,13 @@ export default {
   mixins: [ResizeMixin],
   computed: {
     sidebar() {
-      return this.$store.state.app.sidebar;
+      return AppModule.sidebar;
     },
     device() {
-      return this.$store.state.app.device;
+      return AppModule.device;
     },
     fixedHeader() {
-      return this.$store.state.settings.fixedHeader;
+      return SettingsModule.fixedHeader;
     },
     classObj() {
       return {
