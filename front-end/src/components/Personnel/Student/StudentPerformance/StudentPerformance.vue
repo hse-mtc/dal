@@ -1,22 +1,31 @@
 <template>
   <ExpandBox title="Успеваемость" @toggled="toggled">
-    <el-table :data="performance" max-height="200" size="mini">
-      <el-table-column prop="discipline" label="Дисциплина" />
-      <el-table-column label="Средний балл">
-        <template #default="{ row }">
-          <el-tag :type="tagVariantByAverageMark(row.average_mark)">
-            {{ row.average_mark }}
+    <PrimeTable
+      :value="performance"
+      scrollable
+      scroll-height="200"
+      class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+    >
+      <PrimeColumn
+        column-key="discipline"
+        header="Дисциплина"
+        :field="(row) => row.discipline"
+      />
+      <PrimeColumn header="Средний балл" body-style="text-align: center;">
+        <template #body="{ data }">
+          <el-tag :type="tagVariantByAverageMark(data.average_mark)">
+            {{ data.average_mark }}
           </el-tag>
         </template>
-      </el-table-column>
-      <el-table-column label="Кол-во пропусков">
-        <template #default="{ row }">
-          <el-tag :type="tagVariantByAbsences(row.absences)">
-            {{ row.absences }}
+      </PrimeColumn>
+      <PrimeColumn header="Кол-во пропусков" body-style="text-align: center;">
+        <template #body="{ data }">
+          <el-tag :type="tagVariantByAbsences(data.absences)">
+            {{ data.absences }}
           </el-tag>
         </template>
-      </el-table-column>
-    </el-table>
+      </PrimeColumn>
+    </PrimeTable>
   </ExpandBox>
 </template>
 

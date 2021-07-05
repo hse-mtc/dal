@@ -72,7 +72,7 @@
               >
                 <div>
                   <span
-                      v-if="id === 'bin'"
+                    v-if="id === 'bin'"
                     style="cursor: pointer; color: #858587"
                     @click="selectCategory('bin')"
                   >

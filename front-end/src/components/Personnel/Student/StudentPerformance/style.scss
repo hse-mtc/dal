@@ -1,7 +1,7 @@
-/deep/ .el-table__body-wrapper {
+/deep/ .p-datatable-scrollable-body {
   &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 15px;
+    height: 15px;
   }
   &::-webkit-scrollbar-track {
     border-radius: 10px;

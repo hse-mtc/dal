@@ -71,8 +71,8 @@
             :key="d"
             :column-key="d"
             :header="formatDate(d)"
-            header-style="width: 100px"
-            body-style="width: 100px; height: 90px"
+            header-style="width: 100px; text-align: center;"
+            body-style="width: 100px; height: 90px; text-align: center;"
           >
             <template #body="{ data }">
               <div class="absence-journal-cell">
@@ -293,7 +293,9 @@ export default {
         milgroup: null,
         weekday: null,
         dateRange: [
-          moment().add(-3, "months").format("YYYY-MM-DD"),
+          moment()
+            .add(-3, "months")
+            .format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
         ],
       },
@@ -366,7 +368,9 @@ export default {
   methods: {
     async onWeekdayChanged() {
       this.loading = true;
-      this.filter.milgroup = this.milgroups.length ? this.milgroups[0].milgroup.toString() : "0";
+      this.filter.milgroup = this.milgroups.length
+        ? this.milgroups[0].milgroup.toString()
+        : "0";
       await this.onJournal();
     },
     changeAbsenceStatus(absence) {

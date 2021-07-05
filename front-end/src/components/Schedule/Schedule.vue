@@ -46,6 +46,8 @@
               field="ordinal"
               frozen
               column-key="ordinal"
+              header-style="width: 50px; text-align: center;"
+              body-style="width: 50px; text-align: center;"
             />
             <PrimeColumn
               v-for="d in schedule.dates"
@@ -53,6 +55,8 @@
               :column-key="d"
               :header="formatDate(d)"
               min-width="250"
+              header-style="text-align: center;"
+              body-style="text-align: center;"
             >
               <template #body="{ data }">
                 <div class="lesson-journal-cell">
@@ -74,13 +78,19 @@
                         icon="el-icon-delete"
                         type="danger"
                         circle
-                        @click="handleDelete(data.lessons.find((x) => x.date === d).id)"
+                        @click="
+                          handleDelete(
+                            data.lessons.find((x) => x.date === d).id,
+                          )
+                        "
                       />
                     </div>
                     <div slot="reference">
                       <div>
                         <svg-icon icon-class="notebook-outline" />
-                        {{ data.lessons.find((x) => x.date === d).subject.title }}
+                        {{
+                          data.lessons.find((x) => x.date === d).subject.title
+                        }}
                       </div>
 
                       <div>
@@ -89,10 +99,17 @@
                       </div>
 
                       <el-tag
-                        :type="tagByLessonType(data.lessons.find((x) => x.date === d).type)"
+                        :type="
+                          tagByLessonType(
+                            data.lessons.find((x) => x.date === d).type,
+                          )
+                        "
                         disable-transitions
                       >
-                        {{ data.lessons.find((x) => x.date === d).type | typeFilter }}
+                        {{
+                          data.lessons.find((x) => x.date === d).type
+                            | typeFilter
+                        }}
                       </el-tag>
                     </div>
                   </el-popover>
@@ -240,7 +257,9 @@ export default {
         mg: null,
         dateRange: [
           moment().format("YYYY-MM-DD"),
-          moment().add(1, "months").format("YYYY-MM-DD"),
+          moment()
+            .add(1, "months")
+            .format("YYYY-MM-DD"),
         ],
       },
       lessonTypes: [

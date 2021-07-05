@@ -53,28 +53,50 @@
             Добавить
           </el-button>
         </div>
-        <el-table :data="achievements" max-height="200" size="mini">
-          <el-table-column prop="date" label="Дата" :formatter="formatDate" />
-          <el-table-column label="Тип">
-            <template slot-scope="{ row }">
-              <el-tag :type="tagVariantByType(row.achievement_type)">
-                {{ row.achievement_type }}
+        <PrimeTable
+          :value="achievements"
+          scroll-height="200px"
+          scrollable
+          class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        >
+          <PrimeColumn
+            :field="dateField"
+            header="Дата"
+            column-key="date"
+            header-style="width: 100px"
+            body-style="width: 100px"
+          />
+          <PrimeColumn header="Тип" column-key="achievement_type">
+            <template #body="{ data }">
+              <el-tag :type="tagVariantByType(data.achievement_type)">
+                {{ data.achievement_type }}
               </el-tag>
             </template>
-          </el-table-column>
-          <el-table-column prop="text" label="Описание" show-overflow-tooltip />
-          <el-table-column width="40px">
-            <template slot-scope="scope">
+          </PrimeColumn>
+          <PrimeColumn
+            column-key="text"
+            header="Описание"
+            :field="(row) => row.text"
+          />
+          <PrimeColumn
+            column-key="buttons"
+            header-style="width: 50px;"
+            body-style="width: 50px;"
+          >
+            <template #body="{ data }">
               <el-button
                 size="mini"
                 icon="el-icon-delete"
                 type="danger"
                 circle
-                @click="handleDelete(scope.row.id)"
+                @click="handleDelete(data.id)"
               />
             </template>
-          </el-table-column>
-        </el-table>
+          </PrimeColumn>
+          <template #empty>
+            Нет данных.
+          </template>
+        </PrimeTable>
         <div class="separator" />
       </div>
     </div>
@@ -177,7 +199,7 @@ export default {
   },
   methods: {
     ...mapActions("reference", ["fetchSkills", "fetchAchievementTypes"]),
-    formatDate: row => (moment(row.date).isValid()
+    dateField: row => (moment(row.date).isValid()
       ? moment(row.date).format("DD.MM.YYYY")
       : "---"),
     tagVariantByType(type) {
