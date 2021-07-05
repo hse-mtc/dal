@@ -18,7 +18,7 @@ from rest_framework_simplejwt.views import (
 from drf_spectacular.views import extend_schema
 
 from auth.models import Permission, Group
-
+from auth.permissions import BasePermission
 from auth.serializers import (
     UserSerializer,
     UserDetailedSerializer,
@@ -31,12 +31,17 @@ from auth.serializers import (
 )
 
 
+class PermissionPermission(BasePermission):
+    permission_class = "permissions"
+    view_name_rus = "Права доступа и группы"
+
+
 @extend_schema(tags=["auth"])
 class UserRetrieveAPIView(RetrieveAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [PermissionPermission]
 
     def get_object(self):
         return self.request.user
@@ -47,7 +52,7 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserDetailedSerializer
 
-    permission_classes = []
+    permission_classes = [PermissionPermission]
 
     @extend_schema(request=PermissionRequestSerializer)
     @action(
@@ -199,7 +204,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
                    mixins.DestroyModelMixin, viewsets.GenericViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = []
+    permission_classes = [PermissionPermission]
 
     @extend_schema(request=GroupModifySerializer)
     def create(self, request: Request) -> Response:
@@ -290,7 +295,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
 @extend_schema(tags=["auth"])
 class ChangePasswordAPIView(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [PermissionPermission]
 
     def post(self, request: Request) -> Response:
         serializer = self.get_serializer(data=request.data)
