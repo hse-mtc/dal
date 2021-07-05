@@ -40,7 +40,7 @@ from auth.permissions import BasePermission
 
 
 class MarkPermission(BasePermission):
-    permission_class = 'mark'
+    permission_class = 'marks'
     view_name_rus = 'Оценки'
     scopes = [
         Permission.Scope.ALL,

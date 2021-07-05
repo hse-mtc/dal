@@ -46,7 +46,7 @@ from auth.permissions import (
 
 
 class ReferenceBookPermission(BasePermission):
-    permission_class = 'reference_book'
+    permission_class = 'reference-books'
     view_name_rus = 'Справочные данные'
 
 

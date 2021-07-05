@@ -17,7 +17,7 @@ from auth.permissions import BasePermission
 
 
 class PunishmentPermission(BasePermission):
-    permission_class = 'punishment'
+    permission_class = 'punishments'
     view_name_rus = 'Взыскания'
     scopes = [
         Permission.Scope.ALL,

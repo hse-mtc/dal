@@ -35,7 +35,7 @@ from auth.permissions import BasePermission
 
 
 class SectionPermission(BasePermission):
-    permission_class = "section"
+    permission_class = "sections"
     view_name_rus = "Разделы учебных дисциплин"
     scopes = [
         Permission.Scope.ALL,
@@ -44,12 +44,12 @@ class SectionPermission(BasePermission):
 
 
 class SectionOrderPermission(BasePermission):
-    permission_class = "section-order"
+    permission_class = "sections-order"
     view_name_rus = "Порядок разделов учебных дисциплин"
 
 
 class TopicPermission(BasePermission):
-    permission_class = "topic"
+    permission_class = "topics"
     view_name_rus = "Темы учебных дисциплин"
     scopes = [
         Permission.Scope.ALL,
@@ -58,12 +58,12 @@ class TopicPermission(BasePermission):
 
 
 class TopicOrderPermission(BasePermission):
-    permission_class = "topic-order"
+    permission_class = "topics-order"
     view_name_rus = "Порядок тем учебных дисциплин"
 
 
 class ClassMaterialPermission(BasePermission):
-    permission_class = "class-material"
+    permission_class = "class-materials"
     view_name_rus = "Учебно-методические материалы"
     scopes = [
         Permission.Scope.ALL,

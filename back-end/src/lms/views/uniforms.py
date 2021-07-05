@@ -20,7 +20,7 @@ from auth.permissions import BasePermission
 
 
 class UniformPermission(BasePermission):
-    permission_class = 'uniform'
+    permission_class = 'uniforms'
     view_name_rus = 'Форма одежды'
     scopes = [
         Permission.Scope.ALL,

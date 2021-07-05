@@ -35,7 +35,7 @@ from common.constants import MUTATE_ACTIONS
 
 
 class BookPermission(BasePermission):
-    permission_class = "book"
+    permission_class = "books"
     view_name_rus = "Книги"
     scopes = [
         Permission.Scope.ALL,
@@ -44,7 +44,7 @@ class BookPermission(BasePermission):
 
 
 class FavoriteBookPermission(BasePermission):
-    permission_class = "favorite-book"
+    permission_class = "favorite-books"
     view_name_rus = "Любимые книги"
     scopes = [
         Permission.Scope.SELF,

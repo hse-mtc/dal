@@ -32,7 +32,7 @@ from auth.permissions import BasePermission
 
 
 class LessonPermission(BasePermission):
-    permission_class = 'lesson'
+    permission_class = 'lessons'
     view_name_rus = 'Расписание занятий'
     scopes = [
         Permission.Scope.ALL,
