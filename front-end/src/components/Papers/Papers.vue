@@ -66,21 +66,6 @@
                 </div>
               </el-col>
 
-              <el-col
-                :span="12"
-                class="category-title"
-              >
-                <div>
-                  <span
-                    v-if="id === 'bin'"
-                    style="cursor: pointer; color: #858587"
-                    @click="selectCategory('bin')"
-                  >
-                    Корзина
-                  </span>
-                </div>
-              </el-col>
-
               <el-col :span="12" class="category-title" style="color: #0050b2">
                 <span
                   style="cursor: pointer"
@@ -212,7 +197,6 @@ export default {
       this.stopScrolling();
     },
 
-    // Any modal (paper or category)
     closeModal() {
       console.log("Close modal");
       this.paperAction = "";
