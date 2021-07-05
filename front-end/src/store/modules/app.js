@@ -1,59 +1,72 @@
+import {
+  VuexModule,
+  Module,
+  Mutation,
+  Action,
+} from "vuex-module-decorators";
 import Cookies from "js-cookie";
 
-const initState = {
-  sidebar: {
+import store from "@/store";
+
+@Module({ store, name: "app", namespaced: true })
+class App extends VuexModule {
+  sidebar = {
     opened: Cookies.get("sidebarStatus")
       ? !!+Cookies.get("sidebarStatus")
       : true,
     withoutAnimation: false,
-  },
-  device: "desktop",
-  userId: "",
-};
+  }
 
-const mutations = {
-  /* eslint-disable no-param-reassign */
-  TOGGLE_SIDEBAR: state => {
-    state.sidebar.opened = !state.sidebar.opened;
-    state.sidebar.withoutAnimation = false;
-    if (state.sidebar.opened) {
+  device= "desktop"
+  userId = ""
+
+  @Mutation
+  TOGGLE_SIDEBAR() {
+    this.sidebar.opened = !this.sidebar.opened;
+    this.sidebar.withoutAnimation = false;
+    if (this.sidebar.opened) {
       Cookies.set("sidebarStatus", 1);
     } else {
       Cookies.set("sidebarStatus", 0);
     }
-  },
-  CLOSE_SIDEBAR: (state, withoutAnimation) => {
+  }
+
+  @Mutation
+  CLOSE_SIDEBAR(withoutAnimation) {
     Cookies.set("sidebarStatus", 0);
-    state.sidebar.opened = false;
-    state.sidebar.withoutAnimation = withoutAnimation;
-  },
-  TOGGLE_DEVICE: (state, device) => {
-    state.device = device;
-  },
-  SET_USER_ID: (state, payload) => {
-    state.userId = payload;
-  },
-  /* eslint-enable no-param-reassign */
-};
+    this.sidebar.opened = false;
+    this.sidebar.withoutAnimation = withoutAnimation;
+  }
 
-const actions = {
-  setUserId({ commit }, userId) {
-    commit("SET_USER_ID", userId);
-  },
-  toggleSideBar({ commit }) {
-    commit("TOGGLE_SIDEBAR");
-  },
-  closeSideBar({ commit }, { withoutAnimation }) {
-    commit("CLOSE_SIDEBAR", withoutAnimation);
-  },
-  toggleDevice({ commit }, device) {
-    commit("TOGGLE_DEVICE", device);
-  },
-};
+  @Mutation
+  TOGGLE_DEVICE(device) {
+    this.device = device;
+  }
 
-export default {
-  namespaced: true,
-  state: initState,
-  mutations,
-  actions,
-};
+  @Mutation
+  SET_USER_ID(payload) {
+    this.userId = payload;
+  }
+
+  @Action({ commit: "SET_USER_ID" })
+  setUserId(userId) {
+    return userId;
+  }
+
+  @Action()
+  toggleSideBar() {
+    this.TOGGLE_SIDEBAR();
+  }
+
+  @Action({ commit: "CLOSE_SIDEBAR" })
+  closeSideBar({ withoutAnimation }) {
+    return withoutAnimation;
+  }
+
+  @Action({ commit: "TOGGLE_DEVICE" })
+  toggleDevice(device) {
+    return device;
+  }
+}
+
+export default App;

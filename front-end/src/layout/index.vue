@@ -18,10 +18,9 @@
 <script>
 import { mapActions } from "vuex";
 
-import { getAuthors } from "@/api/authors";
 import { getSubjects } from "@/api/subjects";
-import { getPublishers } from "@/api/publishers";
 
+import { AppModule } from "@/store";
 import { Navbar, Sidebar, AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 
@@ -53,13 +52,6 @@ export default {
     },
   },
   mounted() {
-    getAuthors()
-      .then(response => {
-        this.setAuthors(response.data);
-      })
-      .catch(() => {
-        console.log("Данные по авторам не указаны");
-      });
     getSubjects()
       .then(response => {
         this.setSubjects(response.data);
@@ -67,22 +59,16 @@ export default {
       .catch(() => {
         console.log("Данные по предметам не указаны");
       });
-    getPublishers()
-      .then(response => {
-        this.setPublishers(response.data);
-      })
-      .catch(() => {
-        console.log("Данные по издательствам не указаны");
-      });
+
+    this.getUser();
   },
   methods: {
     ...mapActions({
-      setAuthors: "documents/setAuthors",
       setSubjects: "subjects/setSubjects",
-      setPublishers: "documents/setPublishers",
+      getUser: "user/getUser",
     }),
     handleClickOutside() {
-      this.$store.dispatch("app/closeSideBar", { withoutAnimation: false });
+      AppModule.closeSideBar({ withoutAnimation: false });
     },
   },
 };

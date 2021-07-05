@@ -127,6 +127,7 @@ import { patchPaper, postPaper } from "@/api/papers";
 
 import PaperForm from "@/utils/PaperForm";
 import { surnameWithInitials } from "@/utils/person";
+import { DocumentsModule } from "@/store";
 
 export default {
   name: "UpsertPaperModal",
@@ -174,8 +175,9 @@ export default {
   },
 
   computed: {
-    authors: state => state.documents.authors,
-    publishers: state => state.documents.publishers,
+    authors() { return DocumentsModule.authors; },
+    publishers() { return DocumentsModule.publishers; },
+
     today() {
       return moment().format(this.dateFormat.toUpperCase());
     },

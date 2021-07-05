@@ -84,6 +84,7 @@ import { SIZES, COLORS } from "@/utils/appConsts";
 import CustomText from "@/common/CustomText";
 import { mapState } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
+import { DocumentsModule } from "@/store";
 
 export default {
   name: "LibraryFilters",
@@ -110,9 +111,9 @@ export default {
   },
   computed: {
     ...mapState({
-      authors: state => state.documents.authors,
       subjects: state => state.subjects.subjects,
     }),
+    authors() { return DocumentsModule.authors; },
   },
   created() {
     this.author = this.$route.query.author

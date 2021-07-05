@@ -20,9 +20,8 @@
 <script>
 import { addPaperCategories } from "@/api/paper_categories";
 
-import EventBus from "@/components/EventBus";
-import { mapState } from "vuex";
 import { Message } from "element-ui";
+import { DocumentsModule } from "@/store";
 
 export default {
   name: "AddModal",
@@ -36,9 +35,7 @@ export default {
   },
 
   computed: {
-    ...mapState({
-      categories: state => state.documents.categories,
-    }),
+    categories() { return DocumentsModule.categories; },
   },
 
   methods: {
@@ -54,11 +51,11 @@ export default {
       }
 
       try {
-        await addPaperCategories({ title });
-        EventBus.$emit("UPDATE_CATEGORY");
+        const { data } = await addPaperCategories({ title });
+        DocumentsModule.setCategories([...this.categories, data]);
         this.closeModal();
       } catch (error) {
-        console.log("Failed to add Category: ", error);
+        console.error("Failed to add Category: ", error);
       }
     },
 

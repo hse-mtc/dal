@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import { getModule } from "vuex-module-decorators";
 import getters from "./getters";
 import app from "./modules/app";
 import settings from "./modules/settings";
@@ -23,3 +24,6 @@ const store = new Vuex.Store({
 });
 
 export default store;
+
+export const AppModule = getModule(app, store);
+export const DocumentsModule = getModule(documents, store);

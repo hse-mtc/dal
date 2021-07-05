@@ -35,6 +35,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import LocalStorageService from "@/utils/LocalStorageService";
 import Hamburger from "@/components/Hamburger";
 import { surnameWithInitials } from "@/utils/person";
+import { AppModule } from "@/store";
 
 export default {
   components: {
@@ -55,7 +56,7 @@ export default {
       this.$router.push("/login");
     },
     toggleSideBar() {
-      this.$store.dispatch("app/toggleSideBar");
+      AppModule.toggleSideBar();
     },
   },
 };
