@@ -206,14 +206,14 @@ class MilgroupLeadersView(APIView):
 
     def get(self, request):
         students = Student.objects.select_related(
-            "milgroup", "milgroup__milfaculty",
-            "contact_info").filter(milgroup__milfaculty__milfaculty=request.
-                                   query_params["milfaculty"],
-                                   student_post__title="Командир взвода")
+            'milgroup', 'milgroup__milfaculty',
+            'contact_info').filter(milgroup__milfaculty__milfaculty=request.
+                                   query_params['milfaculty'],
+                                   student_post__title='Командир взвода')
         phones = [
             s.contact_info.personal_phone_number
             for s in students
             if s.contact_info
         ]
-        response = {"phones": phones}
+        response = {'phones': phones}
         return Response(response)

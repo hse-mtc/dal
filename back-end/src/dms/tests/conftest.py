@@ -1,3 +1,5 @@
+# pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name
+
 import pytest
 
 from auth.models import User

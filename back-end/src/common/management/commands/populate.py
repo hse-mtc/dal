@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name,too-many-statements
+
 from datetime import (
     datetime,
     timedelta,

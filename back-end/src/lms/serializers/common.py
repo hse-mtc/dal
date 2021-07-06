@@ -65,3 +65,9 @@ class MilgroupMutateSerializer(ModelSerializer):
 
 class MilgroupLeadersPhonesSerializer(Serializer):
     phones = ListField(child=CharField())
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
