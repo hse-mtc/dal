@@ -30,6 +30,7 @@ from lms.views.reference_book import (
     AchievementTypeViewSet,
     StudentPostViewSet,
     StudentSkillViewSet,
+    MilgroupLeadersView,
 )
 from lms.views.subjects import LessonSubjectViewSet
 from lms.views.lessons import LessonViewSet, LessonJournalView
@@ -71,5 +72,6 @@ urlpatterns = [
     path('lesson-journal/', LessonJournalView.as_view()),
     path('mark-journal/', MarkJournalView.as_view()),
     path('absence-time/', AbsenceTimeView.as_view()),
-    path('students/<int:pk>/performance/', StudentPerformanceView.as_view())
+    path('students/<int:pk>/performance/', StudentPerformanceView.as_view()),
+    path('milgroup-leaders/', MilgroupLeadersView.as_view()),
 ]
