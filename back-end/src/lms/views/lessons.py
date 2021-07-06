@@ -5,6 +5,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import SAFE_METHODS
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -15,9 +16,11 @@ from common.constants import MUTATE_ACTIONS
 from lms.models.common import Milgroup
 from lms.models.lessons import Lesson
 from lms.serializers.common import MilgroupSerializer
-from lms.serializers.lessons import (LessonSerializer,
-                                     LessonJournalQuerySerializer,
-                                     LessonMutateSerializer)
+from lms.serializers.lessons import (
+    LessonSerializer,
+    LessonJournalQuerySerializer,
+    LessonMutateSerializer,
+)
 from lms.filters.lessons import LessonFilter
 from lms.functions import get_date_range, milgroup_allowed_by_scope
 from lms.mixins import QuerySetScopingMixin
@@ -51,6 +54,12 @@ class LessonViewSet(QuerySetScopingMixin, ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return LessonMutateSerializer
         return LessonSerializer
+
+    def get_queryset(self):
+        if (self.request.method in SAFE_METHODS and
+                'archived' not in self.request.query_params):
+            return super().get_queryset().filter(milgroup__archived=False)
+        return super().get_queryset()
 
     def handle_scope_milfaculty(self, user_type, user):
         if user_type == 'student':

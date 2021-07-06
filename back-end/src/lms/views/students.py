@@ -13,6 +13,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
+from rest_framework.permissions import SAFE_METHODS
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -124,6 +125,9 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     def get_queryset(self):
         if self.action == "applications":
             return self.queryset.filter(status=Student.Status.APPLICANT)
+        if (self.request.method in SAFE_METHODS and
+                "archived" not in self.request.query_params):
+            return super().get_queryset().filter(milgroup__archived=False)
         return super().get_queryset()
 
     def handle_scope_milfaculty(self, user_type, user):

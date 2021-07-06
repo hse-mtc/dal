@@ -2,6 +2,8 @@ from django_filters.rest_framework import (
     FilterSet,
     ChoiceFilter,
     CharFilter,
+    BooleanFilter,
+    NumberFilter,
 )
 
 from lms.models.students import Student
@@ -20,6 +22,13 @@ class StudentFilter(FilterSet):
     program = CharFilter(field_name="university_info__program__code")
     student_skill = CharFilter(field_name="student_skills__title",
                                lookup_expr="icontains")
+    archived = BooleanFilter(field_name="milgroup__archived")
+    year_of_admission = NumberFilter(method="filter_by_admission")
+
+    def filter_by_admission(self, queryset, name, value):
+        # pylint: disable=unused-argument
+        value = value % 100  # strip first two symbols of the year
+        return queryset.filter(milgroup__milgroup__startswith=value)
 
     def filter_by_campus(self, queryset, name, value):
         # pylint: disable=unused-argument
@@ -27,4 +36,4 @@ class StudentFilter(FilterSet):
 
     class Meta:
         model = Student
-        fields = ["status", "milgroup", "campus", "student_skill"]
+        fields = ["status", "milgroup", "campus", "student_skill", "archived"]

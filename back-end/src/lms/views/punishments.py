@@ -1,5 +1,5 @@
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
+from rest_framework.viewsets import ModelViewSet
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -7,10 +7,12 @@ from drf_spectacular.views import extend_schema
 from common.constants import MUTATE_ACTIONS
 
 from lms.models.punishments import Punishment
-from lms.serializers.punishments import (PunishmentSerializer,
-                                         PunishmentMutateSerializer)
+from lms.serializers.punishments import (
+    PunishmentSerializer,
+    PunishmentMutateSerializer,
+)
 from lms.filters.punishments import PunishmentFilter
-from lms.mixins import StudentTeacherQuerySetScopingMixin
+from lms.mixins import StudentTeacherQuerySetScopingMixin, ArchivedMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -28,7 +30,7 @@ class PunishmentPermission(BasePermission):
 
 
 @extend_schema(tags=['punishments'])
-class PunishmentViewSet(StudentTeacherQuerySetScopingMixin, ModelViewSet):
+class PunishmentViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin, ModelViewSet):
     queryset = Punishment.objects.all()
 
     permission_classes = [PunishmentPermission]

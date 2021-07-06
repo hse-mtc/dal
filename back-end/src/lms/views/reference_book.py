@@ -1,6 +1,7 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import SAFE_METHODS
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -22,6 +23,7 @@ from lms.serializers.common import (
     MilfacultySerializer,
     MilspecialtySerializer,
     MilgroupSerializer,
+    MilgroupMutateSerializer,
 )
 from lms.serializers.universities import ProgramSerializer
 from lms.serializers.teachers import TeacherPostSerializer, RankSerializer
@@ -38,6 +40,8 @@ from lms.filters.reference_books import (
     MilgroupFilter,
     ProgramFilter,
 )
+
+from common.constants import MUTATE_ACTIONS
 
 from auth.permissions import (
     BasePermission,
@@ -106,7 +110,19 @@ class MilgroupViewSet(ModelViewSet):
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
+    filter_backends = [DjangoFilterBackend]
     filterset_class = MilgroupFilter
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return MilgroupMutateSerializer
+        return MilgroupSerializer
+
+    def get_queryset(self):
+        if (self.request.method in SAFE_METHODS and
+                'archived' not in self.request.query_params):
+            return super().get_queryset().filter(archived=False)
+        return super().get_queryset()
 
 
 @extend_schema(tags=['reference-book'])
