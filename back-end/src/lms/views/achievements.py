@@ -1,4 +1,3 @@
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -10,6 +9,7 @@ from lms.models.achievements import Achievement
 from lms.serializers.achievements import (AchievementSerializer,
                                           AchievementMutateSerializer)
 from lms.filters.achievements import AchievementFilter
+from lms.views.archived_viewset import ArchivedModelViewSet
 
 from auth.permissions import BasePermission
 
@@ -19,7 +19,7 @@ class AchievementPermission(BasePermission):
 
 
 @extend_schema(tags=['achievements'])
-class AchievementViewSet(ModelViewSet):
+class AchievementViewSet(ArchivedModelViewSet):
     queryset = Achievement.objects.all()
 
     permission_classes = [AchievementPermission]

@@ -4,6 +4,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import SAFE_METHODS
 
 from rest_framework.status import (
     HTTP_200_OK,
@@ -19,9 +20,11 @@ from common.constants import MUTATE_ACTIONS
 from lms.models.common import Milgroup
 from lms.models.lessons import Lesson
 from lms.serializers.common import MilgroupSerializer
-from lms.serializers.lessons import (LessonSerializer,
-                                     LessonJournalQuerySerializer,
-                                     LessonMutateSerializer)
+from lms.serializers.lessons import (
+    LessonSerializer,
+    LessonJournalQuerySerializer,
+    LessonMutateSerializer,
+)
 from lms.filters.lessons import LessonFilter
 from lms.functions import get_date_range
 
@@ -45,6 +48,12 @@ class LessonViewSet(ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return LessonMutateSerializer
         return LessonSerializer
+
+    def get_queryset(self):
+        if (self.request.method in SAFE_METHODS and
+                'archived' not in self.request.query_params):
+            return self.queryset.filter(milgroup__archived=False)
+        return super().get_queryset()
 
 
 @extend_schema(tags=['lesson-journal'],

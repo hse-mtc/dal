@@ -13,6 +13,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
+from rest_framework.permissions import SAFE_METHODS
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -108,6 +109,10 @@ class StudentViewSet(ModelViewSet):
     def get_queryset(self):
         if self.action == "applications":
             return self.queryset.filter(status=Student.Status.APPLICANT)
+        print(self.request.query_params)
+        if (self.request.method in SAFE_METHODS and
+                "archived" not in self.request.query_params):
+            return self.queryset.filter(milgroup__archived=False)
         return super().get_queryset()
 
     def filter_queryset(self, queryset):

@@ -47,6 +47,7 @@ class Milgroup(models.Model):
         blank=True,
         null=True,
     )
+    archived = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{str(self.milgroup)}, {str(self.milfaculty)}'

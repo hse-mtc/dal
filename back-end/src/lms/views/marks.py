@@ -3,7 +3,6 @@ from datetime import datetime
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 
 from rest_framework.status import (
@@ -28,9 +27,13 @@ from lms.models.lessons import Lesson
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.subjects import LessonSubjectSerializer
 from lms.serializers.lessons import LessonSerializer
-from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
-                                   MarkJournalSerializer,
-                                   MarkJournalQuerySerializer)
+from lms.serializers.marks import (
+    MarkSerializer,
+    MarkMutateSerializer,
+    MarkJournalSerializer,
+    MarkJournalQuerySerializer,
+)
+from lms.views.archived_viewset import ArchivedModelViewSet
 
 from auth.permissions import BasePermission
 
@@ -40,7 +43,7 @@ class MarkPermission(BasePermission):
 
 
 @extend_schema(tags=['marks'])
-class MarkViewSet(ModelViewSet):
+class MarkViewSet(ArchivedModelViewSet):
     queryset = Mark.objects.all()
 
     permission_classes = [MarkPermission]
