@@ -86,7 +86,7 @@ class Dictionaries {
   get tagsItems() {
     if (this.searchQuery) {
       return this[this.currentTab]
-        .filter(item => item.name.includes(this.searchQuery));
+        .filter(item => item.title.includes(this.searchQuery));
     }
 
     return this[this.currentTab];
