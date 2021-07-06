@@ -47,9 +47,6 @@ export default {
       };
     },
   },
-  mounted() {
-    UserModule.getUser();
-  },
   methods: {
     handleClickOutside() {
       AppModule.closeSideBar({ withoutAnimation: false });

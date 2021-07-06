@@ -5,7 +5,7 @@ import {
   Action,
 } from "vuex-module-decorators";
 
-import store from "@/store";
+import store, { UserModule } from "@/store";
 
 import { login, getUser } from "@/api/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
@@ -18,8 +18,14 @@ const localStorageService = LocalStorageService.getService();
 @Module({ store, name: "user", namespaced: true })
 class User extends VuexModule {
   token = getToken()
-  email = ""
-  campuses = []
+  _email = ""
+  _campuses = []
+  _userInfoLoaded = false
+
+  @Mutation
+  SET_IS_LOADED(value) {
+    this._userInfoLoaded = value;
+  }
 
   @Mutation
   SET_TOKEN(token) {
@@ -28,12 +34,12 @@ class User extends VuexModule {
 
   @Mutation
   SET_EMAIL(email) {
-    this.email = email;
+    this._email = email;
   }
 
   @Mutation
   SET_CAMPUSES(campuses) {
-    this.campuses = campuses;
+    this._campuses = campuses;
   }
 
   @Action
@@ -48,21 +54,23 @@ class User extends VuexModule {
 
   @Action
   async getUser() {
-    const { data } = await getUser(this.token);
-
-    if (!data) {
-      throw new Error("Verification failed, please Login again.");
+    try {
+      const { data } = await getUser(this.token);
+      const { email, campuses } = data;
+      this.SET_EMAIL(email);
+      this.SET_CAMPUSES(campuses);
+      this.SET_IS_LOADED(true);
+    } catch (e) {
+      console.error("Не удалось получить данные пользователя", e);
     }
-
-    const { email, campuses } = data;
-    this.SET_EMAIL(email);
-    this.SET_CAMPUSES(campuses);
   }
 
   @Action
   logout() {
     this.SET_TOKEN();
-    this.SET_EMAIL();
+    this.SET_EMAIL("");
+    this.SET_CAMPUSES([]);
+    this.SET_IS_LOADED(false);
     removeToken();
     resetRouter();
   }
@@ -78,6 +86,22 @@ class User extends VuexModule {
   async resetToken() {
     this.SET_TOKEN("");
     removeToken();
+  }
+
+  get email() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._email;
+  }
+
+  get campuses() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._campuses;
   }
 }
 

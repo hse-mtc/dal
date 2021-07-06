@@ -6,9 +6,9 @@ import {
 } from "vuex-module-decorators";
 
 import store, { DocumentsModule } from "@/store";
-import { deletePaperCategory, getPaperCategories } from "@/api/paper_categories";
-import { getAuthors } from "@/api/authors";
-import { getPublishers } from "@/api/publishers";
+import { addPaperCategories, deletePaperCategory, getPaperCategories } from "@/api/paper_categories";
+import { addAuthor, deleteAuthor, getAuthors } from "@/api/authors";
+import { addPublisher, deletePublisher, getPublishers } from "@/api/publishers";
 
 @Module({ store, name: "documents", namespaced: true })
 class Documents extends VuexModule {
@@ -50,6 +50,36 @@ class Documents extends VuexModule {
     }
   }
 
+  @Action
+  async deletePublisher(id) {
+    try {
+      await deletePublisher(id);
+
+      this.setPublishers(this._publishersList.filter(item => item.id !== id));
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось удалить издателя:", e);
+
+      return false;
+    }
+  }
+
+  @Action
+  async addPublisher({ name }) {
+    try {
+      const { data } = await addPublisher(name);
+
+      this.setPublishers([...this._publishersList, data]);
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось добавить издателя:", e);
+
+      return false;
+    }
+  }
+
   get publishers() {
     if (!this._publishersLoaded) {
       DocumentsModule.fetchPublishers();
@@ -76,6 +106,36 @@ class Documents extends VuexModule {
       this.SET_IS_LOADED({ field: "_authorsLoaded", value: true });
     } catch (e) {
       console.error("Не удалось загрузить авторов", e);
+    }
+  }
+
+  @Action
+  async deleteAuthor(id) {
+    try {
+      await deleteAuthor(id);
+
+      this.setAuthors(this._authorsList.filter(item => item.id !== id));
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось удалить автора:", e);
+
+      return false;
+    }
+  }
+
+  @Action
+  async addAuthor(info) {
+    try {
+      const { data } = await addAuthor(info);
+
+      this.setAuthors([...this._authorsList, data]);
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось добавить автора:", e);
+
+      return false;
     }
   }
 
@@ -118,6 +178,21 @@ class Documents extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось удалить категорию:", e);
+
+      return false;
+    }
+  }
+
+  @Action
+  async addCategory(info) {
+    try {
+      const { data } = await addPaperCategories(info);
+
+      this.setCategories([...this._categoriesList, data]);
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось добавить категорию:", e);
 
       return false;
     }
