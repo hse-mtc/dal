@@ -95,35 +95,16 @@ class UserSerializer(serializers.ModelSerializer):
     """Display main user info and all permissions."""
     all_permissions = serializers.SerializerMethodField(read_only=True)
 
-    class Meta:
-        model = get_user_model()
-        fields = ["id", "email", "all_permissions", "campuses"]
-
-    def get_all_permissions(self, obj) -> list[str]:
-        return PermissionSerializer(obj.get_all_permissions(), many=True).data
-
-
-class UserDetailedSerializer(serializers.ModelSerializer):
-    """Display main user info, user permissions and groups."""
-    permissions = PermissionSerializer(many=True)
-    groups = GroupShortSerializer(many=True)
-
     person_type = serializers.SerializerMethodField(read_only=True)
     person_id = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = [
-            "id", "email", "permissions", "campuses", "person_type", "person_id"
-        ]
+        fields = ["id", "email", "all_permissions", "campuses", "person_type", "person_id"]
 
-    def get_permissions(self, obj) -> list[str]:
-        groups = obj.groups.all()
-        permissions = []
-        for group in groups:
-            permissions += [perm.codename for perm in group.permissions.all()]
-        return list(set(permissions))
-
+    def get_all_permissions(self, obj) -> list[str]:
+        return PermissionSerializer(obj.get_all_permissions(), many=True).data
+    
     def identify_user(self, user_to_check):
         # check if user is a teacher or a student
         user = Teacher.objects.filter(user=user_to_check)
@@ -145,6 +126,25 @@ class UserDetailedSerializer(serializers.ModelSerializer):
         # try to find teachers
         _, user_id = self.identify_user(obj)
         return user_id
+
+
+class UserDetailedSerializer(serializers.ModelSerializer):
+    """Display main user info, user permissions and groups."""
+    permissions = PermissionSerializer(many=True)
+    groups = GroupShortSerializer(many=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = [
+            "id", "email", "permissions", "campuses", "groups",
+        ]
+
+    def get_permissions(self, obj) -> list[str]:
+        groups = obj.groups.all()
+        permissions = []
+        for group in groups:
+            permissions += [perm.codename for perm in group.permissions.all()]
+        return list(set(permissions))
 
 
 class TokenPairSerializer(serializers.Serializer):

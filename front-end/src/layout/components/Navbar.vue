@@ -47,6 +47,8 @@ export default {
   computed: {
     sidebar() { return AppModule.sidebar; },
     email() { return UserModule.email; },
+    personType() { return UserModule.personType; },
+    personId() { return UserModule.personId; },
     isCollapse() {
       return !this.sidebar.opened;
     },

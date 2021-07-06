@@ -39,7 +39,7 @@ import StudentExtra from "@/components/Personnel/Student/StudentExtra/StudentExt
 import StudentAchievements from "@/components/Personnel/Student/StudentAchievements/StudentAchievements.vue";
 import StudentDiscipline from "@/components/Personnel/Student/StudentDiscipline/StudentDiscipline.vue";
 import StudentPerformance from "@/components/Personnel/Student/StudentPerformance/StudentPerformance.vue";
-import { mapState } from "vuex";
+import { UserModule } from "@/store";
 
 export default {
   name: "Student",
@@ -51,7 +51,8 @@ export default {
     StudentPerformance,
   },
   computed: {
-    ...mapState("user", ["personType", "personId"]),
+    personType() { return UserModule.personType; },
+    personId() { return UserModule.personId; },
     id() {
       return this.$route.params.studentId;
     },

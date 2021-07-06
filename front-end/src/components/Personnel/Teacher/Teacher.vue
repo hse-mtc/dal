@@ -210,10 +210,10 @@
 
 <script>
 import { patchTeacher, findTeacher } from "@/api/teachers";
-import { patchError, patchSuccess, getError } from "@/utils/message";
-import { mapState, mapActions } from "vuex";
+import { patchError, getError } from "@/utils/message";
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import moment from "moment";
+import { UserModule, ReferenceModule } from "@/store";
 
 export default {
   name: "Teacher",
@@ -243,13 +243,12 @@ export default {
     };
   },
   computed: {
-    ...mapState("user", ["personType", "personId"]),
-    ...mapState("reference", [
-      "milgroups",
-      "milfaculties",
-      "ranks",
-      "teacherPosts",
-    ]),
+    personType() { return UserModule.personType; },
+    personId() { return UserModule.personId; },
+    milgroups() { return ReferenceModule.milgroups; },
+    milfaculties() { return ReferenceModule.milfaculties; },
+    ranks() { return ReferenceModule.ranks; },
+    teacherPosts() { return ReferenceModule.teacherPosts; },
     id() {
       return this.$route.params.teacherId;
     },
@@ -260,19 +259,9 @@ export default {
     },
   },
   async created() {
-    await this.fetchMilgroups();
-    await this.fetchMilfaculties();
-    await this.fetchTeacherPosts();
-    await this.fetchRanks();
     await this.fetchInfo();
   },
   methods: {
-    ...mapActions("reference", [
-      "fetchMilgroups",
-      "fetchMilfaculties",
-      "fetchTeacherPosts",
-      "fetchRanks",
-    ]),
     formatDate: date => moment(date).format("DD.MM.YYYY"),
     async fetchInfo() {
       const id = this.$route.params.teacherId;
