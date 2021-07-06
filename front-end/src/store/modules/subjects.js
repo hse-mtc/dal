@@ -36,11 +36,6 @@ class Subjects extends VuexModule {
     this._subjectsList = payload;
   }
 
-  @Mutation
-  DELETE_SUBJECT(id) {
-    this._subjectsList = this._subjectsList.filter(subject => subject.id !== id);
-  }
-
   @Action({ commit: "SET_SUBJECTS" })
   setSubjects(subjects) {
     return subjects;
