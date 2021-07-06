@@ -31,14 +31,6 @@ export default Dictionaries;
 <style lang="scss" module>
 @import "@/styles/variables.scss";
 
-// .root {
-//   display: inline-flex;
-//   align-items: center;
-//   background-color: #649dff;
-//   padding: 2px;
-//   border-radius: 5px;
-// }
-
 .button {
   display: inline-flex;
   align-items: center;
