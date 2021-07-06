@@ -119,19 +119,11 @@ class Dictionaries {
       },
     );
 
-    mutateData(
-      () => this.tabs[this.currentTab].delete(id),
-      "Удалено успешно",
-      "Не удалось удалить",
-    );
+    this.tabs[this.currentTab].delete(id);
   }
 
   addItem(data) {
-    mutateData(
-      () => this.tabs[this.currentTab].add(data),
-      "Добавлено успешно",
-      "Не удалось добавить",
-    );
+    this.tabs[this.currentTab].add(data);
   }
 }
 

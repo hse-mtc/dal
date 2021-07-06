@@ -210,20 +210,8 @@ class Papers {
       type: "warning",
     });
 
-    if (await DocumentsModule.deleteCategory(id)) {
-      this.$message({
-        type: "success",
-        message: "Удаление завершено",
-      });
-
-      if (id === this.category.id) {
-        this.selectCategory(this.categories[0]);
-      }
-    } else {
-      this.$message({
-        type: "error",
-        message: "Не удалось удалить",
-      });
+    if (await DocumentsModule.deleteCategory(id) && id === this.category.id) {
+      this.selectCategory(this.categories[0]);
     }
   }
 
