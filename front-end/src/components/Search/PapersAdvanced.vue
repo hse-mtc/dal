@@ -77,7 +77,7 @@
 import { Component } from "vue-property-decorator";
 import moment from "moment";
 import { surnameWithInitials } from "@/utils/person";
-import { DocumentsModule } from "@/store";
+import { PapersModule } from "@/store";
 
 @Component({
   name: "AdvancedPaperSearch",
@@ -87,8 +87,8 @@ class AdvancedPaperSearch {
   publisher = null
   valueDate = ""
 
-  get publishers() { return DocumentsModule.publishers; }
-  get authors() { return DocumentsModule.authors; }
+  get publishers() { return PapersModule.publishers; }
+  get authors() { return PapersModule.authors; }
 
   surnameWithInitials = surnameWithInitials
 

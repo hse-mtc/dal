@@ -94,7 +94,7 @@ import DownloadFile from "@/common/DownloadFile/index.vue";
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { saveFavBook, unsaveFavBook } from "@/api/books";
 import { surnameWithInitials } from "@/utils/person";
-import { DocumentsModule } from "@/store";
+import { PapersModule } from "@/store";
 
 export default {
   name: "Book",
@@ -114,7 +114,7 @@ export default {
     };
   },
   computed: {
-    authors() { return DocumentsModule.authors; },
+    authors() { return PapersModule.authors; },
   },
   methods: {
     getAuthor(id) {

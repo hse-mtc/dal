@@ -124,7 +124,7 @@ import { deleteDocument } from "@/api/delete";
 import { scrollMixin } from "@/mixins/scrollMixin";
 import DownloadFile from "@/common/DownloadFile/index.vue";
 import { surnameWithInitials } from "@/utils/person";
-import { AppModule, DocumentsModule } from "@/store";
+import { AppModule, PapersModule } from "@/store";
 import EventBus from "../EventBus";
 
 export default {
@@ -153,8 +153,8 @@ export default {
   },
   computed: {
     userId() { return AppModule.userId; },
-    authors() { return DocumentsModule.authors; },
-    publishers() { return DocumentsModule.publishers; },
+    authors() { return PapersModule.authors; },
+    publishers() { return PapersModule.publishers; },
   },
   watch: {
     $route() {

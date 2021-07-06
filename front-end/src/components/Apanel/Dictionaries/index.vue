@@ -57,7 +57,7 @@
 import { Component, Watch } from "vue-property-decorator";
 import _omit from "lodash/omit";
 
-import { DocumentsModule } from "@/store";
+import { PapersModule } from "@/store";
 
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
 import Forms from "./Forms.vue";
@@ -82,9 +82,9 @@ class Dictionaries {
     {
       label: "Издатели",
       mapFunc: item => ({ title: item.name, id: item.id }),
-      add: DocumentsModule.addPublisher,
-      delete: DocumentsModule.deletePublisher,
-      edit: DocumentsModule.editPublisher,
+      add: PapersModule.addPublisher,
+      delete: PapersModule.deletePublisher,
+      edit: PapersModule.editPublisher,
     },
     authors: {
       label: "Авторы",
@@ -92,15 +92,15 @@ class Dictionaries {
         id: item.id,
         title: [item.surname, item.name, item.patronymic].filter(Boolean).join(" "),
       }),
-      add: DocumentsModule.addAuthor,
-      delete: DocumentsModule.deleteAuthor,
-      edit: DocumentsModule.editAuthors,
+      add: PapersModule.addAuthor,
+      delete: PapersModule.deleteAuthor,
+      edit: PapersModule.editAuthors,
     },
     categories: {
       label: "Категории",
-      add: DocumentsModule.addCategory,
-      delete: DocumentsModule.deleteCategory,
-      edit: DocumentsModule.editCategories,
+      add: PapersModule.addCategory,
+      delete: PapersModule.deleteCategory,
+      edit: PapersModule.editCategories,
     },
   }
 
@@ -122,11 +122,11 @@ class Dictionaries {
     return data;
   }
 
-  get publishers() { return DocumentsModule.publishers; }
+  get publishers() { return PapersModule.publishers; }
 
-  get authors() { return DocumentsModule.authors; }
+  get authors() { return PapersModule.authors; }
 
-  get categories() { return DocumentsModule.categories; }
+  get categories() { return PapersModule.categories; }
 
   async deleteItem(id) {
     await this.$confirm(
