@@ -4,6 +4,7 @@ import {
   Mutation,
   Action,
 } from "vuex-module-decorators";
+import { Message } from "element-ui";
 
 import store, { DocumentsModule } from "@/store";
 import { addPaperCategories, deletePaperCategory, getPaperCategories } from "@/api/paper_categories";
@@ -47,6 +48,10 @@ class Documents extends VuexModule {
       this.SET_IS_LOADED({ field: "_publishersLoaded", value: true });
     } catch (e) {
       console.error("Не удалось загрузить издателей", e);
+      Message({
+        type: "error",
+        message: "Не удалось загрузить издателей",
+      });
     }
   }
 
@@ -60,6 +65,10 @@ class Documents extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось удалить издателя:", e);
+      Message({
+        type: "error",
+        message: "Не удалось удалить издателя",
+      });
 
       return false;
     }
@@ -75,6 +84,10 @@ class Documents extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось добавить издателя:", e);
+      Message({
+        type: "error",
+        message: "Не удалось добавить издателя",
+      });
 
       return false;
     }
@@ -106,6 +119,10 @@ class Documents extends VuexModule {
       this.SET_IS_LOADED({ field: "_authorsLoaded", value: true });
     } catch (e) {
       console.error("Не удалось загрузить авторов", e);
+      Message({
+        type: "error",
+        message: "Не удалось загрузить авторов",
+      });
     }
   }
 
@@ -119,6 +136,10 @@ class Documents extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось удалить автора:", e);
+      Message({
+        type: "error",
+        message: "Не удалось удалить автора",
+      });
 
       return false;
     }
@@ -134,6 +155,10 @@ class Documents extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось добавить автора:", e);
+      Message({
+        type: "error",
+        message: "Не удалось добавить автора",
+      });
 
       return false;
     }
@@ -165,6 +190,10 @@ class Documents extends VuexModule {
       this.SET_IS_LOADED({ field: "_categoriesLoaded", value: true });
     } catch (e) {
       console.error("Не удалось загрузить категорию", e);
+      Message({
+        type: "error",
+        message: "Не удалось загрузить категорию",
+      });
     }
   }
 
@@ -178,6 +207,10 @@ class Documents extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось удалить категорию:", e);
+      Message({
+        type: "error",
+        message: "Не удалось удалить категорию",
+      });
 
       return false;
     }
@@ -193,6 +226,10 @@ class Documents extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось добавить категорию:", e);
+      Message({
+        type: "error",
+        message: "Не удалось добавить категорию",
+      });
 
       return false;
     }
