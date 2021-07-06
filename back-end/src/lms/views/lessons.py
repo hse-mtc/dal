@@ -58,7 +58,7 @@ class LessonViewSet(QuerySetScopingMixin, ModelViewSet):
     def get_queryset(self):
         if (self.request.method in SAFE_METHODS and
                 'archived' not in self.request.query_params):
-            return self.queryset.filter(milgroup__archived=False)
+            return super().get_queryset().filter(milgroup__archived=False)
         return super().get_queryset()
 
     def handle_scope_milfaculty(self, user_type, user):

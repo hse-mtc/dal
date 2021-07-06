@@ -43,6 +43,8 @@ class MilgroupMutateSerializer(ModelSerializer):
     weekday = IntegerField()
 
     def create_valid_data(self, validated_data: dict) -> dict:
+        if not 'milfaculty' in validated_data:
+            return validated_data
         milfaculty = validated_data.pop('milfaculty')
         query = Milfaculty.objects.filter(milfaculty=milfaculty)
         validated_data['milfaculty'] = query.first()

@@ -121,7 +121,7 @@ class MilgroupViewSet(ModelViewSet):
     def get_queryset(self):
         if (self.request.method in SAFE_METHODS and
                 'archived' not in self.request.query_params):
-            return self.queryset.filter(archived=False)
+            return super().get_queryset().filter(archived=False)
         return super().get_queryset()
 
 

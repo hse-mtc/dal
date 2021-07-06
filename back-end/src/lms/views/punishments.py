@@ -1,4 +1,5 @@
 from rest_framework.filters import SearchFilter
+from rest_framework.viewsets import ModelViewSet
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -11,8 +12,7 @@ from lms.serializers.punishments import (
     PunishmentMutateSerializer,
 )
 from lms.filters.punishments import PunishmentFilter
-from lms.views.archived_viewset import ArchivedModelViewSet
-from lms.mixins import StudentTeacherQuerySetScopingMixin
+from lms.mixins import StudentTeacherQuerySetScopingMixin, ArchivedMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -30,7 +30,7 @@ class PunishmentPermission(BasePermission):
 
 
 @extend_schema(tags=['punishments'])
-class PunishmentViewSet(StudentTeacherQuerySetScopingMixin, ArchivedModelViewSet):
+class PunishmentViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin, ModelViewSet):
     queryset = Punishment.objects.all()
 
     permission_classes = [PunishmentPermission]

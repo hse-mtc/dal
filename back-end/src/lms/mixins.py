@@ -2,6 +2,7 @@ from django.db.models import QuerySet
 
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import SAFE_METHODS
 
 from lms.models.students import Student
 from lms.functions import get_user_from_request
@@ -125,6 +126,15 @@ class QuerySetScopingMixin:
         return Response(
             {"detail": "You do not have permission to perform this action."},
             status=status.HTTP_403_FORBIDDEN)
+
+
+class ArchivedMixin(QuerySetScopingMixin):
+
+    def get_queryset(self):
+        if (self.request.method in SAFE_METHODS and
+                "archived" not in self.request.query_params):
+            return super().get_queryset().filter(student__milgroup__archived=False)
+        return super().get_queryset()
 
 
 class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):

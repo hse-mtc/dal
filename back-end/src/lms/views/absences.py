@@ -3,6 +3,7 @@ from datetime import datetime
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 from rest_framework.generics import GenericAPIView
 
@@ -25,11 +26,9 @@ from lms.models.students import Student
 
 from lms.filters.absences import AbsenceFilter
 from lms.functions import get_date_range, milgroup_allowed_by_scope
-from lms.mixins import StudentTeacherQuerySetScopingMixin
+from lms.mixins import StudentTeacherQuerySetScopingMixin, ArchivedMixin
 
 from lms.functions import get_date_range
-
-from lms.views.archived_viewset import ArchivedModelViewSet
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -47,7 +46,7 @@ class AbsencePermission(BasePermission):
 
 
 @extend_schema(tags=['absences'])
-class AbsenceViewSet(StudentTeacherQuerySetScopingMixin, ArchivedModelViewSet):
+class AbsenceViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin, ModelViewSet):
     queryset = Absence.objects.all()
 
     permission_classes = [AbsencePermission]

@@ -5,6 +5,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import GenericAPIView
+from rest_framework.viewsets import ModelViewSet
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -29,12 +30,11 @@ from lms.serializers.marks import (
     MarkJournalSerializer,
     MarkJournalQuerySerializer,
 )
-from lms.views.archived_viewset import ArchivedModelViewSet
 from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
                                    MarkJournalSerializer,
                                    MarkJournalQuerySerializer)
 from lms.functions import milgroup_allowed_by_scope
-from lms.mixins import QuerySetScopingMixin
+from lms.mixins import QuerySetScopingMixin, ArchivedMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -52,7 +52,7 @@ class MarkPermission(BasePermission):
 
 
 @extend_schema(tags=['marks'])
-class MarkViewSet(QuerySetScopingMixin, ArchivedModelViewSet):
+class MarkViewSet(ArchivedMixin, QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=too-many-public-methods
     queryset = Mark.objects.all()
 
