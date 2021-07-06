@@ -31,9 +31,15 @@ class PunishmentFilter(FilterSet):
     def filter_by_removed_punishment(self, queryset, name, value):
         # pylint: disable=unused-argument
         return queryset.filter(remove_date__isnull=not value)
-      
+
     class Meta:
         model = Punishment
         fields = [
-            'reason', 'milgroup', 'student', 'teacher', 'type', 'archived', 'removed',
+            'reason',
+            'milgroup',
+            'student',
+            'teacher',
+            'type',
+            'archived',
+            'removed',
         ]

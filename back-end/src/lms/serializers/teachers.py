@@ -2,6 +2,7 @@ from rest_framework.serializers import (IntegerField, SerializerMethodField,
                                         ModelSerializer)
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from common.serializers.populate import BaseMutateSerializer
+from common.serializers.persons import BirthInfoSerializer
 
 from lms.models.common import Milgroup
 from lms.models.teachers import Rank, TeacherPost, Teacher
@@ -36,7 +37,9 @@ class TeacherSerializer(WritableNestedModelSerializer):
         fields = '__all__'
 
 
-class TeacherMutateSerializer(BaseMutateSerializer):
+class TeacherMutateSerializer(WritableNestedModelSerializer,
+                              BaseMutateSerializer):
+    birth_info = BirthInfoSerializer()
 
     class Meta:
         model = Teacher

@@ -30,9 +30,6 @@ from lms.serializers.marks import (
     MarkJournalSerializer,
     MarkJournalQuerySerializer,
 )
-from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
-                                   MarkJournalSerializer,
-                                   MarkJournalQuerySerializer)
 from lms.functions import milgroup_allowed_by_scope
 from lms.mixins import QuerySetScopingMixin, ArchivedMixin
 

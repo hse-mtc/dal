@@ -15,10 +15,12 @@ from drf_spectacular.types import OpenApiTypes
 from common.constants import MUTATE_ACTIONS
 
 from lms.serializers.common import MilgroupSerializer
-from lms.serializers.absences import (AbsenceSerializer,
-                                      AbsenceJournalSerializer,
-                                      AbsenceJournalQuerySerializer,
-                                      AbsenceMutateSerializer)
+from lms.serializers.absences import (
+    AbsenceSerializer,
+    AbsenceJournalSerializer,
+    AbsenceJournalQuerySerializer,
+    AbsenceMutateSerializer,
+)
 
 from lms.models.common import Milgroup
 from lms.models.absences import Absence
@@ -27,8 +29,6 @@ from lms.models.students import Student
 from lms.filters.absences import AbsenceFilter
 from lms.functions import get_date_range, milgroup_allowed_by_scope
 from lms.mixins import StudentTeacherQuerySetScopingMixin, ArchivedMixin
-
-from lms.functions import get_date_range
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -46,7 +46,8 @@ class AbsencePermission(BasePermission):
 
 
 @extend_schema(tags=['absences'])
-class AbsenceViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin, ModelViewSet):
+class AbsenceViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin,
+                     ModelViewSet):
     queryset = Absence.objects.all()
 
     permission_classes = [AbsencePermission]
