@@ -7,9 +7,24 @@ import {
 import { Message } from "element-ui";
 
 import store, { DocumentsModule } from "@/store";
-import { addPaperCategories, deletePaperCategory, getPaperCategories } from "@/api/paper_categories";
-import { addAuthor, deleteAuthor, getAuthors } from "@/api/authors";
-import { addPublisher, deletePublisher, getPublishers } from "@/api/publishers";
+import {
+  addPaperCategories,
+  deletePaperCategory,
+  editPaperCategories,
+  getPaperCategories,
+} from "@/api/paper_categories";
+import {
+  addAuthor,
+  deleteAuthor,
+  editAuthors,
+  getAuthors,
+} from "@/api/authors";
+import {
+  addPublisher,
+  deletePublisher,
+  editPublisher,
+  getPublishers,
+} from "@/api/publishers";
 
 @Module({ store, name: "documents", namespaced: true })
 class Documents extends VuexModule {
@@ -93,6 +108,29 @@ class Documents extends VuexModule {
     }
   }
 
+  @Action
+  async editPublisher({ id, ...newData }) {
+    try {
+      const { data } = await editPublisher(id, newData);
+
+      const index = this._publishersList.findIndex(item => item.id === id);
+      const newArray = [...this._publishersList];
+      newArray[index] = data;
+
+      this.setPublishers(newArray);
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось изменить издателя:", e);
+      Message({
+        type: "error",
+        message: "Не удалось изменить издателя",
+      });
+
+      return false;
+    }
+  }
+
   get publishers() {
     if (!this._publishersLoaded) {
       DocumentsModule.fetchPublishers();
@@ -164,6 +202,28 @@ class Documents extends VuexModule {
     }
   }
 
+  @Action
+  async editAuthors({ id, ...newData }) {
+    try {
+      const { data } = await editAuthors(id, newData);
+
+      const index = this._authorsList.findIndex(item => item.id === id);
+      const newArray = [...this._authorsList];
+      newArray[index] = data;
+      this.setAuthors(newArray);
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось изменить автора:", e);
+      Message({
+        type: "error",
+        message: "Не удалось изменить автора",
+      });
+
+      return false;
+    }
+  }
+
   get authors() {
     if (!this._authorsLoaded) {
       DocumentsModule.fetchAuthors();
@@ -229,6 +289,27 @@ class Documents extends VuexModule {
       Message({
         type: "error",
         message: "Не удалось добавить категорию",
+      });
+
+      return false;
+    }
+  }
+
+  @Action
+  async editCategories({ id, ...newData }) {
+    try {
+      const { data } = await editPaperCategories(id, newData);
+      const index = this._categoriesList.findIndex(item => item.id === id);
+      const newArray = [...this._categoriesList];
+      newArray[index] = data;
+      this.setCategories(newArray);
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось изменить категорию:", e);
+      Message({
+        type: "error",
+        message: "Не удалось изменить категорию",
       });
 
       return false;

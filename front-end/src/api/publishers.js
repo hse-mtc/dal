@@ -9,6 +9,14 @@ export function getPublishers(params) {
   });
 }
 
+export function editPublisher(id, data) {
+  return request({
+    url: `${BASE_API_URL}${DMS_URLS.publishers.publishers}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
 export function deletePublisher(id) {
   return request({
     url: `${BASE_API_URL}${DMS_URLS.publishers.publishers}${id}/`,

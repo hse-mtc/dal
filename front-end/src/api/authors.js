@@ -11,6 +11,14 @@ export function getAuthors(params) {
   });
 }
 
+export function editAuthors(id, data) {
+  return request({
+    url: `${BASE_API_URL}${authors}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
 export function deleteAuthor(id) {
   return request({
     url: `${BASE_API_URL}${authors}${id}/`,

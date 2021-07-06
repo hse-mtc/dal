@@ -20,22 +20,31 @@
             v-if="currentTab === field"
             :class="$style.editor"
           >
-            <div :class="$style.tagsWrapper">
-              <el-tag
+            <div
+              v-if="!editingItemId"
+              :class="$style.tagsWrapper"
+            >
+              <Tag
                 v-for="({ id, title }) in tagsItems"
+                :id="id"
                 :key="id"
-                closable
+                :title="title"
                 :class="$style.tag"
-                @close="deleteItem(id)"
+                @delete="deleteItem(id)"
+                @edit="startEdit(id)"
               >
                 {{ title }}
-              </el-tag>
+              </Tag>
             </div>
 
             <Forms
+              :is-edit="!!editingItemId"
+              :init-state="modalData"
               :type="currentTab"
               :class="$style.form"
               @submit="addItem($event)"
+              @change="editItem"
+              @cancel="stopEdit"
             />
           </div>
         </el-tab-pane>
@@ -45,67 +54,76 @@
 </template>
 
 <script>
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
+import _omit from "lodash/omit";
 
 import { DocumentsModule } from "@/store";
-import { mutateData } from "@/utils/mutateData";
 
+import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
 import Forms from "./Forms.vue";
+import Tag from "./Tag.vue";
 
 @Component({
   name: "Dictionaries",
   components: {
     Forms,
+    ModalWindow,
+    Tag,
   },
 })
 class Dictionaries {
   newItem = ""
   searchQuery = ""
+  editingItemId = null
+  modalData = {}
 
   tabs = {
     publishers:
     {
       label: "Издатели",
+      mapFunc: item => ({ title: item.name, id: item.id }),
       add: DocumentsModule.addPublisher,
       delete: DocumentsModule.deletePublisher,
+      edit: DocumentsModule.editPublisher,
     },
     authors: {
       label: "Авторы",
+      mapFunc: item => ({
+        id: item.id,
+        title: [item.surname, item.name, item.patronymic].join(" "),
+      }),
       add: DocumentsModule.addAuthor,
       delete: DocumentsModule.deleteAuthor,
+      edit: DocumentsModule.editAuthors,
     },
     categories: {
       label: "Категории",
       add: DocumentsModule.addCategory,
       delete: DocumentsModule.deleteCategory,
+      edit: DocumentsModule.editCategories,
     },
   }
 
   currentTab = "publishers"
 
   get tagsItems() {
+    const { mapFunc } = this.tabs[this.currentTab];
+    const data = mapFunc
+      ? this[this.currentTab].map(mapFunc)
+      : this[this.currentTab];
+
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
-      return this[this.currentTab]
+      return data
         .filter(item => item.title.toLowerCase().includes(query));
     }
 
-    return this[this.currentTab];
+    return data;
   }
 
-  get publishers() {
-    return DocumentsModule.publishers.map(item => ({
-      title: item.name,
-      id: item.id,
-    }));
-  }
+  get publishers() { return DocumentsModule.publishers; }
 
-  get authors() {
-    return DocumentsModule.authors.map(item => ({
-      id: item.id,
-      title: [item.surname, item.name, item.patronymic].join(" "),
-    }));
-  }
+  get authors() { return DocumentsModule.authors; }
 
   get categories() { return DocumentsModule.categories; }
 
@@ -123,8 +141,40 @@ class Dictionaries {
     this.tabs[this.currentTab].delete(id);
   }
 
+  startEdit(id) {
+    this.editingItemId = id;
+    this.modalData = _omit(
+      this[this.currentTab].find(item => item.id === id),
+      ["id"],
+    );
+  }
+
+  stopEdit() {
+    this.editingItemId = null;
+    this.modalData = {};
+  }
+
+  async editItem(data) {
+    const { edit } = this.tabs[this.currentTab];
+
+    const res = await edit({
+      id: this.editingItemId,
+      ...data,
+    });
+
+    if (res) {
+      this.stopEdit();
+    }
+  }
+
   addItem(data) {
     this.tabs[this.currentTab].add(data);
+  }
+
+  @Watch("currentTab")
+  onCurrentTabChange() {
+    this.editingItemId = null;
+    this.modalData = {};
   }
 }
 

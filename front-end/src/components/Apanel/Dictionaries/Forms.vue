@@ -23,19 +23,29 @@
       type="primary"
       @click="onSubmit"
     >
-      Добавить
+      {{ isEdit ? 'Изменить' : 'Добавить' }}
+    </el-button>
+
+    <el-button
+      v-if="isEdit"
+      @click="$emit('cancel')"
+    >
+      Отменить
     </el-button>
   </ElForm>
 </template>
 
 <script>
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import _cloneDeep from "lodash/cloneDeep";
 
 @Component({
   name: "DictionariesForms",
 })
 class DictionariesForms {
   @Prop({ type: String }) type
+  @Prop({ type: Object, default: () => ({}) }) initState
+  @Prop({ type: Boolean }) isEdit
 
   reloadKey = 0
 
@@ -92,12 +102,29 @@ class DictionariesForms {
 
     this.$refs.form.validate(valid => {
       if (valid) {
-        this.$emit("submit", data);
+        this.$emit(
+          this.isEdit ? "change" : "submit",
+          data,
+        );
         this.dataByTypes[this.type] = {};
         this.reloadKey += 1;
       }
     });
   }
+
+  initEdit() {
+    this.dataByTypes[this.type] = this.isEdit
+      ? _cloneDeep(this.initState)
+      : {};
+
+    this.reloadKey += 1;
+  }
+
+  @Watch("initState", { deep: true })
+  onInitStateChange() { this.initEdit(); }
+
+  @Watch("isEdit", { deep: true })
+  onIsEditChange() { this.initEdit(); }
 }
 
 export default DictionariesForms;
