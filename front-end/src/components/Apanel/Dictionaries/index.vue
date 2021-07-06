@@ -20,22 +20,6 @@
             v-if="currentTab === field"
             :class="$style.editor"
           >
-            <!-- <form
-              :class="$style.addNew"
-              @submit="addItem"
-            >
-              <el-input
-                v-model="newItem"
-                placeholder="Введите нового издателя"
-              />
-              <el-button
-                type="primary"
-                @click="addItem"
-              >
-                Добавить
-              </el-button>
-            </form> -->
-
             <div :class="$style.tagsWrapper">
               <el-tag
                 v-for="({ id, title }) in tagsItems"
@@ -62,7 +46,6 @@
 
 <script>
 import { Component } from "vue-property-decorator";
-import { Message } from "element-ui";
 
 import { DocumentsModule } from "@/store";
 import { mutateData } from "@/utils/mutateData";
