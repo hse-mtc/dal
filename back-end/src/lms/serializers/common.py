@@ -1,7 +1,9 @@
 from rest_framework.serializers import (
     ModelSerializer,
+    Serializer,
     IntegerField,
     CharField,
+    ListField,
 )
 
 from lms.models.common import (
@@ -59,3 +61,7 @@ class MilgroupMutateSerializer(ModelSerializer):
     class Meta:
         model = Milgroup
         fields = '__all__'
+
+
+class MilgroupLeadersPhonesSerializer(Serializer):
+    phones = ListField(child=CharField())
