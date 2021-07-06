@@ -45,34 +45,34 @@ def user():
 
 
 @pytest.mark.django_db
-def test_trailing_slash_redirect(client):
-    response = client.get("/api/dms/categories")
+def test_trailing_slash_redirect(su_client):
+    response = su_client.get("/api/dms/categories")
     assert response.status_code == 301
 
-    response = client.get("/api/dms/categories/")
+    response = su_client.get("/api/dms/categories/")
     assert response.status_code == 200
 
 
 @pytest.mark.django_db
-def test_post_categories_creates_new_category(client, category_data):
-    first = client.post("/api/dms/categories/", category_data(1))
+def test_post_categories_creates_new_category(su_client, category_data):
+    first = su_client.post("/api/dms/categories/", category_data(1))
     assert first.status_code == 201
 
-    second = client.post("/api/dms/categories/", category_data(2))
+    second = su_client.post("/api/dms/categories/", category_data(2))
     assert second.status_code == 201
 
     assert first.data["id"] != second.data["id"]
 
 
 @pytest.mark.django_db
-def test_get_categories_returns_list(client, category_data):
+def test_get_categories_returns_list(su_client, category_data):
     # pylint: disable=too-many-locals
 
     count = 3
     for i in range(count):
         Category.objects.create(**category_data(i))
 
-    response = client.get("/api/dms/categories/")
+    response = su_client.get("/api/dms/categories/")
     assert response.status_code == 200
     assert len(response.data) == count
 
@@ -87,28 +87,33 @@ def test_get_categories_returns_list(client, category_data):
 
 
 @pytest.mark.django_db
-def test_get_category_by_id_returns_single_category(client, category_data):
+def test_get_category_by_id_returns_single_category(su_client, category_data):
     data = category_data()
     id_ = Category.objects.create(**data).id
     data["id"] = id_
 
-    response = client.get(f"/api/dms/categories/{id_}/")
+    response = su_client.get(f"/api/dms/categories/{id_}/")
     assert response.status_code == 200
     assert response.data == data
 
 
 @pytest.mark.django_db
-def test_delete_category_removes_category_from_db(client, category_data):
+def test_delete_category_removes_category_from_db(su_client, category_data):
     id_ = Category.objects.create(**category_data()).id
 
-    response = client.delete(f"/api/dms/categories/{id_}/")
+    response = su_client.delete(f"/api/dms/categories/{id_}/")
     assert response.status_code == 204
 
     assert not Category.objects.exists()
 
 
 @pytest.mark.django_db
-def test_delete_category_with_papers_fails(client, category_data, file, user):
+def test_delete_category_with_papers_fails(
+    su_client,
+    category_data,
+    file,
+    user,
+):
     category = Category.objects.create(**category_data())
     paper = Paper.objects.create(
         file=file,
@@ -116,12 +121,12 @@ def test_delete_category_with_papers_fails(client, category_data, file, user):
         user=user,
     )
 
-    response = client.delete(f"/api/dms/categories/{category.id}/")
+    response = su_client.delete(f"/api/dms/categories/{category.id}/")
     assert response.status_code == 422
 
     paper.delete()
 
-    response = client.delete(f"/api/dms/categories/{category.id}/")
+    response = su_client.delete(f"/api/dms/categories/{category.id}/")
     assert response.status_code == 204
 
 
