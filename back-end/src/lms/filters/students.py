@@ -27,7 +27,7 @@ class StudentFilter(FilterSet):
 
     def filter_by_admission(self, queryset, name, value):
         # pylint: disable=unused-argument
-        value = str(value).split("20")[1]  # strip first two symbols of the year
+        value = value % 100  # strip first two symbols of the year
         return queryset.filter(milgroup__milgroup__startswith=value)
 
     def filter_by_campus(self, queryset, name, value):
