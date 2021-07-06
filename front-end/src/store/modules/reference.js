@@ -27,40 +27,40 @@ class Reference extends VuexModule {
   _milgroupsLoaded = false;
 
   _ranks = [];
-  _ranksLoaded = [];
+  _ranksLoaded = false;
 
   _studentStatuses = [];
-  _studentStatusesLoaded = [];
+  _studentStatusesLoaded = false;
 
   _studentPosts = [];
-  _studentPostsLoaded = [];
+  _studentPostsLoaded = false;
 
   _teacherPosts = [];
-  _teacherPostsLoaded = [];
+  _teacherPostsLoaded = false;
 
   _milfaculties = [];
-  _milfacultiesLoaded = [];
+  _milfacultiesLoaded = false;
 
   _milspecialties = [];
-  _milspecialtiesLoaded = [];
+  _milspecialtiesLoaded = false;
 
   _achievementTypes = [];
-  _achievementTypesLoaded = [];
+  _achievementTypesLoaded = false;
 
   _programs = [];
-  _programsLoaded = [];
+  _programsLoaded = false;
 
   _rooms = [];
-  _roomsLoaded = [];
+  _roomsLoaded = false;
 
   _absenceTypes = [];
-  _absenceTypesLoaded = [];
+  _absenceTypesLoaded = false;
 
   _absenceStatuses = [];
-  _absenceStatusesLoaded = [];
+  _absenceStatusesLoaded = false;
 
   _skills = [];
-  _skillsLoaded = [];
+  _skillsLoaded = false;
 
   @Mutation
   SET_IS_LOADED({ field, value }) {
@@ -190,6 +190,7 @@ class Reference extends VuexModule {
   // TEACHER POSTS
   @Mutation
   SET_TEACHER_POSTS(payload) {
+    console.log("🚀 > payload", payload);
     this._teacherPosts = payload;
   }
 
@@ -201,7 +202,7 @@ class Reference extends VuexModule {
   @Action
   async fetchTeacherPosts() {
     try {
-      const { data } = getTeacherPosts();
+      const { data } = await getTeacherPosts();
       this.setTeacherPosts(data);
       this.SET_IS_LOADED({ field: "_teacherPostsLoaded", value: true });
     } catch (err) {
@@ -231,7 +232,7 @@ class Reference extends VuexModule {
   @Action
   async fetchMilfaculties() {
     try {
-      const { data } = getMilFaculties();
+      const { data } = await getMilFaculties();
       this.setMilfaculties(data);
       this.SET_IS_LOADED({ field: "_milfacultiesLoaded", value: true });
     } catch (err) {
@@ -261,7 +262,7 @@ class Reference extends VuexModule {
   @Action
   async fetchMilspecialities() {
     try {
-      const { data } = getReferenceMilSpecialties();
+      const { data } = await getReferenceMilSpecialties();
       this.setMilspecialities(data);
       this.SET_IS_LOADED({ field: "_milspecialitiesLoaded", value: true });
     } catch (err) {
@@ -291,7 +292,7 @@ class Reference extends VuexModule {
   @Action
   async fetchAchievementTypes() {
     try {
-      const { data } = getAchievementTypes();
+      const { data } = await getAchievementTypes();
       this.setAchievementTypes(data);
       this.SET_IS_LOADED({ field: "_achievementTypesLoaded", value: true });
     } catch (err) {
@@ -321,7 +322,7 @@ class Reference extends VuexModule {
   @Action
   async fetchPrograms() {
     try {
-      const { data } = getPrograms();
+      const { data } = await getPrograms();
       this.setPrograms(data);
       this.SET_IS_LOADED({ field: "_programsLoaded", value: true });
     } catch (err) {
@@ -351,7 +352,7 @@ class Reference extends VuexModule {
   @Action
   async fetchRooms() {
     try {
-      const { data } = getRooms();
+      const { data } = await getRooms();
       this.setRooms(data);
       this.SET_IS_LOADED({ field: "_roomsLoaded", value: true });
     } catch (err) {
@@ -448,7 +449,7 @@ class Reference extends VuexModule {
   @Action
   async fetchSkills() {
     try {
-      const { data } = getSkills();
+      const { data } = await getSkills();
       this.setSkills(data);
       this.SET_IS_LOADED({ field: "_skillsLoaded", value: true });
     } catch (err) {

@@ -243,12 +243,24 @@ export default {
     };
   },
   computed: {
-    personType() { return UserModule.personType; },
-    personId() { return UserModule.personId; },
-    milgroups() { return ReferenceModule.milgroups; },
-    milfaculties() { return ReferenceModule.milfaculties; },
-    ranks() { return ReferenceModule.ranks; },
-    teacherPosts() { return ReferenceModule.teacherPosts; },
+    personType() {
+      return UserModule.personType;
+    },
+    personId() {
+      return UserModule.personId;
+    },
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
+    milfaculties() {
+      return ReferenceModule.milfaculties;
+    },
+    ranks() {
+      return ReferenceModule.ranks;
+    },
+    teacherPosts() {
+      return ReferenceModule.teacherPosts;
+    },
     id() {
       return this.$route.params.teacherId;
     },
@@ -262,7 +274,7 @@ export default {
     await this.fetchInfo();
   },
   methods: {
-    formatDate: date => moment(date).format("DD.MM.YYYY"),
+    formatDate: date => (moment(date).isValid() ? moment(date).format("DD.MM.YYYY") : "---"),
     async fetchInfo() {
       const id = this.$route.params.teacherId;
       if (id) {
@@ -309,6 +321,7 @@ export default {
               name,
               patronymic,
               photo: undefined,
+              contact_info: undefined,
             };
             await patchTeacher(requestBody);
             this.displayInfo = this.modifyInfo;
