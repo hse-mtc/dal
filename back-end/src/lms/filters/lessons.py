@@ -3,7 +3,6 @@ from django_filters.rest_framework import (
     NumberFilter,
     DateFilter,
     BooleanFilter,
-    NumberFilter,
 )
 
 from lms.models.lessons import Lesson
@@ -17,7 +16,7 @@ class LessonFilter(FilterSet):
 
     archived = BooleanFilter(field_name='milgroup__archived')
 
-    year_of_admission = NumberFilter(method="filter_by_admission")
+    year_of_admission = NumberFilter(method='filter_by_admission')
 
     def filter_by_admission(self, queryset, name, value):
         # pylint: disable=unused-argument

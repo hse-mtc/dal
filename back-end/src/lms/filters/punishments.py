@@ -3,7 +3,6 @@ from django_filters.rest_framework import (
     DateFilter,
     NumberFilter,
     BooleanFilter,
-    NumberFilter,
 )
 
 from lms.models.punishments import Punishment
@@ -21,7 +20,7 @@ class PunishmentFilter(FilterSet):
 
     archived = BooleanFilter(field_name='student__milgroup__archived')
 
-    year_of_admission = NumberFilter(method="filter_by_admission")
+    year_of_admission = NumberFilter(method='filter_by_admission')
 
     def filter_by_admission(self, queryset, name, value):
         # pylint: disable=unused-argument

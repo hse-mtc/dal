@@ -1,5 +1,8 @@
-from rest_framework.serializers import (ModelSerializer, IntegerField,
-                                        CharField,)
+from rest_framework.serializers import (
+    ModelSerializer,
+    IntegerField,
+    CharField,
+)
 
 from lms.models.common import (
     Milfaculty,
@@ -35,13 +38,14 @@ class MilgroupSerializer(ModelSerializer):
 
 class MilgroupMutateSerializer(ModelSerializer):
     milgroup = IntegerField()
-    milfaculty = CharField(validators=[PresentInDatabaseValidator(Milfaculty, "milfaculty")])
+    milfaculty = CharField(
+        validators=[PresentInDatabaseValidator(Milfaculty, 'milfaculty')])
     weekday = IntegerField()
 
     def create_valid_data(self, validated_data: dict) -> dict:
-        milfaculty = validated_data.pop("milfaculty")
+        milfaculty = validated_data.pop('milfaculty')
         query = Milfaculty.objects.filter(milfaculty=milfaculty)
-        validated_data["milfaculty"] = query.first()
+        validated_data['milfaculty'] = query.first()
         return validated_data
 
     def create(self, validated_data):

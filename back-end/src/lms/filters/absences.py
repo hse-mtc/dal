@@ -3,7 +3,6 @@ from django_filters.rest_framework import (
     DateFilter,
     NumberFilter,
     BooleanFilter,
-    NumberFilter,
 )
 
 from lms.models.absences import Absence
@@ -18,11 +17,11 @@ class AbsenceFilter(FilterSet):
 
     archived = BooleanFilter(field_name='student__milgroup__archived')
 
-    year_of_admission = NumberFilter(method="filter_by_admission")
+    year_of_admission = NumberFilter(method='filter_by_admission')
 
     def filter_by_admission(self, queryset, name, value):
         # pylint: disable=unused-argument
-        value = str(value).split("20")[1]  # strip first two symbols of the year
+        value = value % 100  # strip first two symbols of the year
         return queryset.filter(student__milgroup__milgroup__startswith=value)
 
     class Meta:
