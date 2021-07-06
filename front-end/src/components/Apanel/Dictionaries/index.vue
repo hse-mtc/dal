@@ -85,8 +85,9 @@ class Dictionaries {
 
   get tagsItems() {
     if (this.searchQuery) {
+      const query = this.searchQuery.toLowerCase();
       return this[this.currentTab]
-        .filter(item => item.title.includes(this.searchQuery));
+        .filter(item => item.title.toLowerCase().includes(query));
     }
 
     return this[this.currentTab];
