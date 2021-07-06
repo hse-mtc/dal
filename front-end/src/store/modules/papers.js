@@ -6,7 +6,7 @@ import {
 } from "vuex-module-decorators";
 import { Message } from "element-ui";
 
-import store, { DocumentsModule } from "@/store";
+import store, { PapersModule } from "@/store";
 import {
   addPaperCategories,
   deletePaperCategory,
@@ -26,8 +26,8 @@ import {
   getPublishers,
 } from "@/api/publishers";
 
-@Module({ store, name: "documents", namespaced: true })
-class Documents extends VuexModule {
+@Module({ store, name: "papers", namespaced: true })
+class Papers extends VuexModule {
   _publishersList = []
   _publishersLoaded = false
   _authorsList = []
@@ -133,7 +133,7 @@ class Documents extends VuexModule {
 
   get publishers() {
     if (!this._publishersLoaded) {
-      DocumentsModule.fetchPublishers();
+      PapersModule.fetchPublishers();
     }
 
     return this._publishersList;
@@ -226,7 +226,7 @@ class Documents extends VuexModule {
 
   get authors() {
     if (!this._authorsLoaded) {
-      DocumentsModule.fetchAuthors();
+      PapersModule.fetchAuthors();
     }
 
     return this._authorsList;
@@ -318,11 +318,11 @@ class Documents extends VuexModule {
 
   get categories() {
     if (!this._categoriesLoaded) {
-      DocumentsModule.fetchCategories();
+      PapersModule.fetchCategories();
     }
 
     return this._categoriesList;
   }
 }
 
-export default Documents;
+export default Papers;

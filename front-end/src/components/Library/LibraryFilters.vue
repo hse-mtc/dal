@@ -83,7 +83,7 @@
 import { SIZES, COLORS } from "@/utils/appConsts";
 import CustomText from "@/common/CustomText";
 import { surnameWithInitials } from "@/utils/person";
-import { DocumentsModule, SubjectsModule } from "@/store";
+import { PapersModule, SubjectsModule } from "@/store";
 
 export default {
   name: "LibraryFilters",
@@ -110,7 +110,7 @@ export default {
   },
   computed: {
     subjects() { return SubjectsModule.subjects; },
-    authors() { return DocumentsModule.authors; },
+    authors() { return PapersModule.authors; },
   },
   created() {
     this.author = this.$route.query.author

@@ -123,7 +123,7 @@ import Search from "@/components/Search/Papers";
 import AdvancedSearch from "@/components/Search/PapersAdvanced.vue";
 import AddCategoryModal from "@/components/Categories/AddModal.vue";
 
-import { DocumentsModule } from "@/store";
+import { PapersModule } from "@/store";
 
 @Component({
   name: "Papers",
@@ -148,7 +148,7 @@ class Papers {
   modalCategories = false
   addNewCategory = false
 
-  get categories() { return [...DocumentsModule.categories, { title: "Корзина", id: "bin" }]; }
+  get categories() { return [...PapersModule.categories, { title: "Корзина", id: "bin" }]; }
 
   created() {
     this.selectCategory(this.categories[0]);
@@ -210,7 +210,7 @@ class Papers {
       type: "warning",
     });
 
-    if (await DocumentsModule.deleteCategory(id) && id === this.category.id) {
+    if (await PapersModule.deleteCategory(id) && id === this.category.id) {
       this.selectCategory(this.categories[0]);
     }
   }

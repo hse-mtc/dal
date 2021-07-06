@@ -108,7 +108,7 @@ import {
 } from "@/common/inputs";
 
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
-import { DocumentsModule, SubjectsModule } from "@/store";
+import { PapersModule, SubjectsModule } from "@/store";
 
 export default {
   name: "LibraryModal",
@@ -150,13 +150,13 @@ export default {
       }));
     },
     authors() {
-      return DocumentsModule.authors.map(author => ({
+      return PapersModule.authors.map(author => ({
         label: `${author.surname} ${author.name} ${author.patronymic}`,
         value: author.id,
       }));
     },
     publishers() {
-      return DocumentsModule.publishers.map(publisher => ({
+      return PapersModule.publishers.map(publisher => ({
         label: publisher.name,
         value: publisher.id,
       }));
