@@ -108,9 +108,10 @@ class Dictionaries {
 
   get tagsItems() {
     const { mapFunc } = this.tabs[this.currentTab];
-    const data = mapFunc
+    const data = (mapFunc
       ? this[this.currentTab].map(mapFunc)
-      : this[this.currentTab];
+      : this[this.currentTab])
+      .sort((left, right) => (left.title > right.title ? 1 : -1));
 
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
