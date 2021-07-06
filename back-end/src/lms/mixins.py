@@ -133,7 +133,8 @@ class ArchivedMixin(QuerySetScopingMixin):
     def get_queryset(self):
         if (self.request.method in SAFE_METHODS and
                 "archived" not in self.request.query_params):
-            return super().get_queryset().filter(student__milgroup__archived=False)
+            return super().get_queryset().filter(
+                student__milgroup__archived=False)
         return super().get_queryset()
 
 
