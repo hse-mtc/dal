@@ -1,24 +1,26 @@
 from django.contrib.auth import get_user_model
 
-from rest_framework import mixins, viewsets
+from rest_framework import mixins
+from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework import status
-from rest_framework.decorators import action
+from rest_framework import permissions
 
+from rest_framework.decorators import action
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK
 
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from rest_framework_simplejwt import views as jwt_views
 
 from drf_spectacular.views import extend_schema
 
-from auth.models import Permission, Group
 from auth.permissions import BasePermission
+from auth.models import (
+    Permission,
+    Group,
+)
 from auth.serializers import (
     UserSerializer,
     UserDetailedSerializer,
@@ -41,7 +43,7 @@ class UserRetrieveAPIView(RetrieveAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
-    permission_classes = [PermissionPermission]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -304,6 +306,15 @@ class ChangePasswordAPIView(generics.GenericAPIView):
 
 
 # ------------------------------------------------------------------------------
+
+
+class TokenObtainPairView(jwt_views.TokenObtainPairView):
+    permission_classes = [permissions.AllowAny]
+
+
+class TokenRefreshView(jwt_views.TokenRefreshView):
+    permission_classes = [permissions.IsAuthenticated]
+
 
 TokenObtainPairExtendedView = extend_schema(
     responses={200: TokenPairSerializer},
