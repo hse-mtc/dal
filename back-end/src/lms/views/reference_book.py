@@ -196,17 +196,24 @@ class StudentSkillViewSet(ModelViewSet):
 
 @extend_schema(tags=['reference-book'],
                parameters=[
-                    OpenApiParameter(name='milfaculty',
+                   OpenApiParameter(name='milfaculty',
                                     description='Filter by milfaculty',
                                     required=True,
                                     type=str),
-        ],
-        responses={200: MilgroupLeadersPhonesSerializer})
+               ],
+               responses={200: MilgroupLeadersPhonesSerializer})
 class MilgroupLeadersView(APIView):
+
     def get(self, request):
-        students = Student.objects.select_related("milgroup", "milgroup__milfaculty", "contact_info").filter(
-            milgroup__milfaculty__milfaculty=request.query_params["milfaculty"], student_post__title="Командир взвода"
-        )
-        phones = [s.contact_info.personal_phone_number for s in students]
+        students = Student.objects.select_related(
+            "milgroup", "milgroup__milfaculty",
+            "contact_info").filter(milgroup__milfaculty__milfaculty=request.
+                                   query_params["milfaculty"],
+                                   student_post__title="Командир взвода")
+        phones = [
+            s.contact_info.personal_phone_number
+            for s in students
+            if s.contact_info
+        ]
         response = {"phones": phones}
         return Response(response)
