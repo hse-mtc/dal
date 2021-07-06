@@ -149,8 +149,8 @@ class Command(BaseCommand):
 
         # nearest day for 18XX milgroups
         nearest_day = datetime.strptime(
-            get_date_range(datetime.now() - timedelta(6), datetime.now(),
-                           4)[0], "%Y-%m-%d")
+            get_date_range(datetime.now() - timedelta(6), datetime.now(), 4)[0],
+            "%Y-%m-%d")
 
         passports = create_passports()
         offices = create_recruitments_offices()

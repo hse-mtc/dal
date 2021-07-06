@@ -7,7 +7,6 @@ from django.urls import (
 
 from conf import settings
 
-
 urlpatterns = [
     # Public
     path("api/auth/", include("auth.urls")),
