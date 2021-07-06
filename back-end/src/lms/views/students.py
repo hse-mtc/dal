@@ -109,7 +109,6 @@ class StudentViewSet(ModelViewSet):
     def get_queryset(self):
         if self.action == "applications":
             return self.queryset.filter(status=Student.Status.APPLICANT)
-        print(self.request.query_params)
         if (self.request.method in SAFE_METHODS and
                 "archived" not in self.request.query_params):
             return self.queryset.filter(milgroup__archived=False)
