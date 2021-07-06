@@ -90,7 +90,7 @@ class Dictionaries {
       label: "Авторы",
       mapFunc: item => ({
         id: item.id,
-        title: [item.surname, item.name, item.patronymic].join(" "),
+        title: [item.surname, item.name, item.patronymic].filter(Boolean).join(" "),
       }),
       add: DocumentsModule.addAuthor,
       delete: DocumentsModule.deleteAuthor,
