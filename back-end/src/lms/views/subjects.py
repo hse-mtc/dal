@@ -1,4 +1,4 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.filters import SearchFilter
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -14,11 +14,13 @@ from auth.permissions import BasePermission
 
 
 class LessonSubjectPermission(BasePermission):
-    permission_class = 'auth.subject'
+    permission_class = 'lesson-subjects'
+    view_name_rus = 'Занятия в расписании'
+    methods = ['get']
 
 
 @extend_schema(tags=['lms-subjects'])
-class LessonSubjectViewSet(ModelViewSet):
+class LessonSubjectViewSet(ReadOnlyModelViewSet):
     serializer_class = LessonSubjectSerializer
     queryset = Subject.objects.all()
 

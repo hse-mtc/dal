@@ -10,6 +10,7 @@
           @keyup.native.enter="onFilter"
         />
       </el-col>
+
       <el-col :span="7">
         <el-select
           v-model="filter.milgroup"
@@ -62,6 +63,9 @@
         :sort-field="milgroupField"
         :sort-order="1"
         class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        :row-class="() => 'clickable'"
+        row-hover
+        @row-click="onEdit"
       >
         <PrimeColumn
           field="fullname"
@@ -78,24 +82,17 @@
           column-key="milgroup"
         />
         <PrimeColumn
-          :field="row => row.milgroup.milfaculty"
+          :field="(row) => row.milgroup.milfaculty"
           header="Цикл"
           column-key="milfaculty"
         />
         <PrimeColumn
-          :field="row => row.university_info.program.program"
-          header="Программа"
-          header-style="width: 300px"
-          body-style="width: 300px"
-          column-key="program"
-        />
-        <PrimeColumn
-          :field="row => dateFilter(row.birth_info && row.birth_info.date)"
+          :field="(row) => dateFilter(row.birth_info && row.birth_info.date)"
           header="Дата рождения"
           column-key="birthday"
         />
         <PrimeColumn
-          :field="row => statusFilter(row.status)"
+          :field="(row) => statusFilter(row.status)"
           header="Статус"
           header-style="width: 150px"
           body-style="width: 150px"
@@ -103,44 +100,31 @@
         />
         <PrimeColumn
           column-key="buttons"
+          header-style="width: 50px"
+          body-style="width: 50px"
         >
           <template #body="{ data }">
-            <el-button
-              size="mini"
-              icon="el-icon-edit"
-              type="info"
-              circle
-              @click="onEdit(data)"
-            />
             <el-button
               size="mini"
               icon="el-icon-delete"
               type="danger"
               circle
-              @click="onDelete(data)"
+              @click="onDelete($event, data.id)"
             />
           </template>
         </PrimeColumn>
       </PrimeTable>
     </el-row>
-    <Student
-      v-model="modal"
-      :student="editStudent"
-      @closeModal="closeModal"
-      @submitModal="clearFilter"
-    />
   </div>
 </template>
 
 <script>
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
-import { getStudent, deleteStudent } from "@/api/students";
-import Student from "../Student/Student.vue";
+import { getStudentBasic, deleteStudent } from "@/api/students";
 
 export default {
   name: "Students",
-  components: { Student },
   data() {
     return {
       loading: false,
@@ -150,7 +134,6 @@ export default {
         status: "ST",
       },
       students: [],
-      modal: false,
       statuses: [
         { code: "ST", label: "Обучающийся" },
         { code: "EX", label: "Отчислен" },
@@ -171,28 +154,16 @@ export default {
         },
       ],
       milfaculties: ["Разведка", "Сержанты", "ВКС", "РВСН"],
-      editStudent: {},
     };
   },
   async created() {
     await this.onFilter();
   },
   methods: {
-    closeModal() {
-      this.modal = false;
-      document
-        .getElementById("main-container")
-        .classList.remove("stop-scrolling");
-      this.editStudent = {};
-    },
-    openModal() {
-      this.modal = true;
-      document.getElementById("main-container").classList.add("stop-scrolling");
-    },
     async onFilter() {
       try {
         this.loading = true;
-        this.students = (await getStudent(this.filter)).data;
+        this.students = (await getStudentBasic(this.filter)).data;
       } catch (err) {
         getError("студентов", err.response.status);
       } finally {
@@ -205,7 +176,8 @@ export default {
       });
       await this.onFilter();
     },
-    onDelete(id) {
+    onDelete(e, id) {
+      e.stopPropagation();
       this.$confirm(
         "Вы уверены, что хотите удалить студента?",
         "Подтверждение",
@@ -224,9 +196,9 @@ export default {
         }
       });
     },
-    onEdit(row) {
-      this.editStudent = { ...row };
-      this.openModal();
+    onEdit({ data }) {
+      console.log("🚀 > data", data);
+      this.$router.push({ name: "Student", params: { studentId: data.id } });
     },
     milgroupField(row) {
       return row.milgroup.milgroup;

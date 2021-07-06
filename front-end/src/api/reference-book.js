@@ -42,9 +42,16 @@ export function getRanks() {
   });
 }
 
-export function getPosts() {
+export function getTeacherPosts() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.posts,
+    url: BASE_API_URL + LMS_URLS.reference.teacherPosts,
+    method: "get",
+  });
+}
+
+export function getStudentPosts() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.studentPosts,
     method: "get",
   });
 }
@@ -66,6 +73,13 @@ export function getPrograms() {
 export function getRooms() {
   return request({
     url: BASE_API_URL + LMS_URLS.reference.rooms,
+    method: "get",
+  });
+}
+
+export function getSkills() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.reference.skills,
     method: "get",
   });
 }

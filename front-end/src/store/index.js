@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import getters from "./getters";
+import { getModule } from "vuex-module-decorators";
 import app from "./modules/app";
 import settings from "./modules/settings";
 import user from "./modules/user";
@@ -19,7 +19,13 @@ const store = new Vuex.Store({
     documents,
     reference,
   },
-  getters,
 });
 
 export default store;
+
+export const AppModule = getModule(app, store);
+export const DocumentsModule = getModule(documents, store);
+export const ReferenceModule = getModule(reference, store);
+export const SettingsModule = getModule(settings, store);
+export const SubjectsModule = getModule(subjects, store);
+export const UserModule = getModule(user, store);

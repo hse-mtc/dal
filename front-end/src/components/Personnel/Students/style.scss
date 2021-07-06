@@ -1,3 +1,7 @@
 .filter {
   margin: 20px;
 }
+
+/deep/ .clickable {
+  cursor: pointer;
+}

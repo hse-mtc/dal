@@ -1,5 +1,5 @@
 import jwtDecode from "jwt-decode";
-import store from "../store";
+import { AppModule } from "../store";
 
 const LocalStorageService = (function serviceConstructor() {
   let service;
@@ -20,7 +20,7 @@ const LocalStorageService = (function serviceConstructor() {
     const token = localStorage.getItem("access_token");
     if (token) {
       const decoded = jwtDecode(token);
-      store.dispatch("app/setUserId", decoded.user_id);
+      AppModule.setUserId(decoded.user_id);
     }
     return token;
   }

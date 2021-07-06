@@ -5,8 +5,6 @@ from datetime import (
 )
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.contrib.contenttypes.models import ContentType
 
 from rest_framework import status
 
@@ -20,9 +18,9 @@ from common.serializers.populate import PopulateSerializer
 # ------------------------------------------------------------------------------
 # Populate imports
 
+from auth.models import Group
 from auth.populate.users import create_users
 from auth.populate.permissions import (
-    create_permissions,
     get_student_permissions,
     get_teacher_permissions,
     get_milfaculty_head_permissions,
@@ -122,9 +120,6 @@ class PopulateAPIView(GenericAPIView):
             teachers, _ = Group.objects.get_or_create(name="teachers")
             milfaculty_heads, _ = Group.objects.get_or_create(
                 name="milfaculty_heads")
-            content_type = ContentType.objects.get_for_model(Group)
-
-            create_permissions(content_type)
 
             students.permissions.set(get_student_permissions())
             teachers.permissions.set(get_teacher_permissions())

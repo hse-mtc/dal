@@ -1,5 +1,4 @@
 from rest_framework import generics
-from rest_framework import permissions
 from rest_framework import viewsets
 
 from rest_framework.filters import SearchFilter
@@ -14,10 +13,7 @@ from taggit.models import Tag
 
 from drf_spectacular.views import extend_schema
 
-from auth.permissions import (
-    IsOwner,
-    ReadOnly,
-)
+from auth.permissions import BasePermission
 
 from dms.models.papers import (
     Category,
@@ -37,11 +33,16 @@ from common.parsers import MultiPartWithJSONParser
 from common.constants import MUTATE_ACTIONS
 
 
+class CategoryPermission(BasePermission):
+    permission_class = "categories"
+    view_name_rus = "Категории статей"
+
+
 @extend_schema(tags=["categories"])
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [CategoryPermission]
 
     def destroy(self, request, *args, **kwargs):
         category = self.get_object()
@@ -54,11 +55,22 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
+class TagPermission(BasePermission):
+    permission_class = "tags"
+    view_name_rus = "Ключевые слова статей"
+    methods = ["get"]
+
+
 @extend_schema(tags=["tags"])
 class TagListAPIView(generics.ListAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [TagPermission]
+
+
+class PaperPermission(BasePermission):
+    permission_class = "papers"
+    view_name_rus = "Статьи"
 
 
 @extend_schema(request=PaperMutateSerializerForSwagger, tags=["papers"])
@@ -67,7 +79,7 @@ class PaperViewSet(viewsets.ModelViewSet):
         .prefetch_related("authors", "category", "publishers", "file", "tags") \
         .order_by("-publication_date", "title", "id")
 
-    permission_classes = [ReadOnly | IsOwner]
+    permission_classes = [PaperPermission]
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = PaperFilter

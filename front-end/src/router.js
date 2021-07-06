@@ -137,6 +137,21 @@ export const constantRoutes = [
       },
 
       {
+        path: "student/:studentId",
+        name: "Student",
+        component: () => import("@/views/Personnel/Student"),
+        meta: { title: "Студент" },
+        hidden: true,
+      },
+      {
+        path: "teacher/:teacherId",
+        name: "Teacher",
+        component: () => import("@/views/Personnel/Teacher"),
+        meta: { title: "Преподаватель" },
+        hidden: true,
+      },
+
+      {
         path: "absence/",
         name: "Absence",
         component: () => import("@/views/Absence/index"),
@@ -155,6 +170,32 @@ export const constantRoutes = [
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
         meta: { title: "Панель администратора", icon: "journal" },
+        children: [
+          {
+            path: "approve/",
+            alias: "",
+            name: "approve",
+            component: () => import("@/components/Apanel/Approve/Approve.vue"),
+            meta: { title: "Подтверждения" },
+          },
+          {
+            path: "permissions/",
+            name: "permissions",
+            component: () => import("@/components/Apanel/PermissionComponent.vue"),
+            meta: { title: "Права" },
+          },
+          {
+            path: "dictionaries/",
+            name: "dictionaries",
+            // component: () => import("@/components/dictionaries")
+          },
+          {
+            path: "subjects/",
+            name: "subjects",
+            component: () => import("@/components/Apanel/SubjectsControl.vue"),
+            meta: { title: "Предметы" },
+          },
+        ],
       },
 
       {

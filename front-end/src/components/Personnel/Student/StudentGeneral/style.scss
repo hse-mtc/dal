@@ -1,0 +1,67 @@
+.general-info {
+  display: flex;
+  align-items: stretch;
+
+  .form {
+    width: 100%;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.avatar-uploader .el-upload {
+  $avatar-width: 225px;
+  $avatar-height: 300px;
+
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  .avatar-uploader-icon {
+    position: relative;
+    font-size: 40px;
+    color: #909399;
+    width: $avatar-width;
+    height: $avatar-height;
+    text-align: center;
+    border: 1px solid #909399;
+    border-radius: 10px;
+    transition: 0.2s;
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+    }
+
+    &:hover {
+      color: #409eff;
+      border-color: #409eff;
+    }
+  }
+
+  .avatar {
+    width: $avatar-width;
+    height: $avatar-height;
+    display: block;
+    object-fit: cover;
+
+    transition: 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+.field-value {
+  font-size: 1.2em;
+
+  sub {
+    color: #8492a6;
+  }
+}

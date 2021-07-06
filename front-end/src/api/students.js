@@ -18,6 +18,48 @@ export function getStudent(params) {
     params,
   });
 }
+export function getStudentBasic(params) {
+  return request({
+    url: `${BASE_API_URL}/${students}/basic/`,
+    method: "get",
+    params,
+  });
+}
+
+export function findStudentBasic(id) {
+  return request({
+    url: `${BASE_API_URL}${students}basic/${id}`,
+    method: "get",
+  });
+}
+
+export function findStudent(id) {
+  return request({
+    url: `${BASE_API_URL}${students}${id}/`,
+    method: "get",
+  });
+}
+
+export function findStudentSkills(id) {
+  return request({
+    url: `${BASE_API_URL}${students}skills/${id}/`,
+    method: "get",
+  });
+}
+
+export function findStudentPerformance(id) {
+  return request({
+    url: `${BASE_API_URL}${students}${id}/performance`,
+    method: "get",
+  });
+}
+
+export function findStudentExtra(id) {
+  return request({
+    url: `${BASE_API_URL}${students}extra/${id}/`,
+    method: "get",
+  });
+}
 
 export function postStudent(data) {
   return request({

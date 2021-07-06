@@ -99,8 +99,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 import {
   SelectInput,
   DateInput,
@@ -110,6 +108,7 @@ import {
 } from "@/common/inputs";
 
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
+import { DocumentsModule, SubjectsModule } from "@/store";
 
 export default {
   name: "LibraryModal",
@@ -144,20 +143,24 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      authors: state => state.documents.authors.map(author => ({
-        label: `${author.surname} ${author.name} ${author.patronymic}`,
-        value: author.id,
-      })),
-      subjects: state => state.subjects.subjects.map(subject => ({
+    subjects() {
+      return SubjectsModule.subjects.map(subject => ({
         label: subject.title,
         value: subject.id,
-      })),
-      publishers: state => state.documents.publishers.map(publisher => ({
+      }));
+    },
+    authors() {
+      return DocumentsModule.authors.map(author => ({
+        label: `${author.surname} ${author.name} ${author.patronymic}`,
+        value: author.id,
+      }));
+    },
+    publishers() {
+      return DocumentsModule.publishers.map(publisher => ({
         label: publisher.name,
         value: publisher.id,
-      })),
-    }),
+      }));
+    },
   },
   watch: {
     initData(nextValue, prevValue) {

@@ -1,0 +1,47 @@
+.discipline-info {
+  .discipline-table {
+    /deep/ .el-table {
+      &::before {
+        height: 0;
+      }
+
+      tr:last-child td {
+        border-bottom: none;
+      }
+    }
+
+    .title {
+      font-weight: 500;
+      font-size: 1.2rem;
+      margin-left: 5px;
+      margin-bottom: 5px;
+    }
+
+    .separator {
+      height: 1px;
+      background: #EBEEF5;
+      margin: 10px -20px;
+    }
+  }
+}
+
+/deep/ .p-datatable-scrollable-body {
+  &::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.2);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.4);
+  }
+  &::-webkit-scrollbar-thumb:active {
+    background: rgba(0, 0, 0, 0.9);
+  }
+}

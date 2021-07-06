@@ -1,8 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import (
-    Group,
-    Permission,
-)
+from django.core.exceptions import ValidationError
 
 from rest_framework import serializers
 
@@ -10,34 +7,108 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from conf.settings import CREATE_PASSWORD_TOKEN_LIFETIME
 
+from auth.models import (
+    Group,
+    Permission,
+)
+
 
 class PermissionSerializer(serializers.ModelSerializer):
+    scope_display = serializers.CharField(source="get_scope_display")
 
     class Meta:
         model = Permission
-        fields = ["name", "codename"]
+        # using __all__ does not display codename
+        fields = [
+            "id", "method", "viewset", "scope", "scope_display", "codename",
+            "name"
+        ]
+
+
+class PermissionRequestSerializer(serializers.ModelSerializer):
+    # specifying this as codename is a property field
+    codename = serializers.CharField()
+
+    def validate(self, attrs):
+        if attrs["codename"].count(".") != 2:
+            raise ValidationError(
+                f"Incorrect codename template for \"{attrs['codename']}\"")
+
+        viewset, method, scope = attrs["codename"].split(".")
+
+        if scope.upper() not in Permission.Scope.names:
+            raise ValidationError(
+                f"Scope \"{scope}\" does not exist " \
+                f"(permission \"{attrs['codename']}\""
+            )
+        scope = int(getattr(Permission.Scope, scope.upper()))
+
+        permission = Permission.objects.filter(viewset=viewset,
+                                               method=method,
+                                               scope=scope)
+
+        if not permission.exists():
+            raise ValidationError(
+                f"Permission \"{attrs['codename']}\" does not exist")
+
+        return super().validate(attrs)
+
+    class Meta:
+        model = Permission
+        fields = ["codename"]
 
 
 class GroupSerializer(serializers.ModelSerializer):
+    permissions = PermissionSerializer(many=True)
+
+    class Meta:
+        model = Group
+        fields = ["id", "name", "permissions"]
+
+
+class GroupShortSerializer(serializers.ModelSerializer):
+
+    def to_representation(self, instance):
+        """Represent a list of groups as a list of strings."""
+        return instance.name
 
     class Meta:
         model = Group
         fields = ["name"]
 
 
+class GroupModifySerializer(serializers.ModelSerializer):
+
+    class StringListField(serializers.ListField):
+        child = serializers.CharField()
+
+    permissions = StringListField()
+
+    class Meta:
+        model = Group
+        fields = ["name", "permissions"]
+
+
 class UserSerializer(serializers.ModelSerializer):
-    permissions = serializers.SerializerMethodField(read_only=True)
+    """Display main user info and all permissions."""
+    all_permissions = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = get_user_model()
-        fields = ["id", "email", "permissions", "campuses"]
+        fields = ["id", "email", "all_permissions", "campuses"]
 
-    def get_permissions(self, obj) -> list[str]:
-        groups = obj.groups.all()
-        permissions = []
-        for group in groups:
-            permissions += [perm.codename for perm in group.permissions.all()]
-        return list(set(permissions))
+    def get_all_permissions(self, obj) -> list[str]:
+        return PermissionSerializer(obj.get_all_permissions(), many=True).data
+
+
+class UserDetailedSerializer(serializers.ModelSerializer):
+    """Display main user info, user permissions and groups."""
+    permissions = PermissionSerializer(many=True)
+    groups = GroupShortSerializer(many=True)
+
+    class Meta:
+        model = get_user_model()
+        fields = ["id", "email", "permissions", "campuses", "groups"]
 
 
 class TokenPairSerializer(serializers.Serializer):

@@ -25,15 +25,15 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import variables from "@/styles/variables.scss";
+import { AppModule, SettingsModule } from "@/store";
 import Logo from "./Logo.vue";
 import SidebarItem from "./SidebarItem.vue";
 
 export default {
   components: { SidebarItem, Logo },
   computed: {
-    ...mapGetters(["sidebar"]),
+    sidebar() { return AppModule.sidebar; },
     routes() {
       return this.$router.options.routes;
     },
@@ -47,7 +47,7 @@ export default {
       return path;
     },
     showLogo() {
-      return this.$store.state.settings.sidebarLogo;
+      return SettingsModule.sidebarLogo;
     },
     variables() {
       return variables;

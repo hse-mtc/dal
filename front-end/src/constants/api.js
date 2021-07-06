@@ -31,16 +31,21 @@ export const LMS_URLS = {
   punishment: {
     punishment: "lms/punishments/",
   },
+  achievement: {
+    achievement: "lms/achievements/",
+  },
   reference: {
     book: "lms/reference-book/",
     milgroups: "lms/milgroups/",
     ranks: "lms/ranks/",
-    posts: "lms/teacher-posts/",
+    teacherPosts: "lms/teacher-posts/",
+    studentPosts: "lms/student-posts/",
     milfaculties: "lms/milfaculties/",
     milspecialties: "lms/milspecialties/",
     achievementTypes: "lms/achievement-types/",
     programs: "lms/programs/",
     rooms: "lms/rooms/",
+    skills: "lms/student-skills/",
   },
   staff: {
     students: "lms/students/",

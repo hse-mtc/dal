@@ -23,10 +23,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import { SIZES, COLORS } from "@/utils/appConsts";
 import { getStatistics } from "@/api/statistics";
 import CustomText from "@/common/CustomText";
+import { AppModule } from "@/store";
 
 // TODO make one component with Subjects for ex if u have a param,
 // than hide title and search and do a request with user id
@@ -48,9 +48,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
+    userId() { return AppModule.userId; },
   },
   created() {
     this.fetchData();

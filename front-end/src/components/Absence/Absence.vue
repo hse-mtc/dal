@@ -261,6 +261,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { ReferenceModule } from "@/store";
 import AbsenceJournal from "./AbsenceJournal/AbsenceJournal.vue";
 
 export default {
@@ -362,13 +363,13 @@ export default {
   },
   computed: {
     milgroups() {
-      return this.$store.state.reference.milgroups;
+      return ReferenceModule.milgroups;
     },
     types() {
-      return this.$store.state.reference.absenceTypes;
+      return ReferenceModule.absenceTypes;
     },
     statuses() {
-      return this.$store.state.reference.absenceStatuses;
+      return ReferenceModule.absenceStatuses;
     },
   },
   created() {
@@ -408,14 +409,14 @@ export default {
     },
     dateField: row => moment(row.date).format("DD.MM.YY"),
     async fetchData() {
-      if (!this.$store.state.reference.milgroups.length) {
-        await this.$store.dispatch("reference/setMilgroups");
+      if (!ReferenceModule.milgroups.length) {
+        await ReferenceModule.fetchMilgroups();
       }
-      if (!this.$store.state.reference.absenceTypes.length) {
-        await this.$store.dispatch("reference/setAbsenceTypes");
+      if (!ReferenceModule.absenceTypes.length) {
+        await ReferenceModule.fetchAbsenceTypes();
       }
-      if (!this.$store.state.reference.absenceStatuses.length) {
-        await this.$store.dispatch("reference/setAbsenceStatuses");
+      if (!ReferenceModule.absenceStatuses.length) {
+        await ReferenceModule.fetchAbsenceStatuses();
       }
     },
     async onFilter() {

@@ -1,3 +1,12 @@
+import {
+  VuexModule,
+  Module,
+  Mutation,
+  Action,
+} from "vuex-module-decorators";
+
+import store from "@/store";
+
 import { login, getUser } from "@/api/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
 
@@ -6,98 +15,70 @@ import LocalStorageService from "../../utils/LocalStorageService";
 
 const localStorageService = LocalStorageService.getService();
 
-const initState = {
-  token: getToken(),
-  email: "",
-  campuses: [],
-};
+@Module({ store, name: "user", namespaced: true })
+class User extends VuexModule {
+  token = getToken()
+  email = ""
+  campuses = []
 
-const mutations = {
-  /* eslint-disable no-param-reassign */
-  SET_TOKEN: (state, token) => {
-    state.token = token;
-  },
-  SET_EMAIL: (state, email) => {
-    state.email = email;
-  },
-  SET_CAMPUSES: (state, campuses) => {
-    state.campuses = campuses;
-  },
-  /* eslint-enable no-param-reassign */
-};
+  @Mutation
+  SET_TOKEN(token) {
+    this.token = token;
+  }
 
-const actions = {
-  // user login
-  login({ commit }, userInfo) {
+  @Mutation
+  SET_EMAIL(email) {
+    this.email = email;
+  }
+
+  @Mutation
+  SET_CAMPUSES(campuses) {
+    this.campuses = campuses;
+  }
+
+  @Action
+  async login(userInfo) {
     const { email, password } = userInfo;
-    return new Promise((resolve, reject) => {
-      login({ email: email.trim(), password })
-        .then(response => {
-          const { data } = response;
-          commit("SET_TOKEN", data.access);
-          setToken(data.access);
-          localStorageService.setToken(data);
-          resolve();
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  },
 
-  // get user info
-  getUser({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getUser(state.token)
-        .then(response => {
-          const { data } = response;
-          if (!data) {
-            reject(new Error("Verification failed, please Login again."));
-          }
+    const { data } = await login({ email: email.trim(), password });
+    this.SET_TOKEN(data.access);
+    setToken(data.access);
+    localStorageService.setToken(data);
+  }
 
-          const { email, campuses } = data;
-          commit("SET_EMAIL", email);
-          commit("SET_CAMPUSES", campuses);
+  @Action
+  async getUser() {
+    const { data } = await getUser(this.token);
 
-          resolve(data);
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  },
+    if (!data) {
+      throw new Error("Verification failed, please Login again.");
+    }
 
-  // user logout
-  logout({ commit }) {
-    commit("SET_TOKEN", "");
-    commit("SET_EMAIL", "");
+    const { email, campuses } = data;
+    this.SET_EMAIL(email);
+    this.SET_CAMPUSES(campuses);
+  }
+
+  @Action
+  logout() {
+    this.SET_TOKEN();
+    this.SET_EMAIL();
     removeToken();
     resetRouter();
-  },
+  }
 
-  // set token
-  setToken({ commit }, token) {
-    return new Promise(resolve => {
-      commit("SET_TOKEN", token);
-      setToken(token);
-      localStorageService.setToken({ access: token, refresh: null });
-      resolve();
-    });
-  },
+  @Action
+  async setToken(token) {
+    this.SET_TOKEN(token);
+    setToken(token);
+    localStorageService.setToken({ access: token, refresh: null });
+  }
 
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      commit("SET_TOKEN", "");
-      removeToken();
-      resolve();
-    });
-  },
-};
+  @Action
+  async resetToken() {
+    this.SET_TOKEN("");
+    removeToken();
+  }
+}
 
-export default {
-  namespaced: true,
-  state: initState,
-  mutations,
-  actions,
-};
+export default User;

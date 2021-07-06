@@ -10,19 +10,30 @@ from lms.serializers.encouragements import (EncouragementSerializer,
                                             EncouragementMutateSerializer)
 from lms.filters.encouragements import EncouragementFilter
 from lms.views.archived_viewset import ArchivedModelViewSet
+from lms.mixins import StudentTeacherQuerySetScopingMixin
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class EncouragementPermission(BasePermission):
-    permission_class = 'auth.encouragement'
+    permission_class = 'encouragements'
+    view_name_rus = 'Поощрения'
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
+    ]
 
 
 @extend_schema(tags=['encouragements'])
-class EncouragementViewSet(ArchivedModelViewSet):
+class EncouragementViewSet(StudentTeacherQuerySetScopingMixin, ArchivedModelViewSet):
     queryset = Encouragement.objects.all()
 
     permission_classes = [EncouragementPermission]
+    scoped_permission_class = EncouragementPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = EncouragementFilter

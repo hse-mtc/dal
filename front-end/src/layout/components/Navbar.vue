@@ -30,11 +30,11 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import Breadcrumb from "@/components/Breadcrumb";
 import LocalStorageService from "@/utils/LocalStorageService";
 import Hamburger from "@/components/Hamburger";
 import { surnameWithInitials } from "@/utils/person";
+import { AppModule, UserModule } from "@/store";
 
 export default {
   components: {
@@ -42,7 +42,8 @@ export default {
     Hamburger,
   },
   computed: {
-    ...mapGetters(["sidebar", "email"]),
+    sidebar() { return AppModule.sidebar; },
+    email() { return UserModule.email; },
     isCollapse() {
       return !this.sidebar.opened;
     },
@@ -55,7 +56,7 @@ export default {
       this.$router.push("/login");
     },
     toggleSideBar() {
-      this.$store.dispatch("app/toggleSideBar");
+      AppModule.toggleSideBar();
     },
   },
 };

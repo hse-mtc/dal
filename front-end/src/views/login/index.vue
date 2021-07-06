@@ -75,6 +75,7 @@
 
 <script>
 import { validEmail } from "@/utils/validate";
+import { UserModule } from "@/store";
 
 export default {
   name: "Login",
@@ -132,8 +133,7 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true;
-          this.$store
-            .dispatch("user/login", this.loginForm)
+          UserModule.login(this.loginForm)
             .then(() => {
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;

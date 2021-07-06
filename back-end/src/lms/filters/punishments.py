@@ -9,6 +9,7 @@ from lms.models.punishments import Punishment
 
 
 class PunishmentFilter(FilterSet):
+    removed = BooleanFilter(method='filter_by_removed_punishment')
 
     milgroup = NumberFilter(field_name='student__milgroup__milgroup')
 
@@ -27,8 +28,12 @@ class PunishmentFilter(FilterSet):
         value = value % 100  # strip first two symbols of the year
         return queryset.filter(student__milgroup__milgroup__startswith=value)
 
+    def filter_by_removed_punishment(self, queryset, name, value):
+        # pylint: disable=unused-argument
+        return queryset.filter(remove_date__isnull=not value)
+      
     class Meta:
         model = Punishment
         fields = [
-            'reason', 'milgroup', 'student', 'teacher', 'type', 'archived'
+            'reason', 'milgroup', 'student', 'teacher', 'type', 'archived', 'removed',
         ]

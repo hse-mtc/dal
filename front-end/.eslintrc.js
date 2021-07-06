@@ -79,5 +79,6 @@ module.exports = {
     "func-names": ["error", "as-needed"],
     "lines-between-class-members": ["error", "always", { exceptAfterSingleLine: true }],
     "class-methods-use-this": 0,
+    "no-underscore-dangle": ["error", { allowAfterThis: true }],
   },
 };

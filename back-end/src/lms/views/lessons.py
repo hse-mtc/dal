@@ -1,15 +1,11 @@
 from datetime import datetime
 
+from rest_framework import status
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
-
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-)
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -26,20 +22,30 @@ from lms.serializers.lessons import (
     LessonMutateSerializer,
 )
 from lms.filters.lessons import LessonFilter
-from lms.functions import get_date_range
+from lms.functions import get_date_range, milgroup_allowed_by_scope
+from lms.mixins import QuerySetScopingMixin
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class LessonPermission(BasePermission):
-    permission_class = 'auth.lesson'
+    permission_class = 'lessons'
+    view_name_rus = 'Расписание занятий'
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+    ]
 
 
 @extend_schema(tags=['lessons'])
-class LessonViewSet(ModelViewSet):
+class LessonViewSet(QuerySetScopingMixin, ModelViewSet):
     queryset = Lesson.objects.all()
 
     permission_classes = [LessonPermission]
+    scoped_permission_class = LessonPermission
+
     filter_backends = [DjangoFilterBackend]
 
     filterset_class = LessonFilter
@@ -54,6 +60,35 @@ class LessonViewSet(ModelViewSet):
                 'archived' not in self.request.query_params):
             return self.queryset.filter(milgroup__archived=False)
         return super().get_queryset()
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == 'student':
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == 'teacher':
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(milgroup__milfaculty=milfaculty)
+
+    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+        # this milgroup must exist as permission check occurs after
+        # the serializer validation
+        milgroup = Milgroup.objects.get(milgroup=data['milgroup'])
+        if user_type == 'student':
+            return milgroup.milfaculty == user.milgroup.milfaculty
+        if user_type == 'teacher':
+            return milgroup.milfaculty == user.milfaculty
+        return False
+
+    def handle_scope_milgroup(self, user_type, user):
+        if user_type in ('student', 'teacher'):
+            return self.queryset.filter(milgroup=user.milgroup)
+        return self.queryset.none()
+
+    def allow_scope_milgroup_on_create(self, data, user_type, user):
+        if user_type in ('student', 'teacher'):
+            return data['milgroup'] == user.milgroup.milgroup
+        return False
 
 
 @extend_schema(tags=['lesson-journal'],
@@ -77,8 +112,7 @@ class LessonJournalView(GenericAPIView):
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
         query_params = LessonJournalQuerySerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         # final json
         data = {}
@@ -87,6 +121,17 @@ class LessonJournalView(GenericAPIView):
         milgroup = MilgroupSerializer(
             Milgroup.objects.get(
                 milgroup=request.query_params['milgroup'])).data
+
+        # this check restricts all journal access if scope == SELF
+        # TODO(@gakhromov): mb allow scope == SELF for journal requests
+        if not milgroup_allowed_by_scope(milgroup, request, LessonPermission):
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+
         data['milgroup'] = milgroup
 
         # calculate dates
@@ -113,4 +158,4 @@ class LessonJournalView(GenericAPIView):
 
         data['ordinals'] = ordinals
 
-        return Response(data, status=HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)

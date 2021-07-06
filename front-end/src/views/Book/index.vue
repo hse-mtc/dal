@@ -138,9 +138,9 @@ import CustomText from "@/common/CustomText";
 import DownloadFile from "@/common/DownloadFile/index.vue";
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook, deleteBook } from "@/api/books";
-import { mapState } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
 import CtaButton from "@/common/CtaButton";
+import { DocumentsModule, SubjectsModule } from "@/store";
 
 export default {
   name: "Book",
@@ -161,11 +161,9 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      authors: state => state.documents.authors,
-      subjects: state => state.subjects.subjects,
-      publishers: state => state.documents.publishers,
-    }),
+    subjects() { return SubjectsModule.subjects; },
+    authors() { return DocumentsModule.authors; },
+    publishers() { return DocumentsModule.publishers; },
   },
   created() {
     this.fetchData();

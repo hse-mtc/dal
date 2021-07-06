@@ -38,10 +38,14 @@
           <div
             class="document-card-authors"
           >
-            <span
-              v-for="(author, authorIndex) in document.authors"
-              :key="author"
-            >{{ `${authorIndex > 0 ? ', ' : ''} ${getAuthor(author)}` }}</span>
+            <template v-for="(author, authorIndex) in document.authors">
+              <span
+                v-if="getAuthor(author)"
+                :key="author"
+              >
+                {{ `${authorIndex > 0 ? ', ' : ''} ${getAuthor(author)}` }}
+              </span>
+            </template>
           </div>
 
           <div class="document-card-annotation">
@@ -119,8 +123,8 @@ import { deleteDocument } from "@/api/delete";
 
 import { scrollMixin } from "@/mixins/scrollMixin";
 import DownloadFile from "@/common/DownloadFile/index.vue";
-import { mapState } from "vuex";
 import { surnameWithInitials } from "@/utils/person";
+import { AppModule, DocumentsModule } from "@/store";
 import EventBus from "../EventBus";
 
 export default {
@@ -148,11 +152,9 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-      authors: state => state.documents.authors,
-      publishers: state => state.documents.publishers,
-    }),
+    userId() { return AppModule.userId; },
+    authors() { return DocumentsModule.authors; },
+    publishers() { return DocumentsModule.publishers; },
   },
   watch: {
     $route() {
@@ -172,6 +174,8 @@ export default {
     moment,
     getAuthor(id) {
       const author = this.authors.find(item => item.id === id);
+      if (!author) return "";
+
       return surnameWithInitials(author);
     },
     publisherNames(ids) {

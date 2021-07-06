@@ -1,200 +1,59 @@
 <template>
-  <el-drawer
-    :visible.sync="modal"
-    direction="rtl"
-    size="40%"
-    :destroy-on-close="true"
-  >
-    <el-form
-      ref="form"
-      :model="form"
-      :rules="rules"
-      label-width="250px"
-      class="form"
-    >
-      <el-form-item label="Фото">
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="form.photo" :src="form.photo" class="avatar">
-          <i v-else class="el-icon-picture-outline avatar-uploader-icon" />
-        </el-upload>
-      </el-form-item>
-
-      <el-form-item label="Фамилия" prop="surname">
-        <el-input
-          v-model="form.surname"
-          clearable
-          placeholder="Введите фамилию"
-        />
-      </el-form-item>
-
-      <el-form-item label="Имя" prop="name">
-        <el-input
-          v-model="form.name"
-          clearable
-          placeholder="Введите имя"
-        />
-      </el-form-item>
-
-      <el-form-item label="Отчество" prop="patronymic">
-        <el-input
-          v-model="form.patronymic"
-          clearable
-          placeholder="Введите отчество"
-        />
-      </el-form-item>
-
-      <el-form-item label="Взвод" prop="milgroup">
-        <el-select
-          v-model="form.milgroup"
-          value-key="milgroup"
-          placeholder="Выберите взвод"
-          style="display: block"
-        >
-          <el-option
-            v-for="item in milgroups"
-            :key="item.milgroup"
-            :label="item.milgroup"
-            :value="item"
+  <el-col :offset="2" :span="20" class="student-page">
+    <el-row class="pageTitle">
+      <el-col>
+        <div v-if="$route.params.studentId" class="d-flex align-items-center">
+          <img
+            src="@/assets/scienceWorks/previous.svg"
+            style="position: absolute; left: -40px; cursor: pointer"
+            height="22px"
+            alt="назад"
+            @click="backToPersonnel"
           >
-            <span style="float: left"> {{ item.milgroup }} </span>
-            <span style="float: right; color: #8492a6; font-size: 13px">
-              {{ item.milfaculty }}
-            </span>
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">
-          Отправить
-        </el-button>
-      </el-form-item>
-    </el-form>
-  </el-drawer>
+          Студент
+        </div>
+      </el-col>
+    </el-row>
+    <div class="row">
+      <StudentGeneral />
+    </div>
+    <div class="row">
+      <div class="column">
+        <StudentDiscipline />
+        <StudentExtra />
+      </div>
+      <div class="column">
+        <StudentAchievements />
+        <StudentPerformance />
+      </div>
+    </div>
+  </el-col>
 </template>
 
 <script>
-import { patchStudent } from "@/api/students";
-import { patchError, patchSuccess } from "@/utils/message";
-import { getMilGroups } from "@/api/reference-book";
+import StudentGeneral from "@/components/Personnel/Student/StudentGeneral/StudentGeneral.vue";
+import StudentExtra from "@/components/Personnel/Student/StudentExtra/StudentExtra.vue";
+import StudentAchievements from "@/components/Personnel/Student/StudentAchievements/StudentAchievements.vue";
+import StudentDiscipline from "@/components/Personnel/Student/StudentDiscipline/StudentDiscipline.vue";
+import StudentPerformance from "@/components/Personnel/Student/StudentPerformance/StudentPerformance.vue";
 
 export default {
   name: "Student",
-  model: {
-    prop: "show",
-    event: "show-change",
-  },
-  props: {
-    student: {
-      type: Object,
-      required: true,
-    },
-    show: {
-      type: Object,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      form: {
-        id: 0,
-        milgroup: null,
-        surname: "",
-        name: "",
-        patronymic: "",
-        photo: null,
-      },
-      rules: {
-        surname: [
-          {
-            required: true,
-            message: "Пожалуйста, введите фамилию",
-            trigger: "blur",
-          },
-        ],
-        name: [
-          {
-            required: true,
-            message: "Пожалуйста, введите имя",
-            trigger: "blur",
-          },
-        ],
-        milgroup: [
-          {
-            required: true,
-            message: "Пожалуйста, выберите взвод",
-            trigger: "change",
-          },
-        ],
-      },
-      milgroups: [],
-      statuses: ["Обучается", "Отчислен", "Завершил"],
-    };
-  },
-  computed: {
-    modal: {
-      get() {
-        return this.show;
-      },
-      set(value) {
-        this.$emit("show-change", value);
-      },
-    },
-  },
-  watch: {
-    async student(value) {
-      Object.keys(this.form).forEach(key => {
-        this.form[key] = value[key];
-      });
-      await this.fetchData();
-    },
+  components: {
+    StudentGeneral,
+    StudentExtra,
+    StudentAchievements,
+    StudentDiscipline,
+    StudentPerformance,
   },
   methods: {
-    async fetchData() {
-      this.milgroups = (await getMilGroups()).data;
-    },
-    handleAvatarSuccess(res, file) {
-      this.form.foto = URL.createObjectURL(file.raw);
-    },
-    beforeAvatarUpload(file) {
-      const isValidType = file.type === "image/jpeg" || file.type === "image/png";
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isValidType) {
-        this.$message.error("Изображение должно иметь формат jpeg или png.");
-      }
-      if (!isLt2M) {
-        this.$message.error("Размер изображения не должен превышать 2 МБ.");
-      }
-      return isValidType && isLt2M;
-    },
-    onSubmit() {
-      this.$refs.form.validate(async valid => {
-        if (valid) {
-          this.form.milgroup = this.form.milgroup.milgroup;
-          try {
-            await patchStudent(this.form);
-            patchSuccess("студента");
-            this.$emit("submitModal");
-            this.closeModal();
-          } catch (err) {
-            patchError("студента", err.response.status);
-          }
-        }
-      });
-    },
-    closeModal() {
-      this.$emit("closeModal");
+    backToPersonnel() {
+      this.$router.push({ name: "Personnel" });
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-@import "style.scss";
+@import "style";
 </style>

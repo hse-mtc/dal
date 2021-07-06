@@ -44,7 +44,7 @@
                     v-if="id !== 'bin'"
                     :id="id"
                     style="cursor: pointer"
-                    @click="selectCategory(id)"
+                    @click="selectCategory({ id, title })"
                   >
                     {{ title }}
                   </span>
@@ -114,22 +114,18 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { Component, Watch } from "vue-property-decorator";
 
 import Serp from "@/components/Papers/Serp";
 import UpsertModal from "@/components/Papers/UpsertModal";
 
 import Search from "@/components/Search/Papers";
-import AdvancedSearch from "@/components/Search/PapersAdvanced";
-import AddCategoryModal from "@/components/Categories/AddModal";
+import AdvancedSearch from "@/components/Search/PapersAdvanced.vue";
+import AddCategoryModal from "@/components/Categories/AddModal.vue";
 
-import {
-  getPaperCategories,
-  deletePaperCategory,
-} from "@/api/paper_categories";
-import EventBus from "@/components/EventBus";
+import { DocumentsModule } from "@/store";
 
-export default {
+@Component({
   name: "Papers",
   components: {
     AddCategoryModal,
@@ -138,136 +134,126 @@ export default {
     Search,
     UpsertModal,
   },
+})
+class Papers {
+  calendarData = null
 
-  data() {
-    return {
-      calendarData: undefined,
+  documents = []
+  count = null
 
-      documents: [],
-      count: undefined,
+  paperAction = ""
+  paperToEdit = {}
 
-      paperAction: "",
-      paperToEdit: {},
+  category = {}
+  modalCategories = false
+  addNewCategory = false
 
-      category: {},
-      modalCategories: false,
-      addNewCategory: false,
-    };
-  },
-
-  computed: {
-    ...mapState({
-      categories: state => [...state.documents.categories, { title: "Корзина", id: "bin" }],
-    }),
-  },
+  get categories() { return [...DocumentsModule.categories, { title: "Корзина", id: "bin" }]; }
 
   created() {
-    this.fetchData();
-  },
-  mounted() {
-    const self = this;
-    EventBus.$on("UPDATE_CATEGORY", () => {
-      self.fetchData();
+    this.selectCategory(this.categories[0]);
+  }
+
+  startScrolling() {
+    document
+      .getElementById("main-container")
+      .classList.remove("stop-scrolling");
+  }
+
+  stopScrolling() {
+    document.getElementById("main-container").classList.add("stop-scrolling");
+  }
+
+  openPaperModal(action, paperToEdit = {}) {
+    console.log(
+      "Open Paper Modal: action = ",
+      action,
+      " to edit = ",
+      paperToEdit,
+    );
+    this.paperAction = action;
+    this.paperToEdit = paperToEdit;
+    this.stopScrolling();
+  }
+
+  closeModal() {
+    console.log("Close modal");
+    this.paperAction = "";
+    this.paperToEdit = {};
+    this.addNewCategory = false;
+    this.startScrolling();
+  }
+
+  rotateArrow() {
+    const arrow = document.getElementById("dark-arrow");
+    if (arrow) {
+      arrow.style.transform = this.modalCategories
+        ? "rotate(180deg)"
+        : "rotate(0deg)";
+    }
+  }
+
+  closeCategorySelector() {
+    this.modalCategories = false;
+    this.rotateArrow();
+  }
+
+  toggleCategorySelector() {
+    this.modalCategories = !this.modalCategories;
+    this.rotateArrow();
+  }
+
+  async deleteCategory(id) {
+    await this.$confirm("Вы уверены?", "Подтвердите действие", {
+      confirmButtonText: "Удалить",
+      cancelButtonText: "Отменить",
+      type: "warning",
     });
-  },
 
-  methods: {
-    ...mapActions({
-      setCategories: "documents/setCategories",
-    }),
-
-    startScrolling() {
-      document
-        .getElementById("main-container")
-        .classList.remove("stop-scrolling");
-    },
-    stopScrolling() {
-      document.getElementById("main-container").classList.add("stop-scrolling");
-    },
-
-    openPaperModal(action, paperToEdit = {}) {
-      console.log(
-        "Open Paper Modal: action = ",
-        action,
-        " to edit = ",
-        paperToEdit,
-      );
-      this.paperAction = action;
-      this.paperToEdit = paperToEdit;
-      this.stopScrolling();
-    },
-
-    // Any modal (paper or category)
-    closeModal() {
-      console.log("Close modal");
-      this.paperAction = "";
-      this.paperToEdit = {};
-      this.addNewCategory = false;
-      this.startScrolling();
-    },
-
-    rotateArrow() {
-      const arrow = document.getElementById("dark-arrow");
-      if (arrow) {
-        arrow.style.transform = this.modalCategories
-          ? "rotate(180deg)"
-          : "rotate(0deg)";
-      }
-    },
-    closeCategorySelector() {
-      this.modalCategories = false;
-      this.rotateArrow();
-    },
-    toggleCategorySelector() {
-      this.modalCategories = !this.modalCategories;
-      this.rotateArrow();
-    },
-    async deleteCategory(id) {
-      await this.$confirm("Вы уверены?", "Подтвердите действие", {
-        confirmButtonText: "Удалить",
-        cancelButtonText: "Отменить",
-        type: "warning",
-      });
-
-      try {
-        await deletePaperCategory(id);
-      } catch (error) {
-        console.log("Failed to delete Category: ", error);
-        return;
-      }
-
-      await this.fetchData();
+    if (await DocumentsModule.deleteCategory(id)) {
       this.$message({
         type: "success",
         message: "Удаление завершено",
       });
-    },
-    addNewPaperCategory() {
-      this.addNewCategory = true;
-    },
 
-    async fetchData() {
-      let categories;
-      try {
-        categories = (await getPaperCategories()).data;
-      } catch (error) {
-        console.log("Failed to fetch Categories: ", error);
+      if (id === this.category.id) {
+        this.selectCategory(this.categories[0]);
       }
+    } else {
+      this.$message({
+        type: "error",
+        message: "Не удалось удалить",
+      });
+    }
+  }
 
-      this.setCategories(categories);
-      this.selectCategory(categories[0].id);
-    },
+  addNewPaperCategory() {
+    this.addNewCategory = true;
+  }
 
-    selectCategory(id) {
-      this.category = this.categories.find(category => category.id === id);
+  selectCategory(category) {
+    if (!category) return;
+
+    this.category = category;
+
+    if (category.id) {
       this.$router.replace({
         name: "Papers",
-        query: { category: id.toString() },
+        query: { category: category.id.toString() },
       });
-      this.closeCategorySelector();
-    },
-  },
-};
+    }
+    this.closeCategorySelector();
+  }
+
+  @Watch("categories")
+  onCategoriesChange(next) {
+    if (!this.category.id) {
+      ([this.category] = next);
+    }
+  }
+}
+
+export default Papers;
 </script>
 
 <style scoped lang="scss">

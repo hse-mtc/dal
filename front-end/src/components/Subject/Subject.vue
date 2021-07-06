@@ -139,6 +139,7 @@
 </template>
 
 <script>
+import { Component } from "vue-property-decorator";
 import SearchForMaterials from "@/components/Search/SearchForMaterials";
 import SubjectTopics from "@/components/SubjectTopic/SubjectTopics.vue";
 import draggable from "vuedraggable";
@@ -149,10 +150,10 @@ import {
   changeSectionOrder,
   getSubject,
 } from "@/api/subjects";
-import { mapActions, mapState } from "vuex";
 import CustomText from "@/common/CustomText";
+import { AppModule, SubjectsModule } from "@/store";
 
-export default {
+@Component({
   name: "Subject",
   components: {
     draggable,
@@ -160,131 +161,127 @@ export default {
     SearchForMaterials,
     SubjectTopics,
   },
-  data() {
-    return {
-      subject: null,
-      subjectId: null,
-      subjectInfo: null,
-      editTitleIndex: null,
-      subjectOwnerId: null,
-      openedCards: [],
-    };
-  },
   computed: {
-    ...mapState({
-      subjects: state => state.subjects.subjects,
-      userId: state => state.app.userId,
-    }),
-    dragOptions() {
-      return {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost",
-        easing: "cubic-bezier(1, 0.5, 0.8, 1)",
-      };
-    },
+    userId() { return AppModule.userId; },
   },
-  watch: {
-    elemData: {
-      deep: false,
-      handler() {
-        console.log("!!!");
-      },
-    },
-  },
+})
+class MyDisciplines {
+  subject = null
+  subjectId = null
+  subjectInfo = null
+  editTitleIndex = null
+  subjectOwnerId = null
+  openedCards = []
+
+  get subjects() { return SubjectsModule.subjects; }
+  get dragOptions() {
+    return {
+      animation: 200,
+      group: "description",
+      disabled: false,
+      ghostClass: "ghost",
+      easing: "cubic-bezier(1, 0.5, 0.8, 1)",
+    };
+  }
+
   async mounted() {
     await this.fetchData(this.$route.params.subjectId);
     console.log("this.$route", this.$route);
     this.openedCards = [...this.openedCards, +this.$route.query.section];
-  },
-  methods: {
-    ...mapActions({
-      setSubjects: "subjects/setSubjects",
-    }),
-    deleteSection(id) {
-      this.$confirm(
-        "Вы уверены, что хотите удалить раздел? Это действие не обратимо.",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        },
-      ).then(() => {
-        deleteSection(id).then(() => {
-          this.subjectInfo = this.subjectInfo.filter(item => item.id !== id);
-        });
+  }
+
+  deleteSection(id) {
+    this.$confirm(
+      "Вы уверены, что хотите удалить раздел? Это действие не обратимо.",
+      "Подтверждение",
+      {
+        confirmButtonText: "Да",
+        cancelButtonText: "Отмена",
+        type: "warning",
+      },
+    ).then(() => {
+      deleteSection(id).then(() => {
+        this.subjectInfo = this.subjectInfo.filter(item => item.id !== id);
       });
-    },
-    acceptNewTitle(id) {
-      const { title } = this.subjectInfo.find(item => item.id === id);
+    });
+  }
 
-      if (!title) {
-        this.$message.warning("Пожалуйста, заполните название раздела");
-        return;
-      }
+  acceptNewTitle(id) {
+    const { title } = this.subjectInfo.find(item => item.id === id);
 
-      const sendData = {
-        title,
-        subject: this.subjectId,
-      };
-      editSectionTitle(id, sendData);
-      this.editTitleIndex = null;
-    },
-    editTitle(id) {
-      this.editTitleIndex = id;
-    },
-    addTopic() {
-      const dataToSend = {
-        title: "Новый раздел",
-        subject: this.subjectId,
-      };
-      addSection(dataToSend).then(res => {
-        this.subjectInfo.push(res.data);
+    if (!title) {
+      this.$message.warning("Пожалуйста, заполните название раздела");
+      return;
+    }
+
+    const sendData = {
+      title,
+      subject: this.subjectId,
+    };
+    editSectionTitle(id, sendData);
+    this.editTitleIndex = null;
+  }
+
+  editTitle(id) {
+    this.editTitleIndex = id;
+  }
+
+  addTopic() {
+    const dataToSend = {
+      title: "Новый раздел",
+      subject: this.subjectId,
+    };
+    addSection(dataToSend).then(res => {
+      this.subjectInfo.push(res.data);
+    });
+  }
+
+  togglePart(id) {
+    const index = this.openedCards.indexOf(id);
+
+    if (index !== -1) {
+      this.openedCards = this.openedCards.filter(item => item !== id);
+    } else {
+      this.openedCards = [...this.openedCards, id];
+    }
+  }
+
+  selectPart(id, index) {
+    if (this.openedCards.indexOf(id)) {
+      this.openedCards = [...this.openedCards, id];
+    }
+
+    this.$nextTick(() => this.$refs.cards[index].scrollIntoView({
+      block: "start",
+      inline: "nearest",
+      behavior: "smooth",
+    }));
+  }
+
+  async fetchData(subjectId) {
+    this.subjectId = subjectId;
+    await getSubject({ id: subjectId })
+      .then(response => {
+        this.subject = response.data.title;
+        this.subjectInfo = response.data.sections;
+        this.subjectOwnerId = response.data.user.id;
+      })
+      .catch(() => {
+        // eslint-disable-next-line no-console
+        console.log("Данные по предмету не указаны");
       });
-    },
-    togglePart(id) {
-      const index = this.openedCards.indexOf(id);
+  }
 
-      if (index !== -1) {
-        this.openedCards = this.openedCards.filter(item => item !== id);
-      } else {
-        this.openedCards = [...this.openedCards, id];
-      }
-    },
-    selectPart(id, index) {
-      if (this.openedCards.indexOf(id)) {
-        this.openedCards = [...this.openedCards, id];
-      }
+  backToSubjects() {
+    this.$router.push({ name: "Subjects" });
+  }
 
-      this.$nextTick(() => this.$refs.cards[index].scrollIntoView({
-        block: "start",
-        inline: "nearest",
-        behavior: "smooth",
-      }));
-    },
-    async fetchData(subjectId) {
-      this.subjectId = subjectId;
-      await getSubject({ id: subjectId })
-        .then(response => {
-          this.subject = response.data.title;
-          this.subjectInfo = response.data.sections;
-          this.subjectOwnerId = response.data.user.id;
-        })
-        .catch(() => {
-          // eslint-disable-next-line no-console
-          console.log("Данные по предмету не указаны");
-        });
-    },
-    backToSubjects() {
-      this.$router.push({ name: "Subjects" });
-    },
-    updateOrder(sectionId, newOrder) {
-      changeSectionOrder(sectionId, newOrder);
-    },
-  },
-};
+  updateOrder(sectionId, newOrder) {
+    changeSectionOrder(sectionId, newOrder);
+  }
+}
+
+export default MyDisciplines;
 </script>
 
 <style scoped lang="scss">

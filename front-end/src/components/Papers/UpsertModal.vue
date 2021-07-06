@@ -116,7 +116,6 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import moment from "moment";
 import isEmpty from "lodash/isEmpty";
 
@@ -127,6 +126,7 @@ import { patchPaper, postPaper } from "@/api/papers";
 
 import PaperForm from "@/utils/PaperForm";
 import { surnameWithInitials } from "@/utils/person";
+import { DocumentsModule } from "@/store";
 
 export default {
   name: "UpsertPaperModal",
@@ -174,12 +174,13 @@ export default {
   },
 
   computed: {
-    authors: state => state.documents.authors,
-    publishers: state => state.documents.publishers,
+    authors() { return DocumentsModule.authors; },
+    categories() { return DocumentsModule.categories; },
+    publishers() { return DocumentsModule.publishers; },
+
     today() {
       return moment().format(this.dateFormat.toUpperCase());
     },
-    ...mapGetters(["authors", "categories", "publishers"]),
   },
 
   methods: {

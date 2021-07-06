@@ -91,13 +91,13 @@
 <script>
 import _debounce from "lodash/debounce";
 import moment from "moment";
-import { mapGetters } from "vuex";
 
 import { getApplicationsStudents, updateStudentApplicationInfo, getApplicationsExcelDownloadLink } from "@/api/students";
 import { getPrograms } from "@/api/reference-book";
 
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
+import { UserModule } from "@/store";
 
 export default {
   name: "ApplicantsDocuments",
@@ -122,8 +122,8 @@ export default {
     },
   },
   data() {
-    const selectedCampus = this.$store.state.user.campuses.length > 0
-      ? this.$store.state.user.campuses[0]
+    const selectedCampus = UserModule.campuses.length > 0
+      ? UserModule.campuses[0]
       : "MO";
     return {
       data: [],
@@ -140,9 +140,9 @@ export default {
   computed: {
     isStudyOffice() {
       // TODO(gakhromov): remove this check when permissions are done
-      return this.$store.state.user.email.includes("study.office");
+      return UserModule.email.includes("study.office");
     },
-    ...mapGetters(["campuses"]),
+    campuses() { return UserModule.campuses; },
   },
   created() {
     this.loading = true;

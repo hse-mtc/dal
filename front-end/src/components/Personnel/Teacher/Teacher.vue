@@ -1,15 +1,30 @@
 <template>
-  <el-drawer
-    :visible.sync="modal"
-    direction="rtl"
-    size="40%"
-    :destroy-on-close="true"
+  <el-col
+    v-loading="loading"
+    :offset="2"
+    :span="20"
+    class="teacher"
   >
+    <el-row class="pageTitle">
+      <el-col>
+        <div v-if="$route.params.teacherId" class="d-flex align-items-center">
+          <img
+            src="@/assets/scienceWorks/previous.svg"
+            style="position: absolute; left: -40px; cursor: pointer"
+            height="22px"
+            alt="назад"
+            @click="backToPersonnel"
+          >
+          {{ fullname }}
+        </div>
+      </el-col>
+    </el-row>
     <el-form
       ref="form"
       :model="form"
       :rules="rules"
-      label-width="250px"
+      label-width="150px"
+      :label-position="$route.params.teacherId ? 'left' : 'right'"
       class="form"
     >
       <el-form-item label="Фото">
@@ -34,11 +49,7 @@
       </el-form-item>
 
       <el-form-item label="Имя" prop="name">
-        <el-input
-          v-model="form.name"
-          clearable
-          placeholder="Введите имя"
-        />
+        <el-input v-model="form.name" clearable placeholder="Введите имя" />
       </el-form-item>
 
       <el-form-item label="Отчество" prop="patronymic">
@@ -124,41 +135,28 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit">
-          Отправить
+          Сохранить
         </el-button>
       </el-form-item>
     </el-form>
-  </el-drawer>
+  </el-col>
 </template>
 
 <script>
-import { patchTeacher } from "@/api/teachers";
-import { patchError, patchSuccess } from "@/utils/message";
+import { patchTeacher, findTeacher } from "@/api/teachers";
+import { patchError, patchSuccess, getError } from "@/utils/message";
 import {
   getMilFaculties,
   getMilGroups,
-  getPosts,
+  getTeacherPosts,
   getRanks,
 } from "@/api/reference-book";
 
 export default {
   name: "Teacher",
-  model: {
-    prop: "show",
-    event: "show-change",
-  },
-  props: {
-    teacher: {
-      type: Object,
-      required: true,
-    },
-    show: {
-      type: Object,
-      required: true,
-    },
-  },
   data() {
     return {
+      loading: false,
       form: {
         id: 0,
         milgroup: null,
@@ -215,29 +213,30 @@ export default {
     };
   },
   computed: {
-    modal: {
-      get() {
-        return this.show;
-      },
-      set(value) {
-        this.$emit("show-change", value);
-      },
+    fullname() {
+      return this.form.fullname;
     },
   },
-  watch: {
-    async teacher(value) {
-      Object.keys(this.form).forEach(key => {
-        this.form[key] = value[key];
-      });
-      await this.fetchData();
-    },
+  async created() {
+    await this.fetchData();
   },
   methods: {
     async fetchData() {
       this.milgroups = (await getMilGroups()).data;
       this.milfaculties = (await getMilFaculties()).data;
       this.ranks = (await getRanks()).data;
-      this.teacher_posts = (await getPosts()).data;
+      this.teacher_posts = (await getTeacherPosts()).data;
+      const id = this.$route.params.teacherId;
+      if (id) {
+        try {
+          this.loading = true;
+          this.form = (await findTeacher(id)).data;
+        } catch {
+          getError("преподавтеля");
+        } finally {
+          this.loading = false;
+        }
+      }
     },
     handleAvatarSuccess(res, file) {
       this.form.foto = URL.createObjectURL(file.raw);
@@ -257,20 +256,20 @@ export default {
     onSubmit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          this.form.milgroup = this.form.milgroup ? this.form.milgroup.milgroup : null;
+          this.form.milgroup = this.form.milgroup
+            ? this.form.milgroup.milgroup
+            : null;
           try {
             await patchTeacher(this.form);
-            patchSuccess("студента");
-            this.$emit("submitModal");
-            this.closeModal();
+            patchSuccess("преподавателя");
           } catch (err) {
-            patchError("студента", err.response.status);
+            patchError("преподавателя", err.response.status);
           }
         }
       });
     },
-    closeModal() {
-      this.$emit("closeModal");
+    backToPersonnel() {
+      this.$router.push({ path: "/personnel/" });
     },
   },
 };

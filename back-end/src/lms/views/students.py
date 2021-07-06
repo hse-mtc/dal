@@ -46,7 +46,9 @@ from lms.serializers.students import (
 )
 
 from lms.utils.export import generate_excel
+from lms.mixins import QuerySetScopingMixin
 
+from auth.models import Permission
 from auth.serializers import CreatePasswordTokenSerializer
 from auth.permissions import BasePermission
 
@@ -62,19 +64,34 @@ class XLSXRenderer(BaseRenderer):
 
 
 class StudentPermission(BasePermission):
-    permission_class = "auth.student"
+    permission_class = "students"
+    view_name_rus = "Студенты"
+    # do not allow student creation in this permission,
+    # as it is handled by the applicant's form procedures
+    methods = ["get", "put", "patch", "delete"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
+    ]
 
 
-class AllowApplicantFormPost(permissions.BasePermission):
+class ApplicantPermission(BasePermission):
+    permission_class = "applicants"
+    view_name_rus = "Абитуриенты"
+    methods = ["get", "post", "patch"]
 
-    def has_object_permission(self, request, view, obj):
-        return request.method == "POST"
 
-
-class AllowApplicationProcess(permissions.BasePermission):
-
-    def has_permission(self, request: Request, view: ModelViewSet):
-        return view.action == "applications"
+class ActivatePermission(BasePermission):
+    permission_class = "activate-students"
+    view_name_rus = "Подтверждение регистрации"
+    methods = ["get", "put", "patch"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+    ]
 
 
 class StudentPageNumberPagination(pagination.PageNumberPagination):
@@ -82,14 +99,13 @@ class StudentPageNumberPagination(pagination.PageNumberPagination):
 
 
 @extend_schema(tags=["students"])
-class StudentViewSet(ModelViewSet):
+class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
+    # pylint: disable=too-many-public-methods
     queryset = Student.objects.order_by("surname", "name", "patronymic", "id")
 
-    permission_classes = [
-        AllowApplicantFormPost |
-        AllowApplicationProcess & permissions.IsAuthenticated |
-        StudentPermission
-    ]
+    permission_classes = [StudentPermission]
+    scoped_permission_class = StudentPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = StudentFilter
@@ -113,6 +129,25 @@ class StudentViewSet(ModelViewSet):
                 "archived" not in self.request.query_params):
             return self.queryset.filter(milgroup__archived=False)
         return super().get_queryset()
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == "student":
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == "teacher":
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(milgroup__milfaculty=milfaculty)
+
+    def handle_scope_milgroup(self, user_type, user):
+        if user_type in ("student", "teacher"):
+            return self.queryset.filter(milgroup=user.milgroup)
+        return self.queryset.none()
+
+    def handle_scope_self(self, user_type, user):
+        if user_type == "student":
+            return self.queryset.filter(user=user)
+        return self.queryset.none()
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -148,7 +183,10 @@ class StudentViewSet(ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save()
 
-    @action(detail=False, methods=["patch"])
+    # TODO(@gakhromov): insert required permissions in actions
+    @action(detail=False,
+            methods=["patch"],
+            permission_classes=[permissions.AllowAny])
     def registration(self, request):
         email = request.data["email"]
         milgroup = Milgroup.objects.get(pk=request.data["milgroup"])
@@ -176,12 +214,16 @@ class StudentViewSet(ModelViewSet):
                          required=False,
                          type=str),
     ])
-    @action(detail=False, methods=["get"])
+    @action(detail=False,
+            methods=["get"],
+            permission_classes=[ApplicantPermission])
     def applications(self, request: Request, *args, **kwargs) -> Response:
         """List all applicants with their applications."""
         return super().list(request, *args, **kwargs)
 
-    @action(detail=True, methods=["patch"])
+    @action(detail=True,
+            methods=["patch"],
+            permission_classes=[ApplicantPermission])
     def application(self, request: Request, pk=None) -> Response:
         """Create or edit applicant's application."""
 
@@ -215,7 +257,8 @@ class StudentViewSet(ModelViewSet):
     @action(methods=["get"],
             url_path="applications/export",
             detail=False,
-            renderer_classes=[XLSXRenderer])
+            renderer_classes=[XLSXRenderer],
+            permission_classes=[ApplicantPermission])
     def applications_export(self, request: Request) -> Response:
         """
         Send an excel file with info about applicants.
@@ -249,13 +292,29 @@ class StudentViewSet(ModelViewSet):
 
 
 @extend_schema(tags=["students"])
-class ActivateStudentViewSet(ModelViewSet):
+class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
     queryset = Student.objects.all()
 
-    permission_classes = [StudentPermission]
+    permission_classes = [ActivatePermission]
+    scoped_permission_class = ActivatePermission
+
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
     serializer_class = StudentSerializer
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == "student":
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == "teacher":
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(milgroup__milfaculty=milfaculty)
+
+    def handle_scope_milgroup(self, user_type, user):
+        if user_type in ("student", "teacher"):
+            return self.queryset.filter(milgroup=user.milgroup)
+        return self.queryset.none()
 
     def list(self, request: Request, *args, **kwargs) -> Response:
         queryset = self.get_queryset().filter(status__in=[

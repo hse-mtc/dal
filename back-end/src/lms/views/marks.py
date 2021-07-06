@@ -1,14 +1,10 @@
 from datetime import datetime
 
+from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import GenericAPIView
-
-from rest_framework.status import (
-    HTTP_200_OK,
-    HTTP_400_BAD_REQUEST,
-)
 
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, OpenApiParameter
@@ -34,19 +30,35 @@ from lms.serializers.marks import (
     MarkJournalQuerySerializer,
 )
 from lms.views.archived_viewset import ArchivedModelViewSet
+from lms.serializers.marks import (MarkSerializer, MarkMutateSerializer,
+                                   MarkJournalSerializer,
+                                   MarkJournalQuerySerializer)
+from lms.functions import milgroup_allowed_by_scope
+from lms.mixins import QuerySetScopingMixin
 
+from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class MarkPermission(BasePermission):
-    permission_class = 'auth.mark'
+    permission_class = 'marks'
+    view_name_rus = 'Оценки'
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
+    ]
 
 
 @extend_schema(tags=['marks'])
-class MarkViewSet(ArchivedModelViewSet):
+class MarkViewSet(QuerySetScopingMixin, ArchivedModelViewSet):
+    # pylint: disable=too-many-public-methods
     queryset = Mark.objects.all()
 
     permission_classes = [MarkPermission]
+    scoped_permission_class = MarkPermission
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = MarkFilter
@@ -68,8 +80,15 @@ class MarkViewSet(ArchivedModelViewSet):
     # pylint: disable=W1113
     # pylint: disable=W0221
     def update(self, request, pk=None, *args, **kwargs):
-        request.data['mark'] = self.queryset.get(
-            id=pk).mark + [request.data['mark']]
+        qs = self.get_queryset()
+        if not qs.exists():
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+        request.data['mark'] = qs.get(id=pk).mark + [request.data['mark']]
         return super().update(request, pk, *args, **kwargs)
 
     # override PATCH - change last mark in array
@@ -77,7 +96,15 @@ class MarkViewSet(ArchivedModelViewSet):
     # pylint: disable=W0221
     def partial_update(self, request, pk=None, *args, **kwargs):
         tmp = request.data['mark']
-        request.data['mark'] = self.queryset.get(id=pk).mark
+        qs = self.get_queryset()
+        if not qs.exists():
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+        request.data['mark'] = qs.get(id=pk).mark
         request.data['mark'][-1] = tmp
         return super().update(request, pk, partial=True, *args, **kwargs)
 
@@ -85,11 +112,63 @@ class MarkViewSet(ArchivedModelViewSet):
     # pylint: disable=W1113
     # pylint: disable=W0221
     def destroy(self, request, pk=None, *args, **kwargs):
-        request.data['mark'] = self.queryset.get(id=pk).mark
+        qs = self.get_queryset()
+        if not qs.exists():
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+        request.data['mark'] = qs.get(id=pk).mark
         request.data['mark'].pop(-1)
         if len(request.data['mark']) == 0:
             return super().destroy(request, pk, *args, **kwargs)
         return super().update(request, pk, *args, **kwargs)
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == 'student':
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == 'teacher':
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(student__milgroup__milfaculty=milfaculty)
+
+    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+        # no need to check student existance,
+        # as permission check occurs after
+        # serializer validation
+        student = Student.objects.get(id=data['student'])
+        if user_type == 'student':
+            return student.milgroup.milfaculty == user.milgroup.milfaculty
+        if user_type == 'teacher':
+            return student.milgroup.milfaculty == user.milfaculty
+        return False
+
+    def handle_scope_milgroup(self, user_type, user):
+        if user_type in ('student', 'teacher'):
+            return self.queryset.filter(student__milgroup=user.milgroup)
+        return self.queryset.none()
+
+    def allow_scope_milgroup_on_create(self, data, user_type, user):
+        # no need to check student existance,
+        # as permission check occurs after
+        # serializer validation
+        student = Student.objects.get(id=data['student'])
+        if user_type in ('student', 'teacher'):
+            return student.milgroup == user.milgroup
+        return False
+
+    def handle_scope_self(self, user_type, user):
+        if user_type == 'student':
+            return self.queryset.filter(student=user)
+        return self.queryset.none()
+
+    def allow_scope_self_on_create(self, data, user_type, user):
+        if user_type == 'student':
+            return data['student'] == user.id
+        return False
 
 
 @extend_schema(tags=['mark-journal'],
@@ -117,8 +196,7 @@ class MarkJournalView(GenericAPIView):
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
         query_params = MarkJournalQuerySerializer(data=request.query_params)
-        if not query_params.is_valid():
-            return Response(query_params.errors, status=HTTP_400_BAD_REQUEST)
+        query_params.is_valid(raise_exception=True)
 
         # final json
         data = {}
@@ -127,6 +205,17 @@ class MarkJournalView(GenericAPIView):
         milgroup = MilgroupSerializer(
             Milgroup.objects.get(
                 milgroup=request.query_params['milgroup'])).data
+
+        # this check restricts all journal access if scope == SELF
+        # TODO(@gakhromov): mb allow scope == SELF for journal requests
+        if not milgroup_allowed_by_scope(milgroup, request, MarkPermission):
+            return Response(
+                {
+                    'detail':
+                        'You do not have permission to perform this action.'
+                },
+                status=status.HTTP_403_FORBIDDEN)
+
         data['milgroup'] = milgroup
 
         subject_query = Subject.objects.get(id=request.query_params['subject'])
@@ -158,4 +247,4 @@ class MarkJournalView(GenericAPIView):
                                                  },
                                                  many=True).data
 
-        return Response(data, status=HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)

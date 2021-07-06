@@ -71,8 +71,8 @@
             :key="d"
             :column-key="d"
             :header="formatDate(d)"
-            header-style="width: 100px"
-            body-style="width: 100px; height: 90px"
+            header-style="width: 100px; text-align: center;"
+            body-style="width: 100px; height: 90px; text-align: center;"
           >
             <template #body="{ data }">
               <div class="absence-journal-cell">
@@ -237,6 +237,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "Absence",
@@ -293,7 +294,9 @@ export default {
         milgroup: null,
         weekday: null,
         dateRange: [
-          moment().add(-3, "months").format("YYYY-MM-DD"),
+          moment()
+            .add(-3, "months")
+            .format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
         ],
       },
@@ -342,18 +345,18 @@ export default {
   },
   computed: {
     milgroups() {
-      return this.$store.state.reference.milgroups.filter(
+      return ReferenceModule.milgroups.filter(
         x => x.weekday === this.filter.weekday,
       );
     },
     milfaculties() {
-      return this.$store.state.reference.milfaculties;
+      return ReferenceModule.milfaculties;
     },
     types() {
-      return this.$store.state.reference.absenceTypes;
+      return ReferenceModule.absenceTypes;
     },
     statuses() {
-      return this.$store.state.reference.absenceStatuses;
+      return ReferenceModule.absenceStatuses;
     },
   },
   async created() {
@@ -366,7 +369,9 @@ export default {
   methods: {
     async onWeekdayChanged() {
       this.loading = true;
-      this.filter.milgroup = this.milgroups.length ? this.milgroups[0].milgroup.toString() : "0";
+      this.filter.milgroup = this.milgroups.length
+        ? this.milgroups[0].milgroup.toString()
+        : "0";
       await this.onJournal();
     },
     changeAbsenceStatus(absence) {
@@ -465,14 +470,14 @@ export default {
       });
     },
     async fetchData() {
-      if (!this.$store.state.reference.milgroups.length) {
-        await this.$store.dispatch("reference/setMilgroups");
+      if (!ReferenceModule.milgroups.length) {
+        await ReferenceModule.fetchMilgroups();
       }
-      if (!this.$store.state.reference.absenceTypes.length) {
-        await this.$store.dispatch("reference/setAbsenceTypes");
+      if (!ReferenceModule.absenceTypes.length) {
+        await ReferenceModule.fetchAbsenceTypes();
       }
-      if (!this.$store.state.reference.absenceStatuses.length) {
-        await this.$store.dispatch("reference/setAbsenceStatuses");
+      if (!ReferenceModule.absenceStatuses.length) {
+        await ReferenceModule.fetchAbsenceStatuses();
       }
     },
     async onJournal() {

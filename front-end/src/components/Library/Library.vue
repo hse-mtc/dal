@@ -95,7 +95,7 @@ import {
   getFavoriteBooks,
 } from "@/api/books";
 import { scrollMixin } from "@/mixins/scrollMixin";
-import { mapState } from "vuex";
+import { AppModule } from "@/store";
 import Modal from "./LibraryModal.vue";
 
 export default {
@@ -150,9 +150,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: state => state.app.userId,
-    }),
+    userId() { return AppModule.userId; },
     sort: {
       get() {
         return this.$route.query.sort || "-publication_year";

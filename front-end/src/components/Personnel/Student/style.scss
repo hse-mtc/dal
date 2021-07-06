@@ -28,3 +28,32 @@
 .form {
   padding-right: 40px;
 }
+
+.student {
+  font-family: "ProximaNovaRegular";
+}
+
+.pageTitle {
+  font-size: 44px;
+  margin-top: 30px;
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.column {
+  width: 50%;
+
+  & + & {
+    margin-left: 20px;
+  }
+
+  div + div {
+    margin-top: 20px;
+  }
+}
