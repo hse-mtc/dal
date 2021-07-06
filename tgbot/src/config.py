@@ -8,3 +8,5 @@ TGBOT_EMAIL = os.environ["TGBOT_EMAIL"]
 TGBOT_PASSWORD = os.environ["TGBOT_PASSWORD"]
 
 TIMEZONE = "Europe/Moscow"
+
+BOT = "dal_tgbot"

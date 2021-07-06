@@ -35,6 +35,7 @@ def main() -> None:
     # Server
     app = web.Application()
     app.add_routes(uniforms.routes)
+    app[config.BOT] = bot
 
     # Run everything
     while True:
