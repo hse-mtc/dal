@@ -96,16 +96,18 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         return FavoriteBookSerializer
 
     def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user)
+
         if self.request.user.is_superuser:
-            return self.queryset
+            return queryset
 
         scope = self.request.user.get_perm_scope(self.scoped_permission_class,
                                                  self.request.method)
 
         if scope == Permission.Scope.SELF:
-            return self.queryset.filter(user=self.request.user)
+            return queryset
 
-        return self.queryset.none()
+        return queryset.none()
 
     def is_creation_allowed_by_scope(self, data):
         if self.request.user.is_superuser:

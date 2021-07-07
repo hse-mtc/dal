@@ -2,10 +2,11 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import SAFE_METHODS
+from rest_framework.views import APIView
 
 from django_filters.rest_framework import DjangoFilterBackend
 
-from drf_spectacular.views import extend_schema
+from drf_spectacular.views import extend_schema, OpenApiParameter
 
 from lms.models.common import (
     Milfaculty,
@@ -13,6 +14,7 @@ from lms.models.common import (
     Milgroup,
 )
 from lms.models.teachers import Rank, TeacherPost
+from lms.models.students import Student
 from lms.models.lessons import Room
 from lms.models.absences import AbsenceTime
 from lms.models.achievements import AchievementType
@@ -24,6 +26,7 @@ from lms.serializers.common import (
     MilspecialtySerializer,
     MilgroupSerializer,
     MilgroupMutateSerializer,
+    MilgroupLeadersPhonesSerializer,
 )
 from lms.serializers.universities import ProgramSerializer
 from lms.serializers.teachers import TeacherPostSerializer, RankSerializer
@@ -189,3 +192,28 @@ class StudentSkillViewSet(ModelViewSet):
     queryset = StudentSkill.objects.all()
 
     permission_classes = [ReferenceBookPermission]
+
+
+@extend_schema(tags=['reference-book'],
+               parameters=[
+                   OpenApiParameter(name='milfaculty',
+                                    description='Filter by milfaculty',
+                                    required=True,
+                                    type=str),
+               ],
+               responses={200: MilgroupLeadersPhonesSerializer})
+class MilgroupLeadersView(APIView):
+
+    def get(self, request):
+        students = Student.objects.select_related(
+            'milgroup', 'milgroup__milfaculty',
+            'contact_info').filter(milgroup__milfaculty__milfaculty=request.
+                                   query_params['milfaculty'],
+                                   student_post__title='Командир взвода')
+        phones = [
+            s.contact_info.personal_phone_number
+            for s in students
+            if s.contact_info
+        ]
+        response = {'phones': phones}
+        return Response(response)

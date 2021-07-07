@@ -4,6 +4,7 @@ import {
   Mutation,
   Action,
 } from "vuex-module-decorators";
+import { Message } from "element-ui";
 
 import store, { SubjectsModule } from "@/store";
 import { deleteSubject, getSubjects, upsertSubject } from "@/api/subjects";
@@ -36,11 +37,6 @@ class Subjects extends VuexModule {
     this._subjectsList = payload;
   }
 
-  @Mutation
-  DELETE_SUBJECT(id) {
-    this._subjectsList = this._subjectsList.filter(subject => subject.id !== id);
-  }
-
   @Action({ commit: "SET_SUBJECTS" })
   setSubjects(subjects) {
     return subjects;
@@ -54,6 +50,10 @@ class Subjects extends VuexModule {
       this.SET_IS_LOADED(true);
     } catch (e) {
       console.error("Не удалось загрузить данные предментов");
+      Message({
+        type: "error",
+        message: "Не удалось загрузить данные предментов",
+      });
     }
   }
 
@@ -67,6 +67,10 @@ class Subjects extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось удалить предмет:", e);
+      Message({
+        type: "error",
+        message: "Не удалось удалить предмет",
+      });
 
       return false;
     }
@@ -80,6 +84,10 @@ class Subjects extends VuexModule {
       return true;
     } catch (e) {
       console.error("Не удалось обновить предмет:", e);
+      Message({
+        type: "error",
+        message: "Не удалось обновить предмет",
+      });
 
       return false;
     }

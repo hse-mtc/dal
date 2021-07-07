@@ -21,7 +21,7 @@
 import { addPaperCategories } from "@/api/paper_categories";
 
 import { Message } from "element-ui";
-import { DocumentsModule } from "@/store";
+import { PapersModule } from "@/store";
 
 export default {
   name: "AddModal",
@@ -35,7 +35,7 @@ export default {
   },
 
   computed: {
-    categories() { return DocumentsModule.categories; },
+    categories() { return PapersModule.categories; },
   },
 
   methods: {
@@ -52,7 +52,7 @@ export default {
 
       try {
         const { data } = await addPaperCategories({ title });
-        DocumentsModule.setCategories([...this.categories, data]);
+        PapersModule.setCategories([...this.categories, data]);
         this.closeModal();
       } catch (error) {
         console.error("Failed to add Category: ", error);

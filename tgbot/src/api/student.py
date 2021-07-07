@@ -19,6 +19,7 @@ class Milgroup:
     milgroup: str
     milfaculty: str
     weekday: int
+    archived: bool
 
 
 @dataclass
@@ -37,6 +38,7 @@ class Student:
 
     @staticmethod
     def from_raw(body: dict[str, tp.Any]) -> "Student":
+        print(body)
         return Student(
             id=body["id"],
             fullname=body["fullname"],
@@ -67,3 +69,15 @@ async def fetch_students(
         return students
     else:
         return students[0]
+
+
+async def fetch_milgroup_leader_phones(
+    milfaculty: str,
+    *args: tp.Any,
+    **kwargs: tp.Any,
+) -> list[str]:
+    method = "lms/milgroup-leaders/"
+    params = {"milfaculty": milfaculty}
+    response = await client.get(method, *args, params=params, **kwargs)
+    data: dict[str, list[str]] = await response.json()
+    return data["phones"]

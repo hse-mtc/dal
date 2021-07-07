@@ -42,6 +42,7 @@ class Uniform:
 
     def __str__(self) -> str:
         return (
+            "Форма одежды на ближайший учебный день обновилась.\n"
             f"Головной убор: {self.headdress}.\n"
             f"Нательная одежда: {self.outerwear}.\n"
         )

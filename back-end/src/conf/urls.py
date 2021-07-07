@@ -5,24 +5,9 @@ from django.urls import (
     path,
 )
 
-from drf_spectacular.views import (
-    SpectacularAPIView,
-    SpectacularSwaggerView,
-)
-
 from conf import settings
 
-from common.views.populate import PopulateAPIView
-
-from tgbot.views import populate as tgbot_populate
-
 urlpatterns = [
-    # Swagger
-    path("swagger/schema/", SpectacularAPIView.as_view(), name="schema"),
-    path("swagger/",
-         SpectacularSwaggerView.as_view(url_name="schema"),
-         name="swagger-ui"),
-
     # Public
     path("api/auth/", include("auth.urls")),
     path("api/dms/", include("dms.urls")),
@@ -31,16 +16,27 @@ urlpatterns = [
 
     # Internal
     path("admin/", admin.site.urls),
-    path("better-populate/", PopulateAPIView.as_view()),
-    path("populate/tgbot/", tgbot_populate),
 ]
 
 # Serve media files
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
-    import debug_toolbar
+    # Swagger
+    from drf_spectacular.views import (
+        SpectacularAPIView,
+        SpectacularSwaggerView,
+    )
     urlpatterns += [
-        path("__debug__/", include(debug_toolbar.urls)),
-        path("silk/", include("silk.urls", namespace="silk")),
+        path("swagger/schema/", SpectacularAPIView.as_view(), name="schema"),
+        path("swagger/",
+             SpectacularSwaggerView.as_view(url_name="schema"),
+             name="swagger-ui"),
     ]
+
+    # Debug toolbar
+    import debug_toolbar
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]
+
+    # Silk profiler
+    urlpatterns += [path("silk/", include("silk.urls", namespace="silk"))]

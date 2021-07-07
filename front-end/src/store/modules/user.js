@@ -92,7 +92,7 @@ class User extends VuexModule {
   @Action
   logout() {
     this.SET_TOKEN();
-    this.SET_EMAIL();
+    this.SET_EMAIL("");
     this.SET_CAMPUSES([]);
     this.SET_PERSON_TYPE("");
     this.SET_PERSON_ID(0);
