@@ -134,7 +134,7 @@ export default {
       searchQuery: "",
       loading: false,
       selectedCampus,
-      selectedProgram: this.$route.query.program,
+      selectedProgram: this.$route.query.program || null,
     };
   },
   computed: {
@@ -153,9 +153,15 @@ export default {
     getExcel() {
       window.location.href = getApplicationsExcelDownloadLink(this.selectedCampus);
     },
+
     async fetchPrograms() {
-      this.programs = (await getPrograms()).data;
+      try {
+        this.programs = (await getPrograms()).data;
+      } catch (e) {
+        console.log("Не удалось загрузить программы", e);
+      }
     },
+
     async changeProgram(program) {
       this.selectedProgram = program;
       this.$router.push({ query: { program } });
@@ -168,25 +174,31 @@ export default {
     async fetchData(page = 1) {
       this.currentPage = page || 1;
       this.loading = true;
-      const { data } = await getApplicationsStudents(
-        this.currentPage,
-        this.pageSize,
-        {
-          search: this.searchQuery,
-          campus: this.selectedCampus,
-          program: this.selectedProgram,
-        },
-      );
-      this.data = data.results.map(item => ({
-        id: item.id,
-        fullname: item.full_name,
-        birthday: moment(item.birth_date).format("DD.MM.yyyy"),
-        passport: item.passport,
-        program: item.program_code,
-        faculty: item.faculty,
-        ...item.application_process,
-      }));
-      this.entriesAmount = data.count;
+
+      try {
+        const { data } = await getApplicationsStudents(
+          this.currentPage,
+          this.pageSize,
+          {
+            search: this.searchQuery,
+            campus: this.selectedCampus,
+            program: this.selectedProgram,
+          },
+        );
+        this.data = data.results.map(item => ({
+          id: item.id,
+          fullname: item.full_name,
+          birthday: moment(item.birth_date).format("DD.MM.yyyy"),
+          passport: item.passport,
+          program: item.program_code,
+          faculty: item.faculty,
+          ...item.application_process,
+        }));
+        this.entriesAmount = data.count;
+      } catch (e) {
+        console.log("Не удалось данные о студентах", e);
+      }
+
       this.loading = false;
     },
 

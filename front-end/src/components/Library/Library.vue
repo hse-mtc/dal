@@ -95,7 +95,7 @@ import {
   getFavoriteBooks,
 } from "@/api/books";
 import { scrollMixin } from "@/mixins/scrollMixin";
-import { AppModule } from "@/store";
+import { UserModule } from "@/store";
 import Modal from "./LibraryModal.vue";
 
 export default {
@@ -150,7 +150,7 @@ export default {
     };
   },
   computed: {
-    userId() { return AppModule.userId; },
+    userId() { return UserModule.userId; },
     sort: {
       get() {
         return this.$route.query.sort || "-publication_year";

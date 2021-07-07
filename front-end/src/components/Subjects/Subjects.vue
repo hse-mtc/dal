@@ -45,7 +45,7 @@
 import { Component } from "vue-property-decorator";
 import SubjectCard from "@/components/SubjectCard/SubjectCard";
 import SearchForSubjects from "@/components/Search/SearchForSubjects";
-import { AppModule, SubjectsModule } from "@/store";
+import { SubjectsModule, UserModule } from "@/store";
 
 @Component({
   name: "Subjects",
@@ -54,7 +54,7 @@ import { AppModule, SubjectsModule } from "@/store";
     SearchForSubjects,
   },
   computed: {
-    userId() { return AppModule.userId; },
+    userId() { return UserModule.userId; },
   },
 })
 class Subjects {

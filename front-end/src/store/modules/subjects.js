@@ -6,7 +6,7 @@ import {
 } from "vuex-module-decorators";
 import { Message } from "element-ui";
 
-import store, { SubjectsModule } from "@/store";
+import store, { SubjectsModule, UserModule } from "@/store";
 import { deleteSubject, getSubjects, upsertSubject } from "@/api/subjects";
 
 @Module({ store, name: "subjects", namespaced: true })

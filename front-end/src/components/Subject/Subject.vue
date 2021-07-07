@@ -151,7 +151,7 @@ import {
   getSubject,
 } from "@/api/subjects";
 import CustomText from "@/common/CustomText";
-import { AppModule, SubjectsModule } from "@/store";
+import { SubjectsModule, UserModule } from "@/store";
 
 @Component({
   name: "Subject",
@@ -162,7 +162,7 @@ import { AppModule, SubjectsModule } from "@/store";
     SubjectTopics,
   },
   computed: {
-    userId() { return AppModule.userId; },
+    userId() { return UserModule.userId; },
   },
 })
 class MyDisciplines {

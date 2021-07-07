@@ -26,7 +26,7 @@
 import { SIZES, COLORS } from "@/utils/appConsts";
 import { getStatistics } from "@/api/statistics";
 import CustomText from "@/common/CustomText";
-import { AppModule } from "@/store";
+import { UserModule } from "@/store";
 
 // TODO make one component with Subjects for ex if u have a param,
 // than hide title and search and do a request with user id
@@ -48,7 +48,7 @@ export default {
     };
   },
   computed: {
-    userId() { return AppModule.userId; },
+    userId() { return UserModule.userId; },
   },
   created() {
     this.fetchData();

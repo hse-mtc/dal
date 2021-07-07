@@ -39,7 +39,7 @@ import { getSubjects } from "@/api/subjects";
 import CustomText from "@/common/CustomText";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import SubjectCard from "@/components/SubjectCard/SubjectCard.vue";
-import { AppModule } from "@/store";
+import { UserModule } from "@/store";
 
 @Component({
   name: "MyDisciplines",
@@ -49,7 +49,7 @@ import { AppModule } from "@/store";
     SubjectCard,
   },
   computed: {
-    userId() { return AppModule.userId; },
+    userId() { return UserModule.userId; },
   },
 })
 class MyDisciplines {

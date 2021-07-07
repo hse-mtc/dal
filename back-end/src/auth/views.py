@@ -313,7 +313,7 @@ class TokenObtainPairView(jwt_views.TokenObtainPairView):
 
 
 class TokenRefreshView(jwt_views.TokenRefreshView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
 TokenObtainPairExtendedView = extend_schema(
