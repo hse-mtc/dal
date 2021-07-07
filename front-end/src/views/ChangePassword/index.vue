@@ -93,17 +93,20 @@ export default {
     };
   },
   created() {
-    let { token } = this.$route.query;
+    const { token } = this.$route.query;
+
     try {
       jwtDecode(token);
-    } catch (ex) {
-      token = null;
-    }
-    if (!token) {
+    } catch (e) {
+      console.log("Ошибка парсинга токена", e);
       this.$router.push({ path: "/" });
       return;
     }
-    UserModule.setToken(token);
+
+    UserModule.SET_TOKENS({
+      access: this.$route.query,
+      refresh: "",
+    });
   },
   methods: {
     showPwd() {
@@ -117,29 +120,21 @@ export default {
       });
     },
     handleChangePassword() {
-      console.log(1);
       this.$refs.changePasswordForm.validate(async valid => {
-        console.log(2);
         if (valid) {
           this.loading = true;
+
           try {
             await changePassword({ password: this.changePasswordForm.password });
-            UserModule.resetToken()
-              .then(() => {
-                this.$router.push({ path: "/login" });
-                this.loading = false;
-              })
-              .catch(() => {
-                this.loading = false;
-              });
-            return true;
+            UserModule.RESET_TOKENS();
+
+            this.$router.push({ path: "/login" });
           } catch (e) {
-            this.loading = false;
-            return false;
+            console.log("Ошибка смены пароля", e);
           }
+
+          this.loading = false;
         }
-        console.log("error submit!");
-        return false;
       });
     },
   },

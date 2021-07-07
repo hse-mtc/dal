@@ -1,5 +1,10 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import permissions
+
+from django.contrib.auth import get_user_model
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -41,6 +46,25 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return TeacherMutateSerializer
         return TeacherSerializer
+    
+    @action(detail=False,
+            methods=["post"],
+            permission_classes=[permissions.AllowAny])
+    def registration(self, request):
+        serializer = TeacherSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = request.data["email"]
+        user = get_user_model().objects.create_user(
+            email=email,
+            password=get_user_model().objects.make_random_password(),
+        )
+
+        serializer.save()
+        teacher = Teacher.objects.get(id=serializer.data.id)
+        teacher.user = user
+        teacher.save()
+        return Response(TeacherSerializer(data=teacher).data)
 
     def handle_scope_milfaculty(self, user_type, user):
         if user_type == "student":

@@ -6,7 +6,7 @@ import {
 } from "vuex-module-decorators";
 import { Message } from "element-ui";
 
-import store, { PapersModule } from "@/store";
+import store, { PapersModule, UserModule } from "@/store";
 import {
   addPaperCategories,
   deletePaperCategory,
@@ -38,11 +38,6 @@ class Papers extends VuexModule {
   @Mutation
   SET_IS_LOADED({ field, value }) {
     this[field] = value;
-  }
-
-  @Action({ commit: "SET_IS_LOADED" })
-  setIsLoaded({ field, value }) {
-    return { field, value };
   }
 
   @Mutation
@@ -317,6 +312,7 @@ class Papers extends VuexModule {
   }
 
   get categories() {
+    console.log("PAPERSPAPERS");
     if (!this._categoriesLoaded) {
       PapersModule.fetchCategories();
     }

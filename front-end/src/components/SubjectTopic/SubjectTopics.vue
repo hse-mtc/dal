@@ -49,7 +49,7 @@ import {
   changeTopicOrder,
 } from "@/api/topic";
 import Draggable from "vuedraggable";
-import { AppModule } from "@/store";
+import { UserModule } from "@/store";
 import SubjectTopic from "./SubjectTopic.vue";
 
 export default {
@@ -69,7 +69,7 @@ export default {
     };
   },
   computed: {
-    userId() { return AppModule.userId; },
+    userId() { return UserModule.userId; },
     dragOptions() {
       return {
         animation: 200,

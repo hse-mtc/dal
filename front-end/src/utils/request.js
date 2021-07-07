@@ -4,20 +4,16 @@ import { Message } from "element-ui";
 import { updateAccess } from "@/api/tokens";
 import { AUTH_URLS } from "@/constants/api";
 import router from "@/router";
-import LocalStorageService from "./LocalStorageService";
+import { UserModule } from "@/store";
 
-const localStorageService = LocalStorageService.getService();
-
-// create an axios instance
 const service = axios.create({
   baseURL: "/",
-  timeout: 10000, // request timeout
-  // withCredentials: true, // send cookies when cross-domain requests
+  timeout: 10000,
 });
 
 service.interceptors.request.use(
   config => {
-    const token = localStorageService.getAccessToken();
+    const token = UserModule.accessToken;
     if (token) {
       // eslint-disable-next-line no-param-reassign
       config.headers.Authorization = `Bearer ${token}`;
@@ -44,12 +40,12 @@ service.interceptors.response.use(
 
       console.error("Не удалось авторизоваться");
     } else if (error.response.status === 401) {
-      const refreshToken = localStorageService.getRefreshToken();
+      const { refreshToken } = UserModule;
 
       try {
         if (refreshToken) {
           const { data } = await updateAccess({ refresh: refreshToken });
-          localStorageService.setToken(data);
+          UserModule.SET_TOKENS(data);
 
           return service(originalRequest);
         }
@@ -59,17 +55,11 @@ service.interceptors.response.use(
         console.error("Ошибка обновления токена:", e);
       }
 
-      localStorageService.clearToken();
+      UserModule.RESET_TOKENS();
 
       const { name, fullPath } = router.currentRoute;
-      console.log("fullPath", fullPath);
       if (name !== "Login") {
-        router.push({
-          name: "Login",
-          query: {
-            redirect: fullPath,
-          },
-        });
+        window.location.href = `/login?redirect=${fullPath}`;
 
         Message({
           message: "Ошибка авторизации",
