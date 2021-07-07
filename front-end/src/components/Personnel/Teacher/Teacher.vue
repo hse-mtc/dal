@@ -17,7 +17,7 @@
         {{ isProfile ? "Мой профиль" : "Преподаватель" }}
       </div>
       <div v-if="isProfile">
-        <el-button type="primary">
+        <el-button type="primary" @click="dialog = true">
           Сменить пароль
         </el-button>
       </div>
@@ -210,7 +210,8 @@
                 />
                 <span v-else class="field-value">
                   {{
-                    displayInfo.contact_info && displayInfo.contact_info.personal_phone_number
+                    displayInfo.contact_info &&
+                      displayInfo.contact_info.personal_phone_number
                       ? displayInfo.contact_info.personal_phone_number
                       : "---"
                   }}
@@ -221,6 +222,15 @@
         </div>
       </ExpandBox>
     </div>
+    <el-dialog
+      width="500px"
+      :visible.sync="dialog"
+      destroy-on-close
+      :close-on-click-modal="false"
+      :before-close="beforeClose"
+    >
+      <ChangePasswordForm in-dialog @submited="dialog = false" />
+    </el-dialog>
   </el-col>
 </template>
 
@@ -230,12 +240,14 @@ import { patchError, getError } from "@/utils/message";
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import moment from "moment";
 import { UserModule, ReferenceModule } from "@/store";
+import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
 
 export default {
   name: "Teacher",
-  components: { ExpandBox },
+  components: { ExpandBox, ChangePasswordForm },
   data() {
     return {
+      dialog: false,
       loading: false,
       modify: false,
       displayInfo: {},
@@ -417,6 +429,21 @@ export default {
     },
     backToPersonnel() {
       this.$router.push({ name: "Personnel" });
+    },
+    beforeClose() {
+      this.$confirm(
+        "Вы уверены, что хотите закрыть окно смены пароля?",
+        "Подтверждение",
+        {
+          confirmButtonText: "Да",
+          cancelButtonText: "Отмена",
+          type: "warning",
+        },
+      )
+        .then(() => {
+          this.dialog = false;
+        })
+        .catch(() => {});
     },
   },
 };
