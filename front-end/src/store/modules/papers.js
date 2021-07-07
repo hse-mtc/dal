@@ -312,7 +312,6 @@ class Papers extends VuexModule {
   }
 
   get categories() {
-    console.log("PAPERSPAPERS");
     if (!this._categoriesLoaded) {
       PapersModule.fetchCategories();
     }

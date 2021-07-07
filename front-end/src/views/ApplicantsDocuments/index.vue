@@ -134,7 +134,7 @@ export default {
       searchQuery: "",
       loading: false,
       selectedCampus,
-      selectedProgram: this.$route.query.program || null,
+      selectedProgram: this.$route.query.program,
     };
   },
   computed: {
