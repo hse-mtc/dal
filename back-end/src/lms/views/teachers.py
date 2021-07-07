@@ -46,7 +46,7 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return TeacherMutateSerializer
         return TeacherSerializer
-    
+
     @action(detail=False,
             methods=["post"],
             permission_classes=[permissions.AllowAny])
