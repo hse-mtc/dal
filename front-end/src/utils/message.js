@@ -11,7 +11,7 @@ function details(status) {
     case 404:
       return "Данные не найдены.";
     case 500:
-      return "Внутрення ошибка сервера.";
+      return "Внутренняя ошибка сервера.";
     case 504:
       return "Сервер не отвечает.";
     default:

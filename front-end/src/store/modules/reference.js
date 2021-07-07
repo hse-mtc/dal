@@ -190,7 +190,6 @@ class Reference extends VuexModule {
   // TEACHER POSTS
   @Mutation
   SET_TEACHER_POSTS(payload) {
-    console.log("🚀 > payload", payload);
     this._teacherPosts = payload;
   }
 
@@ -248,34 +247,35 @@ class Reference extends VuexModule {
     return this._milfaculties;
   }
 
-  // MILSPECIALITIES
+  // milspecialties
   @Mutation
   SET_MILSPECIALTIES(payload) {
     this._milspecialties = payload;
   }
 
   @Action({ commit: "SET_MILSPECIALTIES" })
-  async setMilspecialities(milspecialities) {
-    return milspecialities;
+  async setmilspecialties(milspecialties) {
+    return milspecialties;
   }
 
   @Action
-  async fetchMilspecialities() {
+  async fetchmilspecialties() {
     try {
       const { data } = await getReferenceMilSpecialties();
-      this.setMilspecialities(data);
-      this.SET_IS_LOADED({ field: "_milspecialitiesLoaded", value: true });
+      console.log("🚀 > data", data);
+      this.setmilspecialties(data);
+      this.SET_IS_LOADED({ field: "_milspecialtiesLoaded", value: true });
     } catch (err) {
       getError("воинских специальностей", err.response.status);
     }
   }
 
-  get milspecialities() {
-    if (!this._milspecialitiesLoaded) {
-      ReferenceModule.fetchMilspecialities();
+  get milspecialties() {
+    if (!this._milspecialtiesLoaded) {
+      ReferenceModule.fetchmilspecialties();
     }
 
-    return this._milspecialities;
+    return this._milspecialties;
   }
 
   // ACHIEVEMENT TYPES

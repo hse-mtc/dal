@@ -48,8 +48,7 @@ class StudentPerformanceView(APIView):
         lessons = Lesson.objects.filter(
             date__range=date_range).select_related("subject")
         absences_dates = Absence.objects.filter(
-            student=pk, date__range=date_range).values_list("date")
-        absences_dates = [date[0] for date in absences_dates]
+            student=pk, date__range=date_range).values_list("date", flat=True)
         student_subject_marks = {}
         subject_dates = {}
         response = []

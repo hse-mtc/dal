@@ -292,8 +292,6 @@ export default {
     formatDate: date => moment(date).format("DD.MM.YYYY"),
     async fetch() {
       await this.fetchInfo();
-      await ReferenceModule.fetchPrograms();
-      await ReferenceModule.fetchMilspecialties();
     },
     async fetchInfo() {
       try {

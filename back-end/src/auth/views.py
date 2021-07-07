@@ -38,6 +38,13 @@ class PermissionPermission(BasePermission):
     view_name_rus = "Права доступа и группы"
 
 
+class PasswordPermission(BasePermission):
+    permission_class = "password"
+    view_name_rus = "Пароль"
+    methods = ["post"]
+    scopes = [Permission.Scope.SELF]
+
+
 @extend_schema(tags=["auth"])
 class UserRetrieveAPIView(RetrieveAPIView):
     queryset = get_user_model().objects.all()
@@ -293,7 +300,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
 @extend_schema(tags=["auth"])
 class ChangePasswordAPIView(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
-    permission_classes = [PermissionPermission]
+    permission_classes = [PasswordPermission]
 
     def post(self, request: Request) -> Response:
         serializer = self.get_serializer(data=request.data)

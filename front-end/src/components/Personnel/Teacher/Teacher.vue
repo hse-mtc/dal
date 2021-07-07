@@ -44,10 +44,11 @@
             class="form"
             :model="modifyInfo"
             :rules="rules"
-            label-width="150px"
+            label-width="200px"
             label-position="right"
             size="mini"
             :disabled="loading"
+            hide-required-asterisk
           >
             <el-form-item class="actions">
               <transition name="el-fade-in" mode="out-in">
@@ -71,7 +72,7 @@
                 </template>
               </transition>
             </el-form-item>
-            <el-form-item label="ФИО:">
+            <el-form-item label="ФИО:" prop="fullname">
               <transition name="el-fade-in" mode="out-in">
                 <el-input v-if="modify" v-model="modifyInfo.fullname" />
                 <span v-else class="field-value">
@@ -79,7 +80,7 @@
                 </span>
               </transition>
             </el-form-item>
-            <el-form-item label="Дата рождения:">
+            <el-form-item label="Дата рождения:" prop="birth_info">
               <transition name="el-fade-in" mode="out-in">
                 <el-date-picker
                   v-if="modify"
@@ -115,7 +116,7 @@
                     v-for="item in ranks"
                     :key="item.rank"
                     :label="item.rank"
-                    :value="item"
+                    :value="item.rank"
                   />
                 </el-select>
                 <span v-else class="field-value">
@@ -132,12 +133,11 @@
                   value-key="teacher_post"
                   style="display: block"
                 >
-                  <!-- eslint-disable vue/camelcase -->
                   <el-option
                     v-for="item in teacherPosts"
                     :key="item.teacher_post"
                     :label="item.teacher_post"
-                    :value="item"
+                    :value="item.teacher_post"
                   />
                 </el-select>
                 <span v-else class="field-value">
@@ -158,7 +158,7 @@
                     v-for="item in milfaculties"
                     :key="item.milfaculty"
                     :label="item.milfaculty"
-                    :value="item"
+                    :value="item.milfaculty"
                   />
                 </el-select>
                 <span v-else class="field-value">
@@ -167,7 +167,7 @@
               </transition>
             </el-form-item>
 
-            <el-form-item label="Прикрепленный взвод" prop="milgroup">
+            <el-form-item label="Прикрепленный взвод:" prop="milgroup">
               <transition name="el-fade-in" mode="out-in">
                 <el-select
                   v-if="modify"
@@ -201,6 +201,22 @@
                 </span>
               </transition>
             </el-form-item>
+            <el-form-item label="Телефон:" prop="personal_phone_number">
+              <transition name="el-fade-in" mode="out-in">
+                <el-input
+                  v-if="modify"
+                  v-model="modifyInfo.contact_info.personal_phone_number"
+                  v-maska="'# (###) ###-##-##'"
+                />
+                <span v-else class="field-value">
+                  {{
+                    displayInfo.contact_info && displayInfo.contact_info.personal_phone_number
+                      ? displayInfo.contact_info.personal_phone_number
+                      : "---"
+                  }}
+                </span>
+              </transition>
+            </el-form-item>
           </el-form>
         </div>
       </ExpandBox>
@@ -225,6 +241,44 @@ export default {
       displayInfo: {},
       modifyInfo: {},
       rules: {
+        fullname: [
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error("Пожалуйста, введите ФИО"));
+              } else if (
+                value
+                  .replace(/\s+/g, " ")
+                  .trim()
+                  .split(" ").length < 2
+              ) {
+                callback(new Error("Фамилия и имя обязательны"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "change",
+          },
+        ],
+        birth_info: [
+          {
+            validator: (rule, value, callback) => {
+              if (!value.date) {
+                callback(new Error("Пожалуйста, введите дату рождения"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "change",
+          },
+        ],
+        rank: [
+          {
+            required: true,
+            message: "Пожалуйста, выберите дату рождения",
+            trigger: "change",
+          },
+        ],
         teacher_post: [
           {
             required: true,
@@ -306,22 +360,19 @@ export default {
         if (valid) {
           try {
             this.loading = true;
-            const [
-              surname,
-              name,
-              ...patronymicArray
-            ] = this.modifyInfo.fullname.split(" ");
+            const [surname, name, ...patronymicArray] = this.modifyInfo.fullname
+              .replace(/\s+/g, " ")
+              .trim()
+              .split(" ");
             const patronymic = patronymicArray.join(" ");
             const requestBody = {
               ...this.modifyInfo,
               milgroup: this.modifyInfo.milgroup.milgroup,
-              teacher_post: this.modifyInfo.teacher_post.id,
-              rank: this.modifyInfo.rank.id,
               surname,
               name,
               patronymic,
               photo: undefined,
-              contact_info: undefined,
+              // contact_info: undefined,
             };
             await patchTeacher(requestBody);
             this.displayInfo = this.modifyInfo;
