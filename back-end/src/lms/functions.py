@@ -65,7 +65,7 @@ def milgroup_allowed_by_scope(milgroup: dict, request: Request,
             return False
         return milgroup['milfaculty'] == milfaculty.milfaculty
 
-    if scope == Permission.Scope.MILGROUP:
+    if scope in (Permission.Scope.MILGROUP, Permission.Scope.SELF):
         if user_type in ('student', 'teacher'):
             return milgroup['milgroup'] == user.milgroup.milgroup
         return False

@@ -81,6 +81,7 @@ class AbsenceViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin,
                ])
 class AbsenceJournalView(GenericAPIView):
     permission_classes = [AbsencePermission]
+    scoped_permission_class = AbsencePermission
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
@@ -95,9 +96,7 @@ class AbsenceJournalView(GenericAPIView):
             Milgroup.objects.get(
                 milgroup=request.query_params['milgroup'])).data
 
-        # this check restricts all journal access if scope == SELF
-        # TODO(@gakhromov): mb allow scope == SELF for journal requests
-        if not milgroup_allowed_by_scope(milgroup, request, AbsencePermission):
+        if not milgroup_allowed_by_scope(milgroup, request, self.scoped_permission_class):
             return Response(
                 {
                     'detail':
@@ -115,9 +114,20 @@ class AbsenceJournalView(GenericAPIView):
 
         # add dates and absences
         data['dates'] = date_range
+
+        # get students
+        # if scope == SELF, return only one student
+        scope = request.user.get_perm_scope(self.scoped_permission_class.permission_class,
+                                        request.method)
+
+        if scope == Permission.Scope.SELF:
+            filter_kwargs = {'user': request.user}
+        else:
+            filter_kwargs = {'milgroup__milgroup': request.query_params['milgroup']}
+
         data['students'] = AbsenceJournalSerializer(
             Student.objects.filter(
-                milgroup__milgroup=request.query_params['milgroup']),
+                **filter_kwargs),
             context={
                 'request': request,
                 'date_range': date_range,

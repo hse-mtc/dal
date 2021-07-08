@@ -35,7 +35,7 @@ class PunishmentViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin,
     queryset = Punishment.objects.all()
 
     permission_classes = [PunishmentPermission]
-    scoped_permission_classes = PunishmentPermission
+    scoped_permission_class = PunishmentPermission
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
 

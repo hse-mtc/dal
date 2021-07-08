@@ -73,14 +73,18 @@
                       :column-key="`${d}-header`"
                       :header="formatDate(d)"
                       header-style="text-align: center"
-                      :colspan="journal.lessons.filter((x) => x.date === d).length"
+                      :colspan="
+                        journal.lessons.filter((x) => x.date === d).length
+                      "
                     />
                   </PrimeRow>
 
                   <PrimeRow>
                     <template v-for="d in journal.dates">
                       <PrimeColumn
-                        v-for="item in journal.lessons.filter((x) => x.date === d)"
+                        v-for="item in journal.lessons.filter(
+                          (x) => x.date === d
+                        )"
                         :key="`${item.id}-header`"
                       >
                         <template #header>
@@ -132,9 +136,7 @@
                   width="250"
                   column-key="fullname"
                 />
-                <template
-                  v-for="d in journal.dates"
-                >
+                <template v-for="d in journal.dates">
                   <PrimeColumn
                     v-for="item in journal.lessons.filter((x) => x.date === d)"
                     :key="item.id"
@@ -142,10 +144,7 @@
                     <template #body="{ data }">
                       <div class="mark-journal-cell">
                         <div
-                          v-for="m in getMarksByLesson(
-                            data.marks,
-                            item.id,
-                          )"
+                          v-for="m in getMarksByLesson(data.marks, item.id)"
                           :key="m"
                         >
                           <el-tag
@@ -153,10 +152,12 @@
                             effect="dark"
                             disable-transitions
                             class="is-clickable margin-x"
-                            @click="onEdit(
-                              data.marks.find((x) => x.lesson === item.id),
-                              data,
-                            )"
+                            @click="
+                              onEdit(
+                                data.marks.find((x) => x.lesson === item.id),
+                                data
+                              )
+                            "
                           >
                             {{ m }}
                           </el-tag>
@@ -169,7 +170,7 @@
                             onCreate(
                               data,
                               item,
-                              data.marks.find((x) => x.lesson === item.id),
+                              data.marks.find((x) => x.lesson === item.id)
                             )
                           "
                         />
@@ -217,7 +218,8 @@
           v-if="editMarkId"
           type="danger"
           @click="handleDelete(editMarkId)"
-        >Удалить</el-button>
+          >Удалить</el-button
+        >
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
@@ -263,9 +265,9 @@
           >
             <el-option
               v-for="item in rooms"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.room"
+              :label="item.room"
+              :value="item.room"
             />
           </el-select>
         </el-form-item>
@@ -286,10 +288,9 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="lessonDialogVisible = false">Отмена</el-button>
-        <el-button
-          type="primary"
-          @click="handleAcceptLesson()"
-        >Применить</el-button>
+        <el-button type="primary" @click="handleAcceptLesson()"
+          >Применить</el-button
+        >
       </span>
     </el-dialog>
 
@@ -317,7 +318,7 @@ import {
   putMark,
   deleteMark,
 } from "@/api/mark";
-import { getSubjects } from "@/api/subjects";
+import { getSubjects } from "@/api/subjects-lms";
 import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
 import {
   getError,
@@ -328,6 +329,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "Marks",
@@ -389,24 +391,12 @@ export default {
         subject_id: 0,
         mg: 0,
         dateRange: [
-          moment().add(-3, "months").format("YYYY-MM-DD"),
+          moment()
+            .add(-3, "months")
+            .format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
         ],
       },
-      milgroups: [
-        {
-          milgroup: "1807",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1808",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1809",
-          milfaculty: "ВКС",
-        },
-      ],
       lessonTypes: [
         { label: "Семинар", code: "SE" },
         { label: "Лекция", code: "LE" },
@@ -415,7 +405,6 @@ export default {
         { label: "Зачет", code: "FI" },
         { label: "Экзамен", code: "EX" },
       ],
-      rooms: ["510", "501", "502", "503", "504", "Плац"],
       subjects: [],
       journal: {},
       pickerOptions: {
@@ -451,6 +440,14 @@ export default {
       },
     };
   },
+  computed: {
+    rooms() {
+      return ReferenceModule.rooms;
+    },
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
+  },
   async created() {
     await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
@@ -459,14 +456,14 @@ export default {
   },
   methods: {
     getMarksByLesson(marks, lessonId) {
-      const m = marks.find(x => x.lesson === lessonId);
+      const m = marks.find((x) => x.lesson === lessonId);
       if (m) {
         const result = m.mark;
         return result;
       }
       return [];
     },
-    formatDate: d => moment(d).format("DD.MM.YY"),
+    formatDate: (d) => moment(d).format("DD.MM.YY"),
     isOnlyLesson(marks) {
       return marks.length === 1;
     },
@@ -510,18 +507,19 @@ export default {
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
         })
-          .then(response => {
+          .then((response) => {
             this.journal = response.data;
           })
-          .catch(err => getError("расписания", err.response.status));
+          .catch((err) => getError("расписания", err.response.status));
       }
     },
     async getSubjects() {
       this.subjects = (await getSubjects()).data;
+      console.log("🚀 > this.subjects", this.subjects);
     },
 
     onCreate(student, lesson, mark) {
-      if (student.marks.some(x => x.lesson === lesson.id)) {
+      if (student.marks.some((x) => x.lesson === lesson.id)) {
         this.editMarkMethod = "PUT";
         this.editMarkId = mark.id;
         this.editMark = {
@@ -557,7 +555,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        },
+        }
       )
         .then(() => {
           this.dialogVisible = false;
@@ -573,7 +571,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(err => patchError("оценки", err.response.status));
+          .catch((err) => patchError("оценки", err.response.status));
       } else if (this.editMarkMethod === "POST") {
         postMark(this.editMark)
           .then(() => {
@@ -581,7 +579,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(err => postError("оценки", err.response.status));
+          .catch((err) => postError("оценки", err.response.status));
       } else if (this.editMarkMethod === "PUT") {
         putMark(this.editMark, this.editMarkId)
           .then(() => {
@@ -589,7 +587,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(err => patchError("оценки", err.response.status));
+          .catch((err) => patchError("оценки", err.response.status));
       }
     },
     handleDelete(id) {
@@ -604,7 +602,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch(err => deleteError("оценки", err.response.status));
+          .catch((err) => deleteError("оценки", err.response.status));
       });
     },
     onCreateLesson() {
@@ -634,7 +632,7 @@ export default {
               this.fetchData();
             }
           })
-          .catch(err => patchError("занятия", err.response.status));
+          .catch((err) => patchError("занятия", err.response.status));
       } else {
         postLesson(this.editLesson)
           .then(() => {
@@ -642,7 +640,7 @@ export default {
             this.lessonDialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch(err => postError("занятия", err.response.status));
+          .catch((err) => postError("занятия", err.response.status));
       }
     },
     handleDeleteLesson(id) {
@@ -653,14 +651,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        },
+        }
       ).then(() => {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch(err => deleteError("занятия", err.response.status));
+          .catch((err) => deleteError("занятия", err.response.status));
       });
     },
     openDrawer() {
