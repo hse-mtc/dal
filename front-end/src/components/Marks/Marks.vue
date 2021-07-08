@@ -83,7 +83,7 @@
                     <template v-for="d in journal.dates">
                       <PrimeColumn
                         v-for="item in journal.lessons.filter(
-                          (x) => x.date === d
+                          (x) => x.date === d,
                         )"
                         :key="`${item.id}-header`"
                       >
@@ -155,7 +155,7 @@
                             @click="
                               onEdit(
                                 data.marks.find((x) => x.lesson === item.id),
-                                data
+                                data,
                               )
                             "
                           >
@@ -170,7 +170,7 @@
                             onCreate(
                               data,
                               item,
-                              data.marks.find((x) => x.lesson === item.id)
+                              data.marks.find((x) => x.lesson === item.id),
                             )
                           "
                         />
@@ -218,8 +218,7 @@
           v-if="editMarkId"
           type="danger"
           @click="handleDelete(editMarkId)"
-          >Удалить</el-button
-        >
+        >Удалить</el-button>
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
@@ -288,9 +287,10 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="lessonDialogVisible = false">Отмена</el-button>
-        <el-button type="primary" @click="handleAcceptLesson()"
-          >Применить</el-button
-        >
+        <el-button
+          type="primary"
+          @click="handleAcceptLesson()"
+        >Применить</el-button>
       </span>
     </el-dialog>
 
@@ -456,14 +456,14 @@ export default {
   },
   methods: {
     getMarksByLesson(marks, lessonId) {
-      const m = marks.find((x) => x.lesson === lessonId);
+      const m = marks.find(x => x.lesson === lessonId);
       if (m) {
         const result = m.mark;
         return result;
       }
       return [];
     },
-    formatDate: (d) => moment(d).format("DD.MM.YY"),
+    formatDate: d => moment(d).format("DD.MM.YY"),
     isOnlyLesson(marks) {
       return marks.length === 1;
     },
@@ -507,10 +507,10 @@ export default {
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
         })
-          .then((response) => {
+          .then(response => {
             this.journal = response.data;
           })
-          .catch((err) => getError("расписания", err.response.status));
+          .catch(err => getError("расписания", err.response.status));
       }
     },
     async getSubjects() {
@@ -519,7 +519,7 @@ export default {
     },
 
     onCreate(student, lesson, mark) {
-      if (student.marks.some((x) => x.lesson === lesson.id)) {
+      if (student.marks.some(x => x.lesson === lesson.id)) {
         this.editMarkMethod = "PUT";
         this.editMarkId = mark.id;
         this.editMark = {
@@ -555,7 +555,7 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       )
         .then(() => {
           this.dialogVisible = false;
@@ -571,7 +571,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => patchError("оценки", err.response.status));
+          .catch(err => patchError("оценки", err.response.status));
       } else if (this.editMarkMethod === "POST") {
         postMark(this.editMark)
           .then(() => {
@@ -579,7 +579,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => postError("оценки", err.response.status));
+          .catch(err => postError("оценки", err.response.status));
       } else if (this.editMarkMethod === "PUT") {
         putMark(this.editMark, this.editMarkId)
           .then(() => {
@@ -587,7 +587,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => patchError("оценки", err.response.status));
+          .catch(err => patchError("оценки", err.response.status));
       }
     },
     handleDelete(id) {
@@ -602,7 +602,7 @@ export default {
             this.dialogVisible = false;
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch((err) => deleteError("оценки", err.response.status));
+          .catch(err => deleteError("оценки", err.response.status));
       });
     },
     onCreateLesson() {
@@ -632,7 +632,7 @@ export default {
               this.fetchData();
             }
           })
-          .catch((err) => patchError("занятия", err.response.status));
+          .catch(err => patchError("занятия", err.response.status));
       } else {
         postLesson(this.editLesson)
           .then(() => {
@@ -640,7 +640,7 @@ export default {
             this.lessonDialogVisible = false;
             if (this.filter.mg) this.fetchData();
           })
-          .catch((err) => postError("занятия", err.response.status));
+          .catch(err => postError("занятия", err.response.status));
       }
     },
     handleDeleteLesson(id) {
@@ -651,14 +651,14 @@ export default {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
-        }
+        },
       ).then(() => {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
             if (this.filter.mg > 0) this.fetchData();
           })
-          .catch((err) => deleteError("занятия", err.response.status));
+          .catch(err => deleteError("занятия", err.response.status));
       });
     },
     openDrawer() {
