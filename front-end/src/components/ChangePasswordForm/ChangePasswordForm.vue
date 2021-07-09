@@ -97,7 +97,6 @@ export default {
   created() {
     if (!this.inDialog) {
       let { token } = this.$route.query;
-      console.log("🚀 > token", token);
       try {
         jwtDecode(token);
       } catch (ex) {

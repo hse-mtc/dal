@@ -262,7 +262,6 @@ class Reference extends VuexModule {
   async fetchmilspecialties() {
     try {
       const { data } = await getReferenceMilSpecialties();
-      console.log("🚀 > data", data);
       this.setmilspecialties(data);
       this.SET_IS_LOADED({ field: "_milspecialtiesLoaded", value: true });
     } catch (err) {

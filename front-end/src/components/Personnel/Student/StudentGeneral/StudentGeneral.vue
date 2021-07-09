@@ -335,7 +335,6 @@ export default {
     reset() {
       this.modify = false;
       this.$refs.form.clearValidate();
-      console.log(this.displayInfo);
     },
     beforeAvatarUpload(file) {
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";

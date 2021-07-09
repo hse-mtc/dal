@@ -413,7 +413,6 @@ export default {
         date: moment().format("YYYY-MM-DD"),
         remove_date: null,
       };
-      console.log("zhopa", this.editPunishment);
       this.students = (await getStudent()).data;
       this.teachers = (await getTeacher()).data;
       this.dialogVisible = true;
@@ -502,7 +501,6 @@ export default {
       });
     },
     onRemovePunishmentCheckboxClick() {
-      console.log(this.editPunishment);
       if (this.editPunishment.remove_date != null) {
         this.editPunishment.remove_date = null;
       } else {
