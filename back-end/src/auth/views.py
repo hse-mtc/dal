@@ -71,10 +71,10 @@ class UserRetrieveAPIView(RetrieveAPIView):
 
 @extend_schema(tags=["permissions"])
 class UserControlViewSet(
-    mixins.RetrieveModelMixin,
-    mixins.ListModelMixin,
-    mixins.UpdateModelMixin,
-    viewsets.GenericViewSet,
+        mixins.RetrieveModelMixin,
+        mixins.ListModelMixin,
+        mixins.UpdateModelMixin,
+        viewsets.GenericViewSet,
 ):
     queryset = get_user_model().objects.all()
 
@@ -230,9 +230,13 @@ class UserControlViewSet(
 
 
 @extend_schema(tags=["permissions"])
-class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
-                   mixins.DestroyModelMixin, mixins.UpdateModelMixin,
-                   viewsets.GenericViewSet):
+class GroupViewSet(
+        mixins.RetrieveModelMixin,
+        mixins.ListModelMixin,
+        mixins.DestroyModelMixin,
+        mixins.UpdateModelMixin,
+        viewsets.GenericViewSet,
+):
     queryset = Group.objects.all()
     permission_classes = [PermissionPermission]
 
@@ -241,8 +245,7 @@ class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
             return GroupMutateSerializer
         return GroupSerializer
 
-
-    def list(self, request):
+    def list(self, request, *args, **kwargs):
         serializer = GroupListSerializer(self.get_queryset(), many=True)
         return Response(serializer.data)
 
