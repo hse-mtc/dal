@@ -31,7 +31,7 @@ export default {
   },
   watch: {
     width(nextWidth) {
-      document.getElementById("app").style.minWidth = nextWidth;
+      document.getElementById("app").style.minWidth = `${nextWidth}px`;
     },
   },
 };

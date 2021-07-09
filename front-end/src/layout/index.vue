@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { AppModule, SettingsModule, UserModule } from "@/store";
+import { AppModule, SettingsModule } from "@/store";
 import { Navbar, Sidebar, AppMain } from "./components";
 import ResizeMixin from "./mixin/ResizeHandler";
 

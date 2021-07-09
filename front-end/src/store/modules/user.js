@@ -8,22 +8,20 @@ import {
 import store, { UserModule } from "@/store";
 
 import { login, getUser } from "@/api/user";
-import { getToken, setToken, removeToken } from "@/utils/auth";
 
-import { resetRouter } from "@/router";
 import { getError } from "@/utils/message";
-import LocalStorageService from "../../utils/LocalStorageService";
-
-const localStorageService = LocalStorageService.getService();
+import { tokenService } from "../../utils/tokenService";
 
 @Module({ store, name: "user", namespaced: true })
 class User extends VuexModule {
-  token = getToken();
-  _email = "";
-  _campuses = [];
+  accessToken = tokenService.access
+  refreshToken = tokenService.refresh
+  userId = tokenService.userId
+  _email = ""
+  _campuses = []
   _personType = "";
   _personId = 0;
-  _userInfoLoaded = false;
+  _userInfoLoaded = false
 
   @Mutation
   SET_IS_LOADED(value) {
@@ -31,8 +29,24 @@ class User extends VuexModule {
   }
 
   @Mutation
-  SET_TOKEN(token) {
-    this.token = token;
+  SET_TOKENS({ access, refresh }) {
+    this.accessToken = access;
+    this.refreshToken = refresh;
+
+    tokenService.setTokens({ access, refresh });
+  }
+
+  @Mutation
+  RESET_TOKENS() {
+    this.accessToken = "";
+    this.refreshToken = "";
+
+    tokenService.clearTokens();
+  }
+
+  @Mutation
+  SET_USER_ID(userId) {
+    this.userId = userId;
   }
 
   @Mutation
@@ -59,10 +73,15 @@ class User extends VuexModule {
   async login(userInfo) {
     const { email, password } = userInfo;
 
-    const { data } = await login({ email: email.trim(), password });
-    this.SET_TOKEN(data.access);
-    setToken(data.access);
-    localStorageService.setToken(data);
+    try {
+      const { data } = await login({ email: email.trim(), password });
+      this.SET_TOKENS(data);
+      this.SET_USER_ID(tokenService.userId);
+      return true;
+    } catch (e) {
+      console.log("Не удалось авторизоваться", e);
+      return false;
+    }
   }
 
   @Action
@@ -91,31 +110,17 @@ class User extends VuexModule {
 
   @Action
   logout() {
-    this.SET_TOKEN();
+    this.RESET_TOKENS();
     this.SET_EMAIL("");
     this.SET_CAMPUSES([]);
     this.SET_PERSON_TYPE("");
     this.SET_PERSON_ID(0);
+    this.SET_USER_ID(null);
     this.SET_IS_LOADED(false);
-    removeToken();
-    resetRouter();
-  }
-
-  @Action
-  async setToken(token) {
-    this.SET_TOKEN(token);
-    setToken(token);
-    localStorageService.setToken({ access: token, refresh: null });
-  }
-
-  @Action
-  async resetToken() {
-    this.SET_TOKEN("");
-    removeToken();
   }
 
   get email() {
-    if (!this._userInfoLoaded) {
+    if (!this._userInfoLoaded && this.accessToken) {
       UserModule.getUser();
     }
 
@@ -123,7 +128,7 @@ class User extends VuexModule {
   }
 
   get campuses() {
-    if (!this._userInfoLoaded) {
+    if (!this._userInfoLoaded && this.accessToken) {
       UserModule.getUser();
     }
 

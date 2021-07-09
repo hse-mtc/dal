@@ -184,7 +184,6 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save()
 
-    # TODO(@gakhromov): insert required permissions in actions
     @action(detail=False,
             methods=["patch"],
             permission_classes=[permissions.AllowAny])

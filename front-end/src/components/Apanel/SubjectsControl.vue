@@ -98,7 +98,7 @@ import { Message } from "element-ui";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
 import { SIZES } from "@/utils/appConsts";
-import { AppModule, SubjectsModule } from "@/store";
+import { SubjectsModule } from "@/store";
 
 @Component({
   name: "SubjectsControl",
@@ -122,7 +122,6 @@ class SubjectsControl {
   }
 
   get subjects() { return SubjectsModule.subjects; }
-  get userId() { return AppModule.userId; }
 
   submitForm(name) {
     this.$refs[name].validate(async valid => {

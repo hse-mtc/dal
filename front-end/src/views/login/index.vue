@@ -130,21 +130,16 @@ export default {
       });
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate(async valid => {
         if (valid) {
           this.loading = true;
-          UserModule.login(this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
-          return true;
+
+          if (await UserModule.login(this.loginForm)) {
+            this.$router.push({ path: this.redirect || "/" });
+          }
+
+          this.loading = false;
         }
-        console.log("error submit!");
-        return false;
       });
     },
   },

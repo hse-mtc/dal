@@ -34,7 +34,6 @@
 
 <script>
 import Breadcrumb from "@/components/Breadcrumb";
-import LocalStorageService from "@/utils/LocalStorageService";
 import Hamburger from "@/components/Hamburger";
 import { surnameWithInitials } from "@/utils/person";
 import { AppModule, UserModule } from "@/store";
@@ -56,9 +55,8 @@ export default {
   methods: {
     surnameWithInitials,
     logout() {
-      const localStorageService = LocalStorageService.getService();
-      localStorageService.clearToken();
-      this.$router.push("/login");
+      UserModule.logout();
+      window.location.href = "/login";
     },
     profile() {
       if (this.personType && this.personId) {
