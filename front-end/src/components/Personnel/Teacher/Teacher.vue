@@ -94,6 +94,7 @@
                   }"
                   format="dd.MM.yyyy"
                   value-format="yyyy-MM-dd"
+                  :clearable="false"
                 />
                 <span v-else class="field-value">
                   {{
