@@ -1,6 +1,6 @@
 <template>
   <span v-if="disable || hasPermission">
-    <el-tooltip :disabled="!disabled" content="Недостаточно прав">
+    <el-tooltip :disabled="!disabled" content="Нет доступа">
       <span>
         <slot :disabled="disabled" />
       </span>

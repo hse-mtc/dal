@@ -167,7 +167,7 @@
               <PrimeColumn
                 column-key="buttons"
                 header-style="width: 120px"
-                body-style="width: 120px"
+                body-style="width: 120px; text-align: center;"
               >
                 <template #body="{ data }">
                   <el-button
