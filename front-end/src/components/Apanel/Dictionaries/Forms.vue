@@ -14,7 +14,7 @@
       :prop="field"
     >
       <el-input
-        :value="dataByTypes[type][field]"
+        v-model="dataByTypes[type][field]"
         :placeholder="placeholder"
         @input="onChange(field, formatter, $event)"
       />
@@ -126,6 +126,7 @@ class DictionariesForms {
   }
 
   onChange(field, formatter, value) {
+    console.log("field, formatter, value", field, formatter, value);
     this.dataByTypes[this.type][field] = formatter
       ? formatter(value)
       : value.toLowerCase();
