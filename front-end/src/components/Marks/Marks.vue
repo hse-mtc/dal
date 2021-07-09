@@ -293,19 +293,6 @@
         >Применить</el-button>
       </span>
     </el-dialog>
-
-    <!-- <el-drawer :title="drawerTitle" :visible.sync="drawer" direction="rtl">
-      <span>Hi, there!</span>
-    </el-drawer> -->
-
-    <!-- <el-button
-      type="primary"
-      size="large"
-      class="drawer-button"
-      icon="el-icon-arrow-left"
-      plain
-      @click="openDrawer"
-    /> -->
   </div>
 </template>
 
