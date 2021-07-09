@@ -32,7 +32,7 @@
               <el-button type="primary" plain @click="save">
                 Сохранить
               </el-button>
-              <el-button type="warning" plain @click="modify = false">
+              <el-button type="warning" plain @click="reset">
                 Отмена
               </el-button>
             </div>
@@ -68,6 +68,7 @@
               }"
               format="dd.MM.yyyy"
               value-format="yyyy-MM-dd"
+              :clearable="false"
             />
             <span v-else class="field-value">
               {{
@@ -301,31 +302,40 @@ export default {
       }
     },
     async save() {
-      try {
-        this.loading = true;
-        const [
-          surname,
-          name,
-          ...patronymicArray
-        ] = this.modifyInfo.fullname.split(" ");
-        const patronymic = patronymicArray.join(" ");
-        const requestBody = {
-          ...this.modifyInfo,
-          milgroup: this.modifyInfo.milgroup.milgroup,
-          student_post: this.modifyInfo.student_post.id,
-          surname,
-          name,
-          patronymic,
-          photo: undefined,
-        };
-        await patchStudent(requestBody);
-        this.displayInfo = this.modifyInfo;
-        this.modify = false;
-      } catch (err) {
-        patchError("информации о студенте", err.response.status);
-      } finally {
-        this.loading = false;
-      }
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          try {
+            this.loading = true;
+            const [
+              surname,
+              name,
+              ...patronymicArray
+            ] = this.modifyInfo.fullname.split(" ");
+            const patronymic = patronymicArray.join(" ");
+            const requestBody = {
+              ...this.modifyInfo,
+              milgroup: this.modifyInfo.milgroup.milgroup,
+              student_post: this.modifyInfo.student_post.id,
+              surname,
+              name,
+              patronymic,
+              photo: undefined,
+            };
+            await patchStudent(requestBody);
+            this.displayInfo = this.modifyInfo;
+            this.modify = false;
+          } catch (err) {
+            patchError("информации о студенте", err.response.status);
+          } finally {
+            this.loading = false;
+          }
+        }
+      });
+    },
+    reset() {
+      this.modify = false;
+      this.$refs.form.clearValidate();
+      console.log(this.displayInfo);
     },
     beforeAvatarUpload(file) {
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
