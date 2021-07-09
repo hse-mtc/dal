@@ -99,11 +99,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["id", "email", "all_permissions", "campuses", "person_type", "person_id"]
+        fields = [
+            "id", "email", "all_permissions", "campuses", "person_type",
+            "person_id"
+        ]
 
     def get_all_permissions(self, obj) -> list[str]:
         return PermissionSerializer(obj.get_all_permissions(), many=True).data
-    
+
     def identify_user(self, user_to_check):
         user_type, user = get_user_from_request(user_to_check)
         return user_type, (0 if user is None else user.id)
@@ -127,7 +130,11 @@ class UserDetailedSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = [
-            "id", "email", "permissions", "campuses", "groups",
+            "id",
+            "email",
+            "permissions",
+            "campuses",
+            "groups",
         ]
 
     def get_permissions(self, obj) -> list[str]:
