@@ -16,37 +16,25 @@
           :name="field"
           :label="label"
         >
-          <div
-            v-if="currentTab === field"
-            :class="$style.editor"
-          >
-            <div
-              v-if="!editingItemId"
-              :class="$style.tagsWrapper"
-            >
-              <Tag
-                v-for="({ id, title }) in tagsItems"
-                :id="id"
-                :key="id"
-                :title="title"
-                :class="$style.tag"
-                @delete="deleteItem(id)"
-                @edit="startEdit(id)"
-              >
-                {{ title }}
-              </Tag>
-            </div>
-
-            <Forms
-              :is-edit="!!editingItemId"
-              :init-state="modalData"
+          <template v-if="currentTab === field">
+            <TabsEditor
+              v-if="editorsTypes[currentTab] === 'tags'"
               :type="currentTab"
-              :class="$style.form"
-              @submit="addItem($event)"
-              @change="editItem"
-              @cancel="stopEdit"
+              :tags="tagsItems"
+              :editing-item="modalData"
+              @startEdit="onStartEdit"
+              @abortEdit="onAbortEdit"
+              @submitEdit="onSubmitEdit"
+              @addItem="onAddItem"
+              @delete="onDelete"
             />
-          </div>
+
+            <TableEditor
+              v-else
+              :type="currentTab"
+              :data="tagsItems"
+            />
+          </template>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -57,31 +45,47 @@
 import { Component, Watch } from "vue-property-decorator";
 import _omit from "lodash/omit";
 
-import { PapersModule } from "@/store";
+import { PapersModule, ReferenceModule } from "@/store";
 
-import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
-import Forms from "./Forms.vue";
-import Tag from "./Tag.vue";
+import TabsEditor from "./TagsEditor.vue";
+import TableEditor from "./TableEditor.vue";
+
+const weekdays = {
+  0: "Понедельник",
+  1: "Вторник",
+  2: "Среда",
+  3: "Четверг",
+  4: "Пятница",
+  5: "Суббота",
+  6: "Воскресенье",
+};
 
 @Component({
   name: "Dictionaries",
   components: {
-    Forms,
-    ModalWindow,
-    Tag,
+    TabsEditor,
+    TableEditor,
   },
 })
 class Dictionaries {
   newItem = ""
   searchQuery = ""
   editingItemId = null
-  modalData = {}
+  modalData = null
+
+  editorsTypes = {
+    publishers: "tags",
+    authors: "tags",
+    categories: "tags",
+  }
 
   tabs = {
     publishers:
     {
       label: "Издатели",
       mapFunc: item => ({ title: item.name, id: item.id }),
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
       add: PapersModule.addPublisher,
       delete: PapersModule.deletePublisher,
       edit: PapersModule.editPublisher,
@@ -92,43 +96,59 @@ class Dictionaries {
         id: item.id,
         title: [item.surname, item.name, item.patronymic].filter(Boolean).join(" "),
       }),
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
       add: PapersModule.addAuthor,
       delete: PapersModule.deleteAuthor,
       edit: PapersModule.editAuthors,
     },
     categories: {
       label: "Категории",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
       add: PapersModule.addCategory,
       delete: PapersModule.deleteCategory,
       edit: PapersModule.editCategories,
+    },
+    milgroups: {
+      label: "Взвода",
+      sortFunc: (left, right) => (left.milgroup > right.milgroup ? 1 : -1),
+      filterFunc: (item, query) => {
+        const stringItem = `${item.milgroup} ${item.milfaculty} ${weekdays[item.weekday]}`
+          .toLowerCase();
+        return query.split(" ")
+          .reduce((memo, word) => memo && (word && stringItem.includes(word)), true);
+      },
+      add: () => {},
+      delete: () => {},
+      edit: () => {},
     },
   }
 
   currentTab = "publishers"
 
   get tagsItems() {
-    const { mapFunc } = this.tabs[this.currentTab];
+    const { mapFunc, sortFunc, filterFunc } = this.tabs[this.currentTab];
     const data = (mapFunc
       ? this[this.currentTab].map(mapFunc)
       : this[this.currentTab])
-      .sort((left, right) => (left.title > right.title ? 1 : -1));
+      .sort(sortFunc);
 
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
-      return data
-        .filter(item => item.title.toLowerCase().includes(query));
+      return data.slice(0, 2)
+        .filter(item => filterFunc(item, query));
     }
 
     return data;
   }
 
   get publishers() { return PapersModule.publishers; }
-
   get authors() { return PapersModule.authors; }
-
   get categories() { return PapersModule.categories; }
+  get milgroups() { return ReferenceModule.milgroups; }
 
-  async deleteItem(id) {
+  async onDelete(id) {
     await this.$confirm(
       "Вы уверены, что хотите удалить?",
       "Подтверждение",
@@ -142,7 +162,8 @@ class Dictionaries {
     this.tabs[this.currentTab].delete(id);
   }
 
-  startEdit(id) {
+  onStartEdit(id) {
+    console.log("sdcjscnkscnskjcnsdkjcn");
     this.editingItemId = id;
     this.modalData = _omit(
       this[this.currentTab].find(item => item.id === id),
@@ -150,12 +171,12 @@ class Dictionaries {
     );
   }
 
-  stopEdit() {
+  onAbortEdit() {
     this.editingItemId = null;
-    this.modalData = {};
+    this.modalData = null;
   }
 
-  async editItem(data) {
+  async onSubmitEdit(data) {
     const { edit } = this.tabs[this.currentTab];
 
     const res = await edit({
@@ -164,18 +185,18 @@ class Dictionaries {
     });
 
     if (res) {
-      this.stopEdit();
+      this.onAbortEdit();
     }
   }
 
-  addItem(data) {
+  onAddItem(data) {
     this.tabs[this.currentTab].add(data);
   }
 
   @Watch("currentTab")
   onCurrentTabChange() {
     this.editingItemId = null;
-    this.modalData = {};
+    this.modalData = null;
   }
 }
 
@@ -187,14 +208,6 @@ export default Dictionaries;
 
 .search {
   margin-bottom: 20px;
-}
-
-.tagsWrapper {
-  margin: -10px -10px 0 0;
-
-  .tag {
-    margin: 10px 10px 0 0;
-  }
 }
 
 .addNew {
