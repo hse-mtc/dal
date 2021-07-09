@@ -9,6 +9,7 @@ import Multiselect from "vue-multiselect";
 import VueLodash from "vue-lodash";
 import lodash from "lodash";
 import VueMeta from "vue-meta";
+import AZGuard from "@/components/AZGuard.vue";
 
 import "@/styles/index.scss"; // global css
 
@@ -20,11 +21,11 @@ import "@/icons"; // icon
 import "@/permission"; // permission control
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
-
 import "./elementUIApply";
 import "./primeApply";
 
 Vue.component("Multiselect", Multiselect);
+Vue.component("AZGuard", AZGuard);
 Vue.use(Maska);
 Vue.use(VueMeta);
 Vue.use(VueLodash, { name: "custom", lodash });

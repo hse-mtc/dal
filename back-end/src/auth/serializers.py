@@ -146,36 +146,59 @@ class GroupMutateSerializer(serializers.ModelSerializer):
         return instance
 
 
+class PersonSerialier(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    type = serializers.CharField(read_only=True)
+    milgroups = serializers.ListField(
+        child=serializers.IntegerField(),
+        read_only=True,
+    )
+    milfaculty = serializers.CharField(read_only=True)
+
+    class Meta:
+        fields = [
+            "id", "type", "milgroups", "milfaculty"
+        ]
+
+
 class UserSerializer(serializers.ModelSerializer):
     """Display main user info and all permissions."""
     all_permissions = serializers.SerializerMethodField(read_only=True)
 
-    person_type = serializers.SerializerMethodField(read_only=True)
-    person_id = serializers.SerializerMethodField(read_only=True)
+    person = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = get_user_model()
         fields = [
-            "id", "email", "all_permissions", "campuses", "person_type",
-            "person_id"
+            "id", "email", "all_permissions", "campuses", "person"
         ]
 
     def get_all_permissions(self, obj) -> list[str]:
         return PermissionSerializer(obj.get_all_permissions(), many=True).data
 
-    def identify_user(self, user_to_check):
-        user_type, user = get_user_from_request(user_to_check)
-        return user_type, (0 if user is None else user.id)
-
-    def get_person_type(self, obj) -> str:
+    def get_person(self, obj) -> str:
         # try to find teachers
-        user_type, _ = self.identify_user(obj)
-        return user_type
+        user_type, user = get_user_from_request(obj)
+        class PersonObject:
+            def __init__(self, id, type, milgroups, milfaculty):
+                self.id = id
+                self.type = type
+                self.milgroups = milgroups
+                self.milfaculty = milfaculty
+        
+        milgroups = []
+        milfaculty = None
 
-    def get_person_id(self, obj) -> int:
-        # try to find teachers
-        _, user_id = self.identify_user(obj)
-        return user_id
+        if user_type == 'student':
+            milgroups = [user.milgroup.milgroup]
+            milfaculty = user.milgroup.milfaculty.milfaculty
+
+        if user_type == 'teacher':
+            milgroups = [user.milgroup.milgroup]
+            milfaculty = user.milfaculty.milfaculty
+
+        person = PersonObject(user.id, user_type, milgroups, milfaculty)
+        return PersonSerialier(person).data
 
 
 class UserDetailedSerializer(serializers.ModelSerializer):

@@ -31,6 +31,15 @@ export default {
     Students,
     Teachers,
   },
+  data() {
+    return {
+      activeTab: "",
+      tabs: ["students", "teachers", "uniform"],
+    };
+  },
+  created() {
+    [this.activeTab] = this.tabs;
+  },
 };
 </script>
 

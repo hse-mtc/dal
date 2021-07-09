@@ -13,38 +13,42 @@
           <img :src="headdressesSrc[uniform.headdress]" alt="" class="above">
           <!-- Outerwear -->
           <img :src="outerwearsSrc[uniform.outerwear]" alt="" class="above">
-          <el-button
-            icon="el-icon-caret-left"
-            circle
-            class="top-left"
-            @click="cycleThroughHeaddresses"
-          />
-          <el-button
-            icon="el-icon-caret-left"
-            circle
-            class="left"
-            @click="cycleThroughOuterwears"
-          />
-          <el-button
-            icon="el-icon-caret-right"
-            circle
-            class="top-right"
-            @click="cycleThroughHeaddresses"
-          />
-          <el-button
-            icon="el-icon-caret-right"
-            circle
-            class="right"
-            @click="cycleThroughOuterwears"
-          />
+          <AZGuard :permissions="getPermissions(milfaculty.milfaculty)">
+            <el-button
+              icon="el-icon-caret-left"
+              circle
+              class="top-left"
+              @click="cycleThroughHeaddresses"
+            />
+            <el-button
+              icon="el-icon-caret-left"
+              circle
+              class="left"
+              @click="cycleThroughOuterwears"
+            />
+            <el-button
+              icon="el-icon-caret-right"
+              circle
+              class="top-right"
+              @click="cycleThroughHeaddresses"
+            />
+            <el-button
+              icon="el-icon-caret-right"
+              circle
+              class="right"
+              @click="cycleThroughOuterwears"
+            />
+          </AZGuard>
         </div>
-        <el-button
-          icon="el-icon-check"
-          type="success"
-          @click="confirmUniform"
-        >
-          Утвердить
-        </el-button>
+        <AZGuard :permissions="getPermissions(milfaculty.milfaculty)">
+          <el-button
+            icon="el-icon-check"
+            type="success"
+            @click="confirmUniform"
+          >
+            Утвердить
+          </el-button>
+        </AZGuard>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -59,6 +63,7 @@ import {
 import CA from "@/assets/uniform-picker/cap.svg";
 import HA from "@/assets/uniform-picker/hat.svg";
 import PC from "@/assets/uniform-picker/pea-coat.svg";
+import { UserModule } from "@/store";
 
 export default {
   name: "",
@@ -72,6 +77,11 @@ export default {
       outerwearsSrc: { JA: "", PC },
     };
   },
+  computed: {
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+  },
   created() {
     getMilFaculties()
       .then(response => {
@@ -84,6 +94,15 @@ export default {
       });
   },
   methods: {
+    getPermissions(milfaculty) {
+      return [
+        "uniforms.patch.all",
+        {
+          codename: "uniforms.patch.milfaculty",
+          validator: () => this.userMilfaculty === milfaculty,
+        },
+      ];
+    },
     fetchUniform(milfaculty) {
       getUniforms({
         milfaculty,

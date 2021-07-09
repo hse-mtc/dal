@@ -104,13 +104,31 @@
           body-style="width: 50px"
         >
           <template #body="{ data }">
-            <el-button
-              size="mini"
-              icon="el-icon-delete"
-              type="danger"
-              circle
-              @click="onDelete($event, data.id)"
-            />
+            <AZGuard
+              v-slot="{ disabled }"
+              :permissions="[
+                'students.delete.all',
+                {
+                  codename: 'students.delete.milfaculty',
+                  validator: () => userMilfaculty === data.milgroup.milfaculty,
+                },
+                {
+                  codename: 'students.delete.milgroup',
+                  validator: () =>
+                    userMilgroups.some((x) => x === data.milgroup.milgroup),
+                },
+              ]"
+              disable
+            >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                type="danger"
+                circle
+                :disabled="disabled"
+                @click="onDelete($event, data.id)"
+              />
+            </AZGuard>
           </template>
         </PrimeColumn>
       </PrimeTable>
@@ -121,7 +139,8 @@
 <script>
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
-import { getStudentBasic, deleteStudent } from "@/api/students";
+import { getStudent, deleteStudent } from "@/api/students";
+import { ReferenceModule, UserModule } from "@/store";
 
 export default {
   name: "Students",
@@ -134,27 +153,21 @@ export default {
         status: "ST",
       },
       students: [],
-      statuses: [
-        { code: "ST", label: "Обучающийся" },
-        { code: "EX", label: "Отчислен" },
-        { code: "GR", label: "Выпустился" },
-      ],
-      milgroups: [
-        {
-          milgroup: 1807,
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: 1808,
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: 1809,
-          milfaculty: "ВКС",
-        },
-      ],
-      milfaculties: ["Разведка", "Сержанты", "ВКС", "РВСН"],
     };
+  },
+  computed: {
+    statuses() {
+      return ReferenceModule.studentStatuses;
+    },
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
   },
   async created() {
     await this.onFilter();
@@ -163,7 +176,7 @@ export default {
     async onFilter() {
       try {
         this.loading = true;
-        this.students = (await getStudentBasic(this.filter)).data;
+        this.students = (await getStudent(this.filter)).data;
       } catch (err) {
         getError("студентов", err.response.status);
       } finally {
