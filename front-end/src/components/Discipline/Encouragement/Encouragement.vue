@@ -134,7 +134,7 @@
         />
         <PrimeColumn
           header-style="width: 120px"
-          body-style="width: 120px"
+          body-style="width: 120px; text-align: center;"
           column-key="buttons"
         >
           <template #body="{ data }">
@@ -259,6 +259,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { UserModule, ReferenceModule } from "@/store";
 
 import moment from "moment";
 import { getStudent } from "@/api/students";
@@ -303,20 +304,6 @@ export default {
       },
       students: [],
       teachers: [],
-      milgroups: [
-        {
-          milgroup: "1807",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1808",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1809",
-          milfaculty: "ВКС",
-        },
-      ],
       pickerOptions: {
         shortcuts: [
           {
@@ -349,6 +336,11 @@ export default {
         ],
       },
     };
+  },
+  computed: {
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
   },
   created() {
     this.onFilter();

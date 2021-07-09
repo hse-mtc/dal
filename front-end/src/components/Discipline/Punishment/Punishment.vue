@@ -65,18 +65,26 @@
         </el-select>
       </el-col>
     </el-row>
-    <el-row class="addRow">
-      <el-col :span="24">
-        <el-button
-          class="addBtn"
-          type="primary"
-          icon="el-icon-plus"
-          @click="onCreate"
-        >
-          Новое взыскание
-        </el-button>
-      </el-col>
-    </el-row>
+    <AZGuard
+      :permissions="[
+        'punishments.post.all',
+        'punishments.post.milfaculty',
+        'punishments.post.self',
+      ]"
+    >
+      <el-row class="addRow">
+        <el-col :span="24">
+          <el-button
+            class="addBtn"
+            type="primary"
+            icon="el-icon-plus"
+            @click="onCreate"
+          >
+            Новое взыскание
+          </el-button>
+        </el-col>
+      </el-row>
+    </AZGuard>
     <el-row>
       <PrimeTable
         :value="punishments"
@@ -93,43 +101,33 @@
           column-key="date"
         />
         <PrimeColumn
-          :field="row => row.student.fullname"
+          :field="(row) => row.student.fullname"
           sortable
           header="Студент"
           column-key="fullname"
         />
         <PrimeColumn
-          :field="row => row.teacher.fullname"
+          :field="(row) => row.teacher.fullname"
           sortable
           header="Преподаватель"
           column-key="teacher"
         />
         <PrimeColumn
-          :field="row => row.student.milgroup.milgroup"
+          :field="(row) => row.student.milgroup.milgroup"
           sortable
           header="Взвод"
           header-style="width: 100px"
           body-style="width: 100px"
           column-key="milgroup"
         />
-        <PrimeColumn
-          header="Тип взыскания"
-          column-key="type"
-        >
+        <PrimeColumn header="Тип взыскания" column-key="type">
           <template #body="{ data }">
-            <el-tag
-              :type="tagByPunishmentType(data.type)"
-              disable-transitions
-            >
+            <el-tag :type="tagByPunishmentType(data.type)" disable-transitions>
               {{ data.type | typeFilter }}
             </el-tag>
           </template>
         </PrimeColumn>
-        <PrimeColumn
-          field="reason"
-          header="Причина"
-          column-key="reason"
-        />
+        <PrimeColumn field="reason" header="Причина" column-key="reason" />
         <PrimeColumn
           sortable
           header="Дата снятия"
@@ -140,39 +138,60 @@
         />
         <PrimeColumn
           header-style="width: 150px"
-          body-style="width: 150px"
+          body-style="width: 150px; text-align: center;"
           column-key="buttons"
         >
           <template #body="{ data }">
-            <el-tooltip
-              v-if="!data.remove_date"
-              class="item"
-              effect="dark"
-              content="Снять взыскание"
-              placement="top"
+            <AZGuard
+              v-slot="{ disabled }"
+              :permissions="getPermissions('patch', data)"
+              disable
+            >
+              <el-tooltip
+                v-if="!data.remove_date"
+                class="item"
+                effect="dark"
+                content="Снять взыскание"
+                placement="top"
+              >
+                <el-button
+                  size="mini"
+                  icon="el-icon-remove-outline"
+                  type="warning"
+                  circle
+                  :disabled="disabled"
+                  @click="onRemove(data)"
+                />
+              </el-tooltip>
+            </AZGuard>
+            <AZGuard
+              v-slot="{ disabled }"
+              :permissions="getPermissions('patch', data)"
+              disable
             >
               <el-button
                 size="mini"
-                icon="el-icon-remove-outline"
-                type="warning"
+                icon="el-icon-edit"
+                type="info"
                 circle
-                @click="onRemove(data)"
+                :disabled="disabled"
+                @click="onEdit(data)"
               />
-            </el-tooltip>
-            <el-button
-              size="mini"
-              icon="el-icon-edit"
-              type="info"
-              circle
-              @click="onEdit(data)"
-            />
-            <el-button
-              size="mini"
-              icon="el-icon-delete"
-              type="danger"
-              circle
-              @click="handleDelete(data.id)"
-            />
+            </AZGuard>
+            <AZGuard
+              v-slot="{ disabled }"
+              :permissions="getPermissions('delete', data)"
+              disable
+            >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                type="danger"
+                circle
+                :disabled="disabled"
+                @click="handleDelete(data.id)"
+              />
+            </AZGuard>
           </template>
         </PrimeColumn>
       </PrimeTable>
@@ -220,19 +239,29 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Преподаватель" required>
-          <el-select
-            v-model="editPunishment.teacher"
-            value-key="id"
-            filterable
-            style="display: block"
+          <AZGuard
+            v-slot="{ disabled }"
+            :permissions="[
+              'punishments.post.all',
+              'punishments.post.milfaculty',
+            ]"
+            disable
           >
-            <el-option
-              v-for="t in teachers"
-              :key="t.id"
-              :label="t.fullname"
-              :value="t.id"
-            />
-          </el-select>
+            <el-select
+              v-model="editPunishment.teacher"
+              value-key="id"
+              filterable
+              style="display: block"
+              :disabled="disabled"
+            >
+              <el-option
+                v-for="t in teachers"
+                :key="t.id"
+                :label="t.fullname"
+                :value="t.id"
+              />
+            </el-select>
+          </AZGuard>
         </el-form-item>
         <el-form-item label="Тип взыскания: " required>
           <el-select
@@ -296,6 +325,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { UserModule, ReferenceModule } from "@/store";
 
 export default {
   name: "Punishment",
@@ -329,20 +359,6 @@ export default {
       },
       students: [],
       teachers: [],
-      milgroups: [
-        {
-          milgroup: "1807",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1808",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1809",
-          milfaculty: "ВКС",
-        },
-      ],
       pickerOptions: {
         shortcuts: [
           {
@@ -376,10 +392,43 @@ export default {
       },
     };
   },
+  computed: {
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+    userId() {
+      return UserModule.personId;
+    },
+  },
   created() {
     this.onFilter();
   },
   methods: {
+    getPermissions(method, data) {
+      return [
+        `punishments.${method}.all`,
+        {
+          codename: `punishments.${method}.milfaculty`,
+          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty,
+        },
+        {
+          codename: `punishments.${method}.milgroup`,
+          validator: () => this.userMilgroups.some(
+            x => x === data.student.milgroup.milgroup,
+          ),
+        },
+        {
+          codename: `punishments.${method}.self`,
+          validator: () => this.userId === data.teacher.id,
+        },
+      ];
+    },
     formatDate: row => moment(row.date).format("DD.MM.YY"),
     formatRemoveDate: row => (row.remove_date ? moment(row.remove_date).format("DD.MM.YY") : null),
     onFilter() {
@@ -407,14 +456,14 @@ export default {
     },
     async onCreate() {
       this.editPunishmentFullname = "Новое взыскание";
+      this.students = (await getStudent()).data;
+      this.teachers = (await getTeacher()).data;
       this.editPunishment = {
         student: null,
-        teacher: null,
+        teacher: this.teachers.find(x => x.id === this.userId)?.id,
         date: moment().format("YYYY-MM-DD"),
         remove_date: null,
       };
-      this.students = (await getStudent()).data;
-      this.teachers = (await getTeacher()).data;
       this.dialogVisible = true;
     },
     async onEdit(row) {
