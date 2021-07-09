@@ -8,17 +8,19 @@
             !item.alwaysShow
         "
       >
-        <AppLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
-          <el-menu-item
-            :index="resolvePath(onlyOneChild.path)"
-            :class="{ 'submenu-title-noDropdown': !isNest }"
-          >
-            <Item
-              :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
-              :title="onlyOneChild.meta.title"
-            />
-          </el-menu-item>
-        </AppLink>
+        <AZGuard :permissions="permissions">
+          <AppLink v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
+            <el-menu-item
+              :index="resolvePath(onlyOneChild.path)"
+              :class="{ 'submenu-title-noDropdown': !isNest }"
+            >
+              <Item
+                :icon="onlyOneChild.meta.icon || (item.meta && item.meta.icon)"
+                :title="onlyOneChild.meta.title"
+              />
+            </el-menu-item>
+          </AppLink>
+        </AZGuard>
       </template>
 
       <el-submenu
@@ -59,13 +61,14 @@
 <script>
 import path from "path";
 import { isExternal } from "@/utils/validate";
+import AZGuard from "@/components/AZGuard";
 import Item from "./Item.vue";
 import AppLink from "./Link.vue";
 import FixiOSBug from "./FixiOSBug";
 
 export default {
   name: "SidebarItem",
-  components: { Item, AppLink },
+  components: { AZGuard, Item, AppLink },
   mixins: [FixiOSBug],
   props: {
     // route object
@@ -87,6 +90,11 @@ export default {
     // TODO: refactor with render function
     this.onlyOneChild = null;
     return {};
+  },
+  computed: {
+    permissions() {
+      return this.onlyOneChild?.meta?.permissions;
+    },
   },
   methods: {
     hasOneShowingChild(children = [], parent) {

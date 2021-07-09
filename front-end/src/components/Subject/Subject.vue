@@ -186,7 +186,6 @@ class MyDisciplines {
 
   async mounted() {
     await this.fetchData(this.$route.params.subjectId);
-    console.log("this.$route", this.$route);
     this.openedCards = [...this.openedCards, +this.$route.query.section];
   }
 

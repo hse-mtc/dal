@@ -224,7 +224,6 @@ class ApplicantsDocuments extends Vue {
   }
 
   savePrevValue({ data, field }) {
-    console.log("field", field);
     this.currentEditingValue = data[field];
   }
 

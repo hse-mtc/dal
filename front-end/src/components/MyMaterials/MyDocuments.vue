@@ -53,7 +53,6 @@ export default {
     },
     // Any modal (paper or category)
     closeModal() {
-      console.log("Close modal");
       this.paperAction = "";
       this.paperToEdit = {};
       this.addNewCategory = false;

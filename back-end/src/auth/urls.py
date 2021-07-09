@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from auth.views import (
+    PermissionRetrieveView,
     UserRetrieveAPIView,
     UserControlViewSet,
     GroupViewSet,
@@ -15,6 +16,7 @@ router = DefaultRouter()
 # actions properly, so I register them by hand
 router.register("user-control", UserControlViewSet)
 router.register("group", GroupViewSet)
+router.register("permissions", PermissionRetrieveView)
 
 urlpatterns = [
     path("user-control/<int:pk>/transfer-permissions/",

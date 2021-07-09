@@ -361,9 +361,7 @@ export default {
   },
   async created() {
     await this.fetchData();
-    console.log(this.milgroups);
     this.filter.weekday = moment().day() - 1;
-    console.log("🚀 > this.filter.weekday", this.filter.weekday);
     await this.onWeekdayChanged();
   },
   methods: {

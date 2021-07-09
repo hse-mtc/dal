@@ -182,3 +182,20 @@ div:focus {
 .el-table .cell {
   word-break: break-word !important;
 }
+
+.el-transfer-panel__item {
+  height: auto !important;
+}
+
+.el-transfer-panel__item.el-checkbox .el-checkbox__label {
+  overflow: visible !important;
+  white-space: normal !important;
+}
+
+.el-transfer-panel {
+   width: 400px !important;
+}
+
+.el-transfer-panel__body, .el-transfer-panel__list {
+  height: 500px !important;
+}

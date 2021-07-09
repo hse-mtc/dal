@@ -18,6 +18,7 @@ class User extends VuexModule {
   refreshToken = tokenService.refresh
   userId = tokenService.userId
   _email = ""
+  _permissions = []
   _campuses = []
   _personType = "";
   _personId = 0;
@@ -60,6 +61,11 @@ class User extends VuexModule {
   }
 
   @Mutation
+  SET_PERMISSIONS(permissions) {
+    this._permissions = permissions;
+  }
+
+  @Mutation
   SET_PERSON_TYPE(type) {
     this._personType = type;
   }
@@ -95,11 +101,12 @@ class User extends VuexModule {
 
       const {
         // eslint-disable-next-line camelcase
-        email, campuses, person_type, person_id,
+        email, campuses, person_type, person_id, all_permissions: permissions,
       } = data;
 
       this.SET_EMAIL(email);
       this.SET_CAMPUSES(campuses);
+      this.SET_PERMISSIONS(permissions);
       this.SET_PERSON_TYPE(person_type);
       this.SET_PERSON_ID(person_id);
       this.SET_IS_LOADED(true);
@@ -116,6 +123,7 @@ class User extends VuexModule {
     this.SET_PERSON_TYPE("");
     this.SET_PERSON_ID(0);
     this.SET_USER_ID(null);
+    this.SET_PERMISSIONS([]);
     this.SET_IS_LOADED(false);
   }
 
@@ -133,6 +141,14 @@ class User extends VuexModule {
     }
 
     return this._campuses;
+  }
+
+  get permissions() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._permissions;
   }
 
   get personType() {

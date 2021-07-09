@@ -77,7 +77,7 @@ export const constantRoutes = [
         path: "papers/",
         name: "Papers",
         component: () => import("@/views/Papers/index"),
-        meta: { title: "Военно-научные работы", icon: "study" },
+        meta: { title: "Военно-научные работы", icon: "study", permissions: ["papers.get.all"] },
       },
 
       {
@@ -180,10 +180,17 @@ export const constantRoutes = [
             hidden: true,
           },
           {
-            path: "permissions/",
-            name: "permissions",
-            component: () => import("@/components/Apanel/PermissionComponent.vue"),
-            meta: { title: "Права" },
+            path: "userManagement/",
+            name: "userManagement",
+            component: () => import("@/components/Apanel/UserManagementComponent.vue"),
+            meta: { title: "Управление пользователями" },
+            hidden: true,
+          },
+          {
+            path: "roleManagement/",
+            name: "roleManagement",
+            component: () => import("@/components/Apanel/RoleManagementComponent.vue"),
+            meta: { title: "Управление ролями" },
             hidden: true,
           },
           {

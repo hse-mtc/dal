@@ -27,7 +27,6 @@ export default {
           method: "GET",
           responseType: "blob",
         });
-        console.log("data", data);
         const blob = new Blob([data]);
 
         const link = document.createElement("a");

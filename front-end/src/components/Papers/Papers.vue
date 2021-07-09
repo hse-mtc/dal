@@ -177,7 +177,6 @@ class Papers {
   }
 
   closeModal() {
-    console.log("Close modal");
     this.paperAction = "";
     this.paperToEdit = {};
     this.addNewCategory = false;

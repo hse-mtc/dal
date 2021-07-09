@@ -2,7 +2,8 @@
   <div :class="$style.root">
     <PrimeTabMenu :model="tabs">
       <el-tab-pane label="Подтверждения регистрации" name="approve" />
-      <el-tab-pane label="Разрешения" name="permissions" />
+      <el-tab-pane label="Управление пользователями" name="userManagement" />
+      <el-tab-pane label="Управление ролями" name="roleManagement" />
       <el-tab-pane label="Справочники" name="dictionaries" />
       <el-tab-pane label="Учебные дисциплины" name="subjects" />
     </PrimeTabMenu>
@@ -20,7 +21,8 @@ import { Component } from "vue-property-decorator";
 class AdminPanelPage {
   tabs = [
     { label: "Подтверждения регистрации", to: "/apanel/approve/" },
-    { label: "Разрешения", to: "/apanel/permissions/" },
+    { label: "Управление пользователями", to: "/apanel/userManagement/" },
+    { label: "Управление ролями", to: "/apanel/roleManagement/" },
     { label: "Справочники", to: "/apanel/dictionaries/" },
     { label: "Учебные дисциплины", to: "/apanel/subjects/" },
   ]
