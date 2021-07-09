@@ -9,13 +9,14 @@
     @keypress.enter.native.prevent="onSubmit"
   >
     <ElFormItem
-      v-for="({ placeholder }, field) in fieldsByTypes[type]"
+      v-for="({ placeholder, formatter }, field) in fieldsByTypes[type]"
       :key="field"
       :prop="field"
     >
       <el-input
-        v-model="dataByTypes[type][field]"
+        :value="dataByTypes[type][field]"
         :placeholder="placeholder"
+        @input="onChange(field, formatter, $event)"
       />
     </ElFormItem>
 
@@ -38,6 +39,10 @@
 <script>
 import { Component, Prop, Watch } from "vue-property-decorator";
 import _cloneDeep from "lodash/cloneDeep";
+
+const capitalize = value => (value
+  ? value[0].toUpperCase() + value.slice(1).toLowerCase()
+  : "");
 
 @Component({
   name: "DictionariesForms",
@@ -68,9 +73,9 @@ class DictionariesForms {
       name: { placeholder: "Введите нового издателя" },
     },
     authors: {
-      surname: { placeholder: "Введите фамилию" },
-      name: { placeholder: "Введите имя" },
-      patronymic: { placeholder: "Введите отчество" },
+      surname: { placeholder: "Введите фамилию", formatter: capitalize },
+      name: { placeholder: "Введите имя", formatter: capitalize },
+      patronymic: { placeholder: "Введите отчество", formatter: capitalize },
     },
     categories: {
       title: { placeholder: "Введите название" },
@@ -97,7 +102,7 @@ class DictionariesForms {
     const data = this.dataByTypes[this.type];
     const keys = Object.keys(data);
     keys.forEach(key => {
-      data[key] = data[key].trim().toLowerCase();
+      data[key] = data[key].trim();
     });
 
     this.$refs.form.validate(valid => {
@@ -118,6 +123,12 @@ class DictionariesForms {
       : {};
 
     this.reloadKey += 1;
+  }
+
+  onChange(field, formatter, value) {
+    this.dataByTypes[this.type][field] = formatter
+      ? formatter(value)
+      : value.toLowerCase();
   }
 
   @Watch("initState", { deep: true })
