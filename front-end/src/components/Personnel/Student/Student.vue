@@ -8,7 +8,7 @@
           height="22px"
           alt="назад"
           @click="backToPersonnel"
-        />
+        >
         {{ isProfile ? "Мой профиль" : "Студент" }}
       </div>
       <div v-if="isProfile">

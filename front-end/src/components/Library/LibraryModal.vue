@@ -172,7 +172,6 @@ export default {
   methods: {
     onSubmit() {
       this.$refs.form.validate(valid => {
-        console.log("this.formValues.book", this.formValues.book);
         if (!valid || (!this.isChanging && !this.formValues.book.length)) return false;
 
         this.$emit("save", this.formValues);

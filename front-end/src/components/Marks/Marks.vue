@@ -533,7 +533,6 @@ export default {
           mark: 5,
         };
       }
-      console.log("🚀 > this.editMark ", this.editMark);
       this.editMarkFullname = student.fullname;
       this.dialogVisible = true;
     },

@@ -5,7 +5,9 @@ export const AUTH_URLS = {
   obtain: "auth/tokens/obtain/",
   user: "auth/user/",
   change_password: "auth/password/change/",
-  permissions: "auth/permissions",
+  permissions: "auth/permissions/",
+  userControl: "auth/user-control/",
+  roles: "auth/group/",
 };
 
 export const LMS_URLS = {
@@ -58,8 +60,7 @@ export const LMS_URLS = {
     applicationsExport: "lms/students/applications/export/",
   },
   users: {
-    users: "lms/users/",
-    permissions: "lms/users/permissions",
+    users: "lms/personnel-users",
   },
   uniforms: {
     uniforms: "lms/uniforms/",

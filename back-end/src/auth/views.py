@@ -24,13 +24,18 @@ from auth.models import (
 from auth.serializers import (
     UserSerializer,
     UserDetailedSerializer,
+    UserDetailedMutateSerializer,
     GroupSerializer,
     GroupShortSerializer,
-    GroupModifySerializer,
+    GroupListSerializer,
+    GroupMutateSerializer,
     PermissionRequestSerializer,
+    PermissionListSerializer,
     TokenPairSerializer,
     ChangePasswordSerializer,
 )
+
+from common.constants import MUTATE_ACTIONS
 
 
 class PermissionPermission(BasePermission):
@@ -45,6 +50,14 @@ class PasswordPermission(BasePermission):
     scopes = [Permission.Scope.SELF]
 
 
+@extend_schema(tags=["permissions"])
+class PermissionRetrieveView(viewsets.ReadOnlyModelViewSet):
+    queryset = Permission.objects.all()
+    serializer_class = PermissionListSerializer
+
+    permission_class = [PermissionPermission]
+
+
 @extend_schema(tags=["auth"])
 class UserRetrieveAPIView(RetrieveAPIView):
     queryset = get_user_model().objects.all()
@@ -57,11 +70,20 @@ class UserRetrieveAPIView(RetrieveAPIView):
 
 
 @extend_schema(tags=["permissions"])
-class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
+class UserControlViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
     queryset = get_user_model().objects.all()
-    serializer_class = UserDetailedSerializer
 
     permission_classes = [PermissionPermission]
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return UserDetailedMutateSerializer
+        return UserDetailedSerializer
 
     @extend_schema(request=PermissionRequestSerializer)
     @action(
@@ -209,30 +231,39 @@ class UserControlViewSet(viewsets.ReadOnlyModelViewSet):
 
 @extend_schema(tags=["permissions"])
 class GroupViewSet(mixins.RetrieveModelMixin, mixins.ListModelMixin,
-                   mixins.DestroyModelMixin, viewsets.GenericViewSet):
+                   mixins.DestroyModelMixin, mixins.UpdateModelMixin,
+                   viewsets.GenericViewSet):
     queryset = Group.objects.all()
-    serializer_class = GroupSerializer
     permission_classes = [PermissionPermission]
 
-    @extend_schema(request=GroupModifySerializer)
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return GroupMutateSerializer
+        return GroupSerializer
+
+
+    def list(self, request):
+        serializer = GroupListSerializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
+
+    @extend_schema(request=GroupMutateSerializer)
     def create(self, request: Request) -> Response:
         # validate group name
-        data = GroupModifySerializer(data=request.data)
-        data.is_valid(raise_exception=True)
+        validation = GroupMutateSerializer(data=request.data)
+        validation.is_valid(raise_exception=True)
 
         # validate permissions
         perms = [{
             "codename": codename
-        } for codename in data.data["permissions"]]
+        } for codename in request.data["permissions"]]
         validation = PermissionRequestSerializer(data=perms, many=True)
-        if not validation.is_valid():
-            return Response(validation.errors, status.HTTP_400_BAD_REQUEST)
+        validation.is_valid(raise_exception=True)
 
         # create group and add permissions if everything is ok
-        group = Group.objects.create(name=data.data["name"])
+        group = Group.objects.create(name=request.data["name"])
 
         permissions_lst = []
-        for codename in data.data["permissions"]:
+        for codename in request.data["permissions"]:
             viewset, method, scope = codename.split(".")
             scope = int(getattr(Permission.Scope, scope.upper()))
             permission = Permission.objects.get(viewset=viewset,
