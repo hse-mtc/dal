@@ -48,7 +48,7 @@ class QuerySetScopingMixin:
             return self.queryset
 
         # check if user is a teacher ot a student
-        user_type, user = get_user_from_request(self.request)
+        user_type, user = get_user_from_request(self.request.user)
         if user is None:
             # return nothing if user is not a student or a teacher
             return self.queryset.none()
@@ -94,7 +94,7 @@ class QuerySetScopingMixin:
             return True
 
         # check if user is a teacher ot a student
-        user_type, user = get_user_from_request(self.request)
+        user_type, user = get_user_from_request(self.request.user)
         if user is None:
             # return False if user is not a student or a teacher
             return False

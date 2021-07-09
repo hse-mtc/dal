@@ -11,8 +11,7 @@ from auth.models import (
     Group,
     Permission,
 )
-from lms.models.students import Student
-from lms.models.teachers import Teacher
+from lms.functions import get_user_from_request
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -106,16 +105,8 @@ class UserSerializer(serializers.ModelSerializer):
         return PermissionSerializer(obj.get_all_permissions(), many=True).data
     
     def identify_user(self, user_to_check):
-        # check if user is a teacher or a student
-        user = Teacher.objects.filter(user=user_to_check)
-        user_type = "teacher"
-        if user.count() == 0:
-            # check if user is a student
-            user = Student.objects.filter(user=user_to_check)
-            user_type = "student"
-            if user.count() == 0:
-                return "", 0
-        return user_type, user.first().id
+        user_type, user = get_user_from_request(user_to_check)
+        return user_type, (0 if user is None else user.id)
 
     def get_person_type(self, obj) -> str:
         # try to find teachers

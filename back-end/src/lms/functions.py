@@ -9,21 +9,21 @@ from auth.models import Permission
 from auth.permissions import BasePermission
 
 
-def get_user_from_request(request):
+def get_user_from_request(user):
     """
-    Get user from request.
+    Get Teacher/Student user from request.
     Returns empty string and None if user is not
     a teacher or a student.
 
-    :param request: REST/HTTP request
+    :param user: user from REST/HTTP request
     :return: user_type (str), user (User object)
     """
     # check if user is a teacher or a student
     candidates = [Teacher, Student]
 
     for candidate in candidates:
-        if (user := candidate.objects.filter(user=request.user)).exists():
-            return candidate.__name__.lower(), user.first()
+        if (found_user := candidate.objects.filter(user=user)).exists():
+            return candidate.__name__.lower(), found_user.first()
 
     return '', None
 
@@ -52,7 +52,7 @@ def milgroup_allowed_by_scope(milgroup: dict, request: Request,
         return True
 
     # check if user is a teacher ot a student
-    user_type, user = get_user_from_request(request)
+    user_type, user = get_user_from_request(request.user)
     if user is None:
         return False
 
