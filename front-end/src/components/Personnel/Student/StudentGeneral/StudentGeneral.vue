@@ -229,7 +229,6 @@ export default {
         birth_info: [
           {
             validator: (rule, value, callback) => {
-              console.log("🚀 > value", value);
               if (!value.date) {
                 callback(new Error("Пожалуйста, введите дату рождения"));
               } else {

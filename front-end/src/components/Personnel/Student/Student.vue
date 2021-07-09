@@ -8,7 +8,7 @@
           height="22px"
           alt="назад"
           @click="backToPersonnel"
-        >
+        />
         {{ isProfile ? "Мой профиль" : "Студент" }}
       </div>
       <div v-if="isProfile">
@@ -77,29 +77,26 @@ export default {
       return this.$route.params.studentId;
     },
     isProfile() {
-      return (
-        this.personType === "student" && this.personId === parseInt(this.id, 10)
-      );
+      return this.personType === "student" && this.personId === +this.id;
     },
   },
   methods: {
     backToPersonnel() {
       this.$router.push({ name: "Personnel" });
     },
-    beforeClose() {
-      this.$confirm(
-        "Вы уверены, что хотите закрыть окно смены пароля?",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        },
-      )
-        .then(() => {
-          this.dialog = false;
-        })
-        .catch(() => {});
+    async beforeClose() {
+      try {
+        await this.$confirm(
+          "Вы уверены, что хотите закрыть окно смены пароля?",
+          "Подтверждение",
+          {
+            confirmButtonText: "Да",
+            cancelButtonText: "Отмена",
+            type: "warning",
+          },
+        );
+        this.dialog = false;
+      } catch {}
     },
   },
 };

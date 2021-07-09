@@ -1,4 +1,3 @@
-import _omit from "lodash/omit";
 import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 

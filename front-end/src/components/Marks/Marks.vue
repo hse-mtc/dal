@@ -515,7 +515,6 @@ export default {
     },
     async getSubjects() {
       this.subjects = (await getSubjects()).data;
-      console.log("🚀 > this.subjects", this.subjects);
     },
 
     onCreate(student, lesson, mark) {

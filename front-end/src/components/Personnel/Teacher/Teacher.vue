@@ -332,7 +332,7 @@ export default {
     },
     isProfile() {
       return (
-        this.personType === "teacher" && this.personId === parseInt(this.id, 10)
+        this.personType === "teacher" && this.personId === +this.id
       );
     },
   },
@@ -430,20 +430,19 @@ export default {
     backToPersonnel() {
       this.$router.push({ name: "Personnel" });
     },
-    beforeClose() {
-      this.$confirm(
-        "Вы уверены, что хотите закрыть окно смены пароля?",
-        "Подтверждение",
-        {
-          confirmButtonText: "Да",
-          cancelButtonText: "Отмена",
-          type: "warning",
-        },
-      )
-        .then(() => {
-          this.dialog = false;
-        })
-        .catch(() => {});
+    async beforeClose() {
+      try {
+        await this.$confirm(
+          "Вы уверены, что хотите закрыть окно смены пароля?",
+          "Подтверждение",
+          {
+            confirmButtonText: "Да",
+            cancelButtonText: "Отмена",
+            type: "warning",
+          },
+        );
+        this.dialog = false;
+      } catch {}
     },
   },
 };
