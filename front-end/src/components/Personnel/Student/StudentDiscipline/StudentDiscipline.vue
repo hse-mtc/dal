@@ -2,7 +2,9 @@
   <ExpandBox title="Дисциплина" @toggled="toggled">
     <div class="discipline-info">
       <div class="discipline-table">
-        <span class="title"> Поощрения </span>
+        <div class="title">
+          Поощрения
+        </div>
         <PrimeTable
           :value="encouragements"
           scrollable
@@ -22,7 +24,9 @@
         <div class="separator" />
       </div>
       <div class="discipline-table">
-        <span class="title"> Текущие взыскания </span>
+        <div class="title">
+          Текущие взыскания
+        </div>
         <PrimeTable
           :value="currentPunishments"
           scrollable
@@ -42,7 +46,9 @@
         <div class="separator" />
       </div>
       <div class="discipline-table">
-        <span class="title"> Снятые взыскания </span>
+        <div class="title">
+          Снятые взыскания
+        </div>
         <PrimeTable
           :value="removedPunishments"
           scrollable
@@ -107,7 +113,7 @@ export default {
           await getPunishment({ student: this.id, removed: true })
         ).data;
       } catch (err) {
-        getError("информации о дисциплине студента", err);
+        getError("информации о дисциплине студента", err.response.status);
       } finally {
         this.loading = false;
       }

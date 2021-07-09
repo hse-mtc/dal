@@ -189,6 +189,7 @@ class MarkViewSet(ArchivedMixin, QuerySetScopingMixin, ModelViewSet):
                ])
 class MarkJournalView(GenericAPIView):
     permission_classes = [MarkPermission]
+    scoped_permission_class = MarkPermission
 
     # pylint: disable=too-many-locals
     def get(self, request: Request) -> Response:
@@ -203,9 +204,8 @@ class MarkJournalView(GenericAPIView):
             Milgroup.objects.get(
                 milgroup=request.query_params['milgroup'])).data
 
-        # this check restricts all journal access if scope == SELF
-        # TODO(@gakhromov): mb allow scope == SELF for journal requests
-        if not milgroup_allowed_by_scope(milgroup, request, MarkPermission):
+        if not milgroup_allowed_by_scope(milgroup, request,
+                                         self.scoped_permission_class):
             return Response(
                 {
                     'detail':
@@ -235,13 +235,24 @@ class MarkJournalView(GenericAPIView):
 
         # add dates and absences
         data['dates'] = sorted(date_range)
-        data['students'] = MarkJournalSerializer(Student.objects.filter(
-            milgroup__milgroup=request.query_params['milgroup']),
-                                                 context={
-                                                     'request': request,
-                                                     'date_range': date_range,
-                                                     'subject': subject_query.id
-                                                 },
-                                                 many=True).data
 
+        # get students
+        # if scope == SELF, return only one student
+        scope = request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, request.method)
+
+        if scope == Permission.Scope.SELF:
+            filter_kwargs = {'user': request.user}
+        else:
+            filter_kwargs = {
+                'milgroup__milgroup': request.query_params['milgroup']
+            }
+        data['students'] = MarkJournalSerializer(
+            Student.objects.filter(**filter_kwargs),
+            context={
+                'request': request,
+                'date_range': date_range,
+                'subject': subject_query.id
+            },
+            many=True).data
         return Response(data, status=status.HTTP_200_OK)

@@ -1,39 +1,95 @@
-.avatar-uploader .el-upload {
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader-icon {
-  font-size: 40px;
-  color: #909399;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-.avatar-uploader-icon:hover {
-  color: #409eff;
-}
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-
-.el-date-editor.el-input,
-.el-date-editor.el-input__inner {
-  width: 100%;
-}
-
-.form {
-  padding-right: 40px;
-}
-
-.teacher {
+.teacher-page {
   font-family: "ProximaNovaRegular";
 }
 
-.pageTitle {
+.page-title {
   font-size: 44px;
   margin-top: 30px;
+
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  > div {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.teacher-info {
+  display: flex;
+  align-items: stretch;
+
+  .form {
+    width: 100%;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+.avatar-uploader .el-upload {
+  $avatar-width: 225px;
+  $avatar-height: 300px;
+
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  .avatar-uploader-icon {
+    position: relative;
+    font-size: 40px;
+    color: #909399;
+    width: $avatar-width;
+    height: $avatar-height;
+    text-align: center;
+    border: 1px solid #909399;
+    border-radius: 10px;
+    transition: 0.2s;
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+    }
+
+    &:hover {
+      color: #409eff;
+      border-color: #409eff;
+    }
+  }
+
+  .avatar {
+    width: $avatar-width;
+    height: $avatar-height;
+    display: block;
+    object-fit: cover;
+
+    transition: 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+.row {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.field-value {
+  font-size: 1.2em;
+
+  sub {
+    color: #8492a6;
+  }
 }

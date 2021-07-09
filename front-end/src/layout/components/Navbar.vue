@@ -20,6 +20,9 @@
           <router-link to="/">
             <el-dropdown-item> Домой </el-dropdown-item>
           </router-link>
+          <el-dropdown-item v-if="personType && personId">
+            <span style="display: block" @click="profile">Мой профиль</span>
+          </el-dropdown-item>
           <el-dropdown-item divided>
             <span style="display: block" @click="logout">Выход</span>
           </el-dropdown-item>
@@ -43,6 +46,8 @@ export default {
   computed: {
     sidebar() { return AppModule.sidebar; },
     email() { return UserModule.email; },
+    personType() { return UserModule.personType; },
+    personId() { return UserModule.personId; },
     isCollapse() {
       return !this.sidebar.opened;
     },
@@ -52,6 +57,12 @@ export default {
     logout() {
       UserModule.logout();
       window.location.href = "/login";
+    },
+    profile() {
+      if (this.personType && this.personId) {
+        const name = this.personType.charAt(0).toUpperCase() + this.personType.slice(1);
+        this.$router.push({ name, params: { [`${this.personType}Id`]: this.personId } });
+      }
     },
     toggleSideBar() {
       AppModule.toggleSideBar();

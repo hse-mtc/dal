@@ -11,6 +11,7 @@ from auth.models import (
     Group,
     Permission,
 )
+from lms.functions import get_user_from_request
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -93,12 +94,32 @@ class UserSerializer(serializers.ModelSerializer):
     """Display main user info and all permissions."""
     all_permissions = serializers.SerializerMethodField(read_only=True)
 
+    person_type = serializers.SerializerMethodField(read_only=True)
+    person_id = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = get_user_model()
-        fields = ["id", "email", "all_permissions", "campuses"]
+        fields = [
+            "id", "email", "all_permissions", "campuses", "person_type",
+            "person_id"
+        ]
 
     def get_all_permissions(self, obj) -> list[str]:
         return PermissionSerializer(obj.get_all_permissions(), many=True).data
+
+    def identify_user(self, user_to_check):
+        user_type, user = get_user_from_request(user_to_check)
+        return user_type, (0 if user is None else user.id)
+
+    def get_person_type(self, obj) -> str:
+        # try to find teachers
+        user_type, _ = self.identify_user(obj)
+        return user_type
+
+    def get_person_id(self, obj) -> int:
+        # try to find teachers
+        _, user_id = self.identify_user(obj)
+        return user_id
 
 
 class UserDetailedSerializer(serializers.ModelSerializer):
@@ -108,7 +129,20 @@ class UserDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ["id", "email", "permissions", "campuses", "groups"]
+        fields = [
+            "id",
+            "email",
+            "permissions",
+            "campuses",
+            "groups",
+        ]
+
+    def get_permissions(self, obj) -> list[str]:
+        groups = obj.groups.all()
+        permissions = []
+        for group in groups:
+            permissions += [perm.codename for perm in group.permissions.all()]
+        return list(set(permissions))
 
 
 class TokenPairSerializer(serializers.Serializer):

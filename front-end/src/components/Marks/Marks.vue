@@ -73,14 +73,18 @@
                       :column-key="`${d}-header`"
                       :header="formatDate(d)"
                       header-style="text-align: center"
-                      :colspan="journal.lessons.filter((x) => x.date === d).length"
+                      :colspan="
+                        journal.lessons.filter((x) => x.date === d).length
+                      "
                     />
                   </PrimeRow>
 
                   <PrimeRow>
                     <template v-for="d in journal.dates">
                       <PrimeColumn
-                        v-for="item in journal.lessons.filter((x) => x.date === d)"
+                        v-for="item in journal.lessons.filter(
+                          (x) => x.date === d,
+                        )"
                         :key="`${item.id}-header`"
                       >
                         <template #header>
@@ -132,9 +136,7 @@
                   width="250"
                   column-key="fullname"
                 />
-                <template
-                  v-for="d in journal.dates"
-                >
+                <template v-for="d in journal.dates">
                   <PrimeColumn
                     v-for="item in journal.lessons.filter((x) => x.date === d)"
                     :key="item.id"
@@ -142,10 +144,7 @@
                     <template #body="{ data }">
                       <div class="mark-journal-cell">
                         <div
-                          v-for="m in getMarksByLesson(
-                            data.marks,
-                            item.id,
-                          )"
+                          v-for="m in getMarksByLesson(data.marks, item.id)"
                           :key="m"
                         >
                           <el-tag
@@ -153,10 +152,12 @@
                             effect="dark"
                             disable-transitions
                             class="is-clickable margin-x"
-                            @click="onEdit(
-                              data.marks.find((x) => x.lesson === item.id),
-                              data,
-                            )"
+                            @click="
+                              onEdit(
+                                data.marks.find((x) => x.lesson === item.id),
+                                data,
+                              )
+                            "
                           >
                             {{ m }}
                           </el-tag>
@@ -263,9 +264,9 @@
           >
             <el-option
               v-for="item in rooms"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.room"
+              :label="item.room"
+              :value="item.room"
             />
           </el-select>
         </el-form-item>
@@ -317,7 +318,7 @@ import {
   putMark,
   deleteMark,
 } from "@/api/mark";
-import { getSubjects } from "@/api/subjects";
+import { getSubjects } from "@/api/subjects-lms";
 import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
 import {
   getError,
@@ -328,6 +329,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "Marks",
@@ -389,24 +391,12 @@ export default {
         subject_id: 0,
         mg: 0,
         dateRange: [
-          moment().add(-3, "months").format("YYYY-MM-DD"),
+          moment()
+            .add(-3, "months")
+            .format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
         ],
       },
-      milgroups: [
-        {
-          milgroup: "1807",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1808",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1809",
-          milfaculty: "ВКС",
-        },
-      ],
       lessonTypes: [
         { label: "Семинар", code: "SE" },
         { label: "Лекция", code: "LE" },
@@ -415,7 +405,6 @@ export default {
         { label: "Зачет", code: "FI" },
         { label: "Экзамен", code: "EX" },
       ],
-      rooms: ["510", "501", "502", "503", "504", "Плац"],
       subjects: [],
       journal: {},
       pickerOptions: {
@@ -450,6 +439,14 @@ export default {
         ],
       },
     };
+  },
+  computed: {
+    rooms() {
+      return ReferenceModule.rooms;
+    },
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
   },
   async created() {
     await this.getSubjects();

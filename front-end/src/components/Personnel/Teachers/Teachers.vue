@@ -41,6 +41,9 @@
         sort-field="fullname"
         :sort-order="-1"
         class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
+        :row-class="() => 'clickable'"
+        row-hover
+        @row-click="onEdit"
       >
         <PrimeColumn
           field="fullname"
@@ -72,18 +75,11 @@
           column-key="milgroup"
         />
         <PrimeColumn
-          header-style="width: 120px"
-          body-style="width: 120px"
+          header-style="width: 50px"
+          body-style="width: 50px"
           column-key="buttons"
         >
           <template #body="{ data }">
-            <el-button
-              size="mini"
-              icon="el-icon-edit"
-              type="info"
-              circle
-              @click="onEdit(data)"
-            />
             <el-button
               size="mini"
               icon="el-icon-delete"
@@ -102,7 +98,6 @@
 import { getTeacher, deleteTeacher } from "@/api/teachers";
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
-import Teacher from "../Teacher/Teacher.vue";
 
 export default {
   name: "Teachers",
@@ -175,11 +170,13 @@ export default {
         }
       });
     },
-    onEdit(teacherId) {
-      this.$router.push({ name: "Teacher", params: { teacherId } });
+    onEdit({ data }) {
+      this.$router.push({ name: "Teacher", params: { teacherId: data.id } });
     },
   },
 };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="scss">
+@import "style";
+</style>

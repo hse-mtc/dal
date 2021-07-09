@@ -197,7 +197,6 @@ export default {
       });
     },
     onEdit({ data }) {
-      console.log("🚀 > data", data);
       this.$router.push({ name: "Student", params: { studentId: data.id } });
     },
     milgroupField(row) {

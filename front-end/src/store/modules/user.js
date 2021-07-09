@@ -9,7 +9,7 @@ import store, { UserModule } from "@/store";
 
 import { login, getUser } from "@/api/user";
 
-import { resetRouter } from "@/router";
+import { getError } from "@/utils/message";
 import { tokenService } from "../../utils/tokenService";
 
 @Module({ store, name: "user", namespaced: true })
@@ -19,6 +19,8 @@ class User extends VuexModule {
   userId = tokenService.userId
   _email = ""
   _campuses = []
+  _personType = "";
+  _personId = 0;
   _userInfoLoaded = false
 
   @Mutation
@@ -57,6 +59,16 @@ class User extends VuexModule {
     this._campuses = campuses;
   }
 
+  @Mutation
+  SET_PERSON_TYPE(type) {
+    this._personType = type;
+  }
+
+  @Mutation
+  SET_PERSON_ID(id) {
+    this._personId = id;
+  }
+
   @Action
   async login(userInfo) {
     const { email, password } = userInfo;
@@ -76,12 +88,23 @@ class User extends VuexModule {
   async getUser() {
     try {
       const { data } = await getUser(this.token);
-      const { email, campuses } = data;
+
+      if (!data) {
+        throw new Error("Verification failed, please Login again.");
+      }
+
+      const {
+        // eslint-disable-next-line camelcase
+        email, campuses, person_type, person_id,
+      } = data;
+
       this.SET_EMAIL(email);
       this.SET_CAMPUSES(campuses);
+      this.SET_PERSON_TYPE(person_type);
+      this.SET_PERSON_ID(person_id);
       this.SET_IS_LOADED(true);
-    } catch (e) {
-      console.error("Не удалось получить данные пользователя", e);
+    } catch (err) {
+      getError("информации о пользователе", err.response.status);
     }
   }
 
@@ -90,6 +113,8 @@ class User extends VuexModule {
     this.RESET_TOKENS();
     this.SET_EMAIL("");
     this.SET_CAMPUSES([]);
+    this.SET_PERSON_TYPE("");
+    this.SET_PERSON_ID(0);
     this.SET_USER_ID(null);
     this.SET_IS_LOADED(false);
   }
@@ -108,6 +133,22 @@ class User extends VuexModule {
     }
 
     return this._campuses;
+  }
+
+  get personType() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._personType;
+  }
+
+  get personId() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._personId;
   }
 }
 

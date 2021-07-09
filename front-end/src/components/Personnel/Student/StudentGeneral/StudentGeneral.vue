@@ -1,5 +1,5 @@
 <template>
-  <ExpandBox title="О студенте" non-expandable>
+  <ExpandBox title="Основное" non-expandable>
     <div class="general-info">
       <el-upload
         v-loading="loading"
@@ -19,10 +19,12 @@
         ref="form"
         class="form"
         :model="modifyInfo"
+        :rules="rules"
         label-position="right"
-        label-width="150px"
+        label-width="200px"
         size="mini"
         :disabled="loading"
+        hide-required-asterisk
       >
         <el-form-item class="actions">
           <transition name="el-fade-in" mode="out-in">
@@ -46,13 +48,13 @@
             </template>
           </transition>
         </el-form-item>
-        <el-form-item label="ФИО:">
+        <el-form-item label="ФИО:" prop="fullname">
           <transition name="el-fade-in" mode="out-in">
             <el-input v-if="modify" v-model="modifyInfo.fullname" />
             <span v-else class="field-value"> {{ displayInfo.fullname }} </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Дата рождения:">
+        <el-form-item label="Дата рождения:" prop="birth_info">
           <transition name="el-fade-in" mode="out-in">
             <el-date-picker
               v-if="modify"
@@ -76,7 +78,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Статус:">
+        <el-form-item label="Статус:" prop="status">
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
@@ -120,7 +122,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Взвод:">
+        <el-form-item label="Взвод:" prop="milgroup">
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
@@ -154,13 +156,14 @@
           <transition name="el-fade-in" mode="out-in">
             <el-input
               v-if="modify"
-              v-model="modifyInfo.contact_info.phone"
+              v-model="modifyInfo.contact_info.personal_phone_number"
               v-maska="'# (###) ###-##-##'"
             />
             <span v-else class="field-value">
               {{
-                displayInfo.contact_info && displayInfo.contact_info.phone
-                  ? displayInfo.contact_info.phone
+                displayInfo.contact_info &&
+                  displayInfo.contact_info.personal_phone_number
+                  ? displayInfo.contact_info.personal_phone_number
                   : "---"
               }}
             </span>
@@ -203,21 +206,74 @@ export default {
       displayInfo: {},
       modifyInfo: {},
       loading: false,
+      rules: {
+        fullname: [
+          {
+            validator: (rule, value, callback) => {
+              if (!value) {
+                callback(new Error("Пожалуйста, введите ФИО"));
+              } else if (
+                value
+                  .replace(/\s+/g, " ")
+                  .trim()
+                  .split(" ").length < 2
+              ) {
+                callback(new Error("Фамилия и имя обязательны"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "change",
+          },
+        ],
+        birth_info: [
+          {
+            validator: (rule, value, callback) => {
+              if (!value.date) {
+                callback(new Error("Пожалуйста, введите дату рождения"));
+              } else {
+                callback();
+              }
+            },
+            trigger: "change",
+          },
+        ],
+        milgroup: [
+          {
+            required: true,
+            message: "Пожалуйста, выберите взвод",
+            trigger: "change",
+          },
+        ],
+        status: [
+          {
+            required: true,
+            message: "Пожалуйста, выберите взвод",
+            trigger: "change",
+          },
+        ],
+      },
     };
   },
   computed: {
     id() {
       return this.$route.params.studentId;
     },
-    milgroups() { return ReferenceModule.milgroups; },
-    studentPosts() { return ReferenceModule.studentPosts; },
-    studentStatuses() { return ReferenceModule.studentStatuses; },
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
+    studentPosts() {
+      return ReferenceModule.studentPosts;
+    },
+    studentStatuses() {
+      return ReferenceModule.studentStatuses;
+    },
   },
   async created() {
-    await this.fetchInfo();
     await ReferenceModule.fetchMilgroups();
     await ReferenceModule.fetchStudentPosts();
     await ReferenceModule.fetchStudentStatuses();
+    await this.fetchInfo();
   },
   methods: {
     formatDate: date => moment(date).format("DD.MM.YYYY"),
@@ -226,7 +282,7 @@ export default {
         this.loading = true;
         this.displayInfo = (await findStudentBasic(this.id)).data;
       } catch (err) {
-        getError("информации о студенте", err);
+        getError("информации о студенте", err.response.status);
       } finally {
         this.loading = false;
       }
@@ -265,8 +321,8 @@ export default {
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;
-      } catch {
-        patchError("информации о студенте");
+      } catch (err) {
+        patchError("информации о студенте", err.response.status);
       } finally {
         this.loading = false;
       }
@@ -291,8 +347,8 @@ export default {
           this.loading = true;
           await patchStudent({ id: this.id, image: base64 });
           await this.fetchInfo();
-        } catch {
-          patchError("фотографии студента");
+        } catch (err) {
+          patchError("фотографии студента", err.response.status);
         } finally {
           this.loading = false;
         }
