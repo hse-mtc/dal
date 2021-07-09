@@ -20,9 +20,9 @@
         >
           <el-option
             v-for="item in milfaculties"
-            :key="item"
-            :label="item"
-            :value="item"
+            :key="item.milfaculty"
+            :label="item.milfaculty"
+            :value="item.milfaculty"
           />
         </el-select>
       </el-col>
@@ -59,18 +59,14 @@
           sortable
           column-key="milfaculty"
         />
-        <PrimeColumn
-          field="rank"
-          header="Звание"
-          column-key="rank"
-        />
+        <PrimeColumn field="rank" header="Звание" column-key="rank" />
         <PrimeColumn
           field="teacher_post"
           header="Должность"
           column-key="teacherPost"
         />
         <PrimeColumn
-          :field="row => row.milgroup && row.milgroup.milgroup"
+          :field="(row) => row.milgroup && row.milgroup.milgroup"
           header="Прикр. взвод"
           column-key="milgroup"
         />
@@ -80,13 +76,26 @@
           column-key="buttons"
         >
           <template #body="{ data }">
-            <el-button
-              size="mini"
-              icon="el-icon-delete"
-              type="danger"
-              circle
-              @click="onDelete(data.id)"
-            />
+            <AZGuard
+              v-slot="{ disabled }"
+              :permissions="[
+                'teachers.delete.all',
+                {
+                  codename: 'teachers.delete.milfaculty',
+                  validator: () => userMilfaculty === data.milfaculty,
+                },
+              ]"
+              disable
+            >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                type="danger"
+                circle
+                :disabled="disabled"
+                @click="onDelete($event, data.id)"
+              />
+            </AZGuard>
           </template>
         </PrimeColumn>
       </PrimeTable>
@@ -98,6 +107,7 @@
 import { getTeacher, deleteTeacher } from "@/api/teachers";
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
+import { ReferenceModule, UserModule } from "@/store";
 
 export default {
   name: "Teachers",
@@ -109,23 +119,18 @@ export default {
         milfaculty: null,
       },
       teachers: [],
-      milgroups: [
-        {
-          milgroup: 1807,
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: 1808,
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: 1809,
-          milfaculty: "ВКС",
-        },
-      ],
-      milfaculties: ["Разведка", "Сержанты", "ВКС", "РВСН"],
-      editTeacher: null,
     };
+  },
+  computed: {
+    milfaculties() {
+      return ReferenceModule.milfaculties;
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
   },
   async created() {
     await this.onFilter();
@@ -151,7 +156,8 @@ export default {
       });
       await this.onFilter();
     },
-    onDelete(id) {
+    onDelete(e, id) {
+      e.stopPropagation();
       this.$confirm(
         "Вы уверены, что хотите удалить преподавателя?",
         "Подтверждение",

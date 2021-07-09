@@ -14,15 +14,14 @@ import { tokenService } from "../../utils/tokenService";
 
 @Module({ store, name: "user", namespaced: true })
 class User extends VuexModule {
-  accessToken = tokenService.access
-  refreshToken = tokenService.refresh
-  userId = tokenService.userId
-  _email = ""
-  _permissions = []
-  _campuses = []
-  _personType = "";
-  _personId = 0;
-  _userInfoLoaded = false
+  accessToken = tokenService.access;
+  refreshToken = tokenService.refresh;
+  userId = tokenService.userId;
+  _email = "";
+  _permissions = [];
+  _campuses = [];
+  _person = {};
+  _userInfoLoaded = false;
 
   @Mutation
   SET_IS_LOADED(value) {
@@ -66,13 +65,8 @@ class User extends VuexModule {
   }
 
   @Mutation
-  SET_PERSON_TYPE(type) {
-    this._personType = type;
-  }
-
-  @Mutation
-  SET_PERSON_ID(id) {
-    this._personId = id;
+  SET_PERSON(person) {
+    this._person = person;
   }
 
   @Action
@@ -101,14 +95,13 @@ class User extends VuexModule {
 
       const {
         // eslint-disable-next-line camelcase
-        email, campuses, person_type, person_id, all_permissions: permissions,
+        email, campuses, person, all_permissions: permissions,
       } = data;
 
       this.SET_EMAIL(email);
       this.SET_CAMPUSES(campuses);
       this.SET_PERMISSIONS(permissions);
-      this.SET_PERSON_TYPE(person_type);
-      this.SET_PERSON_ID(person_id);
+      this.SET_PERSON(person);
       this.SET_IS_LOADED(true);
     } catch (err) {
       getError("информации о пользователе", err.response.status);
@@ -120,8 +113,7 @@ class User extends VuexModule {
     this.RESET_TOKENS();
     this.SET_EMAIL("");
     this.SET_CAMPUSES([]);
-    this.SET_PERSON_TYPE("");
-    this.SET_PERSON_ID(0);
+    this.SET_PERSON({});
     this.SET_USER_ID(null);
     this.SET_PERMISSIONS([]);
     this.SET_IS_LOADED(false);
@@ -156,7 +148,7 @@ class User extends VuexModule {
       UserModule.getUser();
     }
 
-    return this._personType;
+    return this._person.type;
   }
 
   get personId() {
@@ -164,7 +156,23 @@ class User extends VuexModule {
       UserModule.getUser();
     }
 
-    return this._personId;
+    return this._person.id;
+  }
+
+  get personMilgroups() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._person.milgroups;
+  }
+
+  get personMilfaculty() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._person.milfaculty;
   }
 }
 

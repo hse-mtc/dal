@@ -209,7 +209,11 @@ class Reference extends VuexModule {
   @Action
   async fetchStudentStatuses() {
     try {
-      const data = ["AP", "ST", "EX", "GR"];
+      const data = [
+        { code: "ST", label: "Обучающийся" },
+        { code: "EX", label: "Отчислен" },
+        { code: "GR", label: "Выпустился" },
+      ];
       this.setStudentStatuses(data);
       this.SET_IS_LOADED({ field: "_studentStatusesLoaded", value: true });
     } catch (err) {

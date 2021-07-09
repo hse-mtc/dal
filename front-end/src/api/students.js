@@ -20,7 +20,7 @@ export function getStudent(params) {
 }
 export function getStudentBasic(params) {
   return request({
-    url: `${BASE_API_URL}/${students}/basic/`,
+    url: `${BASE_API_URL}${students}basic/`,
     method: "get",
     params,
   });
