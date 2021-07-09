@@ -115,12 +115,15 @@ class GroupMutateSerializer(serializers.ModelSerializer):
         if "name" in validated_data:
             # validate name
             if Group.objects.filter(name=validated_data["name"]).exists():
-                raise serializers.ValidationError("Group with this name already exists.")
+                raise serializers.ValidationError(
+                    "Group with this name already exists.")
             instance.name = validated_data["name"]
             instance.save()
         if "permissions" in validated_data:
             # validate permissions
-            data = [{"codename": perm} for perm in validated_data["permissions"]]
+            data = [{
+                "codename": perm
+            } for perm in validated_data["permissions"]]
             perms_validation = PermissionRequestSerializer(data=data, many=True)
             perms_validation.is_valid(raise_exception=True)
 
@@ -130,10 +133,13 @@ class GroupMutateSerializer(serializers.ModelSerializer):
                 scope = int(getattr(Permission.Scope, scope.upper()))
 
                 return Permission.objects.get(viewset=viewset,
-                                                 method=method,
-                                                 scope=scope)
+                                              method=method,
+                                              scope=scope)
 
-            perm_objects = [get_perm_object(codename) for codename in validated_data["permissions"]]
+            perm_objects = [
+                get_perm_object(codename)
+                for codename in validated_data["permissions"]
+            ]
             # delete old perms and set new ones
             instance.permissions.clear()
             instance.permissions.add(*perm_objects)
@@ -187,13 +193,6 @@ class UserDetailedSerializer(serializers.ModelSerializer):
         ]
 
     def get_permissions(self, obj) -> list[str]:
-        groups = obj.groups.all()
-        permissions = []
-        for group in groups:
-            permissions += [perm.codename for perm in group.permissions.all()]
-        return list(set(permissions))
-
-    def get_permissions(self, obj) -> list[str]:
         return [perm.codename for perm in obj.permissions.all()]
 
 
@@ -218,7 +217,9 @@ class UserDetailedMutateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if "permissions" in validated_data:
             # validate permissions
-            data = [{"codename": perm} for perm in validated_data["permissions"]]
+            data = [{
+                "codename": perm
+            } for perm in validated_data["permissions"]]
             perms_validation = PermissionRequestSerializer(data=data, many=True)
             perms_validation.is_valid(raise_exception=True)
 
@@ -228,23 +229,27 @@ class UserDetailedMutateSerializer(serializers.ModelSerializer):
                 scope = int(getattr(Permission.Scope, scope.upper()))
 
                 return Permission.objects.get(viewset=viewset,
-                                                 method=method,
-                                                 scope=scope)
+                                              method=method,
+                                              scope=scope)
 
-            perm_objects = [get_perm_object(codename) for codename in validated_data["permissions"]]
+            perm_objects = [
+                get_perm_object(codename)
+                for codename in validated_data["permissions"]
+            ]
             # delete old perms and set new ones
             instance.permissions.clear()
             instance.permissions.add(*perm_objects)
         if "groups" in validated_data:
             # validate groups
-            group_objects = Group.objects.filter(id__in=validated_data["groups"])
+            group_objects = Group.objects.filter(
+                id__in=validated_data["groups"])
             if len(group_objects) != len(validated_data["groups"]):
-                raise serializers.ValidationError("Some group ids do not exist.")
+                raise serializers.ValidationError(
+                    "Some group ids do not exist.")
 
             # delete old groups and set new ones
             instance.groups.set(group_objects)
         return instance
-
 
 
 class TokenPairSerializer(serializers.Serializer):
