@@ -21,14 +21,33 @@
               </el-button>
             </div>
             <template v-else>
-              <el-button
-                type="info"
-                plain
-                icon="el-icon-edit"
-                @click="startModify"
+              <AZGuard
+                :permissions="[
+                  'students.patch.all',
+                  {
+                    codename: 'students.patch.milfaculty',
+                    validator: () => milgroup.milfaculty === userMilfaculty,
+                  },
+                  {
+                    codename: 'students.patch.milgroup',
+                    validator: () =>
+                      userMilgroups.some((x) => x === milgroup.milgroup),
+                  },
+                  {
+                    codename: 'students.patch.self',
+                    validator: () => +id === userId,
+                  },
+                ]"
               >
-                Редактировать
-              </el-button>
+                <el-button
+                  type="info"
+                  plain
+                  icon="el-icon-edit"
+                  @click="startModify"
+                >
+                  Редактировать
+                </el-button>
+              </AZGuard>
             </template>
           </transition>
         </el-form-item>
@@ -244,11 +263,17 @@ import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import { findStudentExtra, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
-import { ReferenceModule } from "@/store";
+import { ReferenceModule, UserModule } from "@/store";
 
 export default {
   name: "StudentExtra",
   components: { ExpandBox },
+  props: {
+    milgroup: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       modify: false,
@@ -282,10 +307,23 @@ export default {
     };
   },
   computed: {
-    programs() { return ReferenceModule.programs; },
-    milspecialties() { return ReferenceModule.milspecialties; },
+    programs() {
+      return ReferenceModule.programs;
+    },
+    milspecialties() {
+      return ReferenceModule.milspecialties;
+    },
     id() {
       return this.$route.params.studentId;
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+    userId() {
+      return UserModule.personId;
     },
   },
   methods: {

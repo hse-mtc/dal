@@ -31,27 +31,65 @@
             :value="option.id"
           />
         </el-select>
-        <el-button
+        <AZGuard
           v-else-if="skillsOptionsFiltered.length"
-          class="button-new-skill"
-          size="mini"
-          icon="el-icon-plus"
-          @click="showSelect"
-        />
+          :permissions="[
+            'students.patch.all',
+            {
+              codename: 'students.patch.milfaculty',
+              validator: () => milgroup.milfaculty === userMilfaculty,
+            },
+            {
+              codename: 'students.patch.milgroup',
+              validator: () =>
+                userMilgroups.some((x) => x === milgroup.milgroup),
+            },
+            {
+              codename: 'students.patch.self',
+              validator: () => +id === userId,
+            },
+          ]"
+        >
+          <el-button
+            class="button-new-skill"
+            size="mini"
+            icon="el-icon-plus"
+            @click="showSelect"
+          />
+        </AZGuard>
         <div class="separator" />
       </div>
       <div class="achievements-table">
         <div class="title">
           Достижения
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-plus"
-            style="float: right;"
-            @click="showDialog"
+          <AZGuard
+            :permissions="[
+              'achievements.post.all',
+              {
+                codename: 'achievements.post.milfaculty',
+                validator: () => milgroup.milfaculty === userMilfaculty,
+              },
+              {
+                codename: 'achievements.post.milgroup',
+                validator: () =>
+                  userMilgroups.some((x) => x === milgroup.milgroup),
+              },
+              {
+                codename: 'achievements.post.self',
+                validator: () => +id === userId,
+              },
+            ]"
           >
-            Добавить
-          </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-plus"
+              style="float: right;"
+              @click="showDialog"
+            >
+              Добавить
+            </el-button>
+          </AZGuard>
         </div>
         <PrimeTable
           :value="achievements"
@@ -84,13 +122,35 @@
             body-style="width: 50px;"
           >
             <template #body="{ data }">
-              <el-button
-                size="mini"
-                icon="el-icon-delete"
-                type="danger"
-                circle
-                @click="handleDelete(data.id)"
-              />
+              <AZGuard
+                v-slot="{ disabled }"
+                :permissions="[
+                  'achievements.delete.all',
+                  {
+                    codename: 'achievements.delete.milfaculty',
+                    validator: () => milgroup.milfaculty === userMilfaculty,
+                  },
+                  {
+                    codename: 'achievements.delete.milgroup',
+                    validator: () =>
+                      userMilgroups.some((x) => x === milgroup.milgroup),
+                  },
+                  {
+                    codename: 'achievements.delete.self',
+                    validator: () => +id === userId,
+                  },
+                ]"
+                disable
+              >
+                <el-button
+                  size="mini"
+                  icon="el-icon-delete"
+                  type="danger"
+                  circle
+                  :disabled="disabled"
+                  @click="handleDelete(data.id)"
+                />
+              </AZGuard>
             </template>
           </PrimeColumn>
           <template #empty>
@@ -167,11 +227,17 @@ import {
 } from "@/api/achievement";
 import { getError, postError, deleteError } from "@/utils/message";
 import { patchStudent, findStudentSkills } from "@/api/students";
-import { ReferenceModule } from "@/store";
+import { ReferenceModule, UserModule } from "@/store";
 
 export default {
   name: "StudentAchievements",
   components: { ExpandBox },
+  props: {
+    milgroup: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       achievements: [],
@@ -187,12 +253,25 @@ export default {
     id() {
       return this.$route.params.studentId;
     },
-    skillsOptions() { return ReferenceModule.skills; },
-    achievementTypes() { return ReferenceModule.achievementTypes; },
+    skillsOptions() {
+      return ReferenceModule.skills;
+    },
+    achievementTypes() {
+      return ReferenceModule.achievementTypes;
+    },
     skillsOptionsFiltered() {
       return this.skillsOptions.filter(
         x => !this.skills.some(y => x.id === y),
       );
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+    userId() {
+      return UserModule.personId;
     },
   },
   methods: {
@@ -212,8 +291,6 @@ export default {
     async fetchInfo() {
       try {
         this.loading = true;
-        await ReferenceModule.fetchSkills();
-        await ReferenceModule.fetchAchievementTypes();
         this.achievements = (await getAchievement({ student: this.id })).data;
         this.skills = (
           await findStudentSkills(this.id)

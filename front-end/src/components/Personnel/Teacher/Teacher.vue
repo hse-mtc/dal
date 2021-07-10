@@ -61,14 +61,33 @@
                   </el-button>
                 </div>
                 <template v-else>
-                  <el-button
-                    type="info"
-                    plain
-                    icon="el-icon-edit"
-                    @click="startModify"
+                  <AZGuard
+                    :permissions="[
+                      'teachers.patch.all',
+                      {
+                        codename: 'teachers.patch.milfaculty',
+                        validator: () => milgroup.milfaculty === userMilfaculty,
+                      },
+                      {
+                        codename: 'teachers.patch.milgroup',
+                        validator: () =>
+                          userMilgroups.some((x) => x === milgroup.milgroup),
+                      },
+                      {
+                        codename: 'teachers.patch.self',
+                        validator: () => +id === userId && userType === 'teacher',
+                      },
+                    ]"
                   >
-                    Редактировать
-                  </el-button>
+                    <el-button
+                      type="info"
+                      plain
+                      icon="el-icon-edit"
+                      @click="startModify"
+                    >
+                      Редактировать
+                    </el-button>
+                  </AZGuard>
                 </template>
               </transition>
             </el-form-item>
@@ -332,9 +351,23 @@ export default {
       return this.$route.params.teacherId;
     },
     isProfile() {
-      return (
-        this.personType === "teacher" && this.personId === +this.id
-      );
+      return this.personType === "teacher" && this.personId === +this.id;
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+    userId() {
+      return UserModule.personId;
+    },
+    userType() {
+      return UserModule.personType;
+    },
+    milgroup() {
+      console.log(this.displayInfo);
+      return this.displayInfo.milgroup || {};
     },
   },
   async created() {
