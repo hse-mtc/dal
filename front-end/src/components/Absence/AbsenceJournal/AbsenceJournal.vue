@@ -109,31 +109,49 @@
                       {{ data.absences.find((x) => x.date === d).comment }}
                     </el-form-item>
                     <el-form-item>
-                      <el-button
-                        size="mini"
-                        icon="el-icon-edit"
-                        type="info"
-                        @click="
-                          onEdit(
+                      <AZGuard
+                        :permissions="
+                          getPermissions(
+                            'patch',
                             data.absences.find((x) => x.date === d),
-                            data.fullname,
                           )
                         "
                       >
-                        Редактировать
-                      </el-button>
-                      <el-button
-                        size="mini"
-                        icon="el-icon-delete"
-                        type="danger"
-                        @click="
-                          handleDelete(
-                            data.absences.find((x) => x.date === d).id,
+                        <el-button
+                          size="mini"
+                          icon="el-icon-edit"
+                          type="info"
+                          @click="
+                            onEdit(
+                              data.absences.find((x) => x.date === d),
+                              data.fullname,
+                            )
+                          "
+                        >
+                          Редактировать
+                        </el-button>
+                      </AZGuard>
+                      <AZGuard
+                        :permissions="
+                          getPermissions(
+                            'delete',
+                            data.absences.find((x) => x.date === d),
                           )
                         "
                       >
-                        Удалить
-                      </el-button>
+                        <el-button
+                          size="mini"
+                          icon="el-icon-delete"
+                          type="danger"
+                          @click="
+                            handleDelete(
+                              data.absences.find((x) => x.date === d).id,
+                            )
+                          "
+                        >
+                          Удалить
+                        </el-button>
+                      </AZGuard>
                     </el-form-item>
                   </el-form>
                   <i
@@ -365,6 +383,21 @@ export default {
     await this.onWeekdayChanged();
   },
   methods: {
+    getPermissions(method, data) {
+      return [
+        `absences.${method}.all`,
+        {
+          codename: `absences.${method}.milfaculty`,
+          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty,
+        },
+        {
+          codename: `absences.${method}.milgroup`,
+          validator: () => this.userMilgroups.some(
+            x => x === data.student.milgroup.milgroup,
+          ),
+        },
+      ];
+    },
     async onWeekdayChanged() {
       this.loading = true;
       this.filter.milgroup = this.milgroups.length
