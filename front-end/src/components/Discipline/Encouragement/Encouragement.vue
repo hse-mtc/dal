@@ -66,18 +66,26 @@
         </el-select>
       </el-col>
     </el-row>
-    <el-row class="addRow">
-      <el-col :span="24">
-        <el-button
-          class="addBtn"
-          type="primary"
-          icon="el-icon-plus"
-          @click="onCreate"
-        >
-          Новое поощрение
-        </el-button>
-      </el-col>
-    </el-row>
+    <AZGuard
+      :permissions="[
+        'encouragements.post.all',
+        'encouragements.post.milfaculty',
+        'encouragements.post.self',
+      ]"
+    >
+      <el-row class="addRow">
+        <el-col :span="24">
+          <el-button
+            class="addBtn"
+            type="primary"
+            icon="el-icon-plus"
+            @click="onCreate"
+          >
+            Новое поощрение
+          </el-button>
+        </el-col>
+      </el-row>
+    </AZGuard>
     <el-row>
       <PrimeTable
         :value="encouragements"
@@ -96,29 +104,26 @@
           column-key="date"
         />
         <PrimeColumn
-          :field="row => row.student.fullname"
+          :field="(row) => row.student.fullname"
           column-key="student.fullname"
           sortable
           header="Студент"
         />
         <PrimeColumn
-          :field="row => row.teacher.fullname"
+          :field="(row) => row.teacher.fullname"
           sortable
           header="Преподаватель"
           column-key="teacher.fullname"
         />
         <PrimeColumn
-          :field="row => row.student.milgroup.milgroup"
+          :field="(row) => row.student.milgroup.milgroup"
           column-key="milgroup"
           sortable
           header="Взвод"
           header-style="width: 100px"
           body-style="width: 100px"
         />
-        <PrimeColumn
-          header="Тип поощрения"
-          column-key="type"
-        >
+        <PrimeColumn header="Тип поощрения" column-key="type">
           <template #body="{ data }">
             <el-tag
               :type="tagByEncouragementType(data.type)"
@@ -128,30 +133,41 @@
             </el-tag>
           </template>
         </PrimeColumn>
-        <PrimeColumn
-          field="reason"
-          header="Причина"
-        />
+        <PrimeColumn field="reason" header="Причина" />
         <PrimeColumn
           header-style="width: 120px"
           body-style="width: 120px; text-align: center;"
           column-key="buttons"
         >
           <template #body="{ data }">
-            <el-button
-              size="mini"
-              icon="el-icon-edit"
-              type="info"
-              circle
-              @click="onEdit(data)"
-            />
-            <el-button
-              size="mini"
-              icon="el-icon-delete"
-              type="danger"
-              circle
-              @click="handleDelete(data.id)"
-            />
+            <AZGuard
+              v-slot="{ disabled }"
+              :permissions="getPermissions('patch', data)"
+              disable
+            >
+              <el-button
+                size="mini"
+                icon="el-icon-edit"
+                type="info"
+                circle
+                :disabled="disabled"
+                @click="onEdit(data)"
+              />
+            </AZGuard>
+            <AZGuard
+              v-slot="{ disabled }"
+              :permissions="getPermissions('delete', data)"
+              disable
+            >
+              <el-button
+                size="mini"
+                icon="el-icon-delete"
+                type="danger"
+                circle
+                :disabled="disabled"
+                @click="handleDelete(data.id)"
+              />
+            </AZGuard>
           </template>
         </PrimeColumn>
       </PrimeTable>
@@ -199,20 +215,30 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Преподаватель" required>
-          <el-select
-            v-model="editEncouragement.teacher"
-            value-key="id"
-            placeholder="Выберите преподавателя"
-            filterable
-            style="display: block"
+          <AZGuard
+            v-slot="{ disabled }"
+            :permissions="[
+              'encouragements.post.all',
+              'encouragements.post.milfaculty',
+            ]"
+            disable
           >
-            <el-option
-              v-for="t in teachers"
-              :key="t.id"
-              :label="t.fullname"
-              :value="t.id"
-            />
-          </el-select>
+            <el-select
+              v-model="editEncouragement.teacher"
+              value-key="id"
+              placeholder="Выберите преподавателя"
+              filterable
+              style="display: block"
+              :disabled="disabled"
+            >
+              <el-option
+                v-for="t in teachers"
+                :key="t.id"
+                :label="t.fullname"
+                :value="t.id"
+              />
+            </el-select>
+          </AZGuard>
         </el-form-item>
         <el-form-item label="Тип поощрения: " required>
           <el-select
@@ -341,11 +367,55 @@ export default {
     milgroups() {
       return ReferenceModule.milgroups;
     },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+    userId() {
+      return UserModule.personId;
+    },
+    usersPermissions() {
+      return UserModule.permissions;
+    },
+    studentsFilter() {
+      if (
+        this.usersPermissions.some(
+          x => x.codename === "encouragements.post.milfaculty"
+            || x.codename === "encouragements.post.self",
+        )
+      ) {
+        return {
+          milfaculty: this.userMilfaculty,
+        };
+      }
+      return {};
+    },
   },
   created() {
     this.onFilter();
   },
   methods: {
+    getPermissions(method, data) {
+      return [
+        `encouragements.${method}.all`,
+        {
+          codename: `encouragements.${method}.milfaculty`,
+          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty,
+        },
+        {
+          codename: `encouragements.${method}.milgroup`,
+          validator: () => this.userMilgroups.some(
+            x => x === data.student.milgroup.milgroup,
+          ),
+        },
+        {
+          codename: `encouragements.${method}.self`,
+          validator: () => this.userId === data.teacher.id,
+        },
+      ];
+    },
     dateField: row => moment(row.date).format("DD.MM.YY"),
     onFilter() {
       getEncouragement({
@@ -368,24 +438,28 @@ export default {
           return "";
         case "RE":
           return "success";
-        default: return "";
+        default:
+          return "";
       }
     },
     async onCreate() {
       this.editEncouragementFullname = "Новое поощрение";
-      this.editEncouragement = {
-        student: null,
-        teacher: null,
-        date: moment().format("YYYY-MM-DD"),
-      };
       this.students = (await getStudent()).data;
       this.teachers = (await getTeacher()).data;
+      this.editEncouragement = {
+        student: null,
+        teacher: this.teachers.find(x => x.id === this.userId)?.id,
+        date: moment().format("YYYY-MM-DD"),
+      };
       this.dialogVisible = true;
     },
     async onEdit(row) {
-      this.editEncouragement = this.lodash.cloneDeep(row);
-      this.editEncouragement.student = row.student.id;
-      this.editEncouragement.teacher = row.teacher.id;
+      this.editEncouragement = {
+        ...row,
+        student: row.student.id,
+        teacher: row.teacher.id,
+      };
+      this.students = (await getStudent()).data;
       this.teachers = (await getTeacher()).data;
       this.editEncouragementFullname = row.student.fullname;
       this.dialogVisible = true;

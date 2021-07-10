@@ -468,9 +468,11 @@ export default {
     },
     async onEdit(row) {
       this.editPunishmentFullname = row.student.fullname;
-      this.editPunishment = { ...row };
-      this.editPunishment.student = row.student.id;
-      this.editPunishment.teacher = row.teacher.id;
+      this.editPunishment = {
+        ...row,
+        student: row.student.id,
+        teacher: row.teacher.id,
+      };
       this.students = (await getStudent()).data;
       this.teachers = (await getTeacher()).data;
       this.dialogVisible = true;

@@ -113,7 +113,7 @@
                 column-key="fullname"
               />
               <PrimeColumn
-                :field="row => row.student.milgroup.milgroup"
+                :field="(row) => row.student.milgroup.milgroup"
                 sortable
                 header="Взвод"
                 header-style="width: 100px"
@@ -128,10 +128,7 @@
                 field="type"
               >
                 <template #body="{ data: { type } }">
-                  <el-tag
-                    :type="tagByAbsenceType(type)"
-                    disable-transitions
-                  >
+                  <el-tag :type="tagByAbsenceType(type)" disable-transitions>
                     {{ type | absenceTypeFilter }}
                   </el-tag>
                 </template>
@@ -170,20 +167,34 @@
                 body-style="width: 120px; text-align: center;"
               >
                 <template #body="{ data }">
-                  <el-button
-                    size="mini"
-                    icon="el-icon-edit"
-                    type="info"
-                    circle
-                    @click="onEdit(data, data.student.fullname)"
-                  />
-                  <el-button
-                    size="mini"
-                    icon="el-icon-delete"
-                    type="danger"
-                    circle
-                    @click="handleDelete(data.id)"
-                  />
+                  <AZGuard
+                    v-slot="{ disabled }"
+                    :permissions="getPermissions('patch', data)"
+                    disable
+                  >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-edit"
+                      type="info"
+                      circle
+                      :disabled="disabled"
+                      @click="onEdit(data, data.student.fullname)"
+                    />
+                  </AZGuard>
+                  <AZGuard
+                    v-slot="{ disabled }"
+                    :permissions="getPermissions('delete', data)"
+                    disable
+                  >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-delete"
+                      type="danger"
+                      circle
+                      :disabled="disabled"
+                      @click="handleDelete(data.id)"
+                    />
+                  </AZGuard>
                 </template>
               </PrimeColumn>
             </PrimeTable>
@@ -261,7 +272,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
-import { ReferenceModule } from "@/store";
+import { ReferenceModule, UserModule } from "@/store";
 import AbsenceJournal from "./AbsenceJournal/AbsenceJournal.vue";
 
 export default {
@@ -371,11 +382,35 @@ export default {
     statuses() {
       return ReferenceModule.absenceStatuses;
     },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+    userId() {
+      return UserModule.personId;
+    },
   },
   created() {
     this.onFilter();
   },
   methods: {
+    getPermissions(method, data) {
+      return [
+        `absences.${method}.all`,
+        {
+          codename: `absences.${method}.milfaculty`,
+          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty,
+        },
+        {
+          codename: `absences.${method}.milgroup`,
+          validator: () => this.userMilgroups.some(
+            x => x === data.student.milgroup.milgroup,
+          ),
+        },
+      ];
+    },
     changeAbsenceStatus(absence) {
       // todo
       // eslint-disable-next-line no-param-reassign
