@@ -156,9 +156,13 @@ class PersonSerialier(serializers.Serializer):
     milfaculty = serializers.CharField(read_only=True)
 
     class Meta:
-        fields = [
-            "id", "type", "milgroups", "milfaculty"
-        ]
+        fields = ["id", "type", "milgroups", "milfaculty"]
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -169,31 +173,33 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = [
-            "id", "email", "all_permissions", "campuses", "person"
-        ]
+        fields = ["id", "email", "all_permissions", "campuses", "person"]
 
     def get_all_permissions(self, obj) -> list[str]:
         return PermissionSerializer(obj.get_all_permissions(), many=True).data
 
     def get_person(self, obj) -> str:
+        # pylint:disable=(invalid-name)
+        # pylint:disable=(redefined-builtin)
         # try to find teachers
         user_type, user = get_user_from_request(obj)
+
         class PersonObject:
+
             def __init__(self, id, type, milgroups, milfaculty):
                 self.id = id
                 self.type = type
                 self.milgroups = milgroups
                 self.milfaculty = milfaculty
-        
+
         milgroups = []
         milfaculty = None
 
-        if user_type == 'student':
+        if user_type == "student":
             milgroups = [user.milgroup.milgroup]
             milfaculty = user.milgroup.milfaculty.milfaculty
 
-        if user_type == 'teacher':
+        if user_type == "teacher":
             milgroups = [user.milgroup.milgroup]
             milfaculty = user.milfaculty.milfaculty
 
