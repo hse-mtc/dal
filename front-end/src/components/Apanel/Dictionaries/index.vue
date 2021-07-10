@@ -122,7 +122,7 @@ class Dictionaries {
         const stringItem = `${item.milgroup} ${item.milfaculty} ${weekdays[item.weekday]}`
           .toLowerCase();
         return query.split(" ")
-          .reduce((memo, word) => memo && (word && stringItem.includes(word)), true);
+          .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
       },
       add: ReferenceModule.addMilgroup,
       delete: ReferenceModule.deleteMilgroup,
