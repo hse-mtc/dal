@@ -175,7 +175,6 @@ class DictionariesTableEditor {
 
   stopEdit({ data, field }) {
     if (this.editingItemKey === `${data.id} ${field}`) {
-      console.log("abortEdit");
       this.$emit("abortEdit");
     }
   }
