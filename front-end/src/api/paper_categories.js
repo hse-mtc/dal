@@ -12,7 +12,7 @@ export function getPaperCategories() {
   });
 }
 
-export function editPaperCategories(id, data) {
+export function editPaperCategory(id, data) {
   return request({
     url: `${BASE_API_URL}${categories}${id}/`,
     method: "PATCH",
@@ -20,7 +20,7 @@ export function editPaperCategories(id, data) {
   });
 }
 
-export function addPaperCategories(data) {
+export function addPaperCategory(data) {
   return request({
     url: BASE_API_URL + categories,
     method: "post",

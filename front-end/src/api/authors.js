@@ -11,7 +11,7 @@ export function getAuthors(params) {
   });
 }
 
-export function editAuthors(id, data) {
+export function editAuthor(id, data) {
   return request({
     url: `${BASE_API_URL}${authors}${id}/`,
     method: "PATCH",

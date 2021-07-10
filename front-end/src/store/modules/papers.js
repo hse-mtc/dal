@@ -4,19 +4,18 @@ import {
   Mutation,
   Action,
 } from "vuex-module-decorators";
-import { Message } from "element-ui";
 
-import store, { PapersModule, UserModule } from "@/store";
+import store, { PapersModule } from "@/store";
 import {
-  addPaperCategories,
+  addPaperCategory,
   deletePaperCategory,
-  editPaperCategories,
+  editPaperCategory,
   getPaperCategories,
 } from "@/api/paper_categories";
 import {
   addAuthor,
   deleteAuthor,
-  editAuthors,
+  editAuthor,
   getAuthors,
 } from "@/api/authors";
 import {
@@ -25,6 +24,9 @@ import {
   editPublisher,
   getPublishers,
 } from "@/api/publishers";
+import {
+  getAddRequest, getDeleteRequest, getEditRequest, getFetchRequest,
+} from "@/utils/mutators";
 
 @Module({ store, name: "papers", namespaced: true })
 class Papers extends VuexModule {
@@ -45,85 +47,46 @@ class Papers extends VuexModule {
     this._publishersList = publishers;
   }
 
-  @Action({ commit: "SET_PUBLISHERS" })
-  setPublishers(publishers) {
-    return publishers;
-  }
-
   @Action
   async fetchPublishers() {
-    try {
-      const { data } = await getPublishers();
-      this.setPublishers(data);
-      this.SET_IS_LOADED({ field: "_publishersLoaded", value: true });
-    } catch (e) {
-      console.error("Не удалось загрузить издателей", e);
-      Message({
-        type: "error",
-        message: "Не удалось загрузить издателей",
-      });
-    }
+    return await getFetchRequest(
+      getPublishers,
+      data => {
+        this.SET_PUBLISHERS(data);
+        this.SET_IS_LOADED({ field: "_publishersLoaded", value: true });
+      },
+      "издателей",
+    ).call(this);
   }
 
   @Action
-  async deletePublisher(id) {
-    try {
-      await deletePublisher(id);
-
-      this.setPublishers(this._publishersList.filter(item => item.id !== id));
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось удалить издателя:", e);
-      Message({
-        type: "error",
-        message: "Не удалось удалить издателя",
-      });
-
-      return false;
-    }
-  }
-
-  @Action
-  async addPublisher({ name }) {
-    try {
-      const { data } = await addPublisher(name);
-
-      this.setPublishers([...this._publishersList, data]);
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось добавить издателя:", e);
-      Message({
-        type: "error",
-        message: "Не удалось добавить издателя",
-      });
-
-      return false;
-    }
+  async addPublisher(newItem) {
+    return await getAddRequest(
+      addPublisher,
+      this.SET_PUBLISHERS,
+      "_publishersList",
+      "издателя",
+    ).call(this, newItem);
   }
 
   @Action
   async editPublisher({ id, ...newData }) {
-    try {
-      const { data } = await editPublisher(id, newData);
+    return await getEditRequest(
+      editPublisher,
+      this.SET_PUBLISHERS,
+      "_publishersList",
+      "издателя",
+    ).call(this, { id, ...newData });
+  }
 
-      const index = this._publishersList.findIndex(item => item.id === id);
-      const newArray = [...this._publishersList];
-      newArray[index] = data;
-
-      this.setPublishers(newArray);
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось изменить издателя:", e);
-      Message({
-        type: "error",
-        message: "Не удалось изменить издателя",
-      });
-
-      return false;
-    }
+  @Action
+  async deletePublisher(id) {
+    return await getDeleteRequest(
+      deletePublisher,
+      this.SET_PUBLISHERS,
+      "_publishersList",
+      "издателя",
+    ).call(this, id);
   }
 
   get publishers() {
@@ -139,84 +102,46 @@ class Papers extends VuexModule {
     this._authorsList = authors;
   }
 
-  @Action({ commit: "SET_AUTHORS" })
-  setAuthors(authors) {
-    return authors;
-  }
-
   @Action
   async fetchAuthors() {
-    try {
-      const { data } = await getAuthors();
-      this.setAuthors(data);
-      this.SET_IS_LOADED({ field: "_authorsLoaded", value: true });
-    } catch (e) {
-      console.error("Не удалось загрузить авторов", e);
-      Message({
-        type: "error",
-        message: "Не удалось загрузить авторов",
-      });
-    }
+    return await getFetchRequest(
+      getAuthors,
+      data => {
+        this.SET_AUTHORS(data);
+        this.SET_IS_LOADED({ field: "_authorsLoaded", value: true });
+      },
+      "авторов",
+    ).call(this);
   }
 
   @Action
-  async deleteAuthor(id) {
-    try {
-      await deleteAuthor(id);
-
-      this.setAuthors(this._authorsList.filter(item => item.id !== id));
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось удалить автора:", e);
-      Message({
-        type: "error",
-        message: "Не удалось удалить автора",
-      });
-
-      return false;
-    }
-  }
-
-  @Action
-  async addAuthor(info) {
-    try {
-      const { data } = await addAuthor(info);
-
-      this.setAuthors([...this._authorsList, data]);
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось добавить автора:", e);
-      Message({
-        type: "error",
-        message: "Не удалось добавить автора",
-      });
-
-      return false;
-    }
+  async addAuthor(newItem) {
+    return await getAddRequest(
+      addAuthor,
+      this.SET_AUTHORS,
+      "_authorsList",
+      "автора",
+    ).call(this, newItem);
   }
 
   @Action
   async editAuthors({ id, ...newData }) {
-    try {
-      const { data } = await editAuthors(id, newData);
+    return await getEditRequest(
+      editAuthor,
+      this.SET_AUTHORS,
+      "_authorsList",
+      "автора",
+    ).call(this, { id, ...newData });
+  }
 
-      const index = this._authorsList.findIndex(item => item.id === id);
-      const newArray = [...this._authorsList];
-      newArray[index] = data;
-      this.setAuthors(newArray);
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось изменить автора:", e);
-      Message({
-        type: "error",
-        message: "Не удалось изменить автора",
-      });
-
-      return false;
-    }
+  @Action
+  async deleteAuthor(id) {
+    return await getDeleteRequest(
+      deleteAuthor,
+      this.SET_AUTHORS,
+      "_authorsList",
+      "автора",
+    ).call(this, id);
   }
 
   get authors() {
@@ -232,83 +157,46 @@ class Papers extends VuexModule {
     this._categoriesList = payload;
   }
 
-  @Action({ commit: "SET_CATEGORIES" })
-  setCategories(categories) {
-    return categories;
-  }
-
   @Action
   async fetchCategories() {
-    try {
-      const { data } = await getPaperCategories();
-      this.setCategories(data);
-      this.SET_IS_LOADED({ field: "_categoriesLoaded", value: true });
-    } catch (e) {
-      console.error("Не удалось загрузить категорию", e);
-      Message({
-        type: "error",
-        message: "Не удалось загрузить категорию",
-      });
-    }
+    return await getFetchRequest(
+      getPaperCategories,
+      data => {
+        this.SET_CATEGORIES(data);
+        this.SET_IS_LOADED({ field: "_categoriesLoaded", value: true });
+      },
+      "категории",
+    ).call(this);
   }
 
   @Action
-  async deleteCategory(id) {
-    try {
-      await deletePaperCategory(id);
-
-      this.setCategories(this._categoriesList.filter(item => item.id !== id));
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось удалить категорию:", e);
-      Message({
-        type: "error",
-        message: "Не удалось удалить категорию",
-      });
-
-      return false;
-    }
-  }
-
-  @Action
-  async addCategory(info) {
-    try {
-      const { data } = await addPaperCategories(info);
-
-      this.setCategories([...this._categoriesList, data]);
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось добавить категорию:", e);
-      Message({
-        type: "error",
-        message: "Не удалось добавить категорию",
-      });
-
-      return false;
-    }
+  async addCategory(newItem) {
+    return await getAddRequest(
+      addPaperCategory,
+      this.SET_CATEGORIES,
+      "_categoriesList",
+      "категорию",
+    ).call(this, newItem);
   }
 
   @Action
   async editCategories({ id, ...newData }) {
-    try {
-      const { data } = await editPaperCategories(id, newData);
-      const index = this._categoriesList.findIndex(item => item.id === id);
-      const newArray = [...this._categoriesList];
-      newArray[index] = data;
-      this.setCategories(newArray);
+    return await getEditRequest(
+      editPaperCategory,
+      this.SET_CATEGORIES,
+      "_categoriesList",
+      "категорию",
+    ).call(this, { id, ...newData });
+  }
 
-      return true;
-    } catch (e) {
-      console.error("Не удалось изменить категорию:", e);
-      Message({
-        type: "error",
-        message: "Не удалось изменить категорию",
-      });
-
-      return false;
-    }
+  @Action
+  async deleteCategory(id) {
+    return await getDeleteRequest(
+      deletePaperCategory,
+      this.SET_CATEGORIES,
+      "_categoriesList",
+      "категорию",
+    ).call(this, id);
   }
 
   get categories() {

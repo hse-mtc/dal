@@ -22,10 +22,10 @@
               :type="currentTab"
               :tags="tagsItems"
               :editing-item="modalData"
+              @addItem="onAddItem"
               @startEdit="onStartEdit"
               @abortEdit="onAbortEdit"
               @submitEdit="onSubmitEdit"
-              @addItem="onAddItem"
               @delete="onDelete"
             />
 
@@ -33,6 +33,11 @@
               v-else
               :type="currentTab"
               :data="tagsItems"
+              @addItem="onAddItem"
+              @startEdit="onStartEdit"
+              @abortEdit="onAbortEdit"
+              @submitEdit="onSubmitEdit"
+              @delete="onDelete"
             />
           </template>
         </el-tab-pane>
@@ -119,9 +124,9 @@ class Dictionaries {
         return query.split(" ")
           .reduce((memo, word) => memo && (word && stringItem.includes(word)), true);
       },
-      add: () => {},
-      delete: () => {},
-      edit: () => {},
+      add: ReferenceModule.addMilgroup,
+      delete: ReferenceModule.deleteMilgroup,
+      edit: ReferenceModule.editMilgroup,
     },
   }
 
@@ -136,8 +141,7 @@ class Dictionaries {
 
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase();
-      return data.slice(0, 2)
-        .filter(item => filterFunc(item, query));
+      return data.filter(item => filterFunc(item, query));
     }
 
     return data;

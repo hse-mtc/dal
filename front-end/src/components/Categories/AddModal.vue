@@ -18,10 +18,9 @@
 </template>
 
 <script>
-import { addPaperCategories } from "@/api/paper_categories";
-
 import { Message } from "element-ui";
 import { PapersModule } from "@/store";
+import { addPaperCategory } from "@/api/paper_categories";
 
 export default {
   name: "AddModal",
@@ -51,7 +50,7 @@ export default {
       }
 
       try {
-        const { data } = await addPaperCategories({ title });
+        const { data } = await addPaperCategory({ title });
         PapersModule.setCategories([...this.categories, data]);
         this.closeModal();
       } catch (error) {
