@@ -5,6 +5,8 @@ import {
   Action,
 } from "vuex-module-decorators";
 
+import { Message } from "element-ui";
+
 import store, { ReferenceModule } from "@/store";
 
 import {
@@ -18,7 +20,16 @@ import {
   getPrograms,
   getRooms,
   getSkills,
+  addMilGroup,
+  deleteMilGroup,
+  editMilGroup,
 } from "@/api/reference-book";
+import {
+  getAddRequest,
+  getDeleteRequest,
+  getEditRequest,
+  getFetchRequest,
+} from "@/utils/mutators";
 import { getError } from "@/utils/message";
 
 @Module({ store, name: "reference", namespaced: true })
@@ -73,19 +84,76 @@ class Reference extends VuexModule {
     this._milgroups = payload;
   }
 
-  @Action({ commit: "SET_MILGROUPS" })
-  setMilgroups(milgroups) {
-    return milgroups;
+  @Action
+  async fetchMilgroups() {
+    return await getFetchRequest(
+      getMilGroups,
+      data => {
+        // УБРАТЬ УБРАТЬ УБРАТЬ
+        this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup })));
+        // this.SET_MILGROUPS(data);
+        this.SET_IS_LOADED({ field: "_milgroupsLoaded", value: true });
+      },
+      "взвода",
+    ).call(this);
   }
 
-  @Action()
-  async fetchMilgroups() {
+  @Action
+  async addMilgroup(newItem) {
+    return await getAddRequest(
+      addMilGroup,
+      // УБРАТЬ УБРАТЬ УБРАТЬ
+      data => this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup }))),
+      // this.SET_MILGROUPS,
+      "_milgroups",
+      "взвод",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editMilgroup({ id, ...newData }) {
+    return await getEditRequest(
+      editMilGroup,
+      // УБРАТЬ УБРАТЬ УБРАТЬ
+      data => this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup }))),
+      // this.SET_MILGROUPS,
+      "_milgroups",
+      "взвод",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteMilgroup(id) {
+    return await getDeleteRequest(
+      deleteMilGroup,
+      // УБРАТЬ УБРАТЬ УБРАТЬ
+      data => this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup }))),
+      // this.SET_MILGROUPS,
+      "_milgroups",
+      "взвод",
+    ).call(this, id);
+  }
+
+  @Action
+  async editSubject({ id, ...newData }) {
     try {
-      const { data } = await getMilGroups();
-      this.setMilgroups(data);
-      this.SET_IS_LOADED({ field: "_milgroupsLoaded", value: true });
-    } catch (err) {
-      getError("взводов", err.response.status);
+      const { data } = await editMilGroup(id, newData);
+
+      const index = this.milgroups.findIndex(item => item.id === id);
+      const newArray = [...this._publishersList];
+      newArray[index] = data;
+
+      this.SET_MILGROUPS(newArray);
+
+      return true;
+    } catch (e) {
+      console.error("Не удалось обновить взвод:", e);
+      Message({
+        type: "error",
+        message: "Не удалось обновить взвод",
+      });
+
+      return false;
     }
   }
 

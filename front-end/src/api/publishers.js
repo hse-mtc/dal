@@ -24,10 +24,10 @@ export function deletePublisher(id) {
   });
 }
 
-export function addPublisher(name) {
+export function addPublisher(data) {
   return request({
     url: `${BASE_API_URL}${DMS_URLS.publishers.publishers}`,
     method: "POST",
-    data: { name },
+    data,
   });
 }
