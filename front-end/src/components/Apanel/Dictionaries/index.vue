@@ -21,7 +21,7 @@
               v-if="editorsTypes[currentTab] === 'tags'"
               :type="currentTab"
               :tags="tagsItems"
-              :editing-item="modalData"
+              :editing-item="editingData"
               @addItem="onAddItem"
               @startEdit="onStartEdit"
               @abortEdit="onAbortEdit"
@@ -76,7 +76,7 @@ class Dictionaries {
   newItem = ""
   searchQuery = ""
   editingItemId = null
-  modalData = null
+  editingData = null
 
   editorsTypes = {
     publishers: "tags",
@@ -167,9 +167,8 @@ class Dictionaries {
   }
 
   onStartEdit(id) {
-    console.log("sdcjscnkscnskjcnsdkjcn");
     this.editingItemId = id;
-    this.modalData = _omit(
+    this.editingData = _omit(
       this[this.currentTab].find(item => item.id === id),
       ["id"],
     );
@@ -177,7 +176,7 @@ class Dictionaries {
 
   onAbortEdit() {
     this.editingItemId = null;
-    this.modalData = null;
+    this.editingData = null;
   }
 
   async onSubmitEdit(data) {
@@ -200,7 +199,7 @@ class Dictionaries {
   @Watch("currentTab")
   onCurrentTabChange() {
     this.editingItemId = null;
-    this.modalData = null;
+    this.editingData = null;
   }
 }
 
