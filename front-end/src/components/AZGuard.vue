@@ -1,6 +1,6 @@
 <template>
   <span v-if="disable || hasPermission">
-    <el-tooltip :disabled="!disabled" content="Нет доступа">
+    <el-tooltip :disabled="!disabled || !tooltip" content="Нет доступа">
       <span>
         <slot :disabled="disabled" />
       </span>
@@ -21,6 +21,10 @@ export default {
     disable: {
       type: Boolean,
       default: false,
+    },
+    tooltip: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
