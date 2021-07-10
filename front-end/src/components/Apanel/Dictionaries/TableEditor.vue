@@ -84,7 +84,10 @@
         />
       </template>
 
-      <template #editor="{ data }">
+      <template
+        v-if="!!newItemData"
+        #editor="{ data }"
+      >
         <el-button
           circle
           icon="el-icon-check"
@@ -118,7 +121,6 @@ class DictionariesTableEditor {
 
   editingItemKey = undefined
   newItemData = null
-  editingRows = []
 
   get columnsByTypes() {
     return {
@@ -218,8 +220,6 @@ export default DictionariesTableEditor;
 </script>
 
 <style lang="scss" module>
-.root {}
-
 @keyframes highlight {
   from {
     background: #fff;
