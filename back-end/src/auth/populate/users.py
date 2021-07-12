@@ -2,6 +2,8 @@ from collections import namedtuple
 
 from django.contrib.auth import get_user_model
 
+from conf.settings import TGBOT_EMAIL, TGBOT_PASSWORD
+
 User = get_user_model()
 
 Data = namedtuple(
@@ -11,9 +13,6 @@ Data = namedtuple(
         "password",
         "is_staff",
         "is_superuser",
-        "surname",
-        "name",
-        "patronymic",
     ],
 )
 
@@ -37,50 +36,85 @@ def create_user(data: Data) -> User:
 def create_users() -> list[User]:
     users = [
         Data(
-            email="vspelyak@mail.com",
+            email="superuser@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=True,
-            surname="Пеляк",
-            name="Виктор",
-            patronymic="Степанович",
+        ),
+        # TODO (@gakhromov): remove superuser from
+        # tgbot user and add appropriate permissions
+        Data(
+            email=TGBOT_EMAIL,
+            password=TGBOT_PASSWORD,
+            is_staff=True,
+            is_superuser=True,
         ),
         Data(
-            email="test@mail.com",
+            email="gakhromov@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
-            surname="Фамилия",
-            name="Имя",
-            patronymic="Отчество",
         ),
         Data(
-            email="student@mail.com",
+            email="askatsevalov@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
-            surname="Студентов",
-            name="Студент",
-            patronymic="Студентов",
         ),
         Data(
-            email="teacher@mail.com",
+            email="veisakov@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
-            surname="Преподов",
-            name="Препод",
-            patronymic="Преподович",
         ),
         Data(
-            email="milfaculty_head@mail.com",
+            email="naaliev@mail.com",
             password="qwerty",
             is_staff=True,
             is_superuser=False,
-            surname="Начальников",
-            name="Начальник",
-            patronymic="Начальникович",
+        ),
+        Data(
+            email="avkurkin@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+        ),
+        Data(
+            email="psivanov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+        ),
+        Data(
+            email="ivnikandrov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+        ),
+        Data(
+            email="dnrepalov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+        ),
+        Data(
+            email="ivmesheryakov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+        ),
+        Data(
+            email="ivkovalchuk@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+        ),
+        Data(
+            email="ksgavrilov@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
         ),
     ]
 
-    return [create_user(data) for data in users]
+    return [{data.email: create_user(data)} for data in users]
