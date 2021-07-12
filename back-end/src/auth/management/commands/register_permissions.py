@@ -8,13 +8,7 @@ class Command(BaseCommand):
     help = "Save all registered permissions in the database."
 
     def register_view_permissions(self, perm_class: BasePermission):
-        methods_str = {
-            "get": ": получение данных",
-            "post": ": добавление данных",
-            "put": ": добавление дополнительной информации",
-            "patch": ": редактирование данных",
-            "delete": ": удаление данных",
-        }
+        methods_str = perm_class.methods_str
 
         scopes_str = {
             Permission.Scope.SELF: ", связанных с пользователем",

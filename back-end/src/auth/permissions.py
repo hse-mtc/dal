@@ -6,10 +6,18 @@ from auth.models import Permission
 class BasePermission(permissions.BasePermission):
     permission_class = ""
     view_name_rus = ""
-    methods = ["get", "put", "post", "patch", "delete"]
+    methods = ["get", "post", "patch", "delete"]
     scopes = [
         Permission.Scope.ALL,
     ]
+    
+    methods_str = {
+        "get": ": получение данных",
+        "post": ": добавление данных",
+        "put": ": добавление дополнительной информации",
+        "patch": ": редактирование данных",
+        "delete": ": удаление данных",
+    }
 
     def has_permission(self, request, view):
         if not request.user.is_authenticated:
