@@ -7,7 +7,7 @@ from rest_framework.serializers import ValidationError
 
 class PresentInDatabaseValidator:
 
-    def __init__(self, model: Model, field: tp.Optional[str] = None):
+    def __init__(self, model: tp.Type[Model], field: tp.Optional[str] = None):
         # False-positive, remove later
         # See here: https://github.com/PyCQA/pylint/issues/3882
         # pylint: disable=unsubscriptable-object
