@@ -18,7 +18,6 @@ from lms.models.common import (
 )
 from lms.models.teachers import (
     Rank,
-    TeacherPost,
     Teacher,
 )
 from lms.models.achievements import (
@@ -53,7 +52,6 @@ admin.site.register(UniversityInfo)
 # Teachers
 admin.site.register(Rank)
 admin.site.register(Teacher)
-admin.site.register(TeacherPost)
 
 # Lessons
 admin.site.register(Room)
