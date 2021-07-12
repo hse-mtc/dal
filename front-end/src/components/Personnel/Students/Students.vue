@@ -22,12 +22,12 @@
         >
           <el-option
             v-for="item in milgroups"
-            :key="item.milgroup"
-            :value="item.milgroup"
+            :key="item.title"
+            :value="item.id"
           >
-            <span style="float: left">{{ item.milgroup }}</span>
+            <span style="float: left">{{ item.title }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{
-              item.milfaculty
+              item.milfaculty.abbreviation
             }}</span>
           </el-option>
         </el-select>
@@ -82,7 +82,7 @@
           column-key="milgroup"
         />
         <PrimeColumn
-          :field="(row) => row.milgroup.milfaculty"
+          :field="(row) => row.milgroup.milfaculty.title"
           header="Цикл"
           column-key="milfaculty"
         />
@@ -213,7 +213,7 @@ export default {
       this.$router.push({ name: "Student", params: { studentId: data.id } });
     },
     milgroupField(row) {
-      return row.milgroup.milgroup;
+      return row.milgroup.title;
     },
     dateFilter(value) {
       if (value) return moment(value).format("DD.MM.YYYY");

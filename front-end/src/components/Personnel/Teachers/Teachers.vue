@@ -20,9 +20,9 @@
         >
           <el-option
             v-for="item in milfaculties"
-            :key="item.milfaculty"
-            :label="item.milfaculty"
-            :value="item.milfaculty"
+            :key="item.id"
+            :label="item.abbreviation"
+            :value="item.id"
           />
         </el-select>
       </el-col>
@@ -54,20 +54,24 @@
           body-style="width: 400px"
         />
         <PrimeColumn
-          field="milfaculty"
+          :field="teacher => teacher.milfaculty.title"
           header="Цикл"
           sortable
           column-key="milfaculty"
         />
-        <PrimeColumn field="rank" header="Звание" column-key="rank" />
         <PrimeColumn
-          field="teacher_post"
+          :field="teacher => teacher.rank.title"
+          header="Звание"
+          column-key="rank"
+        />
+        <PrimeColumn
+          :field="teacher => displayTeacherPost(teacher.post)"
           header="Должность"
           column-key="teacherPost"
         />
         <PrimeColumn
-          :field="(row) => row.milgroup && row.milgroup.milgroup"
-          header="Прикр. взвод"
+          :field="displayMilgroups"
+          header="Прикр. взвода"
           column-key="milgroup"
         />
         <PrimeColumn
@@ -178,6 +182,13 @@ export default {
     },
     onEdit({ data }) {
       this.$router.push({ name: "Teacher", params: { teacherId: data.id } });
+    },
+    displayMilgroups(teacher) {
+      if (teacher.milgroups === null) {
+        return "";
+      }
+
+      return teacher.milgroups.map(m => m.title).sort().join(", ");
     },
   },
 };

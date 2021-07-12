@@ -18,8 +18,11 @@ from lms.models.teachers import (
 )
 
 from lms.validators import PresentInDatabaseValidator
-from lms.serializers.common import MilgroupSerializer
 from lms.serializers.students import PhotoSerializer
+from lms.serializers.common import (
+    MilgroupSerializer,
+    MilfacultySerializer,
+)
 
 
 class RankSerializer(ModelSerializer):
@@ -32,6 +35,8 @@ class RankSerializer(ModelSerializer):
 class TeacherSerializer(ModelSerializer):
     fullname = SerializerMethodField(read_only=True)
     milgroups = MilgroupSerializer(read_only=True, many=True)
+    milfaculty = MilfacultySerializer(read_only=True)
+    rank = RankSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     photo = PhotoSerializer(read_only=True)
@@ -66,7 +71,7 @@ class TeacherMutateSerializer(
 
 class TeacherShortSerializer(ModelSerializer):
     fullname = SerializerMethodField(read_only=True)
-    milgroup = MilgroupSerializer(
+    milgroups = MilgroupSerializer(
         read_only=True,
         many=True,
         validators=[PresentInDatabaseValidator(Milgroup)],
@@ -77,4 +82,4 @@ class TeacherShortSerializer(ModelSerializer):
 
     class Meta:
         model = Teacher
-        fields = ["id", "fullname", "milgroup"]
+        fields = ["id", "fullname", "milgroups"]
