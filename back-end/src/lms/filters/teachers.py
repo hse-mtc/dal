@@ -7,4 +7,4 @@ class TeacherFilter(FilterSet):
 
     class Meta:
         model = Teacher
-        fields = ['milgroup', 'milgroup', 'milfaculty', 'rank', 'teacher_post']
+        fields = ["milgroups", "milfaculty", "rank", "post"]

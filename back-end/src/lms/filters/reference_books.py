@@ -1,6 +1,7 @@
 from django_filters.rest_framework import (
     FilterSet,
     ChoiceFilter,
+    CharFilter,
     BooleanFilter,
     NumberFilter,
 )
@@ -31,15 +32,16 @@ class MilspecialtyFilter(FilterSet):
 
 
 class MilgroupFilter(FilterSet):
+    archived = BooleanFilter()
 
-    archived = BooleanFilter(field_name="archived")
+    title = CharFilter(lookup_expr="icontains")
 
     year_of_admission = NumberFilter(method="filter_by_admission")
 
     def filter_by_admission(self, queryset, name, value):
         # pylint: disable=unused-argument
         value = value % 100  # strip first two symbols of the year
-        return queryset.filter(milgroup__startswith=value)
+        return queryset.filter(title__startswith=value)
 
     class Meta:
         model = Milgroup
