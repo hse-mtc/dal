@@ -194,9 +194,9 @@
           >
             <el-option
               v-for="item in achievementTypes"
-              :key="item.achievement_type"
-              :label="item.achievement_type"
-              :value="item.achievement_type"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>

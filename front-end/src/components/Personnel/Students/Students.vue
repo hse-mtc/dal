@@ -24,6 +24,7 @@
             v-for="item in milgroups"
             :key="item.title"
             :value="item.id"
+            :label="item.title"
           >
             <span style="float: left">{{ item.title }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{
@@ -41,10 +42,10 @@
           @change="onFilter"
         >
           <el-option
-            v-for="item in statuses"
-            :key="item.code"
-            :label="item.label"
-            :value="item.code"
+            v-for="value, key in STUDENT_STATUSES"
+            :key="key"
+            :label="value"
+            :value="key"
           />
         </el-select>
       </el-col>
@@ -92,7 +93,7 @@
           column-key="birthday"
         />
         <PrimeColumn
-          :field="(row) => statusFilter(row.status)"
+          :field="(row) => STUDENT_STATUSES[row.status]"
           header="Статус"
           header-style="width: 150px"
           body-style="width: 150px"
@@ -141,11 +142,13 @@ import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 import { getStudent, deleteStudent } from "@/api/students";
 import { ReferenceModule, UserModule } from "@/store";
+import { STUDENT_STATUSES } from "@/utils/enums";
 
 export default {
   name: "Students",
   data() {
     return {
+      STUDENT_STATUSES,
       loading: false,
       filter: {
         search: null,
@@ -156,9 +159,6 @@ export default {
     };
   },
   computed: {
-    statuses() {
-      return ReferenceModule.studentStatuses;
-    },
     milgroups() {
       return ReferenceModule.milgroups;
     },
@@ -218,20 +218,6 @@ export default {
     dateFilter(value) {
       if (value) return moment(value).format("DD.MM.YYYY");
       return "Нет данных";
-    },
-    statusFilter(value) {
-      switch (value) {
-        case "AP":
-          return "Абитуриент";
-        case "ST":
-          return "Обучающийся";
-        case "EX":
-          return "Отчислен";
-        case "GR":
-          return "Выпустился";
-        default:
-          return "Ошибка";
-      }
     },
   },
 };

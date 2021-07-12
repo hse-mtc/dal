@@ -107,14 +107,14 @@
               style="display: block"
             >
               <el-option
-                v-for="item in studentStatuses"
-                :key="item"
-                :label="item | statusFilter"
-                :value="item"
+                v-for="(value, key) in STUDENT_STATUSES"
+                :key="key"
+                :label="value"
+                :value="key"
               />
             </el-select>
             <span v-else class="field-value">
-              {{ displayInfo.status | statusFilter }}
+              {{ STUDENT_STATUSES[displayInfo.status] || "---" }}
             </span>
           </transition>
         </el-form-item>
@@ -124,21 +124,18 @@
               v-if="modify"
               v-model="modifyInfo.student_post"
               value-key="id"
+              clearable
               style="display: block"
             >
               <el-option
-                v-for="item in studentPosts"
-                :key="item.id"
-                :label="item.title"
-                :value="item"
+                v-for="(value, key) in STUDENT_POSTS"
+                :key="key"
+                :label="value"
+                :value="key"
               />
             </el-select>
             <span v-else class="field-value">
-              {{
-                displayInfo.student_post
-                  ? displayInfo.student_post.title
-                  : "---"
-              }}
+              {{ STUDENT_POSTS[displayInfo.student_post] || "---" }}
             </span>
           </transition>
         </el-form-item>
@@ -146,27 +143,29 @@
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
-              v-model="modifyInfo.milgroup.milgroup"
+              v-model="modifyInfo.milgroup.id"
               value-key="milgroup"
               style="display: block"
             >
               <el-option
                 v-for="item in milgroups"
-                :key="item.milgroup"
-                :label="item.milgroup"
-                :value="item.milgroup"
+                :key="item.id"
+                :label="item.title"
+                :value="item"
               >
-                <span style="float: left">{{ item.milgroup }}</span>
+                <span style="float: left">{{ item.title }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{
-                  item.milfaculty
+                  item.milfaculty.abbreviation
                 }}</span>
               </el-option>
             </el-select>
             <span v-else class="field-value">
-              {{ displayInfo.milgroup ? displayInfo.milgroup.milgroup : "---" }}
+              {{ displayInfo.milgroup ? displayInfo.milgroup.title : "---" }}
               <sub>
                 {{
-                  displayInfo.milgroup ? displayInfo.milgroup.milfaculty : "---"
+                  displayInfo.milgroup
+                    ? displayInfo.milgroup.milfaculty.title
+                    : "---"
                 }}
               </sub>
             </span>
@@ -200,26 +199,11 @@ import { findStudentBasic, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
+import { STUDENT_POSTS, STUDENT_STATUSES } from "@/utils/enums";
 
 export default {
   name: "StudentGeneral",
   components: { ExpandBox },
-  filters: {
-    statusFilter(value) {
-      switch (value) {
-        case "AP":
-          return "Абитуриент";
-        case "ST":
-          return "Обучающийся";
-        case "EX":
-          return "Отчислен";
-        case "GR":
-          return "Выпустился";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   props: {
     milgroup: {
       type: Object,
@@ -228,6 +212,8 @@ export default {
   },
   data() {
     return {
+      STUDENT_POSTS,
+      STUDENT_STATUSES,
       modify: false,
       displayInfo: {},
       modifyInfo: {},
@@ -288,12 +274,6 @@ export default {
     milgroups() {
       return ReferenceModule.milgroups;
     },
-    studentPosts() {
-      return ReferenceModule.studentPosts;
-    },
-    studentStatuses() {
-      return ReferenceModule.studentStatuses;
-    },
     userMilfaculty() {
       return UserModule.personMilfaculty;
     },
@@ -305,9 +285,6 @@ export default {
     },
   },
   async created() {
-    await ReferenceModule.fetchMilgroups();
-    await ReferenceModule.fetchStudentPosts();
-    await ReferenceModule.fetchStudentStatuses();
     await this.fetchInfo();
   },
   methods: {
@@ -348,7 +325,7 @@ export default {
             const patronymic = patronymicArray.join(" ");
             const requestBody = {
               ...this.modifyInfo,
-              milgroup: this.modifyInfo.milgroup.milgroup,
+              milgroup: this.modifyInfo.milgroup.id,
               student_post: this.modifyInfo.student_post.id,
               surname,
               name,

@@ -261,7 +261,8 @@ import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import moment from "moment";
 import { UserModule, ReferenceModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
-import { TEACHER_POSTS, displayTeacherMilgroups } from "@/utils/teachers";
+import { displayTeacherMilgroups } from "@/utils/teachers";
+import { TEACHER_POSTS } from "@/utils/enums";
 
 export default {
   name: "Teacher",

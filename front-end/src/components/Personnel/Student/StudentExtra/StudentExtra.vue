@@ -84,7 +84,7 @@
               style="display: block"
             >
               <el-option
-                v-for="item in campuses"
+                v-for="item in CAMPUSES"
                 :key="item.code"
                 :label="item.title"
                 :value="item.code"
@@ -92,10 +92,10 @@
             </el-select>
             <span v-else class="field-value">
               {{
-                campuses.some(
+                CAMPUSES.some(
                   (x) => x.code === displayInfo.university_info.campus,
                 )
-                  ? campuses.find(
+                  ? CAMPUSES.find(
                     (x) => x.code === displayInfo.university_info.campus,
                   ).title
                   : "---"
@@ -264,6 +264,7 @@ import { findStudentExtra, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
+import { CAMPUSES } from "@/utils/enums";
 
 export default {
   name: "StudentExtra",
@@ -276,6 +277,7 @@ export default {
   },
   data() {
     return {
+      CAMPUSES,
       modify: false,
       displayInfo: {
         contact_info: {},
@@ -286,24 +288,6 @@ export default {
       },
       modifyInfo: {},
       loading: false,
-      campuses: [
-        {
-          code: "MO",
-          title: "Москва",
-        },
-        {
-          code: "SP",
-          title: "Санкт-Петербург",
-        },
-        {
-          code: "NN",
-          title: "Нижний Новгород",
-        },
-        {
-          code: "PE",
-          title: "Пермь",
-        },
-      ],
     };
   },
   computed: {

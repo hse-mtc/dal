@@ -52,18 +52,9 @@ import _omit from "lodash/omit";
 
 import { PapersModule, ReferenceModule } from "@/store";
 
+import { WEEKDAYS } from "@/utils/enums";
 import TabsEditor from "./TagsEditor.vue";
 import TableEditor from "./TableEditor.vue";
-
-const weekdays = {
-  0: "Понедельник",
-  1: "Вторник",
-  2: "Среда",
-  3: "Четверг",
-  4: "Пятница",
-  5: "Суббота",
-  6: "Воскресенье",
-};
 
 @Component({
   name: "Dictionaries",
@@ -119,7 +110,7 @@ class Dictionaries {
       label: "Взвода",
       sortFunc: (left, right) => (left.milgroup > right.milgroup ? 1 : -1),
       filterFunc: (item, query) => {
-        const stringItem = `${item.milgroup} ${item.milfaculty} ${weekdays[item.weekday]}`
+        const stringItem = `${item.milgroup} ${item.milfaculty} ${WEEKDAYS[item.weekday]}`
           .toLowerCase();
         return query.split(" ")
           .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
