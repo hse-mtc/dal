@@ -203,7 +203,8 @@ class UserSerializer(serializers.ModelSerializer):
             milgroups = [user.milgroup.milgroup]
             milfaculty = user.milfaculty.milfaculty
 
-        person = PersonObject(user.id, user_type, milgroups, milfaculty)
+        person = PersonObject(0 if user is None else user.id, user_type,
+                              milgroups, milfaculty)
         return PersonSerialier(person).data
 
 

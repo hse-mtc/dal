@@ -60,66 +60,84 @@
             >
               <template #body="{ data }">
                 <div class="lesson-journal-cell">
-                  <el-popover
+                  <AZGuard
                     v-if="data.lessons.some((x) => x.date === d)"
-                    placement="right"
-                    trigger="hover"
+                    v-slot="{ disabled }"
+                    :permissions="[
+                      ...getPermissions('patch'),
+                      ...getPermissions('delete'),
+                    ]"
+                    disable
+                    :tooltip="false"
                   >
-                    <div class="text-center">
-                      <el-button
-                        size="mini"
-                        icon="el-icon-edit"
-                        type="info"
-                        circle
-                        @click="onEdit(data.lessons.find((x) => x.date === d))"
-                      />
-                      <el-button
-                        size="mini"
-                        icon="el-icon-delete"
-                        type="danger"
-                        circle
-                        @click="
-                          handleDelete(
-                            data.lessons.find((x) => x.date === d).id,
-                          )
-                        "
-                      />
-                    </div>
-                    <div slot="reference">
-                      <div>
-                        <svg-icon icon-class="notebook-outline" />
-                        {{
-                          data.lessons.find((x) => x.date === d).subject.title
-                        }}
+                    <el-popover
+                      :disabled="disabled"
+                      placement="right"
+                      trigger="hover"
+                    >
+                      <div class="text-center">
+                        <AZGuard :permissions="getPermissions('patch')">
+                          <el-button
+                            size="mini"
+                            icon="el-icon-edit"
+                            type="info"
+                            circle
+                            @click="
+                              onEdit(data.lessons.find((x) => x.date === d))
+                            "
+                          />
+                        </AZGuard>
+                        <AZGuard :permissions="getPermissions('delete')">
+                          <el-button
+                            size="mini"
+                            icon="el-icon-delete"
+                            type="danger"
+                            circle
+                            @click="
+                              handleDelete(
+                                data.lessons.find((x) => x.date === d).id,
+                              )
+                            "
+                          />
+                        </AZGuard>
                       </div>
+                      <div slot="reference">
+                        <div>
+                          <svg-icon icon-class="notebook-outline" />
+                          {{
+                            data.lessons.find((x) => x.date === d).subject.title
+                          }}
+                        </div>
 
-                      <div>
-                        <svg-icon icon-class="map-marker-outline" />
-                        {{ data.lessons.find((x) => x.date === d).room }}
+                        <div>
+                          <svg-icon icon-class="map-marker-outline" />
+                          {{ data.lessons.find((x) => x.date === d).room }}
+                        </div>
+
+                        <el-tag
+                          :type="
+                            tagByLessonType(
+                              data.lessons.find((x) => x.date === d).type,
+                            )
+                          "
+                          disable-transitions
+                        >
+                          {{
+                            data.lessons.find((x) => x.date === d).type
+                              | typeFilter
+                          }}
+                        </el-tag>
                       </div>
-
-                      <el-tag
-                        :type="
-                          tagByLessonType(
-                            data.lessons.find((x) => x.date === d).type,
-                          )
-                        "
-                        disable-transitions
-                      >
-                        {{
-                          data.lessons.find((x) => x.date === d).type
-                            | typeFilter
-                        }}
-                      </el-tag>
-                    </div>
-                  </el-popover>
-                  <el-button
-                    v-else
-                    type="text"
-                    icon="el-icon-plus"
-                    class="create-lesson-btn"
-                    @click="onCreate(data.ordinal, d)"
-                  />
+                    </el-popover>
+                  </AZGuard>
+                  <AZGuard v-else :permissions="getPermissions('post')">
+                    <el-button
+                      type="text"
+                      icon="el-icon-plus"
+                      class="create-lesson-btn"
+                      @click="onCreate(data.ordinal, d)"
+                    />
+                  </AZGuard>
                 </div>
               </template>
             </PrimeColumn>
@@ -164,9 +182,9 @@
           >
             <el-option
               v-for="item in rooms"
-              :key="item"
-              :label="item"
-              :value="item"
+              :key="item.room"
+              :label="item.room"
+              :value="item.room"
             />
           </el-select>
         </el-form-item>
@@ -201,7 +219,7 @@ import {
   postLesson,
   deleteLesson,
 } from "@/api/lesson";
-import { getSubjects } from "@/api/subjects";
+import { getSubjects } from "@/api/subjects-lms";
 import {
   getError,
   postError,
@@ -211,6 +229,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
+import { ReferenceModule, UserModule } from "@/store";
 
 export default {
   name: "Schedule",
@@ -270,21 +289,6 @@ export default {
         { label: "Зачет", code: "FI" },
         { label: "Экзамен", code: "EX" },
       ],
-      rooms: ["510", "501", "502", "503", "504", "Плац"],
-      milgroups: [
-        {
-          milgroup: "1807",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1808",
-          milfaculty: "ВКС",
-        },
-        {
-          milgroup: "1809",
-          milfaculty: "ВКС",
-        },
-      ],
       subjects: [],
       schedule: {},
       pickerOptions: {
@@ -320,11 +324,40 @@ export default {
       },
     };
   },
+  computed: {
+    rooms() {
+      return ReferenceModule.rooms;
+    },
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+  },
   created() {
     this.filter.mg = this.milgroups[0].milgroup;
     this.fetchData();
   },
   methods: {
+    getPermissions(method) {
+      return [
+        `lessons.${method}.all`,
+        {
+          codename: `lessons.${method}.milfaculty`,
+          validator: () => this.userMilfaculty === this.schedule.milgroup.milfaculty,
+        },
+        {
+          codename: `lessons.${method}.milgroup`,
+          validator: () => this.userMilgroups.some(
+            x => x === this.schedule.milgroup.milgroup,
+          ),
+        },
+      ];
+    },
     formatDate: d => moment(d).format("DD.MM.YY"),
     tagByLessonType(type) {
       switch (type) {

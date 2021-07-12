@@ -9,7 +9,7 @@
           alt="назад"
           @click="backToPersonnel"
         >
-        {{ isProfile ? "Мой профиль" : "Студент" }}
+        {{ isProfile ? "Мой профиль" : fullname }}
       </div>
       <div v-if="isProfile">
         <el-button type="primary" @click="dialog = true">
@@ -18,15 +18,15 @@
       </div>
     </div>
     <div class="row">
-      <StudentGeneral />
+      <StudentGeneral :milgroup="milgroup" />
     </div>
     <div class="row">
       <div class="column">
         <StudentDiscipline />
-        <StudentExtra />
+        <StudentExtra :milgroup="milgroup" />
       </div>
       <div class="column">
-        <StudentAchievements />
+        <StudentAchievements :milgroup="milgroup" />
         <StudentPerformance />
       </div>
     </div>
@@ -50,6 +50,7 @@ import StudentDiscipline from "@/components/Personnel/Student/StudentDiscipline/
 import StudentPerformance from "@/components/Personnel/Student/StudentPerformance/StudentPerformance.vue";
 import { UserModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
+import { findStudent } from "@/api/students";
 
 export default {
   name: "Student",
@@ -64,6 +65,7 @@ export default {
   data() {
     return {
       dialog: false,
+      student: {},
     };
   },
   computed: {
@@ -79,6 +81,15 @@ export default {
     isProfile() {
       return this.personType === "student" && this.personId === +this.id;
     },
+    fullname() {
+      return this.student.fullname;
+    },
+    milgroup() {
+      return this.student.milgroup;
+    },
+  },
+  async created() {
+    this.student = (await findStudent(this.id)).data;
   },
   methods: {
     backToPersonnel() {

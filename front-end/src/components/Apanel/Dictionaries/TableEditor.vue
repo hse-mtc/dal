@@ -30,6 +30,7 @@
       :header="title"
       :header-style="width ? `width: ${width}px;`: ''"
       :body-style="width ? `width: ${width}px;`: ''"
+      :body-class="editorType ? $style.editableField : ''"
       :field="field"
     >
       <template #body="{ data }">
@@ -219,6 +220,8 @@ export default DictionariesTableEditor;
 </script>
 
 <style lang="scss" module>
+@import "@/styles/variables.scss";
+
 @keyframes highlight {
   from {
     background: #fff;
@@ -233,5 +236,13 @@ export default DictionariesTableEditor;
 
 .addRow {
   animation: highlight 1.5s linear 1;
+}
+
+.editableField {
+  cursor: pointer;
+
+  &:hover {
+    color: $darkBlue;
+  }
 }
 </style>

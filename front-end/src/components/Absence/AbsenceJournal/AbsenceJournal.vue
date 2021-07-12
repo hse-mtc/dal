@@ -109,31 +109,35 @@
                       {{ data.absences.find((x) => x.date === d).comment }}
                     </el-form-item>
                     <el-form-item>
-                      <el-button
-                        size="mini"
-                        icon="el-icon-edit"
-                        type="info"
-                        @click="
-                          onEdit(
-                            data.absences.find((x) => x.date === d),
-                            data.fullname,
-                          )
-                        "
-                      >
-                        Редактировать
-                      </el-button>
-                      <el-button
-                        size="mini"
-                        icon="el-icon-delete"
-                        type="danger"
-                        @click="
-                          handleDelete(
-                            data.absences.find((x) => x.date === d).id,
-                          )
-                        "
-                      >
-                        Удалить
-                      </el-button>
+                      <AZGuard :permissions="getPermissions('patch')">
+                        <el-button
+                          size="mini"
+                          icon="el-icon-edit"
+                          type="info"
+                          @click="
+                            onEdit(
+                              data.absences.find((x) => x.date === d),
+                              data.fullname,
+                            )
+                          "
+                        >
+                          Редактировать
+                        </el-button>
+                      </AZGuard>
+                      <AZGuard :permissions="getPermissions('delete')">
+                        <el-button
+                          size="mini"
+                          icon="el-icon-delete"
+                          type="danger"
+                          @click="
+                            handleDelete(
+                              data.absences.find((x) => x.date === d).id,
+                            )
+                          "
+                        >
+                          Удалить
+                        </el-button>
+                      </AZGuard>
                     </el-form-item>
                   </el-form>
                   <i
@@ -150,13 +154,14 @@
                     "
                   />
                 </el-popover>
-                <el-button
-                  v-else
-                  type="text"
-                  icon="el-icon-plus"
-                  class="create-absence-btn"
-                  @click="onCreate(data, d)"
-                />
+                <AZGuard v-else :permissions="getPermissions('post')">
+                  <el-button
+                    type="text"
+                    icon="el-icon-plus"
+                    class="create-absence-btn"
+                    @click="onCreate(data, d)"
+                  />
+                </AZGuard>
               </div>
             </template>
           </PrimeColumn>
@@ -237,7 +242,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
-import { ReferenceModule } from "@/store";
+import { ReferenceModule, UserModule } from "@/store";
 
 export default {
   name: "Absence",
@@ -358,13 +363,33 @@ export default {
     statuses() {
       return ReferenceModule.absenceStatuses;
     },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
   },
   async created() {
-    await this.fetchData();
     this.filter.weekday = moment().day() - 1;
     await this.onWeekdayChanged();
   },
   methods: {
+    getPermissions(method) {
+      return [
+        `absences.${method}.all`,
+        {
+          codename: `absences.${method}.milfaculty`,
+          validator: () => this.userMilfaculty === this.journal.milgroup.milfaculty,
+        },
+        {
+          codename: `absences.${method}.milgroup`,
+          validator: () => this.userMilgroups.some(
+            x => x === this.journal.milgroup.milgroup,
+          ),
+        },
+      ];
+    },
     async onWeekdayChanged() {
       this.loading = true;
       this.filter.milgroup = this.milgroups.length
@@ -466,17 +491,6 @@ export default {
           })
           .catch(err => deleteError("пропуска", err.response.status));
       });
-    },
-    async fetchData() {
-      if (!ReferenceModule.milgroups.length) {
-        await ReferenceModule.fetchMilgroups();
-      }
-      if (!ReferenceModule.absenceTypes.length) {
-        await ReferenceModule.fetchAbsenceTypes();
-      }
-      if (!ReferenceModule.absenceStatuses.length) {
-        await ReferenceModule.fetchAbsenceStatuses();
-      }
     },
     async onJournal() {
       if (this.filter.milgroup > 0) {

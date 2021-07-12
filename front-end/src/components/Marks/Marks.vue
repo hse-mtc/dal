@@ -90,9 +90,6 @@
                         <template #header>
                           <el-popover placement="top" trigger="hover">
                             <div class="header-template">
-                              <!-- <span>
-                              {{ item.topic }}
-                            </span> -->
                               <el-tag
                                 :type="tagByLessonType(item.type)"
                                 disable-transitions
@@ -104,20 +101,32 @@
                                 {{ item.room }}
                               </span>
                               <div>
-                                <el-button
-                                  size="mini"
-                                  icon="el-icon-edit"
-                                  type="info"
-                                  circle
-                                  @click="onEditLesson(item)"
-                                />
-                                <el-button
-                                  size="mini"
-                                  icon="el-icon-delete"
-                                  type="danger"
-                                  circle
-                                  @click="handleDeleteLesson(item.id)"
-                                />
+                                <AZGuard
+                                  :permissions="
+                                    getPermissions('patch', 'lessons')
+                                  "
+                                >
+                                  <el-button
+                                    size="mini"
+                                    icon="el-icon-edit"
+                                    type="info"
+                                    circle
+                                    @click="onEditLesson(item)"
+                                  />
+                                </AZGuard>
+                                <AZGuard
+                                  :permissions="
+                                    getPermissions('delete', 'lessons')
+                                  "
+                                >
+                                  <el-button
+                                    size="mini"
+                                    icon="el-icon-delete"
+                                    type="danger"
+                                    circle
+                                    @click="handleDeleteLesson(item.id)"
+                                  />
+                                </AZGuard>
                               </div>
                             </div>
                             <div slot="reference" class="header-template">
@@ -162,32 +171,42 @@
                             {{ m }}
                           </el-tag>
                         </div>
-                        <el-button
-                          type="text"
-                          icon="el-icon-plus"
-                          class="create-mark-btn"
-                          @click="
-                            onCreate(
-                              data,
-                              item,
-                              data.marks.find((x) => x.lesson === item.id),
-                            )
+                        <AZGuard
+                          :permissions="
+                            data.marks.some((x) => x.lesson === item.id)
+                              ? getPermissions('put', 'marks')
+                              : getPermissions('post', 'marks')
                           "
-                        />
+                        >
+                          <el-button
+                            type="text"
+                            icon="el-icon-plus"
+                            class="create-mark-btn"
+                            @click="
+                              onCreate(
+                                data,
+                                item,
+                                data.marks.find((x) => x.lesson === item.id),
+                              )
+                            "
+                          />
+                        </AZGuard>
                       </div>
                     </template>
                   </PrimeColumn>
                 </template>
               </PrimeTable>
             </el-col>
-            <el-col :span="2" class="new-lesson-col">
-              <el-button
-                type="primary"
-                icon="el-icon-plus"
-                circle
-                @click="onCreateLesson()"
-              />
-            </el-col>
+            <AZGuard :permissions="getPermissions('post', 'lessons')">
+              <el-col :span="2" class="new-lesson-col">
+                <el-button
+                  type="primary"
+                  icon="el-icon-plus"
+                  circle
+                  @click="onCreateLesson()"
+                />
+              </el-col>
+            </AZGuard>
           </el-row>
         </el-tab-pane>
       </el-tabs>
@@ -214,11 +233,15 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button
-          v-if="editMarkId"
-          type="danger"
-          @click="handleDelete(editMarkId)"
-        >Удалить</el-button>
+        <AZGuard :permissions="getPermissions('delete', 'marks')">
+          <el-button
+            v-if="editMarkId"
+            type="danger"
+            @click="handleDelete(editMarkId)"
+          >
+            Удалить
+          </el-button>
+        </AZGuard>
         <el-button type="primary" @click="handleAccept()">Применить</el-button>
       </span>
     </el-dialog>
@@ -316,7 +339,7 @@ import {
   patchSuccess,
   deleteSuccess,
 } from "@/utils/message";
-import { ReferenceModule } from "@/store";
+import { ReferenceModule, UserModule } from "@/store";
 
 export default {
   name: "Marks",
@@ -434,6 +457,12 @@ export default {
     milgroups() {
       return ReferenceModule.milgroups;
     },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
   },
   async created() {
     await this.getSubjects();
@@ -442,6 +471,21 @@ export default {
     this.fetchData();
   },
   methods: {
+    getPermissions(method, entity) {
+      return [
+        `${entity}.${method}.all`,
+        {
+          codename: `${entity}.${method}.milfaculty`,
+          validator: () => this.userMilfaculty === this.journal.milgroup.milfaculty,
+        },
+        {
+          codename: `${entity}.${method}.milgroup`,
+          validator: () => this.userMilgroups.some(
+            x => x === this.journal.milgroup.milgroup,
+          ),
+        },
+      ];
+    },
     getMarksByLesson(marks, lessonId) {
       const m = marks.find(x => x.lesson === lessonId);
       if (m) {
