@@ -33,7 +33,7 @@ def create_user(data: Data) -> User:
     return user
 
 
-def create_users() -> list[User]:
+def create_users() -> dict[str, User]:
     users = [
         Data(
             email="superuser@mail.com",
@@ -117,4 +117,4 @@ def create_users() -> list[User]:
         ),
     ]
 
-    return [{data.email: create_user(data)} for data in users]
+    return {data.email: create_user(data) for data in users}

@@ -33,12 +33,10 @@ def get_teacher_permissions():
     values = [
         # DMS permissions
         "books.get.all",
-        "books.put.self",
         "books.post.self",
         "books.patch.self",
         "books.delete.self",
         "favorite-books.get.self",
-        "favorite-books.put.self",
         "favorite-books.post.self",
         "favorite-books.patch.self",
         "favorite-books.delete.self",

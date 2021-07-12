@@ -143,7 +143,7 @@ class Command(BaseCommand):
             subjects=subjects,
         )
         create_favorite_books(books[:11],
-                              User.objects.get(email="vspelyak@mail.com"))
+                              User.objects.get(email="dnrepalov@mail.com"))
 
         # ----------------------------------------------------------------------
         # LMS

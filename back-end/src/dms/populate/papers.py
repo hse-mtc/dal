@@ -57,7 +57,7 @@ def create_papers(
         )
 
         for _ in range(random.randint(1, 2)):
-            paper.authors.add(random.choice(publishers))
+            paper.authors.add(random.choice(authors))
 
         for _ in range(random.randint(1, 2)):
             paper.publishers.add(random.choice(publishers))

@@ -424,6 +424,18 @@ def create_passports() -> dict[str, Passport]:
         "ufms_name": "УФМС гор. Москвы",
         "ufms_code": "740-056",
         "issue_date": "2020-10-02",
+    }, {
+        "series": "7777",
+        "code": "111111",
+        "ufms_name": "УФМС гор. Москвы",
+        "ufms_code": "740-056",
+        "issue_date": "2020-10-02",
+    }, {
+        "series": "8888",
+        "code": "111111",
+        "ufms_name": "УФМС гор. Москвы",
+        "ufms_code": "740-056",
+        "issue_date": "2020-10-02",
     }]
 
     passports = {}
@@ -715,7 +727,7 @@ def create_students(
             "surname_genitive": "Харламова",
             "name_genitive": "Дениса",
             "patronymic_genitive": "",
-            "passport": passports["6666"],
+            "passport": passports["7777"],
             "citizenship": "Узбекистан",
             "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
             "recruitment_office": recruitment_offices["Москва"],
@@ -737,7 +749,7 @@ def create_students(
             "surname_genitive": "Силуанова",
             "name_genitive": "Ильи",
             "patronymic_genitive": "Ахмат оглы",
-            "passport": passports["6666"],
+            "passport": passports["8888"],
             "citizenship": "Узбекистан",
             "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
             "recruitment_office": recruitment_offices["Москва"],
