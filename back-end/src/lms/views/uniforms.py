@@ -20,15 +20,15 @@ from auth.permissions import BasePermission
 
 
 class UniformPermission(BasePermission):
-    permission_class = 'uniforms'
-    view_name_rus = 'Форма одежды'
+    permission_class = "uniforms"
+    view_name_rus = "Форма одежды"
     scopes = [
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
     ]
 
 
-@extend_schema(tags=['uniforms'])
+@extend_schema(tags=["uniforms"])
 class UniformViewSet(QuerySetScopingMixin, ModelViewSet):
     queryset = Uniform.objects.all()
 
@@ -46,22 +46,22 @@ class UniformViewSet(QuerySetScopingMixin, ModelViewSet):
     def perform_update(self, serializer: UniformSerializer):
         serializer.save()
         requests.post(
-            f'http://{TGBOT_HOST}:{TGBOT_PORT}/uniforms/',
+            f"http://{TGBOT_HOST}:{TGBOT_PORT}/uniforms/",
             data=JSONRenderer().render(serializer.data),
         )
 
     def handle_scope_milfaculty(self, user_type, user):
-        if user_type == 'student':
+        if user_type == "student":
             milfaculty = user.milgroup.milfaculty
-        elif user_type == 'teacher':
+        elif user_type == "teacher":
             milfaculty = user.milfaculty
         else:
             return self.queryset.none()
         return self.queryset.filter(milfaculty=milfaculty)
 
     def allow_scope_milfaculty_on_create(self, data, user_type, user):
-        if user_type == 'student':
-            return data['milfaculty'] == user.milgroup.milfaculty.milfaculty
-        if user_type == 'teacher':
-            return data['milfaculty'] == user.milfaculty.milfaculty
+        if user_type == "student":
+            return data["milfaculty"] == user.milgroup.milfaculty.id
+        if user_type == "teacher":
+            return data["milfaculty"] == user.milfaculty.id
         return False

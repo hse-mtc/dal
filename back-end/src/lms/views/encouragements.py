@@ -10,15 +10,15 @@ from lms.models.encouragements import Encouragement
 from lms.serializers.encouragements import (EncouragementSerializer,
                                             EncouragementMutateSerializer)
 from lms.filters.encouragements import EncouragementFilter
-from lms.mixins import StudentTeacherQuerySetScopingMixin, ArchivedMixin
+from lms.mixins import StudentTeacherQuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class EncouragementPermission(BasePermission):
-    permission_class = 'encouragements'
-    view_name_rus = 'Поощрения'
+    permission_class = "encouragements"
+    view_name_rus = "Поощрения"
     scopes = [
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
@@ -27,8 +27,8 @@ class EncouragementPermission(BasePermission):
     ]
 
 
-@extend_schema(tags=['encouragements'])
-class EncouragementViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin,
+@extend_schema(tags=["encouragements"])
+class EncouragementViewSet(StudentTeacherQuerySetScopingMixin,
                            ModelViewSet):
     queryset = Encouragement.objects.all()
 
@@ -38,7 +38,7 @@ class EncouragementViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin,
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = EncouragementFilter
-    search_fields = ['student__surname', 'student__name', 'student__patronymic']
+    search_fields = ["student__surname", "student__name", "student__patronymic"]
 
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:

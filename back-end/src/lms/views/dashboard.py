@@ -55,15 +55,14 @@ class StudentPerformanceView(APIView):
         # find all marks for subject
         for mark in marks:
             student_subject_marks.setdefault(mark.lesson.subject.title,
-                                             []).extend(mark.mark)
+                                             []).extend(mark.values)
         for lesson in lessons:
             subject_dates.setdefault(lesson.subject.title,
                                      []).append(lesson.date)
 
-        for subject in student_subject_marks:
-            current_marks = student_subject_marks[subject]
-            student_subject_marks[subject] = float(
-                sum(current_marks) / len(current_marks))
+        for subject, current_marks in student_subject_marks.items():
+            avg = sum(current_marks) / len(current_marks)
+            student_subject_marks[subject] = avg
 
         for subject in subject_dates:
             subject_dates[subject] = len(
@@ -76,4 +75,5 @@ class StudentPerformanceView(APIView):
                 "absences": subject_dates[subject]
             }
             response.append(subject_info)
+
         return Response(response)

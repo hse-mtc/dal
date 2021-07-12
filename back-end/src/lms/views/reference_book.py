@@ -13,13 +13,13 @@ from lms.models.common import (
     Milspecialty,
     Milgroup,
 )
-from lms.models.teachers import Rank, TeacherPost
+from lms.models.teachers import Rank
 from lms.models.students import Student
 from lms.models.lessons import Room
 from lms.models.absences import AbsenceTime
 from lms.models.achievements import AchievementType
 from lms.models.universities import Program
-from lms.models.students import StudentPost, StudentSkill
+from lms.models.students import Skill
 
 from lms.serializers.common import (
     MilfacultySerializer,
@@ -29,14 +29,11 @@ from lms.serializers.common import (
     MilgroupLeadersPhonesSerializer,
 )
 from lms.serializers.universities import ProgramSerializer
-from lms.serializers.teachers import TeacherPostSerializer, RankSerializer
+from lms.serializers.teachers import RankSerializer
 from lms.serializers.lessons import RoomSerializer
 from lms.serializers.absences import AbsenceTimeSerializer
 from lms.serializers.achievements import AchievementTypeSerializer
-from lms.serializers.students import (
-    StudentPostSerializer,
-    StudentSkillSerializer,
-)
+from lms.serializers.students import SkillSerializer
 
 from lms.filters.reference_books import (
     MilspecialtyFilter,
@@ -53,30 +50,28 @@ from auth.permissions import (
 
 
 class ReferenceBookPermission(BasePermission):
-    permission_class = 'reference-books'
-    view_name_rus = 'Справочные данные'
+    permission_class = "reference-books"
+    view_name_rus = "Справочные данные"
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class ReferenceBookView(ListAPIView):
     permission_classes = [ReferenceBookPermission]
 
     model_serializer = {
-        'milfaculties': (Milfaculty, MilfacultySerializer),
-        'milgroups': (Milgroup, MilgroupSerializer),
-        'program': (Program, ProgramSerializer),
-        'ranks': (Rank, RankSerializer),
-        'teacher_posts': (TeacherPost, TeacherPostSerializer),
-        'rooms': (Room, RoomSerializer),
-        'absence_time': (AbsenceTime, AbsenceTimeSerializer),
-        'achievement_type': (AchievementType, AchievementTypeSerializer),
-        'student_post': (StudentPost, StudentPostSerializer)
+        "milfaculties": (Milfaculty, MilfacultySerializer),
+        "milgroups": (Milgroup, MilgroupSerializer),
+        "program": (Program, ProgramSerializer),
+        "ranks": (Rank, RankSerializer),
+        "rooms": (Room, RoomSerializer),
+        "absence_time": (AbsenceTime, AbsenceTimeSerializer),
+        "achievement_type": (AchievementType, AchievementTypeSerializer),
     }
 
     def list(self, request, *args, **kwargs):
         # pylint:disable=(too-many-locals)
         if request.data:
-            titles = request.data['filter_by']
+            titles = request.data["filter_by"]
         else:
             titles = self.model_serializer.keys()
         response = {}
@@ -87,7 +82,7 @@ class ReferenceBookView(ListAPIView):
         return Response(response)
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class MilfacultyViewSet(ModelViewSet):
     serializer_class = MilfacultySerializer
     queryset = Milfaculty.objects.all()
@@ -95,7 +90,7 @@ class MilfacultyViewSet(ModelViewSet):
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class MilspecialtyViewSet(ModelViewSet):
     serializer_class = MilspecialtySerializer
     queryset = Milspecialty.objects.all()
@@ -106,7 +101,7 @@ class MilspecialtyViewSet(ModelViewSet):
     filterset_class = MilspecialtyFilter
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class MilgroupViewSet(ModelViewSet):
     serializer_class = MilgroupSerializer
     queryset = Milgroup.objects.all()
@@ -123,22 +118,22 @@ class MilgroupViewSet(ModelViewSet):
 
     def get_queryset(self):
         if (self.request.method in SAFE_METHODS and
-                'archived' not in self.request.query_params):
+                "archived" not in self.request.query_params):
             return super().get_queryset().filter(archived=False)
         return super().get_queryset()
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class ProgramViewSet(ModelViewSet):
     serializer_class = ProgramSerializer
-    queryset = Program.objects.order_by('code')
+    queryset = Program.objects.order_by("code")
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
     filterset_class = ProgramFilter
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class RankViewSet(ModelViewSet):
     serializer_class = RankSerializer
     queryset = Rank.objects.all()
@@ -146,15 +141,7 @@ class RankViewSet(ModelViewSet):
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
 
-@extend_schema(tags=['reference-book'])
-class TeacherPostViewSet(ModelViewSet):
-    serializer_class = TeacherPostSerializer
-    queryset = TeacherPost.objects.all()
-
-    permission_classes = [ReadOnly | ReferenceBookPermission]
-
-
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class RoomViewSet(ModelViewSet):
     serializer_class = RoomSerializer
     queryset = Room.objects.all()
@@ -162,7 +149,7 @@ class RoomViewSet(ModelViewSet):
     permission_classes = [ReferenceBookPermission]
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class AbsenceTimeViewSet(ModelViewSet):
     serializer_class = AbsenceTimeSerializer
     queryset = AbsenceTime.objects.all()
@@ -170,7 +157,7 @@ class AbsenceTimeViewSet(ModelViewSet):
     permission_classes = [ReferenceBookPermission]
 
 
-@extend_schema(tags=['reference-book'])
+@extend_schema(tags=["reference-book"])
 class AchievementTypeViewSet(ModelViewSet):
     serializer_class = AchievementTypeSerializer
     queryset = AchievementType.objects.all()
@@ -178,42 +165,35 @@ class AchievementTypeViewSet(ModelViewSet):
     permission_classes = [ReferenceBookPermission]
 
 
-@extend_schema(tags=['reference-book'])
-class StudentPostViewSet(ModelViewSet):
-    serializer_class = StudentPostSerializer
-    queryset = StudentPost.objects.all()
+@extend_schema(tags=["reference-book"])
+class SkillViewSet(ModelViewSet):
+    serializer_class = SkillSerializer
+    queryset = Skill.objects.all()
 
     permission_classes = [ReferenceBookPermission]
 
 
-@extend_schema(tags=['reference-book'])
-class StudentSkillViewSet(ModelViewSet):
-    serializer_class = StudentSkillSerializer
-    queryset = StudentSkill.objects.all()
-
-    permission_classes = [ReferenceBookPermission]
-
-
-@extend_schema(tags=['reference-book'],
+@extend_schema(tags=["reference-book"],
                parameters=[
-                   OpenApiParameter(name='milfaculty',
-                                    description='Filter by milfaculty',
+                   OpenApiParameter(name="milfaculty",
+                                    description="Filter by milfaculty ID",
                                     required=True,
-                                    type=str),
+                                    type=int),
                ],
                responses={200: MilgroupLeadersPhonesSerializer})
 class MilgroupLeadersView(APIView):
 
     def get(self, request):
         students = Student.objects.select_related(
-            'milgroup', 'milgroup__milfaculty',
-            'contact_info').filter(milgroup__milfaculty__milfaculty=request.
-                                   query_params['milfaculty'],
-                                   student_post__title='Командир взвода')
+            "milgroup", "milgroup__milfaculty", "contact_info",
+        ).filter(
+            milgroup__milfaculty__id=request.query_params["milfaculty"],
+            post=Student.Post.MILGROUP_COMMANDER.value,
+        )
         phones = [
             s.contact_info.personal_phone_number
             for s in students
             if s.contact_info
         ]
-        response = {'phones': phones}
+        response = {"phones": phones}
         return Response(response)

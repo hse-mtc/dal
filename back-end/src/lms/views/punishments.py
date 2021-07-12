@@ -12,15 +12,15 @@ from lms.serializers.punishments import (
     PunishmentMutateSerializer,
 )
 from lms.filters.punishments import PunishmentFilter
-from lms.mixins import StudentTeacherQuerySetScopingMixin, ArchivedMixin
+from lms.mixins import StudentTeacherQuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
 
 
 class PunishmentPermission(BasePermission):
-    permission_class = 'punishments'
-    view_name_rus = 'Взыскания'
+    permission_class = "punishments"
+    view_name_rus = "Взыскания"
     scopes = [
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
@@ -29,8 +29,8 @@ class PunishmentPermission(BasePermission):
     ]
 
 
-@extend_schema(tags=['punishments'])
-class PunishmentViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin,
+@extend_schema(tags=["punishments"])
+class PunishmentViewSet(StudentTeacherQuerySetScopingMixin,
                         ModelViewSet):
     queryset = Punishment.objects.all()
 
@@ -40,7 +40,7 @@ class PunishmentViewSet(ArchivedMixin, StudentTeacherQuerySetScopingMixin,
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = PunishmentFilter
-    search_fields = ['student__surname', 'student__name', 'student__patronymic']
+    search_fields = ["student__surname", "student__name", "student__patronymic"]
 
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
