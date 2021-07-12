@@ -1,5 +1,8 @@
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+)
 
 
 class Passport(models.Model):
@@ -15,9 +18,18 @@ class Passport(models.Model):
 
 
 class RecruitmentOffice(models.Model):
-    title = models.CharField(max_length=255, blank=True)
-    city = models.CharField(max_length=127, blank=True)
-    district = models.CharField(max_length=127, blank=True)
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+    city = models.CharField(
+        max_length=127,
+        blank=True,
+    )
+    district = models.CharField(
+        max_length=127,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Recruitment Office"
@@ -61,8 +73,7 @@ class ApplicationProcess(models.Model):
         max_digits=4,
         decimal_places=2,
         default=0,
-        validators=[MinValueValidator(0),
-                    MaxValueValidator(10)],
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
     )
 
     class Meta:

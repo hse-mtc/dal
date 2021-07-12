@@ -1,60 +1,64 @@
 from django.db import models
 
 from common.models.persons import Personnel
-from lms.models.common import Milfaculty, Milgroup
+
+from lms.models.common import (
+    Milfaculty,
+    Milgroup,
+)
 
 
 class Rank(models.Model):
-    rank = models.CharField(primary_key=True, max_length=30)
+    title = models.CharField(
+        unique=True,
+        max_length=63,
+    )
 
     def __str__(self):
-        return str(self.rank)
+        return self.title
 
     class Meta:
-        verbose_name = 'Military Rank'
-        verbose_name_plural = 'Military Ranks'
-
-
-class TeacherPost(models.Model):
-    teacher_post = models.CharField(primary_key=True, max_length=100)
-
-    def __str__(self):
-        return str(self.teacher_post)
-
-    class Meta:
-        verbose_name = 'Teacher Post'
-        verbose_name_plural = 'Teacher Posts'
+        verbose_name = "Military Rank"
+        verbose_name_plural = "Military Ranks"
 
 
 class Teacher(Personnel):
-    milfaculty = models.ForeignKey(Milfaculty,
-                                   models.DO_NOTHING,
-                                   null=True,
-                                   blank=True)
+
+    class Post(models.TextChoices):
+        MTC_HEAD = "CH", "начальник ВУЦ"
+        MILFACULTY_HEAD = "FH", "начальник цикла"
+        TEACHERS = "TE", "профессорско-преподавательский состав"
+
+    post = models.CharField(
+        max_length=2,
+        choices=Post.choices,
+        default=Post.TEACHERS.value,
+        null=True,
+        blank=True,
+    )
     rank = models.ForeignKey(
-        Rank,
-        models.DO_NOTHING,
+        to=Rank,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-    teacher_post = models.ForeignKey(
-        TeacherPost,
-        models.DO_NOTHING,
+
+    milfaculty = models.ForeignKey(
+        to=Milfaculty,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-    milgroup = models.ForeignKey(
-        Milgroup,
-        models.DO_NOTHING,
+    milgroups = models.ManyToManyField(
+        to=Milgroup,
         blank=True,
-        null=True,
     )
 
     def __str__(self):
-        return f'ID = {str(self.id)}\n' \
-               f'Full name = {str(self.surname)} ' \
-               f'{str(self.name)} {str(self.patronymic)}\n'
+        return f"ID = {str(self.id)}\n" \
+               f"Full name = {str(self.surname)} " \
+               f"{str(self.name)} {str(self.patronymic)}\n"
 
     class Meta:
-        verbose_name = 'Teacher'
-        verbose_name_plural = 'Teachers'
+        verbose_name = "Teacher"
+        verbose_name_plural = "Teachers"

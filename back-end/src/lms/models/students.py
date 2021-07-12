@@ -18,26 +18,18 @@ from lms.models.applicants import (
 )
 
 
-class StudentPost(models.Model):
-    title = models.CharField(unique=True, max_length=100, default="Студент")
-
-    class Meta:
-        verbose_name = "Student Post"
-        verbose_name_plural = "Student Posts"
-
-    def __str__(self) -> str:
-        return str(self.title)
-
-
-class StudentSkill(models.Model):
-    title = models.CharField(unique=True, max_length=200)
-
-    class Meta:
-        verbose_name = "Student Skill"
-        verbose_name_plural = "Student Skills"
+class Skill(models.Model):
+    title = models.CharField(
+        unique=True,
+        max_length=255,
+    )
 
     def __str__(self) -> str:
-        return str(self.title)
+        return self.title
+
+    class Meta:
+        verbose_name = "Skill"
+        verbose_name_plural = "Skills"
 
 
 class Student(Personnel):
@@ -50,32 +42,52 @@ class Student(Personnel):
         AWAITING = "AW", "в ожидании"
         DECLINED = "DE", "отклонен"
 
+
+    class Post(models.TextChoices):
+        MILGROUP_COMMANDER = "GC", "командир взвода"
+        MILSQUAD_COMMANDER = "SC", "командир отделения"
+
     status = models.CharField(
         max_length=2,
         choices=Status.choices,
         default=Status.APPLICANT.value,
     )
+    post = models.CharField(
+        max_length=2,
+        choices=Post.choices,
+        default=None,
+        null=True,
+        blank=True,
+    )
 
     milgroup = models.ForeignKey(
         to=Milgroup,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
     milspecialty = models.ForeignKey(
         to=Milspecialty,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         null=True,
+        blank=True,
+    )
+
+    skills = models.ManyToManyField(
+        to=Skill,
         blank=True,
     )
 
     passport = models.OneToOneField(
         to=Passport,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-    family = models.ManyToManyField(to=Relative, blank=True)
+    family = models.ManyToManyField(
+        to=Relative,
+        blank=True,
+    )
     recruitment_office = models.ForeignKey(
         to=RecruitmentOffice,
         on_delete=models.SET_NULL,
@@ -96,13 +108,6 @@ class Student(Personnel):
         blank=True,
     )
 
-    student_post = models.ForeignKey(
-        to=StudentPost,
-        on_delete=models.DO_NOTHING,
-        null=True,
-        blank=True,
-    )
-    student_skills = models.ManyToManyField(to=StudentSkill, blank=True)
 
     class Meta:
         verbose_name = "Student"
