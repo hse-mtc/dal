@@ -25,11 +25,9 @@ from lms.views.reference_book import (
     MilgroupViewSet,
     ProgramViewSet,
     RankViewSet,
-    TeacherPostViewSet,
     RoomViewSet,
     AchievementTypeViewSet,
-    StudentPostViewSet,
-    StudentSkillViewSet,
+    SkillViewSet,
     MilgroupLeadersView,
 )
 from lms.views.subjects import LessonSubjectViewSet
@@ -39,7 +37,7 @@ from lms.views.uniforms import UniformViewSet
 from lms.views.personnel import SearchPersonnelUsersViewSet
 
 routers = DefaultRouter()
-routers.register('students/approvements', ActivateStudentViewSet)
+routers.register('students/approvals', ActivateStudentViewSet)
 routers.register('students/basic', StudentBasicInfoViewSet)
 routers.register('students/extra', StudentExtraInfoViewSet)
 routers.register('students/skills', StudentSkillsView)
@@ -57,12 +55,10 @@ routers.register('milspecialties', MilspecialtyViewSet)
 routers.register('milgroups', MilgroupViewSet)
 routers.register('programs', ProgramViewSet)
 routers.register('ranks', RankViewSet)
-routers.register('teacher-posts', TeacherPostViewSet)
 routers.register('rooms', RoomViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
 routers.register('uniforms', UniformViewSet)
-routers.register('student-posts', StudentPostViewSet)
-routers.register('student-skills', StudentSkillViewSet)
+routers.register('skills', SkillViewSet)
 routers.register('personnel-users', SearchPersonnelUsersViewSet)
 
 urlpatterns = [
