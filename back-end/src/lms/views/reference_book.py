@@ -104,7 +104,7 @@ class MilspecialtyViewSet(ModelViewSet):
 @extend_schema(tags=["reference-book"])
 class MilgroupViewSet(ModelViewSet):
     serializer_class = MilgroupSerializer
-    queryset = Milgroup.objects.all()
+    queryset = Milgroup.objects.order_by("title")
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
@@ -115,12 +115,6 @@ class MilgroupViewSet(ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return MilgroupMutateSerializer
         return MilgroupSerializer
-
-    def get_queryset(self):
-        if (self.request.method in SAFE_METHODS and
-                "archived" not in self.request.query_params):
-            return super().get_queryset().filter(archived=False)
-        return super().get_queryset()
 
 
 @extend_schema(tags=["reference-book"])
