@@ -76,7 +76,7 @@ class ApplicantWithApplicationSerializer(ModelSerializer):
         read_only=True,
     )
     faculty = CharField(
-        source="university_info.program.faculty",
+        source="university_info.program.faculty.title",
         read_only=True,
     )
     application_process = ApplicationProcessSerializer(read_only=True)
