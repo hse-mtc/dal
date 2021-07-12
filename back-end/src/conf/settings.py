@@ -118,6 +118,11 @@ DBBACKUP_CONNECTORS = {
     }
 }
 
+# Default primary key field type
+# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -246,6 +251,8 @@ WATCHDOC_PORT = os.environ["WATCHDOC_PORT"]
 
 TGBOT_HOST = os.environ["TGBOT_HOST"]
 TGBOT_PORT = os.environ["TGBOT_PORT"]
+TGBOT_EMAIL = os.environ["TGBOT_EMAIL"]
+TGBOT_PASSWORD = os.environ["TGBOT_PASSWORD"]
 
 # Swagger settings for drf-spectacular
 
