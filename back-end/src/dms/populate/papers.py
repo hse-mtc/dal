@@ -50,17 +50,14 @@ def create_papers(
     ]
 
     for file in files:
-        paper, is_created = Paper.objects.get_or_create(
+        paper, _ = Paper.objects.get_or_create(
             title=random.choice(titles),
             category=random.choice(categories),
             file=file,
         )
 
-        if not is_created:
-            continue
-
         for _ in range(random.randint(1, 2)):
-            paper.authors.add(random.choice(authors))
+            paper.authors.add(random.choice(publishers))
 
         for _ in range(random.randint(1, 2)):
             paper.publishers.add(random.choice(publishers))

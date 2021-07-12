@@ -47,10 +47,10 @@ from lms.views.populate import (
     create_milspecialties,
     create_milgroups,
     create_ranks,
-    create_posts,
     create_passports,
     create_recruitments_offices,
     create_university_infos,
+    create_birth_infos,
     create_students,
     create_teachers,
     create_absences,
@@ -64,8 +64,7 @@ from lms.views.populate import (
     create_absence_restriction_time,
     create_marks,
     create_uniforms,
-    create_student_posts,
-    create_student_skills,
+    create_skills,
     create_contact_infos,
 )
 
@@ -83,21 +82,31 @@ class Command(BaseCommand):
 
         User = get_user_model()
 
-        create_users()
+        users = create_users()
 
-        students, _ = Group.objects.get_or_create(name="students")
-        teachers, _ = Group.objects.get_or_create(name="teachers")
+        students, _ = Group.objects.get_or_create(name="Студент")
+        teachers, _ = Group.objects.get_or_create(name="Преподаватель")
         milfaculty_heads, _ = Group.objects.get_or_create(
-            name="milfaculty_heads")
+            name="Начальник цикла")
 
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
 
-        students.user_set.add(User.objects.get(email="student@mail.com"))
-        teachers.user_set.add(User.objects.get(email="teacher@mail.com"))
+        students.user_set.add(User.objects.get(email="gakhromov@mail.com"))
+        students.user_set.add(User.objects.get(email="askatsevalov@mail.com"))
+        students.user_set.add(User.objects.get(email="veisakov@mail.com"))
+        students.user_set.add(User.objects.get(email="naaliev@mail.com"))
+        students.user_set.add(User.objects.get(email="avkurkin@mail.com"))
+        students.user_set.add(User.objects.get(email="psivanov@mail.com"))
+
+        teachers.user_set.add(User.objects.get(email="ivnikandrov@mail.com"))
+        teachers.user_set.add(User.objects.get(email="ivmesheryakov@mail.com"))
+        teachers.user_set.add(User.objects.get(email="ivkovalchuk@mail.com"))
+        teachers.user_set.add(User.objects.get(email="ksgavrilov@mail.com"))
+
         milfaculty_heads.user_set.add(
-            User.objects.get(email="milfaculty_head@mail.com"))
+            User.objects.get(email="dnrepalov@mail.com"))
 
         # ----------------------------------------------------------------------
         # Common
@@ -147,7 +156,6 @@ class Command(BaseCommand):
         milgroups = create_milgroups(milfaculties)
 
         ranks = create_ranks()
-        posts = create_posts()
 
         # nearest day for 18XX milgroups
         nearest_day = datetime.strptime(
@@ -155,24 +163,29 @@ class Command(BaseCommand):
             "%Y-%m-%d")
 
         passports = create_passports()
-        offices = create_recruitments_offices()
-        infos = create_university_infos(programs)
-        student_posts = create_student_posts()
-        student_skills = create_student_skills()
-        contacts = create_contact_infos()
+        recruitment_offices = create_recruitments_offices()
+        university_infos = create_university_infos(programs)
+        skills = create_skills()
+        contact_infos = create_contact_infos()
+        birth_infos = create_birth_infos()
         students = create_students(
-            milgroups,
-            programs,
-            milspecialties,
-            passports,
-            offices,
-            infos,
-            student_posts,
-            student_skills,
-            contacts,
+            milgroups=milgroups,
+            milspecialties=milspecialties,
+            passports=passports,
+            recruitment_offices=recruitment_offices,
+            university_infos=university_infos,
+            skills=skills,
+            contact_infos=contact_infos,
+            birth_infos=birth_infos,
+            users=users,
         )
 
-        teachers = create_teachers(milgroups, milfaculties, ranks, posts)
+        teachers = create_teachers(
+            milgroups=milgroups,
+            milfaculties=milfaculties,
+            ranks=ranks,
+            users=users,
+        )
 
         create_absences(students, nearest_day)
 
