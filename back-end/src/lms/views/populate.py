@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,unused-argument,too-many-arguments,too-many-locals
+# pylint: disable=line-too-long,unused-argument,too-many-arguments,too-many-locals,too-many-lines
 
 from datetime import (
     datetime,
@@ -9,6 +9,8 @@ from datetime import (
 from django.contrib.auth import get_user_model
 
 from common.models.persons import BirthInfo
+from common.models.subjects import Subject
+from common.models.persons import ContactInfo
 
 from lms.models.common import (
     Milfaculty,
@@ -47,14 +49,11 @@ from lms.models.lessons import (
 from lms.models.marks import Mark
 from lms.models.uniforms import Uniform
 
-from common.models.subjects import Subject
-from common.models.persons import ContactInfo
-
-
 User = get_user_model()
 
 # ------------------------------------------------------------------------------
 # Universities
+
 
 def create_faculties():
     values = ["МИЭМ", "МИЭФ", "ФКН"]
@@ -99,8 +98,7 @@ def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
 
 
 def create_university_infos(
-    programs: dict[str, Program],
-) -> dict[str, UniversityInfo]:
+    programs: dict[str, Program],) -> dict[str, UniversityInfo]:
     values = [{
         "card_id": "HSE11229",
         "group": "БИТ 188",
@@ -146,6 +144,7 @@ def create_university_infos(
 
     return infos
 
+
 # ------------------------------------------------------------------------------
 # LMS.Common
 
@@ -176,8 +175,7 @@ def create_milfaculties() -> dict[str, Milfaculty]:
 
 
 def create_milgroups(
-    milfaculties: dict[str, Milfaculty],
-) -> dict[str, Milgroup]:
+    milfaculties: dict[str, Milfaculty],) -> dict[str, Milgroup]:
     values = [{
         "title": "1801",
         "milfaculty": milfaculties["Разведка"],
@@ -247,14 +245,13 @@ def create_milspecialties():
         "available_for": [UniversityInfo.Campus.MOSCOW.value],
     }, {
         "code": "453100",
-        "title":
-            "Математическое и программное обеспечение функционирования "
-            "вычислительных комплексов ракетно-космической обороны",
+        "title": "Математическое и программное обеспечение функционирования "
+                 "вычислительных комплексов ракетно-космической обороны",
         "available_for": [UniversityInfo.Campus.MOSCOW.value],
     }, {
         "code": "461300",
         "title": "Эксплуатация и ремонт радиоэлектронного оборудования "
-                        "самолетов, вертолетов и авиационных ракет",
+                 "самолетов, вертолетов и авиационных ракет",
         "available_for": [UniversityInfo.Campus.MOSCOW.value],
     }, {
         "code": "094001",
@@ -263,8 +260,8 @@ def create_milspecialties():
     }, {
         "code": "411300",
         "title": "Эксплуатация и ремонт автоматизированных систем "
-                        "комплексов баллистических стратегических ракет "
-                        "наземного базирования",
+                 "комплексов баллистических стратегических ракет "
+                 "наземного базирования",
         "available_for": [UniversityInfo.Campus.MOSCOW.value],
     }, {
         "code": "751100",
@@ -288,6 +285,7 @@ def create_milspecialties():
         specs[value["title"]] = spec
 
     return specs
+
 
 # ------------------------------------------------------------------------------
 # Teachers
@@ -376,6 +374,7 @@ def create_teachers(
         teachers[value["surname"]] = teacher
 
     return teachers
+
 
 # ------------------------------------------------------------------------------
 # Applicants
@@ -466,6 +465,7 @@ def create_recruitments_offices() -> dict[str, RecruitmentOffice]:
         offices[fields["city"]] = office
 
     return offices
+
 
 # ------------------------------------------------------------------------------
 # Common
@@ -782,8 +782,8 @@ def create_absence_restriction_time():
         return
     restriction_time = time(hour=9, minute=15)
     AbsenceTime.objects.create(absence_restriction_time=restriction_time)
-    
-    
+
+
 def create_absences(students: dict[str, Student], nearest_day: datetime):
     date_f = "%Y-%m-%d"
 
@@ -822,9 +822,10 @@ def create_absences(students: dict[str, Student], nearest_day: datetime):
 # ------------------------------------------------------------------------------
 # Punishments
 
+
 def create_punishments(
     students: dict[str, Student],
-    teachers: dict[str, Teacher], 
+    teachers: dict[str, Teacher],
     nearest_day: datetime,
 ):
     date_f = "%Y-%m-%d"
@@ -854,6 +855,7 @@ def create_punishments(
 
 # ------------------------------------------------------------------------------
 # Encouragements
+
 
 def create_encouragements(
     students: dict[str, Student],
@@ -885,6 +887,7 @@ def create_encouragements(
 
 # ------------------------------------------------------------------------------
 # Achievements
+
 
 def create_achievement_types():
     values = ["Спортивные", "Научные"]
@@ -944,6 +947,7 @@ def create_subjects():
         subjects[value] = subject
 
     return subjects
+
 
 # ------------------------------------------------------------------------------
 # Lessons
@@ -1052,6 +1056,7 @@ def create_lessons(
         lessons.append(lesson)
 
     return lessons
+
 
 # ------------------------------------------------------------------------------
 # Marks

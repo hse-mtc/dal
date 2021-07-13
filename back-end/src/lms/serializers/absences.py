@@ -37,8 +37,7 @@ class AbsenceMutateSerializer(BaseMutateSerializer):
 
 class AbsenceJournalQuerySerializer(Serializer):
     milgroup = IntegerField(
-        required=True,
-        validators=[PresentInDatabaseValidator(Milgroup, "id")])
+        required=True, validators=[PresentInDatabaseValidator(Milgroup, "id")])
     date_from = DateField(required=False)
     date_to = DateField(required=False)
 

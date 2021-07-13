@@ -1,7 +1,6 @@
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import SAFE_METHODS
 from rest_framework.views import APIView
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -179,7 +178,9 @@ class MilgroupLeadersView(APIView):
 
     def get(self, request):
         students = Student.objects.select_related(
-            "milgroup", "milgroup__milfaculty", "contact_info",
+            "milgroup",
+            "milgroup__milfaculty",
+            "contact_info",
         ).filter(
             milgroup__milfaculty__id=request.query_params["milfaculty"],
             post=Student.Post.MILGROUP_COMMANDER.value,

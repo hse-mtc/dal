@@ -92,13 +92,7 @@
             </el-select>
             <span v-else class="field-value">
               {{
-                CAMPUSES.some(
-                  (x) => x.code === displayInfo.university_info.campus,
-                )
-                  ? CAMPUSES.find(
-                    (x) => x.code === displayInfo.university_info.campus,
-                  ).title
-                  : "---"
+                CAMPUSES[displayInfo.university_info.campus] || "---"
               }}
             </span>
           </transition>
@@ -143,13 +137,13 @@
             >
               <el-option
                 v-for="item in milspecialties"
-                :key="item.code"
-                :label="item.milspecialty"
-                :value="item.code"
+                :key="item.id"
+                :label="item.title"
+                :value="item"
               />
             </el-select>
             <span v-else class="field-value">
-              {{ displayInfo.milspecialty }}
+              {{ displayInfo.milspecialty ? displayInfo.milspecialty.title : "---" }}
             </span>
           </transition>
         </el-form-item>
@@ -348,6 +342,7 @@ export default {
         this.modifyInfo.passport.code = code;
         const requestBody = { ...this.modifyInfo };
         requestBody.university_info.program = this.modifyInfo.university_info.program.code;
+        requestBody.milspecialty = this.modifyInfo.milspecialty.id;
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
         this.modify = false;

@@ -89,14 +89,14 @@
                     <el-form-item label="Тип причины: ">
                       <el-tag
                         :type="
-                          tagByAbsenceType(
-                            data.absences.find((x) => x.date === d).type,
+                          tagByExcuse(
+                            data.absences.find((x) => x.date === d).excuse,
                           )
                         "
                         disable-transitions
                       >
                         {{
-                          EXCUSES[data.absences.find((x) => x.date === d).type]
+                          EXCUSES[data.absences.find((x) => x.date === d).excuse]
                         }}
                       </el-tag>
                     </el-form-item>
@@ -180,7 +180,7 @@
       >
         <el-form-item label="Тип причины: ">
           <el-select
-            v-model="editAbsence.type"
+            v-model="editAbsence.excuse"
             placeholder="Выберите тип причины"
             style="display: block"
           >
@@ -245,21 +245,6 @@ import { WEEKDAYS, EXCUSES, ABSENCE_STATUSES } from "@/utils/enums";
 
 export default {
   name: "Absence",
-  components: {},
-  filters: {
-    absenceTypeFilter(value) {
-      switch (value) {
-        case "SE":
-          return "Уважительная";
-        case "NS":
-          return "Неуважительная";
-        case "LA":
-          return "Опоздание";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   data() {
     return {
       EXCUSES,
@@ -270,8 +255,8 @@ export default {
       editAbsence: {
         id: 0,
         date: "",
-        absence_type: "",
-        absence_status: "",
+        excuse: "",
+        status: "",
         student: {
           id: "",
           name: "",
@@ -334,7 +319,7 @@ export default {
   computed: {
     milgroups() {
       return ReferenceModule.milgroups.filter(
-        x => x.weekday === this.filter.weekday,
+        x => x.weekday === +this.filter.weekday,
       );
     },
     userMilfaculty() {
@@ -376,8 +361,8 @@ export default {
       // eslint-disable-next-line no-param-reassign
       absence.status = absence.status === "CL" ? "OP" : "CL";
     },
-    tagByAbsenceType(type) {
-      switch (type) {
+    tagByExcuse(excuse) {
+      switch (excuse) {
         case "NS":
           return "danger";
         case "LA":

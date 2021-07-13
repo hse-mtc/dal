@@ -234,11 +234,13 @@ class MarkJournalView(GenericAPIView):
         date_from = datetime.fromisoformat(query_params.data["date_from"])
         date_to = datetime.fromisoformat(query_params.data["date_to"])
 
+        milgroup_id = request.query_params["milgroup"]
+
         # date_range = get_date_range(date_from, date_to, milgroup["weekday"])
         lessons = Lesson.objects.filter(
             date__lte=date_to,
             date__gte=date_from,
-            milgroup=request.query_params["milgroup"],
+            milgroup=milgroup_id,
             subject=request.query_params["subject"]).order_by(
                 "date", "ordinal")
         data["lessons"] = LessonSerializer(lessons, many=True).data
@@ -255,8 +257,8 @@ class MarkJournalView(GenericAPIView):
         if scope == Permission.Scope.SELF:
             filter_kwargs = {"user": request.user}
         else:
-            filter_kwargs = {"milgroup": milgroup}
-
+            filter_kwargs = {"milgroup": milgroup_id}
+        print(filter_kwargs)
         data["students"] = MarkJournalSerializer(
             Student.objects.filter(**filter_kwargs),
             context={

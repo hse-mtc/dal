@@ -10,7 +10,7 @@ class BasePermission(permissions.BasePermission):
     scopes = [
         Permission.Scope.ALL,
     ]
-    
+
     methods_str = {
         "get": ": получение данных",
         "post": ": добавление данных",

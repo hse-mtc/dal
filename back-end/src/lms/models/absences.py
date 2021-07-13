@@ -60,8 +60,7 @@ class AbsenceTime(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk and AbsenceTime.objects.exists():
             raise ValidationError(
-                "There can only be one instance of absence restriction time"
-            )
+                "There can only be one instance of absence restriction time")
         return super().save(*args, **kwargs)
 
     def __str__(self):

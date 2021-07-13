@@ -1,3 +1,8 @@
+import CA from "@/assets/uniform-picker/cap.svg";
+import HA from "@/assets/uniform-picker/hat.svg";
+
+import PC from "@/assets/uniform-picker/pea-coat.svg";
+
 export const TEACHER_POSTS = {
   CH: "Начальник ВУЦ",
   FH: "Начальник цикла",
@@ -23,15 +28,15 @@ export const STUDENT_STATUSES = {
   GR: "Выпустился",
 };
 
-export const WEEKDAYS = {
-  0: "Понедельник",
-  1: "Вторник",
-  2: "Среда",
-  3: "Четверг",
-  4: "Пятница",
-  5: "Суббота",
-  6: "Воскресенье",
-};
+export const WEEKDAYS = [
+  "Понедельник",
+  "Вторник",
+  "Среда",
+  "Четверг",
+  "Пятница",
+  "Суббота",
+  "Воскресенье",
+];
 
 export const EXCUSES = {
   LE: "Уважительная",
@@ -42,4 +47,30 @@ export const EXCUSES = {
 export const ABSENCE_STATUSES = {
   OP: "Открыт",
   CL: "Закрыт",
+};
+
+export const ENCOURAGEMENT_TYPES = {
+  EN: "Благодарность",
+  RE: "Снятие взыскания",
+};
+
+export const PUNISHMENT_TYPES = {
+  PU: "Взыскание",
+  RE: "Выговор",
+};
+
+export const LESSON_TYPES = {
+  SE: "Семинар",
+  LE: "Лекция",
+  GR: "Групповое занятия",
+  PR: "Практическое занятие",
+  FI: "Зачет",
+  EX: "Экзамен",
+};
+export const HEAD_DRESSES = {
+  CA, HA,
+};
+export const OUTERWEARS = {
+  JA: "",
+  PC,
 };

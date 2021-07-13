@@ -13,7 +13,6 @@ from rest_framework.filters import SearchFilter
 from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
-from rest_framework.permissions import SAFE_METHODS
 
 from django_filters.rest_framework import DjangoFilterBackend
 

@@ -21,7 +21,10 @@ from lms.models.students import (
     Student,
     Skill,
 )
-from lms.serializers.common import MilgroupSerializer
+from lms.serializers.common import (
+    MilgroupSerializer,
+    MilspecialtySerializer,
+)
 from lms.serializers.applicants import (
     PassportSerializer,
     RecruitmentOfficeSerializer,
@@ -137,8 +140,8 @@ class StudentBasicInfoSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            "id", "fullname", "milgroup", "photo", "post",
-            "contact_info", "status", "birth_info"
+            "id", "fullname", "milgroup", "photo", "post", "contact_info",
+            "status", "birth_info"
         ]
 
 
@@ -146,6 +149,7 @@ class StudentExtraInfoSerializer(ModelSerializer):
     contact_info = ContactInfoSerializer(read_only=True)
     passport = PassportSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
+    milspecialty = MilspecialtySerializer(read_only=True)
 
     class Meta:
         model = Student

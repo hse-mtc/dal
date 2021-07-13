@@ -210,12 +210,12 @@
                 </el-select>
                 <span v-else-if="displayInfo.milgroups" class="field-value">
                   <div
-                    v-for="milgroup in displayInfo.milgroups"
-                    :key="milgroup.id"
+                    v-for="mg in displayInfo.milgroups"
+                    :key="mg.id"
                   >
-                    {{ milgroup.title }}
+                    {{ mg.title }}
                     <sub>
-                      {{ milgroup.milfaculty.abbreviation }}
+                      {{ mg.milfaculty.abbreviation }}
                     </sub>
                   </div>
                 </span>
@@ -369,7 +369,6 @@ export default {
       return UserModule.personType;
     },
     milgroup() {
-      console.log(this.displayInfo);
       return this.displayInfo.milgroup || {};
     },
   },

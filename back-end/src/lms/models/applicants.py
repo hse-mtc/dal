@@ -73,7 +73,8 @@ class ApplicationProcess(models.Model):
         max_digits=4,
         decimal_places=2,
         default=0,
-        validators=[MinValueValidator(0), MaxValueValidator(10)],
+        validators=[MinValueValidator(0),
+                    MaxValueValidator(10)],
     )
 
     class Meta:

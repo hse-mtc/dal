@@ -21,6 +21,7 @@ class User extends VuexModule {
   _permissions = [];
   _campuses = [];
   _person = {};
+  _isSuperuser = false;
   _userInfoLoaded = false;
 
   @Mutation
@@ -69,6 +70,11 @@ class User extends VuexModule {
     this._person = person;
   }
 
+  @Mutation
+  SET_IS_SUPERUSER(isSuperuser) {
+    this._isSuperuser = isSuperuser;
+  }
+
   @Action
   async login(userInfo) {
     const { email, password } = userInfo;
@@ -94,14 +100,14 @@ class User extends VuexModule {
       }
 
       const {
-        // eslint-disable-next-line camelcase
-        email, campuses, person, all_permissions: permissions,
+        email, campuses, person, all_permissions: permissions, is_superuser: isSuperuser,
       } = data;
 
       this.SET_EMAIL(email);
       this.SET_CAMPUSES(campuses);
       this.SET_PERMISSIONS(permissions);
       this.SET_PERSON(person);
+      this.SET_IS_SUPERUSER(isSuperuser);
       this.SET_IS_LOADED(true);
     } catch (err) {
       getError("информации о пользователе", err.response.status);
@@ -116,6 +122,7 @@ class User extends VuexModule {
     this.SET_PERSON({});
     this.SET_USER_ID(null);
     this.SET_PERMISSIONS([]);
+    this.SET_IS_SUPERUSER(false);
     this.SET_IS_LOADED(false);
   }
 
@@ -141,6 +148,14 @@ class User extends VuexModule {
     }
 
     return this._permissions;
+  }
+
+  get isSuperuser() {
+    if (!this._userInfoLoaded) {
+      UserModule.getUser();
+    }
+
+    return this._isSuperuser;
   }
 
   get personType() {

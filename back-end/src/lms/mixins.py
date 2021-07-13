@@ -165,9 +165,9 @@ class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
 
         student = student.first()
         teacher = teacher.first()
-        st = user_milfaculty == student.milgroup.milfaculty
-        te = user_milfaculty == teacher.milfaculty
-        return st and te
+        st_ch = user_milfaculty == student.milgroup.milfaculty
+        te_ch = user_milfaculty == teacher.milfaculty
+        return st_ch and te_ch
 
     def handle_scope_milgroup(self, user_type, user):
         if user_type == "student":
@@ -192,14 +192,15 @@ class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
         student = student.first()
         teacher = teacher.first()
 
+        # pylint: disable=no-else-return
         if user_type == "student":
-            st = user.milgroup == student.milgroup
-            te = user.milgroup in teacher.milgroups
-            return st and te
+            st_ch = user.milgroup == student.milgroup
+            te_ch = user.milgroup in teacher.milgroups
+            return st_ch and te_ch
         elif user_type == "teacher":
-            st = student.milgroup in user.milgroups
-            te = teacher.user == user
-            return st and te
+            st_ch = student.milgroup in user.milgroups
+            te_ch = teacher.user == user
+            return st_ch and te_ch
         return False
 
     def handle_scope_self(self, user_type, user):

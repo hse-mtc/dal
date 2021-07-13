@@ -46,8 +46,7 @@ class AbsencePermission(BasePermission):
 
 
 @extend_schema(tags=["absences"])
-class AbsenceViewSet(QuerySetScopingMixin,
-                     ModelViewSet):
+class AbsenceViewSet(QuerySetScopingMixin, ModelViewSet):
     queryset = Absence.objects.all()
 
     permission_classes = [AbsencePermission]

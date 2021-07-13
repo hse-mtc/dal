@@ -30,8 +30,7 @@ class PunishmentPermission(BasePermission):
 
 
 @extend_schema(tags=["punishments"])
-class PunishmentViewSet(StudentTeacherQuerySetScopingMixin,
-                        ModelViewSet):
+class PunishmentViewSet(StudentTeacherQuerySetScopingMixin, ModelViewSet):
     queryset = Punishment.objects.all()
 
     permission_classes = [PunishmentPermission]

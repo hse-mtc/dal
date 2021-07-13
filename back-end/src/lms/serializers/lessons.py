@@ -29,11 +29,12 @@ class LessonShortSerializer(ModelSerializer):
     class Meta:
         model = Lesson
         exclude = ["milgroup"]
-        
-        
+
+
 class LessonSerializer(ModelSerializer):
     subject = LessonSubjectSerializer(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
+    room = RoomSerializer(read_only=True)
 
     class Meta:
         model = Lesson
@@ -49,8 +50,7 @@ class LessonMutateSerializer(BaseMutateSerializer):
 
 class LessonJournalQuerySerializer(Serializer):
     milgroup = IntegerField(
-        required=True,
-        validators=[PresentInDatabaseValidator(Milgroup, "id")])
+        required=True, validators=[PresentInDatabaseValidator(Milgroup, "id")])
     date_from = DateField(required=False)
     date_to = DateField(required=False)
 

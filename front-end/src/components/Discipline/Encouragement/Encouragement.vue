@@ -30,7 +30,7 @@
       <el-col :span="5">
         <el-select
           v-model="filter.mg"
-          value-key="milgroup"
+          value-key="id"
           clearable
           placeholder="Выберите взвод"
           style="display: block"
@@ -38,13 +38,13 @@
         >
           <el-option
             v-for="item in milgroups"
-            :key="item.milgroup"
-            :label="item.milgroup"
+            :key="item.id"
+            :label="item.title"
             :value="item"
           >
-            <span style="float: left">{{ item.milgroup }}</span>
+            <span style="float: left">{{ item.title }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{
-              item.milfaculty
+              item.milfaculty.abbreviation
             }}</span>
           </el-option>
         </el-select>
@@ -58,10 +58,10 @@
           @change="onFilter"
         >
           <el-option
-            v-for="item in types"
-            :key="item.code"
-            :label="item.label"
-            :value="item.code"
+            v-for="value, key in ENCOURAGEMENT_TYPES"
+            :key="key"
+            :label="value"
+            :value="key"
           />
         </el-select>
       </el-col>
@@ -70,6 +70,7 @@
       :permissions="[
         'encouragements.post.all',
         'encouragements.post.milfaculty',
+        'encouragements.post.milgroup',
         'encouragements.post.self',
       ]"
     >
@@ -116,7 +117,7 @@
           column-key="teacher.fullname"
         />
         <PrimeColumn
-          :field="(row) => row.student.milgroup.milgroup"
+          :field="(row) => row.student.milgroup.title"
           column-key="milgroup"
           sortable
           header="Взвод"
@@ -129,7 +130,7 @@
               :type="tagByEncouragementType(data.type)"
               disable-transitions
             >
-              {{ data.type | typeFilter }}
+              {{ ENCOURAGEMENT_TYPES[data.type] }}
             </el-tag>
           </template>
         </PrimeColumn>
@@ -247,10 +248,10 @@
             style="display: block"
           >
             <el-option
-              v-for="item in types"
-              :key="item.code"
-              :label="item.label"
-              :value="item.code"
+              v-for="value, key in ENCOURAGEMENT_TYPES"
+              :key="key"
+              :label="value"
+              :value="key"
             />
           </el-select>
         </el-form-item>
@@ -290,23 +291,13 @@ import { UserModule, ReferenceModule } from "@/store";
 import moment from "moment";
 import { getStudent } from "@/api/students";
 import { getTeacher } from "@/api/teachers";
+import { ENCOURAGEMENT_TYPES } from "@/utils/enums";
 
 export default {
   name: "Encouragement",
-  filters: {
-    typeFilter(value) {
-      switch (value) {
-        case "EN":
-          return "Благодарность";
-        case "RE":
-          return "Снятие взыскания";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   data() {
     return {
+      ENCOURAGEMENT_TYPES,
       editEncouragement: {
         id: 0,
         date: "",
@@ -318,10 +309,6 @@ export default {
       editEncouragementFullname: null,
       dialogVisible: false,
       encouragements: [],
-      types: [
-        { label: "Благодарность", code: "EN" },
-        { label: "Снятие взыскания", code: "RE" },
-      ],
       filter: {
         search: null,
         mg: null,
@@ -425,7 +412,7 @@ export default {
           this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
         type: this.filter.type,
         search: this.filter.search,
-        milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
+        milgroup: this.filter.mg?.id,
       })
         .then(response => {
           this.encouragements = response.data;

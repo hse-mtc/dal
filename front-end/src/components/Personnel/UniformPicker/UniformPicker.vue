@@ -1,18 +1,17 @@
 <template>
   <div class="text-center">
-    <el-tabs type="border-card" @tab-click="handleClick">
+    <el-tabs type="border-card">
       <el-tab-pane
         v-for="milfaculty in milfaculties"
-        :key="milfaculty.milfaculty"
-        v-loading="milfaculty.milfaculty !== uniform.milfaculty"
-        :label="milfaculty.milfaculty"
+        :key="milfaculty.id"
+        :label="milfaculty.title"
       >
         <div class="image-container">
           <img src="@/assets/uniform-picker/base.svg" alt="Ошибка">
           <!-- Headdress -->
-          <img :src="headdressesSrc[uniform.headdress]" alt="" class="above">
+          <img :src="HEAD_DRESSES[uniform.headdress]" alt="" class="above">
           <!-- Outerwear -->
-          <img :src="outerwearsSrc[uniform.outerwear]" alt="" class="above">
+          <img :src="OUTERWEARS[uniform.outerwear]" alt="" class="above">
           <AZGuard :permissions="getPermissions(milfaculty.milfaculty)">
             <el-button
               icon="el-icon-caret-left"
@@ -40,7 +39,7 @@
             />
           </AZGuard>
         </div>
-        <AZGuard :permissions="getPermissions(milfaculty.milfaculty)">
+        <AZGuard :permissions="getPermissions(milfaculty.id)">
           <el-button
             icon="el-icon-check"
             type="success"
@@ -55,43 +54,33 @@
 </template>
 
 <script>
-import { getMilFaculties } from "@/api/reference-book";
 import { getUniforms, createUniform, changeUniform } from "@/api/uniform";
 import {
   getError, postError, patchSuccess, patchError,
 } from "@/utils/message";
-import CA from "@/assets/uniform-picker/cap.svg";
-import HA from "@/assets/uniform-picker/hat.svg";
-import PC from "@/assets/uniform-picker/pea-coat.svg";
-import { UserModule } from "@/store";
+
+import { UserModule, ReferenceModule } from "@/store";
+import { HEAD_DRESSES, OUTERWEARS } from "@/utils/enums";
 
 export default {
   name: "",
   data() {
     return {
+      HEAD_DRESSES,
+      OUTERWEARS,
       uniform: {},
-      milfaculties: [],
-      headdresses: ["CA", "HA"],
-      headdressesSrc: { CA, HA },
-      outerwears: ["JA", "PC"],
-      outerwearsSrc: { JA: "", PC },
     };
   },
   computed: {
     userMilfaculty() {
       return UserModule.personMilfaculty;
     },
+    milfaculties() {
+      return ReferenceModule.milfaculties;
+    },
   },
   created() {
-    getMilFaculties()
-      .then(response => {
-        this.milfaculties = response.data;
-        this.fetchUniform(this.milfaculties[0].milfaculty);
-      })
-      .catch(err => {
-        console.log(err);
-        getError("информации о циклах", err.response.status);
-      });
+    this.fetchUniform();
   },
   methods: {
     getPermissions(milfaculty) {
@@ -129,20 +118,15 @@ export default {
           getError("информации о форме одежды", err.response.status);
         });
     },
-    handleClick(obj) {
-      this.fetchUniform(obj.label);
-    },
     cycleThroughHeaddresses() {
-      const nextIndex = this.headdresses.indexOf(this.uniform.headdress) + 1;
-      this.uniform.headdress = this.headdresses[
-        nextIndex % this.headdresses.length
-      ];
+      const keys = Object.keys(HEAD_DRESSES);
+      const nextIndex = keys.indexOf(this.uniform.headdress) + 1;
+      this.uniform.headdress = keys[nextIndex % keys.length];
     },
     cycleThroughOuterwears() {
-      const nextIndex = this.outerwears.indexOf(this.uniform.outerwear) + 1;
-      this.uniform.outerwear = this.outerwears[
-        nextIndex % this.outerwears.length
-      ];
+      const keys = Object.keys(OUTERWEARS);
+      const nextIndex = keys.indexOf(this.uniform.outerwear) + 1;
+      this.uniform.outerwear = keys[nextIndex % keys.length];
     },
     confirmUniform() {
       changeUniform(

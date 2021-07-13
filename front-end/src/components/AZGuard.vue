@@ -34,22 +34,27 @@ export default {
     usersPermissions() {
       return UserModule.permissions;
     },
+    isSuperuser() {
+      return UserModule.isSuperuser;
+    },
     hasPermission() {
-      if (this.permissions?.length) {
-        return this.permissions.some(permission => {
-          if (typeof permission === "string") {
-            return this.usersPermissions.find(
-              userPermission => userPermission.codename === permission,
-            );
-          }
-          if (typeof permission === "object") {
-            return this.usersPermissions.find(
-              userPermission => userPermission.codename === permission.codename
-                && permission.validator(),
-            );
-          }
-          return false;
-        });
+      if (!this.isSuperuser) {
+        if (this.permissions?.length) {
+          return this.permissions.some(permission => {
+            if (typeof permission === "string") {
+              return this.usersPermissions.find(
+                userPermission => userPermission.codename === permission,
+              );
+            }
+            if (typeof permission === "object") {
+              return this.usersPermissions.find(
+                userPermission => userPermission.codename === permission.codename
+                  && permission.validator(),
+              );
+            }
+            return false;
+          });
+        }
       }
       return true;
     },

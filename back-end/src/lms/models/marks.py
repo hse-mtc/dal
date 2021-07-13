@@ -11,8 +11,8 @@ from lms.models.students import Student
 
 class Mark(models.Model):
     values = ArrayField(base_field=models.IntegerField(
-        validators=[MaxValueValidator(5), MinValueValidator(2)]
-    ))
+        validators=[MaxValueValidator(5),
+                    MinValueValidator(2)]))
     lesson = models.ForeignKey(
         to=Lesson,
         on_delete=models.CASCADE,

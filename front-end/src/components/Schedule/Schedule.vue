@@ -30,9 +30,9 @@
       >
         <el-tab-pane
           v-for="mg in milgroups"
-          :key="mg.milgroup"
-          :label="mg.milgroup"
-          :name="mg.milgroup"
+          :key="mg.id"
+          :label="mg.title"
+          :name="mg.id.toString()"
         >
           <PrimeTable
             :value="schedule.ordinals"
@@ -111,7 +111,7 @@
 
                         <div>
                           <svg-icon icon-class="map-marker-outline" />
-                          {{ data.lessons.find((x) => x.date === d).room }}
+                          {{ data.lessons.find((x) => x.date === d).room.title }}
                         </div>
 
                         <el-tag
@@ -123,8 +123,7 @@
                           disable-transitions
                         >
                           {{
-                            data.lessons.find((x) => x.date === d).type
-                              | typeFilter
+                            LESSON_TYPES[data.lessons.find((x) => x.date === d).type]
                           }}
                         </el-tag>
                       </div>
@@ -182,9 +181,9 @@
           >
             <el-option
               v-for="item in rooms"
-              :key="item.room"
-              :label="item.room"
-              :value="item.room"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -195,10 +194,10 @@
             style="display: block"
           >
             <el-option
-              v-for="item in lessonTypes"
-              :key="item.code"
-              :label="item.label"
-              :value="item.code"
+              v-for="value, key in LESSON_TYPES"
+              :key="key"
+              :label="value"
+              :value="key"
             />
           </el-select>
         </el-form-item>
@@ -230,31 +229,13 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
+import { LESSON_TYPES } from "@/utils/enums";
 
 export default {
   name: "Schedule",
-  filters: {
-    typeFilter(value) {
-      switch (value) {
-        case "LE":
-          return "Лекция";
-        case "SE":
-          return "Семинар";
-        case "GR":
-          return "Групповое занятие";
-        case "PR":
-          return "Практическое занятие";
-        case "FI":
-          return "Зачет";
-        case "EX":
-          return "Экзамен";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   data() {
     return {
+      LESSON_TYPES,
       dialogVisible: false,
       editLessonFullname: "",
       editLesson: {
@@ -281,14 +262,6 @@ export default {
             .format("YYYY-MM-DD"),
         ],
       },
-      lessonTypes: [
-        { label: "Семинар", code: "SE" },
-        { label: "Лекция", code: "LE" },
-        { label: "Групповое занятие", code: "GR" },
-        { label: "Практическое занятие", code: "PR" },
-        { label: "Зачет", code: "FI" },
-        { label: "Экзамен", code: "EX" },
-      ],
       subjects: [],
       schedule: {},
       pickerOptions: {

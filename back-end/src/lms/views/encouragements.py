@@ -28,8 +28,7 @@ class EncouragementPermission(BasePermission):
 
 
 @extend_schema(tags=["encouragements"])
-class EncouragementViewSet(StudentTeacherQuerySetScopingMixin,
-                           ModelViewSet):
+class EncouragementViewSet(StudentTeacherQuerySetScopingMixin, ModelViewSet):
     queryset = Encouragement.objects.all()
 
     permission_classes = [EncouragementPermission]

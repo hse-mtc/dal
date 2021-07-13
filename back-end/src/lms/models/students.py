@@ -42,7 +42,6 @@ class Student(Personnel):
         AWAITING = "AW", "в ожидании"
         DECLINED = "DE", "отклонен"
 
-
     class Post(models.TextChoices):
         MILGROUP_COMMANDER = "GC", "командир взвода"
         MILSQUAD_COMMANDER = "SC", "командир отделения"
@@ -107,7 +106,6 @@ class Student(Personnel):
         null=True,
         blank=True,
     )
-
 
     class Meta:
         verbose_name = "Student"

@@ -60,9 +60,9 @@ def milgroup_allowed_by_scope(
         return False
 
     if scope == Permission.Scope.MILFACULTY:
-        if user_type == 'student':
+        if user_type == "student":
             milfaculty = user.milgroup.milfaculty
-        elif user_type == 'teacher':
+        elif user_type == "teacher":
             milfaculty = user.milfaculty
         else:
             return False
@@ -94,7 +94,7 @@ def get_date_range(date_from: datetime, date_to: datetime,
     cur_date = start_date
 
     while cur_date <= date_to:
-        dates.append(cur_date.strftime('%Y-%m-%d'))
+        dates.append(cur_date.strftime("%Y-%m-%d"))
         cur_date += timedelta(7)
 
     return dates

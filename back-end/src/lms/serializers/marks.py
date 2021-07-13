@@ -1,6 +1,11 @@
-from rest_framework.serializers import (Serializer, ModelSerializer,
-                                        IntegerField, DateField,
-                                        SerializerMethodField, ValidationError,)
+from rest_framework.serializers import (
+    Serializer,
+    ModelSerializer,
+    IntegerField,
+    DateField,
+    SerializerMethodField,
+    ValidationError,
+)
 
 from common.models.subjects import Subject
 from common.serializers.populate import BaseMutateSerializer
