@@ -74,6 +74,10 @@ class PersonnelMutateSerializer(PersonMutateSerializer):
         validated_data["photo"] = photo
 
     def update_photo(self, instance, validated_data):
-        if "image" in validated_data:
+        if "image" not in validated_data:
+            return
+
+        if instance.photo:
             instance.photo.delete()
-            self.create_photo(validated_data)
+
+        self.create_photo(validated_data)
