@@ -71,6 +71,6 @@ export const HEAD_DRESSES = {
   CA, HA,
 };
 export const OUTERWEARS = {
-  JA: "",
+  JA: "", // Uniform uses JA as default, so no picture is needed here.
   PC,
 };
