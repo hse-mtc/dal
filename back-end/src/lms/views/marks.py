@@ -258,7 +258,6 @@ class MarkJournalView(GenericAPIView):
             filter_kwargs = {"user": request.user}
         else:
             filter_kwargs = {"milgroup": milgroup_id}
-        print(filter_kwargs)
         data["students"] = MarkJournalSerializer(
             Student.objects.filter(**filter_kwargs),
             context={
