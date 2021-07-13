@@ -55,21 +55,21 @@
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
-              v-model="modifyInfo.university_info.program.code"
-              value-key="code"
+              v-model="modifyInfo.university_info.program.id"
+              value-key="id"
               style="display: block"
             >
               <el-option
                 v-for="item in programs"
-                :key="item.code"
-                :label="item.program"
-                :value="item.code"
+                :key="item.id"
+                :label="item.title"
+                :value="item.id"
               />
             </el-select>
             <span v-else class="field-value">
               {{
                 displayInfo.university_info.program
-                  ? displayInfo.university_info.program.program
+                  ? displayInfo.university_info.program.title
                   : "---"
               }}
             </span>
@@ -80,14 +80,13 @@
             <el-select
               v-if="modify"
               v-model="modifyInfo.university_info.campus"
-              value-key="code"
               style="display: block"
             >
               <el-option
-                v-for="item in CAMPUSES"
-                :key="item.code"
-                :label="item.title"
-                :value="item.code"
+                v-for="value, key in CAMPUSES"
+                :key="key"
+                :label="value"
+                :value="key"
               />
             </el-select>
             <span v-else class="field-value">
@@ -132,7 +131,7 @@
             <el-select
               v-if="modify"
               v-model="modifyInfo.milspecialty"
-              value-key="code"
+              value-key="id"
               style="display: block"
             >
               <el-option
@@ -341,7 +340,7 @@ export default {
         this.modifyInfo.passport.series = series;
         this.modifyInfo.passport.code = code;
         const requestBody = { ...this.modifyInfo };
-        requestBody.university_info.program = this.modifyInfo.university_info.program.code;
+        requestBody.university_info.program = this.modifyInfo.university_info.program.id;
         requestBody.milspecialty = this.modifyInfo.milspecialty.id;
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;

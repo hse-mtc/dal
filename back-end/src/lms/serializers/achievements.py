@@ -14,7 +14,8 @@ class AchievementTypeSerializer(ModelSerializer):
 
 
 class AchievementSerializer(ModelSerializer):
-    student = StudentShortSerializer()
+    student = StudentShortSerializer(read_only=True)
+    type = AchievementTypeSerializer(read_only=True)
 
     class Meta:
         model = Achievement

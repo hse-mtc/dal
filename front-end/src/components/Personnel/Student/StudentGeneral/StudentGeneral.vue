@@ -122,7 +122,7 @@
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
-              v-model="modifyInfo.student_post"
+              v-model="modifyInfo.post"
               value-key="id"
               clearable
               style="display: block"
@@ -135,7 +135,7 @@
               />
             </el-select>
             <span v-else class="field-value">
-              {{ STUDENT_POSTS[displayInfo.student_post] || "---" }}
+              {{ STUDENT_POSTS[displayInfo.post] || "---" }}
             </span>
           </transition>
         </el-form-item>
@@ -326,7 +326,6 @@ export default {
             const requestBody = {
               ...this.modifyInfo,
               milgroup: this.modifyInfo.milgroup.id,
-              student_post: this.modifyInfo.student_post.id,
               surname,
               name,
               patronymic,
