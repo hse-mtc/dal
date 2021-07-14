@@ -36,17 +36,14 @@ def get_teacher_permissions():
         "authors.post.all",
         "authors.patch.all",
         "authors.delete.all",
-
         "books.get.all",
         "books.post.self",
         "books.patch.self",
         "books.delete.self",
-
         "favorite-books.get.self",
         "favorite-books.post.self",
         "favorite-books.patch.self",
         "favorite-books.delete.self",
-
         "sections.get.all",
 
         # LMS permissions
@@ -102,17 +99,14 @@ def get_milfaculty_head_permissions():
         "authors.post.all",
         "authors.patch.all",
         "authors.delete.all",
-
         "books.get.all",
         "books.post.self",
         "books.patch.self",
         "books.delete.self",
-
         "favorite-books.get.self",
         "favorite-books.post.self",
         "favorite-books.patch.self",
         "favorite-books.delete.self",
-
         "sections.get.all",
 
         # LMS permissions
