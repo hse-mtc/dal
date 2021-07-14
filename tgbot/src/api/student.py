@@ -50,7 +50,6 @@ class Student:
 
     @staticmethod
     def from_raw(body: dict[str, tp.Any]) -> "Student":
-        print(body)
         # remove unnecessary data
         for key in ["skills", "contact_info", "birth_info", "university_info", "family"]:
             body.pop(key)

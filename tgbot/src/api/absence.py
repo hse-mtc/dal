@@ -1,6 +1,7 @@
 import typing as tp
 import asyncio
 import operator
+from datetime import datetime
 
 from api.client import client
 from api.student import (
@@ -29,12 +30,32 @@ def absence_statistic(students: list[Student]) -> str:
     return text
 
 
+async def fetch_today_absences(milgroup: int) -> list[dict]:
+    today = datetime.now().strftime("%Y-%m-%d")
+    response = await client.get(
+        f"lms/absences/?milgroup={milgroup}&date_from={today}&date_to={today}"
+    )
+    return await response.json()
+
+
 async def post_absence(students: list[Student], *args: tp.Any,
                        **kwargs: tp.Any) -> str:
     absent_students = [
         student for student in students
         if student.state.value == State.ABSENT.value
     ]
+    if len(absent_students) == 0:
+        return 
+
+    absences = await fetch_today_absences(absent_students[0].milgroup.id)
+
+    if len(absences) > 0:
+        pending_responses = [
+            client.delete(f"lms/absences/{absence['id']}/")
+            for absence in absences
+        ]
+        # wait for delete to finish before doing create
+        await asyncio.gather(*pending_responses)
 
     pending_responses = [
         client.post(
