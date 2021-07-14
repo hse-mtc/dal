@@ -9,7 +9,7 @@
         <div class="image-container">
           <img src="@/assets/uniform-picker/base.svg" alt="Ошибка">
           <!-- Headdress -->
-          <img :src="HEAD_DRESSES[uniform.headdress]" alt="" class="above">
+          <img :src="HEADDRESSES[uniform.headdress]" alt="" class="above">
           <!-- Outerwear -->
           <img :src="OUTERWEARS[uniform.outerwear]" alt="" class="above">
           <AZGuard :permissions="getPermissions(milfaculty.milfaculty)">
@@ -60,13 +60,13 @@ import {
 } from "@/utils/message";
 
 import { UserModule, ReferenceModule } from "@/store";
-import { HEAD_DRESSES, OUTERWEARS } from "@/utils/enums";
+import { HEADDRESSES, OUTERWEARS } from "@/utils/enums";
 
 export default {
   name: "",
   data() {
     return {
-      HEAD_DRESSES,
+      HEADDRESSES,
       OUTERWEARS,
       uniform: {},
     };
@@ -119,7 +119,7 @@ export default {
         });
     },
     cycleThroughHeaddresses() {
-      const keys = Object.keys(HEAD_DRESSES);
+      const keys = Object.keys(HEADDRESSES);
       const nextIndex = keys.indexOf(this.uniform.headdress) + 1;
       this.uniform.headdress = keys[nextIndex % keys.length];
     },

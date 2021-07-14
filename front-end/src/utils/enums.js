@@ -67,7 +67,7 @@ export const LESSON_TYPES = {
   FI: "Зачет",
   EX: "Экзамен",
 };
-export const HEAD_DRESSES = {
+export const HEADDRESSES = {
   CA, HA,
 };
 export const OUTERWEARS = {
