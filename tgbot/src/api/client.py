@@ -81,6 +81,14 @@ class Client:
         **kwargs: tp.Any,
     ) -> tp.Any:
         return await self._do_request("patch", method, *args, **kwargs)
+    
+    async def delete(
+        self,
+        method: str,
+        *args: tp.Any,
+        **kwargs: tp.Any,
+    ) -> tp.Any:
+        return await self._do_request("delete", method, *args, **kwargs)
 
 
 client = Client()
