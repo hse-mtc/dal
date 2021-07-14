@@ -31,7 +31,7 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
     phone = await fetch_phone(chat_id=message.chat.id)
     user = await fetch_students(many=False, params={"phone": phone})
 
-    students = await fetch_students(params={"milgroup": user.milgroup.milgroup})
+    students = await fetch_students(params={"milgroup": user.milgroup.id})
     students.sort(key=operator.attrgetter("fullname"))
 
     students_by_id = {student.id: student for student in students}

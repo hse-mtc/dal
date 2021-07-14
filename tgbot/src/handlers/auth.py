@@ -1,6 +1,6 @@
 from aiogram.types import Message
 
-from api.student import fetch_students
+from api.student import fetch_students, Post
 from api.auth import (
     session_exists,
     authorize,
@@ -39,7 +39,7 @@ async def share_contact(message: Message) -> None:
     user = await fetch_students(many=False, params={"phone": phone})
     await message.reply(
         f"Здравия желаю, {user.fullname.strip()}.\n"
-        f"Должность: командир взвода {user.milgroup.milgroup}.\n\n"
+        f"Должность: {getattr(Post, user.post).value}, взвод {user.milgroup.title}.\n\n"
         f'Нажмите кнопку "{ButtonText.LIST_MILGROUP.value}", '
         "чтобы вывести список студентов Вашего взвода.",
         reply_markup=list_milgroup_keyboard(),
