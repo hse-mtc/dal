@@ -2,8 +2,7 @@ from datetime import timedelta, datetime
 
 from rest_framework.request import Request
 
-from lms.models.students import Student
-from lms.models.teachers import Teacher
+from lms.models.common import Milgroup
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -19,29 +18,33 @@ def get_user_from_request(user):
     :return: user_type (str), user (User object)
     """
     # check if user is a teacher or a student
-    candidates = [Teacher, Student]
+
+    candidates = ["teacher", "student"]
 
     for candidate in candidates:
-        if (found_user := candidate.objects.filter(user=user)).exists():
-            return candidate.__name__.lower(), found_user.first()
+        if hasattr(user, candidate):
+            return candidate, getattr(user, candidate)
 
-    return '', None
+    return "", None
 
 
 # pylint: disable=too-many-return-statements
-def milgroup_allowed_by_scope(milgroup: dict, request: Request,
-                              permission_class: BasePermission) -> bool:
+def milgroup_allowed_by_scope(
+    milgroup: Milgroup,
+    request: Request,
+    permission_class: BasePermission,
+) -> bool:
     """
     Check if specified milgroup is compatible with permission scope.
     Used in Journal views.
 
-    :param milgroup: serialized milgroup
-    (query param in journal get request)
-    :param request: request
+    :param milgroup: Milgroup object
+    :param request: DRF request
     :param permission_class: Scoped permission class
 
     :return: bool: allowed (True) or not allowed (False)
     """
+
     if request.user.is_superuser:
         return True
 
@@ -57,17 +60,19 @@ def milgroup_allowed_by_scope(milgroup: dict, request: Request,
         return False
 
     if scope == Permission.Scope.MILFACULTY:
-        if user_type == 'student':
+        if user_type == "student":
             milfaculty = user.milgroup.milfaculty
-        elif user_type == 'teacher':
+        elif user_type == "teacher":
             milfaculty = user.milfaculty
         else:
             return False
-        return milgroup['milfaculty'] == milfaculty.milfaculty
+        return milgroup.milfaculty == milfaculty
 
-    if scope in (Permission.Scope.MILGROUP, Permission.Scope.SELF):
-        if user_type in ('student', 'teacher'):
-            return milgroup['milgroup'] == user.milgroup.milgroup
+    if scope in [Permission.Scope.MILGROUP, Permission.Scope.SELF]:
+        if user_type == "student":
+            return milgroup == user.milgroup
+        if user_type == "teacher":
+            return milgroup in user.milgroups
         return False
 
     return False
@@ -89,7 +94,7 @@ def get_date_range(date_from: datetime, date_to: datetime,
     cur_date = start_date
 
     while cur_date <= date_to:
-        dates.append(cur_date.strftime('%Y-%m-%d'))
+        dates.append(cur_date.strftime("%Y-%m-%d"))
         cur_date += timedelta(7)
 
     return dates

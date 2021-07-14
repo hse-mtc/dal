@@ -14,7 +14,6 @@ class ProgramSerializer(ModelSerializer):
     class Meta:
         model = Program
         fields = "__all__"
-        extra_kwargs = {"code": {"validators": []}}
 
 
 class UniversityInfoSerializer(ModelSerializer):

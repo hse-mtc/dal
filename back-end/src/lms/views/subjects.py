@@ -14,12 +14,12 @@ from auth.permissions import BasePermission
 
 
 class LessonSubjectPermission(BasePermission):
-    permission_class = 'lesson-subjects'
-    view_name_rus = 'Дисциплины в расписании'
-    methods = ['get']
+    permission_class = "lesson-subjects"
+    view_name_rus = "Дисциплины в расписании"
+    methods = ["get"]
 
 
-@extend_schema(tags=['lms-subjects'])
+@extend_schema(tags=["lms-subjects"])
 class LessonSubjectViewSet(ReadOnlyModelViewSet):
     serializer_class = LessonSubjectSerializer
     queryset = Subject.objects.all()
@@ -28,6 +28,4 @@ class LessonSubjectViewSet(ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     filterset_class = LessonSubjectFilter
-    search_fields = [
-        'title',
-    ]
+    search_fields = ["title"]

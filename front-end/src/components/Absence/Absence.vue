@@ -36,7 +36,7 @@
             <el-col :span="4">
               <el-select
                 v-model="filter.mg"
-                value-key="milgroup"
+                value-key="id"
                 clearable
                 placeholder="Выберите взвод"
                 style="display: block"
@@ -44,30 +44,30 @@
               >
                 <el-option
                   v-for="item in milgroups"
-                  :key="item.milgroup"
-                  :label="item.milgroup"
+                  :key="item.id"
+                  :label="item.title"
                   :value="item"
                 >
-                  <span style="float: left">{{ item.milgroup }}</span>
+                  <span style="float: left">{{ item.title }}</span>
                   <span style="float: right; color: #8492a6; font-size: 13px">{{
-                    item.milfaculty
+                    item.milfaculty.abbreviation
                   }}</span>
                 </el-option>
               </el-select>
             </el-col>
             <el-col :span="4">
               <el-select
-                v-model="filter.type"
+                v-model="filter.excuse"
                 clearable
                 placeholder="Выберите тип причины"
                 style="display: block"
                 @change="onFilter"
               >
                 <el-option
-                  v-for="item in types"
-                  :key="item.code"
-                  :label="item.label"
-                  :value="item.code"
+                  v-for="(value, key) in EXCUSES"
+                  :key="key"
+                  :label="value"
+                  :value="key"
                 />
               </el-select>
             </el-col>
@@ -80,10 +80,10 @@
                 @change="onFilter"
               >
                 <el-option
-                  v-for="item in statuses"
-                  :key="item.code"
-                  :label="item.label"
-                  :value="item.code"
+                  v-for="(value, key) in ABSENCE_STATUSES"
+                  :key="key"
+                  :label="value"
+                  :value="key"
                 />
               </el-select>
             </el-col>
@@ -113,7 +113,7 @@
                 column-key="fullname"
               />
               <PrimeColumn
-                :field="(row) => row.student.milgroup.milgroup"
+                :field="(row) => row.student.milgroup.title"
                 sortable
                 header="Взвод"
                 header-style="width: 100px"
@@ -124,12 +124,12 @@
               <PrimeColumn
                 sortable
                 header="Тип причины"
-                column-key="type"
-                field="type"
+                column-key="excuse"
+                field="excuse"
               >
-                <template #body="{ data: { type } }">
-                  <el-tag :type="tagByAbsenceType(type)" disable-transitions>
-                    {{ type | absenceTypeFilter }}
+                <template #body="{ data: { excuse } }">
+                  <el-tag :type="tagByExcuse(excuse)" disable-transitions>
+                    {{ EXCUSES[excuse] }}
                   </el-tag>
                 </template>
               </PrimeColumn>
@@ -146,7 +146,7 @@
                     :class="iconByAbsenceStatus(status)"
                     :style="colorByAbsenceStatus(status)"
                   />
-                  {{ status | absenceStatusFilter }}
+                  {{ ABSENCE_STATUSES[status] }}
                 </template>
               </PrimeColumn>
 
@@ -219,15 +219,15 @@
       >
         <el-form-item label="Тип причины: ">
           <el-select
-            v-model="editAbsence.type"
+            v-model="editAbsence.excuse"
             placeholder="Выберите тип причины"
             style="display: block"
           >
             <el-option
-              v-for="item in types"
-              :key="item.code"
-              :label="item.label"
-              :value="item.code"
+              v-for="(value, key) in EXCUSES"
+              :key="key"
+              :label="value"
+              :value="key"
             />
           </el-select>
         </el-form-item>
@@ -273,6 +273,7 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
+import { EXCUSES, ABSENCE_STATUSES } from "@/utils/enums";
 import AbsenceJournal from "./AbsenceJournal/AbsenceJournal.vue";
 
 export default {
@@ -280,38 +281,16 @@ export default {
   components: {
     AbsenceJournal,
   },
-  filters: {
-    absenceTypeFilter(value) {
-      switch (value) {
-        case "SE":
-          return "Уважительная";
-        case "NS":
-          return "Неуважительная";
-        case "LA":
-          return "Опоздание";
-        default:
-          return "Ошибка";
-      }
-    },
-    absenceStatusFilter(value) {
-      switch (value) {
-        case "OP":
-          return "Открыт";
-        case "CL":
-          return "Закрыт";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   data() {
     return {
+      ABSENCE_STATUSES,
+      EXCUSES,
       dialogVisible: false,
       loading: false,
       editAbsence: {
         id: 0,
         date: "",
-        type: "",
+        excuse: "",
         status: "",
         student: {
           id: "",
@@ -329,14 +308,14 @@ export default {
       },
       editAbsenceFullname: "",
       filter: {
-        type: null,
+        excuse: null,
         status: null,
         dateRange: [
           moment().format("YYYY-MM-DD"),
           moment().format("YYYY-MM-DD"),
         ],
         search: null,
-        mg: null,
+        mg: {},
       },
       absences: [],
       pickerOptions: {
@@ -376,12 +355,6 @@ export default {
     milgroups() {
       return ReferenceModule.milgroups;
     },
-    types() {
-      return ReferenceModule.absenceTypes;
-    },
-    statuses() {
-      return ReferenceModule.absenceStatuses;
-    },
     userMilfaculty() {
       return UserModule.personMilfaculty;
     },
@@ -416,9 +389,9 @@ export default {
       // eslint-disable-next-line no-param-reassign
       absence.status = absence.status === "CL" ? "OP" : "CL";
     },
-    tagByAbsenceType(type) {
-      switch (type) {
-        case "NS":
+    tagByExcuse(excuse) {
+      switch (excuse) {
+        case "IL":
           return "danger";
         case "LA":
           return "warning";
@@ -443,35 +416,22 @@ export default {
       }
     },
     dateField: row => moment(row.date).format("DD.MM.YY"),
-    async fetchData() {
-      if (!ReferenceModule.milgroups.length) {
-        await ReferenceModule.fetchMilgroups();
-      }
-      if (!ReferenceModule.absenceTypes.length) {
-        await ReferenceModule.fetchAbsenceTypes();
-      }
-      if (!ReferenceModule.absenceStatuses.length) {
-        await ReferenceModule.fetchAbsenceStatuses();
-      }
-    },
     async onFilter() {
       try {
         this.loading = true;
-        await this.fetchData();
         this.absences = (
           await getAbsence({
-            date_from:
-              this.filter.dateRange !== null ? this.filter.dateRange[0] : null,
-            date_to:
-              this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
-            type: this.filter.type,
+            excuse: this.filter.excuse,
             status: this.filter.status,
             search: this.filter.search,
-            milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
+            milgroup: this.filter.mg?.id,
+            date_from: this.filter.dateRange ? this.filter.dateRange[0] : undefined,
+            date_to: this.filter.dateRange ? this.filter.dateRange[1] : undefined,
           })
         ).data;
       } catch (err) {
-        getError("пропусков", err.response.status);
+        console.log(err);
+        getError("пропусков", err.response?.status);
       } finally {
         this.loading = false;
       }

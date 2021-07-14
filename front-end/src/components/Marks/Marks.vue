@@ -46,9 +46,9 @@
       >
         <el-tab-pane
           v-for="mg in milgroups"
-          :key="mg.milgroup"
-          :label="mg.milgroup"
-          :name="mg.milgroup"
+          :key="mg.id"
+          :label="mg.title"
+          :name="mg.id.toString()"
         >
           <el-row>
             <el-col :span="22">
@@ -94,11 +94,11 @@
                                 :type="tagByLessonType(item.type)"
                                 disable-transitions
                               >
-                                {{ item.type | typeFilter }}
+                                {{ LESSON_TYPES[item.type] }}
                               </el-tag>
                               <span>
                                 <svg-icon icon-class="map-marker-outline" />
-                                {{ item.room }}
+                                {{ item.room.title }}
                               </span>
                               <div>
                                 <AZGuard
@@ -287,9 +287,9 @@
           >
             <el-option
               v-for="item in rooms"
-              :key="item.room"
-              :label="item.room"
-              :value="item.room"
+              :key="item.id"
+              :label="item.title"
+              :value="item.key"
             />
           </el-select>
         </el-form-item>
@@ -300,20 +300,19 @@
             style="display: block"
           >
             <el-option
-              v-for="item in lessonTypes"
-              :key="item.code"
-              :label="item.label"
-              :value="item.code"
+              v-for="(value, key) in LESSON_TYPES"
+              :key="key"
+              :label="value"
+              :value="key"
             />
           </el-select>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="lessonDialogVisible = false">Отмена</el-button>
-        <el-button
-          type="primary"
-          @click="handleAcceptLesson()"
-        >Применить</el-button>
+        <el-button type="primary" @click="handleAcceptLesson()">
+          Применить
+        </el-button>
       </span>
     </el-dialog>
   </div>
@@ -340,31 +339,13 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
+import { LESSON_TYPES } from "@/utils/enums";
 
 export default {
   name: "Marks",
-  filters: {
-    typeFilter(value) {
-      switch (value) {
-        case "LE":
-          return "Лекция";
-        case "SE":
-          return "Семинар";
-        case "GR":
-          return "Групповое занятие";
-        case "PR":
-          return "Практическое занятие";
-        case "FI":
-          return "Зачет";
-        case "EX":
-          return "Экзамен";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   data() {
     return {
+      LESSON_TYPES,
       lessonDialogVisible: false,
       editLessonFullname: "",
       editLesson: {
@@ -407,14 +388,6 @@ export default {
           moment().format("YYYY-MM-DD"),
         ],
       },
-      lessonTypes: [
-        { label: "Семинар", code: "SE" },
-        { label: "Лекция", code: "LE" },
-        { label: "Групповое занятие", code: "GR" },
-        { label: "Практическое занятие", code: "PR" },
-        { label: "Зачет", code: "FI" },
-        { label: "Экзамен", code: "EX" },
-      ],
       subjects: [],
       journal: {},
       pickerOptions: {
@@ -467,7 +440,7 @@ export default {
   async created() {
     await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
-    this.filter.mg = this.milgroups[0].milgroup;
+    this.filter.mg = this.milgroups[0]?.id;
     this.fetchData();
   },
   methods: {
@@ -481,7 +454,7 @@ export default {
         {
           codename: `${entity}.${method}.milgroup`,
           validator: () => this.userMilgroups.some(
-            x => x === this.journal.milgroup.milgroup,
+            x => x === this.journal.milgroup.id,
           ),
         },
       ];
@@ -646,7 +619,7 @@ export default {
     },
     onEditLesson(row) {
       this.editLesson = { ...row };
-      this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
+      this.editLesson.milgroup = this.editLesson.milgroup.id;
       this.editLesson.subject = this.editLesson.subject.id;
       this.editLessonFullname = "Редактирование занятия";
       this.lessonDialogVisible = true;

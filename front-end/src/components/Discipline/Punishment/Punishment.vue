@@ -29,7 +29,7 @@
       <el-col :span="5">
         <el-select
           v-model="filter.mg"
-          value-key="milgroup"
+          value-key="id"
           clearable
           placeholder="Выберите взвод"
           style="display: block"
@@ -37,13 +37,13 @@
         >
           <el-option
             v-for="item in milgroups"
-            :key="item.milgroup"
-            :label="item.milgroup"
+            :key="item.id"
+            :label="item.title"
             :value="item"
           >
-            <span style="float: left">{{ item.milgroup }}</span>
+            <span style="float: left">{{ item.title }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{
-              item.milfaculty
+              item.milfaculty.abbreviation
             }}</span>
           </el-option>
         </el-select>
@@ -57,10 +57,10 @@
           @change="onFilter"
         >
           <el-option
-            v-for="item in types"
-            :key="item.label"
-            :label="item.label"
-            :value="item.code"
+            v-for="value, key in PUNISHMENT_TYPES"
+            :key="key"
+            :label="value"
+            :value="key"
           />
         </el-select>
       </el-col>
@@ -69,6 +69,7 @@
       :permissions="[
         'punishments.post.all',
         'punishments.post.milfaculty',
+        'punishments.post.milgroup',
         'punishments.post.self',
       ]"
     >
@@ -113,7 +114,7 @@
           column-key="teacher"
         />
         <PrimeColumn
-          :field="(row) => row.student.milgroup.milgroup"
+          :field="(row) => row.student.milgroup.title"
           sortable
           header="Взвод"
           header-style="width: 100px"
@@ -123,7 +124,7 @@
         <PrimeColumn header="Тип взыскания" column-key="type">
           <template #body="{ data }">
             <el-tag :type="tagByPunishmentType(data.type)" disable-transitions>
-              {{ data.type | typeFilter }}
+              {{ PUNISHMENT_TYPES[data.type] }}
             </el-tag>
           </template>
         </PrimeColumn>
@@ -270,10 +271,10 @@
             style="display: block"
           >
             <el-option
-              v-for="item in types"
-              :key="item.label"
-              :label="item.label"
-              :value="item.code"
+              v-for="value, key in PUNISHMENT_TYPES"
+              :key="key"
+              :label="value"
+              :value="key"
             />
           </el-select>
         </el-form-item>
@@ -326,6 +327,7 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { UserModule, ReferenceModule } from "@/store";
+import { PUNISHMENT_TYPES } from "@/utils/enums";
 
 export default {
   name: "Punishment",
@@ -343,14 +345,11 @@ export default {
   },
   data() {
     return {
+      PUNISHMENT_TYPES,
       editPunishment: {},
       editPunishmentFullname: null,
       dialogVisible: false,
       punishments: [],
-      types: [
-        { label: "Взыскание", code: "PU" },
-        { label: "Выговор", code: "RE" },
-      ],
       filter: {
         search: null,
         mg: null,
@@ -439,7 +438,7 @@ export default {
           this.filter.dateRange !== null ? this.filter.dateRange[1] : null,
         type: this.filter.type,
         search: this.filter.search,
-        milgroup: this.filter.mg !== null ? this.filter.mg.milgroup : null,
+        milgroup: this.filter.mg?.id,
       })
         .then(response => {
           this.punishments = response.data;

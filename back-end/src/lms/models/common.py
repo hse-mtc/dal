@@ -5,53 +5,56 @@ from lms.models.universities import UniversityInfo
 
 
 class Milfaculty(models.Model):
-    milfaculty = models.CharField(primary_key=True, max_length=10)
+    title = models.CharField(
+        unique=True,
+        max_length=127,
+    )
+    abbreviation = models.CharField(max_length=31)
 
     def __str__(self):
-        return str(self.milfaculty)
+        return self.title
 
     class Meta:
-        verbose_name = 'Military Faculty'
-        verbose_name_plural = 'Military Faculties'
+        verbose_name = "Military Faculty"
+        verbose_name_plural = "Military Faculties"
+
+
+class Milgroup(models.Model):
+    title = models.CharField(
+        unique=True,
+        max_length=31,
+    )
+    milfaculty = models.ForeignKey(
+        to=Milfaculty,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    weekday = models.SmallIntegerField()
+    archived = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"[{self.milfaculty}] {self.title}"
+
+    class Meta:
+        verbose_name = "Military Group"
+        verbose_name_plural = "Military Groups"
 
 
 class Milspecialty(models.Model):
-    code = models.CharField(primary_key=True, max_length=20)
-    milspecialty = models.CharField(max_length=150)
+    title = models.CharField(max_length=150)
+    code = models.CharField(
+        unique=True,
+        max_length=31,
+    )
     available_for = ArrayField(base_field=models.CharField(
         max_length=2,
         choices=UniversityInfo.Campus.choices,
     ))
 
     def __str__(self):
-        return str(self.milspecialty)
+        return self.title
 
     class Meta:
-        verbose_name = 'Military specialty'
-        verbose_name_plural = 'Military specialties'
-
-
-class Milgroup(models.Model):
-    milgroup = models.DecimalField(primary_key=True,
-                                   max_digits=4,
-                                   decimal_places=0)
-    milfaculty = models.ForeignKey(
-        Milfaculty,
-        models.DO_NOTHING,
-        blank=True,
-        null=True,
-    )
-    weekday = models.DecimalField(
-        max_digits=1,
-        decimal_places=0,
-        blank=True,
-        null=True,
-    )
-    archived = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f'{str(self.milgroup)}, {str(self.milfaculty)}'
-
-    class Meta:
-        verbose_name = 'Military Group'
-        verbose_name_plural = 'Military Groups'
+        verbose_name = "Military Specialty"
+        verbose_name_plural = "Military Specialties"

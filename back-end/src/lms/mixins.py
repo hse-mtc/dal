@@ -2,9 +2,9 @@ from django.db.models import QuerySet
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.permissions import SAFE_METHODS
 
 from lms.models.students import Student
+from lms.models.teachers import Teacher
 from lms.functions import get_user_from_request
 
 from auth.models import Permission, User
@@ -128,60 +128,98 @@ class QuerySetScopingMixin:
             status=status.HTTP_403_FORBIDDEN)
 
 
-class ArchivedMixin(QuerySetScopingMixin):
-
-    def get_queryset(self):
-        if (self.request.method in SAFE_METHODS and
-                "archived" not in self.request.query_params):
-            return super().get_queryset().filter(
-                student__milgroup__archived=False)
-        return super().get_queryset()
-
-
 class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
+    """
+    Filters all students by milfaculty (except for the ALL scope)
+    and teachers by scope.
+
+    Requires presence of "student" and "teacher" fields.
+    """
 
     def handle_scope_milfaculty(self, user_type, user):
         if user_type == "student":
             return self.queryset.filter(
-                student__milgroup__milfaculty=user.milgroup.milfaculty)
+                student__milgroup__milfaculty=user.milgroup.milfaculty,
+                teacher__milfaculty=user.milgroup.milfaculty,
+            )
         if user_type == "teacher":
             return self.queryset.filter(
-                student__milgroup__milfaculty=user.milfaculty)
+                student__milgroup__milfaculty=user.milfaculty,
+                teacher__milfaculty=user.milgroup.milfaculty,
+            )
         return self.queryset.none()
 
     def allow_scope_milfaculty_on_create(self, data, user_type, user):
         student = Student.objects.filter(id=data["student"])
-        if not student.exists():
+        teacher = Teacher.objects.filter(id=data["teacher"])
+
+        if (not student.exists()) or (not teacher.exists()):
             return False
+
         if user_type == "student":
-            return user.milgroup.milfaculty.milfaculty == student[
-                0].milgroup.milfaculty.milfaculty
-        if user_type == "teacher":
-            return user.milfaculty.milfaculty == student[
-                0].milgroup.milfaculty.milfaculty
-        return False
+            user_milfaculty = user.milgroup.milfaculty
+        elif user_type == "teacher":
+            user_milfaculty = user.milfaculty
+        else:
+            return False
+
+        student = student.first()
+        teacher = teacher.first()
+        st_ch = user_milfaculty == student.milgroup.milfaculty
+        te_ch = user_milfaculty == teacher.milfaculty
+        return st_ch and te_ch
 
     def handle_scope_milgroup(self, user_type, user):
-        return self.queryset.filter(student__milgroup=user.milgroup)
+        if user_type == "student":
+            return self.queryset.filter(
+                student__milgroup__milfaculty=user.milgroup.milfaculty,
+                teacher__milgroups__contains=user.milgroup,
+            )
+        if user_type == "teacher":
+            return self.queryset.filter(
+                student__milgroup__milfaculty=user.milfaculty,
+                teacher__user=user,
+            )
+        return self.queryset.none()
 
     def allow_scope_milgroup_on_create(self, data, user_type, user):
         student = Student.objects.filter(id=data["student"])
-        if not student.exists():
+        teacher = Teacher.objects.filter(id=data["teacher"])
+
+        if (not student.exists()) or (not teacher.exists()):
             return False
-        if user_type in ("student", "teacher"):
-            return user.milgroup.milgroup == student[0].milgroup.milgroup
+
+        student = student.first()
+        teacher = teacher.first()
+
+        # pylint: disable=no-else-return
+        if user_type == "student":
+            st_ch = user.milgroup == student.milgroup
+            te_ch = user.milgroup in teacher.milgroups
+            return st_ch and te_ch
+        elif user_type == "teacher":
+            st_ch = student.milgroup in user.milgroups
+            te_ch = teacher.user == user
+            return st_ch and te_ch
         return False
 
     def handle_scope_self(self, user_type, user):
         if user_type == "student":
             return self.queryset.filter(student=user)
         if user_type == "teacher":
-            return self.queryset.filter(teacher=user)
+            return self.queryset.filter(
+                teacher=user,
+                student__milgroup__milfaculty=user.milfaculty,
+            )
         return self.queryset.none()
 
     def allow_scope_self_on_create(self, data, user_type, user):
-        if user_type == "student":
-            return data["student"] == user.id
         if user_type == "teacher":
-            return data["teacher"] == user.id
+            student = Student.objects.filter(id=data["student"])
+            if not student.exists():
+                return False
+
+            st_milfaculty = student.first().milgroup.milfaculty
+            milfaculty_check = st_milfaculty == user.milfaculty
+            return (data["teacher"] == user.id) and milfaculty_check
         return False

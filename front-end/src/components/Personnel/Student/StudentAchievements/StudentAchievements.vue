@@ -104,10 +104,10 @@
             header-style="width: 100px"
             body-style="width: 100px"
           />
-          <PrimeColumn header="Тип" column-key="achievement_type">
+          <PrimeColumn header="Тип" column-key="type">
             <template #body="{ data }">
-              <el-tag :type="tagVariantByType(data.achievement_type)">
-                {{ data.achievement_type }}
+              <el-tag :type="tagVariantByType(data.type)">
+                {{ data.type.title }}
               </el-tag>
             </template>
           </PrimeColumn>
@@ -188,15 +188,15 @@
         </el-form-item>
         <el-form-item label="Тип: ">
           <el-select
-            v-model="editAchievement.achievement_type"
+            v-model="editAchievement.type"
             placeholder="Выберите тип"
             style="display: block"
           >
             <el-option
               v-for="item in achievementTypes"
-              :key="item.achievement_type"
-              :label="item.achievement_type"
-              :value="item.achievement_type"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -294,9 +294,10 @@ export default {
         this.achievements = (await getAchievement({ student: this.id })).data;
         this.skills = (
           await findStudentSkills(this.id)
-        ).data.student_skills.map(x => x.id);
+        ).data.skills.map(x => x.id);
       } catch (err) {
-        getError("информации о достижениях студента", err.response.status);
+        console.log("🚀 > err", err);
+        getError("информации о достижениях студента", err.response?.status);
       } finally {
         this.loading = false;
       }
@@ -342,7 +343,7 @@ export default {
         this.dialogVisible = false;
         await this.fetchInfo();
       } catch (err) {
-        postError("достижения студента", err.response.status);
+        postError("достижения студента", err.response?.status);
       } finally {
         this.loading = false;
       }
@@ -353,7 +354,7 @@ export default {
         await deleteAchievement(id);
         await this.fetchInfo();
       } catch (err) {
-        deleteError("достижения студента", err.response.status);
+        deleteError("достижения студента", err.response?.status);
       } finally {
         this.loading = false;
       }

@@ -61,14 +61,13 @@
 <script>
 import path from "path";
 import { isExternal } from "@/utils/validate";
-import AZGuard from "@/components/AZGuard";
 import Item from "./Item.vue";
 import AppLink from "./Link.vue";
 import FixiOSBug from "./FixiOSBug";
 
 export default {
   name: "SidebarItem",
-  components: { AZGuard, Item, AppLink },
+  components: { Item, AppLink },
   mixins: [FixiOSBug],
   props: {
     // route object

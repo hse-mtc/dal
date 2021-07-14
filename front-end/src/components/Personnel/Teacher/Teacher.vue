@@ -128,40 +128,40 @@
               <transition name="el-fade-in" mode="out-in">
                 <el-select
                   v-if="modify"
-                  v-model="modifyInfo.rank"
+                  v-model="modifyInfo.rank.id"
                   value-key="rank"
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in ranks"
-                    :key="item.rank"
-                    :label="item.rank"
-                    :value="item.rank"
+                    v-for="rank in ranks"
+                    :key="rank.id"
+                    :label="rank.title"
+                    :value="rank.id"
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ displayInfo.rank }}
+                  {{ displayInfo.rank.title }}
                 </span>
               </transition>
             </el-form-item>
 
-            <el-form-item label="Должность" prop="teacher_post">
+            <el-form-item label="Должность" prop="post">
               <transition name="el-fade-in" mode="out-in">
                 <el-select
                   v-if="modify"
-                  v-model="modifyInfo.teacher_post"
-                  value-key="teacher_post"
+                  v-model="modifyInfo.post"
+                  value-key="post"
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in teacherPosts"
-                    :key="item.teacher_post"
-                    :label="item.teacher_post"
-                    :value="item.teacher_post"
+                    v-for="(label, value) in TEACHER_POSTS"
+                    :key="value"
+                    :label="label"
+                    :value="value"
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ displayInfo.teacher_post }}
+                  {{ TEACHER_POSTS[displayInfo.post] }}
                 </span>
               </transition>
             </el-form-item>
@@ -170,54 +170,54 @@
               <transition name="el-fade-in" mode="out-in">
                 <el-select
                   v-if="modify"
-                  v-model="modifyInfo.milfaculty"
+                  v-model="modifyInfo.milfaculty.id"
                   value-key="milfaculty"
                   style="display: block"
                 >
                   <el-option
                     v-for="item in milfaculties"
-                    :key="item.milfaculty"
-                    :label="item.milfaculty"
-                    :value="item.milfaculty"
+                    :key="item.id"
+                    :label="item.title"
+                    :value="item.id"
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ displayInfo.milfaculty }}
+                  {{ displayInfo.milfaculty.title }}
                 </span>
               </transition>
             </el-form-item>
 
-            <el-form-item label="Прикрепленный взвод:" prop="milgroup">
+            <el-form-item label="Прикрепленные взвода:" prop="milgroups">
               <transition name="el-fade-in" mode="out-in">
                 <el-select
                   v-if="modify"
-                  v-model="modifyInfo.milgroup.milgroup"
-                  value-key="milgroup"
+                  v-model="modifyInfo.milgroups"
+                  value-key="id"
+                  multiple
                   style="display: block"
                 >
                   <el-option
                     v-for="item in milgroups"
-                    :key="item.milgroup"
-                    :label="item.milgroup"
-                    :value="item.milgroup"
+                    :key="item.id"
+                    :label="item.title"
+                    :value="item"
                   >
-                    <span style="float: left">{{ item.milgroup }}</span>
-                    <span style="float: right; color: #8492a6; font-size: 13px">
-                      {{ item.milfaculty }}
+                    <span style="float: left">{{ item.title }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px; margin-right: 15px;">
+                      {{ item.milfaculty.abbreviation }}
                     </span>
                   </el-option>
                 </el-select>
-                <span v-else class="field-value">
-                  {{
-                    displayInfo.milgroup ? displayInfo.milgroup.milgroup : "---"
-                  }}
-                  <sub>
-                    {{
-                      displayInfo.milgroup
-                        ? displayInfo.milgroup.milfaculty
-                        : ""
-                    }}
-                  </sub>
+                <span v-else-if="displayInfo.milgroups" class="field-value">
+                  <div
+                    v-for="mg in displayInfo.milgroups"
+                    :key="mg.id"
+                  >
+                    {{ mg.title }}
+                    <sub>
+                      {{ mg.milfaculty.abbreviation }}
+                    </sub>
+                  </div>
                 </span>
               </transition>
             </el-form-item>
@@ -261,12 +261,15 @@ import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import moment from "moment";
 import { UserModule, ReferenceModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
+import { displayTeacherMilgroups } from "@/utils/teachers";
+import { TEACHER_POSTS } from "@/utils/enums";
 
 export default {
   name: "Teacher",
   components: { ExpandBox, ChangePasswordForm },
   data() {
     return {
+      TEACHER_POSTS,
       dialog: false,
       loading: false,
       modify: false,
@@ -311,7 +314,7 @@ export default {
             trigger: "change",
           },
         ],
-        teacher_post: [
+        post: [
           {
             required: true,
             message: "Пожалуйста, выберите должность",
@@ -366,7 +369,6 @@ export default {
       return UserModule.personType;
     },
     milgroup() {
-      console.log(this.displayInfo);
       return this.displayInfo.milgroup || {};
     },
   },
@@ -374,6 +376,7 @@ export default {
     await this.fetchInfo();
   },
   methods: {
+    displayTeacherMilgroups,
     formatDate: date => (moment(date).isValid() ? moment(date).format("DD.MM.YYYY") : "---"),
     async fetchInfo() {
       const id = this.$route.params.teacherId;
@@ -413,11 +416,15 @@ export default {
             const patronymic = patronymicArray.join(" ");
             const requestBody = {
               ...this.modifyInfo,
-              milgroup: this.modifyInfo.milgroup.milgroup,
+              milgroups: this.modifyInfo.milgroups.map(x => x.id),
+              milfaculty: this.modifyInfo.milfaculty.id,
+              rank: this.modifyInfo.rank.id,
               surname,
               name,
               patronymic,
               photo: undefined,
+              name_genitive: undefined,
+              surname_genitive: undefined,
               // contact_info: undefined,
             };
             await patchTeacher(requestBody);

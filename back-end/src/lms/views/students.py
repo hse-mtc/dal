@@ -13,7 +13,6 @@ from rest_framework.filters import SearchFilter
 from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
-from rest_framework.permissions import SAFE_METHODS
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -125,9 +124,6 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     def get_queryset(self):
         if self.action == "applications":
             return self.queryset.filter(status=Student.Status.APPLICANT)
-        if (self.request.method in SAFE_METHODS and
-                "archived" not in self.request.query_params):
-            return super().get_queryset().filter(milgroup__archived=False)
         return super().get_queryset()
 
     def handle_scope_milfaculty(self, user_type, user):
@@ -140,13 +136,14 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         return self.queryset.filter(milgroup__milfaculty=milfaculty)
 
     def handle_scope_milgroup(self, user_type, user):
-        if user_type in ("student", "teacher"):
+        if user_type == "student":
             return self.queryset.filter(milgroup=user.milgroup)
+        if user_type == "teacher":
+            return self.queryset.filter(milgroup__in=user.milgroups)
         return self.queryset.none()
 
     def handle_scope_self(self, user_type, user):
         if user_type == "student":
-            print(user)
             return self.queryset.filter(user=user)
         return self.queryset.none()
 
@@ -312,8 +309,10 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
         return self.queryset.filter(milgroup__milfaculty=milfaculty)
 
     def handle_scope_milgroup(self, user_type, user):
-        if user_type in ("student", "teacher"):
+        if user_type == "student":
             return self.queryset.filter(milgroup=user.milgroup)
+        if user_type == "teacher":
+            return self.queryset.filter(milgroup__in=user.milgroups)
         return self.queryset.none()
 
     def list(self, request: Request, *args, **kwargs) -> Response:
@@ -324,15 +323,11 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
         ])
 
         user = request.user
-        milgroup = None
 
         if hasattr(user, "teacher"):
-            milgroup = user.teacher.milgroup
+            queryset = queryset.filter(milgroup__in=user.teacher.milgroups)
         elif hasattr(user, "student"):
-            milgroup = user.student.milgroup
-
-        if milgroup is not None:
-            queryset = queryset.filter(milgroup=milgroup)
+            queryset = queryset.filter(milgroup=user.student.milgroup)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
@@ -354,7 +349,8 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
             user = get_user_model().objects.get(email=email)
             token = CreatePasswordTokenSerializer.get_token(user)
 
-            # TODO(TmLev): send email, link should forward to front end app
+            # TODO(TmLev): send email, link should forward to front end app.
+            #   Waiting for @gakhromov to set up email server.
             print(f"localhost:9528/change-password?token={str(token)}")
 
         if getattr(instance, "_prefetched_objects_cache", None):

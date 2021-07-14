@@ -43,7 +43,8 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
     search_fields = ["surname", "name", "patronymic"]
 
     def get_serializer_class(self):
-        if self.action in MUTATE_ACTIONS:
+        mutate_actions = MUTATE_ACTIONS + ["registration"]
+        if self.action in mutate_actions:
             return TeacherMutateSerializer
         return TeacherSerializer
 
@@ -51,7 +52,9 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
             methods=["post"],
             permission_classes=[permissions.AllowAny])
     def registration(self, request):
-        serializer = TeacherSerializer(data=request.data)
+        # TODO(TmLev): verify email uniqueness. Create Teacher model.
+
+        serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         email = request.data["email"]
@@ -82,7 +85,7 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
             milfaculty = user.milfaculty
         else:
             return False
-        return data["milfaculty"] == milfaculty.milfaculty
+        return data["milfaculty"] == milfaculty.id
 
     def handle_scope_self(self, user_type, user):
         if user_type == "teacher":

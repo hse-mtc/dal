@@ -89,9 +89,7 @@ class Reference extends VuexModule {
     return await getFetchRequest(
       getMilGroups,
       data => {
-        // УБРАТЬ УБРАТЬ УБРАТЬ
-        this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup })));
-        // this.SET_MILGROUPS(data);
+        this.SET_MILGROUPS(data);
         this.SET_IS_LOADED({ field: "_milgroupsLoaded", value: true });
       },
       "взвода",
@@ -102,9 +100,7 @@ class Reference extends VuexModule {
   async addMilgroup(newItem) {
     return await getAddRequest(
       addMilGroup,
-      // УБРАТЬ УБРАТЬ УБРАТЬ
-      data => this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup }))),
-      // this.SET_MILGROUPS,
+      data => this.SET_MILGROUPS(data),
       "_milgroups",
       "взвод",
     ).call(this, newItem);
@@ -114,9 +110,7 @@ class Reference extends VuexModule {
   async editMilgroup({ id, ...newData }) {
     return await getEditRequest(
       editMilGroup,
-      // УБРАТЬ УБРАТЬ УБРАТЬ
-      data => this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup }))),
-      // this.SET_MILGROUPS,
+      data => this.SET_MILGROUPS(data),
       "_milgroups",
       "взвод",
     ).call(this, { id, ...newData });
@@ -126,9 +120,7 @@ class Reference extends VuexModule {
   async deleteMilgroup(id) {
     return await getDeleteRequest(
       deleteMilGroup,
-      // УБРАТЬ УБРАТЬ УБРАТЬ
-      data => this.SET_MILGROUPS(data.map(item => ({ ...item, id: item.milgroup }))),
-      // this.SET_MILGROUPS,
+      data => this.SET_MILGROUPS(data),
       "_milgroups",
       "взвод",
     ).call(this, id);

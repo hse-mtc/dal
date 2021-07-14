@@ -32,14 +32,11 @@ def create_books(
     ]
 
     for file in files:
-        book, is_created = Book.objects.get_or_create(
+        book, _ = Book.objects.get_or_create(
             title=random.choice(titles),
             file=file,
             page_count=random.randint(100, 300),
         )
-
-        if not is_created:
-            continue
 
         for _ in range(random.randint(1, 2)):
             book.authors.add(random.choice(authors))

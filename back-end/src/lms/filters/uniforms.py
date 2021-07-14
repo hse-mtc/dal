@@ -7,4 +7,4 @@ class UniformFilter(FilterSet):
 
     class Meta:
         model = Uniform
-        fields = ['milfaculty']
+        fields = ["milfaculty"]

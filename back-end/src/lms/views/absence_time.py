@@ -8,7 +8,7 @@ from lms.models.absences import AbsenceTime
 from lms.serializers.absences import AbsenceTimeSerializer
 
 
-@extend_schema(tags=['absence-time'])
+@extend_schema(tags=["absence-time"])
 class AbsenceTimeView(RetrieveUpdateAPIView):
     serializer_class = AbsenceTimeSerializer
     queryset = AbsenceTime.objects.all()

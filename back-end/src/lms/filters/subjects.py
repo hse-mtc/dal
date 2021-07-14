@@ -7,6 +7,4 @@ class LessonSubjectFilter(FilterSet):
 
     class Meta:
         model = Subject
-        fields = [
-            'title',
-        ]
+        fields = ["title"]

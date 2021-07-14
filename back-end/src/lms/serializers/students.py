@@ -19,10 +19,12 @@ from common.serializers.persons import (
 from lms.models.common import Milgroup
 from lms.models.students import (
     Student,
-    StudentPost,
-    StudentSkill,
+    Skill,
 )
-from lms.serializers.common import MilgroupSerializer
+from lms.serializers.common import (
+    MilgroupSerializer,
+    MilspecialtySerializer,
+)
 from lms.serializers.applicants import (
     PassportSerializer,
     RecruitmentOfficeSerializer,
@@ -47,30 +49,25 @@ class PhotoSerializer(ModelSerializer):
         exclude = ["id"]
 
 
-class StudentPostSerializer(ModelSerializer):
+class SkillSerializer(ModelSerializer):
 
     class Meta:
-        model = StudentPost
+        model = Skill
         fields = "__all__"
 
 
-class StudentSkillSerializer(ModelSerializer):
-
-    class Meta:
-        model = StudentSkill
-        fields = "__all__"
-
-
-class StudentSerializer(WritableNestedModelSerializer):
-    milgroup = MilgroupSerializer()
-    university_info = UniversityInfoSerializer()
+class StudentSerializer(ModelSerializer):
+    fullname = SerializerMethodField(read_only=True)
     photo = PhotoSerializer(read_only=True)
-    birth_info = BirthInfoSerializer(read_only=True)
-    application_process = ApplicationProcessSerializer(read_only=False)
-    contact_info = ContactInfoSerializer(read_only=True)
-    student_skills = StudentSkillSerializer(many=True)
 
-    fullname = SerializerMethodField()
+    milgroup = MilgroupSerializer(read_only=True)
+    skills = SkillSerializer(many=True, read_only=True)
+
+    birth_info = BirthInfoSerializer(read_only=True)
+    contact_info = ContactInfoSerializer(read_only=True)
+    university_info = UniversityInfoSerializer(read_only=True)
+
+    application_process = ApplicationProcessSerializer(read_only=False)
 
     class Meta:
         model = Student
@@ -119,8 +116,8 @@ class StudentMutateSerializer(
 
 
 class StudentShortSerializer(ModelSerializer):
-    fullname = SerializerMethodField(required=False)
-    milgroup = MilgroupSerializer(required=False)
+    fullname = SerializerMethodField(read_only=True)
+    milgroup = MilgroupSerializer(read_only=True)
 
     def get_fullname(self, obj):
         return f"{obj.surname} {obj.name} {obj.patronymic}"
@@ -131,12 +128,11 @@ class StudentShortSerializer(ModelSerializer):
 
 
 class StudentBasicInfoSerializer(ModelSerializer):
-    fullname = SerializerMethodField()
-    milgroup = MilgroupSerializer()
-    photo = PhotoSerializer()
-    student_post = StudentPostSerializer()
-    contact_info = ContactInfoSerializer()
-    birth_info = BirthInfoSerializer()
+    fullname = SerializerMethodField(read_only=True)
+    milgroup = MilgroupSerializer(read_only=True)
+    photo = PhotoSerializer(read_only=True)
+    contact_info = ContactInfoSerializer(read_only=True)
+    birth_info = BirthInfoSerializer(read_only=True)
 
     def get_fullname(self, obj):
         return f"{obj.surname} {obj.name} {obj.patronymic}"
@@ -144,15 +140,16 @@ class StudentBasicInfoSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            "id", "fullname", "milgroup", "photo", "student_post",
-            "contact_info", "status", "birth_info"
+            "id", "fullname", "milgroup", "photo", "post", "contact_info",
+            "status", "birth_info"
         ]
 
 
 class StudentExtraInfoSerializer(ModelSerializer):
-    contact_info = ContactInfoSerializer()
-    passport = PassportSerializer()
-    university_info = UniversityInfoSerializer()
+    contact_info = ContactInfoSerializer(read_only=True)
+    passport = PassportSerializer(read_only=True)
+    university_info = UniversityInfoSerializer(read_only=True)
+    milspecialty = MilspecialtySerializer(read_only=True)
 
     class Meta:
         model = Student
@@ -163,8 +160,8 @@ class StudentExtraInfoSerializer(ModelSerializer):
 
 
 class StudentSkillsSerializer(ModelSerializer):
-    student_skills = StudentSkillSerializer(many=True)
+    skills = SkillSerializer(many=True)
 
     class Meta:
         model = Student
-        fields = ["student_skills"]
+        fields = ["skills"]

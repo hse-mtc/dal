@@ -4,16 +4,15 @@
       <el-col :span="5">
         <el-select
           v-model="filter.weekday"
-          value-key="number"
           placeholder="Выберите учебный день"
           style="display: block"
           @change="onWeekdayChanged"
         >
           <el-option
-            v-for="item in weekdays"
-            :key="item.number"
-            :label="item.name"
-            :value="item.number"
+            v-for="(value, key) in WEEKDAYS"
+            :key="key"
+            :label="value"
+            :value="key"
           />
         </el-select>
       </el-col>
@@ -44,9 +43,9 @@
     >
       <el-tab-pane
         v-for="mg in milgroups"
-        :key="mg.milgroup"
-        :label="mg.milgroup.toString()"
-        :name="mg.milgroup.toString()"
+        :key="mg.id"
+        :label="mg.title.toString()"
+        :name="mg.id.toString()"
       >
         <PrimeTable
           :value="journal.students"
@@ -90,15 +89,14 @@
                     <el-form-item label="Тип причины: ">
                       <el-tag
                         :type="
-                          tagByAbsenceType(
-                            data.absences.find((x) => x.date === d).type,
+                          tagByExcuse(
+                            data.absences.find((x) => x.date === d).excuse,
                           )
                         "
                         disable-transitions
                       >
                         {{
-                          data.absences.find((x) => x.date === d).type
-                            | absenceTypeFilter
+                          EXCUSES[data.absences.find((x) => x.date === d).excuse]
                         }}
                       </el-tag>
                     </el-form-item>
@@ -182,15 +180,15 @@
       >
         <el-form-item label="Тип причины: ">
           <el-select
-            v-model="editAbsence.type"
+            v-model="editAbsence.excuse"
             placeholder="Выберите тип причины"
             style="display: block"
           >
             <el-option
-              v-for="item in types"
-              :key="item.code"
-              :label="item.label"
-              :value="item.code"
+              v-for="value, key in EXCUSES"
+              :key="key"
+              :label="value"
+              :value="key"
             />
           </el-select>
         </el-form-item>
@@ -243,43 +241,22 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
+import { WEEKDAYS, EXCUSES, ABSENCE_STATUSES } from "@/utils/enums";
 
 export default {
   name: "Absence",
-  components: {},
-  filters: {
-    absenceTypeFilter(value) {
-      switch (value) {
-        case "SE":
-          return "Уважительная";
-        case "NS":
-          return "Неуважительная";
-        case "LA":
-          return "Опоздание";
-        default:
-          return "Ошибка";
-      }
-    },
-    absenceStatusFilter(value) {
-      switch (value) {
-        case "OP":
-          return "Открыт";
-        case "CL":
-          return "Закрыт";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
   data() {
     return {
+      EXCUSES,
+      WEEKDAYS,
+      ABSENCE_STATUSES,
       dialogVisible: false,
       loading: false,
       editAbsence: {
         id: 0,
         date: "",
-        absence_type: "",
-        absence_status: "",
+        excuse: "",
+        status: "",
         student: {
           id: "",
           name: "",
@@ -337,31 +314,13 @@ export default {
         ],
       },
       journal: {},
-      weekdays: [
-        { number: 0, name: "Понедельник" },
-        { number: 1, name: "Вторник" },
-        { number: 2, name: "Среда" },
-        { number: 3, name: "Четверг" },
-        { number: 4, name: "Пятница" },
-        { number: 5, name: "Суббота" },
-        { number: 6, name: "Воскресенье" },
-      ],
     };
   },
   computed: {
     milgroups() {
       return ReferenceModule.milgroups.filter(
-        x => x.weekday === this.filter.weekday,
+        x => x.weekday === +this.filter.weekday,
       );
-    },
-    milfaculties() {
-      return ReferenceModule.milfaculties;
-    },
-    types() {
-      return ReferenceModule.absenceTypes;
-    },
-    statuses() {
-      return ReferenceModule.absenceStatuses;
     },
     userMilfaculty() {
       return UserModule.personMilfaculty;
@@ -393,7 +352,7 @@ export default {
     async onWeekdayChanged() {
       this.loading = true;
       this.filter.milgroup = this.milgroups.length
-        ? this.milgroups[0].milgroup.toString()
+        ? this.milgroups[0].id.toString()
         : "0";
       await this.onJournal();
     },
@@ -402,8 +361,8 @@ export default {
       // eslint-disable-next-line no-param-reassign
       absence.status = absence.status === "CL" ? "OP" : "CL";
     },
-    tagByAbsenceType(type) {
-      switch (type) {
+    tagByExcuse(excuse) {
+      switch (excuse) {
         case "NS":
           return "danger";
         case "LA":
