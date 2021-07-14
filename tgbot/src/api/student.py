@@ -14,10 +14,23 @@ class State(Enum):
     PRESENT = auto()
 
 
+class Post(Enum):
+    GC = "командир взвода"
+    SC = "командир отделения"
+
+
+@dataclass
+class Milfaculty:
+    id: int
+    title: str
+    abbreviation: str
+
+
 @dataclass
 class Milgroup:
-    milgroup: str
-    milfaculty: str
+    id: int
+    title: str
+    milfaculty: Milfaculty
     weekday: int
     archived: bool
 
@@ -28,29 +41,41 @@ class Student:
     fullname: str
     state: State
     milgroup: tp.Optional[Milgroup] = None
-    absence_type: str = "NS"
-    absence_status: str = "OP"
-    post: str = "PL"  # TODO(vladisa88): add StudentPosts (Platoon Leader)
+    excuse: str = "IL"
+    status: str = "OP"
+    post: tp.Optional[str] = None
 
     def is_milgroup_commander(self) -> bool:
-        # TODO(vladisa88): `PL` may change to something else in the future.
-        return self.post == "PL"
+        return self.post in ("GC", "SC")
 
     @staticmethod
     def from_raw(body: dict[str, tp.Any]) -> "Student":
         print(body)
+        # remove unnecessary data
+        for key in ["skills", "contact_info", "birth_info", "university_info", "family"]:
+            body.pop(key)
+            
+        # parse milgroup & milfaculty
+        milgroup_dict = body.pop("milgroup")
+        if milgroup_dict is None:
+            milgroup = None
+        else:
+            milfaculty = Milfaculty(**milgroup_dict.pop("milfaculty"))
+            milgroup = Milgroup(milfaculty=milfaculty, **milgroup_dict)
+
         return Student(
             id=body["id"],
             fullname=body["fullname"],
-            milgroup=Milgroup(**body["milgroup"]),
+            milgroup=milgroup,
             state=State.PRESENT,
+            post=body["post"],
         )
 
     def to_body(self) -> dict[str, tp.Any]:
         return {
             "student": self.id,
-            "absence_type": self.absence_type,
-            "absence_status": self.absence_status,
+            "excuse": self.excuse,
+            "status": self.status,
         }
 
 
