@@ -101,7 +101,7 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return queryset
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class.permission_class,
                                                  self.request.method)
 
         if scope == Permission.Scope.SELF:
@@ -113,7 +113,7 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return True
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class.permission_class,
                                                  self.request.method)
 
         if scope == Permission.Scope.SELF:
