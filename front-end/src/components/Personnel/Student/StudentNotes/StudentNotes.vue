@@ -1,6 +1,6 @@
 <template>
   <ExpandBox title="Заметки" @toggled="toggled">
-    <div class="notes" v-loading="loading">
+    <div v-loading="loading" class="notes">
       <TableEditor
         type="notes"
         :data="notes"
@@ -17,13 +17,16 @@
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import TableEditor from "@/components/Apanel/Dictionaries/TableEditor.vue";
-import { postError, getError, patchError, deleteError } from "@/utils/message";
+import {
+  postError, getError, patchError, deleteError,
+} from "@/utils/message";
 import {
   findStudentNotes,
   postStudentNote,
   patchStudentNote,
   deleteStudentNote,
 } from "@/api/students";
+import _omit from "lodash/omit";
 
 export default {
   name: "StudentNotes",
@@ -107,8 +110,8 @@ export default {
     onStartEdit(id) {
       this.editingItemId = id;
       this.editingData = _omit(
-        this[this.currentTab].find((item) => item.id === id),
-        ["id"]
+        this.notes.find(item => item.id === id),
+        ["id"],
       );
     },
     onAbortEdit() {
@@ -116,9 +119,7 @@ export default {
       this.editingData = null;
     },
     async onSubmitEdit(data) {
-      const { edit } = this.editorDefenition;
-
-      const res = await edit({
+      const res = await this.editorDefenition.edit({
         id: this.editingItemId,
         ...data,
       });

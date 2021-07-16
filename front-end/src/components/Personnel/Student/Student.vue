@@ -8,7 +8,7 @@
           height="22px"
           alt="назад"
           @click="backToPersonnel"
-        />
+        >
         {{ isProfile ? "Мой профиль" : fullname }}
       </div>
       <div v-if="isProfile">
@@ -110,7 +110,7 @@ export default {
             confirmButtonText: "Да",
             cancelButtonText: "Отмена",
             type: "warning",
-          }
+          },
         );
         this.dialog = false;
       } catch {}

@@ -110,7 +110,7 @@ export function findStudentNotes(id) {
     method: "get",
     params: {
       student: id,
-    }
+    },
   });
 }
 

@@ -154,10 +154,10 @@ class DictionariesTableEditor {
       notes: {
         text: {
           title: "Заметка",
-        width: 400,
+          width: 400,
           editorType: "input",
-        }
-      }
+        },
+      },
     };
   }
 
