@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+
 from rest_framework.serializers import (
     SerializerMethodField,
     ModelSerializer,
@@ -169,6 +171,16 @@ class StudentSkillsSerializer(ModelSerializer):
 
 
 class NoteSerializer(ModelSerializer):
+    user = SerializerMethodField(read_only=True)
+
+    def get_user(self, obj) -> int:
+        return self.context["request"].user.id
+
+    def create(self, validated_data):
+        user_id = self.context["request"].user.id
+        validated_data["user"] = get_user_model().objects.get(id=user_id)
+
+        return super().create(validated_data)
 
     class Meta:
         model = Note
