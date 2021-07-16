@@ -203,7 +203,7 @@ class UserSerializer(serializers.ModelSerializer):
             milfaculty = user.milgroup.milfaculty.id
 
         if user_type == "teacher":
-            milgroups = user.milgroups
+            milgroups = [m.id for m in user.milgroups.all()]
             milfaculty = user.milfaculty.id
 
         person = PersonObject(0 if user is None else user.id, user_type,
