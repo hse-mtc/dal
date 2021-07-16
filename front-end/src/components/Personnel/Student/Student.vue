@@ -8,7 +8,7 @@
           height="22px"
           alt="назад"
           @click="backToPersonnel"
-        >
+        />
         {{ isProfile ? "Мой профиль" : fullname }}
       </div>
       <div v-if="isProfile">
@@ -21,15 +21,19 @@
       <StudentGeneral :milgroup="milgroup" />
     </div>
     <div class="row">
+      <StudentExtra :milgroup="milgroup" />
+    </div>
+    <div class="row">
       <div class="column">
+        <StudentPerformance />
         <StudentDiscipline />
-        <StudentExtra :milgroup="milgroup" />
       </div>
       <div class="column">
         <StudentAchievements :milgroup="milgroup" />
-        <StudentPerformance />
+        <StudentNotes />
       </div>
     </div>
+
     <el-dialog
       width="500px"
       :visible.sync="dialog"
@@ -48,6 +52,7 @@ import StudentExtra from "@/components/Personnel/Student/StudentExtra/StudentExt
 import StudentAchievements from "@/components/Personnel/Student/StudentAchievements/StudentAchievements.vue";
 import StudentDiscipline from "@/components/Personnel/Student/StudentDiscipline/StudentDiscipline.vue";
 import StudentPerformance from "@/components/Personnel/Student/StudentPerformance/StudentPerformance.vue";
+import StudentNotes from "@/components/Personnel/Student/StudentNotes/StudentNotes.vue";
 import { UserModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
 import { findStudent } from "@/api/students";
@@ -60,6 +65,7 @@ export default {
     StudentAchievements,
     StudentDiscipline,
     StudentPerformance,
+    StudentNotes,
     ChangePasswordForm,
   },
   data() {
@@ -104,7 +110,7 @@ export default {
             confirmButtonText: "Да",
             cancelButtonText: "Отмена",
             type: "warning",
-          },
+          }
         );
         this.dialog = false;
       } catch {}

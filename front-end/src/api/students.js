@@ -103,3 +103,36 @@ export const updateStudentApplicationInfo = (id, data) => request({
 export function getApplicationsExcelDownloadLink(campus) {
   return `${BASE_API_URL}${applicationsExport}?campus=${campus}`;
 }
+
+export function findStudentNotes(id) {
+  return request({
+    url: `${BASE_API_URL}${students}notes/`,
+    method: "get",
+    params: {
+      student: id,
+    }
+  });
+}
+
+export function patchStudentNote(data) {
+  return request({
+    url: `${BASE_API_URL}${students}notes/${data.id}/`,
+    method: "patch",
+    data,
+  });
+}
+
+export function postStudentNote(data) {
+  return request({
+    url: `${BASE_API_URL}${students}notes/`,
+    method: "post",
+    data,
+  });
+}
+
+export function deleteStudentNote(id) {
+  return request({
+    url: `${BASE_API_URL}${students}notes/${id}`,
+    method: "delete",
+  });
+}
