@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.root">
+  <div>
     <el-input
       v-model="searchQuery"
       placeholder="Поиск"
@@ -202,8 +202,6 @@ export default Dictionaries;
 </script>
 
 <style lang="scss" module>
-.root {}
-
 .search {
   margin-bottom: 20px;
 }

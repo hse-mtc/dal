@@ -140,7 +140,3 @@ class DictionariesForms {
 
 export default DictionariesForms;
 </script>
-
-<style lang="scss" module>
-.root {}
-</style>
