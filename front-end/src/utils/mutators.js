@@ -1,4 +1,9 @@
-const { Message } = require("element-ui");
+import {
+  deleteError,
+  getError,
+  patchError,
+  postError,
+} from "@/utils/message";
 
 /**
  *
@@ -20,10 +25,10 @@ export const getFetchRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось загрузить ${errorMsg}:`, e);
-    Message({
-      type: "error",
-      message: `Не удалось загрузить ${errorMsg}`,
-    });
+
+    if (e.response.status) {
+      getError(errorMsg, e.response.status);
+    }
 
     return false;
   }
@@ -51,10 +56,10 @@ export const getAddRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось добавить ${errorMsg}:`, e);
-    Message({
-      type: "error",
-      message: `Не удалось добавить ${errorMsg}`,
-    });
+
+    if (e.response.status) {
+      postError(errorMsg, e.response.status);
+    }
 
     return false;
   }
@@ -81,10 +86,10 @@ export const getDeleteRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось удалить ${errorMsg}:`, e);
-    Message({
-      type: "error",
-      message: `Не удалось удалить ${errorMsg}`,
-    });
+
+    if (e.response.status) {
+      deleteError(errorMsg, e.response.status);
+    }
 
     return false;
   }
@@ -116,10 +121,10 @@ export const getEditRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось изменить ${errorMsg}:`, e);
-    Message({
-      type: "error",
-      message: `Не удалось изменить ${errorMsg}`,
-    });
+
+    if (e.response.status) {
+      patchError(errorMsg, e.response.status);
+    }
 
     return false;
   }
