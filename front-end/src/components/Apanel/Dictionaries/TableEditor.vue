@@ -53,20 +53,20 @@
           v-if="editorType === 'checkbox'"
           v-model="editorData[field]"
           :checkbox-label="editorData[field] ? 'Да' : 'Нет'"
-          @change="onEdit(field, $event, editorData.newItem)"
+          @change="onEdit(editorData, field)"
         />
 
         <TextInput
           v-else-if="editorType === 'input'"
           v-model="editorData[field]"
-          @change="onEdit(field, $event, editorData.newItem)"
+          @change="onEdit(editorData, field)"
         />
 
         <SelectInput
           v-else-if="editorType === 'select'"
           v-model="editorData[field]"
           v-bind="props"
-          @change="onEdit(field, $event, editorData.newItem)"
+          @change="onEdit(editorData, field)"
         />
       </template>
     </PrimeColumn>
@@ -126,7 +126,7 @@ class DictionariesTableEditor {
   get columnsByTypes() {
     return {
       milgroups: {
-        milgroup: { title: "Взвод", width: 100, editorType: "input" },
+        title: { title: "Взвод", width: 100, editorType: "input" },
         milfaculty: {
           title: "Направление",
           width: 200,
@@ -156,8 +156,8 @@ class DictionariesTableEditor {
 
   get milfacultiesOptions() {
     return ReferenceModule.milfaculties.map(item => ({
-      label: item.milfaculty,
-      value: item.milfaculty,
+      label: item.title,
+      value: item.id,
     }));
   }
 
@@ -180,9 +180,9 @@ class DictionariesTableEditor {
     }
   }
 
-  onEdit(field, value, isNew) {
-    if (!isNew) {
-      this.$emit("submitEdit", { [field]: value });
+  onEdit(data, field) {
+    if (!data.isNew) {
+      this.$emit("submitEdit", { [field]: data[field] });
     }
   }
 

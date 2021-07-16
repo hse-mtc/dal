@@ -108,9 +108,12 @@ class Dictionaries {
     },
     milgroups: {
       label: "Взвода",
-      sortFunc: (left, right) => (left.milgroup > right.milgroup ? 1 : -1),
+      mapFunc: item => ({ ...item, milfaculty: item.milfaculty.id }),
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
       filterFunc: (item, query) => {
-        const stringItem = `${item.milgroup} ${item.milfaculty} ${WEEKDAYS[item.weekday]}`
+        const stringItem = `${item.title} ${
+          this.milfaculties.find(milfaculty => milfaculty.id === item.milfaculty).title
+        } ${WEEKDAYS[item.weekday]}`
           .toLowerCase();
         return query.split(" ")
           .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
@@ -142,6 +145,7 @@ class Dictionaries {
   get authors() { return PapersModule.authors; }
   get categories() { return PapersModule.categories; }
   get milgroups() { return ReferenceModule.milgroups; }
+  get milfaculties() { return ReferenceModule.milfaculties; }
 
   async onDelete(id) {
     await this.$confirm(
@@ -178,7 +182,7 @@ class Dictionaries {
       ...data,
     });
 
-    if (res) {
+    if (res && this.editorsTypes[this.currentTab] === "tags") {
       this.onAbortEdit();
     }
   }

@@ -114,6 +114,16 @@ class MilgroupViewSet(ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return MilgroupMutateSerializer
         return MilgroupSerializer
+    
+    def partial_update(self, request, pk=None):
+        super().partial_update(request, pk)
+        serializer = MilgroupSerializer(
+            self.get_object(),
+            data=request.data,
+            partial=True,
+        )
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)
 
 
 @extend_schema(tags=["reference-book"])
