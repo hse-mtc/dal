@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 from common.models.persons import (
     Personnel,
@@ -113,3 +114,20 @@ class Student(Personnel):
 
     def __str__(self):
         return f"ID = {self.id}, full name = {self.full_name}"
+
+
+class Note(models.Model):
+    text = models.TextField()
+    # author of the note
+    user = models.ForeignKey(
+        to=get_user_model(),
+        on_delete=models.CASCADE,
+    )
+    student = models.ForeignKey(
+        to=Student,
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "Note"
+        verbose_name_plural = "Notes"

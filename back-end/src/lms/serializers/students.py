@@ -20,6 +20,7 @@ from lms.models.common import Milgroup
 from lms.models.students import (
     Student,
     Skill,
+    Note,
 )
 from lms.serializers.common import (
     MilgroupSerializer,
@@ -165,3 +166,10 @@ class StudentSkillsSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = ["skills"]
+
+
+class NoteSerializer(ModelSerializer):
+
+    class Meta:
+        model = Note
+        fields = "__all__"

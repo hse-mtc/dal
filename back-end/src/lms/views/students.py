@@ -26,13 +26,16 @@ from conf.settings import (
 from common.constants import MUTATE_ACTIONS
 
 from lms.models.applicants import ApplicationProcess
-from lms.models.students import Student
+from lms.models.students import Student, Note
 from lms.models.common import (
     Milgroup,
     Milspecialty,
 )
 
-from lms.filters.students import StudentFilter
+from lms.filters.students import (
+    StudentFilter,
+    NoteFilter,
+)
 
 from lms.serializers.applicants import (
     ApplicantSerializer,
@@ -42,6 +45,7 @@ from lms.serializers.applicants import (
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
+    NoteSerializer,
 )
 
 from lms.utils.export import generate_excel
@@ -90,6 +94,14 @@ class ActivatePermission(BasePermission):
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
         Permission.Scope.MILGROUP,
+    ]
+
+
+class StudentNotePermission(BasePermission):
+    permission_class = "student-notes"
+    view_name_rus = "Заметки о студентах"
+    scopes = [
+        Permission.Scope.SELF,
     ]
 
 
@@ -360,3 +372,53 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+
+@extend_schema(tags=["students"])
+class NoteViewSet(ModelViewSet):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+    permission_classes = [StudentNotePermission]
+    filter_backends = [DjangoFilterBackend]
+
+    filterset_class = NoteFilter
+
+    def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user)
+
+        if self.request.user.is_superuser:
+            return queryset
+
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scope.SELF:
+            return queryset.filter(user=self.request.user)
+
+        return queryset.none()
+
+    def is_creation_allowed_by_scope(self, data):
+        if self.request.user.is_superuser:
+            return True
+
+        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
+                                                 self.request.method)
+
+        if scope == Permission.Scope.SELF:
+            return self.request.user.id == data["user"]
+        return False
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        # check scoping
+        if self.is_creation_allowed_by_scope(request.data):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data,
+                            status=status.HTTP_201_CREATED,
+                            headers=headers)
+        return Response(
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN)
