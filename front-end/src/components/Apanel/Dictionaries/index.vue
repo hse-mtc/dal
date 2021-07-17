@@ -30,7 +30,7 @@
             />
 
             <TableEditor
-              v-else
+              v-else-if="editorsTypes[currentTab] === 'table'"
               :type="currentTab"
               :data="tagsItems"
               @addItem="onAddItem"
@@ -73,11 +73,13 @@ class Dictionaries {
     publishers: "tags",
     authors: "tags",
     categories: "tags",
+    achievementTypes: "tags",
+    milfaculties: "tags",
+    milgroups: "table",
   }
 
   tabs = {
-    publishers:
-    {
+    publishers: {
       label: "Издатели",
       mapFunc: item => ({ title: item.name, id: item.id }),
       sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
@@ -122,6 +124,26 @@ class Dictionaries {
       delete: ReferenceModule.deleteMilgroup,
       edit: ReferenceModule.editMilgroup,
     },
+    achievementTypes: {
+      label: "Достижения",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addAchievementType,
+      delete: ReferenceModule.deleteAchievementType,
+      edit: ReferenceModule.editAchievementType,
+    },
+    milfaculties: {
+      label: "Циклы",
+      mapFunc: item => ({
+        id: item.id,
+        title: item.title + (item.abbreviation ? ` (${item.abbreviation})` : ""),
+      }),
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addMilfaculty,
+      delete: ReferenceModule.deleteMilfaculty,
+      edit: ReferenceModule.editMilfaculty,
+    },
   }
 
   currentTab = "publishers"
@@ -146,6 +168,7 @@ class Dictionaries {
   get categories() { return PapersModule.categories; }
   get milgroups() { return ReferenceModule.milgroups; }
   get milfaculties() { return ReferenceModule.milfaculties; }
+  get achievementTypes() { return ReferenceModule.achievementTypes; }
 
   async onDelete(id) {
     await this.$confirm(
