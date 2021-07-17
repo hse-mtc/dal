@@ -18,7 +18,7 @@ class User extends VuexModule {
   refreshToken = tokenService.refresh;
   userId = tokenService.userId;
   _email = "";
-  _permissions = [];
+  _permissions = null;
   _campuses = [];
   _person = {};
   _isSuperuser = false;

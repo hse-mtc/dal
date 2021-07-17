@@ -3,9 +3,11 @@
     <CustomText variant="page-header">
       {{ title }}
     </CustomText>
-    <div v-if="button" class="button" @click="click">
-      {{ button }}
-    </div>
+    <AZGuard :permissions="permissions">
+      <div v-if="button" class="button" @click="click">
+        {{ button }}
+      </div>
+    </AZGuard>
   </div>
 </template>
 
@@ -25,6 +27,10 @@ export default {
     button: {
       type: String,
       default: "",
+    },
+    permissions: {
+      type: Array,
+      default: () => [],
     },
     click: {
       type: Function,

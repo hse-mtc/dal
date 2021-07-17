@@ -76,7 +76,7 @@ class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
 
     permission_classes = [SectionPermission]
-    scoped_permission_classes = SectionPermission
+    scoped_permission_class = SectionPermission
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SectionFilter
@@ -91,8 +91,8 @@ class SectionViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return self.queryset
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.ALL:
             return self.queryset
@@ -106,8 +106,8 @@ class SectionViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return True
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.ALL:
             return True
@@ -153,8 +153,8 @@ class TopicViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return self.queryset
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.ALL:
             return self.queryset
@@ -169,8 +169,8 @@ class TopicViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return True
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.ALL:
             return True
@@ -226,8 +226,8 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return self.queryset
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.ALL:
             return self.queryset
@@ -242,8 +242,8 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return True
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class,
-                                                 self.request.method)
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.ALL:
             return True

@@ -13,17 +13,23 @@
             >
             {{ subject }}
           </div>
-          <CustomText
-            v-if="userId === subjectOwnerId"
-            variant="paragraph"
-            color="#0C4B9A"
-            :custom-style="{ cursor: 'pointer' }"
-            @click="addTopic"
+          <AZGuard
+            :permissions="['sections.post.all', {
+              codename: 'sections.post.self',
+              validator: () => userId === subjectOwnerId,
+            }]"
           >
-            <div @click="addTopic">
-              + Добавить раздел
-            </div>
-          </CustomText>
+            <CustomText
+              variant="paragraph"
+              color="#0C4B9A"
+              :custom-style="{ cursor: 'pointer' }"
+              @click="addTopic"
+            >
+              <div @click="addTopic">
+                + Добавить раздел
+              </div>
+            </CustomText>
+          </AZGuard>
         </div>
       </el-col>
     </el-row>
@@ -45,12 +51,12 @@
         </div>
       </div>
       <div class="subjects">
-        <SearchForMaterials placeholder="Введите название темы или документа" />
+        <!--        <SearchForMaterials placeholder="Введите название темы или документа" />-->
         <div class="main-parts">
           <draggable
             :list="subjectInfo"
             v-bind="dragOptions"
-            :disabled="userId !== subjectOwnerId"
+            :disabled="disableDrag"
             @start="dragging = true"
             @end="dragging = false"
             @change="
@@ -99,7 +105,7 @@
                     />
                   </div>
 
-                  <div v-if="userId === subjectOwnerId" class="buttons">
+                  <div class="buttons">
                     <img
                       v-if="editTitleIndex === mainPart.id"
                       class="grow"
@@ -108,27 +114,47 @@
                       @click="acceptNewTitle(mainPart.id)"
                     >
                     <template v-else>
-                      <img
-                        class="grow"
-                        src="../../assets/subject/edit.svg"
-                        alt=""
-                        @click="editTitle(mainPart.id)"
+                      <AZGuard
+                        :permissions="['sections.patch.all', {
+                          codename: 'sections.patch.self',
+                          validator: () => userId === subjectOwnerId,
+                        }]"
                       >
-                      <img
-                        class="grow"
-                        src="../../assets/subject/close.svg"
-                        alt=""
-                        @click="deleteSection(mainPart.id)"
+                        <img
+                          class="grow"
+                          src="../../assets/subject/edit.svg"
+                          alt=""
+                          @click="editTitle(mainPart.id)"
+                        >
+                      </AZGuard>
+                      <AZGuard
+                        :permissions="['sections.delete.all', {
+                          codename: 'sections.delete.self',
+                          validator: () => userId === subjectOwnerId,
+                        }]"
                       >
+                        <img
+                          class="grow"
+                          src="../../assets/subject/close.svg"
+                          alt=""
+                          @click="deleteSection(mainPart.id)"
+                        >
+                      </AZGuard>
                     </template>
                   </div>
                 </div>
-
-                <SubjectTopics
-                  v-show="openedCards.includes(mainPart.id)"
-                  :section-id="mainPart.id"
-                  :is-owner="userId === subjectOwnerId"
-                />
+                <AZGuard
+                  :permissions="['topics.get.all', {
+                    codename: 'topics.get.self',
+                    validator: () => userId === subjectOwnerId },
+                  ]"
+                >
+                  <SubjectTopics
+                    v-show="openedCards.includes(mainPart.id)"
+                    :section-id="mainPart.id"
+                    :subject-owner-id="subjectOwnerId"
+                  />
+                </AZGuard>
               </div>
             </transition-group>
           </draggable>
@@ -143,6 +169,8 @@ import { Component } from "vue-property-decorator";
 import SearchForMaterials from "@/components/Search/SearchForMaterials";
 import SubjectTopics from "@/components/SubjectTopic/SubjectTopics.vue";
 import draggable from "vuedraggable";
+import { hasPermission } from "@/utils/permissions";
+
 import {
   addSection,
   deleteSection,
@@ -162,7 +190,15 @@ import { SubjectsModule, UserModule } from "@/store";
     SubjectTopics,
   },
   computed: {
-    userId() { return UserModule.userId; },
+    userId() {
+      return UserModule.userId;
+    },
+    disableDrag() {
+      return !hasPermission([{
+        codename: "sections-order.patch.all", // TODO: add sections-order.patch.self to BE and use validator with it on FE
+        validator: () => this.userId === this.subjectOwnerId,
+      }]);
+    },
   },
 })
 class MyDisciplines {
