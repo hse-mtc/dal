@@ -23,6 +23,10 @@ import {
   addMilGroup,
   deleteMilGroup,
   editMilGroup,
+  addAchievementType,
+  editAchievementType,
+  addMilFaculty,
+  editMilFaculty,
 } from "@/api/reference-book";
 import {
   getAddRequest,
@@ -100,7 +104,7 @@ class Reference extends VuexModule {
   async addMilgroup(newItem) {
     return await getAddRequest(
       addMilGroup,
-      data => this.SET_MILGROUPS(data),
+      this.SET_MILGROUPS,
       "_milgroups",
       "взвод",
     ).call(this, newItem);
@@ -110,7 +114,7 @@ class Reference extends VuexModule {
   async editMilgroup({ id, ...newData }) {
     return await getEditRequest(
       editMilGroup,
-      data => this.SET_MILGROUPS(data),
+      this.SET_MILGROUPS,
       "_milgroups",
       "взвод",
     ).call(this, { id, ...newData });
@@ -120,33 +124,10 @@ class Reference extends VuexModule {
   async deleteMilgroup(id) {
     return await getDeleteRequest(
       deleteMilGroup,
-      data => this.SET_MILGROUPS(data),
+      this.SET_MILGROUPS,
       "_milgroups",
       "взвод",
     ).call(this, id);
-  }
-
-  @Action
-  async editSubject({ id, ...newData }) {
-    try {
-      const { data } = await editMilGroup(id, newData);
-
-      const index = this.milgroups.findIndex(item => item.id === id);
-      const newArray = [...this._publishersList];
-      newArray[index] = data;
-
-      this.SET_MILGROUPS(newArray);
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось обновить взвод:", e);
-      Message({
-        type: "error",
-        message: "Не удалось обновить взвод",
-      });
-
-      return false;
-    }
   }
 
   get milgroups() {
@@ -287,20 +268,46 @@ class Reference extends VuexModule {
     this._milfaculties = payload;
   }
 
-  @Action({ commit: "SET_MILFACULTIES" })
-  async setMilfaculties(milfaculties) {
-    return milfaculties;
+  @Action
+  async fetchMilfaculties() {
+    return await getFetchRequest(
+      getMilFaculties,
+      data => {
+        this.SET_MILFACULTIES(data);
+        this.SET_IS_LOADED({ field: "_milfacultiesLoaded", value: true });
+      },
+      "циклов",
+    ).call(this);
   }
 
   @Action
-  async fetchMilfaculties() {
-    try {
-      const { data } = await getMilFaculties();
-      this.setMilfaculties(data);
-      this.SET_IS_LOADED({ field: "_milfacultiesLoaded", value: true });
-    } catch (err) {
-      getError("циклов", err.response.status);
-    }
+  async addMilfaculty(newItem) {
+    return await getAddRequest(
+      addMilFaculty,
+      this.SET_MILFACULTIES,
+      "_milfaculties",
+      "цикла",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editMilfaculty({ id, ...newData }) {
+    return await getEditRequest(
+      editMilFaculty,
+      this.SET_MILFACULTIES,
+      "_milfaculties",
+      "цикла",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteMilfaculty(id) {
+    return await getDeleteRequest(
+      deleteMilGroup,
+      this.SET_MILFACULTIES,
+      "_milfaculties",
+      "цикла",
+    ).call(this, id);
   }
 
   get milfaculties() {
@@ -347,20 +354,46 @@ class Reference extends VuexModule {
     this._achievementTypes = payload;
   }
 
-  @Action({ commit: "SET_ACHIEVEMENT_TYPES" })
-  async setAchievementTypes(achievementTypes) {
-    return achievementTypes;
+  @Action
+  async fetchAchievementTypes() {
+    return await getFetchRequest(
+      getAchievementTypes,
+      data => {
+        this.SET_ACHIEVEMENT_TYPES(data);
+        this.SET_IS_LOADED({ field: "_achievementTypesLoaded", value: true });
+      },
+      "типов достижений",
+    ).call(this);
   }
 
   @Action
-  async fetchAchievementTypes() {
-    try {
-      const { data } = await getAchievementTypes();
-      this.setAchievementTypes(data);
-      this.SET_IS_LOADED({ field: "_achievementTypesLoaded", value: true });
-    } catch (err) {
-      getError("типов достижений", err.response.status);
-    }
+  async addAchievementType(newItem) {
+    return await getAddRequest(
+      addAchievementType,
+      this.SET_ACHIEVEMENT_TYPES,
+      "_achievementTypes",
+      "тип достижения",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editAchievementType({ id, ...newData }) {
+    return await getEditRequest(
+      editAchievementType,
+      this.SET_ACHIEVEMENT_TYPES,
+      "_achievementTypes",
+      "тип достижения",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteAchievementType(id) {
+    return await getDeleteRequest(
+      deleteMilGroup,
+      this.SET_ACHIEVEMENT_TYPES,
+      "_achievementTypes",
+      "тип достижения",
+    ).call(this, id);
   }
 
   get achievementTypes() {

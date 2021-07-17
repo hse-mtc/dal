@@ -6,6 +6,8 @@ const {
     book,
     milspecialties,
     milgroups,
+    achievementTypes,
+    milfaculties,
   },
 } = LMS_URLS;
 
@@ -57,8 +59,31 @@ export function addMilGroup(data) {
 
 export function getMilFaculties() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.milfaculties,
+    url: BASE_API_URL + milfaculties,
     method: "get",
+  });
+}
+
+export function editMilFaculty(id, data) {
+  return request({
+    url: `${BASE_API_URL}${milfaculties}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteMilFaculty(id) {
+  return request({
+    url: `${BASE_API_URL}${milfaculties}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addMilFaculty(data) {
+  return request({
+    url: `${BASE_API_URL}${milfaculties}`,
+    method: "POST",
+    data,
   });
 }
 
@@ -85,8 +110,31 @@ export function getStudentPosts() {
 
 export function getAchievementTypes() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.achievementTypes,
+    url: BASE_API_URL + achievementTypes,
     method: "get",
+  });
+}
+
+export function editAchievementType(id, data) {
+  return request({
+    url: `${BASE_API_URL}${achievementTypes}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteAchievementType(id) {
+  return request({
+    url: `${BASE_API_URL}${achievementTypes}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addAchievementType(data) {
+  return request({
+    url: `${BASE_API_URL}${achievementTypes}`,
+    method: "POST",
+    data,
   });
 }
 

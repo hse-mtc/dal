@@ -66,6 +66,13 @@ class DictionariesForms {
     categories: {
       title: "",
     },
+    achievementTypes: {
+      title: "",
+    },
+    milfaculties: {
+      title: "",
+      abbreviation: "",
+    },
   }
 
   fieldsByTypes = {
@@ -80,6 +87,13 @@ class DictionariesForms {
     categories: {
       title: { placeholder: "Введите название" },
     },
+    achievementTypes: {
+      title: { placeholder: "Введите название" },
+    },
+    milfaculties: {
+      title: { placeholder: "Введите название" },
+      abbreviation: { placeholder: "Введите сокращение" },
+    },
   }
 
   rulesByTypes = {
@@ -92,6 +106,12 @@ class DictionariesForms {
       patronymic: [],
     },
     categories: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    achievementTypes: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    milfaculties: {
       title: [{ required: true, message: "Обязательное поле" }],
     },
   }
