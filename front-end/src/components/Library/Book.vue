@@ -74,15 +74,22 @@
             Скачать
           </CustomText>
         </DownloadFile>
-        <div class="button" @click="onEdit">
-          <CustomText
-            :mt="SIZES.m"
-            :color="COLORS.darkBlue"
-            variant="paragraph"
-          >
-            Редактировать
-          </CustomText>
-        </div>
+        <AZGuard
+          :permissions="['books.patch.all', {
+            codename: 'books.patch.self',
+            validator: () => userId === data.user_id,
+          }]"
+        >
+          <div class="button" @click="onEdit">
+            <CustomText
+              :mt="SIZES.m"
+              :color="COLORS.darkBlue"
+              variant="paragraph"
+            >
+              Редактировать
+            </CustomText>
+          </div>
+        </AZGuard>
       </div>
     </div>
   </div>
@@ -94,7 +101,7 @@ import DownloadFile from "@/common/DownloadFile/index.vue";
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { saveFavBook, unsaveFavBook } from "@/api/books";
 import { surnameWithInitials } from "@/utils/person";
-import { PapersModule } from "@/store";
+import { PapersModule, UserModule } from "@/store";
 
 export default {
   name: "Book",
@@ -115,6 +122,7 @@ export default {
   },
   computed: {
     authors() { return PapersModule.authors; },
+    userId() { return UserModule.userId; },
   },
   methods: {
     getAuthor(id) {

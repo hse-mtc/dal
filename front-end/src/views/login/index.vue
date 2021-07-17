@@ -82,14 +82,14 @@ export default {
   data() {
     const validateEmail = (rule, value, callback) => {
       if (!validEmail(value)) {
-        callback(new Error("Please enter the correct email"));
+        callback(new Error("Пожалуйста, введите корректную почту"));
       } else {
         callback();
       }
     };
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error("The password can not be less than 6 digits"));
+        callback(new Error("Пароль должен содержать минимум 6 символов"));
       } else {
         callback();
       }

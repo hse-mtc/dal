@@ -10,7 +10,7 @@
         >
         <div>Тема №{{ index }}</div>
       </div>
-      <div v-if="isOwner" class="buttons">
+      <div class="buttons">
         <img
           v-if="isEditing"
           class="grow"
@@ -20,18 +20,32 @@
         >
 
         <template v-else>
-          <img
-            class="grow"
-            src="../../assets/subject/edit.svg"
-            alt=""
-            @click="isEditing = true"
+          <AZGuard
+            :permissions="['topics.patch.all', {
+              codename: 'topics.patch.self',
+              validator: () => userId === subjectOwnerId,
+            }]"
           >
-          <img
-            class="grow"
-            src="../../assets/subject/close.svg"
-            alt=""
-            @click="deleteTopic(topic.id)"
+            <img
+              class="grow"
+              src="../../assets/subject/edit.svg"
+              alt=""
+              @click="isEditing = true"
+            >
+          </AZGuard>
+          <AZGuard
+            :permissions="['topics.delete.all', {
+              codename: 'topics.delete.self',
+              validator: () => userId === subjectOwnerId,
+            }]"
           >
+            <img
+              class="grow"
+              src="../../assets/subject/close.svg"
+              alt=""
+              @click="deleteTopic(topic.id)"
+            >
+          </AZGuard>
           <!-- <img
             @click="downloadTopic(topic.id)"
             class="grow"
@@ -72,7 +86,7 @@
         :key="`${topic.id}-${key}`"
         :ref="key"
         :opened="openedMaterials.includes(key)"
-        :is-owner="isOwner"
+        :subject-owner-id="subjectOwnerId"
         :title="key"
         :highlight="key === highlight"
         :topic="topic.id"
@@ -85,6 +99,7 @@
 
 <script>
 import CustomText from "@/common/CustomText.vue";
+import { UserModule } from "@/store";
 import ClassMaterials from "./ClassMaterials.vue";
 
 export default {
@@ -95,7 +110,7 @@ export default {
     event: "update",
   },
   props: {
-    isOwner: { type: Boolean },
+    subjectOwnerId: { type: Number, required: true },
     topic: { type: Object, required: true, default: () => ({}) },
     index: { type: Number, required: true },
   },
@@ -107,6 +122,9 @@ export default {
     };
   },
   computed: {
+    userId() {
+      return UserModule.userId;
+    },
     title: {
       get() { return this.topic.title; },
       set(value) {

@@ -20,24 +20,27 @@
     <el-row class="pageTitle">
       <el-col :span="24">
         <div class="d-flex align-items-center justify-content-end">
-          <CustomText
-            v-if="roleId"
-            variant="paragraph"
-            :custom-style="{ color: '#409EFF', cursor: 'pointer', marginRight: '16px' }"
-          >
-            <div @click="deleteRoleHandler">
-              Удалить текущую роль
-            </div>
-          </CustomText>
-
-          <CustomText
-            variant="paragraph"
-            :custom-style="{ color: '#409EFF', cursor: 'pointer' }"
-          >
-            <div @click="windowModal = true">
-              + Добавить новую роль
-            </div>
-          </CustomText>
+          <AZGuard :permissions="['permissions.delete.all']">
+            <CustomText
+              v-if="roleId"
+              variant="paragraph"
+              :custom-style="{ color: '#409EFF', cursor: 'pointer', marginRight: '16px' }"
+            >
+              <div @click="deleteRoleHandler">
+                Удалить текущую роль
+              </div>
+            </CustomText>
+          </AZGuard>
+          <AZGuard :permissions="['permissions.post.all']">
+            <CustomText
+              variant="paragraph"
+              :custom-style="{ color: '#409EFF', cursor: 'pointer' }"
+            >
+              <div @click="windowModal = true">
+                + Добавить новую роль
+              </div>
+            </CustomText>
+          </AZGuard>
         </div>
       </el-col>
     </el-row>
@@ -93,6 +96,7 @@ import CustomText from "@/common/CustomText";
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
 import { SIZES } from "@/utils/appConsts";
 import { Message } from "element-ui";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "RoleManagementComponent",
@@ -165,10 +169,14 @@ export default {
       this.windowModal = false;
     },
     changeInRole(data) {
-      saveRoleChanges(this.roleId, data).catch(err => {
-        this.$message.error("Ошибка редактирования данных о роли");
-        console.log("[RoleManagementComponent Error]: ", err);
-      });
+      if (hasPermission(["permissions.patch.all"])) {
+        saveRoleChanges(this.roleId, data).catch(err => {
+          this.$message.error("Ошибка редактирования данных о роли");
+          console.log("[RoleManagementComponent Error]: ", err);
+        });
+      } else {
+        this.$message.error("У вас нет доступа для этого действия");
+      }
     },
     selectRoleHandler(roleId) {
       this.permissionLoading = true;

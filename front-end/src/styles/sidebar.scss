@@ -93,15 +93,16 @@
       padding-left: 16px !important;
     }
 
+
     & .nest-menu .el-submenu > .el-submenu__title,
     & .el-submenu .el-menu-item {
       display: flex;
       align-items: center;
       min-width: $sideBarWidth !important;
-      background-color: $subMenuBg !important;
+      background-color: #304156 !important;
 
       &:hover {
-        background-color: $subMenuHover !important;
+        background-color: #263445 !important;
       }
     }
   }

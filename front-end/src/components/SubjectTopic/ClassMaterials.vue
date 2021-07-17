@@ -46,13 +46,20 @@
                   fontSize: '15px',
                 }"
               >
-                <div
-                  v-if="isOwner"
-                  style="cursor: pointer"
-                  @click="deleteMaterial(material.id)"
+                <AZGuard
+                  :permissions="['class-materials.delete.all', {
+                    codename: 'class-materials.delete.self',
+                    validator: () => userId === subjectOwnerId,
+                  }]"
                 >
-                  Удалить
-                </div>
+                  <div
+                    style="cursor: pointer"
+                    @click="deleteMaterial(material.id)"
+                  >
+                    Удалить
+                  </div>
+                </AZGuard>
+
                 <DownloadFile
                   :url="material.file.content"
                   :file-name="material.file.name"
@@ -77,25 +84,31 @@
         </div>
       </div>
       <div v-else class="pt-2 pl-2">
-        <CustomText v-if="!isOwner" variant="paragraph">
+        <CustomText v-if="showEmptyMaterial" variant="paragraph">
           Здесь пока нет материалов
         </CustomText>
       </div>
-      <CustomText
-        v-if="isOwner"
-        class="mt-3 mb-1"
-        variant="paragraph"
-        color="#0C4B9A"
-        :custom-style="{
-          cursor: 'pointer',
-          display: 'flex',
-          justifyContent: 'flex-end',
-        }"
+      <AZGuard
+        :permissions="['class-materials.post.all', {
+          codename: 'class-materials.post.self',
+          validator: () => userId === subjectOwnerId,
+        }]"
       >
-        <div @click="dialogVisible = true">
-          + Добавить материал
-        </div>
-      </CustomText>
+        <CustomText
+          class="mt-3 mb-1"
+          variant="paragraph"
+          color="#0C4B9A"
+          :custom-style="{
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }"
+        >
+          <div @click="dialogVisible = true">
+            + Добавить материал
+          </div>
+        </CustomText>
+      </AZGuard>
     </div>
     <el-dialog
       :visible.sync="dialogVisible"
@@ -137,6 +150,8 @@
 import CustomText from "@/common/CustomText";
 import DownloadFile from "@/common/DownloadFile/index.vue";
 import { deleteMaterial, addTopicFile } from "@/api/material";
+import { UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   components: { CustomText, DownloadFile },
@@ -157,10 +172,7 @@ export default {
       type: Array,
       required: true,
     },
-    isOwner: {
-      type: Boolean,
-      default: false,
-    },
+    subjectOwnerId: { type: Number, required: true },
     opened: {
       type: Boolean,
       default: false,
@@ -204,6 +216,15 @@ export default {
     };
   },
   computed: {
+    showEmptyMaterial() {
+      return !hasPermission(["class-materials.post.all", {
+        codename: "class-materials.post.self",
+        validator: () => this.userId === this.subjectOwnerId,
+      }]);
+    },
+    userId() {
+      return UserModule.userId;
+    },
     hasMaterials() {
       return this.displayMaterials && this.displayMaterials.length > 0;
     },

@@ -68,33 +68,43 @@
             <div
               style="text-align: center; margin: 0; padding: 0; font-size: 15px"
             >
-              <DownloadFile
-                v-if="$route.query.category !== 'bin'"
-                :url="document.file.content"
-                :file-name="document.file.name"
-              >
-                Скачать
-              </DownloadFile>
-              <div v-if="$route.query.category !== 'bin'" style="cursor: pointer" @click="editPaper(document.id)">
-                Редактировать
-              </div>
-              <div
-                v-if="$route.query.category !== 'bin'"
-                style="cursor: pointer"
-                @click="toggleBinStatus(document.id, true)"
-              >
-                Переместить в корзину
-              </div>
-              <div
-                v-if="$route.query.category === 'bin'"
-                style="cursor: pointer"
-                @click="toggleBinStatus(document.id, false)"
-              >
-                Восстановить
-              </div>
-              <div v-if="$route.query.category === 'bin'" style="cursor: pointer" @click="deletePaper(document.id)">
-                Удалить
-              </div>
+              <AZGuard :permissions="['papers.get.all']">
+                <DownloadFile
+                  v-if="$route.query.category !== 'bin'"
+                  :url="document.file.content"
+                  :file-name="document.file.name"
+                >
+                  Скачать
+                </DownloadFile>
+              </AZGuard>
+              <AZGuard :permissions="['papers.patch.all']">
+                <div v-if="$route.query.category !== 'bin'" style="cursor: pointer" @click="editPaper(document.id)">
+                  Редактировать
+                </div>
+              </AZGuard>
+              <AZGuard :permissions="['papers.delete.all']">
+                <div
+                  v-if="$route.query.category !== 'bin'"
+                  style="cursor: pointer"
+                  @click="toggleBinStatus(document.id, true)"
+                >
+                  Переместить в корзину
+                </div>
+              </AZGuard>
+              <AZGuard :permissions="['papers.delete.all']">
+                <div
+                  v-if="$route.query.category === 'bin'"
+                  style="cursor: pointer"
+                  @click="toggleBinStatus(document.id, false)"
+                >
+                  Восстановить
+                </div>
+              </AZGuard>
+              <AZGuard :permissions="['papers.delete.all']">
+                <div v-if="$route.query.category === 'bin'" style="cursor: pointer" @click="deletePaper(document.id)">
+                  Удалить
+                </div>
+              </AZGuard>
             </div>
 
             <div
