@@ -73,6 +73,9 @@ class DictionariesForms {
       title: "",
       abbreviation: "",
     },
+    ranks: {
+      title: "",
+    },
   }
 
   fieldsByTypes = {
@@ -94,6 +97,9 @@ class DictionariesForms {
       title: { placeholder: "Введите название" },
       abbreviation: { placeholder: "Введите сокращение" },
     },
+    ranks: {
+      title: { placeholder: "Введите название" },
+    },
   }
 
   rulesByTypes = {
@@ -112,6 +118,9 @@ class DictionariesForms {
       title: [{ required: true, message: "Обязательное поле" }],
     },
     milfaculties: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    ranks: {
       title: [{ required: true, message: "Обязательное поле" }],
     },
   }
