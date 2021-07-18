@@ -9,7 +9,10 @@
     />
 
     <div>
-      <el-tabs v-model="currentTab" tab-position="left">
+      <el-tabs
+        v-model="currentTab"
+        tab-position="left"
+      >
         <el-tab-pane
           v-for="({ label }, field) in tabs"
           :key="field"
@@ -34,9 +37,7 @@
               :type="currentTab"
               :data="tagsItems"
               @addItem="onAddItem"
-              @startEdit="onStartEdit"
-              @abortEdit="onAbortEdit"
-              @submitEdit="onSubmitEdit"
+              @submitEdit="onTableEdit"
               @delete="onDelete"
             />
           </template>
@@ -76,6 +77,8 @@ class Dictionaries {
     achievementTypes: "tags",
     milfaculties: "tags",
     milgroups: "table",
+    milspecialties: "table",
+    programs: "table",
   }
 
   tabs = {
@@ -144,6 +147,30 @@ class Dictionaries {
       delete: ReferenceModule.deleteMilfaculty,
       edit: ReferenceModule.editMilfaculty,
     },
+    milspecialties: {
+      label: "Направления",
+      sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
+      filterFunc: (item, query) => {
+        const stringItem = `${item.code} ${item.title}`.toLowerCase();
+        return query.split(" ")
+          .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
+      },
+      add: ReferenceModule.addMilSpecialty,
+      delete: ReferenceModule.deleteMilSpecialty,
+      edit: ReferenceModule.editMilSpecialty,
+    },
+    // programs: {
+    //   label: "Программы",
+    //   sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
+    //   filterFunc: (item, query) => {
+    //     const stringItem = `${item.code} ${item.title} ${item.faculty}`.toLowerCase();
+    //     return query.split(" ")
+    //       .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
+    //   },
+    //   add: ReferenceModule.addProgram,
+    //   delete: ReferenceModule.deleteProgram,
+    //   edit: ReferenceModule.editProgram,
+    // },
   }
 
   currentTab = "publishers"
@@ -169,6 +196,8 @@ class Dictionaries {
   get milgroups() { return ReferenceModule.milgroups; }
   get milfaculties() { return ReferenceModule.milfaculties; }
   get achievementTypes() { return ReferenceModule.achievementTypes; }
+  get milspecialties() { return ReferenceModule.milspecialties; }
+  get programs() { return ReferenceModule.programs; }
 
   async onDelete(id) {
     await this.$confirm(
@@ -210,6 +239,12 @@ class Dictionaries {
     }
   }
 
+  onTableEdit(data) {
+    this.onStartEdit(data.id);
+    this.onSubmitEdit(data);
+    this.onAbortEdit();
+  }
+
   onAddItem(data) {
     this.tabs[this.currentTab].add(data);
   }
@@ -244,6 +279,10 @@ export default Dictionaries;
     margin-left: 20px;
     flex: none;
   }
+}
+
+.tabs {
+  width: 200px;
 }
 
 </style>

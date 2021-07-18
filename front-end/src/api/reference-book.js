@@ -8,6 +8,7 @@ const {
     milgroups,
     achievementTypes,
     milfaculties,
+    programs,
   },
 } = LMS_URLS;
 
@@ -19,11 +20,34 @@ export function getReferenceBooks(params) {
   });
 }
 
-export function getReferenceMilSpecialties(campus) {
+export function getMilSpecialties(campus) {
   return request({
     url: BASE_API_URL + milspecialties,
     method: "get",
     params: { campus },
+  });
+}
+
+export function editMilSpecialty(id, data) {
+  return request({
+    url: `${BASE_API_URL}${milspecialties}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteMilSpecialty(id) {
+  return request({
+    url: `${BASE_API_URL}${milspecialties}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addMilSpecialty(data) {
+  return request({
+    url: `${BASE_API_URL}${milspecialties}`,
+    method: "POST",
+    data,
   });
 }
 
@@ -140,8 +164,31 @@ export function addAchievementType(data) {
 
 export function getPrograms() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.programs,
+    url: BASE_API_URL + programs,
     method: "get",
+  });
+}
+
+export function editProgram(id, data) {
+  return request({
+    url: `${BASE_API_URL}${programs}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteProgram(id) {
+  return request({
+    url: `${BASE_API_URL}${programs}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addProgram(data) {
+  return request({
+    url: `${BASE_API_URL}${programs}`,
+    method: "POST",
+    data,
   });
 }
 

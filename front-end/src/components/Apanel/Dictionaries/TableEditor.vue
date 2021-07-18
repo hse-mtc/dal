@@ -9,8 +9,6 @@
     :frozen-value="newItemData"
     data-key="id"
     :editing-rows.sync="newItemData"
-    @cell-edit-init="startEdit"
-    @cell-edit-complete="stopEdit"
   >
     <template v-if="!newItemData" #header>
       <el-button
@@ -59,7 +57,7 @@
         <TextInput
           v-else-if="editorType === 'input'"
           v-model="editorData[field]"
-          @change="onEdit(editorData, field)"
+          @change="addToBuffer(editorData, field)"
         />
 
         <SelectInput
@@ -108,9 +106,13 @@
 
 <script>
 import { Component, Prop } from "vue-property-decorator";
+import _isArray from "lodash/isArray";
+import _debounce from "lodash/debounce";
+import _isEqual from "lodash/isEqual";
 
 import { SingleCheckbox, TextInput, SelectInput } from "@/common/inputs";
 import { ReferenceModule } from "@/store";
+import { CAMPUSES } from "@/utils/enums";
 
 @Component({
   name: "DictionariesTableEditor",
@@ -151,6 +153,34 @@ class DictionariesTableEditor {
         },
         archived: { title: "Заархивирован", width: 150, editorType: "checkbox" },
       },
+      milspecialties: {
+        code: { title: "Код", width: 100, editorType: "input" },
+        title: { title: "Название", width: 500, editorType: "input" },
+        available_for: {
+          title: "Доступно в",
+          width: 250,
+          editorType: "select",
+          props: {
+            options: Object.entries(CAMPUSES)
+              .map(([value, label]) => ({ value, label })),
+            multiple: true,
+          },
+        },
+      },
+      // programs: {
+      //   code: { title: "Код", width: 100, editorType: "input" },
+      //   title: { title: "Название", width: 500, editorType: "input" },
+      //   faculty: {
+      //     title: "Факультет",
+      //     width: 250,
+      //     // editorType: "select",
+      //     // props: {
+      //     //   options: Object.entries(CAMPUSES)
+      //     //     .map(([value, label]) => ({ value, label })),
+      //     //   multiple: true,
+      //     // },
+      //   },
+      // },
     };
   }
 
@@ -164,27 +194,48 @@ class DictionariesTableEditor {
   get columns() { return this.columnsByTypes[this.type]; }
 
   getOptionLabel(item, options) {
-    const currentOption = options.find(option => option.value === item);
+    const valuesArray = _isArray(item) ? item : [item];
 
-    return currentOption ? currentOption.label : "";
-  }
-
-  startEdit({ data, field }) {
-    this.editingItemKey = `${data.id} ${field}`;
-    this.$emit("startEdit", data.id);
-  }
-
-  stopEdit({ data, field }) {
-    if (this.editingItemKey === `${data.id} ${field}`) {
-      this.$emit("abortEdit");
-    }
+    return valuesArray.map(value => {
+      const currentOption = options.find(option => _isEqual(option.value, value));
+      return currentOption ? currentOption.label : "";
+    }).filter(Boolean).join(", ");
   }
 
   onEdit(data, field) {
-    if (!data.isNew) {
-      this.$emit("submitEdit", { [field]: data[field] });
+    if (!data.newItem) {
+      this.$emit("submitEdit", {
+        id: data.id,
+        [field]: data[field],
+      });
     }
   }
+
+  addToBuffer(data, field) {
+    this.editBuffer = this.editBuffer || [];
+
+    this.editBuffer.push({
+      id: data.id,
+      field,
+      value: data[field],
+    });
+
+    this.debouncedOnEdit();
+  }
+
+  debouncedOnEdit = _debounce(function handler() {
+    const buff = this.editBuffer;
+    this.editBuffer = [];
+    buff.reverse()
+      .filter((item, index, arr) => {
+        const found = arr.findIndex(elem => elem.id === item.id && elem.field === item.field);
+        return found === index;
+      })
+      .forEach(item => this.onEdit({
+        id: item.id,
+        [item.field]: item.value,
+      }, item.field));
+  }, 1500)
 
   getNewItemInitData() {
     const fields = Object.keys(this.columns);
