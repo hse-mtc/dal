@@ -11,6 +11,7 @@ const {
     programs,
     ranks,
     rooms,
+    skills,
   },
 } = LMS_URLS;
 
@@ -219,14 +220,60 @@ export function addProgram(data) {
 
 export function getRooms() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.rooms,
+    url: BASE_API_URL + rooms,
     method: "get",
+  });
+}
+
+export function editRoom(id, data) {
+  return request({
+    url: `${BASE_API_URL}${rooms}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteRoom(id) {
+  return request({
+    url: `${BASE_API_URL}${rooms}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addRoom(data) {
+  return request({
+    url: `${BASE_API_URL}${rooms}`,
+    method: "POST",
+    data,
   });
 }
 
 export function getSkills() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.skills,
+    url: BASE_API_URL + skills,
     method: "get",
+  });
+}
+
+export function editSkill(id, data) {
+  return request({
+    url: `${BASE_API_URL}${skills}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteSkill(id) {
+  return request({
+    url: `${BASE_API_URL}${skills}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addSkill(data) {
+  return request({
+    url: `${BASE_API_URL}${skills}`,
+    method: "POST",
+    data,
   });
 }

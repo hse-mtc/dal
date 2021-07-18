@@ -76,6 +76,12 @@ class DictionariesForms {
     ranks: {
       title: "",
     },
+    rooms: {
+      title: "",
+    },
+    skills: {
+      title: "",
+    },
   }
 
   fieldsByTypes = {
@@ -100,6 +106,12 @@ class DictionariesForms {
     ranks: {
       title: { placeholder: "Введите название" },
     },
+    rooms: {
+      title: { placeholder: "Введите название" },
+    },
+    skills: {
+      title: { placeholder: "Введите название" },
+    },
   }
 
   rulesByTypes = {
@@ -121,6 +133,12 @@ class DictionariesForms {
       title: [{ required: true, message: "Обязательное поле" }],
     },
     ranks: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    rooms: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    skills: {
       title: [{ required: true, message: "Обязательное поле" }],
     },
   }
