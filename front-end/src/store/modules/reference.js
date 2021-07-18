@@ -31,6 +31,9 @@ import {
   addProgram,
   editProgram,
   deleteProgram,
+  addRank,
+  editRank,
+  deleteRank,
 } from "@/api/reference-book";
 import {
   getAddRequest,
@@ -148,20 +151,46 @@ class Reference extends VuexModule {
     this._ranks = payload;
   }
 
-  @Action({ commit: "SET_RANKS" })
-  async setRanks(ranks) {
-    return ranks;
+  @Action
+  async fetchRanks() {
+    return await getFetchRequest(
+      getRanks,
+      data => {
+        this.SET_RANKS(data);
+        this.SET_IS_LOADED({ field: "_ranksLoaded", value: true });
+      },
+      "званий",
+    ).call(this);
   }
 
-  @Action()
-  async fetchRanks() {
-    try {
-      const { data } = await getRanks();
-      this.setRanks(data);
-      this.SET_IS_LOADED({ field: "_ranksLoaded", value: true });
-    } catch (err) {
-      getError("званий", err.response.status);
-    }
+  @Action
+  async addRank(newItem) {
+    return await getAddRequest(
+      addRank,
+      this.SET_RANKS,
+      "_ranks",
+      "звание",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editRank({ id, ...newData }) {
+    return await getEditRequest(
+      editRank,
+      this.SET_RANKS,
+      "_ranks",
+      "звание",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteRank(id) {
+    return await getDeleteRequest(
+      deleteRank,
+      this.SET_RANKS,
+      "_ranks",
+      "звание",
+    ).call(this, id);
   }
 
   get ranks() {
@@ -456,7 +485,7 @@ class Reference extends VuexModule {
   async addProgram(newItem) {
     return await getAddRequest(
       addProgram,
-      this.SET_MILGROUPS,
+      this.SET_PROGRAMS,
       "_programs",
       "образовательную программу",
     ).call(this, newItem);
@@ -466,7 +495,7 @@ class Reference extends VuexModule {
   async editProgram({ id, ...newData }) {
     return await getEditRequest(
       editProgram,
-      this.SET_MILGROUPS,
+      this.SET_PROGRAMS,
       "_programs",
       "образовательную программу",
     ).call(this, { id, ...newData });
@@ -476,7 +505,7 @@ class Reference extends VuexModule {
   async deleteProgram(id) {
     return await getDeleteRequest(
       deleteProgram,
-      this.SET_MILGROUPS,
+      this.SET_PROGRAMS,
       "_programs",
       "образовательную программу",
     ).call(this, id);
