@@ -217,7 +217,10 @@ class DictionariesTableEditor {
     this.editBuffer.push({
       id: data.id,
       field,
-      value: data[field],
+      data: {
+        [field]: data[field],
+        newItem: data.newItem,
+      },
     });
 
     this.debouncedOnEdit();
@@ -233,7 +236,7 @@ class DictionariesTableEditor {
       })
       .forEach(item => this.onEdit({
         id: item.id,
-        [item.field]: item.value,
+        ...item.data,
       }, item.field));
   }, 1500)
 

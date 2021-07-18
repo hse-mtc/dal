@@ -77,6 +77,8 @@ class Dictionaries {
     achievementTypes: "tags",
     milfaculties: "tags",
     ranks: "tags",
+    rooms: "tags",
+    skills: "tags",
     milgroups: "table",
     milspecialties: "table",
     programs: "table",
@@ -180,6 +182,22 @@ class Dictionaries {
       delete: ReferenceModule.deleteRank,
       edit: ReferenceModule.editRank,
     },
+    rooms: {
+      label: "Аудитории",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addRoom,
+      delete: ReferenceModule.deleteRoom,
+      edit: ReferenceModule.editRoom,
+    },
+    skills: {
+      label: "Умения",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addSkill,
+      delete: ReferenceModule.deleteSkill,
+      edit: ReferenceModule.editSkill,
+    },
   }
 
   currentTab = "publishers"
@@ -208,6 +226,8 @@ class Dictionaries {
   get milspecialties() { return ReferenceModule.milspecialties; }
   get programs() { return ReferenceModule.programs; }
   get ranks() { return ReferenceModule.ranks; }
+  get rooms() { return ReferenceModule.rooms; }
+  get skills() { return ReferenceModule.skills; }
 
   async onDelete(id) {
     await this.$confirm(

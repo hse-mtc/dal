@@ -34,6 +34,12 @@ import {
   addRank,
   editRank,
   deleteRank,
+  deleteRoom,
+  editRoom,
+  addRoom,
+  deleteSkill,
+  editSkill,
+  addSkill,
 } from "@/api/reference-book";
 import {
   getAddRequest,
@@ -525,20 +531,46 @@ class Reference extends VuexModule {
     this._rooms = payload;
   }
 
-  @Action({ commit: "SET_ROOMS" })
-  async setRooms(rooms) {
-    return rooms;
+  @Action
+  async fetchRooms() {
+    return await getFetchRequest(
+      getRooms,
+      data => {
+        this.SET_ROOMS(data);
+        this.SET_IS_LOADED({ field: "_roomsLoaded", value: true });
+      },
+      "аудиторий",
+    ).call(this);
   }
 
   @Action
-  async fetchRooms() {
-    try {
-      const { data } = await getRooms();
-      this.setRooms(data);
-      this.SET_IS_LOADED({ field: "_roomsLoaded", value: true });
-    } catch (err) {
-      getError("аудиторий", err.response.status);
-    }
+  async addRoom(newItem) {
+    return await getAddRequest(
+      addRoom,
+      this.SET_ROOMS,
+      "_rooms",
+      "аудиторию",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editRoom({ id, ...newData }) {
+    return await getEditRequest(
+      editRoom,
+      this.SET_ROOMS,
+      "_rooms",
+      "аудиторию",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteRoom(id) {
+    return await getDeleteRequest(
+      deleteRoom,
+      this.SET_ROOMS,
+      "_rooms",
+      "аудиторию",
+    ).call(this, id);
   }
 
   get rooms() {
@@ -622,20 +654,46 @@ class Reference extends VuexModule {
     this._skills = payload;
   }
 
-  @Action({ commit: "SET_SKILLS" })
-  async setSkills(skills) {
-    return skills;
+  @Action
+  async fetchSkills() {
+    return await getFetchRequest(
+      getSkills,
+      data => {
+        this.SET_SKILLS(data);
+        this.SET_IS_LOADED({ field: "_skillsLoaded", value: true });
+      },
+      "умений",
+    ).call(this);
   }
 
   @Action
-  async fetchSkills() {
-    try {
-      const { data } = await getSkills();
-      this.setSkills(data);
-      this.SET_IS_LOADED({ field: "_skillsLoaded", value: true });
-    } catch (err) {
-      getError("умений", err.response.status);
-    }
+  async addSkill(newItem) {
+    return await getAddRequest(
+      addSkill,
+      this.SET_SKILLS,
+      "_skills",
+      "умение",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editSkill({ id, ...newData }) {
+    return await getEditRequest(
+      editSkill,
+      this.SET_SKILLS,
+      "_skills",
+      "умение",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteSkill(id) {
+    return await getDeleteRequest(
+      deleteSkill,
+      this.SET_SKILLS,
+      "_skills",
+      "умение",
+    ).call(this, id);
   }
 
   get skills() {
