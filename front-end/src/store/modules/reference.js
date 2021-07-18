@@ -213,24 +213,20 @@ class Reference extends VuexModule {
     this._studentStatuses = payload;
   }
 
-  @Action({ commit: "SET_STUDENT_STATUSES" })
-  async setStudentStatuses(studentStatuses) {
-    return studentStatuses;
-  }
-
   @Action
   async fetchStudentStatuses() {
-    try {
-      const data = [
+    return await getFetchRequest(
+      () => [
         { code: "ST", label: "Обучающийся" },
         { code: "EX", label: "Отчислен" },
         { code: "GR", label: "Выпустился" },
-      ];
-      this.setStudentStatuses(data);
-      this.SET_IS_LOADED({ field: "_studentStatusesLoaded", value: true });
-    } catch (err) {
-      getError("статусов студентов", err.response.status);
-    }
+      ],
+      data => {
+        this.SET_STUDENT_STATUSES(data);
+        this.SET_IS_LOADED({ field: "_studentStatusesLoaded", value: true });
+      },
+      "статусов студентов",
+    ).call(this);
   }
 
   get studentStatuses() {
@@ -247,20 +243,16 @@ class Reference extends VuexModule {
     this._studentPosts = payload;
   }
 
-  @Action({ commit: "SET_STUDENT_POSTS" })
-  async setStudentPosts(studentPosts) {
-    return studentPosts;
-  }
-
   @Action
   async fetchStudentPosts() {
-    try {
-      const { data } = await getStudentPosts();
-      this.setStudentPosts(data);
-      this.SET_IS_LOADED({ field: "_studentPostsLoaded", value: true });
-    } catch (err) {
-      getError("должностей студентов", err.response.status);
-    }
+    return await getFetchRequest(
+      getStudentPosts,
+      data => {
+        this.SET_STUDENT_POSTS(data);
+        this.SET_IS_LOADED({ field: "_studentPostsLoaded", value: true });
+      },
+      "должностей студентов",
+    ).call(this);
   }
 
   get studentPosts() {
@@ -277,20 +269,16 @@ class Reference extends VuexModule {
     this._teacherPosts = payload;
   }
 
-  @Action({ commit: "SET_TEACHER_POSTS" })
-  async setTeacherPosts(teacherPosts) {
-    return teacherPosts;
-  }
-
   @Action
   async fetchTeacherPosts() {
-    try {
-      const { data } = await getTeacherPosts();
-      this.setTeacherPosts(data);
-      this.SET_IS_LOADED({ field: "_teacherPostsLoaded", value: true });
-    } catch (err) {
-      getError("должностей преподавателей", err.response.status);
-    }
+    return await getFetchRequest(
+      getTeacherPosts,
+      data => {
+        this.SET_TEACHER_POSTS(data);
+        this.SET_IS_LOADED({ field: "_teacherPostsLoaded", value: true });
+      },
+      "должностей преподавателей",
+    ).call(this);
   }
 
   get teacherPosts() {
@@ -628,16 +616,17 @@ class Reference extends VuexModule {
 
   @Action
   async fetchAbsenceStatuses() {
-    try {
-      const data = [
+    return await getFetchRequest(
+      () => [
         { label: "Закрыт", code: "CL" },
         { label: "Открыт", code: "OP" },
-      ];
-      this.setAbsenceStatuses(data);
-      this.SET_IS_LOADED({ field: "_absenceStatusesLoaded", value: true });
-    } catch (err) {
-      getError("статусов пропусков", err.response.status);
-    }
+      ],
+      data => {
+        this.SET_ABSENCE_STATUSES(data);
+        this.SET_IS_LOADED({ field: "_absenceStatusesLoaded", value: true });
+      },
+      "статусов пропусков",
+    ).call(this);
   }
 
   get absenceStatuses() {
