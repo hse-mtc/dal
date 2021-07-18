@@ -5,8 +5,6 @@ import {
   Action,
 } from "vuex-module-decorators";
 
-import { Message } from "element-ui";
-
 import store, { ReferenceModule } from "@/store";
 
 import {
@@ -15,7 +13,6 @@ import {
   getStudentPosts,
   getTeacherPosts,
   getRanks,
-  getReferenceMilSpecialties,
   getAchievementTypes,
   getPrograms,
   getRooms,
@@ -27,6 +24,13 @@ import {
   editAchievementType,
   addMilFaculty,
   editMilFaculty,
+  getMilSpecialties,
+  addMilSpecialty,
+  editMilSpecialty,
+  deleteMilSpecialty,
+  addProgram,
+  editProgram,
+  deleteProgram,
 } from "@/api/reference-book";
 import {
   getAddRequest,
@@ -324,25 +328,51 @@ class Reference extends VuexModule {
     this._milspecialties = payload;
   }
 
-  @Action({ commit: "SET_MILSPECIALTIES" })
-  async setmilspecialties(milspecialties) {
-    return milspecialties;
+  @Action
+  async fetchMilSpecialties() {
+    return await getFetchRequest(
+      getMilSpecialties,
+      data => {
+        this.SET_MILSPECIALTIES(data);
+        this.SET_IS_LOADED({ field: "_milspecialtiesLoaded", value: true });
+      },
+      "воинских специальностей",
+    ).call(this);
   }
 
   @Action
-  async fetchmilspecialties() {
-    try {
-      const { data } = await getReferenceMilSpecialties();
-      this.setmilspecialties(data);
-      this.SET_IS_LOADED({ field: "_milspecialtiesLoaded", value: true });
-    } catch (err) {
-      getError("воинских специальностей", err.response.status);
-    }
+  async addMilSpecialty(newItem) {
+    return await getAddRequest(
+      addMilSpecialty,
+      this.SET_MILSPECIALTIES,
+      "_milspecialties",
+      "воинскую специальность",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editMilSpecialty({ id, ...newData }) {
+    return await getEditRequest(
+      editMilSpecialty,
+      this.SET_MILSPECIALTIES,
+      "_milspecialties",
+      "воинскую специальность",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteMilSpecialty(id) {
+    return await getDeleteRequest(
+      deleteMilSpecialty,
+      this.SET_MILSPECIALTIES,
+      "_milspecialties",
+      "воинскую специальность",
+    ).call(this, id);
   }
 
   get milspecialties() {
     if (!this._milspecialtiesLoaded) {
-      ReferenceModule.fetchmilspecialties();
+      ReferenceModule.fetchMilSpecialties();
     }
 
     return this._milspecialties;
@@ -410,20 +440,46 @@ class Reference extends VuexModule {
     this._programs = payload;
   }
 
-  @Action({ commit: "SET_PROGRAMS" })
-  async setPrograms(programs) {
-    return programs;
+  @Action
+  async fetchPrograms() {
+    return await getFetchRequest(
+      getPrograms,
+      data => {
+        this.SET_PROGRAMS(data);
+        this.SET_IS_LOADED({ field: "_programsLoaded", value: true });
+      },
+      "образовательных программ",
+    ).call(this);
   }
 
   @Action
-  async fetchPrograms() {
-    try {
-      const { data } = await getPrograms();
-      this.setPrograms(data);
-      this.SET_IS_LOADED({ field: "_programsLoaded", value: true });
-    } catch (err) {
-      getError("образовательных программ", err.response.status);
-    }
+  async addProgram(newItem) {
+    return await getAddRequest(
+      addProgram,
+      this.SET_MILGROUPS,
+      "_programs",
+      "образовательную программу",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editProgram({ id, ...newData }) {
+    return await getEditRequest(
+      editProgram,
+      this.SET_MILGROUPS,
+      "_programs",
+      "образовательную программу",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteProgram(id) {
+    return await getDeleteRequest(
+      deleteProgram,
+      this.SET_MILGROUPS,
+      "_programs",
+      "образовательную программу",
+    ).call(this, id);
   }
 
   get programs() {

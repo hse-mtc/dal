@@ -12,12 +12,13 @@
       :type="type"
       v-bind="$attrs"
       :placeholder="placeholder"
-      v-on="$listeners"
+      v-on="listeners"
     />
   </InputsBase>
 </template>
 
 <script>
+import _omit from "lodash/omit";
 import mixin from "./inputsMixin";
 
 export default {
@@ -39,6 +40,9 @@ export default {
       set(value) {
         this.$emit("change", this.onlyChars ? value.replace(/\d/g, "") : value);
       },
+    },
+    listeners() {
+      return _omit(this.$listeners, ["change"]);
     },
   },
 };

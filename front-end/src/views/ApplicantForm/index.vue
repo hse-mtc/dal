@@ -182,7 +182,7 @@ import {
   STEPS,
 } from "@/constants/applicantForm";
 
-import { getReferenceMilSpecialties } from "@/api/reference-book";
+import { getMilSpecialties } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
 
 export default {
@@ -437,7 +437,7 @@ export default {
 
       if (nextValue === STEPS.milspecialty) {
         try {
-          const { data } = await getReferenceMilSpecialties(
+          const { data } = await getMilSpecialties(
             this.studentData.universityInfo.campus,
           );
           this.fillMilspecialtyOptions(data);
