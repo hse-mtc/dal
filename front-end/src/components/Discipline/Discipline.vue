@@ -5,10 +5,16 @@
         <h1>{{ $route.meta.title }}</h1>
       </el-row>
       <el-tabs stretch>
-        <el-tab-pane label="Поощрения">
+        <el-tab-pane
+          v-if="hasPermission(getPermissions('encouragements'))"
+          label="Поощрения"
+        >
           <Encouragement />
         </el-tab-pane>
-        <el-tab-pane label="Взыскания">
+        <el-tab-pane
+          v-if="hasPermission(getPermissions('punishments'))"
+          label="Взыскания"
+        >
           <Punishment />
         </el-tab-pane>
       </el-tabs>
@@ -17,6 +23,7 @@
 </template>
 
 <script>
+import { hasPermission } from "@/utils/permissions";
 import Punishment from "./Punishment/Punishment.vue";
 import Encouragement from "./Encouragement/Encouragement.vue";
 
@@ -25,6 +32,17 @@ export default {
   components: {
     Punishment,
     Encouragement,
+  },
+  methods: {
+    hasPermission,
+    getPermissions(entity) {
+      return [
+        `${entity}.get.all`,
+        `${entity}.get.milfaculty`,
+        `${entity}.get.milgroup`,
+        `${entity}.get.self`,
+      ];
+    },
   },
 };
 </script>

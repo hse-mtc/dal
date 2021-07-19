@@ -156,7 +156,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
     def handle_scope_self(self, user_type, user):
         if user_type == "student":
-            return self.queryset.filter(user=user)
+            return self.queryset.filter(user=user.user)
         return self.queryset.none()
 
     def filter_queryset(self, queryset):
