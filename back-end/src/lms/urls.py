@@ -36,6 +36,10 @@ from lms.views.lessons import LessonViewSet, LessonJournalView
 from lms.views.marks import MarkViewSet, MarkJournalView
 from lms.views.uniforms import UniformViewSet
 from lms.views.personnel import SearchPersonnelUsersViewSet
+from lms.views.birthdays import (
+    StudentBirthdayAlertView,
+    TeacherBirthdayAlertView,
+)
 
 routers = DefaultRouter()
 routers.register('students/notes', NoteViewSet)
@@ -72,4 +76,6 @@ urlpatterns = [
     path('absence-time/', AbsenceTimeView.as_view()),
     path('students/<int:pk>/performance/', StudentPerformanceView.as_view()),
     path('milgroup-leaders/', MilgroupLeadersView.as_view()),
+    path('birthdays/students', StudentBirthdayAlertView.as_view()),
+    path('birthdays/teachers', TeacherBirthdayAlertView.as_view()),
 ]

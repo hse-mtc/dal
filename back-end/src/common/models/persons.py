@@ -1,3 +1,6 @@
+from datetime import date, timedelta
+import typing as tp
+
 import uuid
 from django.contrib.auth import get_user_model
 
@@ -63,6 +66,22 @@ class Person(models.Model):
 
     def __str__(self):
         return self.full_name
+
+    @classmethod
+    def get_nearest_birthdays(cls) -> models.QuerySet[tp.Type["Person"]]:
+        """
+        Return persons with birthdays that are
+        in one week to today's date.
+        :return: QuerySet of Person subtype objects
+        """
+        today = date.today()
+        start, end = today, today + timedelta(days=7)
+        return cls.objects.select_related("birth_info").filter(
+            birth_info__date__day__gte=start.day,
+            birth_info__date__day__lte=end.day,
+            birth_info__date__month__gte=start.month,
+            birth_info__date__month__lte=end.month,
+        ).order_by("birth_info__date")
 
 
 class Relative(Person):

@@ -115,8 +115,8 @@ class MilgroupViewSet(ModelViewSet):
             return MilgroupMutateSerializer
         return MilgroupSerializer
 
-    def partial_update(self, request, *args, pk=None, **kwargs):
-        super().partial_update(request, pk)
+    def partial_update(self, request, *args, **kwargs):
+        super().partial_update(request, kwargs["pk"])
         serializer = MilgroupSerializer(
             self.get_object(),
             data=request.data,
