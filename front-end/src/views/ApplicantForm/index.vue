@@ -441,7 +441,7 @@ class ApplicantForm {
     };
   }
 
-  async validate() {
+  validate() {
     let isValid = true;
 
     const formValidate = valid => {

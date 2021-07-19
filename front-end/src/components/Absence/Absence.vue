@@ -208,56 +208,22 @@
     <el-dialog
       :title="editAbsenceFullname"
       :visible.sync="dialogVisible"
-      width="30%"
       :before-close="handleClose"
     >
-      <el-form
-        label-position="right"
+      <GenericForm
+        v-model="editAbsence"
+        :fields="fields"
+        :on-submit="handleAccept"
+        left-label
         label-width="150px"
-        size="mini"
-        :model="editAbsence"
       >
-        <el-form-item label="Тип причины: ">
-          <el-select
-            v-model="editAbsence.excuse"
-            placeholder="Выберите тип причины"
-            style="display: block"
-          >
-            <el-option
-              v-for="(value, key) in EXCUSES"
-              :key="key"
-              :label="value"
-              :value="key"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Статус: ">
-          <el-switch
-            :value="editAbsence.status === 'CL'"
-            active-text="Закрыт"
-            inactive-text="Открыт"
-            @change="changeAbsenceStatus(editAbsence)"
-          />
-        </el-form-item>
-        <el-form-item label="Причина: ">
-          <el-input
-            v-model="editAbsence.reason"
-            placeholder="Введите причину"
-          />
-        </el-form-item>
-        <el-form-item label="Комментарий: ">
-          <el-input
-            v-model="editAbsence.comment"
-            type="textarea"
-            :rows="2"
-            placeholder="Введите комментарий"
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Отмена</el-button>
-        <el-button type="primary" @click="handleAccept()">Применить</el-button>
-      </span>
+        <template #buttons="{ validate }">
+          <span style="display: flex; justify-content: flex-end">
+            <el-button @click="dialogVisible = false">Отмена</el-button>
+            <el-button type="primary" @click="validate">Применить</el-button>
+          </span>
+        </template>
+      </GenericForm>
     </el-dialog>
   </div>
 </template>
@@ -274,15 +240,18 @@ import {
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
 import { EXCUSES, ABSENCE_STATUSES } from "@/utils/enums";
+import GenericForm from "@/common/Form/index.vue";
 import AbsenceJournal from "./AbsenceJournal/AbsenceJournal.vue";
 
 export default {
   name: "Absence",
   components: {
     AbsenceJournal,
+    GenericForm,
   },
   data() {
     return {
+      test: "a",
       ABSENCE_STATUSES,
       EXCUSES,
       dialogVisible: false,
@@ -348,6 +317,44 @@ export default {
             },
           },
         ],
+      },
+
+      fields: {
+        excuse: {
+          component: "select",
+          title: "Тип причины",
+          props: {
+            options: Object.keys(EXCUSES).map(key => ({
+              value: key,
+              label: EXCUSES[key],
+            })),
+          },
+        },
+        status: {
+          component: "switch",
+          title: "Статус",
+          props: {
+            trueValue: "CL",
+            falseValue: "OP",
+            activeText: "Закрыт",
+            inactiveText: "Открыт",
+          },
+        },
+        reason: {
+          component: "text",
+          title: "Причина",
+          props: {
+            placeholder: "Введите причину",
+          },
+        },
+        comment: {
+          component: "text",
+          title: "Комментарий",
+          props: {
+            placeholder: "Введите комментарий",
+            isTextArea: true,
+          },
+        },
       },
     };
   },
@@ -436,11 +443,6 @@ export default {
         this.loading = false;
       }
     },
-    onCreate(student, date) {
-      this.editAbsence = { status: "Открыт", student: student.id, date };
-      this.editAbsenceFullname = student.fullname;
-      this.dialogVisible = true;
-    },
     onEdit(row, fn) {
       this.editAbsence = { ...row };
       this.editAbsence.student = undefined;
@@ -495,4 +497,5 @@ export default {
 
 <style scoped lang="scss">
 @import "style";
+
 </style>
