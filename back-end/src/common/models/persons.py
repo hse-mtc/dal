@@ -68,7 +68,10 @@ class Person(models.Model):
         return self.full_name
 
     @classmethod
-    def get_nearest_birthdays(cls) -> models.QuerySet[tp.Type["Person"]]:
+    def get_nearest_birthdays(
+        cls,
+        filter_kwargs: tp.Optional[dict] = None
+    ) -> models.QuerySet[tp.Type["Person"]]:
         """
         Return persons with birthdays that are
         in one week to today's date.
@@ -81,6 +84,7 @@ class Person(models.Model):
             birth_info__date__day__lte=end.day,
             birth_info__date__month__gte=start.month,
             birth_info__date__month__lte=end.month,
+            **({} if filter_kwargs is None else filter_kwargs),
         ).order_by("birth_info__date")
 
 

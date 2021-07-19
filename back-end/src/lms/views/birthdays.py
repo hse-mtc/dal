@@ -12,9 +12,10 @@ from lms.models.teachers import Teacher
 
 class BirthdayAlertView(APIView):
     model = None
+    filter_kwargs = None
 
     def get(self, request: Request) -> Response:
-        persons = self.model.get_nearest_birthdays()
+        persons = self.model.get_nearest_birthdays(self.filter_kwargs)
         today = date.today()
 
         response = []
@@ -44,6 +45,7 @@ class BirthdayAlertView(APIView):
 @extend_schema(tags=["birthday"])
 class StudentBirthdayAlertView(BirthdayAlertView):
     model = Student
+    filter_kwargs = {"milgroup__archived": False}
 
 
 @extend_schema(tags=["birthday"])
