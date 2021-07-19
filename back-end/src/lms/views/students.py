@@ -390,13 +390,13 @@ class NoteViewSet(ModelViewSet):
         if self.request.user.is_superuser:
             return queryset
 
-        scope = self.request.user.get_perm_scope(self.scoped_permission_class.permission_class,
-                                                 self.request.method)
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.SELF:
             return queryset
 
         return queryset.none()
-    
-    # no need to check on create as user id is automatically 
+
+    # no need to check on create as user id is automatically
     # received from the request by the serializer

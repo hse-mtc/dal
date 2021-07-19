@@ -173,6 +173,7 @@ class StudentSkillsSerializer(ModelSerializer):
 class NoteSerializer(ModelSerializer):
     user = SerializerMethodField(read_only=True)
 
+    # pylint: disable=unused-argument
     def get_user(self, obj) -> int:
         return self.context["request"].user.id
 

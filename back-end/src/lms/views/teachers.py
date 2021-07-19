@@ -22,7 +22,7 @@ from auth.permissions import BasePermission
 
 class TeacherPermission(BasePermission):
     permission_class = "teachers"
-    view_name_rus = "Профессорско-преподавательский состав"
+    view_name_rus = "Преподаватель"
     scopes = [
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
