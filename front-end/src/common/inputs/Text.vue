@@ -27,8 +27,8 @@ import InputsMixin from "./inputsMixin";
   name: "TextInput",
 })
 class TextInput extends InputsMixin {
-  @Prop({ type: Boolean, default: false }) isTextArea
-  @Prop({ type: Boolean, default: false }) onlyChars
+  @Prop({ type: Boolean }) isTextArea
+  @Prop({ type: Boolean }) onlyChars
   @Prop({ type: String, default: "" }) placeholder
 
   get value() { return this.modelValue; }
