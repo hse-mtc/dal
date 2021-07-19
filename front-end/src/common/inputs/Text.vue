@@ -18,32 +18,33 @@
 </template>
 
 <script>
+import { Component, Prop } from "vue-property-decorator";
 import _omit from "lodash/omit";
-import mixin from "./inputsMixin";
 
-export default {
+import InputsMixin from "./inputsMixin";
+
+@Component({
   name: "TextInput",
-  mixins: [mixin],
-  props: {
-    isTextArea: { type: Boolean, default: false },
-    onlyChars: { type: Boolean, default: false },
-    placeholder: { type: String, default: "" },
-  },
-  computed: {
-    type() {
-      return this.isTextArea ? "textarea" : "text";
-    },
-    value: {
-      get() {
-        return this.modelValue;
-      },
-      set(value) {
-        this.$emit("change", this.onlyChars ? value.replace(/\d/g, "") : value);
-      },
-    },
-    listeners() {
-      return _omit(this.$listeners, ["change"]);
-    },
-  },
-};
+})
+class TextInput extends InputsMixin {
+  @Prop({ type: Boolean, default: false }) isTextArea
+  @Prop({ type: Boolean, default: false }) onlyChars
+  @Prop({ type: String, default: "" }) placeholder
+
+  get value() { return this.modelValue; }
+
+  get type() {
+    return this.isTextArea ? "textarea" : "text";
+  }
+
+  set value(value) {
+    this.$emit("change", this.onlyChars ? value.replace(/\d/g, "") : value);
+  }
+
+  get listeners() {
+    return _omit(this.$listeners, ["change"]);
+  }
+}
+
+export default TextInput;
 </script>

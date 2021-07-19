@@ -11,33 +11,32 @@
     filterable
     allow-create
     default-first-option
-    @change="onChange"
+    @change="change"
   />
 </template>
 
 <script>
-import mixin from "./inputsMixin";
+import { Component, Emit, Prop } from "vue-property-decorator";
 import Select from "./Select.vue";
+import InputsMixin from "./inputsMixin";
 
-export default {
+@Component({
   name: "TagsInput",
   components: { Select },
-  mixins: [mixin],
-  props: {
-    tags: { type: Array, default: () => [] },
-  },
-  data() {
-    return { tag: "" };
-  },
-  methods: {
-    onChange(values) {
-      this.$emit(
-        "change",
-        values
-          .map(item => item.trim().toLowerCase())
-          .filter(item => Boolean(item)),
-      );
-    },
-  },
-};
+})
+class TagsInput extends InputsMixin {
+  @Prop({ type: Array, default: () => [] }) tags
+
+  tag = ""
+
+  @Emit()
+  change(values) {
+    console.log("values", values);
+    return values
+      .map(item => item.trim().toLowerCase())
+      .filter(item => Boolean(item));
+  }
+}
+
+export default TagsInput;
 </script>

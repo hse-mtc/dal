@@ -2,10 +2,14 @@
   <div :class="{ [wrapperClassName]: wrapperClassName }">
     <span
       v-if="title"
-      :class="[$style.title, { [titleClassName]: titleClassName }]"
+      :class="[
+        $style.title,
+        { [titleClassName]: titleClassName },
+      ]"
     >
       {{ title }}
     </span>
+
     <span
       v-if="annotation"
       :class="[
@@ -15,21 +19,26 @@
     >
       {{ annotation }}
     </span>
+
     <slot />
   </div>
 </template>
 
 <script>
-export default {
-  name: "InputsBase",
-  props: {
-    title: { type: String, default: null },
-    annotation: { type: String, default: null },
-    wrapperClassName: { type: String, default: "" },
-    titleClassName: { type: String, default: "" },
-    annotationClassName: { type: String, default: "" },
-  },
-};
+import { Component, Prop } from "vue-property-decorator";
+
+@Component({
+  name: "InputBase",
+})
+class InputBase {
+  @Prop({ type: String, default: null }) title
+  @Prop({ type: String, default: null }) annotation
+  @Prop({ type: String, default: "" }) wrapperClassName
+  @Prop({ type: String, default: "" }) titleClassName
+  @Prop({ type: String, default: "" }) annotationClassName
+}
+
+export default InputBase;
 </script>
 
 <style lang="scss" module>
