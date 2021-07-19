@@ -5,6 +5,8 @@
     :wrapper-class-name="wrapperClassName"
     :title-class-name="titleClassName"
     :annotation-class-name="annotationClassName"
+    :left-label="leftLabel"
+    :label-width="labelWidth"
   >
     <el-date-picker
       v-model="value"

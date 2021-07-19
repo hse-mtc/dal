@@ -3,6 +3,8 @@
     :title="title"
     :wrapper-class-name="wrapperClassName"
     :title-class-name="titleClassName"
+    :left-label="leftLabel"
+    :label-width="labelWidth"
   >
     <el-checkbox v-model="value" v-bind="$attrs" :label="checkboxLabel" />
   </InputsBase>

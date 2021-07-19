@@ -5,6 +5,8 @@
     :wrapper-class-name="wrapperClassName"
     :title-class-name="titleClassName"
     :annotation-class-name="annotationClassName"
+    :left-label="leftLabel"
+    :label-width="labelWidth"
   >
     <el-select
       v-model="value"

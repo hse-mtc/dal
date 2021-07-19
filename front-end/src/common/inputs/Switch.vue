@@ -3,6 +3,8 @@
     :title="title"
     :wrapper-class-name="wrapperClassName"
     :title-class-name="titleClassName"
+    :left-label="leftLabel"
+    :label-width="labelWidth"
   >
     <el-switch
       v-model="value"
