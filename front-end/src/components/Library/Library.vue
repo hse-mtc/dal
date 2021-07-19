@@ -5,6 +5,7 @@
       title="Библиотека"
       button="+ Добавить учебник"
       :click="addNewBook"
+      :permissions="['books.post.all']"
     />
     <Modal
       v-if="showModal"
@@ -51,13 +52,17 @@
         </div>
         <div class="content">
           <div class="books">
-            <div v-for="item in books" :key="item.id" class="book">
-              <Book
-                :data="item"
-                :on-edit="() => onBookEdit(item)"
-                @deleteFavBook="deleteFavBook"
-              />
-            </div>
+            <AZGuard :permissions="['books.get.all', 'books.get.self']">
+              <div>
+                <div v-for="item in books" :key="item.id" class="book">
+                  <Book
+                    :data="item"
+                    :on-edit="() => onBookEdit(item)"
+                    @deleteFavBook="deleteFavBook"
+                  />
+                </div>
+              </div>
+            </AZGuard>
             <div v-if="books.length === 0 && isFavoriteBooks && !loading">
               <CustomText :mt="SIZES.m" variant="paragraph">
                 У вас нет сохраненных учебников, добавить их можно в разделе

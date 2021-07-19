@@ -12,7 +12,6 @@ import VueMeta from "vue-meta";
 import AZGuard from "@/components/AZGuard.vue";
 
 import "@/styles/index.scss"; // global css
-
 import App from "./App.vue";
 import store from "./store";
 import router from "./router";

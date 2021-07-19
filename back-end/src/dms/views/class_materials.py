@@ -76,7 +76,7 @@ class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
 
     permission_classes = [SectionPermission]
-    scoped_permission_classes = SectionPermission
+    scoped_permission_class = SectionPermission
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SectionFilter

@@ -23,74 +23,85 @@
             >
           </el-col>
 
-          <el-col :span="7">
-            <div class="add-document-top" @click="openPaperModal('add')">
-              Добавить новый документ
-            </div>
-          </el-col>
+          <AZGuard :permissions="['papers.post.all']">
+            <el-col :span="7">
+              <div class="add-document-top" @click="openPaperModal('add')">
+                Добавить новый документ
+              </div>
+            </el-col>
+          </AZGuard>
         </el-row>
 
-        <el-row v-if="modalCategories" class="categories-selector">
-          <el-col :offset="1" :span="22" class="categories-title">
-            <el-row style="width: 100%">
-              <el-col
-                v-for="{ id, title } in categories"
-                :key="id"
-                :span="12"
-                class="category-title"
+        <AZGuard :permissions="['categories.get.all']">
+          <el-row v-if="modalCategories" class="categories-selector">
+            <el-col :offset="1" :span="22" class="categories-title">
+              <el-row style="width: 100%">
+                <el-col
+                  v-for="{ id, title } in categories"
+                  :key="id"
+                  :span="12"
+                  class="category-title"
+                >
+                  <div>
+                    <span
+                      v-if="id !== 'bin'"
+                      :id="id"
+                      style="cursor: pointer"
+                      @click="selectCategory({ id, title })"
+                    >
+                      {{ title }}
+                    </span>
+                    <AZGuard :permissions="['categories.delete.all']">
+                      <img
+                        v-if="id !== 'bin'"
+                        class="category-delete ml-2"
+                        height="10px"
+                        src="../../assets/scienceWorks/close.svg"
+                        alt="Удалить категорию"
+                        @click="deleteCategory(id)"
+                      >
+                    </AZGuard>
+                    <AZGuard :permissions="['papers.patch.all']">
+                      <span
+                        v-if="id === 'bin'"
+                        style="cursor: pointer; color: #858587"
+                        @click="selectCategory({ id: 'bin', title: 'Корзина' })"
+                      >
+                        Корзина
+                      </span>
+                    </AZGuard>
+                  </div>
+                </el-col>
+                <AZGuard :permissions="['categories.post.all']">
+                  <el-col :span="12" class="category-title" style="color: #0050b2">
+                    <span
+                      style="cursor: pointer"
+                      @click="addNewPaperCategory"
+                    >Добавить новую категорию</span>
+                  </el-col>
+                </AZGuard>
+              </el-row>
+            </el-col>
+
+            <el-col :span="1" class="cross-col">
+              <img
+                src="../../assets/scienceWorks/cross.svg"
+                alt=""
+                @click="closeCategorySelector"
               >
-                <div>
-                  <span
-                    v-if="id !== 'bin'"
-                    :id="id"
-                    style="cursor: pointer"
-                    @click="selectCategory({ id, title })"
-                  >
-                    {{ title }}
-                  </span>
-                  <img
-                    v-if="id !== 'bin'"
-                    class="category-delete ml-2"
-                    height="10px"
-                    src="../../assets/scienceWorks/close.svg"
-                    alt="Удалить категорию"
-                    @click="deleteCategory(id)"
-                  >
-                  <span
-                    v-if="id === 'bin'"
-                    style="cursor: pointer; color: #858587"
-                    @click="selectCategory('bin')"
-                  >
-                    Корзина
-                  </span>
-                </div>
-              </el-col>
-
-              <el-col :span="12" class="category-title" style="color: #0050b2">
-                <span
-                  style="cursor: pointer"
-                  @click="addNewPaperCategory"
-                >Добавить новую категорию</span>
-              </el-col>
-            </el-row>
-          </el-col>
-
-          <el-col :span="1" class="cross-col">
-            <img
-              src="../../assets/scienceWorks/cross.svg"
-              alt=""
-              @click="closeCategorySelector"
-            >
-          </el-col>
-        </el-row>
+            </el-col>
+          </el-row>
+        </AZGuard>
       </div>
 
       <el-row class="search">
-        <el-col :span="16" :offset="2">
-          <Search placeholder="Введите ключевые слова" />
-          <AdvancedSearch class="advanced-search" />
-          <Serp class="documents" @openPaperModal="openPaperModal" />
-        </el-col>
+        <AZGuard :permissions="['papers.get.all']">
+          <el-col :span="16" :offset="2">
+            <Search placeholder="Введите ключевые слова" />
+            <AdvancedSearch class="advanced-search" />
+            <Serp class="documents" @openPaperModal="openPaperModal" />
+          </el-col>
+        </AZGuard>
       </el-row>
     </el-col>
 
@@ -136,8 +147,6 @@ import { PapersModule } from "@/store";
   },
 })
 class Papers {
-  calendarData = null
-
   documents = []
   count = null
 
@@ -148,7 +157,7 @@ class Papers {
   modalCategories = false
   addNewCategory = false
 
-  get categories() { return [...PapersModule.categories, { title: "Корзина", id: "bin" }]; }
+  get categories() { return [...PapersModule.categories]; }
 
   created() {
     this.selectCategory(this.categories[0]);
@@ -236,6 +245,10 @@ class Papers {
   onCategoriesChange(next) {
     if (!this.category.id) {
       ([this.category] = next);
+      this.$router.replace({
+        name: "Papers",
+        query: { category: this.category.id.toString() },
+      });
     }
   }
 }

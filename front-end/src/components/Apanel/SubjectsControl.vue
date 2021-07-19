@@ -3,14 +3,16 @@
     <el-row class="pageTitle">
       <el-col :span="24">
         <div class="d-flex align-items-center justify-content-end">
-          <CustomText
-            variant="paragraph"
-            :custom-style="{ color: '#409EFF', cursor: 'pointer' }"
-          >
-            <div @click="windowModal = true">
-              + Добавить дисциплину
-            </div>
-          </CustomText>
+          <AZGuard :permissions="['subjects.post.all', 'subjects.post.self']">
+            <CustomText
+              variant="paragraph"
+              :custom-style="{ color: '#409EFF', cursor: 'pointer' }"
+            >
+              <div @click="windowModal = true">
+                + Добавить дисциплину
+              </div>
+            </CustomText>
+          </AZGuard>
         </div>
       </el-col>
     </el-row>
@@ -38,18 +40,32 @@
       >
         <template #body="{ data }">
           <div class="buttons">
-            <img
-              class="grow"
-              src="../../assets/subject/edit.svg"
-              alt=""
-              @click="editSubject(data.id)"
+            <AZGuard
+              :permissions="['subjects.patch.all', {
+                codename: 'subjects.patch.self',
+                validator: () => data.user.id === userId,
+              }]"
             >
-            <img
-              class="grow"
-              src="../../assets/subject/close.svg"
-              alt=""
-              @click="deleteSubjectHandler(data.id)"
+              <img
+                class="grow"
+                src="../../assets/subject/edit.svg"
+                alt=""
+                @click="editSubject(data.id)"
+              >
+            </AZGuard>
+            <AZGuard
+              :permissions="['subjects.delete.all', {
+                codename: 'subjects.delete.self',
+                validator: () => data.user.id === userId,
+              }]"
             >
+              <img
+                class="grow"
+                src="../../assets/subject/close.svg"
+                alt=""
+                @click="deleteSubjectHandler(data.id)"
+              >
+            </AZGuard>
           </div>
         </template>
       </PrimeColumn>
@@ -98,13 +114,16 @@ import { Message } from "element-ui";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
 import { SIZES } from "@/utils/appConsts";
-import { SubjectsModule } from "@/store";
+import { SubjectsModule, UserModule } from "@/store";
 
 @Component({
   name: "SubjectsControl",
   components: {
     CustomText,
     ModalWindow,
+  },
+  computed: {
+    userId() { return UserModule.userId; },
   },
 })
 class SubjectsControl {

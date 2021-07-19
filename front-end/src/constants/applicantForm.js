@@ -1,3 +1,5 @@
+import { CAMPUSES } from "@/utils/enums";
+
 export const STEPS = {
   about: "about",
   birthInfo: "birthInfo",
@@ -137,24 +139,8 @@ export const UNIVERSITY_INFO = {
     component: "SelectInput",
     title: "Кампус",
     props: {
-      options: [
-        {
-          value: "MO",
-          label: "Москва",
-        },
-        {
-          value: "SP",
-          label: "Санкт-Петербург",
-        },
-        {
-          value: "NN",
-          label: "Нижний Новгород",
-        },
-        {
-          value: "PE",
-          label: "Пермь",
-        },
-      ],
+      options: Object.entries(CAMPUSES)
+        .map(([value, label]) => ({ value, label })),
     },
   },
   card_id: {

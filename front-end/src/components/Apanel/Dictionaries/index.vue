@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.root">
+  <div>
     <el-input
       v-model="searchQuery"
       placeholder="Поиск"
@@ -9,7 +9,10 @@
     />
 
     <div>
-      <el-tabs v-model="currentTab" tab-position="left">
+      <el-tabs
+        v-model="currentTab"
+        tab-position="left"
+      >
         <el-tab-pane
           v-for="({ label }, field) in tabs"
           :key="field"
@@ -30,13 +33,11 @@
             />
 
             <TableEditor
-              v-else
+              v-else-if="editorsTypes[currentTab] === 'table'"
               :type="currentTab"
               :data="tagsItems"
               @addItem="onAddItem"
-              @startEdit="onStartEdit"
-              @abortEdit="onAbortEdit"
-              @submitEdit="onSubmitEdit"
+              @submitEdit="onTableEdit"
               @delete="onDelete"
             />
           </template>
@@ -73,11 +74,18 @@ class Dictionaries {
     publishers: "tags",
     authors: "tags",
     categories: "tags",
+    achievementTypes: "tags",
+    milfaculties: "tags",
+    ranks: "tags",
+    rooms: "tags",
+    skills: "tags",
+    milgroups: "table",
+    milspecialties: "table",
+    programs: "table",
   }
 
   tabs = {
-    publishers:
-    {
+    publishers: {
       label: "Издатели",
       mapFunc: item => ({ title: item.name, id: item.id }),
       sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
@@ -108,9 +116,12 @@ class Dictionaries {
     },
     milgroups: {
       label: "Взвода",
-      sortFunc: (left, right) => (left.milgroup > right.milgroup ? 1 : -1),
+      mapFunc: item => ({ ...item, milfaculty: item.milfaculty.id }),
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
       filterFunc: (item, query) => {
-        const stringItem = `${item.milgroup} ${item.milfaculty} ${WEEKDAYS[item.weekday]}`
+        const stringItem = `${item.title} ${
+          this.milfaculties.find(milfaculty => milfaculty.id === item.milfaculty).title
+        } ${WEEKDAYS[item.weekday]}`
           .toLowerCase();
         return query.split(" ")
           .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
@@ -118,6 +129,74 @@ class Dictionaries {
       add: ReferenceModule.addMilgroup,
       delete: ReferenceModule.deleteMilgroup,
       edit: ReferenceModule.editMilgroup,
+    },
+    achievementTypes: {
+      label: "Достижения",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addAchievementType,
+      delete: ReferenceModule.deleteAchievementType,
+      edit: ReferenceModule.editAchievementType,
+    },
+    milfaculties: {
+      label: "Циклы",
+      mapFunc: item => ({
+        id: item.id,
+        title: item.title + (item.abbreviation ? ` (${item.abbreviation})` : ""),
+      }),
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addMilfaculty,
+      delete: ReferenceModule.deleteMilfaculty,
+      edit: ReferenceModule.editMilfaculty,
+    },
+    milspecialties: {
+      label: "Направления",
+      sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
+      filterFunc: (item, query) => {
+        const stringItem = `${item.code} ${item.title}`.toLowerCase();
+        return query.split(" ")
+          .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
+      },
+      add: ReferenceModule.addMilSpecialty,
+      delete: ReferenceModule.deleteMilSpecialty,
+      edit: ReferenceModule.editMilSpecialty,
+    },
+    // programs: {
+    //   label: "Программы",
+    //   sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
+    //   filterFunc: (item, query) => {
+    //     const stringItem = `${item.code} ${item.title} ${item.faculty}`.toLowerCase();
+    //     return query.split(" ")
+    //       .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
+    //   },
+    //   add: ReferenceModule.addProgram,
+    //   delete: ReferenceModule.deleteProgram,
+    //   edit: ReferenceModule.editProgram,
+    // },
+    ranks: {
+      label: "Звания",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addRank,
+      delete: ReferenceModule.deleteRank,
+      edit: ReferenceModule.editRank,
+    },
+    rooms: {
+      label: "Аудитории",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addRoom,
+      delete: ReferenceModule.deleteRoom,
+      edit: ReferenceModule.editRoom,
+    },
+    skills: {
+      label: "Умения",
+      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+      add: ReferenceModule.addSkill,
+      delete: ReferenceModule.deleteSkill,
+      edit: ReferenceModule.editSkill,
     },
   }
 
@@ -142,6 +221,13 @@ class Dictionaries {
   get authors() { return PapersModule.authors; }
   get categories() { return PapersModule.categories; }
   get milgroups() { return ReferenceModule.milgroups; }
+  get milfaculties() { return ReferenceModule.milfaculties; }
+  get achievementTypes() { return ReferenceModule.achievementTypes; }
+  get milspecialties() { return ReferenceModule.milspecialties; }
+  get programs() { return ReferenceModule.programs; }
+  get ranks() { return ReferenceModule.ranks; }
+  get rooms() { return ReferenceModule.rooms; }
+  get skills() { return ReferenceModule.skills; }
 
   async onDelete(id) {
     await this.$confirm(
@@ -178,9 +264,15 @@ class Dictionaries {
       ...data,
     });
 
-    if (res) {
+    if (res && this.editorsTypes[this.currentTab] === "tags") {
       this.onAbortEdit();
     }
+  }
+
+  onTableEdit(data) {
+    this.onStartEdit(data.id);
+    this.onSubmitEdit(data);
+    this.onAbortEdit();
   }
 
   onAddItem(data) {
@@ -198,8 +290,6 @@ export default Dictionaries;
 </script>
 
 <style lang="scss" module>
-.root {}
-
 .search {
   margin-bottom: 20px;
 }
@@ -219,6 +309,10 @@ export default Dictionaries;
     margin-left: 20px;
     flex: none;
   }
+}
+
+.tabs {
+  width: 200px;
 }
 
 </style>

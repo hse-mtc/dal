@@ -5,8 +5,6 @@ import {
   Action,
 } from "vuex-module-decorators";
 
-import { Message } from "element-ui";
-
 import store, { ReferenceModule } from "@/store";
 
 import {
@@ -15,7 +13,6 @@ import {
   getStudentPosts,
   getTeacherPosts,
   getRanks,
-  getReferenceMilSpecialties,
   getAchievementTypes,
   getPrograms,
   getRooms,
@@ -23,6 +20,26 @@ import {
   addMilGroup,
   deleteMilGroup,
   editMilGroup,
+  addAchievementType,
+  editAchievementType,
+  addMilFaculty,
+  editMilFaculty,
+  getMilSpecialties,
+  addMilSpecialty,
+  editMilSpecialty,
+  deleteMilSpecialty,
+  addProgram,
+  editProgram,
+  deleteProgram,
+  addRank,
+  editRank,
+  deleteRank,
+  deleteRoom,
+  editRoom,
+  addRoom,
+  deleteSkill,
+  editSkill,
+  addSkill,
 } from "@/api/reference-book";
 import {
   getAddRequest,
@@ -100,7 +117,7 @@ class Reference extends VuexModule {
   async addMilgroup(newItem) {
     return await getAddRequest(
       addMilGroup,
-      data => this.SET_MILGROUPS(data),
+      this.SET_MILGROUPS,
       "_milgroups",
       "взвод",
     ).call(this, newItem);
@@ -110,7 +127,7 @@ class Reference extends VuexModule {
   async editMilgroup({ id, ...newData }) {
     return await getEditRequest(
       editMilGroup,
-      data => this.SET_MILGROUPS(data),
+      this.SET_MILGROUPS,
       "_milgroups",
       "взвод",
     ).call(this, { id, ...newData });
@@ -120,33 +137,10 @@ class Reference extends VuexModule {
   async deleteMilgroup(id) {
     return await getDeleteRequest(
       deleteMilGroup,
-      data => this.SET_MILGROUPS(data),
+      this.SET_MILGROUPS,
       "_milgroups",
       "взвод",
     ).call(this, id);
-  }
-
-  @Action
-  async editSubject({ id, ...newData }) {
-    try {
-      const { data } = await editMilGroup(id, newData);
-
-      const index = this.milgroups.findIndex(item => item.id === id);
-      const newArray = [...this._publishersList];
-      newArray[index] = data;
-
-      this.SET_MILGROUPS(newArray);
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось обновить взвод:", e);
-      Message({
-        type: "error",
-        message: "Не удалось обновить взвод",
-      });
-
-      return false;
-    }
   }
 
   get milgroups() {
@@ -163,20 +157,46 @@ class Reference extends VuexModule {
     this._ranks = payload;
   }
 
-  @Action({ commit: "SET_RANKS" })
-  async setRanks(ranks) {
-    return ranks;
+  @Action
+  async fetchRanks() {
+    return await getFetchRequest(
+      getRanks,
+      data => {
+        this.SET_RANKS(data);
+        this.SET_IS_LOADED({ field: "_ranksLoaded", value: true });
+      },
+      "званий",
+    ).call(this);
   }
 
-  @Action()
-  async fetchRanks() {
-    try {
-      const { data } = await getRanks();
-      this.setRanks(data);
-      this.SET_IS_LOADED({ field: "_ranksLoaded", value: true });
-    } catch (err) {
-      getError("званий", err.response.status);
-    }
+  @Action
+  async addRank(newItem) {
+    return await getAddRequest(
+      addRank,
+      this.SET_RANKS,
+      "_ranks",
+      "звание",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editRank({ id, ...newData }) {
+    return await getEditRequest(
+      editRank,
+      this.SET_RANKS,
+      "_ranks",
+      "звание",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteRank(id) {
+    return await getDeleteRequest(
+      deleteRank,
+      this.SET_RANKS,
+      "_ranks",
+      "звание",
+    ).call(this, id);
   }
 
   get ranks() {
@@ -193,24 +213,20 @@ class Reference extends VuexModule {
     this._studentStatuses = payload;
   }
 
-  @Action({ commit: "SET_STUDENT_STATUSES" })
-  async setStudentStatuses(studentStatuses) {
-    return studentStatuses;
-  }
-
   @Action
   async fetchStudentStatuses() {
-    try {
-      const data = [
+    return await getFetchRequest(
+      () => [
         { code: "ST", label: "Обучающийся" },
         { code: "EX", label: "Отчислен" },
         { code: "GR", label: "Выпустился" },
-      ];
-      this.setStudentStatuses(data);
-      this.SET_IS_LOADED({ field: "_studentStatusesLoaded", value: true });
-    } catch (err) {
-      getError("статусов студентов", err.response.status);
-    }
+      ],
+      data => {
+        this.SET_STUDENT_STATUSES(data);
+        this.SET_IS_LOADED({ field: "_studentStatusesLoaded", value: true });
+      },
+      "статусов студентов",
+    ).call(this);
   }
 
   get studentStatuses() {
@@ -227,20 +243,16 @@ class Reference extends VuexModule {
     this._studentPosts = payload;
   }
 
-  @Action({ commit: "SET_STUDENT_POSTS" })
-  async setStudentPosts(studentPosts) {
-    return studentPosts;
-  }
-
   @Action
   async fetchStudentPosts() {
-    try {
-      const { data } = await getStudentPosts();
-      this.setStudentPosts(data);
-      this.SET_IS_LOADED({ field: "_studentPostsLoaded", value: true });
-    } catch (err) {
-      getError("должностей студентов", err.response.status);
-    }
+    return await getFetchRequest(
+      getStudentPosts,
+      data => {
+        this.SET_STUDENT_POSTS(data);
+        this.SET_IS_LOADED({ field: "_studentPostsLoaded", value: true });
+      },
+      "должностей студентов",
+    ).call(this);
   }
 
   get studentPosts() {
@@ -257,20 +269,16 @@ class Reference extends VuexModule {
     this._teacherPosts = payload;
   }
 
-  @Action({ commit: "SET_TEACHER_POSTS" })
-  async setTeacherPosts(teacherPosts) {
-    return teacherPosts;
-  }
-
   @Action
   async fetchTeacherPosts() {
-    try {
-      const { data } = await getTeacherPosts();
-      this.setTeacherPosts(data);
-      this.SET_IS_LOADED({ field: "_teacherPostsLoaded", value: true });
-    } catch (err) {
-      getError("должностей преподавателей", err.response.status);
-    }
+    return await getFetchRequest(
+      getTeacherPosts,
+      data => {
+        this.SET_TEACHER_POSTS(data);
+        this.SET_IS_LOADED({ field: "_teacherPostsLoaded", value: true });
+      },
+      "должностей преподавателей",
+    ).call(this);
   }
 
   get teacherPosts() {
@@ -287,20 +295,46 @@ class Reference extends VuexModule {
     this._milfaculties = payload;
   }
 
-  @Action({ commit: "SET_MILFACULTIES" })
-  async setMilfaculties(milfaculties) {
-    return milfaculties;
+  @Action
+  async fetchMilfaculties() {
+    return await getFetchRequest(
+      getMilFaculties,
+      data => {
+        this.SET_MILFACULTIES(data);
+        this.SET_IS_LOADED({ field: "_milfacultiesLoaded", value: true });
+      },
+      "циклов",
+    ).call(this);
   }
 
   @Action
-  async fetchMilfaculties() {
-    try {
-      const { data } = await getMilFaculties();
-      this.setMilfaculties(data);
-      this.SET_IS_LOADED({ field: "_milfacultiesLoaded", value: true });
-    } catch (err) {
-      getError("циклов", err.response.status);
-    }
+  async addMilfaculty(newItem) {
+    return await getAddRequest(
+      addMilFaculty,
+      this.SET_MILFACULTIES,
+      "_milfaculties",
+      "цикла",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editMilfaculty({ id, ...newData }) {
+    return await getEditRequest(
+      editMilFaculty,
+      this.SET_MILFACULTIES,
+      "_milfaculties",
+      "цикла",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteMilfaculty(id) {
+    return await getDeleteRequest(
+      deleteMilGroup,
+      this.SET_MILFACULTIES,
+      "_milfaculties",
+      "цикла",
+    ).call(this, id);
   }
 
   get milfaculties() {
@@ -317,25 +351,51 @@ class Reference extends VuexModule {
     this._milspecialties = payload;
   }
 
-  @Action({ commit: "SET_MILSPECIALTIES" })
-  async setmilspecialties(milspecialties) {
-    return milspecialties;
+  @Action
+  async fetchMilSpecialties() {
+    return await getFetchRequest(
+      getMilSpecialties,
+      data => {
+        this.SET_MILSPECIALTIES(data);
+        this.SET_IS_LOADED({ field: "_milspecialtiesLoaded", value: true });
+      },
+      "воинских специальностей",
+    ).call(this);
   }
 
   @Action
-  async fetchmilspecialties() {
-    try {
-      const { data } = await getReferenceMilSpecialties();
-      this.setmilspecialties(data);
-      this.SET_IS_LOADED({ field: "_milspecialtiesLoaded", value: true });
-    } catch (err) {
-      getError("воинских специальностей", err.response.status);
-    }
+  async addMilSpecialty(newItem) {
+    return await getAddRequest(
+      addMilSpecialty,
+      this.SET_MILSPECIALTIES,
+      "_milspecialties",
+      "воинскую специальность",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editMilSpecialty({ id, ...newData }) {
+    return await getEditRequest(
+      editMilSpecialty,
+      this.SET_MILSPECIALTIES,
+      "_milspecialties",
+      "воинскую специальность",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteMilSpecialty(id) {
+    return await getDeleteRequest(
+      deleteMilSpecialty,
+      this.SET_MILSPECIALTIES,
+      "_milspecialties",
+      "воинскую специальность",
+    ).call(this, id);
   }
 
   get milspecialties() {
     if (!this._milspecialtiesLoaded) {
-      ReferenceModule.fetchmilspecialties();
+      ReferenceModule.fetchMilSpecialties();
     }
 
     return this._milspecialties;
@@ -347,20 +407,46 @@ class Reference extends VuexModule {
     this._achievementTypes = payload;
   }
 
-  @Action({ commit: "SET_ACHIEVEMENT_TYPES" })
-  async setAchievementTypes(achievementTypes) {
-    return achievementTypes;
+  @Action
+  async fetchAchievementTypes() {
+    return await getFetchRequest(
+      getAchievementTypes,
+      data => {
+        this.SET_ACHIEVEMENT_TYPES(data);
+        this.SET_IS_LOADED({ field: "_achievementTypesLoaded", value: true });
+      },
+      "типов достижений",
+    ).call(this);
   }
 
   @Action
-  async fetchAchievementTypes() {
-    try {
-      const { data } = await getAchievementTypes();
-      this.setAchievementTypes(data);
-      this.SET_IS_LOADED({ field: "_achievementTypesLoaded", value: true });
-    } catch (err) {
-      getError("типов достижений", err.response.status);
-    }
+  async addAchievementType(newItem) {
+    return await getAddRequest(
+      addAchievementType,
+      this.SET_ACHIEVEMENT_TYPES,
+      "_achievementTypes",
+      "тип достижения",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editAchievementType({ id, ...newData }) {
+    return await getEditRequest(
+      editAchievementType,
+      this.SET_ACHIEVEMENT_TYPES,
+      "_achievementTypes",
+      "тип достижения",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteAchievementType(id) {
+    return await getDeleteRequest(
+      deleteMilGroup,
+      this.SET_ACHIEVEMENT_TYPES,
+      "_achievementTypes",
+      "тип достижения",
+    ).call(this, id);
   }
 
   get achievementTypes() {
@@ -377,20 +463,46 @@ class Reference extends VuexModule {
     this._programs = payload;
   }
 
-  @Action({ commit: "SET_PROGRAMS" })
-  async setPrograms(programs) {
-    return programs;
+  @Action
+  async fetchPrograms() {
+    return await getFetchRequest(
+      getPrograms,
+      data => {
+        this.SET_PROGRAMS(data);
+        this.SET_IS_LOADED({ field: "_programsLoaded", value: true });
+      },
+      "образовательных программ",
+    ).call(this);
   }
 
   @Action
-  async fetchPrograms() {
-    try {
-      const { data } = await getPrograms();
-      this.setPrograms(data);
-      this.SET_IS_LOADED({ field: "_programsLoaded", value: true });
-    } catch (err) {
-      getError("образовательных программ", err.response.status);
-    }
+  async addProgram(newItem) {
+    return await getAddRequest(
+      addProgram,
+      this.SET_PROGRAMS,
+      "_programs",
+      "образовательную программу",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editProgram({ id, ...newData }) {
+    return await getEditRequest(
+      editProgram,
+      this.SET_PROGRAMS,
+      "_programs",
+      "образовательную программу",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteProgram(id) {
+    return await getDeleteRequest(
+      deleteProgram,
+      this.SET_PROGRAMS,
+      "_programs",
+      "образовательную программу",
+    ).call(this, id);
   }
 
   get programs() {
@@ -407,20 +519,46 @@ class Reference extends VuexModule {
     this._rooms = payload;
   }
 
-  @Action({ commit: "SET_ROOMS" })
-  async setRooms(rooms) {
-    return rooms;
+  @Action
+  async fetchRooms() {
+    return await getFetchRequest(
+      getRooms,
+      data => {
+        this.SET_ROOMS(data);
+        this.SET_IS_LOADED({ field: "_roomsLoaded", value: true });
+      },
+      "аудиторий",
+    ).call(this);
   }
 
   @Action
-  async fetchRooms() {
-    try {
-      const { data } = await getRooms();
-      this.setRooms(data);
-      this.SET_IS_LOADED({ field: "_roomsLoaded", value: true });
-    } catch (err) {
-      getError("аудиторий", err.response.status);
-    }
+  async addRoom(newItem) {
+    return await getAddRequest(
+      addRoom,
+      this.SET_ROOMS,
+      "_rooms",
+      "аудиторию",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editRoom({ id, ...newData }) {
+    return await getEditRequest(
+      editRoom,
+      this.SET_ROOMS,
+      "_rooms",
+      "аудиторию",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteRoom(id) {
+    return await getDeleteRequest(
+      deleteRoom,
+      this.SET_ROOMS,
+      "_rooms",
+      "аудиторию",
+    ).call(this, id);
   }
 
   get rooms() {
@@ -478,16 +616,17 @@ class Reference extends VuexModule {
 
   @Action
   async fetchAbsenceStatuses() {
-    try {
-      const data = [
+    return await getFetchRequest(
+      () => [
         { label: "Закрыт", code: "CL" },
         { label: "Открыт", code: "OP" },
-      ];
-      this.setAbsenceStatuses(data);
-      this.SET_IS_LOADED({ field: "_absenceStatusesLoaded", value: true });
-    } catch (err) {
-      getError("статусов пропусков", err.response.status);
-    }
+      ],
+      data => {
+        this.SET_ABSENCE_STATUSES(data);
+        this.SET_IS_LOADED({ field: "_absenceStatusesLoaded", value: true });
+      },
+      "статусов пропусков",
+    ).call(this);
   }
 
   get absenceStatuses() {
@@ -504,20 +643,46 @@ class Reference extends VuexModule {
     this._skills = payload;
   }
 
-  @Action({ commit: "SET_SKILLS" })
-  async setSkills(skills) {
-    return skills;
+  @Action
+  async fetchSkills() {
+    return await getFetchRequest(
+      getSkills,
+      data => {
+        this.SET_SKILLS(data);
+        this.SET_IS_LOADED({ field: "_skillsLoaded", value: true });
+      },
+      "умений",
+    ).call(this);
   }
 
   @Action
-  async fetchSkills() {
-    try {
-      const { data } = await getSkills();
-      this.setSkills(data);
-      this.SET_IS_LOADED({ field: "_skillsLoaded", value: true });
-    } catch (err) {
-      getError("умений", err.response.status);
-    }
+  async addSkill(newItem) {
+    return await getAddRequest(
+      addSkill,
+      this.SET_SKILLS,
+      "_skills",
+      "умение",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editSkill({ id, ...newData }) {
+    return await getEditRequest(
+      editSkill,
+      this.SET_SKILLS,
+      "_skills",
+      "умение",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async deleteSkill(id) {
+    return await getDeleteRequest(
+      deleteSkill,
+      this.SET_SKILLS,
+      "_skills",
+      "умение",
+    ).call(this, id);
   }
 
   get skills() {

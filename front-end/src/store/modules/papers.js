@@ -162,7 +162,7 @@ class Papers extends VuexModule {
     return await getFetchRequest(
       getPaperCategories,
       data => {
-        this.SET_CATEGORIES(data);
+        this.SET_CATEGORIES([...data, { title: "Корзина", id: "bin" }]);
         this.SET_IS_LOADED({ field: "_categoriesLoaded", value: true });
       },
       "категории",

@@ -98,6 +98,7 @@ import { getPrograms } from "@/api/reference-book";
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
 import { UserModule } from "@/store";
+import { CAMPUSES } from "@/utils/enums";
 
 export default {
   name: "ApplicantsDocuments",
@@ -107,18 +108,7 @@ export default {
   },
   filters: {
     campusFilter(campus) {
-      switch (campus) {
-        case "MO":
-          return "Москва";
-        case "SP":
-          return "Санкт-Петербург";
-        case "NN":
-          return "Нижний Новгород";
-        case "PE":
-          return "Пермь";
-        default:
-          return "Ошибка";
-      }
+      return CAMPUSES[campus] || "Ошибка";
     },
   },
   data() {

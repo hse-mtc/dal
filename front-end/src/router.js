@@ -84,7 +84,15 @@ export const constantRoutes = [
         path: "library/",
         name: "Library",
         component: () => import("@/views/Library/index"),
-        meta: { title: "Электронная библиотека", icon: "books" },
+        meta: { title: "Электронная библиотека", icon: "books", permissions: ["books.get.all", "books.get.self"] },
+      },
+
+      {
+        path: "library/book/:id/",
+        name: "Book",
+        component: () => import("@/views/Book/index"),
+        meta: { title: "Электронная библиотека" },
+        hidden: true,
       },
 
       {
@@ -97,7 +105,7 @@ export const constantRoutes = [
             path: "subjects/",
             name: "Subjects",
             component: () => import("@/views/Subjects/index"),
-            meta: { title: "Методические материалы", icon: "presentation" },
+            meta: { title: "Методические материалы", icon: "presentation", permissions: ["class-materials.get.all", "class-materials.get.self"] },
           },
           {
             path: "subjects/:subjectId/",
@@ -110,23 +118,15 @@ export const constantRoutes = [
             path: "schedule/",
             name: "Schedule",
             component: () => import("@/views/Schedule/index"),
-            meta: { title: "Расписание занятий", icon: "calendar" },
+            meta: { title: "Расписание занятий", icon: "calendar", permissions: ["lessons.get.all", "lessons.get.milfaculty", "lessons.get.milgroup"] },
           },
           {
             path: "marks/",
             name: "Marks",
             component: () => import("@/views/Marks/index"),
-            meta: { title: "Журнал оценок", icon: "journal" },
+            meta: { title: "Журнал оценок", icon: "journal", permissions: ["marks.get.all", "marks.get.milfaculty", "marks.get.milgroup", "marks.get.self"] },
           },
         ],
-      },
-
-      {
-        path: "library/book/:id/",
-        name: "Book",
-        component: () => import("@/views/Book/index"),
-        meta: { title: "Электронная библиотека" },
-        hidden: true,
       },
 
       {
@@ -170,10 +170,10 @@ export const constantRoutes = [
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
         meta: { title: "Панель администратора", icon: "journal" },
+        permissions: ["permissions.get.all", "subjects.get.all", "subjects.get.self"],
         children: [
           {
             path: "approve/",
-            alias: "",
             name: "approve",
             component: () => import("@/components/Apanel/Approve/Approve.vue"),
             meta: { title: "Подтверждения" },

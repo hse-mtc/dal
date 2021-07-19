@@ -48,12 +48,8 @@ export default {
     };
   },
 
-  async created() {
-    try {
-      this.all = (await getExistingTags()).data;
-    } catch (error) {
-      console.log("Failed to fetch Tags: ", error);
-    }
+  created() {
+    this.getSuggestions();
   },
 
   methods: {
@@ -95,6 +91,14 @@ export default {
         .map(tag => ({ value: tag }));
 
       cb(asValues);
+    },
+
+    async getSuggestions() {
+      try {
+        this.all = (await getExistingTags()).data;
+      } catch (error) {
+        console.log("Failed to fetch Tags: ", error);
+      }
     },
   },
 };

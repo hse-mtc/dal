@@ -1,3 +1,8 @@
+from dataclasses import (
+    dataclass,
+    field,
+)
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
@@ -146,7 +151,7 @@ class GroupMutateSerializer(serializers.ModelSerializer):
         return instance
 
 
-class PersonSerialier(serializers.Serializer):
+class PersonSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     type = serializers.CharField(read_only=True)
     milgroups = serializers.ListField(
@@ -187,28 +192,34 @@ class UserSerializer(serializers.ModelSerializer):
         # try to find teachers
         user_type, user = get_user_from_request(obj)
 
+        @dataclass
         class PersonObject:
+            id: int = 0
+            type: str = ""
+            milgroups: list[str] = field(default_factory=list)
+            milfaculty: str = ""
 
-            def __init__(self, id, type, milgroups, milfaculty):
-                self.id = id
-                self.type = type
-                self.milgroups = milgroups
-                self.milfaculty = milfaculty
+        if user is None:
+            return PersonSerializer(PersonObject()).data
 
         milgroups = []
         milfaculty = None
 
-        if user_type == "student":
+        if user_type == "student" and user.milgroup is not None:
             milgroups = [user.milgroup.id]
             milfaculty = user.milgroup.milfaculty.id
 
         if user_type == "teacher":
-            milgroups = [m.id for m in user.milgroups.all()]
+            milgroups = user.milgroups.all().values_list("id", flat=True)
             milfaculty = user.milfaculty.id
 
-        person = PersonObject(0 if user is None else user.id, user_type,
-                              milgroups, milfaculty)
-        return PersonSerialier(person).data
+        person = PersonObject(
+            id=user.id,
+            type=user_type,
+            milgroups=milgroups,
+            milfaculty=milfaculty,
+        )
+        return PersonSerializer(person).data
 
 
 class UserDetailedSerializer(serializers.ModelSerializer):

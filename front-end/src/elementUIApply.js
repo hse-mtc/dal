@@ -49,6 +49,7 @@ import {
   Message,
   Notification,
   Scrollbar,
+  Autocomplete,
 } from "element-ui";
 
 locale.use(localeLangRu);
@@ -92,6 +93,7 @@ Vue.use(RadioGroup);
 Vue.use(Tree);
 Vue.use(InputNumber);
 Vue.use(Icon);
+Vue.use(Autocomplete);
 
 Vue.use(Loading.directive);
 

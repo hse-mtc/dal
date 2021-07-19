@@ -6,6 +6,12 @@ const {
     book,
     milspecialties,
     milgroups,
+    achievementTypes,
+    milfaculties,
+    programs,
+    ranks,
+    rooms,
+    skills,
   },
 } = LMS_URLS;
 
@@ -17,11 +23,34 @@ export function getReferenceBooks(params) {
   });
 }
 
-export function getReferenceMilSpecialties(campus) {
+export function getMilSpecialties(campus) {
   return request({
     url: BASE_API_URL + milspecialties,
     method: "get",
     params: { campus },
+  });
+}
+
+export function editMilSpecialty(id, data) {
+  return request({
+    url: `${BASE_API_URL}${milspecialties}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteMilSpecialty(id) {
+  return request({
+    url: `${BASE_API_URL}${milspecialties}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addMilSpecialty(data) {
+  return request({
+    url: `${BASE_API_URL}${milspecialties}`,
+    method: "POST",
+    data,
   });
 }
 
@@ -57,15 +86,61 @@ export function addMilGroup(data) {
 
 export function getMilFaculties() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.milfaculties,
+    url: BASE_API_URL + milfaculties,
     method: "get",
+  });
+}
+
+export function editMilFaculty(id, data) {
+  return request({
+    url: `${BASE_API_URL}${milfaculties}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteMilFaculty(id) {
+  return request({
+    url: `${BASE_API_URL}${milfaculties}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addMilFaculty(data) {
+  return request({
+    url: `${BASE_API_URL}${milfaculties}`,
+    method: "POST",
+    data,
   });
 }
 
 export function getRanks() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.ranks,
+    url: BASE_API_URL + ranks,
     method: "get",
+  });
+}
+
+export function editRank(id, data) {
+  return request({
+    url: `${BASE_API_URL}${ranks}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteRank(id) {
+  return request({
+    url: `${BASE_API_URL}${ranks}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addRank(data) {
+  return request({
+    url: `${BASE_API_URL}${ranks}`,
+    method: "POST",
+    data,
   });
 }
 
@@ -85,28 +160,120 @@ export function getStudentPosts() {
 
 export function getAchievementTypes() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.achievementTypes,
+    url: BASE_API_URL + achievementTypes,
     method: "get",
+  });
+}
+
+export function editAchievementType(id, data) {
+  return request({
+    url: `${BASE_API_URL}${achievementTypes}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteAchievementType(id) {
+  return request({
+    url: `${BASE_API_URL}${achievementTypes}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addAchievementType(data) {
+  return request({
+    url: `${BASE_API_URL}${achievementTypes}`,
+    method: "POST",
+    data,
   });
 }
 
 export function getPrograms() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.programs,
+    url: BASE_API_URL + programs,
     method: "get",
+  });
+}
+
+export function editProgram(id, data) {
+  return request({
+    url: `${BASE_API_URL}${programs}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteProgram(id) {
+  return request({
+    url: `${BASE_API_URL}${programs}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addProgram(data) {
+  return request({
+    url: `${BASE_API_URL}${programs}`,
+    method: "POST",
+    data,
   });
 }
 
 export function getRooms() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.rooms,
+    url: BASE_API_URL + rooms,
     method: "get",
+  });
+}
+
+export function editRoom(id, data) {
+  return request({
+    url: `${BASE_API_URL}${rooms}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteRoom(id) {
+  return request({
+    url: `${BASE_API_URL}${rooms}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addRoom(data) {
+  return request({
+    url: `${BASE_API_URL}${rooms}`,
+    method: "POST",
+    data,
   });
 }
 
 export function getSkills() {
   return request({
-    url: BASE_API_URL + LMS_URLS.reference.skills,
+    url: BASE_API_URL + skills,
     method: "get",
+  });
+}
+
+export function editSkill(id, data) {
+  return request({
+    url: `${BASE_API_URL}${skills}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
+export function deleteSkill(id) {
+  return request({
+    url: `${BASE_API_URL}${skills}${id}/`,
+    method: "DELETE",
+  });
+}
+
+export function addSkill(data) {
+  return request({
+    url: `${BASE_API_URL}${skills}`,
+    method: "POST",
+    data,
   });
 }

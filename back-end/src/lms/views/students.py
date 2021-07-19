@@ -337,8 +337,9 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
         user = request.user
 
         if hasattr(user, "teacher"):
-            queryset = queryset.filter(milgroup__in=user.teacher.milgroups)
-        elif hasattr(user, "student"):
+            queryset = queryset.filter(
+                milgroup__in=user.teacher.milgroups.all())
+        elif hasattr(user, "student") and user.student.milgroup is not None:
             queryset = queryset.filter(milgroup=user.student.milgroup)
 
         serializer = self.get_serializer(queryset, many=True)

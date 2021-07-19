@@ -66,6 +66,22 @@ class DictionariesForms {
     categories: {
       title: "",
     },
+    achievementTypes: {
+      title: "",
+    },
+    milfaculties: {
+      title: "",
+      abbreviation: "",
+    },
+    ranks: {
+      title: "",
+    },
+    rooms: {
+      title: "",
+    },
+    skills: {
+      title: "",
+    },
   }
 
   fieldsByTypes = {
@@ -80,6 +96,22 @@ class DictionariesForms {
     categories: {
       title: { placeholder: "Введите название" },
     },
+    achievementTypes: {
+      title: { placeholder: "Введите название" },
+    },
+    milfaculties: {
+      title: { placeholder: "Введите название" },
+      abbreviation: { placeholder: "Введите сокращение" },
+    },
+    ranks: {
+      title: { placeholder: "Введите название" },
+    },
+    rooms: {
+      title: { placeholder: "Введите название" },
+    },
+    skills: {
+      title: { placeholder: "Введите название" },
+    },
   }
 
   rulesByTypes = {
@@ -92,6 +124,21 @@ class DictionariesForms {
       patronymic: [],
     },
     categories: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    achievementTypes: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    milfaculties: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    ranks: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    rooms: {
+      title: [{ required: true, message: "Обязательное поле" }],
+    },
+    skills: {
       title: [{ required: true, message: "Обязательное поле" }],
     },
   }
@@ -140,7 +187,3 @@ class DictionariesForms {
 
 export default DictionariesForms;
 </script>
-
-<style lang="scss" module>
-.root {}
-</style>

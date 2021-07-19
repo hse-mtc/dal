@@ -1,25 +1,33 @@
 <template>
   <div class="topics">
-    <div v-if="isOwner" class="add-theme">
-      <CustomText
-        variant="paragraph"
-        color="#0C4B9A"
-        :custom-style="{ cursor: 'pointer' }"
+    <div class="add-theme">
+      <AZGuard
+        :permissions="['topics.post.all',
+                       { codename: 'topics.post.self',
+                         validator: () => userId === subjectOwnerId,
+                       },
+        ]"
       >
-        <div @click="addTopic">
-          + Добавить тему
-        </div>
-      </CustomText>
+        <CustomText
+          variant="paragraph"
+          color="#0C4B9A"
+          :custom-style="{ cursor: 'pointer' }"
+        >
+          <div @click="addTopic">
+            + Добавить тему
+          </div>
+        </CustomText>
+      </AZGuard>
     </div>
     <div v-if="topics.length === 0" class="pt-2 pl-2">
-      <CustomText v-if="!isOwner" variant="paragraph">
+      <CustomText v-if="userId !== subjectOwnerId" variant="paragraph">
         Этот раздел пока пуст
       </CustomText>
     </div>
     <Draggable
       :list="topics"
       v-bind="dragOptions"
-      :disabled="!isOwner"
+      :disabled="disableDrag"
       @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
     >
       <transition-group type="transition" name="flip-list">
@@ -27,7 +35,7 @@
           v-for="(item, index) in topics"
           :key="item.id"
           :topic="item"
-          :is-owner="isOwner"
+          :subject-owner-id="subjectOwnerId"
           class="topic"
           :index="index + 1"
           @update="onTopicUpdate(index, $event)"
@@ -50,6 +58,7 @@ import {
 } from "@/api/topic";
 import Draggable from "vuedraggable";
 import { UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 import SubjectTopic from "./SubjectTopic.vue";
 
 export default {
@@ -61,7 +70,7 @@ export default {
   },
   // todo
   // eslint-disable-next-line vue/require-prop-types
-  props: ["sectionId", "isOwner"],
+  props: ["sectionId", "subjectOwnerId"],
   data() {
     return {
       topics: [],
@@ -78,6 +87,12 @@ export default {
         ghostClass: "ghost",
         easing: "cubic-bezier(1, 0.5, 0.8, 1)",
       };
+    },
+    disableDrag() {
+      return !hasPermission([{
+        codename: "topics-order.patch.all", // TODO: add topics-order.patch.self to BE and use validator with it on FE
+        validator: () => this.userId === this.subjectOwnerId,
+      }]);
     },
   },
   async mounted() {

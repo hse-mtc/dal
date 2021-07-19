@@ -32,22 +32,29 @@
               >
                 {{ book.title }}
               </CustomText>
-              <CtaButton
-                background="#fff"
-                color="#0061D9"
-                border="1px solid #0061D9"
-                @click="handleDelete"
+              <AZGuard
+                :permissions="['books.delete.all', {
+                  codename: 'books.delete.self',
+                  validator: () => userId === book.user_id,
+                }]"
               >
-                <div style="display: flex; align-items: center">
-                  <img
-                    class="grow"
-                    src="@/assets/subject/close.svg"
-                    alt=""
-                    style="margin-right: 8px"
-                  >
-                  Удалить
-                </div>
-              </CtaButton>
+                <CtaButton
+                  background="#fff"
+                  color="#0061D9"
+                  border="1px solid #0061D9"
+                  @click="handleDelete"
+                >
+                  <div style="display: flex; align-items: center">
+                    <img
+                      class="grow"
+                      src="@/assets/subject/close.svg"
+                      alt=""
+                      style="margin-right: 8px"
+                    >
+                    Удалить
+                  </div>
+                </CtaButton>
+              </AZGuard>
             </div>
             <CustomText
               v-for="authorId in book.authors"
@@ -140,7 +147,7 @@ import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook, deleteBook } from "@/api/books";
 import { surnameWithInitials } from "@/utils/person";
 import CtaButton from "@/common/CtaButton";
-import { PapersModule, SubjectsModule } from "@/store";
+import { PapersModule, SubjectsModule, UserModule } from "@/store";
 
 export default {
   name: "Book",
@@ -164,6 +171,7 @@ export default {
     subjects() { return SubjectsModule.subjects; },
     authors() { return PapersModule.authors; },
     publishers() { return PapersModule.publishers; },
+    userId() { return UserModule.userId; },
   },
   created() {
     this.fetchData();

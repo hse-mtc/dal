@@ -67,6 +67,7 @@ import {
   saveUserControl,
   getAllRoles,
 } from "@/api/admin";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "UserManagementComponent",
@@ -91,10 +92,14 @@ export default {
       this.mode = mode;
     },
     changeInUserControl(data) {
-      saveUserControl(this.userId, data).catch(err => {
-        this.$message.error("Ошибка редактирования данных о пользователе");
-        console.log("[UserManagementComponent Error]: ", err);
-      });
+      if (hasPermission(["permissions.patch.all"])) {
+        saveUserControl(this.userId, data).catch(err => {
+          this.$message.error("Ошибка редактирования данных о пользователе");
+          console.log("[UserManagementComponent Error]: ", err);
+        });
+      } else {
+        this.$message.error("У вас нет доступа для этого действия");
+      }
     },
     selectUserHandler(userId) {
       this.permissionLoading = true;
