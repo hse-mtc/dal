@@ -1,3 +1,5 @@
+from django.contrib.auth import get_user_model
+
 from rest_framework.serializers import (
     SerializerMethodField,
     ModelSerializer,
@@ -20,6 +22,7 @@ from lms.models.common import Milgroup
 from lms.models.students import (
     Student,
     Skill,
+    Note,
 )
 from lms.serializers.common import (
     MilgroupSerializer,
@@ -165,3 +168,21 @@ class StudentSkillsSerializer(ModelSerializer):
     class Meta:
         model = Student
         fields = ["skills"]
+
+
+class NoteSerializer(ModelSerializer):
+    user = SerializerMethodField(read_only=True)
+
+    # pylint: disable=unused-argument
+    def get_user(self, obj) -> int:
+        return self.context["request"].user.id
+
+    def create(self, validated_data):
+        user_id = self.context["request"].user.id
+        validated_data["user"] = get_user_model().objects.get(id=user_id)
+
+        return super().create(validated_data)
+
+    class Meta:
+        model = Note
+        fields = "__all__"

@@ -26,13 +26,16 @@ from conf.settings import (
 from common.constants import MUTATE_ACTIONS
 
 from lms.models.applicants import ApplicationProcess
-from lms.models.students import Student
+from lms.models.students import Student, Note
 from lms.models.common import (
     Milgroup,
     Milspecialty,
 )
 
-from lms.filters.students import StudentFilter
+from lms.filters.students import (
+    StudentFilter,
+    NoteFilter,
+)
 
 from lms.serializers.applicants import (
     ApplicantSerializer,
@@ -42,6 +45,7 @@ from lms.serializers.applicants import (
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
+    NoteSerializer,
 )
 
 from lms.utils.export import generate_excel
@@ -90,6 +94,14 @@ class ActivatePermission(BasePermission):
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
         Permission.Scope.MILGROUP,
+    ]
+
+
+class StudentNotePermission(BasePermission):
+    permission_class = "student-notes"
+    view_name_rus = "Заметки о студентах"
+    scopes = [
+        Permission.Scope.SELF,
     ]
 
 
@@ -361,3 +373,31 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
             instance._prefetched_objects_cache = {}
 
         return Response(serializer.data)
+
+
+@extend_schema(tags=["students"])
+class NoteViewSet(ModelViewSet):
+    queryset = Note.objects.all()
+    serializer_class = NoteSerializer
+
+    permission_classes = [StudentNotePermission]
+    scoped_permission_class = StudentNotePermission
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = NoteFilter
+
+    def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user)
+        if self.request.user.is_superuser:
+            return queryset
+
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method)
+
+        if scope == Permission.Scope.SELF:
+            return queryset
+
+        return queryset.none()
+
+    # no need to check on create as user id is automatically
+    # received from the request by the serializer

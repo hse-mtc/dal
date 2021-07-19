@@ -153,6 +153,13 @@ class DictionariesTableEditor {
         },
         archived: { title: "Заархивирован", width: 150, editorType: "checkbox" },
       },
+      notes: {
+        text: {
+          title: "Заметка",
+          width: 400,
+          editorType: "input",
+        },
+      },
       milspecialties: {
         code: { title: "Код", width: 100, editorType: "input" },
         title: { title: "Название", width: 500, editorType: "input" },

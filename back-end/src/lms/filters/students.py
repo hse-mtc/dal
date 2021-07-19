@@ -6,7 +6,7 @@ from django_filters.rest_framework import (
     NumberFilter,
 )
 
-from lms.models.students import Student
+from lms.models.students import Student, Note
 from lms.models.universities import UniversityInfo
 
 
@@ -38,3 +38,10 @@ class StudentFilter(FilterSet):
     class Meta:
         model = Student
         fields = ["status", "milgroup", "campus", "skill", "archived"]
+
+
+class NoteFilter(FilterSet):
+
+    class Meta:
+        model = Note
+        fields = ["student"]

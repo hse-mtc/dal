@@ -26,6 +26,7 @@ from lms.models.achievements import (
 )
 from lms.models.students import (
     Student,
+    Note,
     RecruitmentOffice,
 )
 from lms.models.lessons import (
@@ -41,6 +42,7 @@ admin.site.register(Milgroup)
 # Students
 admin.site.register(Student)
 admin.site.register(RecruitmentOffice)
+admin.site.register(Note)
 
 # Applicants
 admin.site.register(ApplicationProcess)

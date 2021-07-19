@@ -2,7 +2,9 @@ import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
 const {
-  staff: { students, applications, applicationsExport },
+  staff: {
+    students, applications, applicationsExport, notes,
+  },
 } = LMS_URLS;
 
 export const getStudents = filters => request({
@@ -102,4 +104,37 @@ export const updateStudentApplicationInfo = (id, data) => request({
 
 export function getApplicationsExcelDownloadLink(campus) {
   return `${BASE_API_URL}${applicationsExport}?campus=${campus}`;
+}
+
+export function findStudentNotes(id) {
+  return request({
+    url: `${BASE_API_URL}${notes}`,
+    method: "get",
+    params: {
+      student: id,
+    },
+  });
+}
+
+export function patchStudentNote(data) {
+  return request({
+    url: `${BASE_API_URL}${notes}${data.id}/`,
+    method: "patch",
+    data,
+  });
+}
+
+export function postStudentNote(data) {
+  return request({
+    url: `${BASE_API_URL}${notes}`,
+    method: "post",
+    data,
+  });
+}
+
+export function deleteStudentNote(id) {
+  return request({
+    url: `${BASE_API_URL}${notes}${id}`,
+    method: "delete",
+  });
 }

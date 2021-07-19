@@ -5,6 +5,7 @@ from rest_framework.routers import DefaultRouter
 from lms.views.students import (
     StudentViewSet,
     ActivateStudentViewSet,
+    NoteViewSet,
 )
 from lms.views.dashboard import (
     StudentBasicInfoViewSet,
@@ -37,6 +38,7 @@ from lms.views.uniforms import UniformViewSet
 from lms.views.personnel import SearchPersonnelUsersViewSet
 
 routers = DefaultRouter()
+routers.register('students/notes', NoteViewSet)
 routers.register('students/approvals', ActivateStudentViewSet)
 routers.register('students/basic', StudentBasicInfoViewSet)
 routers.register('students/extra', StudentExtraInfoViewSet)
