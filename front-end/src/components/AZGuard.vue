@@ -23,9 +23,10 @@ export default {
     },
   },
   render() {
-    return this.isSuperuser || (this.$scopedSlots.default && (this.disable || hasPermission(this.permissions))) ? (
-      this.$scopedSlots.default({ disabled: this.disabled })
-    ) : null;
+    return this.$scopedSlots.default
+      && (this.disable || hasPermission(this.permissions))
+      ? this.$scopedSlots.default({ disabled: this.disabled })
+      : null;
   },
 };
 </script>

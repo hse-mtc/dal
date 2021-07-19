@@ -58,7 +58,7 @@
           @change="onFilter"
         >
           <el-option
-            v-for="value, key in ENCOURAGEMENT_TYPES"
+            v-for="(value, key) in ENCOURAGEMENT_TYPES"
             :key="key"
             :label="value"
             :value="key"
@@ -219,8 +219,12 @@
           <AZGuard
             v-slot="{ disabled }"
             :permissions="[
-              'encouragements.post.all',
-              'encouragements.post.milfaculty',
+              `punishments.${
+                editEncouragement.id && editEncouragement.id > 0 ? 'patch' : 'post'
+              }.all`,
+              `punishments.${
+                editEncouragement.id && editEncouragement.id > 0 ? 'patch' : 'post'
+              }.milfaculty`,
             ]"
             disable
           >
@@ -248,7 +252,7 @@
             style="display: block"
           >
             <el-option
-              v-for="value, key in ENCOURAGEMENT_TYPES"
+              v-for="(value, key) in ENCOURAGEMENT_TYPES"
               :key="key"
               :label="value"
               :value="key"
@@ -289,9 +293,10 @@ import {
 import { UserModule, ReferenceModule } from "@/store";
 
 import moment from "moment";
-import { getStudent } from "@/api/students";
-import { getTeacher } from "@/api/teachers";
+import { getStudent, findStudent } from "@/api/students";
+import { getTeacher, findTeacher } from "@/api/teachers";
 import { ENCOURAGEMENT_TYPES } from "@/utils/enums";
+import { getDisciplinePersonsFilters } from "@/utils/permissions";
 
 export default {
   name: "Encouragement",
@@ -389,12 +394,12 @@ export default {
         `encouragements.${method}.all`,
         {
           codename: `encouragements.${method}.milfaculty`,
-          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty,
+          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty.id,
         },
         {
           codename: `encouragements.${method}.milgroup`,
           validator: () => this.userMilgroups.some(
-            x => x === data.student.milgroup.milgroup,
+            x => x === data.student.milgroup.id,
           ),
         },
         {
@@ -431,8 +436,16 @@ export default {
     },
     async onCreate() {
       this.editEncouragementFullname = "Новое поощрение";
-      this.students = (await getStudent()).data;
-      this.teachers = (await getTeacher()).data;
+      const { students, teachers } = getDisciplinePersonsFilters(
+        "encouragements",
+        "post",
+      );
+      this.students = students?.id
+        ? [(await findStudent(students.id)).data]
+        : (await getStudent(students)).data;
+      this.teachers = teachers?.id
+        ? [(await findTeacher(teachers.id)).data]
+        : (await getTeacher(teachers)).data;
       this.editEncouragement = {
         student: null,
         teacher: this.teachers.find(x => x.id === this.userId)?.id,
@@ -446,8 +459,16 @@ export default {
         student: row.student.id,
         teacher: row.teacher.id,
       };
-      this.students = (await getStudent()).data;
-      this.teachers = (await getTeacher()).data;
+      const { students, teachers } = getDisciplinePersonsFilters(
+        "encouragements",
+        "patch",
+      );
+      this.students = students?.id
+        ? (await findStudent(students.id)).data
+        : (await getStudent(students)).data;
+      this.teachers = teachers?.id
+        ? (await findTeacher(teachers.id)).data
+        : (await getTeacher(teachers)).data;
       this.editEncouragementFullname = row.student.fullname;
       this.dialogVisible = true;
     },

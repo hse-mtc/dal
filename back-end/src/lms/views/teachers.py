@@ -94,5 +94,5 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
 
     def allow_scope_self_on_create(self, data, user_type, user):
         if user_type == "teacher":
-            return data["user"] == user.id
+            return data["user"] == user.user.id
         return False

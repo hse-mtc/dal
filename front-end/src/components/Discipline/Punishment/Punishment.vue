@@ -57,7 +57,7 @@
           @change="onFilter"
         >
           <el-option
-            v-for="value, key in PUNISHMENT_TYPES"
+            v-for="(value, key) in PUNISHMENT_TYPES"
             :key="key"
             :label="value"
             :value="key"
@@ -243,8 +243,8 @@
           <AZGuard
             v-slot="{ disabled }"
             :permissions="[
-              'punishments.post.all',
-              'punishments.post.milfaculty',
+              `punishments.${editPunishment.id && editPunishment.id > 0 ? 'patch' : 'post'}.all`,
+              `punishments.${editPunishment.id && editPunishment.id > 0 ? 'patch' : 'post'}.milfaculty`,
             ]"
             disable
           >
@@ -271,7 +271,7 @@
             style="display: block"
           >
             <el-option
-              v-for="value, key in PUNISHMENT_TYPES"
+              v-for="(value, key) in PUNISHMENT_TYPES"
               :key="key"
               :label="value"
               :value="key"
@@ -315,8 +315,8 @@ import {
 } from "@/api/punishment";
 
 import moment from "moment";
-import { getStudent } from "@/api/students";
-import { getTeacher } from "@/api/teachers";
+import { getStudent, findStudent } from "@/api/students";
+import { getTeacher, findTeacher } from "@/api/teachers";
 import {
   getError,
   postError,
@@ -328,6 +328,7 @@ import {
 } from "@/utils/message";
 import { UserModule, ReferenceModule } from "@/store";
 import { PUNISHMENT_TYPES } from "@/utils/enums";
+import { getDisciplinePersonsFilters } from "@/utils/permissions";
 
 export default {
   name: "Punishment",
@@ -414,12 +415,12 @@ export default {
         `punishments.${method}.all`,
         {
           codename: `punishments.${method}.milfaculty`,
-          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty,
+          validator: () => this.userMilfaculty === data.student.milgroup.milfaculty.id,
         },
         {
           codename: `punishments.${method}.milgroup`,
           validator: () => this.userMilgroups.some(
-            x => x === data.student.milgroup.milgroup,
+            x => x === data.student.milgroup.id,
           ),
         },
         {
@@ -455,8 +456,16 @@ export default {
     },
     async onCreate() {
       this.editPunishmentFullname = "Новое взыскание";
-      this.students = (await getStudent()).data;
-      this.teachers = (await getTeacher()).data;
+      const { students, teachers } = getDisciplinePersonsFilters(
+        "punishments",
+        "post",
+      );
+      this.students = students?.id
+        ? [(await findStudent(students.id)).data]
+        : (await getStudent(students)).data;
+      this.teachers = teachers?.id
+        ? [(await findTeacher(teachers.id)).data]
+        : (await getTeacher(teachers)).data;
       this.editPunishment = {
         student: null,
         teacher: this.teachers.find(x => x.id === this.userId)?.id,
@@ -472,8 +481,16 @@ export default {
         student: row.student.id,
         teacher: row.teacher.id,
       };
-      this.students = (await getStudent()).data;
-      this.teachers = (await getTeacher()).data;
+      const { students, teachers } = getDisciplinePersonsFilters(
+        "punishments",
+        "patch",
+      );
+      this.students = students?.id
+        ? [(await findStudent(students.id)).data]
+        : (await getStudent(students)).data;
+      this.teachers = teachers?.id
+        ? [(await findTeacher(teachers.id)).data]
+        : (await getTeacher(teachers)).data;
       this.dialogVisible = true;
     },
     handleDelete(id) {

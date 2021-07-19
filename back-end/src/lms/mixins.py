@@ -145,7 +145,7 @@ class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
         if user_type == "teacher":
             return self.queryset.filter(
                 student__milgroup__milfaculty=user.milfaculty,
-                teacher__milfaculty=user.milgroup.milfaculty,
+                teacher__milfaculty=user.milfaculty,
             )
         return self.queryset.none()
 

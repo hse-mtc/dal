@@ -2,7 +2,7 @@
   <div class="text-center">
     <el-tabs type="border-card">
       <el-tab-pane
-        v-for="milfaculty in milfaculties"
+        v-for="milfaculty in milfacultiesFiltered"
         :key="milfaculty.id"
         :label="milfaculty.title"
       >
@@ -12,7 +12,7 @@
           <img :src="HEADDRESSES[uniform.headdress]" alt="" class="above">
           <!-- Outerwear -->
           <img :src="OUTERWEARS[uniform.outerwear]" alt="" class="above">
-          <AZGuard :permissions="getPermissions(milfaculty.milfaculty)">
+          <AZGuard :permissions="getPermissions(milfaculty.id, 'patch')">
             <el-button
               icon="el-icon-caret-left"
               circle
@@ -39,7 +39,7 @@
             />
           </AZGuard>
         </div>
-        <AZGuard :permissions="getPermissions(milfaculty.id)">
+        <AZGuard :permissions="getPermissions(milfaculty.id, 'patch')">
           <el-button
             icon="el-icon-check"
             type="success"
@@ -58,6 +58,7 @@ import { getUniforms, createUniform, changeUniform } from "@/api/uniform";
 import {
   getError, postError, patchSuccess, patchError,
 } from "@/utils/message";
+import { hasPermission } from "@/utils/permissions";
 
 import { UserModule, ReferenceModule } from "@/store";
 import { HEADDRESSES, OUTERWEARS } from "@/utils/enums";
@@ -78,17 +79,20 @@ export default {
     milfaculties() {
       return ReferenceModule.milfaculties;
     },
+    milfacultiesFiltered() {
+      return this.milfaculties.filter(x => hasPermission(this.getPermissions(x.id, "get")));
+    },
   },
   created() {
     this.fetchUniform();
   },
   methods: {
-    getPermissions(milfaculty) {
+    getPermissions(milfaculty, method) {
       return [
-        "uniforms.patch.all",
+        `uniforms.${method}.all`,
         {
-          codename: "uniforms.patch.milfaculty",
-          validator: () => this.userMilfaculty === milfaculty,
+          codename: `uniforms.${method}.milfaculty`,
+          validator: () => +this.userMilfaculty === milfaculty,
         },
       ];
     },

@@ -155,14 +155,22 @@ export const constantRoutes = [
         path: "absence/",
         name: "Absence",
         component: () => import("@/views/Absence/index"),
-        meta: { title: "Журнал посещаемости", icon: "session-log" },
+        meta: { title: "Журнал посещаемости", icon: "session-log", permissions: ["absences.get.all", "absences.get.milfaculty", "absences.get.milgroup", "absences.get.self"] },
       },
 
       {
         path: "discipline/",
         name: "Discipline",
         component: () => import("@/views/Discipline/index"),
-        meta: { title: "Дисциплинарная практика", icon: "cross" },
+        meta: {
+          title: "Дисциплинарная практика",
+          icon: "cross",
+          permissions:
+            [
+              "encouragements.get.all", "encouragements.get.milfaculty", "encouragements.get.milgroup", "encouragements.get.self",
+              "punishments.get.all", "punishments.get.milfaculty", "punishments.get.milgroup", "punishments.get.self",
+            ],
+        },
       },
 
       {

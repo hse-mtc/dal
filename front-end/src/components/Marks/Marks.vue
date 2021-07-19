@@ -160,12 +160,21 @@
                             :type="tagByMark(m)"
                             effect="dark"
                             disable-transitions
-                            class="is-clickable margin-x"
+                            class="margin-x"
+                            :class="{
+                              'is-clickable': hasPermission(
+                                getPermissions('patch', 'marks'),
+                              ),
+                            }"
                             @click="
-                              onEdit(
-                                data.marks.find((x) => x.lesson === item.id),
-                                data,
-                              )
+                              hasPermission(getPermissions('patch', 'marks'))
+                                ? onEdit(
+                                  data.marks.find(
+                                    (x) => x.lesson === item.id,
+                                  ),
+                                  data,
+                                )
+                                : null
                             "
                           >
                             {{ m }}
@@ -225,7 +234,7 @@
       >
         <el-form-item label="Оценка: " required>
           <el-input-number
-            v-model="editMark.mark"
+            v-model="editMark.value"
             controls-position="right"
             :min="2"
             :max="5"
@@ -340,6 +349,7 @@ import {
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
 import { LESSON_TYPES } from "@/utils/enums";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "Marks",
@@ -444,6 +454,7 @@ export default {
     this.fetchData();
   },
   methods: {
+    hasPermission,
     getPermissions(method, entity) {
       return [
         `${entity}.${method}.all`,
@@ -453,17 +464,14 @@ export default {
         },
         {
           codename: `${entity}.${method}.milgroup`,
-          validator: () => this.userMilgroups.some(
-            x => x === this.journal.milgroup.id,
-          ),
+          validator: () => this.userMilgroups.some(x => x === this.journal.milgroup.id),
         },
       ];
     },
     getMarksByLesson(marks, lessonId) {
       const m = marks.find(x => x.lesson === lessonId);
       if (m) {
-        const result = m.mark;
-        return result;
+        return m.values;
       }
       return [];
     },
@@ -526,7 +534,7 @@ export default {
         this.editMarkMethod = "PUT";
         this.editMarkId = mark.id;
         this.editMark = {
-          mark: 5,
+          value: 5,
         };
       } else {
         this.editMarkMethod = "POST";
@@ -534,7 +542,7 @@ export default {
         this.editMark = {
           student: student.id,
           lesson: lesson.id,
-          mark: 5,
+          value: 5,
         };
       }
       this.editMarkFullname = student.fullname;
@@ -543,7 +551,7 @@ export default {
     onEdit(mark, student) {
       this.editMarkMethod = "PATCH";
       this.editMark = {
-        mark: mark.mark[mark.mark.length - 1],
+        value: mark.values[mark.values.length - 1],
       };
       this.editMarkId = mark.id;
       this.editMarkFullname = student.fullname;

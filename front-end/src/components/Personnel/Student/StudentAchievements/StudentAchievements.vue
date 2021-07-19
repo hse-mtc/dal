@@ -8,7 +8,7 @@
         <el-tag
           v-for="skill in skills"
           :key="skill"
-          closable
+          :closable="hasPermission(getSkillsPermissions())"
           :disable-transitions="false"
           effect="plain"
           @close="handleClose(skill)"
@@ -33,22 +33,7 @@
         </el-select>
         <AZGuard
           v-else-if="skillsOptionsFiltered.length"
-          :permissions="[
-            'students.patch.all',
-            {
-              codename: 'students.patch.milfaculty',
-              validator: () => milgroup.milfaculty === userMilfaculty,
-            },
-            {
-              codename: 'students.patch.milgroup',
-              validator: () =>
-                userMilgroups.some((x) => x === milgroup.milgroup),
-            },
-            {
-              codename: 'students.patch.self',
-              validator: () => +id === userId,
-            },
-          ]"
+          :permissions="getSkillsPermissions()"
         >
           <el-button
             class="button-new-skill"
@@ -228,6 +213,7 @@ import {
 import { getError, postError, deleteError } from "@/utils/message";
 import { patchStudent, findStudentSkills } from "@/api/students";
 import { ReferenceModule, UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "StudentAchievements",
@@ -275,6 +261,24 @@ export default {
     },
   },
   methods: {
+    hasPermission,
+    getSkillsPermissions() {
+      return [
+        "students.patch.all",
+        {
+          codename: "students.patch.milfaculty",
+          validator: () => this.milgroup.milfaculty === this.userMilfaculty,
+        },
+        {
+          codename: "students.patch.milgroup",
+          validator: () => this.userMilgroups.some(x => x === this.milgroup.milgroup),
+        },
+        {
+          codename: "students.patch.self",
+          validator: () => +this.id === this.userId,
+        },
+      ];
+    },
     dateField: row => (moment(row.date).isValid()
       ? moment(row.date).format("DD.MM.YYYY")
       : "---"),
@@ -292,9 +296,9 @@ export default {
       try {
         this.loading = true;
         this.achievements = (await getAchievement({ student: this.id })).data;
-        this.skills = (
-          await findStudentSkills(this.id)
-        ).data.skills.map(x => x.id);
+        this.skills = (await findStudentSkills(this.id)).data.skills.map(
+          x => x.id,
+        );
       } catch (err) {
         console.log("🚀 > err", err);
         getError("информации о достижениях студента", err.response?.status);
