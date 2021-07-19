@@ -52,6 +52,7 @@ import {
   TagsInput,
   TextInput,
   SingleCheckbox,
+  SwitchInput,
 } from "@/common/inputs";
 
 @Component({
@@ -64,6 +65,7 @@ import {
     TagsInput,
     TextInput,
     SingleCheckbox,
+    SwitchInput,
   },
 })
 class GenericForm {
@@ -82,6 +84,7 @@ class GenericForm {
     tags: TagsInput,
     text: TextInput,
     checkbox: SingleCheckbox,
+    switch: SwitchInput,
   }
 
   @Emit("change")
