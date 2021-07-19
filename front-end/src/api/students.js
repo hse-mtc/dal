@@ -65,7 +65,10 @@ export function postStudent(data) {
   return request({
     url: BASE_API_URL + students,
     method: "post",
-    data,
+    data: {
+      ...data,
+      generate_documents: __PROD__,
+    },
   });
 }
 
