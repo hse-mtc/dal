@@ -18,50 +18,50 @@ export const STEPS = {
 
 export const ABOUT = {
   surname: {
-    component: "TextInput",
+    component: "text",
     title: "Фамилия",
     props: { onlyChars: true, placeholder: "Чехов" },
   },
   name: {
-    component: "TextInput",
+    component: "text",
     title: "Имя",
     props: { onlyChars: true, placeholder: "Антон" },
   },
   patronymic: {
-    component: "TextInput",
+    component: "text",
     title: "Отчество (при наличии)",
     props: { onlyChars: true, placeholder: "Павлович" },
   },
   citizenship: {
-    component: "TextInput",
+    component: "text",
     title: "Гражданство",
     props: { onlyChars: true, placeholder: "РФ" },
   },
   permanent_address: {
-    component: "TextInput",
+    component: "text",
     title: "Адрес постоянной регистрации",
   },
   surname_genitive: {
-    component: "TextInput",
+    component: "text",
     title: "Фамилия в родительном падеже",
     props: { onlyChars: true, placeholder: "Чехова" },
   },
   name_genitive: {
-    component: "TextInput",
+    component: "text",
     title: "Имя в родительном падеже",
     props: { onlyChars: true, placeholder: "Антона" },
   },
   patronymic_genitive: {
-    component: "TextInput",
+    component: "text",
     title: "Отчество в родительном падеже (при наличии)",
     props: { onlyChars: true, placeholder: "Павловича" },
   },
 };
 
 export const BIRTH_INFO = {
-  date: { component: "DateInput", title: "Дата" },
+  date: { component: "date", title: "Дата" },
   country: {
-    component: "TextInput",
+    component: "text",
     title: "Страна",
     props: {
       placeholder: "Россия",
@@ -69,7 +69,7 @@ export const BIRTH_INFO = {
     },
   },
   city: {
-    component: "TextInput",
+    component: "text",
     title: "Город",
     props: {
       placeholder: "Владимир",
@@ -80,17 +80,17 @@ export const BIRTH_INFO = {
 
 export const CONTACT_INFO = {
   corporate_email: {
-    component: "TextInput",
+    component: "text",
     title: "Корпоративная почта",
     props: { placeholder: "apchekhov@edu.hse.ru" },
   },
   personal_email: {
-    component: "TextInput",
+    component: "text",
     title: "Личная почта",
     props: { placeholder: "chekhov@writers.ru" },
   },
   personal_phone_number: {
-    component: "TextInput",
+    component: "text",
     title: "Номер телефона",
     props: { placeholder: "+79095050011" },
   },
@@ -98,25 +98,25 @@ export const CONTACT_INFO = {
 
 export const PASSPORT = {
   series: {
-    component: "TextInput",
+    component: "text",
     title: "Серия",
     props: { placeholder: "1234" },
   },
   code: {
-    component: "TextInput",
+    component: "text",
     title: "Номер",
     props: { placeholder: "567890" },
   },
   ufms_name: {
-    component: "TextInput",
+    component: "text",
     title: "Паспорт выдан",
     props: {
       placeholder: "Отделом УФМС России по гор. Таганрог по району Светлый",
     },
   },
-  issue_date: { component: "DateInput", title: "Дата выдачи" },
+  issue_date: { component: "date", title: "Дата выдачи" },
   ufms_code: {
-    component: "TextInput",
+    component: "text",
     title: "Код подразделения",
     props: { placeholder: "700-007" },
   },
@@ -124,7 +124,7 @@ export const PASSPORT = {
 
 export const RECRUITMENT_OFFICE = {
   title: {
-    component: "TextInput",
+    component: "text",
     title: "Состою на воинском учете в военном комиссариате...",
     props: {
       isTextArea: true,
@@ -136,7 +136,7 @@ export const RECRUITMENT_OFFICE = {
 
 export const UNIVERSITY_INFO = {
   campus: {
-    component: "SelectInput",
+    component: "select",
     title: "Кампус",
     props: {
       options: Object.entries(CAMPUSES)
@@ -144,17 +144,17 @@ export const UNIVERSITY_INFO = {
     },
   },
   card_id: {
-    component: "TextInput",
+    component: "text",
     title: "Номер студенческого билета",
     props: { placeholder: "М123БМИЭФ321" },
   },
   program: {
-    component: "TextInput",
+    component: "text",
     title: "Код образовательной программы",
     props: { placeholder: "01.02.03" },
   },
   group: {
-    component: "TextInput",
+    component: "text",
     title: "Номер группы",
     props: { placeholder: "БИТ 123" },
   },
@@ -162,7 +162,7 @@ export const UNIVERSITY_INFO = {
 
 export const MILSPECIALTY = {
   milspecialty: {
-    component: "SelectInput",
+    component: "select",
     title: "Желаемая военная специальность",
     props: { options: [] },
   },
@@ -170,7 +170,7 @@ export const MILSPECIALTY = {
 
 export const PHOTO = {
   photo: {
-    component: "FileInput",
+    component: "file",
     title: "Загрузите фотографию размером 3x4",
     props: { filesTypes: [".png", ".jpg", ".jpeg"] },
   },
@@ -178,43 +178,43 @@ export const PHOTO = {
 
 export const AGREEMENT = {
   agreement: {
-    component: "SingleCheckbox",
+    component: "checkbox",
     title: "Я даю согласие на обработку персональных данных",
   },
   isDataCorrect: {
-    component: "SingleCheckbox",
+    component: "checkbox",
     title: "Я подтверждаю правильность введенных данных",
   },
 };
 
 export const getRelationData = rel => ({
   surname: {
-    component: "TextInput",
+    component: "text",
     title: `Фамилия ${rel}`,
     props: { onlyChars: true },
   },
   name: {
-    component: "TextInput",
+    component: "text",
     title: `Имя ${rel}`,
     props: { onlyChars: true },
   },
   patronymic: {
-    component: "TextInput",
+    component: "text",
     title: `Отчество ${rel} (при наличии)`,
     props: { onlyChars: true },
   },
   citizenship: {
-    component: "TextInput",
+    component: "text",
     title: `Гражданство ${rel}`,
     props: { onlyChars: true, placeholder: "РФ" },
   },
   permanent_address: {
-    component: "TextInput",
+    component: "text",
     title: `Адрес постоянной регистрации ${rel}`,
   },
-  date: { component: "DateInput", title: `Дата рождения ${rel}` },
+  date: { component: "date", title: `Дата рождения ${rel}` },
   country: {
-    component: "TextInput",
+    component: "text",
     title: `Страна рождения ${rel}`,
     props: {
       onlyChars: true,
@@ -222,15 +222,15 @@ export const getRelationData = rel => ({
     },
   },
   city: {
-    component: "TextInput",
+    component: "text",
     title: `Город рождения ${rel}`,
     props: {
       annotation: "не более 64х символов",
     },
   },
-  personal_email: { component: "TextInput", title: `Личная почта ${rel}` },
+  personal_email: { component: "text", title: `Личная почта ${rel}` },
   personal_phone_number: {
-    component: "TextInput",
+    component: "text",
     title: `Номер телефона ${rel}`,
   },
 });
@@ -331,7 +331,7 @@ export const devInitData = {
   photo: {
     photo: null,
   },
-  milspecialty: { milspecialty: "106646-543" },
+  milspecialty: { milspecialty: 8 },
   agreement: {
     agreement: true,
     isDataCorrect: true,
