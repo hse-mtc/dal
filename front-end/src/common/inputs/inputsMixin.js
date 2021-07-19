@@ -14,6 +14,8 @@ class InputsMixin {
   @Prop({ type: String, default: "" }) wrapperClassName
   @Prop({ type: String, default: "" }) titleClassName
   @Prop({ type: String, default: "" }) annotationClassName
+  @Prop({ type: Boolean }) leftLabel
+  @Prop({ default: "auto " }) labelWidth
 }
 
 export default InputsMixin;

@@ -17,20 +17,15 @@
         :is="components[component]"
         :model-value="formData[key]"
         :title="title"
+        :left-label="leftLabel"
+        :label-width="labelWidth"
         v-bind="props"
         @change="onChange(key, $event)"
       />
     </el-form-item>
 
     <el-form-item>
-      <slot name="buttons" :validate="validate">
-        <el-button
-          type="primary"
-          @click="validate"
-        >
-          Сохранить
-        </el-button>
-      </slot>
+      <slot name="buttons" :validate="validate" />
     </el-form-item>
   </el-form>
 </template>
@@ -72,7 +67,9 @@ class GenericForm {
   @Model("change", { type: Object, required: true }) formData
   @Prop({ type: Object, required: true, default: () => ({}) }) fields
   @Prop({ type: Object, default: () => ({}) }) rules
-  @Prop({ type: Function, default: () => true }) onSubmit
+  @Prop({ type: Function, default: () => {} }) onSubmit
+  @Prop({ type: Boolean }) leftLabel
+  @Prop({ default: "auto" }) labelWidth
 
   @Ref() form
 
@@ -100,16 +97,18 @@ class GenericForm {
 
     this.form.validate(valid => {
       if (valid) {
-        isValid = this.onSubmit();
+        this.onSubmit();
+
+        isValid = true;
+      } else {
+        this.$message({
+          type: "error",
+          message: "Проверьте правильность заполняемых полей",
+        });
+
+        isValid = false;
       }
     });
-
-    if (!isValid) {
-      this.$message({
-        type: "error",
-        message: "Проверьте правильность заполняемых полей",
-      });
-    }
 
     return isValid;
   }

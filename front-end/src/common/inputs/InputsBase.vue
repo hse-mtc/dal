@@ -1,24 +1,37 @@
 <template>
-  <div :class="{ [wrapperClassName]: wrapperClassName }">
-    <span
-      v-if="title"
-      :class="[
-        $style.title,
-        { [titleClassName]: titleClassName },
-      ]"
+  <div
+    :class="{
+      [wrapperClassName]: wrapperClassName,
+      [$style.wrapper]: true,
+      [$style.wrapperLeft]: leftLabel,
+    }"
+  >
+    <div
+      :class="{ [$style.left]: leftLabel }"
+      :style="{
+        width: labelWidth,
+      }"
     >
-      {{ title }}
-    </span>
+      <span
+        v-if="title"
+        :class="[
+          $style.title,
+          { [titleClassName]: titleClassName },
+        ]"
+      >
+        {{ title }}
+      </span>
 
-    <span
-      v-if="annotation"
-      :class="[
-        $style.annotation,
-        { [annotationClassName]: annotationClassName },
-      ]"
-    >
-      {{ annotation }}
-    </span>
+      <span
+        v-if="annotation"
+        :class="[
+          $style.annotation,
+          { [annotationClassName]: annotationClassName },
+        ]"
+      >
+        {{ annotation }}
+      </span>
+    </div>
 
     <slot />
   </div>
@@ -36,6 +49,8 @@ class InputBase {
   @Prop({ type: String, default: "" }) wrapperClassName
   @Prop({ type: String, default: "" }) titleClassName
   @Prop({ type: String, default: "" }) annotationClassName
+  @Prop({ type: Boolean }) leftLabel
+  @Prop({ default: "auto" }) labelWidth
 }
 
 export default InputBase;
@@ -60,4 +75,17 @@ export default InputBase;
   line-height: 21px;
   color: #76767a;
 }
+
+.wrapper {
+  &Left {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.left {
+  margin-right: 15px;
+  flex: none;
+}
+
 </style>
