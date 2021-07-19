@@ -10,6 +10,20 @@
     <Breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
+      <el-popover>
+        <div class="teachers">
+          Teachers
+        </div>
+        <div class="students">
+          Students
+        </div>
+        <el-badge slot="reference" :is-dot="birthdays.length" class="birthdays">
+          <button>
+            <SvgIcon icon-class="cake" />
+            <span class="text">Дни рождения</span>
+          </button>
+        </el-badge>
+      </el-popover>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper m-0" style="font-size: 19px">
           <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
@@ -44,12 +58,23 @@ export default {
     Hamburger,
   },
   computed: {
-    sidebar() { return AppModule.sidebar; },
-    email() { return UserModule.email; },
-    personType() { return UserModule.personType; },
-    personId() { return UserModule.personId; },
+    sidebar() {
+      return AppModule.sidebar;
+    },
+    email() {
+      return UserModule.email;
+    },
+    personType() {
+      return UserModule.personType;
+    },
+    personId() {
+      return UserModule.personId;
+    },
     isCollapse() {
       return !this.sidebar.opened;
+    },
+    birthdays() {
+      return ["s"];
     },
   },
   methods: {
@@ -61,7 +86,10 @@ export default {
     profile() {
       if (this.personType && this.personId) {
         const name = this.personType.charAt(0).toUpperCase() + this.personType.slice(1);
-        this.$router.push({ name, params: { [`${this.personType}Id`]: this.personId } });
+        this.$router.push({
+          name,
+          params: { [`${this.personType}Id`]: this.personId },
+        });
       }
     },
     toggleSideBar() {
@@ -96,6 +124,8 @@ export default {
     margin-left: auto;
     height: 100%;
     line-height: 56px;
+    display: flex;
+    align-items: center;
 
     &:focus {
       outline: none;
@@ -156,6 +186,40 @@ export default {
 
   &:hover {
     background-color: #263445;
+  }
+}
+
+.birthdays {
+  height: 30px;
+  margin-right: 20px;
+
+  button {
+    cursor: pointer;
+    border-radius: 100px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: white;
+    outline: none !important;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+
+    .text {
+      margin-left: 10px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    &:focus {
+      background: rgba(255, 255, 255, 0.2);
+    }
   }
 }
 </style>

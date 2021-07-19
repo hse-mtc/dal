@@ -50,6 +50,7 @@ import {
   Notification,
   Scrollbar,
   Autocomplete,
+  Badge,
 } from "element-ui";
 
 locale.use(localeLangRu);
@@ -94,6 +95,7 @@ Vue.use(Tree);
 Vue.use(InputNumber);
 Vue.use(Icon);
 Vue.use(Autocomplete);
+Vue.use(Badge);
 
 Vue.use(Loading.directive);
 
