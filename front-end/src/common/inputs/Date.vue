@@ -18,15 +18,18 @@
 </template>
 
 <script>
-import mixin from "./inputsMixin";
+import { Component, Prop } from "vue-property-decorator";
 
-export default {
+import InputsMixin from "./inputsMixin";
+
+@Component({
   name: "DateInput",
-  mixins: [mixin],
-  props: {
-    type: { type: String, default: "date" },
-    format: { type: String, default: "dd.MM.yyyy" },
-    valueFormat: { type: String, default: "yyyy-MM-dd" },
-  },
-};
+})
+class DateInput extends InputsMixin {
+  @Prop({ type: String, default: "date" }) type
+  @Prop({ type: String, default: "dd.MM.yyyy" }) format
+  @Prop({ type: String, default: "yyyy-MM-dd" }) valueFormat
+}
+
+export default DateInput;
 </script>

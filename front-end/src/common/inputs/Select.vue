@@ -22,58 +22,81 @@
 </template>
 
 <script>
+import { Component, Prop } from "vue-property-decorator";
+
 import _isObject from "lodash/isObject";
 import _isArray from "lodash/isArray";
-import mixin from "./inputsMixin";
 
-export default {
+import InputsMixin from "./inputsMixin";
+
+@Component({
   name: "SelectInput",
-  mixins: [mixin],
-  props: {
-    options: { type: Array, default: () => [] },
-  },
-  computed: {
-    selectOptions() {
-      return this.options.map(option => {
-        const isObj = _isObject(option);
-        const rawLabel = isObj ? option.label : option;
+})
+class SelectInput extends InputsMixin {
+  @Prop({ type: Array, default: () => [] }) options
 
-        return {
-          label: _isObject(rawLabel) ? JSON.stringify(rawLabel) : rawLabel,
-          optionValue: JSON.stringify(isObj ? option.value : option),
-        };
-      });
-    },
+  get selectOptions() {
+    return this.options.map(option => {
+      const isObj = _isObject(option);
+      const rawLabel = isObj ? option.label : option;
 
-    value: {
-      get() {
-        if (_isArray(this.modelValue)) {
-          return this.modelValue.map(item => this.encodeValue(item));
+      const getValue = item => {
+        if (isObj) {
+          if (_isObject(item.value)) return JSON.stringify(item.value);
+
+          return item.value;
         }
 
-        return this.encodeValue(this.modelValue);
-      },
-      set(newValue) {
-        if (_isArray(newValue)) {
-          this.$emit(
-            "change",
-            newValue.map(item => this.decodeValue(item)),
-          );
-        } else {
-          this.$emit("change", this.decodeValue(newValue));
-        }
-      },
-    },
-  },
-  methods: {
-    encodeValue(value) {
-      if (!value && value !== 0) return value;
+        return item;
+      };
+
+      return {
+        label: _isObject(rawLabel) ? JSON.stringify(rawLabel) : rawLabel,
+        optionValue: getValue(option),
+      };
+    });
+  }
+
+  get value() {
+    if (_isArray(this.modelValue)) {
+      return this.modelValue.map(item => this.encodeValue(item));
+    }
+
+    return this.encodeValue(this.modelValue);
+  }
+
+  set value(newValue) {
+    if (_isArray(newValue)) {
+      this.$emit(
+        "change",
+        newValue
+          .map(item => this.decodeValue(item))
+          .filter((item, index, arr) => arr.indexOf(item) === index),
+      );
+    } else {
+      this.$emit("change", this.decodeValue(newValue));
+    }
+  }
+
+  encodeValue(value) {
+    if (!value && value !== 0) return value;
+
+    if (_isObject(value)) {
       return JSON.stringify(value);
-    },
-    decodeValue(value) {
-      if (!value && value !== 0) return value;
+    }
+
+    return value;
+  }
+
+  decodeValue(value) {
+    if (!value && value !== 0) return value;
+    try {
       return JSON.parse(value);
-    },
-  },
-};
+    } catch (e) {
+      return value;
+    }
+  }
+}
+
+export default SelectInput;
 </script>

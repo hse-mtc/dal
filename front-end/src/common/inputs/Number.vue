@@ -14,12 +14,16 @@
 </template>
 
 <script>
-import mixin from "./inputsMixin";
+import { Component } from "vue-property-decorator";
 
-export default {
+import InputsMixin from "./inputsMixin";
+
+@Component({
   name: "NumberInput",
-  mixins: [mixin],
-};
+})
+class NumberInput extends InputsMixin {}
+
+export default NumberInput;
 </script>
 
 <style lang="scss" module>

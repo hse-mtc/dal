@@ -28,30 +28,31 @@
 </template>
 
 <script>
-import mixin from "./inputsMixin";
+import { Component, Prop } from "vue-property-decorator";
 
-export default {
-  name: "NumberInput",
-  mixins: [mixin],
-  props: {
-    limit: { type: Number, default: 0 },
-    filesTypes: { type: Array, default: () => [] },
-  },
-  computed: {
-    inputAnnotation() {
-      if (this.lodash.isString(this.annotation) || !this.filesTypes.length) {
-        return this.annotation;
-      }
+import InputsMixin from "./inputsMixin";
 
-      return `Файлы в формате ${this.filesTypes.slice(0, -1).join(", ")}${
-        this.filesTypes.length !== 1 ? " или " : ""
-      }${this.filesTypes.slice(-1)}`;
-    },
-  },
-  methods: {
-    onChange(file, files) {
-      this.value = files;
-    },
-  },
-};
+@Component({
+  name: "FileInput",
+})
+class FileInput extends InputsMixin {
+  @Prop({ type: Number, default: 0 }) limit
+  @Prop({ type: Array, default: () => [] }) filesTypes
+
+  get inputAnnotation() {
+    if (this.lodash.isString(this.annotation) || !this.filesTypes.length) {
+      return this.annotation;
+    }
+
+    return `Файлы в формате ${this.filesTypes.slice(0, -1).join(", ")}${
+      this.filesTypes.length !== 1 ? " или " : ""
+    }${this.filesTypes.slice(-1)}`;
+  }
+
+  onChange(file, files) {
+    this.value = files;
+  }
+}
+
+export default FileInput;
 </script>

@@ -9,16 +9,15 @@
 </template>
 
 <script>
-import mixin from "./inputsMixin";
+import { Component, Prop } from "vue-property-decorator";
 
-export default {
+import InputsMixin from "./inputsMixin";
+
+@Component({
   name: "SingleCheckbox",
-  mixins: [mixin],
-  props: {
-    checkboxLabel: {
-      type: String,
-      default: "Да",
-    },
-  },
-};
+})
+class SingleCheckbox extends InputsMixin {
+  @Prop({ type: String, default: "Да" }) checkboxLabel
+}
+export default SingleCheckbox;
 </script>
