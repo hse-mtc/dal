@@ -80,49 +80,37 @@
                   placement="top"
                   trigger="hover"
                 >
-                  <el-form
-                    label-position="right"
+                  <GenericForm
+                    v-model="data[d]"
+                    :fields="getPreviewFields(data[d])"
+                    left-label
                     label-width="150px"
-                    size="mini"
-                    :model="data"
                   >
-                    <el-form-item label="Тип причины: ">
-                      <el-tag
-                        :type="tagByExcuse(data[d].excuse)"
-                        disable-transitions
-                      >
-                        {{ EXCUSES[data[d].excuse] }}
-                      </el-tag>
-                    </el-form-item>
-                    <el-form-item label="Причина: ">
-                      {{ data[d].reason }}
-                    </el-form-item>
-                    <el-form-item label="Комментарий: ">
-                      {{ data[d].comment }}
-                    </el-form-item>
-                    <el-form-item>
-                      <AZGuard :permissions="getPermissions('patch')">
-                        <el-button
-                          size="mini"
-                          icon="el-icon-edit"
-                          type="info"
-                          @click="onEdit(data[d],data.fullname)"
-                        >
-                          Редактировать
-                        </el-button>
-                      </AZGuard>
-                      <AZGuard :permissions="getPermissions('delete')">
-                        <el-button
-                          size="mini"
-                          icon="el-icon-delete"
-                          type="danger"
-                          @click="handleDelete(data[d].id)"
-                        >
-                          Удалить
-                        </el-button>
-                      </AZGuard>
-                    </el-form-item>
-                  </el-form>
+                    <template #buttons>
+                      <center>
+                        <AZGuard :permissions="getPermissions('patch')">
+                          <el-button
+                            size="mini"
+                            icon="el-icon-edit"
+                            type="info"
+                            @click="onEdit(data[d], data.fullname)"
+                          >
+                            Редактировать
+                          </el-button>
+                        </AZGuard>
+                        <AZGuard :permissions="getPermissions('delete')">
+                          <el-button
+                            size="mini"
+                            icon="el-icon-delete"
+                            type="danger"
+                            @click="handleDelete(data[d].id)"
+                          >
+                            Удалить
+                          </el-button>
+                        </AZGuard>
+                      </center>
+                    </template>
+                  </GenericForm>
                   <i
                     slot="reference"
                     :class="iconByAbsenceStatus(data[d].status)"
@@ -324,10 +312,20 @@ export default {
       return students.map(student => ({
         id: student.id,
         fullname: student.fullname,
-        ...dates.reduce((memo, date) => ({
-          ...memo,
-          [date]: student.absences.find(absence => absence.date === date),
-        }), {}),
+        ...dates.reduce((memo, date) => {
+          const rawAbsence = student.absences.find(absence => absence.date === date);
+          if (rawAbsence) {
+            return {
+              ...memo,
+              [date]: {
+                ...rawAbsence,
+                excuse: EXCUSES[rawAbsence.excuse],
+              },
+            };
+          }
+
+          return memo;
+        }, {}),
       }));
     },
   },
@@ -470,6 +468,26 @@ export default {
           this.loading = false;
         }
       }
+    },
+    getPreviewFields(data) {
+      return {
+        excuse: {
+          component: "el-tag",
+          title: "Тип причины",
+          props: {
+            type: this.tagByExcuse(data.excuse),
+            disableTransitions: true,
+          },
+        },
+        reason: {
+          component: "span",
+          title: "Причина",
+        },
+        comment: {
+          component: "span",
+          title: "Комментарий",
+        },
+      };
     },
   },
 };
