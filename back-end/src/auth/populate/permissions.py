@@ -77,6 +77,8 @@ def get_teacher_permissions():
         "marks.delete.milfaculty",
         "reference-books.get.all",
         "uniforms.get.all",
+        "student-birthday-alert.get.milfaculty",
+        "teacher-birthday-alert.get.all",
     ]
 
     res = []
@@ -150,6 +152,8 @@ def get_milfaculty_head_permissions():
         "marks.delete.milfaculty",
         "reference-books.get.all",
         "uniforms.get.all",
+        "student-birthday-alert.get.milfaculty",
+        "teacher-birthday-alert.get.all",
     ]
 
     res = []
