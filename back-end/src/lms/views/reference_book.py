@@ -39,9 +39,11 @@ from lms.filters.reference_books import (
     MilgroupFilter,
     ProgramFilter,
 )
+from lms.mixins import QuerySetScopingMixin
 
 from common.constants import MUTATE_ACTIONS
 
+from auth.models import Permission
 from auth.permissions import (
     BasePermission,
     ReadOnly,
@@ -51,6 +53,15 @@ from auth.permissions import (
 class ReferenceBookPermission(BasePermission):
     permission_class = "reference-books"
     view_name_rus = "Справочные данные"
+
+
+class MilgroupPermission(BasePermission):
+    permission_class = "milgroups"
+    view_name_rus = "Взвода"
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+    ]
 
 
 @extend_schema(tags=["reference-book"])
@@ -101,11 +112,12 @@ class MilspecialtyViewSet(ModelViewSet):
 
 
 @extend_schema(tags=["reference-book"])
-class MilgroupViewSet(ModelViewSet):
+class MilgroupViewSet(QuerySetScopingMixin, ModelViewSet):
     serializer_class = MilgroupSerializer
     queryset = Milgroup.objects.order_by("title")
 
-    permission_classes = [ReadOnly | ReferenceBookPermission]
+    permission_classes = [MilgroupPermission]
+    scoped_permission_class = MilgroupPermission
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = MilgroupFilter
@@ -124,6 +136,15 @@ class MilgroupViewSet(ModelViewSet):
         )
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
+
+    def handle_scope_milfaculty(self, user_type, user):
+        if user_type == "student":
+            milfaculty = user.milgroup.milfaculty
+        elif user_type == "teacher":
+            milfaculty = user.milfaculty
+        else:
+            return self.queryset.none()
+        return self.queryset.filter(milfaculty=milfaculty)
 
 
 @extend_schema(tags=["reference-book"])
