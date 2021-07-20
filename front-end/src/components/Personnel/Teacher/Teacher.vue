@@ -14,7 +14,7 @@
           alt="назад"
           @click="backToPersonnel"
         >
-        {{ isProfile ? "Мой профиль" : "Преподаватель" }}
+        {{ isProfile ? "Мой профиль" : fullname }}
       </div>
       <div v-if="isProfile">
         <el-button type="primary" @click="dialog = true">
@@ -370,6 +370,9 @@ export default {
     },
     milgroup() {
       return this.displayInfo.milgroup || {};
+    },
+    fullname() {
+      return this.displayInfo.fullname;
     },
   },
   async created() {
