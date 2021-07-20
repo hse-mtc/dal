@@ -308,14 +308,14 @@ class ApplicantForm {
       Boolean,
     ).length;
 
-    const withFaterRules = Object.values(this.studentData.father).filter(
+    const withFatherRules = Object.values(this.studentData.father).filter(
       Boolean,
     ).length;
 
     const motherFatherPhone = [
       {
         required: true,
-        message: withFaterRules
+        message: withFatherRules
           ? "Укажите номер матери или отца"
           : "Укажите номер матери",
       },
@@ -325,14 +325,14 @@ class ApplicantForm {
     let fatherFields = {};
 
     if (!withMotherRules) {
-      if (withFaterRules) {
+      if (withFatherRules) {
         fatherFields = {
           ...relationFields,
           personal_phone_number: motherFatherPhone,
         };
       }
     } else if (!this.studentData.mother.personal_phone_number) {
-      if (withFaterRules) {
+      if (withFatherRules) {
         fatherFields = {
           ...relationFields,
           personal_phone_number: motherFatherPhone,
