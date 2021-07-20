@@ -60,6 +60,8 @@
 </template>
 
 <script>
+import _throttle from "lodash/throttle";
+
 import {
   getUsers,
   getUserPermissions,
@@ -115,23 +117,22 @@ export default {
           this.permissionLoading = false;
         });
     },
-    remoteMethod(name) {
-      if (name.length > 3) {
+    remoteMethod: _throttle(function request(name) {
+      if (name) {
         this.loading = true;
         getUsers({ name })
           .then(res => {
-            this.loading = false;
             this.options = res.data;
           })
           .catch(err => {
-            this.loading = false;
             console.log("[UserManagementComponent Error]: ", err);
             this.$message.error("Ошибка загрузки данных о пользователях");
-          });
+          })
+          .finally(() => { this.loading = false; });
       } else {
         this.options = [];
       }
-    },
+    }, 500),
     async fetchData() {
       try {
         this.roleData = (await getAllRoles()).data;
