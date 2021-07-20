@@ -106,7 +106,7 @@ class StudentBirthdayAlertView(BirthdayAlertView):
         if scope == Permission.Scope.MILFACULTY:
             params = self.get_milfaculty_scope_filter(user_type, user)
             return self.model.get_nearest_birthdays(params)
-        
+
         return QuerySet()
 
 

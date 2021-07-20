@@ -81,8 +81,7 @@ def get_teacher_permissions():
         "milgroups.patch.milfaculty",
         "milgroups.delete.milfaculty",
         "reference-books.get.all",
-        "uniforms.get.all",
-        "uniforms.patch.all",
+        "uniforms.get.milfaculty",
         "student-birthday-alert.get.milfaculty",
         "teacher-birthday-alert.get.all",
     ]
@@ -158,7 +157,8 @@ def get_milfaculty_head_permissions():
         "marks.delete.milfaculty",
         "milgroups.get.milfaculty",
         "reference-books.get.all",
-        "uniforms.get.all",
+        "uniforms.get.milfaculty",
+        "uniforms.patch.milfaculty",
         "student-birthday-alert.get.milfaculty",
         "teacher-birthday-alert.get.all",
     ]
