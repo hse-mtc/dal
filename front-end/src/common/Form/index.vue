@@ -15,6 +15,7 @@
     >
       <component
         :is="components[component]"
+        v-if="components[component]"
         :model-value="formData[key]"
         :title="title"
         :left-label="leftLabel"
@@ -22,9 +23,23 @@
         v-bind="props"
         @change="onChange(key, $event)"
       />
+      <InputsBaseInput
+        v-else
+        :title="title"
+        :left-label="leftLabel"
+        :label-width="labelWidth"
+        v-bind="props"
+      >
+        <component
+          :is="component"
+          v-bind="getNotInputProps(props)"
+        >
+          {{ formData[key] }}
+        </component>
+      </InputsBaseInput>
     </el-form-item>
 
-    <el-form-item>
+    <el-form-item :class="$style.buttons">
       <slot name="buttons" :validate="validate" />
     </el-form-item>
   </el-form>
@@ -39,6 +54,8 @@ import {
   Ref,
 } from "vue-property-decorator";
 
+import _omit from "lodash/omit";
+
 import {
   DateInput,
   FileInput,
@@ -48,6 +65,7 @@ import {
   TextInput,
   SingleCheckbox,
   SwitchInput,
+  InputsBaseInput,
 } from "@/common/inputs";
 
 @Component({
@@ -61,6 +79,7 @@ import {
     TextInput,
     SingleCheckbox,
     SwitchInput,
+    InputsBaseInput,
   },
 })
 class GenericForm {
@@ -112,6 +131,15 @@ class GenericForm {
 
     return isValid;
   }
+
+  getNotInputProps(props) {
+    return _omit(props, [
+      "annotation",
+      "wrapperClassName",
+      "titleClassName",
+      "annotationClassName",
+    ]);
+  }
 }
 
 export default GenericForm;
@@ -121,5 +149,9 @@ export default GenericForm;
 :global(.el-select-dropdown__item) {
   height: auto !important;
   white-space: normal;
+}
+
+.buttons {
+  margin-bottom: 0;
 }
 </style>
