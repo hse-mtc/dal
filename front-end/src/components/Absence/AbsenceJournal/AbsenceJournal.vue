@@ -48,7 +48,7 @@
         :name="mg.id.toString()"
       >
         <PrimeTable
-          :value="journal.students"
+          :value="tableData"
           scrollable
           scroll-height="680px"
           sort-field="fullname"
@@ -76,7 +76,7 @@
             <template #body="{ data }">
               <div class="absence-journal-cell">
                 <el-popover
-                  v-if="data.absences.some((x) => x.date === d)"
+                  v-if="data[d]"
                   placement="top"
                   trigger="hover"
                 >
@@ -84,27 +84,21 @@
                     label-position="right"
                     label-width="150px"
                     size="mini"
-                    :model="data.absences.find((x) => x.date === d)"
+                    :model="data"
                   >
                     <el-form-item label="Тип причины: ">
                       <el-tag
-                        :type="
-                          tagByExcuse(
-                            data.absences.find((x) => x.date === d).excuse,
-                          )
-                        "
+                        :type="tagByExcuse(data[d].excuse)"
                         disable-transitions
                       >
-                        {{
-                          EXCUSES[data.absences.find((x) => x.date === d).excuse]
-                        }}
+                        {{ EXCUSES[data[d].excuse] }}
                       </el-tag>
                     </el-form-item>
                     <el-form-item label="Причина: ">
-                      {{ data.absences.find((x) => x.date === d).reason }}
+                      {{ data[d].reason }}
                     </el-form-item>
                     <el-form-item label="Комментарий: ">
-                      {{ data.absences.find((x) => x.date === d).comment }}
+                      {{ data[d].comment }}
                     </el-form-item>
                     <el-form-item>
                       <AZGuard :permissions="getPermissions('patch')">
@@ -112,12 +106,7 @@
                           size="mini"
                           icon="el-icon-edit"
                           type="info"
-                          @click="
-                            onEdit(
-                              data.absences.find((x) => x.date === d),
-                              data.fullname,
-                            )
-                          "
+                          @click="onEdit(data[d],data.fullname)"
                         >
                           Редактировать
                         </el-button>
@@ -127,11 +116,7 @@
                           size="mini"
                           icon="el-icon-delete"
                           type="danger"
-                          @click="
-                            handleDelete(
-                              data.absences.find((x) => x.date === d).id,
-                            )
-                          "
+                          @click="handleDelete(data[d].id)"
                         >
                           Удалить
                         </el-button>
@@ -140,16 +125,8 @@
                   </el-form>
                   <i
                     slot="reference"
-                    :class="
-                      iconByAbsenceStatus(
-                        data.absences.find((x) => x.date === d).status,
-                      )
-                    "
-                    :style="
-                      colorByAbsenceStatus(
-                        data.absences.find((x) => x.date === d).status,
-                      )
-                    "
+                    :class="iconByAbsenceStatus(data[d].status)"
+                    :style="colorByAbsenceStatus(data[d].status)"
                   />
                 </el-popover>
                 <AZGuard v-else :permissions="getPermissions('post')">
@@ -169,56 +146,23 @@
     <el-dialog
       :title="editAbsenceFullname"
       :visible.sync="dialogVisible"
-      width="30%"
       :before-close="handleClose"
     >
-      <el-form
-        label-position="right"
+      <GenericForm
+        v-model="editAbsence"
+        :fields="fields"
+        :rules="rules"
+        :on-submit="handleAccept"
+        left-label
         label-width="150px"
-        size="mini"
-        :model="editAbsence"
       >
-        <el-form-item label="Тип причины: ">
-          <el-select
-            v-model="editAbsence.excuse"
-            placeholder="Выберите тип причины"
-            style="display: block"
-          >
-            <el-option
-              v-for="value, key in EXCUSES"
-              :key="key"
-              :label="value"
-              :value="key"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Статус: ">
-          <el-switch
-            :value="editAbsence.status === 'CL'"
-            active-text="Закрыт"
-            inactive-text="Открыт"
-            @change="changeAbsenceStatus(editAbsence)"
-          />
-        </el-form-item>
-        <el-form-item label="Причина: ">
-          <el-input
-            v-model="editAbsence.reason"
-            placeholder="Введите причину"
-          />
-        </el-form-item>
-        <el-form-item label="Комментарий: ">
-          <el-input
-            v-model="editAbsence.comment"
-            type="textarea"
-            :rows="2"
-            placeholder="Введите комментарий"
-          />
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">Отмена</el-button>
-        <el-button type="primary" @click="handleAccept()">Применить</el-button>
-      </span>
+        <template #buttons="{ validate }">
+          <span style="display: flex; justify-content: flex-end">
+            <el-button @click="dialogVisible = false">Отмена</el-button>
+            <el-button type="primary" @click="validate">Применить</el-button>
+          </span>
+        </template>
+      </GenericForm>
     </el-dialog>
   </div>
 </template>
@@ -242,9 +186,11 @@ import {
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
 import { WEEKDAYS, EXCUSES, ABSENCE_STATUSES } from "@/utils/enums";
+import GenericForm from "@/common/Form/index.vue";
 
 export default {
   name: "Absence",
+  components: { GenericForm },
   data() {
     return {
       EXCUSES,
@@ -314,6 +260,49 @@ export default {
         ],
       },
       journal: {},
+
+      fields: {
+        excuse: {
+          component: "select",
+          title: "Тип причины",
+          props: {
+            options: Object.keys(EXCUSES).map(key => ({
+              value: key,
+              label: EXCUSES[key],
+            })),
+          },
+        },
+        status: {
+          component: "switch",
+          title: "Статус",
+          props: {
+            trueValue: "CL",
+            falseValue: "OP",
+            activeText: "Закрыт",
+            inactiveText: "Открыт",
+          },
+        },
+        reason: {
+          component: "text",
+          title: "Причина",
+          props: {
+            placeholder: "Введите причину",
+          },
+        },
+        comment: {
+          component: "text",
+          title: "Комментарий",
+          props: {
+            placeholder: "Введите комментарий",
+            isTextArea: true,
+          },
+        },
+      },
+
+      rules: {
+        excuse: [{ required: true, message: "Обязательное поле" }],
+        reason: [{ required: true, message: "Обязательное поле" }],
+      },
     };
   },
   computed: {
@@ -327,6 +316,19 @@ export default {
     },
     userMilgroups() {
       return UserModule.personMilgroups;
+    },
+
+    tableData() {
+      const { students, dates } = this.journal;
+
+      return students.map(student => ({
+        id: student.id,
+        fullname: student.fullname,
+        ...dates.reduce((memo, date) => ({
+          ...memo,
+          [date]: student.absences.find(absence => absence.date === date),
+        }), {}),
+      }));
     },
   },
   async created() {
@@ -363,7 +365,7 @@ export default {
     },
     tagByExcuse(excuse) {
       switch (excuse) {
-        case "NS":
+        case "IL":
           return "danger";
         case "LA":
           return "warning";

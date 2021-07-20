@@ -213,6 +213,7 @@
       <GenericForm
         v-model="editAbsence"
         :fields="fields"
+        :rules="rules"
         :on-submit="handleAccept"
         left-label
         label-width="150px"
@@ -355,6 +356,10 @@ export default {
             isTextArea: true,
           },
         },
+      },
+      rules: {
+        excuse: [{ required: true, message: "Обязательное поле" }],
+        reason: [{ required: true, message: "Обязательное поле" }],
       },
     };
   },
