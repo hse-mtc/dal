@@ -10,16 +10,53 @@
     <Breadcrumb class="breadcrumb-container" />
 
     <div class="right-menu">
-      <el-popover>
-        <div class="teachers">
-          Teachers
+      <el-popover v-model="birthdaysVisible" width="500" placement="bottom-end">
+        <div class="birthdays-list">
+          <div class="teachers">
+            <el-divider content-position="left" class="title">
+              Преподаватели
+            </el-divider>
+            <template v-if="teachers.length">
+              <BirthdayItem
+                v-for="item in teachers"
+                :key="item.id"
+                :person="item"
+                type="teacher"
+                @clicked="birthdaysVisible = false"
+              />
+            </template>
+            <span v-else class="empty">
+              В течение ближайшей недели именинников нет
+              <SvgIcon icon-class="sad" />
+            </span>
+          </div>
+
+          <div class="students">
+            <el-divider content-position="left" class="title">
+              Студенты
+            </el-divider>
+            <template v-if="students.length">
+              <BirthdayItem
+                v-for="item in students"
+                :key="item.id"
+                :person="item"
+                type="student"
+                @clicked="birthdaysVisible = false"
+              />
+            </template>
+            <span v-else class="empty">
+              В течение ближайшей недели именинников нет
+              <SvgIcon icon-class="sad" />
+            </span>
+          </div>
         </div>
-        <div class="students">
-          Students
-        </div>
-        <el-badge slot="reference" :is-dot="birthdays.length" class="birthdays">
+        <el-badge
+          slot="reference"
+          :is-dot="anyBirthday"
+          class="birthdays-trigger"
+        >
           <button>
-            <SvgIcon icon-class="cake" />
+            <SvgIcon icon-class="gift" />
             <span class="text">Дни рождения</span>
           </button>
         </el-badge>
@@ -51,11 +88,22 @@ import Breadcrumb from "@/components/Breadcrumb";
 import Hamburger from "@/components/Hamburger";
 import { surnameWithInitials } from "@/utils/person";
 import { AppModule, UserModule } from "@/store";
+import { getStudentBirthdays, getTeacherBirthdays } from "@/api/birthdays";
+import { getError } from "@/utils/message";
+import BirthdayItem from "./BirthdayItem.vue";
 
 export default {
   components: {
     Breadcrumb,
     Hamburger,
+    BirthdayItem,
+  },
+  data() {
+    return {
+      students: [],
+      teachers: [],
+      birthdaysVisible: false,
+    };
   },
   computed: {
     sidebar() {
@@ -73,9 +121,12 @@ export default {
     isCollapse() {
       return !this.sidebar.opened;
     },
-    birthdays() {
-      return ["s"];
+    anyBirthday() {
+      return this.students?.length > 0 || this.teachers.length > 0;
     },
+  },
+  async created() {
+    await this.fetchBirthdays();
   },
   methods: {
     surnameWithInitials,
@@ -94,6 +145,14 @@ export default {
     },
     toggleSideBar() {
       AppModule.toggleSideBar();
+    },
+    async fetchBirthdays() {
+      try {
+        this.students = (await getStudentBirthdays()).data;
+        this.teachers = (await getTeacherBirthdays()).data;
+      } catch (err) {
+        getError("информации о днях рождения", err.response?.status);
+      }
     },
   },
 };
@@ -189,7 +248,7 @@ export default {
   }
 }
 
-.birthdays {
+.birthdays-trigger {
   height: 30px;
   margin-right: 20px;
 
@@ -220,6 +279,23 @@ export default {
     &:focus {
       background: rgba(255, 255, 255, 0.2);
     }
+  }
+}
+
+.birthdays-list {
+  .students {
+    margin-top: 30px;
+  }
+
+  .el-divider__text {
+    color: darkgray;
+  }
+  .el-divider--horizontal {
+    margin: 12px 0;
+  }
+
+  .empty {
+    padding: 10px;
   }
 }
 </style>

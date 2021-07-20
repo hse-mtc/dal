@@ -64,6 +64,10 @@ export const LMS_URLS = {
   uniforms: {
     uniforms: "lms/uniforms/",
   },
+  birthdays: {
+    students: "lms/birthdays/students",
+    teachers: "lms/birthdays/teachers",
+  },
 };
 
 export const DMS_URLS = {

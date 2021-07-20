@@ -51,6 +51,7 @@ import {
   Scrollbar,
   Autocomplete,
   Badge,
+  Divider,
 } from "element-ui";
 
 locale.use(localeLangRu);
@@ -96,6 +97,7 @@ Vue.use(InputNumber);
 Vue.use(Icon);
 Vue.use(Autocomplete);
 Vue.use(Badge);
+Vue.use(Divider);
 
 Vue.use(Loading.directive);
 
