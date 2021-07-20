@@ -252,7 +252,6 @@ export default {
   },
   data() {
     return {
-      test: "a",
       ABSENCE_STATUSES,
       EXCUSES,
       dialogVisible: false,
