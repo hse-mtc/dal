@@ -22,6 +22,7 @@ from auth.permissions import BasePermission
 class UniformPermission(BasePermission):
     permission_class = "uniforms"
     view_name_rus = "Форма одежды"
+    methods = ["get", "patch"]
     scopes = [
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
