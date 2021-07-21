@@ -45,7 +45,7 @@ async def post_absence(students: list[Student], *args: tp.Any,
         if student.state.value == State.ABSENT.value
     ]
     if len(absent_students) == 0:
-        return "Товарищ командир, все студенты присутствуют!"
+        return "Все студенты присутствуют."
 
     absences = await fetch_today_absences(absent_students[0].milgroup.id)
 
