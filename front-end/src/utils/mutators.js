@@ -16,9 +16,9 @@ export const getFetchRequest = (
   fetchFunc,
   mutation,
   errorMsg,
-) => async function fetchRequest(newItem) {
+) => async function fetchRequest() {
   try {
-    const { data } = await fetchFunc(newItem);
+    const { data } = await fetchFunc();
 
     mutation(data);
 

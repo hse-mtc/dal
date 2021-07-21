@@ -1,0 +1,68 @@
+@import "@/styles/variables.scss";
+
+.root {
+  cursor: pointer;
+  z-index: 2;
+  background: $white;
+  padding: $l;
+  border: 1px solid #e5e5eb;
+  box-sizing: border-box;
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.06);
+  border-radius: $s;
+  height: 291px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  &:hover {
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+
+    .header {
+      .buttons {
+        display: flex;
+      }
+    }
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: $s;
+
+    .buttons {
+      z-index: 4;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      img {
+        cursor: pointer;
+        margin-left: $s;
+
+        &.grow {
+          transition: all 0.2s ease-in-out;
+
+          &:hover {
+            transform: scale(1.2);
+          }
+        }
+      }
+    }
+  }
+
+  .annotation {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+  }
+
+  .owner {
+    display: flex;
+    align-items: center;
+    img {
+      margin-right: $s;
+    }
+  }
+}

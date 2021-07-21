@@ -7,16 +7,25 @@ import {
 import { Message } from "element-ui";
 
 import store, { SubjectsModule } from "@/store";
-import { deleteSubject, getSubjects, upsertSubject } from "@/api/subjects";
+import {
+  addSubject, deleteSubject, editSubject, getSubject, getSubjects, upsertSubject,
+} from "@/api/subjects";
+import {
+  getAddRequest, getDeleteRequest, getEditRequest, getFetchRequest,
+} from "@/utils/mutators";
 
 @Module({ store, name: "subjects", namespaced: true })
 class Subjects extends VuexModule {
   _subjectsList = []
   _subjectsLoaded = false
 
+  subjectId = 0
+  _subjectInfo = {}
+  _subjectInfoLoaded = false
+
   @Mutation
-  SET_IS_LOADED(value) {
-    this._subjectsLoaded = value;
+  SET_IS_LOADED({ field, value }) {
+    this[field] = value;
   }
 
   @Mutation
@@ -37,43 +46,46 @@ class Subjects extends VuexModule {
     this._subjectsList = payload;
   }
 
-  @Action({ commit: "SET_SUBJECTS" })
-  setSubjects(subjects) {
-    return subjects;
+  @Action
+  async fetchSubjects() {
+    return await getFetchRequest(
+      getSubjects,
+      data => {
+        this.SET_SUBJECTS(data);
+        this.SET_IS_LOADED({ field: "_subjectsLoaded", value: true });
+      },
+      "предметов",
+    ).call(this);
   }
 
   @Action
-  async fetchSubjects() {
-    try {
-      const { data } = await getSubjects();
-      this.setSubjects(data);
-      this.SET_IS_LOADED(true);
-    } catch (e) {
-      console.error("Не удалось загрузить данные предментов");
-      Message({
-        type: "error",
-        message: "Не удалось загрузить данные предментов",
-      });
-    }
+  async addSubject(newItem) {
+    return await getAddRequest(
+      addSubject,
+      this.SET_SUBJECTS,
+      "_subjectsList",
+      "предмет",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async editSubject({ id, ...newData }) {
+    return await getEditRequest(
+      editSubject,
+      this.SET_SUBJECTS,
+      "_subjectsList",
+      "предмет",
+    ).call(this, { id, ...newData });
   }
 
   @Action
   async deleteSubject(id) {
-    try {
-      await deleteSubject(id);
-
-      this.setSubjects(this._subjectsList.filter(item => item.id !== id));
-
-      return true;
-    } catch (e) {
-      console.error("Не удалось удалить предмет:", e);
-      Message({
-        type: "error",
-        message: "Не удалось удалить предмет",
-      });
-
-      return false;
-    }
+    return await getDeleteRequest(
+      deleteSubject,
+      this.SET_SUBJECTS,
+      "_subjectsList",
+      "предмет",
+    ).call(this, id);
   }
 
   @Action
@@ -99,6 +111,48 @@ class Subjects extends VuexModule {
     }
 
     return this._subjectsList;
+  }
+
+  // Current subject
+
+  @Mutation
+  SET_CURRENT_SUBJECT_INFO(data) {
+    this._subjectInfo = data;
+  }
+
+  @Mutation
+  SET_CURRENT_SUBJECT_ID(id) {
+    this.subjectId = id;
+  }
+
+  @Action
+  setCurrentSubjectId(id) {
+    this.SET_CURRENT_SUBJECT_ID(id);
+    this.SET_IS_LOADED({ field: "_subjectInfoLoaded", value: false });
+  }
+
+  @Action
+  async fetchSubject() {
+    if (!this.subjectId) return false;
+
+    return await getFetchRequest(
+      () => getSubject({
+        id: this.subjectId,
+      }),
+      data => {
+        this.SET_CURRENT_SUBJECT_INFO(data);
+        this.SET_IS_LOADED({ field: "_subjectInfoLoaded", value: true });
+      },
+      "предмета",
+    ).call(this);
+  }
+
+  get currentSubject() {
+    if (!this._subjectInfoLoaded) {
+      SubjectsModule.fetchSubject();
+    }
+
+    return this._subjectInfo;
   }
 }
 

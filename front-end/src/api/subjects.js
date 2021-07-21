@@ -28,6 +28,22 @@ export function deleteSubject(id) {
   });
 }
 
+export function addSubject(data) {
+  return request({
+    url: `${BASE_API_URL}${subjects}`,
+    method: "POST",
+    data,
+  });
+}
+
+export function editSubject(id, data) {
+  return request({
+    url: `${BASE_API_URL}${subjects}${id}/`,
+    method: "PATCH",
+    data,
+  });
+}
+
 export function upsertSubject(data) {
   if (data.id) {
     return request({
