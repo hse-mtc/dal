@@ -35,7 +35,7 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
 
     if user.milgroup.weekday != datetime.now().weekday():
         await message.answer(
-            bold_text("Товарищ командир, у вас нет занятий в этот день!"),
+            bold_text("У вас сегодня нет занятий."),
             parse_mode=MD2,
             reply_markup=main_menu_keyboard(),
         )
