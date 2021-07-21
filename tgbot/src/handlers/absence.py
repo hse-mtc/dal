@@ -1,4 +1,6 @@
 import operator
+import typing as tp
+from datetime import datetime
 
 from aiogram.types import Message
 from aiogram.types import ParseMode
@@ -30,6 +32,14 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
     # TODO(TmLev): save user to local storage to prevent excessive requests.
     phone = await fetch_phone(chat_id=message.chat.id)
     user = await fetch_students(many=False, params={"phone": phone})
+
+    if user.milgroup.weekday != datetime.now().weekday():
+        await message.answer(
+            bold_text("Товарищ командир, у вас нет занятий в этот день!"),
+            parse_mode=MD2,
+            reply_markup=main_menu_keyboard(),
+        )
+        return
 
     students = await fetch_students(params={"milgroup": user.milgroup.id})
     students.sort(key=operator.attrgetter("fullname"))
