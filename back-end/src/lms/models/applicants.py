@@ -22,14 +22,6 @@ class RecruitmentOffice(models.Model):
         max_length=255,
         blank=True,
     )
-    city = models.CharField(
-        max_length=127,
-        blank=True,
-    )
-    district = models.CharField(
-        max_length=127,
-        blank=True,
-    )
 
     class Meta:
         verbose_name = "Recruitment Office"
