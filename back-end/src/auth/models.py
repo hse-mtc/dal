@@ -120,6 +120,8 @@ class User(AbstractUser):
         related_name="user_set",
         related_query_name="user",
     )
+
+    user_permissions = None  # Remove default ones.
     permissions = models.ManyToManyField(
         Permission,
         verbose_name="user permissions",
