@@ -134,7 +134,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         return StudentSerializer
 
     def get_queryset(self):
-        if self.action == "applications":
+        if self.action in ["applications", "application"]:
             return self.queryset.filter(status=Student.Status.APPLICANT)
         return super().get_queryset()
 
