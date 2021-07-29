@@ -112,9 +112,13 @@ export default {
     },
   },
   data() {
+    // FIXME(TmLev, i-oktav-i): `UserModule.campuses` is getter with async call.
+    // Campuses are not being fetched on time, so `UserModule.campuses`
+    // returns empty array, which always leads to default value being selected.
+    // This is broken in so many ways :(
     const selectedCampus = UserModule.campuses.length > 0
       ? UserModule.campuses[0]
-      : "MO";
+      : null;
     return {
       data: [],
       programs: [],
@@ -134,10 +138,10 @@ export default {
     },
     campuses() { return UserModule.campuses; },
   },
-  created() {
+  async created() {
     this.loading = true;
-    this.fetchPrograms();
-    this.fetchData();
+    await this.fetchPrograms();
+    await this.fetchData();
   },
   methods: {
     getExcel() {
