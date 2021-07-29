@@ -105,9 +105,7 @@ export const updateStudentApplicationInfo = (id, data) => request({
   data,
 });
 
-export function getApplicationsExcelDownloadLink(campus) {
-  return `${BASE_API_URL}${applicationsExport}?campus=${campus}`;
-}
+export const APPLICATIONS_EXPORT_LINK = `${BASE_API_URL}${applicationsExport}`;
 
 export function findStudentNotes(id) {
   return request({

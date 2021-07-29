@@ -1,12 +1,24 @@
 import uuid
 
+from dataclasses import dataclass
 from pathlib import Path
 
 from django.db.models import QuerySet
 
 import xlsxwriter
 
+from xlsxwriter.format import Format
+
 from lms.models.students import Student
+
+
+@dataclass
+class Formats:
+    header: Format
+    align_center: Format
+    russian_date: Format
+    int: Format
+    float: Format
 
 
 def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
@@ -20,20 +32,26 @@ def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
     workbook = xlsxwriter.Workbook(path)
 
     # define formats
-    header_format = workbook.add_format({"bold": True, "align": "center"})
-    align_center = workbook.add_format({"align": "center"})
-    russian_date = workbook.add_format({
-        "num_format": "dd.mm.yyyy",
-        "align": "center",
-    })
-    mean_grade = workbook.add_format({
-        "align": "center",
-        "num_format": "#,##0.00"
-    })
+    formats = Formats(
+        header=workbook.add_format({"bold": True, "align": "center"}),
+        align_center=workbook.add_format({"align": "center"}),
+        russian_date=workbook.add_format({
+            "num_format": "dd.mm.yyyy",
+            "align": "center",
+        }),
+        int=workbook.add_format({
+            "align": "center",
+            "num_format": "#0"
+        }),
+        float=workbook.add_format({
+            "align": "center",
+            "num_format": "#,##0.00"
+        }),
+    )
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
-        _fill_header(worksheet=worksheet, cell_format=header_format)
+        _fill_header(worksheet=worksheet, cell_format=formats.header)
 
         for row, student in enumerate(
                 students.filter(milspecialty=milspecialty),
@@ -41,9 +59,7 @@ def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
         ):
             cells = _make_student_row(
                 student=student,
-                align_center=align_center,
-                russian_date=russian_date,
-                mean_grade=mean_grade,
+                formats=formats,
             )
             for col, (data, cell_format) in enumerate(cells):
                 worksheet.write(row, col, data, cell_format)
@@ -62,6 +78,7 @@ def _fill_header(
         "Код ОП",
         "Кампус",
         "Ср. балл",
+        "Ср. балл (100)",
         "РМО",
         "РППО",
         "ПП",
@@ -71,6 +88,11 @@ def _fill_header(
         "ПС",
         "СБ",
         "Заявление",
+        "Подтягивания",
+        "Скорость",
+        "Кросс",
+        "ФИЗО",
+        "Итог",
     ]
 
     worksheet.write_row(0, 0, columns)
@@ -78,38 +100,37 @@ def _fill_header(
     worksheet.set_column(0, 0, 30)  # ФИО
     worksheet.set_column(1, 1, 15)  # Дата рождения
     worksheet.set_column(3, 3, 15)  # Кампус
-    worksheet.set_column(5, 5, 34)  # РМО
+    worksheet.set_column(5, 5, 13)  # Средний балл / 100
+    worksheet.set_column(6, 6, 34)  # РМО
 
 
 def _make_student_row(
     student: Student,
-    align_center: xlsxwriter.workbook.Format,
-    russian_date: xlsxwriter.workbook.Format,
-    mean_grade: xlsxwriter.workbook.Format,
+    formats: Formats,
 ) -> list[...]:
-    row = [(student.full_name, align_center)]
+    row = [(student.full_name, formats.align_center)]
 
-    if student.birth_info is not None:
-        row.append((student.birth_info.date, russian_date))
+    if (bi := student.birth_info) is not None:
+        row += [(bi.date, formats.russian_date)]
     else:
-        row.append(("", align_center))
+        row += [("", formats.align_center)]
 
-    if student.university_info is not None:
+    if (ui := student.university_info) is not None:
         row += [
-            (student.university_info.program.code, align_center),
-            (student.university_info.get_campus_display(), align_center),
+            (ui.program.code, formats.align_center),
+            (ui.get_campus_display(), formats.align_center),
         ]
     else:
-        row += [("", align_center)] * 2
+        row += [("", formats.align_center)] * 2
 
-    if student.application_process is not None:
+    if (ap := student.application_process) is not None:
         row += [
-            (student.application_process.mean_grade, mean_grade),
-            (student.application_process.get_medical_examination_display(),
-             align_center),
-            (student.application_process.get_prof_psy_selection_display(),
-             align_center),
+            (ap.mean_grade, formats.float),
+            (int(ap.mean_grade * 10), formats.int),
+            (ap.get_medical_examination_display(), formats.align_center),
+            (ap.get_prof_psy_selection_display(), formats.align_center),
         ]
+
         for field in [
                 "preferential_right", "characteristic_handed_over",
                 "criminal_record_handed_over", "passport_handed_over",
@@ -117,9 +138,24 @@ def _make_student_row(
                 "university_card_handed_over", "application_handed_over"
         ]:
             row.append(
-                ("Да" if getattr(student.application_process, field) else "Нет",
-                 align_center))
+                ("Да" if getattr(ap, field) else "Нет", formats.align_center))
+
+        row += [
+            (ap.pull_ups, formats.int),
+            (ap.speed_run, formats.float),
+            (ap.long_run, formats.float),
+            (ap.physical_test_grade, formats.int),
+        ]
+
     else:
-        row += [("", align_center)] * 9
+        row += [("", formats.align_center)] * 14
+        row += [(0, formats.align_center)]  # ФИЗО
+
+    mean_grade_scaled = row[5][0]
+    physical_test_grade = row[18][0]
+    try:
+        row += [(mean_grade_scaled + physical_test_grade, formats.int)]
+    except TypeError:
+        row += [(0, formats.int)]
 
     return row

@@ -59,9 +59,14 @@
           />
         </el-col>
         <el-col v-if="!isStudyOffice" :span="4">
-          <el-button type="success" plain @click="getExcel">
-            <i class="el-icon-download" /> Экспорт в Excel
-          </el-button>
+          <DownloadFile
+            :url="makeExportLink()"
+            :file-name="makeExportFilename()"
+          >
+            <el-button type="success" plain>
+              <i class="el-icon-download" /> Экспорт в Excel
+            </el-button>
+          </DownloadFile>
         </el-col>
       </el-row>
 
@@ -92,17 +97,23 @@
 import _debounce from "lodash/debounce";
 import moment from "moment";
 
-import { getApplicationsStudents, updateStudentApplicationInfo, getApplicationsExcelDownloadLink } from "@/api/students";
+import {
+  getApplicationsStudents,
+  updateStudentApplicationInfo,
+  APPLICATIONS_EXPORT_LINK,
+} from "@/api/students";
 import { getPrograms } from "@/api/reference-book";
 
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
 import { UserModule } from "@/store";
 import { CAMPUSES } from "@/utils/enums";
+import DownloadFile from "@/common/DownloadFile";
 
 export default {
   name: "ApplicantsDocuments",
   components: {
+    DownloadFile,
     InfoTable,
     TextInput,
   },
@@ -144,10 +155,6 @@ export default {
     await this.fetchData();
   },
   methods: {
-    getExcel() {
-      window.location.href = getApplicationsExcelDownloadLink(this.selectedCampus);
-    },
-
     async fetchPrograms() {
       try {
         this.programs = (await getPrograms()).data;
@@ -212,6 +219,13 @@ export default {
         );
         return false;
       }
+    },
+
+    makeExportLink() {
+      return `${APPLICATIONS_EXPORT_LINK}?campus=${this.selectedCampus}`;
+    },
+    makeExportFilename() {
+      return `${CAMPUSES[this.selectedCampus]}.xlsx`;
     },
 
     search: _debounce(function debouncedFetch() {
