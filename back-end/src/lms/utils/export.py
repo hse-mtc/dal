@@ -8,6 +8,7 @@ from django.db.models import QuerySet
 import xlsxwriter
 
 from xlsxwriter.format import Format
+from xlsxwriter.workbook import Workbook
 
 from lms.models.students import Student
 
@@ -20,6 +21,25 @@ class Formats:
     int: Format
     float: Format
 
+    @classmethod
+    def from_workbook(cls, workbook: Workbook) -> "Formats":
+        return Formats(
+            header=workbook.add_format({"bold": True, "align": "center"}),
+            align_center=workbook.add_format({"align": "center"}),
+            russian_date=workbook.add_format({
+                "num_format": "dd.mm.yyyy",
+                "align": "center",
+            }),
+            int=workbook.add_format({
+                "align": "center",
+                "num_format": "#0"
+            }),
+            float=workbook.add_format({
+                "align": "center",
+                "num_format": "#,##0.00"
+            }),
+        )
+
 
 def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
     """Generate an Excel file with information about the students.
@@ -30,24 +50,7 @@ def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
 
     path = Path(f"/tmp/{uuid.uuid4()}.xlsx")
     workbook = xlsxwriter.Workbook(path)
-
-    # define formats
-    formats = Formats(
-        header=workbook.add_format({"bold": True, "align": "center"}),
-        align_center=workbook.add_format({"align": "center"}),
-        russian_date=workbook.add_format({
-            "num_format": "dd.mm.yyyy",
-            "align": "center",
-        }),
-        int=workbook.add_format({
-            "align": "center",
-            "num_format": "#0"
-        }),
-        float=workbook.add_format({
-            "align": "center",
-            "num_format": "#,##0.00"
-        }),
-    )
+    formats = Formats.from_workbook(workbook)
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
