@@ -77,6 +77,47 @@
           :max-fraction-digits="2"
           @change="onUpdate(editorData, field, $event || 0)"
         />
+
+        <NumberInput
+          v-if="field === 'pull_ups'"
+          v-model="editorData[field]"
+          :controls="false"
+          :min="0"
+          :min-fraction-digits="0"
+          :max-fraction-digits="0"
+          @change="onUpdate(editorData, field, $event || 0)"
+        />
+
+        <NumberInput
+          v-if="field === 'speed_run'"
+          v-model="editorData[field]"
+          :controls="false"
+          :min="0"
+          :min-fraction-digits="1"
+          :max-fraction-digits="1"
+          @change="onUpdate(editorData, field, $event || 0)"
+        />
+
+        <NumberInput
+          v-if="field === 'long_run'"
+          v-model="editorData[field]"
+          :controls="false"
+          :min="0"
+          :min-fraction-digits="1"
+          :max-fraction-digits="1"
+          @change="onUpdate(editorData, field, $event || 0)"
+        />
+
+        <NumberInput
+          v-if="field === 'physical_test_grade'"
+          v-model="editorData[field]"
+          :controls="false"
+          :max="100"
+          :min="0"
+          :min-fraction-digits="0"
+          :max-fraction-digits="0"
+          @change="onUpdate(editorData, field, $event || 0)"
+        />
       </template>
     </PrimeColumn>
   </PrimeTable>
@@ -153,6 +194,23 @@ const additionalFields = {
     title: "Заявление",
     width: 120,
   },
+  pull_ups: {
+    title: "Подтягивания",
+    width: 140,
+  },
+  speed_run: {
+    title: "Скорость",
+    width: 100,
+  },
+  long_run: {
+    title: "Кросс",
+    width: 100,
+  },
+  physical_test_grade: {
+    abbr: "ФИЗО",
+    title: "Итоговая оцена за физические испытания",
+    width: 100,
+  },
 };
 
 const medicalExaminationOptions = [
@@ -209,6 +267,10 @@ class ApplicantsDocuments extends Vue {
     "mean_grade",
     "medical_examination",
     "prof_psy_selection",
+    "pull_ups",
+    "speed_run",
+    "long_run",
+    "physical_test_grade",
   ]
 
   medicalExaminationOptions = medicalExaminationOptions
@@ -249,7 +311,38 @@ class ApplicantsDocuments extends Vue {
     }
 
     if (field === "mean_grade") {
+      if (data[field] === undefined) {
+        return "---";
+      }
       return (+data[field]).toFixed(2);
+    }
+
+    if (field === "pull_ups") {
+      if (data[field] === undefined) {
+        return "---";
+      }
+      return +data[field];
+    }
+
+    if (field === "speed_run") {
+      if (data[field] === undefined) {
+        return "---";
+      }
+      return (+data[field]).toFixed(2);
+    }
+
+    if (field === "long_run") {
+      if (data[field] === undefined) {
+        return "---";
+      }
+      return (+data[field]).toFixed(2);
+    }
+
+    if (field === "physical_test_grade") {
+      if (data[field] === undefined) {
+        return 0;
+      }
+      return +data[field];
     }
 
     return data[field];

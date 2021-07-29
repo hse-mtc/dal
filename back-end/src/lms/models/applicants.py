@@ -53,6 +53,7 @@ class ApplicationProcess(models.Model):
         choices=ProfPsySelection.choices,
         blank=True,
     )
+
     preferential_right = models.BooleanField(default=False)
     characteristic_handed_over = models.BooleanField(default=False)
     criminal_record_handed_over = models.BooleanField(default=False)
@@ -68,6 +69,23 @@ class ApplicationProcess(models.Model):
         validators=[MinValueValidator(0),
                     MaxValueValidator(10)],
     )
+
+    pull_ups = models.SmallIntegerField(
+        default=None,
+        null=True,
+        blank=True,
+    )
+    speed_run = models.FloatField(
+        default=None,
+        null=True,
+        blank=True,
+    )
+    long_run = models.FloatField(
+        default=None,
+        null=True,
+        blank=True,
+    )
+    physical_test_grade = models.SmallIntegerField(default=0)
 
     class Meta:
         verbose_name = "Application Process"
