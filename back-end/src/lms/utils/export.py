@@ -41,7 +41,7 @@ class Formats:
         )
 
 
-def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
+def generate_default_export(students: QuerySet, milspecialties: QuerySet) -> Path:
     """Generate an Excel file with information about the students.
 
     Returns:
@@ -69,6 +69,17 @@ def generate_excel(students: QuerySet, milspecialties: QuerySet) -> Path:
 
     workbook.close()
     return path
+
+
+def generate_comp_sel_protocol_export(students: QuerySet, milspecialties: QuerySet) -> Path:
+    """Generate an Excel file with information about the students
+    using the competitive selection protocol template.
+
+    Returns:
+        A path to the generated Excel file.
+    """
+    # TODO(@gakhromov) change this
+    return generate_default_export(students, milspecialties)
 
 
 def _fill_header(
