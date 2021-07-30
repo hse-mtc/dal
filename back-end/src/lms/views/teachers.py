@@ -14,7 +14,7 @@ from common.constants import MUTATE_ACTIONS
 from lms.models.teachers import Teacher
 from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
 from lms.filters.teachers import TeacherFilter
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission

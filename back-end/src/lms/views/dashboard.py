@@ -16,7 +16,7 @@ from lms.serializers.students import (
     StudentSkillsSerializer,
 )
 
-from lms.functions import get_current_semester_range
+from lms.utils.functions import get_current_semester_range
 
 
 @extend_schema(tags=["students"])

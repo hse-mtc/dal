@@ -16,7 +16,7 @@ from auth.models import (
     Group,
     Permission,
 )
-from lms.functions import get_user_from_request
+from lms.utils.functions import get_user_from_request
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -52,10 +52,8 @@ class PermissionRequestSerializer(serializers.ModelSerializer):
         viewset, method, scope = attrs["codename"].split(".")
 
         if scope.upper() not in Permission.Scope.names:
-            raise ValidationError(
-                f"Scope \"{scope}\" does not exist " \
-                f"(permission \"{attrs['codename']}\""
-            )
+            raise ValidationError(f"Scope \"{scope}\" does not exist "
+                                  f"(permission \"{attrs['codename']}\"")
         scope = int(getattr(Permission.Scope, scope.upper()))
 
         permission = Permission.objects.filter(viewset=viewset,

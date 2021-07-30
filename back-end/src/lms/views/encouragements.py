@@ -10,7 +10,7 @@ from lms.models.encouragements import Encouragement
 from lms.serializers.encouragements import (EncouragementSerializer,
                                             EncouragementMutateSerializer)
 from lms.filters.encouragements import EncouragementFilter
-from lms.mixins import StudentTeacherQuerySetScopingMixin
+from lms.utils.mixins import StudentTeacherQuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission

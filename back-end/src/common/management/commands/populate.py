@@ -68,7 +68,7 @@ from lms.views.populate import (
     create_contact_infos,
 )
 
-from lms.functions import get_date_range
+from lms.utils.functions import get_date_range
 
 # ------------------------------------------------------------------------------
 

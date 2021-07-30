@@ -5,7 +5,7 @@ from rest_framework.response import Response
 
 from lms.models.students import Student
 from lms.models.teachers import Teacher
-from lms.functions import get_user_from_request
+from lms.utils.functions import get_user_from_request
 
 from auth.models import Permission, User
 

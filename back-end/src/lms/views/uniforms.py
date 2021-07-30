@@ -8,7 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from lms.models.uniforms import Uniform
 from lms.serializers.uniforms import UniformSerializer, UniformMutateSerializer
 from lms.filters.uniforms import UniformFilter
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.mixins import QuerySetScopingMixin
 
 from conf.settings import (
     TGBOT_PORT,
