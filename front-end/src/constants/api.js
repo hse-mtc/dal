@@ -56,6 +56,7 @@ export const LMS_URLS = {
     approvements: "lms/students/approvals/",
     applications: "lms/students/applications/",
     applicationsExport: "lms/students/applications/export/",
+    applicationsCSPExport: "lms/students/applications/competitive-selection-protocol/export/",
     notes: "lms/students/notes/",
   },
   users: {

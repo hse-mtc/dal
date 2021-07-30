@@ -16,6 +16,11 @@ export const CAMPUSES = {
   PE: "Пермь",
 };
 
+export const APPLICATIONS_EXPORT_OPTIONS = {
+  DEF: "по умолч.",
+  CSP: "протокол",
+};
+
 export const STUDENT_POSTS = {
   GC: "Командир взвода",
   SC: "Командир отделения",

@@ -50,23 +50,36 @@
             :title="campuses[0] | campusFilter"
           />
         </el-col>
-        <el-col :span="4">
+        <el-col :span="3">
           <el-alert
             type="info"
             class="text-center"
             :closable="false"
-            :title="'Всего абитуриентов: ' + entriesAmount"
+            :title="'Всего абитур-ов: ' + entriesAmount"
           />
         </el-col>
-        <el-col v-if="!isStudyOffice" :span="4">
-          <DownloadFile
-            :url="makeExportLink()"
-            :file-name="makeExportFilename()"
+        <el-col v-if="!isStudyOffice" :span="5">
+          <el-dropdown
+            split-button
+            type="success"
+            @command="handleExportOption"
           >
-            <el-button type="success" plain>
-              <i class="el-icon-download" /> Экспорт в Excel
-            </el-button>
-          </DownloadFile>
+            <DownloadFile
+              :url="makeExportLink()"
+              :file-name="makeExportFilename()"
+            >
+              <i class="el-icon-download" /> Экспорт:
+              {{ selectedExportOption }}
+            </DownloadFile>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-document" command="DEF"
+                >По умолчанию</el-dropdown-item
+              >
+              <el-dropdown-item icon="el-icon-document-copy" command="CSP"
+                >Протокол конкурсного отбора</el-dropdown-item
+              >
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-col>
       </el-row>
 
@@ -101,13 +114,14 @@ import {
   getApplicationsStudents,
   updateStudentApplicationInfo,
   APPLICATIONS_EXPORT_LINK,
+  APPLICATIONS_CSP_EXPORT_LINK,
 } from "@/api/students";
 import { getPrograms } from "@/api/reference-book";
 
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
 import { UserModule } from "@/store";
-import { CAMPUSES } from "@/utils/enums";
+import { CAMPUSES, APPLICATIONS_EXPORT_OPTIONS } from "@/utils/enums";
 import DownloadFile from "@/common/DownloadFile";
 
 export default {
@@ -127,9 +141,8 @@ export default {
     // Campuses are not being fetched on time, so `UserModule.campuses`
     // returns empty array, which always leads to default value being selected.
     // This is broken in so many ways :(
-    const selectedCampus = UserModule.campuses.length > 0
-      ? UserModule.campuses[0]
-      : null;
+    const selectedCampus =
+      UserModule.campuses.length > 0 ? UserModule.campuses[0] : null;
     return {
       data: [],
       programs: [],
@@ -140,6 +153,7 @@ export default {
       loading: false,
       selectedCampus,
       selectedProgram: this.$route.query.program,
+      selectedExportOption: APPLICATIONS_EXPORT_OPTIONS.DEF,
     };
   },
   computed: {
@@ -147,7 +161,9 @@ export default {
       // TODO(gakhromov): remove this check when permissions are done
       return UserModule.email.includes("study.office");
     },
-    campuses() { return UserModule.campuses; },
+    campuses() {
+      return UserModule.campuses;
+    },
   },
   async created() {
     this.loading = true;
@@ -184,9 +200,9 @@ export default {
             search: this.searchQuery,
             campus: this.selectedCampus,
             program: this.selectedProgram,
-          },
+          }
         );
-        this.data = data.results.map(item => ({
+        this.data = data.results.map((item) => ({
           id: item.id,
           fullname: item.full_name,
           birthday: moment(item.birth_date).format("DD.MM.yyyy"),
@@ -215,14 +231,23 @@ export default {
       } catch (e) {
         console.error("Не удалось обновить данные студента о поступлении: ", e);
         this.$message.error(
-          "Не удалось обновить данные, рекомендуем перезагрузить страницу",
+          "Не удалось обновить данные, рекомендуем перезагрузить страницу"
         );
         return false;
       }
     },
 
+    handleExportOption(type) {
+      this.selectedExportOption = APPLICATIONS_EXPORT_OPTIONS[type];
+    },
+
     makeExportLink() {
-      return `${APPLICATIONS_EXPORT_LINK}?campus=${this.selectedCampus}`;
+      switch (this.selectedExportOption) {
+        case APPLICATIONS_EXPORT_OPTIONS.CSP:
+          return `${APPLICATIONS_CSP_EXPORT_LINK}?campus=${this.selectedCampus}`;
+        default:
+          return `${APPLICATIONS_EXPORT_LINK}?campus=${this.selectedCampus}`;
+      }
     },
     makeExportFilename() {
       return `${CAMPUSES[this.selectedCampus]}.xlsx`;
