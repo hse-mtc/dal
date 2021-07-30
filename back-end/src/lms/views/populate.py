@@ -98,7 +98,7 @@ def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
 
 
 def create_university_infos(
-    programs: dict[str, Program],) -> dict[str, UniversityInfo]:
+        programs: dict[str, Program],) -> dict[str, UniversityInfo]:
     values = [{
         "card_id": "HSE11229",
         "group": "БИТ 188",
@@ -175,7 +175,7 @@ def create_milfaculties() -> dict[str, Milfaculty]:
 
 
 def create_milgroups(
-    milfaculties: dict[str, Milfaculty],) -> dict[str, Milgroup]:
+        milfaculties: dict[str, Milfaculty],) -> dict[str, Milgroup]:
     values = [{
         "title": "1801",
         "milfaculty": milfaculties["Разведка"],
@@ -451,17 +451,18 @@ def create_recruitments_offices() -> dict[str, RecruitmentOffice]:
         "title": "городов Одинцово, Звенигород, Краснознаменск и "
                  "Одинцовского городского округа",
         "city": "Одинцово",
-        "district": "Одинцовский",
+        # "district": "Одинцовский",
     }, {
         "title": "Московский военкомат",
         "city": "Москва",
-        "district": "ЦАО",
+        # "district": "ЦАО",
     }]
 
     offices = {}
 
     for fields in values:
-        office, _ = RecruitmentOffice.objects.get_or_create(**fields)
+        office, _ = RecruitmentOffice.objects.get_or_create(
+            title=fields["title"])
         offices[fields["city"]] = office
 
     return offices
