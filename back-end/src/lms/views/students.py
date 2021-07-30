@@ -1,6 +1,10 @@
+import typing as tp
+from pathlib import Path
+
 import requests
 
 from django.contrib.auth import get_user_model
+from django.db.models.query import QuerySet
 
 from rest_framework import status
 from rest_framework import permissions
@@ -48,7 +52,10 @@ from lms.serializers.students import (
     NoteSerializer,
 )
 
-from lms.utils.export import generate_excel
+from lms.utils.export import (
+    generate_default_export,
+    generate_comp_sel_protocol_export,
+)
 from lms.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
@@ -173,7 +180,8 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        generate_documents = serializer.validated_data.pop("generate_documents")
+        generate_documents = serializer.validated_data.pop(
+            "generate_documents")
         instance = self.perform_create(serializer)
 
         if generate_documents:
@@ -257,6 +265,34 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
             data=ApplicationProcessSerializer(instance=updated).data,
         )
 
+    def return_excel_file_response(
+            self,
+            request: Request,
+            excel_path_gen_func: tp.Callable[[QuerySet, QuerySet], Path]) -> Response:
+        if "campus" not in request.query_params:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        campus = request.query_params["campus"]
+        students = self.queryset.filter(
+            status=Student.Status.APPLICANT,
+            university_info__campus=campus,
+        )
+        milspecialties = Milspecialty.objects.filter(
+            available_for__contains=[campus])
+
+        path = excel_path_gen_func(students, milspecialties)
+        with open(path, "rb") as file:
+            export = file.read()
+        path.unlink(missing_ok=True)
+
+        return Response(
+            export,
+            headers={
+                "Content-Disposition": "attachment; filename=export.xlsx",
+            },
+            content_type="application/xlsx",
+            status=status.HTTP_200_OK,
+        )
+
     @extend_schema(parameters=[
         OpenApiParameter(name="campus",
                          description="Filter by campus",
@@ -273,31 +309,26 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         Send an excel file with info about applicants.
         Applicants are filtered by campus, specified in request query params.
         """
+        return self.return_excel_file_response(request, generate_default_export)
 
-        if "campus" not in request.query_params:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        campus = request.query_params["campus"]
-        students = self.queryset.filter(
-            status=Student.Status.APPLICANT,
-            university_info__campus=campus,
-        )
-        milspecialties = Milspecialty.objects.filter(
-            available_for__contains=[campus])
-
-        path = generate_excel(students, milspecialties)
-        with open(path, "rb") as file:
-            export = file.read()
-        path.unlink(missing_ok=True)
-
-        return Response(
-            export,
-            headers={
-                "Content-Disposition": "attachment; filename=export.xlsx",
-            },
-            content_type="application/xlsx",
-            status=status.HTTP_200_OK,
-        )
+    @extend_schema(parameters=[
+        OpenApiParameter(name="campus",
+                         description="Filter by campus",
+                         required=True,
+                         type=str)
+    ])
+    @action(methods=["get"],
+            url_path="applications/competitive-selection-protocol/generate",
+            detail=False,
+            renderer_classes=[XLSXRenderer],
+            permission_classes=[ApplicantPermission])
+    def generate_comp_sel_protocol(self, request: Request) -> Response:
+        """
+        Send an excel protocol file with info about applicants.
+        Applicants are filtered by campus, specified in request query params.
+        File includes a header from a template.
+        """
+        return self.return_excel_file_response(request, generate_comp_sel_protocol_export)
 
 
 @extend_schema(tags=["students"])
