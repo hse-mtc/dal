@@ -27,7 +27,7 @@ class File(models.Model):
         return self.name
 
     def get_extension(self):
-        return self.name.split(".")[-1]
+        return self.name.rsplit(".", maxsplit=1)[-1]
 
 
 class Document(models.Model):

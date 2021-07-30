@@ -52,11 +52,10 @@ from lms.serializers.students import (
     NoteSerializer,
 )
 
-from lms.utils.export import (
-    generate_default_export,
-    generate_comp_sel_protocol_export,
-)
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.export.default import generate_export as generate_def_export
+from lms.utils.export.comp_sel_protocol import generate_export \
+    as generate_csp_export
+from lms.utils.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
 from auth.serializers import CreatePasswordTokenSerializer
@@ -180,8 +179,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        generate_documents = serializer.validated_data.pop(
-            "generate_documents")
+        generate_documents = serializer.validated_data.pop("generate_documents")
         instance = self.perform_create(serializer)
 
         if generate_documents:
@@ -266,9 +264,9 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         )
 
     def return_excel_file_response(
-            self,
-            request: Request,
-            excel_path_gen_func: tp.Callable[[QuerySet, QuerySet], Path]) -> Response:
+        self, request: Request,
+        excel_path_gen_func: tp.Callable[[QuerySet, QuerySet],
+                                         Path]) -> Response:
         if "campus" not in request.query_params:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         campus = request.query_params["campus"]
@@ -309,7 +307,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         Send an excel file with info about applicants.
         Applicants are filtered by campus, specified in request query params.
         """
-        return self.return_excel_file_response(request, generate_default_export)
+        return self.return_excel_file_response(request, generate_def_export)
 
     @extend_schema(parameters=[
         OpenApiParameter(name="campus",
@@ -318,7 +316,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
                          type=str)
     ])
     @action(methods=["get"],
-            url_path="applications/competitive-selection-protocol/generate",
+            url_path="applications/competitive-selection-protocol/export",
             detail=False,
             renderer_classes=[XLSXRenderer],
             permission_classes=[ApplicantPermission])
@@ -328,7 +326,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         Applicants are filtered by campus, specified in request query params.
         File includes a header from a template.
         """
-        return self.return_excel_file_response(request, generate_comp_sel_protocol_export)
+        return self.return_excel_file_response(request, generate_csp_export)
 
 
 @extend_schema(tags=["students"])

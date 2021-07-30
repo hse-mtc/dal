@@ -21,8 +21,8 @@ from lms.serializers.lessons import (
     LessonMutateSerializer,
 )
 from lms.filters.lessons import LessonFilter
-from lms.functions import get_date_range, milgroup_allowed_by_scope
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.functions import get_date_range, milgroup_allowed_by_scope
+from lms.utils.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission

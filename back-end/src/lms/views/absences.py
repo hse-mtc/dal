@@ -27,8 +27,8 @@ from lms.models.absences import Absence
 from lms.models.students import Student
 
 from lms.filters.absences import AbsenceFilter
-from lms.functions import get_date_range, milgroup_allowed_by_scope
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.functions import get_date_range, milgroup_allowed_by_scope
+from lms.utils.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission

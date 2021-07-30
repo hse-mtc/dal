@@ -12,7 +12,7 @@ from lms.serializers.punishments import (
     PunishmentMutateSerializer,
 )
 from lms.filters.punishments import PunishmentFilter
-from lms.mixins import StudentTeacherQuerySetScopingMixin
+from lms.utils.mixins import StudentTeacherQuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission

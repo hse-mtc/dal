@@ -30,8 +30,8 @@ from lms.serializers.marks import (
     MarkJournalSerializer,
     MarkJournalQuerySerializer,
 )
-from lms.functions import milgroup_allowed_by_scope
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.functions import milgroup_allowed_by_scope
+from lms.utils.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission

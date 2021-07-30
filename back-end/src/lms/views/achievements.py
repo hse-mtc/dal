@@ -11,7 +11,7 @@ from lms.models.students import Student
 from lms.serializers.achievements import (AchievementSerializer,
                                           AchievementMutateSerializer)
 from lms.filters.achievements import AchievementFilter
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.mixins import QuerySetScopingMixin
 
 from auth.models import Permission
 from auth.permissions import BasePermission
