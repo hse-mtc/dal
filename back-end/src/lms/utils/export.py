@@ -23,6 +23,7 @@ class Formats:
     russian_date: Format
     int: Format
     float: Format
+    underline: Format
     table_center: Format
     table_center_vertical: Format
     table_name: Format
@@ -64,12 +65,19 @@ class Formats:
                 "num_format": "#0"
             }),
             float=workbook.add_format({
-                "font_name": "Times New Roman",
+                "font_name": "times new roman",
                 "font_size": 12,
                 "align": "center",
                 "valign": "vcenter",
                 "border": 1,
                 "num_format": "#,##0.00"
+            }),
+            underline=workbook.add_format({
+                "font_name": "times new roman",
+                "font_size": 12,
+                "align": "left",
+                "valign": "vcenter",
+                "bottom": 1,
             }),
             table_center=workbook.add_format({
                 "font_name": "Times New Roman",
@@ -164,10 +172,9 @@ def generate_comp_sel_protocol_export(students: QuerySet, milspecialties: QueryS
         )
 
         start = 15
-        for row, student in enumerate(
-                students.filter(milspecialty=milspecialty),
-                start=start,  # Skip header.
-        ):
+        studs = students.filter(milspecialty=milspecialty)
+
+        for row, student in enumerate(studs, start=start):  # Skip header
             cells = _make_student_comp_sel_protocol_row(
                 student=student,
                 formats=formats,
@@ -176,6 +183,13 @@ def generate_comp_sel_protocol_export(students: QuerySet, milspecialties: QueryS
 
             for col, (data, cell_format) in enumerate(cells):
                 worksheet.write(row, col, data, cell_format)
+
+        # row = index of last element
+        _fill_comp_sel_protocol_footer(
+            worksheet=worksheet,
+            formats=formats,
+            start_row=start+len(studs),
+        )
 
     workbook.close()
     return path
@@ -394,3 +408,48 @@ def _make_student_comp_sel_protocol_row(
     row += [("", formats.table_center)]
 
     return row
+
+
+def _fill_comp_sel_protocol_footer(
+    worksheet: xlsxwriter.Workbook.worksheet_class,
+    formats: Formats,
+    start_row: int,
+) -> None:
+    row = start_row + 4  # 3 blank lines
+    worksheet.merge_range(
+        f"A{row}:N{row}", "2. Список граждан не допущенных к конкурсному отбору", formats.table_center)
+
+    row = row + 4  # 3 blank lines
+    lines = [
+        "Изъявили желание пройти обучение по программе военной подготовки -",
+        "Допущены к военной подготовке -",
+        "Не допущены к военной подготовке (не прошли по конкурсу) -",
+        "Не допущены к конкурсному отбору -",
+    ]
+    for line in lines:
+        worksheet.merge_range(f"C{row}:H{row}", line, formats.align_left)
+        worksheet.write(f"I{row}", "чел.", formats.align_left)
+        row += 1
+
+    row = row + 3  # 3 blank lines (already had row += 1)
+    worksheet.merge_range(
+        f"D{row}:E{row}", "Члены комиссии:", formats.align_left)
+    lines = [
+        ("подполковник", ""),
+        ("подполковник", "М.И. Гвозд"),
+        ("подполковник", ""),
+        ("", "Е.К. Артемов"),
+        ("", "О.С. Булыкин"),
+        ("полковник", "В.А. Коргутов"),
+        ("полковник", "А.В. Кашин"),
+    ]
+    for line in lines:
+        worksheet.merge_range(f"F{row}:G{row}", line[0], formats.underline)
+        worksheet.write(f"H{row}", "", formats.underline)
+        worksheet.write(f"I{row}", "", formats.underline)
+        worksheet.write(f"J{row}", "", formats.underline)
+        worksheet.merge_range(f"K{row}:L{row}", line[1], formats.underline)
+        row += 1
+
+    worksheet.merge_range(f"D{row-1}:E{row-1}",
+                          "Секретарь комиссии:", formats.align_left)
