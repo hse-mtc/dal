@@ -25,6 +25,8 @@ class Formats:
     float: Format
     table_center: Format
     table_center_vertical: Format
+    table_name: Format
+    table_date: Format
 
     @classmethod
     def from_workbook(cls, workbook: Workbook) -> "Formats":
@@ -49,18 +51,24 @@ class Formats:
                 "font_name": "Times New Roman",
                 "font_size": 12,
                 "num_format": "dd.mm.yyyy",
+                "border": 1,
                 "align": "center",
+                "valign": "vcenter",
             }),
             int=workbook.add_format({
                 "font_name": "Times New Roman",
                 "font_size": 12,
                 "align": "center",
+                "valign": "vcenter",
+                "border": 1,
                 "num_format": "#0"
             }),
             float=workbook.add_format({
                 "font_name": "Times New Roman",
                 "font_size": 12,
                 "align": "center",
+                "valign": "vcenter",
+                "border": 1,
                 "num_format": "#,##0.00"
             }),
             table_center=workbook.add_format({
@@ -80,6 +88,27 @@ class Formats:
                 "text_wrap": True,
                 "rotation": 90,
             }),
+            table_name=workbook.add_format({
+                "font_name": "Times New Roman",
+                "font_size": 12,
+                "align": "center",
+                "valign": "vcenter",
+                "left": 1,
+                "top": 1,
+                "bottom": 1,
+                "text_wrap": True,
+            }),
+            table_date=workbook.add_format({
+                "font_name": "Times New Roman",
+                "font_size": 12,
+                "align": "center",
+                "valign": "vcenter",
+                "right": 1,
+                "top": 1,
+                "bottom": 1,
+                "text_wrap": True,
+                "num_format": "dd.mm.yyyy",
+            }),
         )
 
 
@@ -96,7 +125,8 @@ def generate_default_export(students: QuerySet, milspecialties: QuerySet) -> Pat
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
-        _fill_default_header(worksheet=worksheet, cell_format=formats.header)
+        _fill_default_header(worksheet=worksheet,
+                             cell_format=formats.table_center)
 
         for row, student in enumerate(
                 students.filter(milspecialty=milspecialty),
@@ -130,17 +160,20 @@ def generate_comp_sel_protocol_export(students: QuerySet, milspecialties: QueryS
         _fill_comp_sel_protocol_header(
             worksheet=worksheet,
             formats=formats,
-            milspecialty_code=milspecialty,
+            milspecialty_code=milspecialty.code,
         )
 
+        start = 15
         for row, student in enumerate(
                 students.filter(milspecialty=milspecialty),
-                start=15,  # Skip header.
+                start=start,  # Skip header.
         ):
-            cells = _make_student_row(
+            cells = _make_student_comp_sel_protocol_row(
                 student=student,
                 formats=formats,
+                index=row-start,  # student order number (from 0 to n)
             )
+
             for col, (data, cell_format) in enumerate(cells):
                 worksheet.write(row, col, data, cell_format)
 
@@ -260,27 +293,27 @@ def _make_student_row(
     student: Student,
     formats: Formats,
 ) -> list[...]:
-    row = [(student.full_name, formats.align_center)]
+    row = [(student.full_name, formats.table_center)]
 
     if (bi := student.birth_info) is not None:
         row += [(bi.date, formats.russian_date)]
     else:
-        row += [("", formats.align_center)]
+        row += [("", formats.table_center)]
 
     if (ui := student.university_info) is not None:
         row += [
-            (ui.program.code, formats.align_center),
-            (ui.get_campus_display(), formats.align_center),
+            (ui.program.code, formats.table_center),
+            (ui.get_campus_display(), formats.table_center),
         ]
     else:
-        row += [("", formats.align_center)] * 2
+        row += [("", formats.table_center)] * 2
 
     if (ap := student.application_process) is not None:
         row += [
             (ap.mean_grade, formats.float),
             (int(ap.mean_grade * 10), formats.int),
-            (ap.get_medical_examination_display(), formats.align_center),
-            (ap.get_prof_psy_selection_display(), formats.align_center),
+            (ap.get_medical_examination_display(), formats.table_center),
+            (ap.get_prof_psy_selection_display(), formats.table_center),
         ]
 
         for field in [
@@ -290,7 +323,7 @@ def _make_student_row(
                 "university_card_handed_over", "application_handed_over"
         ]:
             row.append(
-                ("Да" if getattr(ap, field) else "Нет", formats.align_center))
+                ("Да" if getattr(ap, field) else "Нет", formats.table_center))
 
         row += [
             (ap.pull_ups, formats.int),
@@ -300,8 +333,8 @@ def _make_student_row(
         ]
 
     else:
-        row += [("", formats.align_center)] * 14
-        row += [(0, formats.align_center)]  # ФИЗО
+        row += [("", formats.table_center)] * 14
+        row += [(0, formats.table_center)]  # ФИЗО
 
     mean_grade_scaled = row[5][0]
     physical_test_grade = row[18][0]
@@ -309,5 +342,55 @@ def _make_student_row(
         row += [(mean_grade_scaled + physical_test_grade, formats.int)]
     except TypeError:
         row += [(0, formats.int)]
+
+    return row
+
+
+def _make_student_comp_sel_protocol_row(
+    student: Student,
+    formats: Formats,
+    index: int,
+) -> list[...]:
+    row = [(f"{index+1}.", formats.table_center)]
+    row += [(student.full_name, formats.table_name)]
+
+    if (bi := student.birth_info) is not None:
+        row += [(bi.date, formats.table_date)]
+    else:
+        row += [("", formats.table_date)]
+
+    if (ui := student.university_info) is not None:
+        row += [(ui.program.code, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (ap := student.application_process) is not None:
+        row += [
+            (ap.get_medical_examination_display(), formats.table_center),
+            (ap.get_prof_psy_selection_display(), formats.table_center),
+        ]
+        row += [("Да" if ap.preferential_right else "Нет", formats.table_center)]
+
+        row += [
+            (ap.pull_ups, formats.int),
+            (ap.speed_run, formats.float),
+            (ap.long_run, formats.float),
+            (ap.physical_test_grade, formats.int),
+        ]
+
+        row += [(int(ap.mean_grade * 10), formats.int)]
+
+    else:
+        row += [("", formats.table_center)] * 6
+        row += [(0, formats.table_center)] * 2  # ФИЗО + Ср Оценка
+
+    mean_grade_scaled = row[9][0]
+    physical_test_grade = row[10][0]
+    try:
+        row += [(mean_grade_scaled + physical_test_grade, formats.int)]
+    except TypeError:
+        row += [(0, formats.int)]
+
+    row += [("", formats.table_center)]
 
     return row
