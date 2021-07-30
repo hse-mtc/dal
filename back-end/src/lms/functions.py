@@ -108,3 +108,22 @@ def get_current_semester_range() -> tuple[datetime, datetime]:
     if current_month in first_semester_months:
         return datetime(current_year, 9, 1), datetime(current_year, 12, 31)
     return datetime(current_year, 1, 1), datetime(current_year, 8, 31)
+
+
+def get_today_date_rus() -> str:
+    today = datetime.today()
+    months = [
+        "января",
+        "февраля",
+        "марта",
+        "апреля",
+        "мая",
+        "июня",
+        "июля",
+        "августа",
+        "сентября",
+        "октября",
+        "ноября",
+        "декабря",
+    ]
+    return f"\"{today.day}\"  {months[today.month-1]}  {today.year} г."
