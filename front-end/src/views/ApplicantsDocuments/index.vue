@@ -72,12 +72,18 @@
               {{ selectedExportOption }}
             </DownloadFile>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item icon="el-icon-document" command="DEF"
-                >По умолчанию</el-dropdown-item
+              <el-dropdown-item
+                icon="el-icon-document"
+                command="DEF"
               >
-              <el-dropdown-item icon="el-icon-document-copy" command="CSP"
-                >Протокол конкурсного отбора</el-dropdown-item
+                По умолчанию
+              </el-dropdown-item>
+              <el-dropdown-item
+                icon="el-icon-document-copy"
+                command="CSP"
               >
+                Протокол конкурсного отбора
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -141,8 +147,7 @@ export default {
     // Campuses are not being fetched on time, so `UserModule.campuses`
     // returns empty array, which always leads to default value being selected.
     // This is broken in so many ways :(
-    const selectedCampus =
-      UserModule.campuses.length > 0 ? UserModule.campuses[0] : null;
+    const selectedCampus = UserModule.campuses.length > 0 ? UserModule.campuses[0] : null;
     return {
       data: [],
       programs: [],
@@ -200,9 +205,9 @@ export default {
             search: this.searchQuery,
             campus: this.selectedCampus,
             program: this.selectedProgram,
-          }
+          },
         );
-        this.data = data.results.map((item) => ({
+        this.data = data.results.map(item => ({
           id: item.id,
           fullname: item.full_name,
           birthday: moment(item.birth_date).format("DD.MM.yyyy"),
@@ -231,7 +236,7 @@ export default {
       } catch (e) {
         console.error("Не удалось обновить данные студента о поступлении: ", e);
         this.$message.error(
-          "Не удалось обновить данные, рекомендуем перезагрузить страницу"
+          "Не удалось обновить данные, рекомендуем перезагрузить страницу",
         );
         return false;
       }

@@ -98,7 +98,7 @@ def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
 
 
 def create_university_infos(
-        programs: dict[str, Program],) -> dict[str, UniversityInfo]:
+    programs: dict[str, Program],) -> dict[str, UniversityInfo]:
     values = [{
         "card_id": "HSE11229",
         "group": "БИТ 188",
@@ -175,7 +175,7 @@ def create_milfaculties() -> dict[str, Milfaculty]:
 
 
 def create_milgroups(
-        milfaculties: dict[str, Milfaculty],) -> dict[str, Milgroup]:
+    milfaculties: dict[str, Milfaculty],) -> dict[str, Milgroup]:
     values = [{
         "title": "1801",
         "milfaculty": milfaculties["Разведка"],
@@ -447,17 +447,14 @@ def create_passports() -> dict[str, Passport]:
 
 
 def create_recruitments_offices() -> dict[str, RecruitmentOffice]:
-    values = [
-        {
-            "title": "городов Одинцово, Звенигород, Краснознаменск и "
-                     "Одинцовского городского округа",
-            "city": "Одинцово",
-        },
-        {
-            "title": "Московский военкомат",
-            "city": "Москва",
-        }
-    ]
+    values = [{
+        "title": "городов Одинцово, Звенигород, Краснознаменск и "
+                 "Одинцовского городского округа",
+        "city": "Одинцово",
+    }, {
+        "title": "Московский военкомат",
+        "city": "Москва",
+    }]
 
     offices = {}
 
