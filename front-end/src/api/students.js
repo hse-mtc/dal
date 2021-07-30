@@ -3,7 +3,7 @@ import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
 const {
   staff: {
-    students, applications, applicationsExport, notes,
+    students, applications, applicationsExport, applicationsCSPExport, notes,
   },
 } = LMS_URLS;
 
@@ -106,6 +106,7 @@ export const updateStudentApplicationInfo = (id, data) => request({
 });
 
 export const APPLICATIONS_EXPORT_LINK = `${BASE_API_URL}${applicationsExport}`;
+export const APPLICATIONS_CSP_EXPORT_LINK = `${BASE_API_URL}${applicationsCSPExport}`;
 
 export function findStudentNotes(id) {
   return request({
