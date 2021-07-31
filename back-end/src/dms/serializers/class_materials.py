@@ -10,7 +10,6 @@ from dms.models.class_materials import (
     Section,
     Topic,
 )
-from dms.serializers.common import SubjectSerializer
 from dms.serializers.documents import (
     DocumentMutateSerializer,
     DocumentSerializer,
@@ -66,14 +65,6 @@ class TopicRetrieveSerializer(TopicSerializer):
                 many=True,
             ).data
         return data
-
-
-class SectionRetrieveSerializer(SectionSerializer):
-    topics = TopicRetrieveSerializer(many=True, read_only=True)
-
-
-class SubjectRetrieveSerializer(SubjectSerializer):
-    sections = SectionSerializer(many=True, read_only=True)
 
 
 ClassMaterialMutateSerializerForSwagger = inline_serializer(
