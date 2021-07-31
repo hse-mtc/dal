@@ -2,6 +2,7 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import status
+
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 
@@ -10,7 +11,6 @@ from drf_spectacular.utils import OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 from django_filters.rest_framework import DjangoFilterBackend
-from dms.filters import SubjectFilter
 
 from dms.models.common import (
     Author,
@@ -18,13 +18,13 @@ from dms.models.common import (
 )
 from dms.models.papers import Paper
 from dms.models.books import Book
-from dms.serializers.class_materials import SubjectRetrieveSerializer
 from dms.serializers.common import (
     AuthorSerializer,
     OrderUpdateSerializer,
     PublisherSerializer,
     SubjectSerializer,
 )
+from dms.filters import SubjectFilter
 from dms.mixins import QuerySetScopingByUserMixin
 
 from common.models.subjects import Subject
@@ -69,6 +69,7 @@ class SubjectPermission(BasePermission):
 @extend_schema(tags=["subjects"])
 class SubjectViewSet(QuerySetScopingByUserMixin, viewsets.ModelViewSet):
     queryset = Subject.objects.order_by("-title", "id")
+    serializer_class = SubjectSerializer
 
     permission_classes = [SubjectPermission]
     scoped_permission_class = SubjectPermission
@@ -76,11 +77,6 @@ class SubjectViewSet(QuerySetScopingByUserMixin, viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SubjectFilter
     search_fields = ["title", "annotation"]
-
-    def get_serializer_class(self):
-        if self.action == "retrieve":
-            return SubjectRetrieveSerializer
-        return SubjectSerializer
 
 
 class OrderUpdateAPIView(generics.GenericAPIView, mixins.UpdateModelMixin):
