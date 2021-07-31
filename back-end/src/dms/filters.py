@@ -4,7 +4,10 @@ from common.models.subjects import Subject
 
 from dms.models.common import Author
 from dms.models.papers import Paper
-from dms.models.class_materials import Section
+from dms.models.class_materials import (
+    Section,
+    Topic,
+)
 from dms.models.books import (
     Book,
     FavoriteBook,
@@ -38,6 +41,13 @@ class SectionFilter(filters.FilterSet):
     class Meta:
         model = Section
         fields = ["subject"]
+
+
+class TopicFilter(filters.FilterSet):
+
+    class Meta:
+        model = Topic
+        fields = ["section"]
 
 
 class BookFilter(filters.FilterSet):
