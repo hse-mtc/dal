@@ -1,7 +1,6 @@
 from rest_framework import status
 from rest_framework import viewsets
 
-from rest_framework.filters import SearchFilter
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 
@@ -18,12 +17,14 @@ from dms.serializers.class_materials import (
     ClassMaterialMutateSerializer,
     ClassMaterialMutateSerializerForSwagger,
     ClassMaterialSerializer,
-    SectionRetrieveSerializer,
     SectionSerializer,
     TopicRetrieveSerializer,
     TopicSerializer,
 )
-from dms.filters import SectionFilter
+from dms.filters import (
+    SectionFilter,
+    TopicFilter,
+)
 from dms.views.common import OrderUpdateAPIView
 
 from common.models.subjects import Subject
@@ -74,18 +75,13 @@ class ClassMaterialPermission(BasePermission):
 @extend_schema(tags=["sections"])
 class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.all()
+    serializer_class = SectionSerializer
 
     permission_classes = [SectionPermission]
     scoped_permission_class = SectionPermission
 
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend]
     filterset_class = SectionFilter
-    search_fields = ["topics__title", "topics__class_materials__title"]
-
-    def get_serializer_class(self):
-        if self.action in ["retrieve", "list"]:
-            return SectionRetrieveSerializer
-        return SectionSerializer
 
     def get_queryset(self):
         if self.request.user.is_superuser:
@@ -144,8 +140,11 @@ class TopicViewSet(viewsets.ModelViewSet):
     permission_classes = [TopicPermission]
     scoped_permission_class = TopicPermission
 
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TopicFilter
+
     def get_serializer_class(self):
-        if self.action == "retrieve":
+        if self.action in ["retrieve", "list"]:
             return TopicRetrieveSerializer
         return TopicSerializer
 
