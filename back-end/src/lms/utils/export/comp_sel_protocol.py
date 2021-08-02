@@ -243,10 +243,10 @@ def _make_student_row(
         row += [("", formats.table_center)] * 6
         row += [(0, formats.table_center)] * 2  # ФИЗО + Ср Оценка
 
-    mean_grade_scaled = row[9][0]
     physical_test_grade = row[10][0]
+    mean_grade_scaled = row[11][0]
     try:
-        row += [(mean_grade_scaled + physical_test_grade, formats.int)]
+        row += [(physical_test_grade + mean_grade_scaled, formats.int)]
     except TypeError:
         row += [(0, formats.int)]
 
