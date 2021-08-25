@@ -33,6 +33,7 @@ export default SectionsMenu;
 .menu {
   background-color: #f5f5f7;
   padding: 15px;
+  border-radius: 15px;
 
   &Item {
     display: block;

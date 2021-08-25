@@ -101,7 +101,7 @@ export default {
   methods: {
     async fetchData() {
       await getTopics(this.sectionId).then(res => {
-        this.topics = res.data.topics;
+        this.topics = res.data;
       });
     },
     acceptNewTopic(data) {

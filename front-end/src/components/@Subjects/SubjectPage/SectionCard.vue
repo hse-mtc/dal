@@ -12,10 +12,7 @@
         alt=""
       >
 
-      <div
-        v-if="!isEditing"
-        @click="togglePart(sectionInfo.id)"
-      >
+      <div v-if="!isEditing" @click="opened = !opened">
         {{ sectionInfo.title }}
       </div>
       <div
@@ -76,30 +73,35 @@
         validator: () => userId === subjectOwnerId },
       ]"
     >
-      <!-- <SubjectTopics
-        v-show="openedCards.includes(sectionInfo.id)"
+      <TopicsCards
+        :shown="opened"
         :section-id="sectionInfo.id"
-        :subject-owner-id="subjectOwnerId"
-      /> -->
+      />
     </AZGuard>
   </div>
 </template>
 
 <script>
-import { Component, Prop } from "vue-property-decorator";
+import { Component, ModelSync, Prop } from "vue-property-decorator";
 
 import { SubjectsModule, UserModule } from "@/store";
 
+import SubjectTopics from "@/components/SubjectTopic/SubjectTopics.vue";
+import TopicsCards from "@/components/@Subjects/SubjectPage/TopicsCards.vue";
+
 @Component({
   name: "SectionCard",
+  components: { SubjectTopics, TopicsCards },
 })
 class SectionCard {
+  @ModelSync("isOpen", "change", { required: true }) opened
   @Prop({ required: true }) sectionInfo
 
   isEditing = false
 
   get sections() { return SubjectsModule.currentSections; }
   get userId() { return UserModule.userId; }
+  get subjectOwnerId() { return SubjectsModule.currentSubject.user.id; }
 
   editTitle() {
     this.isEditing = true;
