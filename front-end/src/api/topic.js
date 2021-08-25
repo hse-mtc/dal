@@ -2,13 +2,16 @@ import request from "@/utils/request";
 import { BASE_API_URL, DMS_URLS } from "@/constants/api";
 
 const {
-  subjects: { topics, sections },
+  subjects: { topics },
 } = DMS_URLS;
 
 export function getTopics(id) {
   return request({
-    url: `${BASE_API_URL}${sections}${id}/`,
+    url: `${BASE_API_URL}${topics}`,
     method: "get",
+    params: {
+      section: id,
+    },
   });
 }
 

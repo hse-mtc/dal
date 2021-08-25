@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.root">
-    <draggable
+    <Draggable
       :list="sections"
       v-bind="dragOptions"
       :disabled="disableDrag"
@@ -10,17 +10,18 @@
         <SectionCard
           v-for="section in sections"
           :key="section.id"
+          v-model="openedCards[section.id]"
           :section-info="section"
         />
       </transition-group>
-    </draggable>
+    </Draggable>
   </div>
 </template>
 
 <script>
 import { Component } from "vue-property-decorator";
 
-import draggable from "vuedraggable";
+import Draggable from "vuedraggable";
 
 import { SubjectsModule, UserModule } from "@/store";
 import { hasPermission } from "@/utils/permissions";
@@ -31,10 +32,12 @@ import SectionCard from "./SectionCard.vue";
   name: "SectionsCards",
   components: {
     SectionCard,
-    draggable,
+    Draggable,
   },
 })
 class SectionsCards {
+  openedCards = {}
+
   get userId() { return UserModule.userId; }
   get sections() { return SubjectsModule.currentSections; }
   get dragOptions() {

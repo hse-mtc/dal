@@ -133,10 +133,10 @@ export const getEditRequest = (
 
 /**
  *
- * @param {unction} orderFunc - функция удаления элемента
+ * @param {unction} orderFunc - функция перемещения элемента
  * @param {function} mutation - принимает на вход обновленный массив
  * @param {string} mutationFiled - поле в котором хранятся данные
- * @param {string} errorMsg - что не удалось удалить
+ * @param {string} errorMsg - что не удалось переместить
  * @returns {function}
  */
 export const getOrderChangeRequest = (
@@ -149,8 +149,9 @@ export const getOrderChangeRequest = (
     await orderFunc(id, order);
 
     const newOrder = [...this[mutationFiled]];
-    const elementIndex = newOrder.find(item => item.id === id);
+    const elementIndex = newOrder.findIndex(item => item.id === id);
     const temp = newOrder[elementIndex];
+
     newOrder.splice(elementIndex, 1);
     newOrder.splice(order, 0, temp);
 
