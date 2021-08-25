@@ -1,6 +1,7 @@
 import {
   deleteError,
   getError,
+  orderError,
   patchError,
   postError,
 } from "@/utils/message";
@@ -124,6 +125,45 @@ export const getEditRequest = (
 
     if (e.response.status) {
       patchError(errorMsg, e.response.status);
+    }
+
+    return false;
+  }
+};
+
+/**
+ *
+ * @param {unction} orderFunc - функция удаления элемента
+ * @param {function} mutation - принимает на вход обновленный массив
+ * @param {string} mutationFiled - поле в котором хранятся данные
+ * @param {string} errorMsg - что не удалось удалить
+ * @returns {function}
+ */
+export const getOrderChangeRequest = (
+  orderFunc,
+  mutation,
+  mutationFiled,
+  errorMsg,
+) => async function orderRequest(id, order) {
+  try {
+    await orderFunc(id, order);
+
+    const newOrder = [...this[mutationFiled]];
+    const elementIndex = newOrder.find(item => item.id === id);
+    const temp = newOrder[elementIndex];
+    newOrder.splice(elementIndex, 1);
+    newOrder.splice(order, 0, temp);
+
+    // eslint-disable-next-line no-param-reassign
+    newOrder.forEach((item, index) => { item.order = index; });
+
+    mutation(newOrder);
+    return true;
+  } catch (e) {
+    console.error(`Не удалось переместить ${errorMsg}:`, e);
+
+    if (e.response.status) {
+      orderError(errorMsg, e.response.status);
     }
 
     return false;

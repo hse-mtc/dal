@@ -204,12 +204,12 @@ import { SubjectsModule, UserModule } from "@/store";
 class MyDisciplines {
   subject = null
   subjectId = null
-  subjectInfo = null
   editTitleIndex = null
   subjectOwnerId = null
   openedCards = []
 
   get subjects() { return SubjectsModule.subjects; }
+  get subjectInfo() { return SubjectsModule.currentSections; }
   get dragOptions() {
     return {
       animation: 200,
@@ -298,7 +298,7 @@ class MyDisciplines {
     await getSubject({ id: subjectId })
       .then(response => {
         this.subject = response.data.title;
-        this.subjectInfo = response.data.sections;
+        // this.subjectInfo = response.data.sections;
         this.subjectOwnerId = response.data.user.id;
       })
       .catch(() => {
