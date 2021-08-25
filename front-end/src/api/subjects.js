@@ -78,6 +78,16 @@ export function changeSectionOrder(id, order) {
   });
 }
 
+export function getSections(subjectId) {
+  return request({
+    url: BASE_API_URL + sections,
+    method: "get",
+    params: {
+      subject: subjectId,
+    },
+  });
+}
+
 export function addSection(data) {
   return request({
     url: BASE_API_URL + sections,

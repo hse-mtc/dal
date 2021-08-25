@@ -47,6 +47,13 @@ export function deleteError(entity, status) {
   });
 }
 
+export function orderError(entity, status) {
+  Message({
+    message: `Ошибка при перемещении ${entity}. ${details(status)}`,
+    type: "error",
+  });
+}
+
 export function postSuccess(entity) {
   Message({
     message: `Создание ${entity} прошло успешно.`,

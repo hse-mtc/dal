@@ -8,11 +8,26 @@ import { Message } from "element-ui";
 
 import store, { SubjectsModule } from "@/store";
 import {
-  addSubject, deleteSubject, editSubject, getSubject, getSubjects, upsertSubject,
+  addSection,
+  addSubject,
+  changeSectionOrder,
+  deleteSection,
+  deleteSubject,
+  editSectionTitle,
+  editSubject,
+  getSections,
+  getSubject,
+  getSubjects,
+  upsertSubject,
 } from "@/api/subjects";
 import {
-  getAddRequest, getDeleteRequest, getEditRequest, getFetchRequest,
+  getAddRequest,
+  getDeleteRequest,
+  getEditRequest,
+  getFetchRequest,
+  getOrderChangeRequest,
 } from "@/utils/mutators";
+import { postError } from "@/utils/message";
 
 @Module({ store, name: "subjects", namespaced: true })
 class Subjects extends VuexModule {
@@ -22,6 +37,9 @@ class Subjects extends VuexModule {
   subjectId = 0
   _subjectInfo = {}
   _subjectInfoLoaded = false
+
+  _subjectSections = []
+  _subjectSectionsLoaded = false
 
   @Mutation
   SET_IS_LOADED({ field, value }) {
@@ -116,18 +134,18 @@ class Subjects extends VuexModule {
   // Current subject
 
   @Mutation
-  SET_CURRENT_SUBJECT_INFO(data) {
+  SET_SUBJECT_INFO(data) {
     this._subjectInfo = data;
   }
 
   @Mutation
-  SET_CURRENT_SUBJECT_ID(id) {
+  SET_SUBJECT_ID(id) {
     this.subjectId = id;
   }
 
   @Action
   setCurrentSubjectId(id) {
-    this.SET_CURRENT_SUBJECT_ID(id);
+    this.SET_SUBJECT_ID(id);
     this.SET_IS_LOADED({ field: "_subjectInfoLoaded", value: false });
   }
 
@@ -140,7 +158,7 @@ class Subjects extends VuexModule {
         id: this.subjectId,
       }),
       data => {
-        this.SET_CURRENT_SUBJECT_INFO(data);
+        this.SET_SUBJECT_INFO(data);
         this.SET_IS_LOADED({ field: "_subjectInfoLoaded", value: true });
       },
       "предмета",
@@ -153,6 +171,73 @@ class Subjects extends VuexModule {
     }
 
     return this._subjectInfo;
+  }
+
+  @Mutation
+  SET_SECTIONS(data) {
+    this._subjectSections = data;
+  }
+
+  @Action
+  async fetchSections() {
+    if (!this.subjectId) return false;
+
+    return await getFetchRequest(
+      () => getSections(this.subjectId),
+      data => {
+        this.SET_SECTIONS(data);
+        this.SET_IS_LOADED({ field: "_subjectSectionsLoaded", value: true });
+      },
+      "разделов",
+    ).call(this);
+  }
+
+  get currentSections() {
+    if (!this._subjectSectionsLoaded) {
+      SubjectsModule.fetchSections();
+    }
+
+    return this._subjectSections;
+  }
+
+  @Action
+  async updateSectionTitle({ id, ...newData }) {
+    getEditRequest(
+      editSectionTitle,
+      this.SET_SECTIONS,
+      "_subjectSections",
+      "раздел",
+    ).call(this, { id, ...newData });
+  }
+
+  @Action
+  async addSection(newItem) {
+    return await getAddRequest(
+      addSection,
+      this.SET_SECTIONS,
+      "_subjectSections",
+      "раздел",
+    ).call(this, newItem);
+  }
+
+  @Action
+  async deleteSection(id) {
+    return await getDeleteRequest(
+      deleteSection,
+      this.SET_SECTIONS,
+      "_subjectSections",
+      "раздел",
+    ).call(this, id);
+  }
+
+  @Action
+  async changeSectionsOrder({ id, order }) {
+    return await getOrderChangeRequest(
+      changeSectionOrder,
+      this.SET_SECTIONS,
+      "_subjectSections",
+      "раздела",
+    ).call(this, id, order);
   }
 }
 
