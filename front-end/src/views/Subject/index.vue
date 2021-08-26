@@ -32,8 +32,17 @@
       <div :class="$style.menuWrapper">
         <Menu :class="$style.menu" />
       </div>
+      <div :class="$style.sectionsWrapper">
+        <el-button
+          type="primary"
+          :class="$style.bigAddButton"
+          @click="addSection"
+        >
+          + Добавить раздел
+        </el-button>
 
-      <SectionsCards :class="$style.sections" />
+        <SectionsCards :class="$style.sections" />
+      </div>
     </div>
   </div>
 </template>
@@ -76,10 +85,15 @@ export default SubjectPage;
 <style lang="scss" module>
 .root {
   padding: 50px;
+
+  @media screen and (max-width: 767px) {
+    padding: 20px 10px;
+  }
 }
 
 .header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   margin-bottom: 50px;
 
@@ -92,17 +106,32 @@ export default SubjectPage;
 
     &:hover {
       opacity: 0.7;
+      text-decoration: none;
+    }
+
+    @media screen and (max-width: 767px) {
+      display: flex;
+      align-items: center;
+
+      &::after {
+        content: "К дисциплинам";
+        font-size: 18px;
+      }
     }
   }
 
   .title {
-    margin: 0;
+    margin: 0 20px 0 0;
   }
 
   .addButton {
     margin-left: auto;
     font-size: 18px;
     color: #0c4b9a;
+
+    @media screen and (max-width: 800px) {
+      display: none;
+    }
   }
 }
 
@@ -115,11 +144,24 @@ export default SubjectPage;
 
     &Wrapper {
       margin-right: 20px;
+
+      @media screen and (max-width: 767px) {
+        display: none;
+      }
     }
   }
 
-  .sections {
+  .sectionsWrapper {
     width: 100%;
+
+    .bigAddButton {
+      width: 100%;
+      display: none;
+
+      @media screen and (max-width: 800px) {
+        display: block;
+      }
+    }
   }
 }
 

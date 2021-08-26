@@ -1,84 +1,86 @@
 <template>
-  <div class="mynavbar">
-    <div
-      class="burger"
-      :title="isCollapse ? 'Развернуть меню' : 'Свернуть меню'"
-      @click="toggleSideBar"
-    >
-      <Hamburger :is-active="sidebar.opened" class="hamburger-container" />
-    </div>
-    <Breadcrumb class="breadcrumb-container" />
+  <div class="navbar-wrapper">
+    <div :class="['mynavbar', { 'sidebar-opened': sidebar.opened }]">
+      <div
+        class="burger"
+        :title="isCollapse ? 'Развернуть меню' : 'Свернуть меню'"
+        @click="toggleSideBar"
+      >
+        <Hamburger :is-active="sidebar.opened" class="hamburger-container" />
+      </div>
+      <Breadcrumb class="breadcrumb-container" />
 
-    <div class="right-menu">
-      <el-popover v-model="birthdaysVisible" width="500" placement="bottom-end">
-        <div class="birthdays-list">
-          <div class="teachers">
-            <el-divider content-position="left" class="title">
-              Преподаватели
-            </el-divider>
-            <template v-if="teachers.length">
-              <BirthdayItem
-                v-for="item in teachers"
-                :key="item.id"
-                :person="item"
-                type="teacher"
-                @clicked="birthdaysVisible = false"
-              />
-            </template>
-            <span v-else class="empty">
-              В течение ближайшей недели именинников нет
-              <SvgIcon icon-class="sad" />
-            </span>
-          </div>
+      <div class="right-menu">
+        <el-popover v-model="birthdaysVisible" width="500" placement="bottom-end">
+          <div class="birthdays-list">
+            <div class="teachers">
+              <el-divider content-position="left" class="title">
+                Преподаватели
+              </el-divider>
+              <template v-if="teachers.length">
+                <BirthdayItem
+                  v-for="item in teachers"
+                  :key="item.id"
+                  :person="item"
+                  type="teacher"
+                  @clicked="birthdaysVisible = false"
+                />
+              </template>
+              <span v-else class="empty">
+                В течение ближайшей недели именинников нет
+                <SvgIcon icon-class="sad" />
+              </span>
+            </div>
 
-          <div class="students">
-            <el-divider content-position="left" class="title">
-              Студенты
-            </el-divider>
-            <template v-if="students.length">
-              <BirthdayItem
-                v-for="item in students"
-                :key="item.id"
-                :person="item"
-                type="student"
-                @clicked="birthdaysVisible = false"
-              />
-            </template>
-            <span v-else class="empty">
-              В течение ближайшей недели именинников нет
-              <SvgIcon icon-class="sad" />
-            </span>
+            <div class="students">
+              <el-divider content-position="left" class="title">
+                Студенты
+              </el-divider>
+              <template v-if="students.length">
+                <BirthdayItem
+                  v-for="item in students"
+                  :key="item.id"
+                  :person="item"
+                  type="student"
+                  @clicked="birthdaysVisible = false"
+                />
+              </template>
+              <span v-else class="empty">
+                В течение ближайшей недели именинников нет
+                <SvgIcon icon-class="sad" />
+              </span>
+            </div>
           </div>
-        </div>
-        <el-badge
-          slot="reference"
-          :is-dot="anyBirthday"
-          class="birthdays-trigger"
-        >
-          <button>
-            <SvgIcon icon-class="gift" />
-            <span class="text">Дни рождения</span>
-          </button>
-        </el-badge>
-      </el-popover>
-      <el-dropdown class="avatar-container" trigger="click">
-        <div class="avatar-wrapper m-0" style="font-size: 19px">
-          <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
-          {{ email }}
-          <i class="el-icon-caret-bottom" />
-        </div>
-        <el-dropdown-menu slot="dropdown" class="user-dropdown">
-          <router-link to="/">
-            <el-dropdown-item> Домой </el-dropdown-item>
-          </router-link>
-          <el-dropdown-item v-if="personType && personId">
-            <span style="display: block" @click="profile">Мой профиль</span>
-          </el-dropdown-item>
-          <el-dropdown-item divided>
-            <span style="display: block" @click="logout">Выход</span>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+          <el-badge
+            slot="reference"
+            :is-dot="anyBirthday"
+            class="birthdays-trigger"
+          >
+            <button class="birthdaysButton">
+              <SvgIcon icon-class="gift" />
+              <span class="birthdaysButtonText">Дни рождения</span>
+            </button>
+          </el-badge>
+        </el-popover>
+        <el-dropdown class="avatar-container" trigger="click">
+          <div class="avatar-wrapper m-0" style="font-size: 19px">
+            <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
+            {{ email }}
+            <i class="el-icon-caret-bottom" />
+          </div>
+          <el-dropdown-menu slot="dropdown" class="user-dropdown">
+            <router-link to="/">
+              <el-dropdown-item> Домой </el-dropdown-item>
+            </router-link>
+            <el-dropdown-item v-if="personType && personId">
+              <span style="display: block" @click="profile">Мой профиль</span>
+            </el-dropdown-item>
+            <el-dropdown-item divided>
+              <span style="display: block" @click="logout">Выход</span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </div>
   </div>
 </template>
@@ -159,14 +161,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.navbar-wrapper {
+  overflow: hidden;
+}
+
 .mynavbar {
   display: flex;
+  min-width: 0;
   height: 56px;
   overflow: hidden;
   position: relative;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   background-color: #2d3746;
   color: #fff !important;
+  transition: min-width 0.6s;
+
+  &.sidebar-opened {
+    min-width: 100vw;
+    width: 100vw;
+
+    @media screen and (min-width: 1200px) {
+      min-width: 0;
+      width: auto;
+    }
+
+    @media screen and (max-width: 992px) {
+      min-width: 0;
+      width: auto;
+    }
+  }
 
   .breadcrumb-container {
     height: 56px;
@@ -176,10 +199,14 @@ export default {
     float: left;
     color: #fff;
     color: #fff !important;
+
+    @media screen and (max-width: 799px) {
+      display: none;
+    }
   }
 
   .right-menu {
-    margin-right: 120px;
+    margin-right: 20px;
     margin-left: auto;
     height: 100%;
     line-height: 56px;
@@ -210,6 +237,10 @@ export default {
 
     .avatar-container {
       margin-right: 30px;
+
+      @media screen and (max-width: 499px) {
+        display: none;
+      }
 
       .avatar-wrapper {
         margin-top: 5px;
@@ -252,7 +283,7 @@ export default {
   height: 30px;
   margin-right: 20px;
 
-  button {
+  .birthdaysButton {
     cursor: pointer;
     border-radius: 100px;
     height: 100%;
@@ -268,8 +299,16 @@ export default {
     display: flex;
     align-items: center;
 
-    .text {
+    &Text {
       margin-left: 10px;
+
+      @media screen and (max-width: 889px) {
+        display: none;
+      }
+
+      @media screen and (max-width: 799px) {
+        display: inline;
+      }
     }
 
     &:hover {

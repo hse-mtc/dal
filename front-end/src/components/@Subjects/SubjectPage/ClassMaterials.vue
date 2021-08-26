@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.root">
+  <div>
     <div
       :class="$style.header"
       @click="opened = !opened"
@@ -212,8 +212,6 @@ export default ClassMaterials;
 </script>
 
 <style lang="scss" module>
-.root {}
-
 .header {
   display: flex;
   align-items: center;
@@ -230,6 +228,10 @@ export default ClassMaterials;
   display: flex;
   flex-wrap: wrap;
 
+  @media screen and (max-width: 1024px) {
+    flex-direction: column;
+  }
+
   .file {
     display: flex;
     align-items: center;
@@ -242,6 +244,14 @@ export default ClassMaterials;
 
     &:nth-child(2n) {
       margin-left: 20px;
+    }
+
+    @media screen and (max-width: 1024px) {
+      width: 100%;
+
+      &:nth-child(2n) {
+        margin-left: 0;
+      }
     }
 
     &ExtIcon {

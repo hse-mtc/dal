@@ -13,6 +13,35 @@
         :collapse-transition="false"
         mode="vertical"
       >
+        <el-menu-item
+          class="sidebar-close-button"
+          @click="close"
+        >
+          <i class="el-icon-back" />
+          Свернуть
+        </el-menu-item>
+
+        <el-menu-item class="user-controls-wrapper">
+          <el-dropdown class="user-controls" trigger="click">
+            <div class="avatar-wrapper m-0" style="font-size: 19px">
+              <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
+              {{ email }}
+              <i class="el-icon-caret-bottom" />
+            </div>
+            <el-dropdown-menu slot="dropdown" class="user-dropdown">
+              <router-link to="/">
+                <el-dropdown-item> Домой </el-dropdown-item>
+              </router-link>
+              <el-dropdown-item v-if="personType && personId">
+                <span style="display: block" @click="profile">Мой профиль</span>
+              </el-dropdown-item>
+              <el-dropdown-item divided>
+                <span style="display: block" @click="logout">Выход</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-menu-item>
+
         <SidebarItem
           v-for="route in routes"
           :key="route.path"
@@ -26,7 +55,7 @@
 
 <script>
 import variables from "@/styles/variables.scss";
-import { AppModule, SettingsModule } from "@/store";
+import { AppModule, SettingsModule, UserModule } from "@/store";
 import Logo from "./Logo.vue";
 import SidebarItem from "./SidebarItem.vue";
 
@@ -55,11 +84,57 @@ export default {
     isCollapse() {
       return !this.sidebar.opened;
     },
+    email() {
+      return UserModule.email;
+    },
+  },
+  methods: {
+    profile() {
+      if (this.personType && this.personId) {
+        const name = this.personType.charAt(0).toUpperCase() + this.personType.slice(1);
+        this.$router.push({
+          name,
+          params: { [`${this.personType}Id`]: this.personId },
+        });
+      }
+    },
+    logout() {
+      UserModule.logout();
+      window.location.href = "/login";
+    },
+    close() {
+      AppModule.closeSideBar({ withoutAnimation: false });
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.sidebar-close-button {
+  display: none;
+
+  @media screen and (max-width: 992px) {
+    display: block;
+  }
+}
+
+.user-controls {
+  display: flex;
+  justify-content: center;
+  color: #000;
+  background-color: #dfdfdf;
+  border-radius: 20px;
+
+  &-wrapper {
+    display: none;
+
+    @media screen and (max-width: 499px) {
+      display: block;
+    }
+  }
+
+}
+
 .burger {
   display: flex;
   align-items: center;
@@ -77,7 +152,7 @@ export default {
   }
 
   &Text {
-    color: rgb(191, 203, 217);
+    color: #bfcbd9;
     line-height: 56px;
     font-size: 14px;
     white-space: nowrap;
