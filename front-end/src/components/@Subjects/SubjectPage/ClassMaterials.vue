@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="[$style.root, { [$style.highlight]: highlight }]">
     <div
       :class="$style.header"
       @click="opened = !opened"
@@ -119,6 +119,7 @@ import {
   ModelSync,
   Prop,
   Vue,
+  Watch,
 } from "vue-property-decorator";
 
 import _isArray from "lodash/isArray";
@@ -143,6 +144,7 @@ class ClassMaterials extends Vue {
   @Prop({ default: "" }) code
   @Prop({ type: Array, required: true }) materials
   @Prop({ required: true }) topicId
+  @Prop({ type: Boolean }) highlight
 
   dialogVisible = false
 
@@ -217,6 +219,30 @@ export default ClassMaterials;
 </script>
 
 <style lang="scss" module>
+.root {
+  position: relative;
+
+  &::after {
+    transition: 0.5s;
+    display: block;
+    position: absolute;
+    content: "";
+    top: -10px;
+    bottom: -10px;
+    left: -10px;
+    right: -10px;
+    background-color: #000;
+    border-radius: 10px;
+    opacity: 0;
+    z-index: -1;
+  }
+
+  &.highlight::after {
+    opacity: 0.2;
+    z-index: 1;
+  }
+}
+
 .header {
   display: flex;
   align-items: center;
