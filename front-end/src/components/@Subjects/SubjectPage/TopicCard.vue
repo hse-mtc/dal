@@ -77,6 +77,7 @@
         :code="codes[type]"
         :materials="materials[type]"
         :topic-id="topic.id"
+        :highlight="highlight === type"
         @delete="$emit('deleteMaterial', $event)"
       />
     </div>
@@ -89,6 +90,7 @@ import {
   Prop,
   Ref,
   Vue,
+  Watch,
 } from "vue-property-decorator";
 
 import { SubjectsModule, UserModule } from "@/store";
@@ -127,11 +129,13 @@ class TopicCard extends Vue {
     practices: "PR",
   }
 
+  highlight = ""
+
   get materials() { return this.topic.class_materials; }
   get subjectOwnerId() { return SubjectsModule.currentSubject.user.id; }
   get userId() { return UserModule.userId; }
 
-  // mounted() { this.onRouteChange(); }
+  mounted() { this.onRouteChange(this.$route); }
 
   acceptNewTopic() {
     if (!this.topic.title) {
@@ -169,17 +173,20 @@ class TopicCard extends Vue {
     );
   }
 
-  // @Watch("$route")
-  // onRouteChange({ query: { topic, materialsType } }) {
-  //   if (+topic === this.topic.id && materialsType) {
-  //     this.openedMaterials[materialsType] = true;
-  //     this.root.scrollIntoView({
-  //       block: "start",
-  //       inline: "nearest",
-  //       behavior: "smooth",
-  //     });
-  //   }
-  // }
+  @Watch("$route")
+  onRouteChange({ query: { topic, materialsType } }) {
+    if (+topic === this.topic.id && materialsType) {
+      this.openedMaterials[materialsType] = true;
+      this.root.scrollIntoView({
+        block: "start",
+        inline: "nearest",
+        behavior: "smooth",
+      });
+
+      this.highlight = materialsType;
+      setTimeout(() => { this.highlight = ""; }, 2000);
+    }
+  }
 }
 
 export default TopicCard;
