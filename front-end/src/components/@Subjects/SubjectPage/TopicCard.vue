@@ -2,12 +2,7 @@
   <div :class="$style.root">
     <div :class="$style.header">
       <div :class="$style.topline">
-        <img
-          height="12"
-          class="mr-2"
-          src="../../../assets/icons/drag.svg"
-          alt=""
-        >
+        <svg-icon icon-class="drag" />
 
         <div>Тема №{{ topic.order + 1 }}</div>
 
@@ -77,6 +72,16 @@
     </div>
 
     <div class="topic-files">
+      <ClassMaterials
+        v-for="(title, type) in titles"
+        :key="type"
+        v-model="openedMaterials[type]"
+        :title="title"
+        :code="codes[type]"
+        :materials="materials[type]"
+        :topic-id="topic.id"
+        @delete="$emit('deleteMaterial', $event)"
+      />
       <!-- <ClassMaterials
         v-for="(variant, key) in (topic.class_materials || {})"
         :key="`${topic.id}-${key}`"
@@ -94,11 +99,12 @@
 </template>
 
 <script>
-import { Component, Emit, Prop } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 
-import { SubjectsModule } from "@/store";
+import { SubjectsModule, UserModule } from "@/store";
 
-import ClassMaterials from "@/components/SubjectTopic/ClassMaterials.vue";
+import { getDeleteRequest } from "@/utils/mutators";
+import ClassMaterials from "./ClassMaterials.vue";
 
 @Component({
   name: "TopicCard",
@@ -116,7 +122,23 @@ class TopicCard {
     practices: false,
   }
 
+  titles = {
+    lectures: "Лекции",
+    seminars: "Семинары",
+    groups: "Групповые занятия",
+    practices: "Практические занятия",
+  }
+
+  codes = {
+    lectures: "LE",
+    seminars: "SE",
+    groups: "GR",
+    practices: "PR",
+  }
+
+  get materials() { return this.topic.class_materials; }
   get subjectOwnerId() { return SubjectsModule.currentSubject.user.id; }
+  get userId() { return UserModule.userId; }
 
   acceptNewTopic() {
     if (!this.topic.title) {
@@ -140,6 +162,18 @@ class TopicCard {
 
   deleteTopic() {
     this.$emit("delete", this.topic.id);
+  }
+
+  async deleteMaterial(id) {
+    await this.$confirm(
+      "Вы уверены, что хотите удалить материал? Это действие не обратимо.",
+      "Подтверждение",
+      {
+        confirmButtonText: "Да",
+        cancelButtonText: "Отмена",
+        type: "warning",
+      },
+    );
   }
 }
 
