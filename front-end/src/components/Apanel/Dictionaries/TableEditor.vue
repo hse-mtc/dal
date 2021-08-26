@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 import _isArray from "lodash/isArray";
 import _debounce from "lodash/debounce";
 import _isEqual from "lodash/isEqual";
@@ -118,7 +118,7 @@ import { CAMPUSES } from "@/utils/enums";
   name: "DictionariesTableEditor",
   components: { SingleCheckbox, TextInput, SelectInput },
 })
-class DictionariesTableEditor {
+class DictionariesTableEditor extends Vue {
   @Prop({ type: String, required: true }) type
   @Prop({ type: Array, required: true, default: () => [] }) data
 

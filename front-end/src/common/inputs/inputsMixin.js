@@ -1,4 +1,9 @@
-import { Component, ModelSync, Prop } from "vue-property-decorator";
+import {
+  Component,
+  ModelSync,
+  Prop,
+  Vue,
+} from "vue-property-decorator";
 
 import InputsBase from "./InputsBase.vue";
 
@@ -6,7 +11,7 @@ import InputsBase from "./InputsBase.vue";
   inheritAttrs: false,
   components: { InputsBase },
 })
-class InputsMixin {
+class InputsMixin extends Vue {
   @ModelSync("modelValue", "change", { required: true }) value
   @Prop({ required: true }) modelValue
   @Prop({ default: null }) title

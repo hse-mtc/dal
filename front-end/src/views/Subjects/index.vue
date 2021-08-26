@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 import { SubjectsModule } from "@/store";
 
@@ -38,7 +38,7 @@ import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue
   name: "SubjectsPage",
   components: { SubjectsCards },
 })
-class SubjectsPage {
+class SubjectsPage extends Vue {
   get searchQuery() { return this.$route.query.subjectsSearch || ""; }
   set searchQuery(newValue) {
     this.$router.replace({

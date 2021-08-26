@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { Component } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 
 import Draggable from "vuedraggable";
 
@@ -36,7 +36,7 @@ import SectionCard from "./SectionCard.vue";
     Draggable,
   },
 })
-class SectionsCards {
+class SectionsCards extends Vue {
   openedCards = {}
 
   get userId() { return UserModule.userId; }
@@ -60,6 +60,13 @@ class SectionsCards {
 
   updateOrder(id, order) {
     SubjectsModule.changeSectionsOrder({ id, order });
+  }
+
+  @Watch("$route", { immediate: true })
+  onRouteChange(next) {
+    if (next.query.section) {
+      this.openedCards[next.query.section] = true;
+    }
   }
 }
 

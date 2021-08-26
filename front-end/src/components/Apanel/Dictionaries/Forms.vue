@@ -37,7 +37,12 @@
 </template>
 
 <script>
-import { Component, Prop, Watch } from "vue-property-decorator";
+import {
+  Component,
+  Prop,
+  Vue,
+  Watch,
+} from "vue-property-decorator";
 import _cloneDeep from "lodash/cloneDeep";
 
 const capitalize = value => (value
@@ -47,7 +52,7 @@ const capitalize = value => (value
 @Component({
   name: "DictionariesForms",
 })
-class DictionariesForms {
+class DictionariesForms extends Vue {
   @Prop({ type: String }) type
   @Prop({ type: Object, default: () => ({}) }) initState
   @Prop({ type: Boolean }) isEdit

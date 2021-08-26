@@ -137,7 +137,9 @@
 </template>
 
 <script>
-import { Component, Ref, Watch } from "vue-property-decorator";
+import {
+  Component, Ref, Vue, Watch,
+} from "vue-property-decorator";
 import _pick from "lodash/pick";
 import _omit from "lodash/omit";
 
@@ -177,7 +179,7 @@ const createData = fields => Object.keys(fields).reduce(
   name: "ApplicantForm",
   components: { GenericForm },
 })
-class ApplicantForm {
+class ApplicantForm extends Vue {
   @Ref() form
 
   data() {

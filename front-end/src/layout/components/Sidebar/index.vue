@@ -87,6 +87,9 @@ export default {
     email() {
       return UserModule.email;
     },
+    personType() {
+      return UserModule.personType;
+    },
   },
   methods: {
     profile() {

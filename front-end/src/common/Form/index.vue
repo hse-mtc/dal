@@ -52,6 +52,7 @@ import {
   Model,
   Prop,
   Ref,
+  Vue,
 } from "vue-property-decorator";
 
 import _omit from "lodash/omit";
@@ -82,7 +83,7 @@ import {
     InputsBaseInput,
   },
 })
-class GenericForm {
+class GenericForm extends Vue {
   @Model("change", { type: Object, required: true }) formData
   @Prop({ type: Object, required: true, default: () => ({}) }) fields
   @Prop({ type: Object, default: () => ({}) }) rules

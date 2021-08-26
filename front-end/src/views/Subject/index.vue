@@ -49,7 +49,7 @@
 
 <script>
 import { SubjectsModule } from "@/store";
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 import Menu from "@/components/@Subjects/SubjectPage/SectionsMenu.vue";
 import SectionCard from "@/components/@Subjects/SubjectPage/SectionCard.vue";
@@ -63,7 +63,7 @@ import SectionsCards from "@/components/@Subjects/SubjectPage/SectionsCards.vue"
     SectionsCards,
   },
 })
-class SubjectPage {
+class SubjectPage extends Vue {
   get subjectInfo() { return SubjectsModule.currentSubject; }
   get sections() { return SubjectsModule.currentSections; }
 

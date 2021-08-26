@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import _omit from "lodash/omit";
 
 import { PapersModule, ReferenceModule } from "@/store";
@@ -64,7 +64,7 @@ import TableEditor from "./TableEditor.vue";
     TableEditor,
   },
 })
-class Dictionaries {
+class Dictionaries extends Vue {
   newItem = ""
   searchQuery = ""
   editingItemId = null

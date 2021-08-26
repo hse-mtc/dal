@@ -15,12 +15,12 @@
 </template>
 
 <script>
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component({
   name: "Dictionaries",
 })
-class Dictionaries {
+class Dictionaries extends Vue {
   @Prop({ required: true, type: Number }) id
   @Prop({ required: true, type: String }) title
 }

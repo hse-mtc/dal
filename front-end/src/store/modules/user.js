@@ -14,13 +14,16 @@ import { tokenService } from "../../utils/tokenService";
 
 @Module({ store, name: "user", namespaced: true })
 class User extends VuexModule {
-  accessToken = tokenService.access;
-  refreshToken = tokenService.refresh;
-  userId = tokenService.userId;
-  _email = "";
-  _permissions = null;
-  _campuses = [];
-  _person = {};
+  accessToken = tokenService.access
+  refreshToken = tokenService.refresh
+  userId = tokenService.userId
+  _email = ""
+  _permissions = null
+  _campuses = []
+  _person = {
+    type: "",
+  }
+
   _isSuperuser = false;
   _userInfoLoaded = false;
 

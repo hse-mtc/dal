@@ -114,7 +114,12 @@
 </template>
 
 <script>
-import { Component, ModelSync, Prop } from "vue-property-decorator";
+import {
+  Component,
+  ModelSync,
+  Prop,
+  Vue,
+} from "vue-property-decorator";
 
 import _isArray from "lodash/isArray";
 
@@ -132,7 +137,7 @@ import { FileInput } from "@/common/inputs";
     FileInput,
   },
 })
-class ClassMaterials {
+class ClassMaterials extends Vue {
   @ModelSync("isOpen", "change", { default: false }) opened
   @Prop({ default: "" }) title
   @Prop({ default: "" }) code

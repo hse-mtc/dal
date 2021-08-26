@@ -74,7 +74,12 @@
 </template>
 
 <script>
-import { Component, ModelSync, Prop } from "vue-property-decorator";
+import {
+  Component,
+  ModelSync,
+  Prop,
+  Vue,
+} from "vue-property-decorator";
 
 import { SubjectsModule, UserModule } from "@/store";
 
@@ -86,7 +91,7 @@ import TopicsCards from "@/components/@Subjects/SubjectPage/TopicsCards.vue";
     TopicsCards,
   },
 })
-class SectionCard {
+class SectionCard extends Vue {
   @ModelSync("isOpen", "change", { required: true }) opened
   @Prop({ required: true }) sectionInfo
 

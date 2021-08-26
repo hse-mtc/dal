@@ -7,14 +7,14 @@
 </template>
 
 <script>
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { hasPermission } from "@/utils/permissions";
 import { UserModule } from "@/store";
 
 @Component({
   name: "AdminPanelPage",
 })
-class AdminPanelPage {
+class AdminPanelPage extends Vue {
   defaultTabs = [
     { label: "Подтверждения регистрации", to: "/apanel/approve/", permissions: [] },
     { label: "Управление пользователями", to: "/apanel/userManagement/", permissions: ["permissions.get.all", "permissions.patch.all", "permissions.post.all", "permissions.delete.all"] },

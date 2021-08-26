@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 import Draggable from "vuedraggable";
 
@@ -66,7 +66,7 @@ import TopicCard from "./TopicCard.vue";
     Draggable,
   },
 })
-class TopicsCards {
+class TopicsCards extends Vue {
   @Prop({ required: true }) sectionId
   @Prop({ required: true }) shown
 
