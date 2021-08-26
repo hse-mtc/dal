@@ -24,6 +24,7 @@
       <transition-group type="transition" name="flip-list">
         <TopicCard
           v-for="topic in topics"
+          :id="`section-${sectionId}-topic-${topic.id}`"
           :key="topic.id"
           :topic="topic"
           @change="editTopic"
@@ -109,8 +110,8 @@ class TopicsCards extends Vue {
     ).call(this);
   }
 
-  addTopic() {
-    getAddRequest(
+  async addTopic() {
+    const res = await getAddRequest(
       addTopics,
       data => { this.topicsList = data; },
       "topicsList",
@@ -120,6 +121,24 @@ class TopicsCards extends Vue {
       section: this.sectionId,
       annotation: "Введите аннотацию",
     });
+
+    if (res) {
+      this.$nextTick(() => {
+        const elem = document.getElementById(`section-${
+          this.sectionId
+        }-topic-${
+          this.topics[this.topics.length - 1].id
+        }`);
+
+        if (elem) {
+          elem.scrollIntoView({
+            block: "start",
+            inline: "nearest",
+            behavior: "smooth",
+          });
+        }
+      });
+    }
   }
 
   editTopic({ id, ...newData }) {

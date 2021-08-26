@@ -71,11 +71,25 @@ class SubjectPage extends Vue {
     SubjectsModule.setCurrentSubjectId(this.$route.params.subjectId);
   }
 
-  addSection() {
-    SubjectsModule.addSection({
+  async addSection() {
+    const res = await SubjectsModule.addSection({
       title: "Новый раздел",
       subject: SubjectsModule.subjectId,
     });
+
+    if (res) {
+      this.$nextTick(() => {
+        const elem = document.getElementById(`section-${this.sections[this.sections.length - 1].id}`);
+
+        if (elem) {
+          elem.scrollIntoView({
+            block: "start",
+            inline: "nearest",
+            behavior: "smooth",
+          });
+        }
+      });
+    }
   }
 }
 
