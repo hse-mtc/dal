@@ -1,13 +1,13 @@
 <template>
-  <div
-    :key="sectionInfo.id"
-    ref="cards"
-    class="main-part"
-  >
+  <div>
     <div :class="$style.header">
-      <svg-icon icon-class="drag" />
+      <svg-icon icon-class="drag" :class="$style.dragIcon" />
 
-      <div v-if="!isEditing" @click="opened = !opened">
+      <div
+        v-if="!isEditing"
+        :class="$style.title"
+        @click="opened = !opened"
+      >
         {{ sectionInfo.title }}
       </div>
       <div
@@ -17,20 +17,19 @@
       >
         <el-input
           v-model="sectionInfo.title"
-          :class="$style.titleInput"
+          :class="[$style.titleInput, $style.title]"
           clearable
           size="mini"
         />
       </div>
 
       <div :class="$style.buttons">
-        <img
+        <svg-icon
           v-if="isEditing"
           :class="$style.button"
-          src="../../../assets/subject/accept.svg"
-          alt=""
+          icon-class="accept"
           @click="acceptNewTitle"
-        >
+        />
         <template v-else>
           <AZGuard
             :permissions="['sections.patch.all', {
@@ -38,12 +37,11 @@
               validator: () => userId === subjectOwnerId,
             }]"
           >
-            <img
+            <svg-icon
               :class="$style.button"
-              src="../../../assets/subject/edit.svg"
-              alt=""
+              icon-class="edit"
               @click="editTitle"
-            >
+            />
           </AZGuard>
 
           <AZGuard
@@ -52,12 +50,11 @@
               validator: () => userId === subjectOwnerId,
             }]"
           >
-            <img
+            <svg-icon
               :class="$style.button"
-              src="../../../assets/subject/close.svg"
-              alt=""
+              icon-class="close"
               @click="deleteSection"
-            >
+            />
           </AZGuard>
         </template>
       </div>
@@ -86,7 +83,10 @@ import TopicsCards from "@/components/@Subjects/SubjectPage/TopicsCards.vue";
 
 @Component({
   name: "SectionCard",
-  components: { SubjectTopics, TopicsCards },
+  components: {
+    SubjectTopics,
+    TopicsCards,
+  },
 })
 class SectionCard {
   @ModelSync("isOpen", "change", { required: true }) opened
@@ -127,8 +127,6 @@ export default SectionCard;
 </script>
 
 <style lang="scss" module>
-.root {}
-
 .header {
   display: flex;
   align-items: center;
@@ -137,9 +135,14 @@ export default SectionCard;
   font-size: 20px;
   cursor: pointer;
 
+  .dragIcon {
+    margin-right: 10px;
+  }
+
   .title {
+    flex: 1;
+
     &Input {
-      flex: 1;
       font-size: 20px;
 
       :global(.el-input__inner) {
@@ -158,6 +161,7 @@ export default SectionCard;
     margin-left: auto;
 
     .button {
+      font-size: 24px;
       cursor: pointer;
       transition: all 0.2s ease-in-out;
 
