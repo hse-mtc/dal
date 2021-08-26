@@ -78,13 +78,11 @@ import { Component, ModelSync, Prop } from "vue-property-decorator";
 
 import { SubjectsModule, UserModule } from "@/store";
 
-import SubjectTopics from "@/components/SubjectTopic/SubjectTopics.vue";
 import TopicsCards from "@/components/@Subjects/SubjectPage/TopicsCards.vue";
 
 @Component({
   name: "SectionCard",
   components: {
-    SubjectTopics,
     TopicsCards,
   },
 })
