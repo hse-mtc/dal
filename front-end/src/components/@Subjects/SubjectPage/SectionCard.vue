@@ -5,12 +5,7 @@
     class="main-part"
   >
     <div :class="$style.header">
-      <img
-        height="12"
-        class="mr-2"
-        src="../../../assets/icons/drag.svg"
-        alt=""
-      >
+      <svg-icon icon-class="drag" />
 
       <div v-if="!isEditing" @click="opened = !opened">
         {{ sectionInfo.title }}

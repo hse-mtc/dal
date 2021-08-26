@@ -41,11 +41,18 @@ import Draggable from "vuedraggable";
 
 import {
   addTopics,
-  changeTopicOrder, deleteTopics, editTopics, getTopics,
+  changeTopicOrder,
+  deleteTopics,
+  editTopics,
+  getTopics,
 } from "@/api/topic";
+import { deleteMaterial } from "@/api/material";
 import {
   getAddRequest,
-  getDeleteRequest, getEditRequest, getFetchRequest, getOrderChangeRequest,
+  getDeleteRequest,
+  getEditRequest,
+  getFetchRequest,
+  getOrderChangeRequest,
 } from "@/utils/mutators";
 import { hasPermission } from "@/utils/permissions";
 
