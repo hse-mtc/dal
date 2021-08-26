@@ -18,7 +18,7 @@
 
 <script>
 import { UserModule } from "@/store";
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 import SubjectCard from "./SubjectCard/index.vue";
 
@@ -26,7 +26,7 @@ import SubjectCard from "./SubjectCard/index.vue";
   name: "Subjects",
   components: { SubjectCard },
 })
-class Subjects {
+class Subjects extends Vue {
   @Prop({ default: () => [] }) cards
 
   get userId() { return UserModule.userId; }

@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { Component, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 
 import Serp from "@/components/Papers/Serp";
 import UpsertModal from "@/components/Papers/UpsertModal";
@@ -146,7 +146,7 @@ import { PapersModule } from "@/store";
     UpsertModal,
   },
 })
-class Papers {
+class Papers extends Vue {
   documents = []
   count = null
 

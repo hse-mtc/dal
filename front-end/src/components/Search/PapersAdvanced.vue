@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import moment from "moment";
 import { surnameWithInitials } from "@/utils/person";
 import { PapersModule } from "@/store";
@@ -82,7 +82,7 @@ import { PapersModule } from "@/store";
 @Component({
   name: "AdvancedPaperSearch",
 })
-class AdvancedPaperSearch {
+class AdvancedPaperSearch extends Vue {
   author = null
   publisher = null
   valueDate = ""

@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.root">
+  <div ref="root" :class="$style.root">
     <div :class="$style.header">
       <div :class="$style.topline">
         <svg-icon icon-class="drag" />
@@ -84,7 +84,12 @@
 </template>
 
 <script>
-import { Component, Prop } from "vue-property-decorator";
+import {
+  Component,
+  Prop,
+  Ref,
+  Vue,
+} from "vue-property-decorator";
 
 import { SubjectsModule, UserModule } from "@/store";
 
@@ -94,8 +99,10 @@ import ClassMaterials from "./ClassMaterials.vue";
   name: "TopicCard",
   components: { ClassMaterials },
 })
-class TopicCard {
+class TopicCard extends Vue {
   @Prop({ required: true }) topic
+
+  @Ref() root
 
   isEditing = false
 
@@ -123,6 +130,8 @@ class TopicCard {
   get materials() { return this.topic.class_materials; }
   get subjectOwnerId() { return SubjectsModule.currentSubject.user.id; }
   get userId() { return UserModule.userId; }
+
+  // mounted() { this.onRouteChange(); }
 
   acceptNewTopic() {
     if (!this.topic.title) {
@@ -159,6 +168,18 @@ class TopicCard {
       },
     );
   }
+
+  // @Watch("$route")
+  // onRouteChange({ query: { topic, materialsType } }) {
+  //   if (+topic === this.topic.id && materialsType) {
+  //     this.openedMaterials[materialsType] = true;
+  //     this.root.scrollIntoView({
+  //       block: "start",
+  //       inline: "nearest",
+  //       behavior: "smooth",
+  //     });
+  //   }
+  // }
 }
 
 export default TopicCard;

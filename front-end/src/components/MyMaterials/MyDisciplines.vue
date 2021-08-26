@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { getSubjects } from "@/api/subjects";
 import CustomText from "@/common/CustomText";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
@@ -52,7 +52,7 @@ import { UserModule } from "@/store";
     userId() { return UserModule.userId; },
   },
 })
-class MyDisciplines {
+class MyDisciplines extends Vue {
   mySubjects = null
   loading = false
 

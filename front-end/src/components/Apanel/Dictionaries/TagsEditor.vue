@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { Component, Prop } from "vue-property-decorator";
+import { Component, Prop, Vue } from "vue-property-decorator";
 
 import Tag from "./Tag.vue";
 import Forms from "./Forms.vue";
@@ -39,7 +39,7 @@ import Forms from "./Forms.vue";
   name: "DictionariesTagsEditor",
   components: { Tag, Forms },
 })
-class DictionariesTagsEditor {
+class DictionariesTagsEditor extends Vue {
   @Prop({ type: String, required: true }) type
   @Prop({ type: Array, required: true, default: () => ({}) }) tags
   @Prop() editingItem

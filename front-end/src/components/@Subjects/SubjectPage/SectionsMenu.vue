@@ -16,14 +16,14 @@
 </template>
 
 <script>
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 
 import { SubjectsModule } from "@/store";
 
 @Component({
   name: "SectionsMenu",
 })
-class SectionsMenu {
+class SectionsMenu extends Vue {
   get sections() { return SubjectsModule.currentSections; }
 
   scrollToSection(id) {

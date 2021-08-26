@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { Component } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { Message } from "element-ui";
 
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
@@ -123,7 +123,7 @@ import { SubjectsModule, UserModule } from "@/store";
     userId() { return UserModule.userId; },
   },
 })
-class SubjectsControl {
+class SubjectsControl extends Vue {
   SIZES = SIZES
   windowModal = false
   subjectForm = {
