@@ -46,7 +46,7 @@ import {
   editTopics,
   getTopics,
 } from "@/api/topic";
-import { deleteMaterial } from "@/api/material";
+
 import {
   getAddRequest,
   getDeleteRequest,
@@ -54,6 +54,7 @@ import {
   getFetchRequest,
   getOrderChangeRequest,
 } from "@/utils/mutators";
+
 import { hasPermission } from "@/utils/permissions";
 
 import TopicCard from "./TopicCard.vue";

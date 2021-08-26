@@ -1,45 +1,39 @@
 <template>
-  <div>
-    <div :class="$style.root">
-      <div :class="$style.header">
-        <router-link
-          :to="{ name: 'Subjects' }"
-          :class="$style.arrow"
+  <div :class="$style.root">
+    <div :class="$style.header">
+      <router-link
+        :to="{ name: 'Subjects' }"
+        :class="$style.arrow"
+      >
+        <i class="el-icon-arrow-left" />
+      </router-link>
+
+      <h1 :class="$style.title">
+        {{ subjectInfo.title }}
+      </h1>
+
+      <AZGuard
+        :permissions="['sections.post.all', {
+          codename: 'sections.post.self',
+          validator: () => userId === subjectOwnerId,
+        }]"
+      >
+        <el-button
+          type="text"
+          :class="$style.addButton"
+          @click="addSection"
         >
-          <i class="el-icon-arrow-left" />
-        </router-link>
-
-        <h1 :class="$style.title">
-          {{ subjectInfo.title }}
-        </h1>
-
-        <AZGuard
-          :permissions="['sections.post.all', {
-            codename: 'sections.post.self',
-            validator: () => userId === subjectOwnerId,
-          }]"
-        >
-          <el-button
-            type="text"
-            :class="$style.addButton"
-            @click="addSection"
-          >
-            + Добавить раздел
-          </el-button>
-        </AZGuard>
-      </div>
-
-      <div :class="$style.content">
-        <div :class="$style.menuWrapper">
-          <Menu :class="$style.menu" />
-        </div>
-
-        <SectionsCards :class="$style.sections" />
-      </div>
+          + Добавить раздел
+        </el-button>
+      </AZGuard>
     </div>
 
-    <div class="app-container">
-      <Subject />
+    <div :class="$style.content">
+      <div :class="$style.menuWrapper">
+        <Menu :class="$style.menu" />
+      </div>
+
+      <SectionsCards :class="$style.sections" />
     </div>
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.root">
+  <div>
     <Draggable
       :list="sections"
       v-bind="dragOptions"
@@ -9,6 +9,7 @@
       <transition-group type="transition" name="flip-list">
         <SectionCard
           v-for="section in sections"
+          :id="`section-${section.id}`"
           :key="section.id"
           v-model="openedCards[section.id]"
           :section-info="section"
@@ -64,7 +65,3 @@ class SectionsCards {
 
 export default SectionsCards;
 </script>
-
-<style lang="scss" module>
-.root {}
-</style>

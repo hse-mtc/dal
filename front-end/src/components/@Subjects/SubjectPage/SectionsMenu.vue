@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.menu">
-    <span :class="[$style.menuItem, $style.menuTitle]">
+    <span :class="$style.menuTitle">
       Все разделы
     </span>
     <span
@@ -8,6 +8,7 @@
       :id="section.id"
       :key="section.id"
       :class="$style.menuItem"
+      @click="scrollToSection(section.id)"
     >
       {{ section.title }}
     </span>
@@ -24,17 +25,32 @@ import { SubjectsModule } from "@/store";
 })
 class SectionsMenu {
   get sections() { return SubjectsModule.currentSections; }
+
+  scrollToSection(id) {
+    const section = document.getElementById(`section-${id}`);
+
+    if (section) {
+      section.scrollIntoView({
+        block: "start",
+        inline: "nearest",
+        behavior: "smooth",
+      });
+    }
+  }
 }
 
 export default SectionsMenu;
 </script>
 
 <style lang="scss" module>
+@import "@/styles/variables.scss";
+
 .menu {
   background-color: #f5f5f7;
   padding: 15px;
   border-radius: 15px;
 
+  &Title,
   &Item {
     display: block;
     margin-top: 10px;
@@ -46,6 +62,14 @@ export default SectionsMenu;
 
   &Title {
     font-weight: bold;
+  }
+
+  &Item {
+    cursor: pointer;
+
+    &:hover {
+      color: $darkBlue;
+    }
   }
 }
 </style>

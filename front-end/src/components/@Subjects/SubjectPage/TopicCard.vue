@@ -7,13 +7,12 @@
         <div>Тема №{{ topic.order + 1 }}</div>
 
         <div :class="$style.buttons">
-          <img
+          <svg-icon
             v-if="isEditing"
             :class="$style.button"
-            src="../../../assets/subject/accept.svg"
-            alt=""
+            icon-class="accept"
             @click="acceptNewTopic(topic.id)"
-          >
+          />
 
           <template v-else>
             <AZGuard
@@ -22,12 +21,11 @@
                 validator: () => userId === subjectOwnerId,
               }]"
             >
-              <img
+              <svg-icon
                 :class="$style.button"
-                src="../../../assets/subject/edit.svg"
-                alt=""
+                icon-class="edit"
                 @click="isEditing = true"
-              >
+              />
             </AZGuard>
             <AZGuard
               :permissions="['topics.delete.all', {
@@ -35,12 +33,11 @@
                 validator: () => userId === subjectOwnerId,
               }]"
             >
-              <img
+              <svg-icon
                 :class="$style.button"
-                src="../../../assets/subject/close.svg"
-                alt=""
+                icon-class="close"
                 @click="deleteTopic(topic.id)"
-              >
+              />
             </AZGuard>
           </template>
         </div>
@@ -82,18 +79,6 @@
         :topic-id="topic.id"
         @delete="$emit('deleteMaterial', $event)"
       />
-      <!-- <ClassMaterials
-        v-for="(variant, key) in (topic.class_materials || {})"
-        :key="`${topic.id}-${key}`"
-        :ref="key"
-        :opened="openedMaterials[key]"
-        :subject-owner-id="subjectOwnerId"
-        :title="key"
-        :highlight="key === highlight"
-        :topic="topic.id"
-        :materials="variant || []"
-        @click="openedMaterials[key] = !openedMaterials[key]"
-      /> -->
     </div>
   </div>
 </template>
@@ -103,7 +88,6 @@ import { Component, Prop } from "vue-property-decorator";
 
 import { SubjectsModule, UserModule } from "@/store";
 
-import { getDeleteRequest } from "@/utils/mutators";
 import ClassMaterials from "./ClassMaterials.vue";
 
 @Component({
@@ -197,6 +181,7 @@ export default TopicCard;
       margin-left: auto;
 
       .button {
+        font-size: 24px;
         cursor: pointer;
         transition: all 0.2s ease-in-out;
 

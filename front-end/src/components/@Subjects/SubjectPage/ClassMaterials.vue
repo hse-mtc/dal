@@ -33,7 +33,7 @@
 
         <el-dialog
           :visible.sync="dialogVisible"
-          width="30%"
+          width="300px"
           :before-close="handleClose"
         >
           <FileInput
