@@ -45,12 +45,12 @@
                   @click="handleDelete"
                 >
                   <div style="display: flex; align-items: center">
-                    <img
-                      class="grow"
-                      src="@/assets/subject/close.svg"
-                      alt=""
-                      style="margin-right: 8px"
-                    >
+                    <svg-icon
+                      icon-class="close"
+                      style="font-size: 24px; margin-right: 8px"
+                      @click="deleteSection"
+                    />
+
                     Удалить
                   </div>
                 </CtaButton>

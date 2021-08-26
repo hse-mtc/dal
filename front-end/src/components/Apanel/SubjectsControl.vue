@@ -4,14 +4,13 @@
       <el-col :span="24">
         <div class="d-flex align-items-center justify-content-end">
           <AZGuard :permissions="['subjects.post.all', 'subjects.post.self']">
-            <CustomText
-              variant="paragraph"
-              :custom-style="{ color: '#409EFF', cursor: 'pointer' }"
+            <el-button
+              type="text"
+              :class="$style.addButton"
+              @click="windowModal = true"
             >
-              <div @click="windowModal = true">
-                + Добавить дисциплину
-              </div>
-            </CustomText>
+              + Добавить дисциплину
+            </el-button>
           </AZGuard>
         </div>
       </el-col>
@@ -39,19 +38,18 @@
         column-key="buttons"
       >
         <template #body="{ data }">
-          <div class="buttons">
+          <div :class="$style.buttons">
             <AZGuard
               :permissions="['subjects.patch.all', {
                 codename: 'subjects.patch.self',
                 validator: () => data.user.id === userId,
               }]"
             >
-              <img
-                class="grow"
-                src="../../assets/subject/edit.svg"
-                alt=""
+              <svg-icon
+                :class="$style.button"
+                icon-class="edit"
                 @click="editSubject(data.id)"
-              >
+              />
             </AZGuard>
             <AZGuard
               :permissions="['subjects.delete.all', {
@@ -59,12 +57,11 @@
                 validator: () => data.user.id === userId,
               }]"
             >
-              <img
-                class="grow"
-                src="../../assets/subject/close.svg"
-                alt=""
+              <svg-icon
+                :class="$style.button"
+                icon-class="close"
                 @click="deleteSubjectHandler(data.id)"
-              >
+              />
             </AZGuard>
           </div>
         </template>
@@ -202,23 +199,28 @@ class SubjectsControl {
 export default SubjectsControl;
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" module>
 @import "@/styles/variables.scss";
 
+.addButton {
+  display: block;
+  margin: 0 0 0 auto;
+  font-size: 18px;
+  color: #0c4b9a;
+}
+
 .buttons {
-  z-index: 4;
-  align-items: center;
-  justify-content: center;
-  img {
+  .button {
+    font-size: 24px;
     cursor: pointer;
-    margin-left: $s;
+    transition: all 0.2s ease-in-out;
 
-    &.grow {
-      transition: all 0.2s ease-in-out;
+    &:nth-child(2) {
+      margin-left: 10px;
+    }
 
-      &:hover {
-        transform: scale(1.2);
-      }
+    &:hover {
+      transform: scale(1.2);
     }
   }
 }

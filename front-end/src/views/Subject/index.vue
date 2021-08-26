@@ -46,12 +46,9 @@ import Menu from "@/components/@Subjects/SubjectPage/SectionsMenu.vue";
 import SectionCard from "@/components/@Subjects/SubjectPage/SectionCard.vue";
 import SectionsCards from "@/components/@Subjects/SubjectPage/SectionsCards.vue";
 
-import Subject from "../../components/Subject/Subject.vue";
-
 @Component({
   name: "SubjectPage",
   components: {
-    Subject,
     Menu,
     SectionCard,
     SectionsCards,

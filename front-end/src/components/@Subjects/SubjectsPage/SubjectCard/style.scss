@@ -61,8 +61,10 @@
   .owner {
     display: flex;
     align-items: center;
-    img {
+
+    .icon {
       margin-right: $s;
+      font-size: 32px;
     }
   }
 }

@@ -20,7 +20,7 @@
 import { UserModule } from "@/store";
 import { Component, Prop } from "vue-property-decorator";
 
-import SubjectCard from "./SubjectCard/SubjectCard.vue";
+import SubjectCard from "./SubjectCard/index.vue";
 
 @Component({
   name: "Subjects",

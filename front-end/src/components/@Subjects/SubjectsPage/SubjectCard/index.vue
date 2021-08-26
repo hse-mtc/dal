@@ -18,7 +18,11 @@
       </CustomText>
     </div>
     <div class="owner">
-      <img src="@/assets/subject/owner.svg" alt="">
+      <svg-icon
+        icon-class="owner"
+        class="icon"
+      />
+
       {{ owner }}
     </div>
   </div>
