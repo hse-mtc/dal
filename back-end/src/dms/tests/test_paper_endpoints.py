@@ -9,29 +9,6 @@ from dms.models.common import Author, Publisher
 
 
 @pytest.fixture(scope="function")
-def author_data():
-    return {
-        "surname": "last",
-        "name": "first",
-        "patronymic": "patronymic",
-    }
-
-
-@pytest.fixture(scope="function")
-def publisher_data():
-    return {
-        "name": "publisher name",
-    }
-
-
-@pytest.fixture(scope="function")
-def category_data():
-    return {
-        "title": "category name",
-    }
-
-
-@pytest.fixture(scope="function")
 def paper_data():
     return {
         "content": BytesIO(b"Some text"),
@@ -56,9 +33,9 @@ def test_trailing_slash_redirect(su_client):
 @pytest.mark.django_db
 def test_post_papers_creates_new_paper(su_client, author_data, publisher_data,
                                        category_data, paper_data):
-    author_id_ = Author.objects.create(**author_data).id
-    publisher_id_ = Publisher.objects.create(**publisher_data).id
-    category_id_ = Category.objects.create(**category_data).id
+    author_id_ = Author.objects.create(**author_data()).id
+    publisher_id_ = Publisher.objects.create(**publisher_data()).id
+    category_id_ = Category.objects.create(**category_data()).id
 
     paper_data |= {
         "authors": [author_id_],
