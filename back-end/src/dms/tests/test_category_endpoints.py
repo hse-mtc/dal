@@ -4,44 +4,10 @@ from operator import itemgetter
 
 import pytest
 
-from django.core.files.base import ContentFile
-from django.contrib.auth import get_user_model
-
-from dms.models.documents import File
 from dms.models.papers import (
     Category,
     Paper,
 )
-
-
-@pytest.fixture(scope="function")
-def category_data():
-
-    def call_me(index: int = 0) -> dict:
-        return {
-            "title": f"category_{index}",
-        }
-
-    return call_me
-
-
-@pytest.fixture(scope="function")
-def file():
-    name = "name"
-    content = ContentFile("some content here", name=name)
-    instance = File.objects.create(content=content, name=name)
-    instance.save()
-    return instance
-
-
-@pytest.fixture(scope="function")
-def user():
-    instance = get_user_model().objects.create_user(
-        email="user@mail.com",
-        password="password",
-    )
-    instance.save()
-    return instance
 
 
 @pytest.mark.django_db
@@ -116,7 +82,7 @@ def test_delete_category_with_papers_fails(
 ):
     category = Category.objects.create(**category_data())
     paper = Paper.objects.create(
-        file=file,
+        file=file(),
         category=category,
         user=user,
     )
