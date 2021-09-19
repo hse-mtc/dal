@@ -1,6 +1,6 @@
 # pylint: disable=redefined-outer-name
+import random
 
-from io import BytesIO
 import pytest
 
 from dms.models.papers import Category
@@ -8,17 +8,24 @@ from dms.models.documents import File
 from dms.models.common import Author, Publisher
 
 
-@pytest.fixture(scope="function")
-def paper_data():
-    return {
-        "content": BytesIO(b"Some text"),
-        "tags": {"tag 1", "tag 2"},
-        "title": "paper title",
-        "annotation": "some annotation",
-        "upload_date": "2021-09-17",
-        "publication_date": "2021-09-17",
-        "is_binned": False
-    }
+@pytest.fixture
+def non_string_publication_data(author_data, publisher_data, category_data):
+
+    def call_me(num_authors: int = 1, num_publishers: int = 1):
+
+        return {
+            "authors": [
+                Author.objects.create(**author_data()).id
+                for _ in range(num_authors)
+            ],
+            "publishers": [
+                Publisher.objects.create(**publisher_data()).id
+                for _ in range(num_publishers)
+            ],
+            "category": Category.objects.create(**category_data()).id
+        }
+
+    return call_me
 
 
 @pytest.mark.django_db
@@ -31,18 +38,11 @@ def test_trailing_slash_redirect(su_client):
 
 
 @pytest.mark.django_db
-def test_post_papers_creates_new_paper(su_client, author_data, publisher_data,
-                                       category_data, paper_data):
-    author_id_ = Author.objects.create(**author_data()).id
-    publisher_id_ = Publisher.objects.create(**publisher_data()).id
-    category_id_ = Category.objects.create(**category_data()).id
-
-    paper_data |= {
-        "authors": [author_id_],
-        "publishers": [publisher_id_],
-        "category": category_id_
-    }
-    response = su_client.post("/api/dms/papers/", paper_data)
+def test_post_papers_creates_new_paper(su_client, paper_data,
+                                       non_string_publication_data):
+    data = paper_data()
+    data |= non_string_publication_data()
+    response = su_client.post("/api/dms/papers/", data)
     assert response.status_code == 201
     id_ = response.data["id"]
 
@@ -51,14 +51,42 @@ def test_post_papers_creates_new_paper(su_client, author_data, publisher_data,
 
     file = File.objects.get(
         id=response.data["file"]["content"].rsplit("/", maxsplit=1)[-1])
-    assert file.content.open().read() == paper_data["content"].getvalue()
     to_compare_fields = [
         "title", "annotation", "upload_date", "publication_date", "is_binned",
         "category", "authors", "publishers"
     ]
+    assert file.content.open("r").read() == data["content"].open("r").read()
     assert {
         field_name: response.data[field_name]
         for field_name in to_compare_fields
-    } == {
-        field_name: paper_data[field_name] for field_name in to_compare_fields
-    }
+    } == {field_name: data[field_name] for field_name in to_compare_fields}
+
+
+@pytest.mark.django_db
+def test_get_searches_papers_by_title_and_annotation(
+        su_client, paper_data, non_string_publication_data):
+    data = paper_data(title="Танки Великой Отечественной войны")
+    non_string_data = non_string_publication_data()
+    data |= non_string_data
+    response = su_client.post("/api/dms/papers/", data)
+    assert response.status_code == 201
+
+    for _ in range(5):
+        data = paper_data(
+            title=random.choice(["Тактика боя", "Устав", "Справочник офицера"]))
+        data |= non_string_data
+        response = su_client.post("/api/dms/papers/", data)
+        assert response.status_code == 201
+
+    response = su_client.get("/api/dms/papers/", {"search": "танк"})
+    assert response.status_code == 200
+    assert len(response.data) == 1
+
+    data = paper_data(title="Танки США и NATO")
+    data |= non_string_data
+    response = su_client.post("/api/dms/papers/", data)
+    assert response.status_code == 201
+
+    response = su_client.get("/api/dms/papers/", {"search": "танк"})
+    assert response.status_code == 200
+    assert len(response.data) == 2

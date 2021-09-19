@@ -1,4 +1,5 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name
+from typing import List
 
 import pytest
 
@@ -8,7 +9,6 @@ from django.contrib.auth import get_user_model
 from dms.models.documents import File
 
 from auth.models import User
-
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
@@ -93,3 +93,30 @@ def user():
     )
     instance.save()
     return instance
+
+
+@pytest.fixture
+def paper_data(file):
+
+    def call_me(file_name: str = "filename",
+                file_content: str = "file content",
+                tags: List[str] = None,
+                title: str = "paper title",
+                annotation: str = "some annotation",
+                upload_date: str = "2021-09-17",
+                publication_date: str = "2021-09-17",
+                is_binned: bool = False):
+        if tags is None:
+            tags = []
+
+        return {
+            "content": ContentFile(file_content, name=file_name),
+            "tags": tags,
+            "title": title,
+            "annotation": annotation,
+            "upload_date": upload_date,
+            "publication_date": publication_date,
+            "is_binned": is_binned
+        }
+
+    return call_me
