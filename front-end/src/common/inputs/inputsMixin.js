@@ -13,7 +13,6 @@ import InputsBase from "./InputsBase.vue";
 })
 class InputsMixin extends Vue {
   @ModelSync("modelValue", "change", { required: true }) value
-  @Prop({ required: true }) modelValue
   @Prop({ default: null }) title
   @Prop({ default: null }) annotation
   @Prop({ type: String, default: "" }) wrapperClassName
