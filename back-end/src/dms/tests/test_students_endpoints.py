@@ -9,8 +9,8 @@ def test_get_students_returns_list(su_client, student_data):
 
     count = 3
     for _ in range(count):
-        s, data = student_data()
-        s.save()
+        stud, data = student_data()
+        stud.save()
 
     response = su_client.get("/api/lms/students/")
     assert response.status_code == 200
