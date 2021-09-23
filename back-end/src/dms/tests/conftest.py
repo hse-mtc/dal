@@ -116,6 +116,7 @@ def paper_data(file):
                 is_binned: bool = False):
         if tags is None:
             tags = []
+        # pylint: disable=too-many-locals
 
         return {
             "content": ContentFile(file_content, name=file_name),
@@ -132,7 +133,6 @@ def paper_data(file):
     return call_me
 
 
-<<<<<<< HEAD
 @pytest.fixture()
 def image(tmp_path):
 
@@ -152,8 +152,6 @@ def image(tmp_path):
     return call_me
 
 
-=======
->>>>>>> 93be1103... Added first test
 @pytest.fixture
 def cover_data(image):
 
