@@ -1,20 +1,12 @@
-from collections import OrderedDict
 from operator import itemgetter
 
 import pytest
-from django.utils.datetime_safe import datetime
-from rest_framework.fields import SerializerMethodField
 
-from common.models.persons import Photo, BirthInfo
-from dms.models.common import Author
-from lms.models.applicants import ApplicationProcess
-from lms.models.common import Milgroup
-from lms.models.students import Student, Skill
-from lms.models.universities import UniversityInfo
+from lms.models.students import Student
 
 
 @pytest.fixture
-def test_student():
+def data_student():
 
     def call_me(
         name: str = "first",
@@ -61,7 +53,7 @@ def test_get_students_returns_list(su_client, test_student):
 
     count = 3
     for _ in range(count):
-        s, data = test_student()
+        s, data = data_student()
         s.save()
 
     response = su_client.get("/api/lms/students/")
