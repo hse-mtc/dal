@@ -48,7 +48,7 @@ def data_student():
 
 
 @pytest.mark.django_db
-def test_get_students_returns_list(su_client, test_student):
+def test_get_students_returns_list(su_client, data_student):
     # pylint: disable=too-many-locals
 
     count = 3
