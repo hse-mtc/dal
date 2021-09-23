@@ -2,6 +2,7 @@ from operator import itemgetter
 
 import pytest
 
+
 @pytest.mark.django_db
 def test_get_students_returns_list(su_client, student_data):
     # pylint: disable=too-many-locals
