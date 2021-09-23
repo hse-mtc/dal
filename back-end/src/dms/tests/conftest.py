@@ -132,6 +132,7 @@ def paper_data(file):
     return call_me
 
 
+<<<<<<< HEAD
 @pytest.fixture()
 def image(tmp_path):
 
@@ -151,6 +152,8 @@ def image(tmp_path):
     return call_me
 
 
+=======
+>>>>>>> 93be1103... Added first test
 @pytest.fixture
 def cover_data(image):
 
