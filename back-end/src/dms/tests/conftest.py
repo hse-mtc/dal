@@ -11,6 +11,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
 from auth.models import User
+from lms.models.students import Student
 
 from dms.models.common import Author, Publisher
 from dms.models.documents import File
