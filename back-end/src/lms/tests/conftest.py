@@ -274,9 +274,11 @@ def student_application_process():
 
 @pytest.fixture
 def student_photo():
+
     def call_me() -> Photo:
         photo_ = Photo()
-        photo_.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' / 'data' / 'images' / 'test_photo.png')
+        photo_.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' /
+                                  'data' / 'images' / 'test_photo.png')
         return photo_
 
     return call_me
