@@ -109,7 +109,6 @@ def paper_data(file):
                 is_binned: bool = False):
         if tags is None:
             tags = []
-        # pylint: disable=too-many-locals
 
         return {
             "content": ContentFile(file_content, name=file_name),
