@@ -5,18 +5,17 @@ import pytest
 
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 
-from dms.models.documents import File
+from PIL import Image
 
 from auth.models import User
 
-from django.core.files.uploadedfile import SimpleUploadedFile
-
 from dms.models.books import Cover
 from dms.models.common import Author, Publisher
-from common.models.subjects import Subject
+from dms.models.documents import File
 
-from PIL import Image
+from common.models.subjects import Subject
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
@@ -132,36 +131,38 @@ def paper_data(file):
 
 @pytest.fixture()
 def image(tmp_path):
+
     def call_me(name: str = "image.png") -> SimpleUploadedFile:
-        image =  Image.new('RGB', size=(1, 1))
-        dir = tmp_path / "sub"
-        dir.mkdir(parents=True, exist_ok=True)
-        path = dir / name
+        image = Image.new("RGB", size=(1, 1))
+        sub_dir = tmp_path / "sub"
+        sub_dir.mkdir(parents=True, exist_ok=True)
+        path = sub_dir / name
         image.save(str(path))
-        return SimpleUploadedFile(name=name, content=open(path, 'rb').read(), content_type='image/png')
+        content = ""
+        with open(path, "rb") as file:
+            content = file.read()
+        return SimpleUploadedFile(name=name,
+                                  content=content,
+                                  content_type="image/png")
 
     return call_me
 
 
 @pytest.fixture
 def cover_data(image):
+
     def call_me(name: str = "image.png"):
-        return {
-            'image': image(name)
-        }
-    
+        return {"image": image(name)}
+
     return call_me
 
 
 @pytest.fixture
 def subject_data(user):
+
     def call_me(title: str = "title",
                 annotation: str = "annotation") -> SimpleUploadedFile:
-        return {
-            'title': title,
-            'annotation': annotation,
-            'user': user
-        }
+        return {"title": title, "annotation": annotation, "user": user}
 
     return call_me
 
@@ -175,7 +176,7 @@ def book_data(image):
                 publisher_data,
                 subject_data,
                 file_name: str = "filename",
-                file_content: str = "file content", 
+                file_content: str = "file content",
                 image_name: str = "image.png"):
         cover = Cover.objects.create(**cover_data())
         author = Author.objects.create(**author_data())
@@ -190,15 +191,9 @@ def book_data(image):
             "publication_year": 32767,
             "page_count": 32767,
             "cover": cover.id,
-            "authors": [
-                author.id
-            ],
-            "publishers": [
-                publisher.id
-            ],
-            "subjects": [
-                subject.id
-            ]
+            "authors": [author.id],
+            "publishers": [publisher.id],
+            "subjects": [subject.id]
         }
 
     return call_me

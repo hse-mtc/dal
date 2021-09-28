@@ -28,6 +28,7 @@ psycopg2-binary = "2.8.6"
 requests = "2.25"
 uvicorn = "0.13.4"
 xlsxwriter = "1.4"
+numpy = "*"
 
 [requires]
 python_version = "3.9.1"
