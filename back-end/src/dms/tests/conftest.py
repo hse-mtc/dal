@@ -10,6 +10,14 @@ from dms.models.documents import File
 
 from auth.models import User
 
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from dms.models.books import Cover
+from dms.models.common import Author, Publisher
+from common.models.subjects import Subject
+
+from PIL import Image
+
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
 
@@ -117,6 +125,80 @@ def paper_data(file):
             "upload_date": upload_date,
             "publication_date": publication_date,
             "is_binned": is_binned
+        }
+
+    return call_me
+
+
+@pytest.fixture()
+def image(tmp_path):
+    def call_me(name: str = "image.png") -> SimpleUploadedFile:
+        image =  Image.new('RGB', size=(1, 1))
+        dir = tmp_path / "sub"
+        dir.mkdir(parents=True, exist_ok=True)
+        path = dir / name
+        image.save(str(path))
+        return SimpleUploadedFile(name=name, content=open(path, 'rb').read(), content_type='image/png')
+
+    return call_me
+
+
+@pytest.fixture
+def cover_data(image):
+    def call_me(name: str = "image.png"):
+        return {
+            'image': image(name)
+        }
+    
+    return call_me
+
+
+@pytest.fixture
+def subject_data(user):
+    def call_me(title: str = "title",
+                annotation: str = "annotation") -> SimpleUploadedFile:
+        return {
+            'title': title,
+            'annotation': annotation,
+            'user': user
+        }
+
+    return call_me
+
+
+@pytest.fixture()
+@pytest.mark.django_db
+def book_data(image):
+    # pylint: disable=too-many-arguments
+    def call_me(cover_data,
+                author_data,
+                publisher_data,
+                subject_data,
+                file_name: str = "filename",
+                file_content: str = "file content", 
+                image_name: str = "image.png"):
+        cover = Cover.objects.create(**cover_data())
+        author = Author.objects.create(**author_data())
+        publisher = Publisher.objects.create(**publisher_data())
+        subject = Subject.objects.create(**subject_data())
+        return {
+            "content": ContentFile(file_content, name=file_name),
+            "image": image(image_name),
+            "title": "string",
+            "annotation": "string",
+            "upload_date": "2021-09-23",
+            "publication_year": 32767,
+            "page_count": 32767,
+            "cover": cover.id,
+            "authors": [
+                author.id
+            ],
+            "publishers": [
+                publisher.id
+            ],
+            "subjects": [
+                subject.id
+            ]
         }
 
     return call_me
