@@ -4,7 +4,6 @@ import pytest
 from auth.models import User
 from lms.models.students import Student
 
-
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
 
@@ -34,6 +33,54 @@ def su_client(superuser):
     )
     access_token = response.data["access"]
     return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
+
+@pytest.fixture
+def student_status():
+    pass
+
+
+@pytest.fixture
+def student_post():
+    pass
+
+
+def student_milgroup():
+    pass
+
+
+def student_milspecialty():
+    pass
+
+
+def student_skills():
+    pass
+
+
+def student_passport():
+    pass
+
+
+def student_family():
+    pass
+
+
+def student_recruitment_office():
+    pass
+
+
+def student_university_info():
+    pass
+
+
+def student_application_process():
+    pass
+
+
+@pytest.fixture
+def student_photo():
+    pass
+
 
 @pytest.fixture
 def student_data():
