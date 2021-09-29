@@ -1,5 +1,6 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name
 from typing import List
+import datetime
 
 import pytest
 
@@ -109,7 +110,7 @@ def paper_data(file):
                 file_content: str = "file content",
                 tags: List[str] = None,
                 title: str = "paper title",
-                annotation: str = "some annotation",
+                annotation: str = str(datetime.date.today()),
                 upload_date: str = "2021-09-17",
                 publication_date: str = "2021-09-17",
                 is_binned: bool = False):
@@ -171,13 +172,20 @@ def subject_data(user):
 @pytest.mark.django_db
 def book_data(image):
     # pylint: disable=too-many-arguments
-    def call_me(cover_data,
-                author_data,
-                publisher_data,
-                subject_data,
-                file_name: str = "filename",
-                file_content: str = "file content",
-                image_name: str = "image.png"):
+    def call_me(
+        cover_data,
+        author_data,
+        publisher_data,
+        subject_data,
+        file_name: str = "filename",
+        file_content: str = "file content",
+        image_name: str = "image.png",
+        title: str = "title",
+        annotation: str = "annotation",
+        upload_date: str = str(datetime.date.today()),
+        publication_year: int = 2021,
+        page_count: int = 100,
+    ):
         cover = Cover.objects.create(**cover_data())
         author = Author.objects.create(**author_data())
         publisher = Publisher.objects.create(**publisher_data())
@@ -185,15 +193,17 @@ def book_data(image):
         return {
             "content": ContentFile(file_content, name=file_name),
             "image": image(image_name),
-            "title": "string",
-            "annotation": "string",
-            "upload_date": "2021-09-23",
-            "publication_year": 32767,
-            "page_count": 32767,
-            "cover": cover.id,
-            "authors": [author.id],
-            "publishers": [publisher.id],
-            "subjects": [subject.id]
+            "data": {
+                "title": title,
+                "annotation": annotation,
+                "upload_date": upload_date,
+                "publication_year": publication_year,
+                "page_count": page_count,
+                "cover": str(cover.id),
+                "authors": [author.id],
+                "publishers": [publisher.id],
+                "subjects": [subject.id]
+            }
         }
 
     return call_me
