@@ -111,12 +111,14 @@ def paper_data(file):
 
         return {
             "content": ContentFile(file_content, name=file_name),
-            "tags": tags,
-            "title": title,
-            "annotation": annotation,
-            "upload_date": upload_date,
-            "publication_date": publication_date,
-            "is_binned": is_binned
+            "data": {
+                "tags": tags,
+                "title": title,
+                "annotation": annotation,
+                "upload_date": upload_date,
+                "publication_date": publication_date,
+                "is_binned": is_binned
+            }
         }
 
     return call_me
