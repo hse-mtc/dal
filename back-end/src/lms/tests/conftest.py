@@ -4,6 +4,7 @@ from datetime import datetime
 import pytest
 
 from auth.models import User
+from lms.models.students import Student
 from lms.models.lessons import Room, Lesson
 from lms.models.common import Milfaculty, Milgroup
 from lms.models.teachers import Teacher, Rank
@@ -181,3 +182,45 @@ def create_test_user(email: str = "test@email.ru", password: str = "1234"):
     )
 
     return user
+
+
+@pytest.fixture
+def student_data():
+
+    def call_me(
+        name: str = "first",
+        surname: str = "second",
+        patronymic: str = "patronymic",
+    ) -> tuple:
+
+        s = Student()
+        s.name = name
+        s.surname = surname
+        s.patronymic = patronymic
+        return s, {
+            "fullname": s.full_name,
+            "name": s.name,
+            "surname": s.surname,
+            "patronymic": s.patronymic,
+            "photo": s.photo,
+            "milgroup": s.milgroup,
+            "birth_info": s.birth_info,
+            "university_info": s.university_info,
+            "application_process": s.application_process,
+            "skills": [],
+            "contact_info": s.contact_info,
+            "citizenship": s.citizenship,
+            "permanent_address": s.permanent_address,
+            "surname_genitive": s.surname_genitive,
+            "name_genitive": s.name_genitive,
+            "patronymic_genitive": s.patronymic_genitive,
+            "status": s.status,
+            "post": s.post,
+            "user": s.user,
+            "milspecialty": s.milspecialty,
+            "passport": s.passport,
+            "recruitment_office": s.recruitment_office,
+            "family": []
+        }
+
+    return call_me
