@@ -97,6 +97,7 @@ def user():
 
 @pytest.fixture
 def paper_data(file):
+
     # pylint: disable=too-many-arguments
     def call_me(file_name: str = "filename",
                 file_content: str = "file content",

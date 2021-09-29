@@ -1,4 +1,5 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name, too-many-locals, too-many-arguments
+<<<<<<< HEAD
 import base64
 from io import BytesIO, StringIO
 
@@ -10,6 +11,12 @@ from auth.models import User
 from common.models.persons import Photo
 from lms.models.students import Student
 from PIL import Image
+=======
+import pytest
+
+from auth.models import User
+from lms.models.students import Student
+>>>>>>> 4174aee5a3864ae77e246aff341ff0d279a55bd5
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
@@ -103,11 +110,13 @@ def student_photo():
 
 
 @pytest.fixture
-def student_data(student_photo):
+def student_data():
 
-    def call_me(name: str = "first",
-                surname: str = "second",
-                patronymic: str = "patronymic") -> tuple:
+    def call_me(
+        name: str = "first",
+        surname: str = "second",
+        patronymic: str = "patronymic",
+    ) -> tuple:
 
         s = Student()
         s.name = name
