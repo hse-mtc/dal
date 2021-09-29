@@ -110,7 +110,7 @@ def paper_data(file):
                 file_content: str = "file content",
                 tags: List[str] = None,
                 title: str = "paper title",
-                annotation: str = str(datetime.date.today()),
+                annotation: str = "some_annotation",
                 upload_date: str = "2021-09-17",
                 publication_date: str = "2021-09-17",
                 is_binned: bool = False):
