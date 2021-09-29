@@ -7,11 +7,11 @@
         :label="milfaculty.title"
       >
         <div class="image-container">
-          <img src="@/assets/uniform-picker/base.svg" alt="Ошибка" />
+          <img src="@/assets/uniform-picker/base.svg" alt="Ошибка">
           <!-- Headdress -->
-          <img :src="HEADDRESSES[uniform.headdress]" alt="" class="above" />
+          <img :src="HEADDRESSES[uniform.headdress]" alt="" class="above">
           <!-- Outerwear -->
-          <img :src="OUTERWEARS[uniform.outerwear]" alt="" class="above" />
+          <img :src="OUTERWEARS[uniform.outerwear]" alt="" class="above">
           <el-button
             v-if="hasPermission(getPermissions(milfaculty.id, 'patch'))"
             icon="el-icon-caret-left"
@@ -57,7 +57,9 @@
 
 <script>
 import { getUniforms, createUniform, changeUniform } from "@/api/uniform";
-import { getError, postError, patchSuccess, patchError } from "@/utils/message";
+import {
+  getError, postError, patchSuccess, patchError,
+} from "@/utils/message";
 import { hasPermission } from "@/utils/permissions";
 
 import { UserModule, ReferenceModule } from "@/store";
@@ -80,9 +82,7 @@ export default {
       return ReferenceModule.milfaculties;
     },
     milfacultiesFiltered() {
-      return this.milfaculties.filter((x) =>
-        hasPermission(this.getPermissions(x.id, "get"))
-      );
+      return this.milfaculties.filter(x => hasPermission(this.getPermissions(x.id, "get")));
     },
   },
   created() {
@@ -103,7 +103,7 @@ export default {
       getUniforms({
         milfaculty,
       })
-        .then((response) => {
+        .then(response => {
           if (response.data.length === 0) {
             // Create
             createUniform({
@@ -111,17 +111,17 @@ export default {
               outerwear: "JA",
               milfaculty,
             })
-              .then((resp) => {
+              .then(resp => {
                 this.uniform = resp.data;
               })
-              .catch((err) => {
+              .catch(err => {
                 postError("формы одежды", err.response.status);
               });
           } else {
             [this.uniform] = response.data;
           }
         })
-        .catch((err) => {
+        .catch(err => {
           getError("информации о форме одежды", err.response.status);
         });
     },
@@ -141,12 +141,12 @@ export default {
           headdress: this.uniform.headdress,
           outerwear: this.uniform.outerwear,
         },
-        this.uniform.id
+        this.uniform.id,
       )
         .then(() => {
           patchSuccess("формы одежды");
         })
-        .catch((err) => {
+        .catch(err => {
           patchError("формы одежды", err.response.status);
         });
     },
