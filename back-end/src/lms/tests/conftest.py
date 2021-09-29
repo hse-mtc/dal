@@ -1,8 +1,15 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name, too-many-locals, too-many-arguments
+import base64
+from io import BytesIO, StringIO
+
 import pytest
 
+from conf.settings import BASE_DIR
+
 from auth.models import User
+from common.models.persons import Photo
 from lms.models.students import Student
+from PIL import Image
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
@@ -87,28 +94,36 @@ def student_application_process():
 
 @pytest.fixture
 def student_photo():
-    pass
+    def call_me() -> Photo:
+        photo_ = Photo()
+        photo_.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' / 'data' / 'images' / 'test_photo.png')
+        return photo_
+
+    return call_me
 
 
 @pytest.fixture
-def student_data():
+def student_data(student_photo):
 
-    def call_me(
-        name: str = "first",
-        surname: str = "second",
-        patronymic: str = "patronymic",
-    ) -> tuple:
+    def call_me(name: str = "first",
+                surname: str = "second",
+                patronymic: str = "patronymic") -> tuple:
 
         s = Student()
         s.name = name
         s.surname = surname
         s.patronymic = patronymic
+
+        buffered = BytesIO()
+        student_photo().image.save(buffered, format="PNG")
+        photo_base64 = base64.b64encode(buffered.getvalue())
+
         return s, {
             "fullname": s.full_name,
             "name": s.name,
             "surname": s.surname,
             "patronymic": s.patronymic,
-            "photo": s.photo,
+            "photo": photo_base64,
             "milgroup": s.milgroup,
             "birth_info": s.birth_info,
             "university_info": s.university_info,

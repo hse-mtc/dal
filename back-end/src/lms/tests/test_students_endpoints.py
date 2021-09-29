@@ -22,4 +22,6 @@ def test_get_students_returns_list(su_client, student_data):
 
     for id_, student in enumerate(response.data, start=min_id):
         data["id"] = id_
+        # Сервер не возвращает фото
+        data["photo"] = None
         assert student == data
