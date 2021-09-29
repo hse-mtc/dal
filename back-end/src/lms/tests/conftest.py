@@ -191,6 +191,9 @@ def create_test_user(email: str = "test@email.ru", password: str = "1234"):
 
     return user
 
+from auth.models import User
+from lms.models.students import Student
+
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
 
