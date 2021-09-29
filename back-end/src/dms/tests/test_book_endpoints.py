@@ -1,29 +1,70 @@
 # pylint: disable=redefined-outer-name
+import json
+
+from uuid import UUID
+
 import pytest
 
-from PIL import Image
+from django.test.client import BOUNDARY, MULTIPART_CONTENT, encode_multipart
+from django.core.files.base import ContentFile
 
-import numpy as np
+from PIL import Image, ImageChops
 
 from dms.models.documents import File
 from dms.models.books import Cover
 
 
-def assert_images_equal(image_1_path: str, image_2_path):
+def dump_data(data):
+    json_data = data.copy()
+    json_data["data"] = json.dumps(json_data["data"])
+    return json_data
+
+
+def send_create_request(su_client, data):
+    create_response = su_client.post("/api/dms/books/", data=dump_data(data))
+    assert create_response.status_code == 201
+    return create_response
+
+
+def assert_images_equal(image_1_path: str, image_2_path: str):
     with Image.open(image_1_path) as img1, Image.open(image_2_path) as img2:
         # Convert to same mode and size for comparison
         img2 = img2.convert(img1.mode)
         img2 = img2.resize(img1.size)
 
-        sum_sq_diff = np.sum((np.asarray(img1).astype("float") -
-                              np.asarray(img2).astype("float"))**2)
+        diff = ImageChops.difference(img1, img2)
 
-        if sum_sq_diff == 0:
-            # Images are exactly the same
-            pass
-        else:
-            normalized_sum_sq_diff = sum_sq_diff / np.sqrt(sum_sq_diff)
-            assert normalized_sum_sq_diff < 0.001
+        assert not diff.getbbox()
+
+
+def assert_book_data_equal(su_client, original_data, book_id):
+    get_response = su_client.get(f"/api/dms/books/{book_id}/")
+    assert get_response.status_code == 200
+
+    response_data = get_response.data
+    file = File.objects.get(id=response_data["file"]["content"].rsplit(
+        "/", maxsplit=1)[-1].rsplit("_", maxsplit=1)[0])
+    to_compare_fields = [
+        "title", "annotation", "upload_date", "publication_year", "page_count",
+        "authors", "publishers", "subjects"
+    ]
+
+    image = ""
+    if isinstance(response_data["cover"], UUID):
+        image = Cover.objects.get(id=response_data["cover"])
+    else:
+        image = Cover.objects.get(
+            id=response_data["cover"]["image"].rsplit("/", maxsplit=1)[-1])
+    assert_images_equal(original_data["image"], image.image)
+    assert file.content.open("r").read() == original_data["content"].open(
+        "r").read()
+    assert {
+        field_name: response_data[field_name]
+        for field_name in to_compare_fields
+    } == {
+        field_name: original_data["data"][field_name]
+        for field_name in to_compare_fields
+    }
 
 
 @pytest.mark.django_db
@@ -31,27 +72,59 @@ def assert_images_equal(image_1_path: str, image_2_path):
 def test_post_books_creates_new_book(su_client, book_data, cover_data,
                                      author_data, publisher_data, subject_data):
     data = book_data(cover_data, author_data, publisher_data, subject_data)
-    create_response = su_client.post("/api/dms/books/", data)
-    assert create_response.status_code == 201
+    create_response = send_create_request(su_client, data)
 
     book_id = create_response.data["id"]
-    get_response = su_client.get(f"/api/dms/books/{book_id}/")
-    assert get_response.status_code == 200
+    assert_book_data_equal(su_client, data, book_id)
 
-    print(get_response.json())
-    data["favorite"] = False
-    file = File.objects.get(
-        id=get_response.data["file"]["content"].rsplit("/", maxsplit=1)[-1])
-    print(get_response.data["file"]["content"].rsplit("/", maxsplit=1)[-1])
-    to_compare_fields = [
-        "favorite", "title", "annotation", "upload_date", "publication_year",
-        "page_count", "authors", "publishers", "subjects"
-    ]
-    image = Cover.objects.get(
-        id=get_response.data["cover"]["image"].rsplit("/", maxsplit=1)[-1])
-    assert_images_equal(data["image"], image.image)
-    assert file.content.open("r").read() == data["content"].open("r").read()
-    assert {
-        field_name: get_response.data[field_name]
-        for field_name in to_compare_fields
-    } == {field_name: data[field_name] for field_name in to_compare_fields}
+
+@pytest.mark.django_db
+# pylint: disable=too-many-arguments
+def test_put_update_book(su_client, book_data, cover_data, author_data,
+                         publisher_data, subject_data):
+    data = book_data(cover_data, author_data, publisher_data, subject_data)
+    create_response = send_create_request(su_client, data)
+
+    book_id = create_response.data["id"]
+    data = book_data(cover_data,
+                     author_data,
+                     publisher_data,
+                     subject_data,
+                     title="new_title",
+                     annotation="new_annotation")
+    json_data = data.copy()
+    json_data["data"] = json.dumps(data["data"])
+    content = encode_multipart(
+        boundary=BOUNDARY,
+        data=json_data,
+    )
+    update_response = su_client.put(f"/api/dms/books/{book_id}/",
+                                    data=content,
+                                    content_type=MULTIPART_CONTENT)
+    assert update_response.status_code == 200
+    assert_book_data_equal(su_client, data, book_id)
+
+
+@pytest.mark.django_db
+# pylint: disable=too-many-arguments
+def test_patch_update_book(su_client, book_data, cover_data, author_data,
+                           publisher_data, subject_data):
+    data = book_data(cover_data, author_data, publisher_data, subject_data)
+    create_response = send_create_request(su_client, data)
+
+    book_id = create_response.data["id"]
+    file = ContentFile("file_content_new", name="file.txt")
+    data["content"] = file
+    content = encode_multipart(
+        boundary=BOUNDARY,
+        data={
+            "content": file,
+            "data": json.dumps({"title": "new_title_2"})
+        },
+    )
+    update_response = su_client.patch(f"/api/dms/books/{book_id}/",
+                                      data=content,
+                                      content_type=MULTIPART_CONTENT)
+    assert update_response.status_code == 200
+    data["data"]["title"] = "new_title_2"
+    assert_book_data_equal(su_client, data, book_id)
