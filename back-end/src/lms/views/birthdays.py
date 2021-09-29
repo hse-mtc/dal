@@ -13,7 +13,7 @@ from auth.permissions import BasePermission
 
 from lms.models.students import Student
 from lms.models.teachers import Teacher
-from lms.functions import get_user_from_request
+from lms.utils.functions import get_user_from_request
 
 
 class StudentBirthdayAlertPermission(BasePermission):

@@ -39,7 +39,7 @@ from lms.filters.reference_books import (
     MilgroupFilter,
     ProgramFilter,
 )
-from lms.mixins import QuerySetScopingMixin
+from lms.utils.mixins import QuerySetScopingMixin
 
 from common.constants import MUTATE_ACTIONS
 
