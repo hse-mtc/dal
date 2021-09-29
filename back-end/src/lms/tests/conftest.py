@@ -285,11 +285,13 @@ def student_photo():
 
 
 @pytest.fixture
-def student_data(student_photo):
+def student_data():
 
-    def call_me(name: str = "first",
-                surname: str = "second",
-                patronymic: str = "patronymic") -> tuple:
+    def call_me(
+        name: str = "first",
+        surname: str = "second",
+        patronymic: str = "patronymic",
+    ) -> tuple:
 
         s = Student()
         s.name = name
@@ -306,6 +308,7 @@ def student_data(student_photo):
             "surname": s.surname,
             "patronymic": s.patronymic,
             "photo": photo_base64,
+            "photo": s.photo,
             "milgroup": s.milgroup,
             "birth_info": s.birth_info,
             "university_info": s.university_info,
