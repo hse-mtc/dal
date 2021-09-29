@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name
 import json
 import pytest
 from django.test.client import encode_multipart, BOUNDARY
