@@ -223,33 +223,41 @@ def student_status():
 def student_post():
     pass
 
+
 @pytest.fixture
 def student_milgroup():
     pass
+
 
 @pytest.fixture
 def student_milspecialty():
     pass
 
+
 @pytest.fixture
 def student_skills():
     pass
+
 
 @pytest.fixture
 def student_passport():
     pass
 
+
 @pytest.fixture
 def student_family():
     pass
+
 
 @pytest.fixture
 def student_recruitment_office():
     pass
 
+
 @pytest.fixture
 def student_university_info():
     pass
+
 
 @pytest.fixture
 def student_application_process():
