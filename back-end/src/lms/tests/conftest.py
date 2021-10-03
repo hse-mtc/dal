@@ -1,14 +1,13 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name, too-many-locals, too-many-arguments
 import base64
-from io import BytesIO, StringIO
+from io import BytesIO
 
 import pytest
+from django.core.files import File
 
 from conf.settings import BASE_DIR
 
-from auth.models import User
 from common.models.persons import Photo
-from lms.models.students import Student
 from PIL import Image
 
 from auth.models import User
@@ -96,34 +95,42 @@ def student_application_process():
 
 
 @pytest.fixture
+@pytest.mark.django_db
 def student_photo():
+
     def call_me() -> Photo:
         photo_ = Photo()
-        photo_.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' / 'data' / 'images' / 'test_photo.png')
+        img = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' /
+                                  'data' / 'images' / 'test_photo.png')
+
+        buffered = BytesIO()
+        img.save(buffered, 'PNG')
+        photo_.image.save('photo.png', File(buffered))
         return photo_
 
     return call_me
 
 
 @pytest.fixture
-def student_data():
+@pytest.mark.django_db
+def student_data(student_photo):
 
     def call_me(
         name: str = "first",
         surname: str = "second",
         patronymic: str = "patronymic",
-    ) -> tuple:
+    ) -> dict:
 
         s = Student()
         s.name = name
         s.surname = surname
         s.patronymic = patronymic
+        s.photo = student_photo()
+        s.save()
 
-        buffered = BytesIO()
-        student_photo().image.save(buffered, format="PNG")
-        photo_base64 = base64.b64encode(buffered.getvalue())
+        photo_base64 = base64.b64encode(s.photo.image.read())
 
-        return s, {
+        return {
             "fullname": s.full_name,
             "name": s.name,
             "surname": s.surname,

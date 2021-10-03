@@ -1,6 +1,9 @@
+from io import BytesIO
 from operator import itemgetter
 
 import pytest
+import requests
+from PIL.Image import Image
 
 
 @pytest.mark.django_db
@@ -9,8 +12,7 @@ def test_get_students_returns_list(su_client, student_data):
 
     count = 3
     for _ in range(count):
-        stud, data = student_data()
-        stud.save()
+        data = student_data()
 
     response = su_client.get("/api/lms/students/")
     assert response.status_code == 200
@@ -22,6 +24,10 @@ def test_get_students_returns_list(su_client, student_data):
 
     for id_, student in enumerate(response.data, start=min_id):
         data["id"] = id_
-        # Сервер не возвращает фото
-        data["photo"] = None
+        # Server return an url to photo, not a base64 string!
+        response = su_client.get(student["photo"]["image"])
+        img = BytesIO(response.content)
+        assert data["photo"] == img
+
+        data["photo"] = student["photo"]
         assert student == data
