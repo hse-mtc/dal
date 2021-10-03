@@ -5,18 +5,19 @@ from datetime import datetime
 import base64
 from io import BytesIO, StringIO
 from PIL import Image
-
 import pytest
+from django.core.files import File
 
 from conf.settings import BASE_DIR
 
-from auth.models import User
 from common.models.persons import Photo
 from lms.models.students import Student
 from lms.models.lessons import Room, Lesson
 from lms.models.common import Milfaculty, Milgroup
 from lms.models.teachers import Teacher, Rank
 from common.models.subjects import Subject
+from auth.models import User
+from lms.models.students import Student
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
@@ -191,8 +192,6 @@ def create_test_user(email: str = "test@email.ru", password: str = "1234"):
 
     return user
 
-from auth.models import User
-from lms.models.students import Student
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
@@ -276,6 +275,7 @@ def student_application_process():
 
 
 @pytest.fixture
+@pytest.mark.django_db
 def student_photo():
 
     def call_me() -> Photo:
@@ -373,24 +373,25 @@ def student_photo():
 
 
 @pytest.fixture
-def student_data():
+@pytest.mark.django_db
+def student_data(student_photo):
 
     def call_me(
         name: str = "first",
         surname: str = "second",
         patronymic: str = "patronymic",
-    ) -> tuple:
+    ) -> dict:
 
         s = Student()
         s.name = name
         s.surname = surname
         s.patronymic = patronymic
+        s.photo = student_photo()
+        s.save()
 
-        buffered = BytesIO()
-        student_photo().image.save(buffered, format="PNG")
-        photo_base64 = base64.b64encode(buffered.getvalue())
+        photo_base64 = base64.b64encode(s.photo.image.read())
 
-        return s, {
+        return {
             "fullname": s.full_name,
             "name": s.name,
             "surname": s.surname,
