@@ -193,9 +193,8 @@ def test_only_content(su_client):
     get_response = su_client.get(f"/api/dms/books/{book_id}/")
     assert get_response.status_code == 200
 
-    create_response = su_client.post(
-        "/api/dms/books/",
-        data={"content": "string"})
+    create_response = su_client.post("/api/dms/books/",
+                                     data={"content": "string"})
     assert create_response.status_code == 400
     assert "content" in create_response.json()
 
