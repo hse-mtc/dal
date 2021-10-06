@@ -5,7 +5,6 @@
 *.devcontainer
 __pycache__
 .ipynb_checkpoints
-.pytest_cache
 
 ## Files
 .env
