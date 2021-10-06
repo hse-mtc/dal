@@ -145,7 +145,6 @@ def test_delete_book(su_client, book_data, author_data, publisher_data,
 
 
 @pytest.mark.django_db
-# pylint: disable=too-many-arguments
 def test_invalid_cover(su_client, book_data, author_data, publisher_data,
                        subject_data):
     data = book_data(author_data, publisher_data, subject_data)
@@ -182,7 +181,6 @@ def test_invalid_cover(su_client, book_data, author_data, publisher_data,
 
 
 @pytest.mark.django_db
-# pylint: disable=too-many-arguments
 def test_only_content(su_client):
     create_response = su_client.post(
         "/api/dms/books/",
@@ -200,7 +198,6 @@ def test_only_content(su_client):
 
 
 @pytest.mark.django_db
-# pylint: disable=too-many-arguments
 def test_post_create_with_null_data(su_client):
     create_response = su_client.post("/api/dms/books/", data=None)
     assert create_response.status_code == 400
