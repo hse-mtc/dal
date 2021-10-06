@@ -9,7 +9,6 @@ from lms.models.common import Milfaculty, Milgroup
 from lms.models.teachers import Teacher, Rank
 from common.models.subjects import Subject
 
-
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
 
