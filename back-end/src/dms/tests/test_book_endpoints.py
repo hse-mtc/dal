@@ -53,8 +53,9 @@ def assert_book_data_equal(su_client, original_data, book_id):
     if isinstance(response_data["cover"], UUID):
         image = Cover.objects.get(id=response_data["cover"])
     else:
-        image = Cover.objects.get(
-            id=response_data["cover"]["image"].rsplit("/", maxsplit=1)[-1])
+        img_id = response_data["cover"]["image"].rsplit(
+            "/", maxsplit=1)[-1].split("_")[0]
+        image = Cover.objects.get(id=img_id)
     assert_images_equal(original_data["image"], image.image)
     assert file.content.open("r").read() == original_data["content"].open(
         "r").read()
@@ -69,9 +70,9 @@ def assert_book_data_equal(su_client, original_data, book_id):
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_post_books_creates_new_book(su_client, book_data, cover_data,
-                                     author_data, publisher_data, subject_data):
-    data = book_data(cover_data, author_data, publisher_data, subject_data)
+def test_post_books_creates_new_book(su_client, book_data, author_data,
+                                     publisher_data, subject_data):
+    data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
     book_id = create_response.data["id"]
@@ -80,14 +81,13 @@ def test_post_books_creates_new_book(su_client, book_data, cover_data,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_put_update_book(su_client, book_data, cover_data, author_data,
-                         publisher_data, subject_data):
-    data = book_data(cover_data, author_data, publisher_data, subject_data)
+def test_put_update_book(su_client, book_data, author_data, publisher_data,
+                         subject_data):
+    data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
     book_id = create_response.data["id"]
-    data = book_data(cover_data,
-                     author_data,
+    data = book_data(author_data,
                      publisher_data,
                      subject_data,
                      title="new_title",
@@ -107,9 +107,9 @@ def test_put_update_book(su_client, book_data, cover_data, author_data,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_patch_update_book(su_client, book_data, cover_data, author_data,
-                           publisher_data, subject_data):
-    data = book_data(cover_data, author_data, publisher_data, subject_data)
+def test_patch_update_book(su_client, book_data, author_data, publisher_data,
+                           subject_data):
+    data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
     book_id = create_response.data["id"]
@@ -132,9 +132,9 @@ def test_patch_update_book(su_client, book_data, cover_data, author_data,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_delete_book(su_client, book_data, cover_data, author_data,
-                     publisher_data, subject_data):
-    data = book_data(cover_data, author_data, publisher_data, subject_data)
+def test_delete_book(su_client, book_data, author_data, publisher_data,
+                     subject_data):
+    data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
     book_id = create_response.data["id"]
@@ -146,15 +146,15 @@ def test_delete_book(su_client, book_data, cover_data, author_data,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_invalid_cover(su_client, book_data, cover_data, author_data,
-                       publisher_data, subject_data):
-    data = book_data(cover_data, author_data, publisher_data, subject_data)
+def test_invalid_cover(su_client, book_data, author_data, publisher_data,
+                       subject_data):
+    data = book_data(author_data, publisher_data, subject_data)
     data["image"] = ContentFile("file_content", name="file_name.png")
     create_response = su_client.post("/api/dms/books/", data=dump_data(data))
     assert create_response.status_code == 400
     assert "image" in create_response.json()
 
-    data = book_data(cover_data, author_data, publisher_data, subject_data)
+    data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
     book_id = create_response.data["id"]
     json_data = data.copy()
