@@ -12,7 +12,6 @@ from PIL import Image
 
 from auth.models import User
 
-from dms.models.books import Cover
 from dms.models.common import Author, Publisher
 from dms.models.documents import File
 
@@ -110,7 +109,7 @@ def paper_data(file):
                 file_content: str = "file content",
                 tags: List[str] = None,
                 title: str = "paper title",
-                annotation: str = "some_annotation",
+                annotation: str = "some annotation",
                 upload_date: str = "2021-09-17",
                 publication_date: str = "2021-09-17",
                 is_binned: bool = False):
@@ -173,7 +172,6 @@ def subject_data(user):
 def book_data(image):
     # pylint: disable=too-many-arguments
     def call_me(
-        cover_data,
         author_data,
         publisher_data,
         subject_data,
@@ -186,7 +184,6 @@ def book_data(image):
         publication_year: int = 2021,
         page_count: int = 100,
     ):
-        cover = Cover.objects.create(**cover_data())
         author = Author.objects.create(**author_data())
         publisher = Publisher.objects.create(**publisher_data())
         subject = Subject.objects.create(**subject_data())
@@ -199,7 +196,6 @@ def book_data(image):
                 "upload_date": upload_date,
                 "publication_year": publication_year,
                 "page_count": page_count,
-                "cover": str(cover.id),
                 "authors": [author.id],
                 "publishers": [publisher.id],
                 "subjects": [subject.id]
