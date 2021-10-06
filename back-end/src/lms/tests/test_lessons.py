@@ -53,8 +53,7 @@ def test_post_posts_right_data(su_client, get_new_lesson_data):
 
 
 @pytest.mark.django_db
-def test_get_by_id_returns_right_data(get_new_lesson_data, 
-su_client,
+def test_get_by_id_returns_right_data(get_new_lesson_data, su_client,
                                       create_lesson):
     lesson_data = get_new_lesson_data(ids_only=False)
     lesson = create_lesson(**lesson_data)
