@@ -34,18 +34,19 @@ def test_trailing_slash_redirect(su_client):
 def test_post(su_client, get_new_lesson_data):
     lesson_data = get_new_lesson_data()
 
-    first_lesson_responce = su_client.post(
-        "/api/lms/lessons/", lesson_data, content_type="application/json"
-    )
+    first_lesson_responce = su_client.post("/api/lms/lessons/",
+                                           lesson_data,
+                                           content_type="application/json")
 
-    second_lesson_responce = su_client.post(
-        "/api/lms/lessons/", lesson_data, content_type="application/json"
-    )
+    second_lesson_responce = su_client.post("/api/lms/lessons/",
+                                            lesson_data,
+                                            content_type="application/json")
 
     assert first_lesson_responce.status_code == 201
     assert second_lesson_responce.status_code == 201
 
-    assert first_lesson_responce.data.pop("id") != second_lesson_responce.data.pop("id")
+    assert first_lesson_responce.data.pop(
+        "id") != second_lesson_responce.data.pop("id")
 
     assert first_lesson_responce.data == lesson_data
     assert second_lesson_responce.data == lesson_data
@@ -84,9 +85,9 @@ def test_put(get_new_lesson_data, su_client, create_lesson):
     lesson_data["type"] = new_type
     lesson_data["ordinal"] += 1
 
-    lesson_responce_put = su_client.put(
-        f"/api/lms/lessons/{lesson.id}/", lesson_data, content_type="application/json"
-    )
+    lesson_responce_put = su_client.put(f"/api/lms/lessons/{lesson.id}/",
+                                        lesson_data,
+                                        content_type="application/json")
 
     assert lesson_responce_put.status_code == 200
     assert lesson_responce_put.data["type"] == new_type
@@ -127,7 +128,7 @@ def test_delete(su_client, get_new_lesson_data, create_lesson):
     first_lesson_data = create_lesson(**lesson_data)
 
     first_lesson_responce = su_client.delete(
-        f"/api/lms/lessons/{first_lesson_data.id}/", content_type="application/json"
-    )
+        f"/api/lms/lessons/{first_lesson_data.id}/",
+        content_type="application/json")
 
     assert first_lesson_responce.status_code == 204
