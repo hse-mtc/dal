@@ -147,7 +147,7 @@ class LessonJournalView(GenericAPIView):
         # ordinals
         ordinals = []
         for ordinal in range(1, 11):
-            lessons = dict()
+            lessons = {}
             lessons["ordinal"] = ordinal
             lessons["lessons"] = LessonSerializer(
                 lessons_filtered.filter(ordinal=ordinal), many=True).data
