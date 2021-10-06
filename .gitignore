@@ -4,6 +4,7 @@
 *.vscode
 *.devcontainer
 __pycache__
+*__pytest_cache*
 .ipynb_checkpoints
 
 ## Files
