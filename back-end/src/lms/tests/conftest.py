@@ -1,8 +1,7 @@
-# pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name
+# pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name,too-many-arguments,redefined-builtin
 from typing import List
-import pytest
 from datetime import datetime
-from typing import List
+import pytest
 
 from auth.models import User
 from lms.models.lessons import Room, Lesson
@@ -10,8 +9,6 @@ from lms.models.common import Milfaculty, Milgroup
 from lms.models.teachers import Teacher, Rank
 from common.models.subjects import Subject
 
-from auth.models import User
-#import models_creation as md_creation
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"

@@ -119,7 +119,8 @@ def test_patch(
     assert lesson_responce_patch.status_code == 200
     assert lesson_responce_patch.data["type"] == new_values["type"]
     assert lesson_responce_patch.data["type"] != first_lesson_data.type
-    assert lesson_responce_patch.data["ordinal"] - 1 == first_lesson_data.ordinal
+    assert (
+        lesson_responce_patch.data["ordinal"] - 1 == first_lesson_data.ordinal)
 
 
 @pytest.mark.django_db
