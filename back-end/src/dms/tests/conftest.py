@@ -160,8 +160,7 @@ def cover_data(image):
 @pytest.fixture
 def subject_data(user):
 
-    def call_me(title: str = "title",
-                annotation: str = "annotation"):
+    def call_me(title: str = "title", annotation: str = "annotation"):
         return {"title": title, "annotation": annotation, "user": user}
 
     return call_me
