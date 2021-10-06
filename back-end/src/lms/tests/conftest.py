@@ -7,6 +7,7 @@ from io import BytesIO, StringIO
 from PIL import Image
 import pytest
 from django.core.files import File
+from PIL import Image
 
 from conf.settings import BASE_DIR
 
@@ -19,8 +20,8 @@ from common.models.subjects import Subject
 from auth.models import User
 from lms.models.students import Student
 
-SUPERUSER_EMAIL = "superuserfortests@mail.com"
-SUPERUSER_PASSWORD = "superuserpasswordfortests"
+SUPERUSER_EMAIL = 'superuserfortests@mail.com'
+SUPERUSER_PASSWORD = 'superuserpasswordfortests'
 
 
 @pytest.fixture
@@ -213,15 +214,15 @@ def superuser(db):
 def su_client(superuser):
     from django.test.client import Client
     response = Client().post(
-        "/api/auth/tokens/obtain/",
+        '/api/auth/tokens/obtain/',
         {
-            "email": SUPERUSER_EMAIL,
-            "password": SUPERUSER_PASSWORD
+            'email': SUPERUSER_EMAIL,
+            'password': SUPERUSER_PASSWORD
         },
-        content_type="application/json",
+        content_type='application/json',
     )
-    access_token = response.data["access"]
-    return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+    access_token = response.data['access']
+    return Client(HTTP_AUTHORIZATION=f'Bearer {access_token}')
 
 
 @pytest.fixture
@@ -375,11 +376,11 @@ def student_photo():
 @pytest.fixture
 @pytest.mark.django_db
 def student_data(student_photo):
-
+    #Creates AND save default student to DB!
     def call_me(
-        name: str = "first",
-        surname: str = "second",
-        patronymic: str = "patronymic",
+        name: str = 'first',
+        surname: str = 'second',
+        patronymic: str = 'patronymic',
     ) -> dict:
 
         s = Student()
@@ -417,5 +418,29 @@ def student_data(student_photo):
             "recruitment_office": s.recruitment_office,
             "family": []
         }
+
+    return call_me
+
+def log_to_file(file_name, data):
+    f = open(file_name + '.txt', 'w')
+    f.write(data)
+    f.close()
+
+@pytest.fixture
+def assert_student_equals(su_client, student_data):
+
+    def call_me(
+        local_student_id,
+        local_student: dict = {"id": 0},
+        remote_student: dict = {"id": 0},
+    ):
+        local_student['id'] = local_student_id
+        # Server return an url to photo, not a base64 string!
+        url = '/' + '/'.join(remote_student['photo']['image'].split('/')[3:]) + '/'
+        response = su_client.get(url)
+        #img = BytesIO(response.content)
+        local_student['photo'] = remote_student['photo']
+
+        assert local_student == remote_student
 
     return call_me
