@@ -1,6 +1,7 @@
-import { mount, createLocalVue } from "@vue/test-utils";
-import { Input } from "element-ui";
+import { mount, shallowMount, createLocalVue } from "@vue/test-utils";
+import { ElementUI } from "element-ui";
 import { TextInput } from "@/common/inputs";
+import TagsInput from "@/components/Tags/TagsInput";
 
 describe("Text input", () => {
   // Нужен, если используются глобальные компоненты,плагины и т.д
@@ -8,7 +9,7 @@ describe("Text input", () => {
   // Думаю стоит вынести создание и настройку в отдельный файл,
   // чтобы не дублировать одно и то же
   const localVue = createLocalVue();
-  localVue.use(Input);
+  localVue.use(ElementUI);
 
   // Есть еще shallowMount, если не нужно рендерить дочерние компоненты
   const factory = props => mount(TextInput, {
@@ -29,5 +30,18 @@ describe("Text input", () => {
     input.trigger("input");
     // Триггер на инпуте инициирует события в el-input, а затем и в TextInput
     expect(wrapper.emitted().change[0]).toEqual(["1234"]);
+  });
+});
+
+describe("TagsInput", () => {
+  const localVue = createLocalVue();
+  localVue.use(ElementUI);
+  it("getSuggestions", () => {
+    const wrapper = shallowMount(TagsInput, {
+      propsData: {
+        selected: ["Танки", "Гранаты", "Мины"],
+      },
+    });
+    const getSuggestions = jest.fn();
   });
 });
