@@ -1,7 +1,9 @@
 import { mount, shallowMount, createLocalVue } from "@vue/test-utils";
-import { ElementUI } from "element-ui";
+import flushPromises from "flush-promises";
+import * as ElementUI from "element-ui";
 import { TextInput } from "@/common/inputs";
 import TagsInput from "@/components/Tags/TagsInput";
+import { getExistingTags } from "@/api/existingTags";
 
 describe("Text input", () => {
   // Нужен, если используются глобальные компоненты,плагины и т.д
@@ -36,12 +38,29 @@ describe("Text input", () => {
 describe("TagsInput", () => {
   const localVue = createLocalVue();
   localVue.use(ElementUI);
-  it("getSuggestions", () => {
+
+  it("getSuggestions has been called", async() => {
+    const mockSuggestion = jest.fn();
     const wrapper = shallowMount(TagsInput, {
-      propsData: {
-        selected: ["Танки", "Гранаты", "Мины"],
+      methods: {
+        getSuggestions: mockSuggestion,
       },
     });
-    const getSuggestions = jest.fn();
+    await flushPromises();
+
+    expect(mockSuggestion).toHaveBeenCalled();
+  });
+
+  it("getSuggestions returns result", async() => {
+    jest.mock("getExistingTags", () => {
+      const mock = {
+        data: ["Танки", "Гранаты", "Мины"],
+      };
+      return mock;
+    });
+    const wrapper = shallowMount(TagsInput);
+    await flushPromises();
+
+    expect(wrapper.vm.all).toEqual(["Танки", "Гранаты", "Мины"]);
   });
 });
