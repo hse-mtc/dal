@@ -116,7 +116,8 @@ class MilgroupViewSet(QuerySetScopingMixin, ModelViewSet):
     serializer_class = MilgroupSerializer
     queryset = Milgroup.objects.order_by("title")
 
-    permission_classes = [MilgroupPermission]
+    permission_allow_read_only = True
+    permission_classes = [ReadOnly | MilgroupPermission]
     scoped_permission_class = MilgroupPermission
 
     filter_backends = [DjangoFilterBackend]
