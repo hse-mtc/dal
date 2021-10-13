@@ -67,10 +67,10 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in milgroups"
-                    :key="item.milgroup"
-                    :label="item.milgroup"
-                    :value="item.milgroup"
+                    v-for="milgroup in milgroups"
+                    :key="milgroup.id"
+                    :label="milgroup.title"
+                    :value="milgroup.id"
                   />
                 </el-select>
               </el-form-item>
@@ -138,10 +138,10 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in milfaculties"
-                    :key="item.milfaculty"
-                    :label="item.milfaculty"
-                    :value="item.milfaculty"
+                    v-for="milfaculty in milfaculties"
+                    :key="milfaculty.id"
+                    :label="milfaculty.title"
+                    :value="milfaculty.id"
                   />
                 </el-select>
               </el-form-item>
@@ -156,10 +156,10 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in ranks"
-                    :key="item.rank"
-                    :label="item.rank"
-                    :value="item.rank"
+                    v-for="rank in ranks"
+                    :key="rank.id"
+                    :label="rank.title"
+                    :value="rank.id"
                   />
                 </el-select>
               </el-form-item>
@@ -174,10 +174,10 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in teacherPosts"
-                    :key="item.teacher_post"
-                    :label="item.teacher_post"
-                    :value="item.teacher_post"
+                    v-for="(value, key) in TEACHER_POSTS"
+                    :key="key"
+                    :label="value"
+                    :value="key"
                   />
                 </el-select>
               </el-form-item>
@@ -192,10 +192,10 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="item in milgroups"
-                    :key="item.milgroup"
-                    :label="item.milgroup"
-                    :value="item.milgroup"
+                    v-for="milgroup in milgroups"
+                    :key="milgroup.id"
+                    :label="milgroup.title"
+                    :value="milgroup.id"
                   />
                 </el-select>
               </el-form-item>
@@ -231,8 +231,8 @@
         :visible.sync="finished"
       >
         <div>
-          Ожидайте подтверждения учетной записи. После подтверждения на почту
-          будет выслана ссылка для создания пароля.
+          Ожидайте подтверждения регистрации.
+          После подтверждения на почту будет выслана ссылка для создания пароля.
         </div>
       </el-dialog>
     </el-col>
@@ -248,13 +248,14 @@ import { validCorEmail } from "@/utils/validate";
 import {
   getMilFaculties,
   getMilGroups,
-  getTeacherPosts,
   getRanks,
 } from "@/api/reference-book";
 import { registerStudent, registerTeacher } from "@/api/user";
+import { TEACHER_POSTS } from "@/utils/enums";
 
 export default {
   name: "Signup",
+
   data() {
     const validateEmail = (rule, value, callback) => {
       if (!validCorEmail(value)) {
@@ -263,7 +264,10 @@ export default {
         callback();
       }
     };
+
     return {
+      TEACHER_POSTS,
+
       registerForm: {
         email: "",
         role: "",
@@ -279,7 +283,6 @@ export default {
       milgroups: [],
       milfaculties: [],
       ranks: [],
-      teacherPosts: [],
       roles: [
         { label: "Студент", key: "student" },
         { label: "Преподаватель", key: "teacher" },
@@ -293,6 +296,7 @@ export default {
       redirect: undefined,
     };
   },
+
   computed: {
     disabledButton() {
       if (this.registerForm.role === "student") {
@@ -316,6 +320,7 @@ export default {
       return true;
     },
   },
+
   watch: {
     $route: {
       handler(route) {
@@ -324,24 +329,21 @@ export default {
       immediate: true,
     },
   },
-  mounted() {
-    this.fetchData();
+
+  async created() {
+    await this.fetchData();
   },
+
   methods: {
-    fetchData() {
-      getMilGroups().then(response => {
-        this.milgroups = response.data;
-      });
-      getMilFaculties().then(response => {
-        this.milfaculties = response.data;
-      });
-      getRanks().then(response => {
-        this.ranks = response.data;
-      });
-      getTeacherPosts().then(response => {
-        this.teacherPosts = response.data;
-      });
+    async fetchData() {
+      const responses = await Promise.all([
+        getMilGroups(),
+        getMilFaculties(),
+        getRanks(),
+      ]);
+      [this.milgroups, this.milfaculties, this.ranks] = responses.map(r => r.data);
     },
+
     handleRegister() {
       this.$refs.registerForm.validate(valid => {
         if (valid) {
