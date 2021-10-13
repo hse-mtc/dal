@@ -3,7 +3,7 @@ import flushPromises from "flush-promises";
 import * as ElementUI from "element-ui";
 import { TextInput } from "@/common/inputs";
 import TagsInput from "@/components/Tags/TagsInput";
-import { getExistingTags } from "@/api/existingTags";
+import * as getTags from "@/api/existingTags";
 
 describe("Text input", () => {
   // Нужен, если используются глобальные компоненты,плагины и т.д
@@ -52,15 +52,19 @@ describe("TagsInput", () => {
   });
 
   it("getSuggestions returns result", async() => {
-    jest.mock("getExistingTags", () => {
-      const mock = {
-        data: ["Танки", "Гранаты", "Мины"],
-      };
-      return mock;
+    // jest.mock("getExistingTags", () => {
+    //   const mock = {
+    //     data: ["Танки", "Гранаты", "Мины"],
+    //   };
+    //   return mock;
+    // });
+    const mockSuggestion = wrapper.vm.all;
+    const wrapper = shallowMount(TagsInput, {
+      methods: {
+        getSuggestions: mockSuggestion,
+      },
     });
-    const wrapper = shallowMount(TagsInput);
     await flushPromises();
-
     expect(wrapper.vm.all).toEqual(["Танки", "Гранаты", "Мины"]);
   });
 });
