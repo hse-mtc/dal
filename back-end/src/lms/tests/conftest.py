@@ -1,11 +1,16 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name,too-many-arguments,redefined-builtin
+import base64
+from tkinter import Image
 from typing import List
 from datetime import datetime
 import pytest
 
 from auth.models import User
+from common.models.persons import Photo
+from conf.settings import BASE_DIR
 from lms.models.lessons import Room, Lesson
 from lms.models.common import Milfaculty, Milgroup
+from lms.models.students import Student
 from lms.models.teachers import Teacher, Rank
 from common.models.subjects import Subject
 
@@ -181,3 +186,135 @@ def create_test_user(email: str = "test@email.ru", password: str = "1234"):
     )
 
     return user
+
+
+@pytest.fixture
+def student_status():
+    pass
+
+
+@pytest.fixture
+def student_post():
+    pass
+
+
+@pytest.fixture
+def student_milgroup():
+    pass
+
+
+@pytest.fixture
+def student_milspecialty():
+    pass
+
+
+@pytest.fixture
+def student_skills():
+    pass
+
+
+@pytest.fixture
+def student_passport():
+    pass
+
+
+@pytest.fixture
+def student_family():
+    pass
+
+
+@pytest.fixture
+def student_recruitment_office():
+    pass
+
+
+@pytest.fixture
+def student_university_info():
+    pass
+
+
+@pytest.fixture
+def student_application_process():
+    pass
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def student_photo():
+
+    def call_me() -> Photo:
+        photo_ = Photo()
+        photo_.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' /
+                                  'data' / 'images' / 'test_photo.png')
+        return photo_
+
+    return call_me
+
+
+@pytest.fixture
+@pytest.mark.django_db
+def student_data(student_photo):
+    #Creates AND save default student to DB!
+    def call_me(
+        name: str = 'first',
+        surname: str = 'second',
+        patronymic: str = 'patronymic',
+    ) -> dict:
+
+        s = Student()
+        s.name = name
+        s.surname = surname
+        s.patronymic = patronymic
+        s.photo = student_photo()
+        s.save()
+
+        photo_base64 = base64.b64encode(s.photo.image.read())
+
+        return {
+            "fullname": s.full_name,
+            "name": s.name,
+            "surname": s.surname,
+            "patronymic": s.patronymic,
+            "photo": photo_base64,
+            "photo": s.photo,
+            "milgroup": s.milgroup,
+            "birth_info": s.birth_info,
+            "university_info": s.university_info,
+            "application_process": s.application_process,
+            "skills": [],
+            "contact_info": s.contact_info,
+            "citizenship": s.citizenship,
+            "permanent_address": s.permanent_address,
+            "surname_genitive": s.surname_genitive,
+            "name_genitive": s.name_genitive,
+            "patronymic_genitive": s.patronymic_genitive,
+            "status": s.status,
+            "post": s.post,
+            "user": s.user,
+            "milspecialty": s.milspecialty,
+            "passport": s.passport,
+            "recruitment_office": s.recruitment_office,
+            "family": []
+        }
+
+    return call_me
+
+
+@pytest.fixture
+def assert_student_equals(su_client, student_data):
+
+    def call_me(
+        local_student_id,
+        local_student: dict = {"id": 0},
+        remote_student: dict = {"id": 0},
+    ):
+        local_student['id'] = local_student_id
+        # Server return an url to photo, not a base64 string!
+        url = '/' + '/'.join(remote_student['photo']['image'].split('/')[3:]) + '/'
+        response = su_client.get(url)
+        #img = BytesIO(response.content)
+        local_student['photo'] = remote_student['photo']
+
+        assert local_student == remote_student
+
+    return call_me
