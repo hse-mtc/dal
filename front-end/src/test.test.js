@@ -58,12 +58,9 @@ describe("TagsInput", () => {
     //   };
     //   return mock;
     // });
-    const mockSuggestion = wrapper.vm.all;
-    const wrapper = shallowMount(TagsInput, {
-      methods: {
-        getSuggestions: mockSuggestion,
-      },
-    });
+    // const mockSuggestion = wrapper.setData({all: ["Танки", "Гранаты", "Мины"]});
+    const wrapper = shallowMount(TagsInput);
+    wrapper.setData({ all: ["Танки", "Гранаты", "Мины"] });
     await flushPromises();
     expect(wrapper.vm.all).toEqual(["Танки", "Гранаты", "Мины"]);
   });
