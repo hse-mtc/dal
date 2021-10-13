@@ -2,14 +2,60 @@
 from typing import List
 from datetime import datetime
 import pytest
+from conf.settings import BASE_DIR
+
 
 from auth.models import User
 from common.models.subjects import Subject
 from common.models.persons import BirthInfo, ContactInfo, Relative
 from lms.models.applicants import Passport
 from lms.models.lessons import Room, Lesson
-from lms.models.common import Milfaculty, Milgroup
+from lms.models.common import Milfaculty, Milgroup, Milspecialty
 from lms.models.teachers import Teacher, Rank
+from common.models.subjects import Subject
+from lms.models.students import Student, Skill
+from common.models.persons import Photo
+from lms.models.universities import UniversityInfo, Program, Faculty
+
+from PIL import Image
+
+from lms.models.applicants import (
+    Passport,
+    RecruitmentOffice,
+    ApplicationProcess,
+)
+
+
+SUPERUSER_EMAIL = "superuserfortests@mail.com"
+SUPERUSER_PASSWORD = "superuserpasswordfortests"
+
+
+@pytest.fixture
+def superuser(db):
+    user = User.objects.filter(email=SUPERUSER_EMAIL)
+    if user.exists():
+        return user.first()
+
+    return User.objects.create_superuser(
+        email=SUPERUSER_EMAIL,
+        password=SUPERUSER_PASSWORD,
+    )
+
+
+@pytest.fixture
+def su_client(superuser):
+    from django.test.client import Client
+
+    response = Client().post(
+        "/api/auth/tokens/obtain/",
+        {
+            "email": SUPERUSER_EMAIL,
+            "password": SUPERUSER_PASSWORD
+        },
+        content_type="application/json",
+    )
+    access_token = response.data["access"]
+    return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
 
 
 @pytest.fixture
@@ -265,3 +311,92 @@ def get_student_data(
         "university_info": __pass,
         "application_process": __pass
     }
+
+
+def student_photo() -> Photo:
+    __photo = Photo()
+    __photo.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' /
+                              'data' / 'images' / 'test_photo.png')
+    return __photo
+
+
+def create_faculty():
+
+    f = Faculty(title='МИЭМ')
+    f.save()
+    return f
+
+
+def create_program():
+    p = Program(code='1.1.1.1', title='ИТСС', faculty=create_faculty())
+    p.save()
+    return p
+
+
+def create_university_info():
+
+    ui = UniversityInfo(campus=UniversityInfo.Campus.MOSCOW.value, program=create_program(), group='БИТ191', card_id='аф241ивылп8')
+    ui.save()
+    return ui
+
+
+def create_milspecialty() -> Milspecialty:
+
+    m = Milspecialty(title='mil title', code='453.100', available_for=create_university_info())
+    m.save()
+    return m
+
+
+def create_skill():
+
+    s = Skill(title='Кац')
+    s.save()
+    return s
+
+
+def create_recruitment_office():
+
+    r = RecruitmentOffice(title='RecruitmentOffice')
+    r.save()
+    return r
+
+
+def create_application_process():
+
+    medical_examination = ApplicationProcess.MedicalExamination.FIT.value
+    prof_psy_selection = ApplicationProcess.ProfPsySelection.FIRST.value
+    mean_grade = float(8)
+    pull_ups = 1000
+    speed_run = float(6)
+    long_run = float(10)
+    physical_test_grade = 8
+
+    a = ApplicationProcess(
+        medical_examination=medical_examination,
+        prof_psy_selection=prof_psy_selection,
+        mean_grade=mean_grade,
+        pull_ups=pull_ups,
+        speed_run=speed_run,
+        long_run=long_run,
+        physical_test_grade=physical_test_grade,
+    )
+    a.save()
+    return a
+
+
+def create_student() -> Student:
+
+    s = Student()
+    s.name = "name"
+    s.surname = "surname"
+    s.patronymic = "patronymic"
+    s.photo = student_photo()
+    s.milgroup = create_milgroup(create_milfaculty())
+    s.post = s.Post.MILGROUP_COMMANDER.value
+    s.milspecialty = create_milspecialty()
+    s.skills.add(create_skill())
+    s.recruitment_office = create_recruitment_office()
+    s.university_info = create_university_info()
+    s.application_process = create_application_process()
+    s.save()
+    print(s)
