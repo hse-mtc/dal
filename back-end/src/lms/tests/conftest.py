@@ -4,41 +4,12 @@ from datetime import datetime
 import pytest
 
 from auth.models import User
+from common.models.subjects import Subject
+from common.models.persons import BirthInfo, ContactInfo, Relative
+from lms.models.applicants import Passport
 from lms.models.lessons import Room, Lesson
 from lms.models.common import Milfaculty, Milgroup
 from lms.models.teachers import Teacher, Rank
-from common.models.subjects import Subject
-
-SUPERUSER_EMAIL = "superuserfortests@mail.com"
-SUPERUSER_PASSWORD = "superuserpasswordfortests"
-
-
-@pytest.fixture
-def superuser(db):
-    user = User.objects.filter(email=SUPERUSER_EMAIL)
-    if user.exists():
-        return user.first()
-
-    return User.objects.create_superuser(
-        email=SUPERUSER_EMAIL,
-        password=SUPERUSER_PASSWORD,
-    )
-
-
-@pytest.fixture
-def su_client(superuser):
-    from django.test.client import Client
-
-    response = Client().post(
-        "/api/auth/tokens/obtain/",
-        {
-            "email": SUPERUSER_EMAIL,
-            "password": SUPERUSER_PASSWORD
-        },
-        content_type="application/json",
-    )
-    access_token = response.data["access"]
-    return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
 
 
 @pytest.fixture
@@ -181,3 +152,116 @@ def create_test_user(email: str = "test@email.ru", password: str = "1234"):
     )
 
     return user
+
+
+def create_test_birth_info(date: datetime = datetime.today(),
+                           country: str = "Wonderland",
+                           city: str = "Sin city") -> BirthInfo:
+    __bt_info, _ = BirthInfo.objects.get_or_create(date=date,
+                                                   country=country,
+                                                   city=city)
+
+    return __bt_info
+
+
+def create_test_contact_info(
+        corporate_email="Fool@corp.com",
+        personal_email="Fool@mail.com",
+        personal_phone_number="88005553535") -> ContactInfo:
+    __ct_info, _ = ContactInfo.objects.get_or_create(
+        corporate_email=corporate_email,
+        personal_email=personal_email,
+        personal_phone_number=personal_phone_number)
+
+    return __ct_info
+
+
+def get_test_person_data(name: str = "Test name",
+                         surname: str = "Test surname",
+                         patronymic: str = "Test patr",
+                         citizenship: str = "Wonderland") -> dict:
+    return {
+        "name": name,
+        "surname": surname,
+        "patronymic": patronymic,
+        "citizenship": citizenship,
+        "birth_info": create_test_birth_info(),
+        "contact_info": create_test_contact_info()
+    }
+
+
+def create_test_relative(type=Relative.Type.FATHER.value) -> Relative:
+    value = get_test_person_data()
+    value["type"] = type
+    __relative, _ = Relative.objects.get_or_create(**value)
+
+    return __relative
+
+
+def create_passport(
+    series: str = "4040",
+    code: str = "404040",
+    ufms_name: str = "Test ufms",
+    ufms_code: str = "4040404",
+    issue_date: datetime = datetime.today()
+) -> Passport:
+    value = {
+        "series": series,
+        "code": code,
+        "ufms_name": ufms_name,
+        "ufms_code": ufms_code,
+        "issue_date": issue_date
+    }
+
+    __passport, _ = Passport.objects.get_or_create(**value)
+    return __passport
+
+
+def get_passport_data(
+    series: str = "4040",
+    code: str = "404040",
+    ufms_name: str = "Test ufms",
+    ufms_code: str = "4040404",
+    issue_date: datetime = datetime.today()) -> dict:
+    return {
+        "series": series,
+        "code": code,
+        "ufms_name": ufms_name,
+        "ufms_code": ufms_code,
+        "issue_date": issue_date
+    }
+
+
+def get_student_data(
+    name: str = 'first',
+    surname: str = 'second',
+    patronymic: str = 'patronymic',
+) -> dict:
+
+    __pass = ""
+
+    return {
+        "name": name,
+        "surname": surname,
+        "patronymic": patronymic,
+        "fullname": " ".join([surname, name, patronymic]),
+        "photo": __pass,
+        "birth_info": __pass,
+        "contact_info": __pass,
+        "citizenship": __pass,
+        "permanent_address": __pass,
+        "surname_genitive": __pass,
+        "name_genitive": __pass,
+        "patronymic_genitive": __pass,
+        "user": __pass,
+        "status": __pass,
+        "post": __pass,
+        "milgroup": __pass,
+        "milspecialty": __pass,
+        "skills": __pass,
+        "passport": get_passport_data(),
+        "family": __pass,
+        "recruitment_office": __pass,
+        "university_info": __pass,
+        "application_process": __pass
+    }
