@@ -319,15 +319,14 @@ def student_photo() -> Photo:
 
 
 def create_faculty():
-
-    f = Faculty(title='МИЭМ')
-    f.save()
+    value = {"title": "МИЭМ"}
+    f, _ = Faculty.objects.get_or_create(**value)
     return f
 
 
 def create_program():
-    p = Program(code='1.1.1.1', title='ИТСС', faculty=create_faculty())
-    p.save()
+    value = {"title": "ИТСС", "code": "1.1.1.1", "faculty": create_faculty()}
+    p, _ = Program.objects.get_or_create(**value)
     return p
 
 
@@ -398,11 +397,12 @@ def create_student() -> Student:
     s.milgroup = create_milgroup(create_milfaculty())
     s.post = s.Post.MILGROUP_COMMANDER.value
     s.milspecialty = create_milspecialty()
-    s.skills.add(create_skill())
-    s.family.add(create_test_relative())
     s.recruitment_office = create_recruitment_office()
     s.university_info = create_university_info()
     s.application_process = create_application_process()
+    s.save()
+    s.skills.add(create_skill())
+    s.family.add(create_test_relative())
     s.save()
     print(s)
     return s
