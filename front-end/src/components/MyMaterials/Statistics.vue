@@ -59,9 +59,7 @@ export default {
         .then(res => {
           this.statistics = res.data;
         })
-        .catch(() => {
-          console.log("Проблема с загрузкой данных");
-        });
+        .catch(err => downloadError());
     },
   },
 };
