@@ -27,6 +27,7 @@ import { SIZES, COLORS } from "@/utils/appConsts";
 import { getStatistics } from "@/api/statistics";
 import CustomText from "@/common/CustomText";
 import { UserModule } from "@/store";
+import downloadError from "@/utils/message";
 
 // TODO make one component with Subjects for ex if u have a param,
 // than hide title and search and do a request with user id
@@ -59,7 +60,7 @@ export default {
         .then(res => {
           this.statistics = res.data;
         })
-        .catch(err => downloadError());
+        .catch(() => downloadError());
     },
   },
 };
