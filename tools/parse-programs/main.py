@@ -8,6 +8,8 @@ import docx
 
 BASE_DIR = Path(__file__).resolve().parent
 
+COLUMNS_IN_TABLE_BY_DEFAULT = 7
+
 
 class DataclassJSONEncoder(json.JSONEncoder):
     def default(self, o):
@@ -36,20 +38,28 @@ def parse_programs(
     rows = document.tables[0].rows[1:]
 
     for i, row in enumerate(rows, start=1):
-        print(f"Rows with programs left: {len(rows) - i} / {len(rows)}")
+        cells = [c.text.strip() for c in row.cells]
 
-        degree = row.cells[5].text.strip()
+        if len(cells) != COLUMNS_IN_TABLE_BY_DEFAULT:
+            print(f"Skipping bad program: {cells = }")
+            continue
+
+        print(f"\rPrograms left: {len(rows) - i} / {len(rows)}", end="")
+
+        degree: str = cells[5].lower()
 
         if degree in degrees_to_ignore:
             continue
 
         programs.append(
             Program(
-                faculty=row.cells[1].text.strip(),
-                title=row.cells[3].text.strip(),
-                code=row.cells[4].text.strip(),
-                degree=degree,
+                faculty=cells[1],
+                title=cells[3],
+                code=cells[4],
+                degree=degree.title(),
             ))
+
+    print()
 
     return programs
 
@@ -83,7 +93,9 @@ def main() -> None:
 
     programs = parse_programs(
         docx_path=args.programs_docx_path,
-        degrees_to_ignore=args.degrees_to_ignore,
+        degrees_to_ignore=[
+            degree.lower() for degree in args.degrees_to_ignore
+        ],
     )
     degrees = set(program.degree for program in programs)
 
