@@ -54,7 +54,7 @@
 </template>
 
 <script>
-// import variables from "@/styles/variables.scss";
+import variables from "@/styles/variables.scss";
 import { AppModule, SettingsModule, UserModule } from "@/store";
 import Logo from "./Logo.vue";
 import SidebarItem from "./SidebarItem.vue";
@@ -78,9 +78,9 @@ export default {
     showLogo() {
       return SettingsModule.sidebarLogo;
     },
-    // variables() {
-    //   return variables;
-    // },
+    variables() {
+      return variables;
+    },
     isCollapse() {
       return !this.sidebar.opened;
     },

@@ -6,6 +6,7 @@
 
 <script>
 import request from "@/utils/request";
+import downloadError from "@/utils/message";
 
 export default {
   name: "DownloadFile",
@@ -35,7 +36,7 @@ export default {
         link.click();
         URL.revokeObjectURL(link.href);
       } catch (e) {
-        console.error("Не удалось загрузить файл:", e);
+        downloadError();
       }
 
       this.isDataLoading = false;

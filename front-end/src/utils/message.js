@@ -74,3 +74,10 @@ export function deleteSuccess(entity) {
     type: "success",
   });
 }
+
+export function downloadError(entity) {
+  Message({
+    message: `Удаление ${entity} прошло успешно.`,
+    type: "success",
+  });
+}
