@@ -181,6 +181,7 @@ export default {
         this.programs = (await getPrograms()).data;
       } catch (e) {
         console.log("Не удалось загрузить программы", e);
+        this.$message.error("Не удалось загрузить программы");
       }
     },
 
@@ -218,7 +219,8 @@ export default {
         }));
         this.entriesAmount = data.count;
       } catch (e) {
-        console.log("Не удалось данные о студентах", e);
+        console.log("Не удалось загрузить данные о студентах", e);
+        this.$message.error("Не удалось загрузить данные о студентах");
       }
 
       this.loading = false;

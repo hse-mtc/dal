@@ -37,7 +37,6 @@ service.interceptors.response.use(
         type: "error",
         duration: 5 * 1000,
       });
-
       console.error("Не удалось авторизоваться");
     } else if (error.response.status === 401) {
       const { refreshToken } = UserModule;

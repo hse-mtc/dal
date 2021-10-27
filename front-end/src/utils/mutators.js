@@ -26,7 +26,7 @@ export const getFetchRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось загрузить ${errorMsg}:`, e);
-
+    this.$message.error("Не удалось загрузить данные");
     if (e.response.status) {
       getError(errorMsg, e.response.status);
     }
@@ -57,6 +57,7 @@ export const getAddRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось добавить ${errorMsg}:`, e);
+    this.$message.error("Не удалось добавить данные");
 
     if (e.response.status) {
       postError(errorMsg, e.response.status);
@@ -87,7 +88,7 @@ export const getDeleteRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось удалить ${errorMsg}:`, e);
-
+    this.$message.error("Не удалось удалить данные");
     if (e.response.status) {
       deleteError(errorMsg, e.response.status);
     }
@@ -122,6 +123,7 @@ export const getEditRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось изменить ${errorMsg}:`, e);
+    this.$message.error("Не удалось изменить данные");
 
     if (e.response.status) {
       patchError(errorMsg, e.response.status);
@@ -162,6 +164,7 @@ export const getOrderChangeRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось переместить ${errorMsg}:`, e);
+    this.$message.error("Не удалось переместить данные");
 
     if (e.response.status) {
       orderError(errorMsg, e.response.status);

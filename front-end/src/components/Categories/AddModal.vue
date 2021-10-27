@@ -53,8 +53,8 @@ export default {
         const { data } = await addPaperCategory({ title });
         PapersModule.setCategories([...this.categories, data]);
         this.closeModal();
-      } catch (error) {
-        console.error("Failed to add Category: ", error);
+      } catch (e) {
+        this.$message.error("Не удалось добавить категорию");
       }
     },
 

@@ -89,6 +89,7 @@ class User extends VuexModule {
       return true;
     } catch (e) {
       console.log("Не удалось авторизоваться", e);
+      this.$message.error("Не удалось авторизоваться");
       return false;
     }
   }

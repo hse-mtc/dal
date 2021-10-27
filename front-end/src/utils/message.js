@@ -75,9 +75,9 @@ export function deleteSuccess(entity) {
   });
 }
 
-export function downloadError(entity) {
+export function downloadError() {
   Message({
-    message: `Удаление ${entity} прошло успешно.`,
-    type: "success",
+    message: "Ошибка загрузки данных",
+    type: "error",
   });
 }

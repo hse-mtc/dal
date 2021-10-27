@@ -211,8 +211,8 @@ export default {
 
         EventBus.$emit("UPDATE_EVENT");
         this.closeModal();
-      } catch (error) {
-        console.log("Failed to upsert Paper: ", error);
+      } catch (e) {
+        this.$message.error("Не удалось обновить документ");
       }
     },
 

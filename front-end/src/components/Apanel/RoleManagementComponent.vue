@@ -139,10 +139,7 @@ export default {
         this.options = this.options.filter(i => i.key !== this.roleId);
         this.roleId = null;
       } catch (e) {
-        Message({
-          message: "Не получилось удалить роль",
-          type: "error",
-        });
+        this.$message.error("Не удалось удалить роль");
       }
     },
     submitForm() {

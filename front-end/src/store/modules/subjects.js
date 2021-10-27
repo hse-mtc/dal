@@ -113,12 +113,7 @@ class Subjects extends VuexModule {
       this.UPSERT_SUBJECT(data);
       return true;
     } catch (e) {
-      console.error("Не удалось обновить предмет:", e);
-      Message({
-        type: "error",
-        message: "Не удалось обновить предмет",
-      });
-
+      this.$message.error("Не удалось обновить предмет");
       return false;
     }
   }

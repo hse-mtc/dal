@@ -363,10 +363,7 @@ export default {
               })
               .catch(() => {
                 this.loading = false;
-                this.$message({
-                  type: "error",
-                  message: "Ошибка регистрации",
-                });
+                this.$message.error("Ошибка регистрации");
               });
           }
           if (this.registerForm.role === "teacher") {
@@ -389,10 +386,7 @@ export default {
               })
               .catch(() => {
                 this.loading = false;
-                this.$message({
-                  type: "error",
-                  message: "Ошибка регистрации",
-                });
+                this.$message.error("Ошибка регистрации");
               });
           }
         }

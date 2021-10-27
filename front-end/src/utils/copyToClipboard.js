@@ -14,6 +14,7 @@ const fallbackCopyTextToClipboard = text => {
       return document.execCommand("copy");
     } catch (err) {
       console.error("fallback: Не удалось скопировать в буфер", err);
+      this.$message.error("Не удалось скопировать в буфер");
       return false;
     }
   })();
@@ -36,6 +37,7 @@ const copyToClipboard = async text => {
     return true;
   } catch (e) {
     console.error("clipboard: Could not copy text: ", e);
+    this.$message.error("Не удалось скопировать в буфер");
     return fallbackCopyTextToClipboard(text);
   }
 };

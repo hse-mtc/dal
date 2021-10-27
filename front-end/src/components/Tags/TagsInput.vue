@@ -96,8 +96,8 @@ export default {
     async getSuggestions() {
       try {
         this.all = (await getExistingTags()).data;
-      } catch (error) {
-        console.log("Failed to fetch Tags: ", error);
+      } catch (e) {
+        this.$message.error("Не удалось загрузить тэги");
       }
     },
   },

@@ -260,10 +260,8 @@ export default {
 
       try {
         await deleteDocument(id);
-      } catch (error) {
-        // TODO(TmLev): better error handling.
-        console.log("Failed to delete Paper: ", error);
-        return;
+      } catch (e) {
+        this.$message.error("Не удалось удалить документ");
       }
 
       this.removePaperFromList(id);
@@ -295,8 +293,8 @@ export default {
           this.documents = [...this.documents, ...data.results];
           this.count = data.count > 0 ? data.count : null;
           this.loading = false;
-        } catch (error) {
-          console.log("Failed to fetch Papers: ", error);
+        } catch (e) {
+          this.$message.error("Не удалось загрузить документы");
         }
       }
     },

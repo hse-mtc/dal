@@ -629,10 +629,7 @@ class ApplicantForm extends Vue {
       } catch (e) {
         this.isSubmitting = false;
         console.error("Ошибка чтения файла:", e);
-        this.$message({
-          type: "error",
-          message: "Ошибка чтения файла",
-        });
+        this.$message.error("Ошибка чтения файла");
       }
     }
   }
