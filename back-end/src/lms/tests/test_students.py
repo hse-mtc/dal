@@ -8,4 +8,4 @@ def assert_student_equals():
 
 @pytest.mark.django_db
 def test_get_skills_by_student_id(create_student):
-    create_student()
+    create_student
