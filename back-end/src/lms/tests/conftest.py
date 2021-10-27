@@ -4,7 +4,6 @@ from datetime import datetime
 import pytest
 from conf.settings import BASE_DIR
 
-
 from auth.models import User
 from common.models.subjects import Subject
 from common.models.persons import BirthInfo, ContactInfo, Relative
@@ -24,7 +23,6 @@ from lms.models.applicants import (
     RecruitmentOffice,
     ApplicationProcess,
 )
-
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
@@ -315,8 +313,8 @@ def get_student_data(
 
 def student_photo() -> Photo:
     __photo = Photo()
-    __photo.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' /
-                              'data' / 'images' / 'test_photo.png')
+    __photo.image = Image.open(fp=BASE_DIR / 'src' / 'lms' / 'tests' / 'data' /
+                               'images' / 'test_photo.png')
     return __photo
 
 
@@ -335,14 +333,19 @@ def create_program():
 
 def create_university_info():
 
-    ui = UniversityInfo(campus=UniversityInfo.Campus.MOSCOW.value, program=create_program(), group='БИТ191', card_id='аф241ивылп8')
+    ui = UniversityInfo(campus=UniversityInfo.Campus.MOSCOW.value,
+                        program=create_program(),
+                        group='БИТ191',
+                        card_id='аф241ивылп8')
     ui.save()
     return ui
 
 
 def create_milspecialty() -> Milspecialty:
 
-    m = Milspecialty(title='mil title', code='453.100', available_for=create_university_info())
+    m = Milspecialty(title='mil title',
+                     code='453.100',
+                     available_for=[create_university_info().campus])
     m.save()
     return m
 
@@ -384,6 +387,7 @@ def create_application_process():
     return a
 
 
+@pytest.fixture
 def create_student() -> Student:
 
     s = Student()
@@ -395,8 +399,10 @@ def create_student() -> Student:
     s.post = s.Post.MILGROUP_COMMANDER.value
     s.milspecialty = create_milspecialty()
     s.skills.add(create_skill())
+    s.family.add(create_test_relative())
     s.recruitment_office = create_recruitment_office()
     s.university_info = create_university_info()
     s.application_process = create_application_process()
     s.save()
     print(s)
+    return s
