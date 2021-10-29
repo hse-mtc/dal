@@ -1,11 +1,9 @@
 # pylint: disable=redefined-outer-name
-import json
-
 from uuid import UUID
 
 import pytest
 
-from django.test.client import BOUNDARY, MULTIPART_CONTENT, encode_multipart
+from django.test.client import MULTIPART_CONTENT
 from django.core.files.base import ContentFile
 
 from PIL import Image, ImageChops
@@ -14,16 +12,16 @@ from dms.models.documents import File
 from dms.models.books import Cover
 
 
-def dump_data(data):
-    json_data = data.copy()
-    json_data["data"] = json.dumps(json_data["data"])
-    return json_data
+@pytest.fixture
+def send_create_request(su_client, format_multipart_for_post_request):
 
+    def callme(data):
+        create_response = su_client.post(
+            "/api/dms/books/", data=format_multipart_for_post_request(data))
+        assert create_response.status_code == 201
+        return create_response
 
-def send_create_request(su_client, data):
-    create_response = su_client.post("/api/dms/books/", data=dump_data(data))
-    assert create_response.status_code == 201
-    return create_response
+    return callme
 
 
 def assert_images_equal(image_1_path: str, image_2_path: str):
@@ -71,9 +69,10 @@ def assert_book_data_equal(su_client, original_data, book_id):
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
 def test_post_books_creates_new_book(su_client, book_data, author_data,
-                                     publisher_data, subject_data):
+                                     publisher_data, subject_data,
+                                     send_create_request):
     data = book_data(author_data, publisher_data, subject_data)
-    create_response = send_create_request(su_client, data)
+    create_response = send_create_request(data)
 
     book_id = create_response.data["id"]
     assert_book_data_equal(su_client, data, book_id)
@@ -82,9 +81,10 @@ def test_post_books_creates_new_book(su_client, book_data, author_data,
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
 def test_put_update_book(su_client, book_data, author_data, publisher_data,
-                         subject_data):
+                         subject_data, send_create_request,
+                         format_multipart_for_put_request):
     data = book_data(author_data, publisher_data, subject_data)
-    create_response = send_create_request(su_client, data)
+    create_response = send_create_request(data)
 
     book_id = create_response.data["id"]
     data = book_data(author_data,
@@ -93,11 +93,9 @@ def test_put_update_book(su_client, book_data, author_data, publisher_data,
                      title="new_title",
                      annotation="new_annotation")
     json_data = data.copy()
-    json_data["data"] = json.dumps(data["data"])
-    content = encode_multipart(
-        boundary=BOUNDARY,
-        data=json_data,
-    )
+    print(json_data)
+    content = format_multipart_for_put_request(json_data)
+    print(content)
     update_response = su_client.put(f"/api/dms/books/{book_id}/",
                                     data=content,
                                     content_type=MULTIPART_CONTENT)
@@ -108,20 +106,20 @@ def test_put_update_book(su_client, book_data, author_data, publisher_data,
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
 def test_patch_update_book(su_client, book_data, author_data, publisher_data,
-                           subject_data):
+                           subject_data, send_create_request,
+                           format_multipart_for_put_request):
     data = book_data(author_data, publisher_data, subject_data)
-    create_response = send_create_request(su_client, data)
+    create_response = send_create_request(data)
 
     book_id = create_response.data["id"]
     file = ContentFile("file_content_new", name="file.txt")
     data["content"] = file
-    content = encode_multipart(
-        boundary=BOUNDARY,
-        data={
-            "content": file,
-            "data": json.dumps({"title": "new_title_2"})
-        },
-    )
+    content = format_multipart_for_put_request({
+        "content": file,
+        "data": {
+            "title": "new_title_2"
+        }
+    })
     update_response = su_client.patch(f"/api/dms/books/{book_id}/",
                                       data=content,
                                       content_type=MULTIPART_CONTENT)
@@ -133,9 +131,9 @@ def test_patch_update_book(su_client, book_data, author_data, publisher_data,
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
 def test_delete_book(su_client, book_data, author_data, publisher_data,
-                     subject_data):
+                     subject_data, send_create_request):
     data = book_data(author_data, publisher_data, subject_data)
-    create_response = send_create_request(su_client, data)
+    create_response = send_create_request(data)
 
     book_id = create_response.data["id"]
     delete_response = su_client.delete(f"/api/dms/books/{book_id}/")
@@ -145,34 +143,33 @@ def test_delete_book(su_client, book_data, author_data, publisher_data,
 
 
 @pytest.mark.django_db
+# pylint: disable=too-many-arguments
 def test_invalid_cover(su_client, book_data, author_data, publisher_data,
-                       subject_data):
+                       subject_data, send_create_request,
+                       format_multipart_for_post_request,
+                       format_multipart_for_put_request):
     data = book_data(author_data, publisher_data, subject_data)
     data["image"] = ContentFile("file_content", name="file_name.png")
-    create_response = su_client.post("/api/dms/books/", data=dump_data(data))
+    create_response = su_client.post(
+        "/api/dms/books/", data=format_multipart_for_post_request(data))
     assert create_response.status_code == 400
     assert "image" in create_response.json()
 
     data = book_data(author_data, publisher_data, subject_data)
-    create_response = send_create_request(su_client, data)
+    create_response = send_create_request(data)
     book_id = create_response.data["id"]
     json_data = data.copy()
     json_data["image"] = "test_str"
-    json_data["data"] = json.dumps(data["data"])
-    content = encode_multipart(
-        boundary=BOUNDARY,
-        data=json_data,
-    )
+    json_data["data"] = data["data"]
+    content = format_multipart_for_put_request(json_data)
     update_response = su_client.put(f"/api/dms/books/{book_id}/",
                                     data=content,
                                     content_type=MULTIPART_CONTENT)
     assert update_response.status_code == 400
     assert "image" in update_response.json()
 
-    content = encode_multipart(
-        boundary=BOUNDARY,
-        data={"image": ContentFile("file_content", name="file_name.png")},
-    )
+    content = format_multipart_for_put_request(
+        {"image": ContentFile("file_content", name="file_name.png")})
     update_response = su_client.patch(f"/api/dms/books/{book_id}/",
                                       data=content,
                                       content_type=MULTIPART_CONTENT)

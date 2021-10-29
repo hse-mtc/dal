@@ -13,7 +13,8 @@ def format_multipart_for_put_request():
 
     def call_me(data):
         request_data = data.copy()
-        request_data["data"] = json.dumps(data["data"])
+        if "data" in request_data:
+            request_data["data"] = json.dumps(data["data"])
         return encode_multipart(boundary=BOUNDARY, data=request_data)
 
     return call_me
@@ -24,7 +25,8 @@ def format_multipart_for_post_request():
 
     def call_me(data):
         request_data = data.copy()
-        request_data["data"] = json.dumps(data["data"])
+        if "data" in request_data:
+            request_data["data"] = json.dumps(data["data"])
         return request_data
 
     return call_me
