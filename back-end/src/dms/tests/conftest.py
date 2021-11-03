@@ -7,19 +7,13 @@ import pytest
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test.client import Client
 
 from PIL import Image
-
-from auth.models import User, Permission
 
 from dms.models.common import Author, Publisher
 from dms.models.documents import File
 
 from common.models.subjects import Subject
-
-TEST_USER_EMAIL = "test_user@mail.com"
-TEST_USER_PASSWORD = "qwerty"
 
 
 @pytest.fixture
@@ -178,44 +172,3 @@ def book_data(image):
         }
 
     return call_me
-
-
-@pytest.fixture
-def permission_data():
-
-    def call_me(viewset: str = "null",
-                method: str = "get",
-                scope: str = "self"):
-        return {
-            "viewset": viewset,
-            "method": method,
-            "scope": getattr(Permission.Scope, scope.upper())
-        }
-
-    return call_me
-
-
-@pytest.fixture
-def test_user(db):
-    user = User.objects.filter(email=TEST_USER_EMAIL)
-    if user.exists():
-        return user.first()
-
-    user = User.objects.create_user(email=TEST_USER_EMAIL,
-                                    password=TEST_USER_PASSWORD)
-    user.save()
-    return user
-
-
-@pytest.fixture
-def test_client(test_user):
-    response = Client().post(
-        "/api/auth/tokens/obtain/",
-        {
-            "email": TEST_USER_EMAIL,
-            "password": TEST_USER_PASSWORD
-        },
-        content_type="application/json",
-    )
-    access_token = response.data["access"]
-    return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
