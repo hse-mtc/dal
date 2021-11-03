@@ -17,7 +17,7 @@ def create_subject():
         annotation: str = None,
     ):
         if annotation is None:
-            annotation = f'Пример анноттации для {title}'
+            annotation = f"Пример анноттации для {title}"
         subject, _ = Subject.objects.get_or_create(
             title=title,
             annotation=annotation,
