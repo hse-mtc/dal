@@ -131,6 +131,8 @@ import moment from "moment";
 import { getPapers, patchPaper } from "@/api/papers";
 import { deleteDocument } from "@/api/delete";
 
+import * as message from "@/utils/message";
+
 import { scrollMixin } from "@/mixins/scrollMixin";
 import DownloadFile from "@/common/DownloadFile/index.vue";
 import { surnameWithInitials } from "@/utils/person";
@@ -184,9 +186,10 @@ export default {
     moment,
     getAuthor(id) {
       const author = this.authors.find(item => item.id === id);
-      if (!author) return "";
-
-      return surnameWithInitials(author);
+      if (author) {
+        return surnameWithInitials(author);
+      }
+      return "";
     },
     publisherNames(ids) {
       return this.publishers
@@ -228,13 +231,12 @@ export default {
             : "Документ восстановлен",
         });
       } catch (error) {
-        console.log("[ERROR]: ", error);
-        this.$message({
-          type: "error",
-          message: status
-            ? "Не удалось переместить файл в корзину"
-            : "Не удалось восстановить файл",
-        });
+        this.$message.error(
+          status
+            ? "Не удалось переместить файл в корзину."
+            : "Не удалось восстановить файл.",
+        );
+        console.error("Papers.Serp.toggleBinStatus: ", error);
       }
     },
 
@@ -261,8 +263,8 @@ export default {
       try {
         await deleteDocument(id);
       } catch (error) {
-        // TODO(TmLev): better error handling.
-        console.log("Failed to delete Paper: ", error);
+        message.deleteError("статьи", error.response?.status);
+        console.error("Papers.Serp.deletePaper: ", error);
         return;
       }
 
@@ -270,7 +272,7 @@ export default {
 
       this.$message({
         type: "success",
-        message: "Удаление завершено",
+        message: "Статья удалена.",
       });
     },
 
@@ -296,7 +298,8 @@ export default {
           this.count = data.count > 0 ? data.count : null;
           this.loading = false;
         } catch (error) {
-          console.log("Failed to fetch Papers: ", error);
+          message.getError("статей", error.response?.status);
+          console.error("Papers.Serp.fetchData: ", error);
         }
       }
     },
