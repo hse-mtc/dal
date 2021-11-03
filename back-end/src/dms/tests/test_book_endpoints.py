@@ -227,13 +227,14 @@ def test_get_book_with_permissions(test_client, test_user, permission_data):
     get_response = test_client.get(f"/api/dms/books/{-1}/")
     assert get_response.status_code == 404
 
+
 # pylint: disable=too-many-arguments
 def send_create_request_with_permissions(test_client, test_user,
                                          permission_data, book_data,
                                          author_data, publisher_data,
-                                         subject_data, scope):
+                                         subject_data, post_create_permission_scope):
     give_permission_to_user(test_user, permission_data("books", "get", "all"))
-    give_permission_to_user(test_user, permission_data("books", "post", scope))
+    give_permission_to_user(test_user, permission_data("books", "post", post_create_permission_scope))
     data = book_data(author_data, publisher_data, subject_data)
     data["data"]["user"] = test_user.id
     create_response = send_create_request(test_client, data)
@@ -348,12 +349,12 @@ def test_delete_books_with_permissions(su_client, test_client, test_user,
     give_permission_to_user(test_user, permission_data("books", "post", "self"))
     data = book_data(author_data, publisher_data, subject_data)
     data["data"]["user"] = test_user.id
-    create_response = send_create_request(su_client, data)
+    create_response = send_create_request(test_client, data)
 
     book_id = create_response.data["id"]
     delete_response = test_client.delete(f"/api/dms/books/{book_id}/")
     assert delete_response.status_code == 403
     give_permission_to_user(test_user, permission_data("books", "delete",
-                                                       "all"))
+                                                       "self"))
     delete_response = test_client.delete(f"/api/dms/books/{book_id}/")
     assert delete_response.status_code == 204
