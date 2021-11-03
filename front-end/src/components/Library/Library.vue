@@ -330,10 +330,12 @@ export default {
       if (changingId) {
         try {
           const bookData = (await getBook(changingId)).data;
-
           this.books = this.books.map(item => (item.id === changingId ? bookData : item));
         } catch (e) {
-          console.warn(`не удалось отобразить новые данные: ${e}`, e);
+          this.$message.error(
+            "Не удалось отобразить новые данные о книге.",
+          );
+          console.error(`Не удалось отобразить новые данные: ${e}`);
         }
       }
     },
