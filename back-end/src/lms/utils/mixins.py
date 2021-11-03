@@ -12,6 +12,7 @@ from auth.models import Permission, User
 
 class QuerySetScopingMixin:
 
+    permission_allow_read_only = False
     scoped_permission_class = None
 
     # Scoping for getting the queryset
@@ -39,6 +40,9 @@ class QuerySetScopingMixin:
         :return: filtered QuerySet
         """
         if self.request.user.is_superuser:
+            return self.queryset
+
+        if self.permission_allow_read_only:
             return self.queryset
 
         scope = self.request.user.get_perm_scope(

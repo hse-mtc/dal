@@ -1,22 +1,18 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name,too-many-arguments,redefined-builtin
 from typing import List
 from datetime import datetime
+from PIL import Image
 import pytest
 from conf.settings import BASE_DIR
 
 from auth.models import User
 from common.models.subjects import Subject
-from common.models.persons import BirthInfo, ContactInfo, Relative
-from lms.models.applicants import Passport
+from common.models.persons import BirthInfo, ContactInfo, Relative, Photo
 from lms.models.lessons import Room, Lesson
-from lms.models.common import Milfaculty, Milgroup, Milspecialty
 from lms.models.teachers import Teacher, Rank
-from common.models.subjects import Subject
 from lms.models.students import Student, Skill
-from common.models.persons import Photo
+from lms.models.common import Milfaculty, Milgroup, Milspecialty
 from lms.models.universities import UniversityInfo, Program, Faculty
-
-from PIL import Image
 
 from lms.models.applicants import (
     Passport,
@@ -24,8 +20,8 @@ from lms.models.applicants import (
     ApplicationProcess,
 )
 
-SUPERUSER_EMAIL = "superuserfortests@mail.com"
-SUPERUSER_PASSWORD = "superuserpasswordfortests"
+SUPERUSER_EMAIL = 'superuserfortests@mail.com'
+SUPERUSER_PASSWORD = 'superuserpasswordfortests'
 
 
 @pytest.fixture
@@ -45,15 +41,15 @@ def su_client(superuser):
     from django.test.client import Client
 
     response = Client().post(
-        "/api/auth/tokens/obtain/",
+        '/api/auth/tokens/obtain/',
         {
-            "email": SUPERUSER_EMAIL,
-            "password": SUPERUSER_PASSWORD
+            'email': SUPERUSER_EMAIL,
+            'password': SUPERUSER_PASSWORD
         },
-        content_type="application/json",
+        content_type='application/json',
     )
-    access_token = response.data["access"]
-    return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+    access_token = response.data['access']
+    return Client(HTTP_AUTHORIZATION=f'Bearer {access_token}')
 
 
 @pytest.fixture
@@ -78,23 +74,23 @@ def get_new_lesson_data() -> dict:
 
         if ids_only:
             res = {
-                "subject": subject.id,
-                "room": room.id,
-                "milgroup": milgroup.id,
-                "teacher": teacher.id,
-                "type": "LE",
-                "date": "2021-09-22",
-                "ordinal": 2,
+                'subject': subject.id,
+                'room': room.id,
+                'milgroup': milgroup.id,
+                'teacher': teacher.id,
+                'type': 'LE',
+                'date': '2021-09-22',
+                'ordinal': 2,
             }
         else:
             res = {
-                "subject": subject,
-                "room": room,
-                "milgroup": milgroup,
-                "teacher": teacher,
-                "type": "LE",
-                "date": "2021-09-22",
-                "ordinal": 2,
+                'subject': subject,
+                'room': room,
+                'milgroup': milgroup,
+                'teacher': teacher,
+                'type': 'LE',
+                'date': '2021-09-22',
+                'ordinal': 2,
             }
 
         return res
@@ -102,14 +98,14 @@ def get_new_lesson_data() -> dict:
     return call_me
 
 
-def create_room(title: str = "510") -> Room:
+def create_room(title: str = '510') -> Room:
     room, _ = Room.objects.get_or_create(title=title,)
 
     return room
 
 
-def create_milfaculty(title: str = "Тестовое название цикла 1",
-                      abbreviation: str = "АБР 1") -> Milfaculty:
+def create_milfaculty(title: str = 'Тестовое название цикла 1',
+                      abbreviation: str = 'АБР 1') -> Milfaculty:
     milfaculty, _ = Milfaculty.objects.get_or_create(title=title,
                                                      abbreviation=abbreviation)
     return milfaculty
@@ -117,7 +113,7 @@ def create_milfaculty(title: str = "Тестовое название цикла
 
 def create_milgroup(
     milfaculty: Milfaculty,
-    title: str = "Тестовое название взвода 1",
+    title: str = 'Тестовое название взвода 1',
     weekday: int = 1,
 ) -> Milgroup:
     milgroup, _ = Milgroup.objects.get_or_create(title=title,
@@ -131,12 +127,12 @@ def create_teacher(rank: Rank,
                    milfaculty: Milfaculty,
                    milgroups: List[Milgroup] or None = None) -> Teacher:
     value = {
-        "surname": "Тест_Фам",
-        "name": "Тест_Им",
-        "patronymic": "Тест_От",
-        "rank": rank,
-        "post": Teacher.Post.MILFACULTY_HEAD.value,
-        "milfaculty": milfaculty,
+        'surname': 'Тест_Фам',
+        'name': 'Тест_Им',
+        'patronymic': 'Тест_От',
+        'rank': rank,
+        'post': Teacher.Post.MILFACULTY_HEAD.value,
+        'milfaculty': milfaculty,
     }
     teacher, _ = Teacher.objects.get_or_create(**value)
     if milgroups:
@@ -145,13 +141,13 @@ def create_teacher(rank: Rank,
     return teacher
 
 
-def create_rank(title: str = "Тестовый ранк 1") -> Rank:
+def create_rank(title: str = 'Тестовый ранк 1') -> Rank:
     rank, _ = Rank.objects.get_or_create(title=title)
     return rank
 
 
 def create_subject(user: User,
-                   title: str = "Тактическая подготовка 2") -> Subject:
+                   title: str = 'Тактическая подготовка 2') -> Subject:
     subject, _ = Subject.objects.get_or_create(
         title=title,
         annotation=f"Пример аннотации для '{title.lower()}'",
@@ -169,8 +165,8 @@ def create_lesson():
         milgroup: Milgroup,
         subject: Subject,
         teacher: Teacher,
-        type: str = "SE",
-        date: datetime = "2021-09-22",
+        type: str = 'SE',
+        date: datetime = '2021-09-22',
         ordinal: int = 1,
     ) -> Lesson:
         lesson, _ = Lesson.objects.get_or_create(
@@ -187,7 +183,7 @@ def create_lesson():
     return call_me
 
 
-def create_test_user(email: str = "test@email.ru", password: str = "1234"):
+def create_test_user(email: str = 'test@email.ru', password: str = '1234'):
     user = User.objects.create_user(
         email=email,
         password=password,
@@ -199,8 +195,8 @@ def create_test_user(email: str = "test@email.ru", password: str = "1234"):
 
 
 def create_test_birth_info(date: datetime = datetime.today(),
-                           country: str = "Wonderland",
-                           city: str = "Sin city") -> BirthInfo:
+                           country: str = 'Wonderland',
+                           city: str = 'Sin city') -> BirthInfo:
     __bt_info, _ = BirthInfo.objects.get_or_create(date=date,
                                                    country=country,
                                                    city=city)
@@ -209,9 +205,9 @@ def create_test_birth_info(date: datetime = datetime.today(),
 
 
 def create_test_contact_info(
-        corporate_email="Fool@corp.com",
-        personal_email="Fool@mail.com",
-        personal_phone_number="88005553535") -> ContactInfo:
+        corporate_email='Fool@corp.com',
+        personal_email='Fool@mail.com',
+        personal_phone_number='88005553535') -> ContactInfo:
     __ct_info, _ = ContactInfo.objects.get_or_create(
         corporate_email=corporate_email,
         personal_email=personal_email,
@@ -220,41 +216,41 @@ def create_test_contact_info(
     return __ct_info
 
 
-def get_test_person_data(name: str = "Test name",
-                         surname: str = "Test surname",
-                         patronymic: str = "Test patr",
-                         citizenship: str = "Wonderland") -> dict:
+def get_test_person_data(name: str = 'Test name',
+                         surname: str = 'Test surname',
+                         patronymic: str = 'Test patr',
+                         citizenship: str = 'Wonderland') -> dict:
     return {
-        "name": name,
-        "surname": surname,
-        "patronymic": patronymic,
-        "citizenship": citizenship,
-        "birth_info": create_test_birth_info(),
-        "contact_info": create_test_contact_info()
+        'name': name,
+        'surname': surname,
+        'patronymic': patronymic,
+        'citizenship': citizenship,
+        'birth_info': create_test_birth_info(),
+        'contact_info': create_test_contact_info()
     }
 
 
 def create_test_relative(type=Relative.Type.FATHER.value) -> Relative:
     value = get_test_person_data()
-    value["type"] = type
+    value['type'] = type
     __relative, _ = Relative.objects.get_or_create(**value)
 
     return __relative
 
 
 def create_passport(
-    series: str = "4040",
-    code: str = "404040",
-    ufms_name: str = "Test ufms",
-    ufms_code: str = "4040404",
+    series: str = '4040',
+    code: str = '404040',
+    ufms_name: str = 'Test ufms',
+    ufms_code: str = '4040404',
     issue_date: datetime = datetime.today()
 ) -> Passport:
     value = {
-        "series": series,
-        "code": code,
-        "ufms_name": ufms_name,
-        "ufms_code": ufms_code,
-        "issue_date": issue_date
+        'series': series,
+        'code': code,
+        'ufms_name': ufms_name,
+        'ufms_code': ufms_code,
+        'issue_date': issue_date
     }
 
     __passport, _ = Passport.objects.get_or_create(**value)
@@ -262,53 +258,57 @@ def create_passport(
 
 
 def get_passport_data(
-    series: str = "4040",
-    code: str = "404040",
-    ufms_name: str = "Test ufms",
-    ufms_code: str = "4040404",
+    series: str = '4040',
+    code: str = '404040',
+    ufms_name: str = 'Test ufms',
+    ufms_code: str = '4040404',
     issue_date: datetime = datetime.today()) -> dict:
     return {
-        "series": series,
-        "code": code,
-        "ufms_name": ufms_name,
-        "ufms_code": ufms_code,
-        "issue_date": issue_date
+        'series': series,
+        'code': code,
+        'ufms_name': ufms_name,
+        'ufms_code': ufms_code,
+        'issue_date': issue_date
     }
 
 
-def get_student_data(
-    name: str = 'first',
-    surname: str = 'second',
-    patronymic: str = 'patronymic',
-) -> dict:
+@pytest.fixture()
+def get_student_data() -> dict:
 
-    __pass = ""
+    def call_me(stud_id: int = 1,
+                name: str = 'first',
+                surname: str = 'second',
+                patronymic: str = 'patronymic'):
+        __pass = ''
 
-    return {
-        "name": name,
-        "surname": surname,
-        "patronymic": patronymic,
-        "fullname": " ".join([surname, name, patronymic]),
-        "photo": __pass,
-        "birth_info": __pass,
-        "contact_info": __pass,
-        "citizenship": __pass,
-        "permanent_address": __pass,
-        "surname_genitive": __pass,
-        "name_genitive": __pass,
-        "patronymic_genitive": __pass,
-        "user": __pass,
-        "status": __pass,
-        "post": __pass,
-        "milgroup": __pass,
-        "milspecialty": __pass,
-        "skills": __pass,
-        "passport": get_passport_data(),
-        "family": __pass,
-        "recruitment_office": __pass,
-        "university_info": __pass,
-        "application_process": __pass
-    }
+        return {
+            'id': stud_id,
+            'name': name,
+            'surname': surname,
+            'patronymic': patronymic,
+            'fullname': ' '.join([surname, name, patronymic]),
+            'photo': __pass,
+            'birth_info': __pass,
+            'contact_info': __pass,
+            'citizenship': __pass,
+            'permanent_address': __pass,
+            'surname_genitive': __pass,
+            'name_genitive': __pass,
+            'patronymic_genitive': __pass,
+            'user': __pass,
+            'status': __pass,
+            'post': __pass,
+            'milgroup': __pass,
+            'milspecialty': __pass,
+            'skills': get_skills_data(skill_id=stud_id),
+            'passport': get_passport_data(),
+            'family': __pass,
+            'recruitment_office': __pass,
+            'university_info': __pass,
+            'application_process': __pass
+        }
+
+    return call_me
 
 
 def student_photo() -> Photo:
@@ -319,13 +319,13 @@ def student_photo() -> Photo:
 
 
 def create_faculty():
-    value = {"title": "МИЭМ"}
+    value = {'title': 'МИЭМ'}
     f, _ = Faculty.objects.get_or_create(**value)
     return f
 
 
 def create_program():
-    value = {"title": "ИТСС", "code": "1.1.1.1", "faculty": create_faculty()}
+    value = {'title': 'ИТСС', 'code': '1.1.1.1', 'faculty': create_faculty()}
     p, _ = Program.objects.get_or_create(**value)
     return p
 
@@ -354,6 +354,10 @@ def create_skill():
     s = Skill(title='Кац')
     s.save()
     return s
+
+
+def get_skills_data(skill_id: int = 1, title: str = 'Кац') -> list:
+    return [{'id': skill_id, 'title': title}]
 
 
 def create_recruitment_office():
@@ -390,10 +394,11 @@ def create_application_process():
 def create_student() -> Student:
 
     s = Student()
-    s.name = "name"
-    s.surname = "surname"
-    s.patronymic = "patronymic"
-    s.photo = student_photo()
+    s.name = 'name'
+    s.surname = 'surname'
+    s.patronymic = 'patronymic'
+    #s.photo = student_photo()
+    # TODO: исправить ошибку при установке фото студента!
     s.milgroup = create_milgroup(create_milfaculty())
     s.post = s.Post.MILGROUP_COMMANDER.value
     s.milspecialty = create_milspecialty()
