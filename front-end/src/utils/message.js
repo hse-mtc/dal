@@ -74,3 +74,10 @@ export function deleteSuccess(entity) {
     type: "success",
   });
 }
+
+export function downloadError(entity, status) {
+  Message({
+    message: `Ошибка при удалении ${entity}. ${details(status)}`,
+    type: "error",
+  });
+}
