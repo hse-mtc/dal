@@ -40,22 +40,18 @@ export default {
   methods: {
     async onSubmit() {
       const title = this.form.title.trim();
-      const usedCategories = [...this.categories.map(category => category.title.trim().toLowerCase()), "Корзина"];
-      if (usedCategories.includes(title.trim().toLowerCase())) {
+
+      const usedCategories = [...this.categories.map(category => category.title.trim().toLowerCase()), "Корзина".toLowerCase()];
+      if (usedCategories.includes(title.toLowerCase())) {
         Message({
-          message: "Такая категория уже существует",
+          message: "Категория с похожим названием уже существует.",
           type: "error",
         });
         return;
       }
 
-      try {
-        const { data } = await addPaperCategory({ title });
-        PapersModule.setCategories([...this.categories, data]);
-        this.closeModal();
-      } catch (error) {
-        console.error("Failed to add Category: ", error);
-      }
+      await PapersModule.addCategory({ title });
+      this.closeModal();
     },
 
     closeModal() {
