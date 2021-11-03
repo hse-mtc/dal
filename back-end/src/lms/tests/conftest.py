@@ -275,32 +275,36 @@ def get_passport_data(
 @pytest.fixture()
 def get_student_data() -> dict:
 
-    def call_me(stud_id: int = 1,
+    def call_me(student_ids,
                 name: str = 'first',
                 surname: str = 'second',
-                patronymic: str = 'patronymic'):
+                patronymic: str = 'patronymic',
+                status: str = 'AP',
+                post: str = 'GC'):
         __pass = ''
 
         return {
-            'id': stud_id,
+            'id': student_ids['student_id'],
             'name': name,
             'surname': surname,
             'patronymic': patronymic,
             'fullname': ' '.join([surname, name, patronymic]),
             'photo': __pass,
             'birth_info': __pass,
-            'contact_info': __pass,
+            'contact_info': None,  #TODO: не прописали
             'citizenship': __pass,
             'permanent_address': __pass,
             'surname_genitive': __pass,
             'name_genitive': __pass,
             'patronymic_genitive': __pass,
-            'user': __pass,
-            'status': __pass,
-            'post': __pass,
-            'milgroup': __pass,
-            'milspecialty': __pass,
-            'skills': get_skills_data(skill_id=stud_id),
+            'user': None,  #TODO: не прописали
+            'status': status,
+            'post': post,
+            'milgroup': student_ids['millgroup_id'],
+            'milspecialty': student_ids['milspecialty_id'],
+            'skills': [
+                get_skills_data(skill_id=id) for id in student_ids['skill_id']
+            ],
             'passport': get_passport_data(),
             'family': __pass,
             'recruitment_office': __pass,
@@ -342,22 +346,21 @@ def create_university_info():
 
 def create_milspecialty() -> Milspecialty:
 
-    m = Milspecialty(title='mil title',
-                     code='453.100',
-                     available_for=[create_university_info().campus])
-    m.save()
+    m, _ = Milspecialty.objects.get_or_create(
+        title='mil title',
+        code='453.100',
+        available_for=[create_university_info().campus])
     return m
 
 
 def create_skill():
 
-    s = Skill(title='Кац')
-    s.save()
+    s, _ = Skill.objects.get_or_create(title='Кац')
     return s
 
 
 def get_skills_data(skill_id: int = 1, title: str = 'Кац') -> list:
-    return [{'id': skill_id, 'title': title}]
+    return {'id': skill_id, 'title': title}
 
 
 def create_recruitment_office():
@@ -391,23 +394,33 @@ def create_application_process():
 
 
 @pytest.fixture
-def create_student() -> Student:
+def create_student():
 
-    s = Student()
-    s.name = 'name'
-    s.surname = 'surname'
-    s.patronymic = 'patronymic'
-    #s.photo = student_photo()
-    # TODO: исправить ошибку при установке фото студента!
-    s.milgroup = create_milgroup(create_milfaculty())
-    s.post = s.Post.MILGROUP_COMMANDER.value
-    s.milspecialty = create_milspecialty()
-    s.recruitment_office = create_recruitment_office()
-    s.university_info = create_university_info()
-    s.application_process = create_application_process()
-    s.save()
-    s.skills.add(create_skill())
-    s.family.add(create_test_relative())
-    s.save()
-    print(s)
-    return s
+    def call_me() -> Student:
+        s = Student()
+        s.name = 'name'
+        s.surname = 'surname'
+        s.patronymic = 'patronymic'
+        #s.photo = student_photo()
+        # TODO: исправить ошибку при установке фото студента!
+        s.milgroup = create_milgroup(create_milfaculty())
+        s.post = s.Post.MILGROUP_COMMANDER.value
+        s.milspecialty = create_milspecialty()
+        s.recruitment_office = create_recruitment_office()
+        s.university_info = create_university_info()
+        s.application_process = create_application_process()
+        s.save()
+        s.skills.add(create_skill())
+        s.family.add(create_test_relative())
+        s.save()
+
+        student_ids = {
+            'student_id': s.id,
+            'skill_id': [skill.id for skill in s.skills.all()],
+            'millgroup_id': s.milgroup.id,
+            'milspecialty_id': s.milspecialty.id,
+        }
+
+        return s, student_ids
+
+    return call_me
