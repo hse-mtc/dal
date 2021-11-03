@@ -10,10 +10,11 @@ SUPERUSER_PASSWORD = "superuserpasswordfortests"
 
 @pytest.fixture
 def create_subject():
+
     def call_me(
-            user: User,
-            title: str = "Тактическая подготовка 2",
-            annotation: str = None,
+        user: User,
+        title: str = "Тактическая подготовка 2",
+        annotation: str = None,
     ):
         if annotation is None:
             annotation = f'Пример анноттации для {title}'
@@ -42,11 +43,11 @@ def create_test_user(email: str = "test@email.ru", password: str = "1234"):
 def get_new_subject_data():
 
     def call_me(
-            title: str = "Тактическая подготовка 2",
-            annotation: str = None,
+        title: str = "Тактическая подготовка 2",
+        annotation: str = None,
     ):
         if annotation is None:
-            annotation = f'Пример анноттации для {title}'
+            annotation = f"Пример анноттации для {title}"
         user = create_test_user()
         data = {
             "title": title,
