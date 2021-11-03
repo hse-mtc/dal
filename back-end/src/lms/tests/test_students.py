@@ -18,6 +18,22 @@ def test_get_skills_by_student_id(su_client, create_student, get_student_data):
 
 
 @pytest.mark.django_db
+def test_get_all_skills(su_client, create_student, get_student_data):
+    students_ids = []
+    # pylint: disable=unused-variable
+    for i in range(3):
+        _, stud_ids = create_student()
+        students_ids.append(stud_ids)
+
+    response = su_client.get('/api/lms/students/skills/')
+    assert response.status_code == 200
+
+    for i, data in enumerate(response.data):
+        assert data['skills'] == get_student_data(
+            student_ids=students_ids[i])['skills']
+
+
+@pytest.mark.django_db
 def test_get_all_students(su_client, create_student):
     students_ids = []
     #pylint: disable=unused-variable

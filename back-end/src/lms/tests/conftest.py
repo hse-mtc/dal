@@ -303,7 +303,9 @@ def get_student_data() -> dict:
             'milgroup': student_ids['millgroup_id'],
             'milspecialty': student_ids['milspecialty_id'],
             'skills': [
-                get_skills_data(skill_id=id) for id in student_ids['skill_id']
+                get_skills_data(skill_id=student_ids['skill_id'][i],
+                                title=student_ids['skill_titles'][i])
+                for i in range(len(student_ids['skill_id']))
             ],
             'passport': get_passport_data(),
             'family': __pass,
@@ -353,9 +355,9 @@ def create_milspecialty() -> Milspecialty:
     return m
 
 
-def create_skill():
+def create_skill(title: str = 'Кац'):
 
-    s, _ = Skill.objects.get_or_create(title='Кац')
+    s, _ = Skill.objects.get_or_create(title=title)
     return s
 
 
@@ -410,13 +412,16 @@ def create_student():
         s.university_info = create_university_info()
         s.application_process = create_application_process()
         s.save()
-        s.skills.add(create_skill())
+        skill_titles = ['Кац', 'Клац']
+        #pylint:disable=expression-not-assigned
+        [s.skills.add(create_skill(title=i)) for i in skill_titles]
         s.family.add(create_test_relative())
         s.save()
 
         student_ids = {
             'student_id': s.id,
             'skill_id': [skill.id for skill in s.skills.all()],
+            'skill_titles': skill_titles,
             'millgroup_id': s.milgroup.id,
             'milspecialty_id': s.milspecialty.id,
         }
