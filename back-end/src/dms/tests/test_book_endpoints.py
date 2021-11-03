@@ -15,8 +15,6 @@ from dms.models.books import Cover
 
 from auth.models import Permission
 
-TEST_USER_EMAIL = "test_user@mail.com"
-
 
 def dump_data(data):
     json_data = data.copy()
@@ -232,9 +230,12 @@ def test_get_book_with_permissions(test_client, test_user, permission_data):
 def send_create_request_with_permissions(test_client, test_user,
                                          permission_data, book_data,
                                          author_data, publisher_data,
-                                         subject_data, post_create_permission_scope):
+                                         subject_data,
+                                         post_create_permission_scope):
     give_permission_to_user(test_user, permission_data("books", "get", "all"))
-    give_permission_to_user(test_user, permission_data("books", "post", post_create_permission_scope))
+    give_permission_to_user(
+        test_user, permission_data("books", "post",
+                                   post_create_permission_scope))
     data = book_data(author_data, publisher_data, subject_data)
     data["data"]["user"] = test_user.id
     create_response = send_create_request(test_client, data)
