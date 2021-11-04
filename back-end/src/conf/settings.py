@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # DAL apps
     "auth",
     "common",
+    "ams",
     "dms",
     "lms",
     "tgbot",
