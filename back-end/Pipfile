@@ -30,4 +30,4 @@ uvicorn = "0.13.4"
 xlsxwriter = "1.4"
 
 [requires]
-python_version = "3.9.1"
+python_version = "3.10"
