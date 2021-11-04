@@ -1,6 +1,4 @@
-from rest_framework.serializers import ModelSerializer
-
-from common.serializers.populate import BaseMutateSerializer
+from rest_framework import serializers
 
 from lms.models.punishments import Punishment
 
@@ -8,16 +6,16 @@ from lms.serializers.students import StudentShortSerializer
 from lms.serializers.teachers import TeacherShortSerializer
 
 
-class PunishmentSerializer(ModelSerializer):
-    student = StudentShortSerializer()
-    teacher = TeacherShortSerializer()
+class PunishmentSerializer(serializers.ModelSerializer):
+    student = StudentShortSerializer(read_only=True)
+    teacher = TeacherShortSerializer(read_only=True)
 
     class Meta:
         model = Punishment
         fields = "__all__"
 
 
-class PunishmentMutateSerializer(BaseMutateSerializer):
+class PunishmentMutateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Punishment

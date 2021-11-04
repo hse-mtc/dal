@@ -2,11 +2,9 @@ from rest_framework import serializers
 
 from common.models.subjects import Subject
 
-from auth.serializers import UserSerializer
-
 
 class LessonSubjectSerializer(serializers.ModelSerializer):
-    user = UserSerializer(
+    user = serializers.HiddenField(
         write_only=True,
         default=serializers.CurrentUserDefault(),
     )

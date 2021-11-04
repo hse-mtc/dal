@@ -1,19 +1,21 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
-from common.serializers.populate import BaseMutateSerializer
+from lms.models.achievements import (
+    Achievement,
+    AchievementType,
+)
 
-from lms.models.achievements import Achievement, AchievementType
 from lms.serializers.students import StudentShortSerializer
 
 
-class AchievementTypeSerializer(ModelSerializer):
+class AchievementTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AchievementType
         fields = "__all__"
 
 
-class AchievementSerializer(ModelSerializer):
+class AchievementSerializer(serializers.ModelSerializer):
     student = StudentShortSerializer(read_only=True)
     type = AchievementTypeSerializer(read_only=True)
 
@@ -22,7 +24,7 @@ class AchievementSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class AchievementMutateSerializer(BaseMutateSerializer):
+class AchievementMutateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Achievement
