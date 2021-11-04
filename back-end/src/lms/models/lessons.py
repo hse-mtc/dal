@@ -18,12 +18,12 @@ class Room(models.Model):
         max_length=63,
     )
 
-    def __str__(self):
-        return self.title
-
     class Meta:
         verbose_name = "Room"
         verbose_name_plural = "Rooms"
+
+    def __str__(self):
+        return self.title
 
 
 class Lesson(models.Model):
@@ -75,9 +75,9 @@ class Lesson(models.Model):
         validators=[MaxValueValidator(10),
                     MinValueValidator(1)])
 
-    def __str__(self):
-        return f"Lesson {self.subject} on {self.date}, #{self.ordinal}"
-
     class Meta:
         verbose_name = "Lesson"
         verbose_name_plural = "Lessons"
+
+    def __str__(self):
+        return f"Lesson {self.subject} on {self.date}, #{self.ordinal}"

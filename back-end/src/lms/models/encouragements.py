@@ -29,13 +29,13 @@ class Encouragement(models.Model):
     reason = models.CharField(max_length=255)
     date = models.DateField(default=datetime.date.today)
 
+    class Meta:
+        verbose_name = "Encouragement Journal"
+        verbose_name_plural = "Encouragement Journal"
+
     def __str__(self):
         return f"ID = {str(self.id)}\n" \
                f"StudentID = {str(self.student)}, " \
                f"TeacherID = {str(self.teacher)}\n" \
                f"Type = {str(self.type)}\n" \
                f"Date = {str(self.date)}"
-
-    class Meta:
-        verbose_name = "Encouragement Journal"
-        verbose_name_plural = "Encouragement Journal"
