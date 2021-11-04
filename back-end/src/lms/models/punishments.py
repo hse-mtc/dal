@@ -33,6 +33,10 @@ class Punishment(models.Model):
         null=True,
     )
 
+    class Meta:
+        verbose_name = "Punishment Journal"
+        verbose_name_plural = "Punishment Journal"
+
     def __str__(self):
         return f"ID = {str(self.id)}\n" \
                f"StudentID = {str(self.student)}, " \
@@ -40,7 +44,3 @@ class Punishment(models.Model):
                f"Type = {str(self.type)}\n" \
                f"Date = {str(self.date)}, " \
                f"Remove Date = {str(self.remove_date)}"
-
-    class Meta:
-        verbose_name = "Punishment Journal"
-        verbose_name_plural = "Punishment Journal"
