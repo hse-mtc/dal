@@ -1,18 +1,32 @@
 from datetime import datetime
 
 from rest_framework import status
+
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
 from rest_framework.generics import GenericAPIView
-
 from rest_framework.filters import SearchFilter
+
 from django_filters.rest_framework import DjangoFilterBackend
 
-from drf_spectacular.views import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.views import (
+    OpenApiParameter,
+    extend_schema,
+)
+
 from common.constants import MUTATE_ACTIONS
+
+from common.utils.date import get_date_range
+
+from auth.models import Permission
+from auth.permissions import BasePermission
+
+from lms.models.common import Milgroup
+from lms.models.absences import Absence
+from lms.models.students import Student
+from lms.models.teachers import Teacher
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.absences import (
@@ -22,16 +36,12 @@ from lms.serializers.absences import (
     AbsenceMutateSerializer,
 )
 
-from lms.models.common import Milgroup
-from lms.models.absences import Absence
-from lms.models.students import Student
-
 from lms.filters.absences import AbsenceFilter
-from lms.utils.functions import get_date_range, milgroup_allowed_by_scope
-from lms.utils.mixins import QuerySetScopingMixin
 
-from auth.models import Permission
-from auth.permissions import BasePermission
+from lms.utils.mixins import QuerySetScopingMixin
+from lms.utils.functions import milgroup_allowed_by_scope
+
+from lms.types.personnel import Personnel
 
 
 class AbsencePermission(BasePermission):
@@ -62,60 +72,67 @@ class AbsenceViewSet(QuerySetScopingMixin, ModelViewSet):
             return AbsenceMutateSerializer
         return AbsenceSerializer
 
-    def handle_scope_milfaculty(self, user_type, user):
-        if user_type == "student":
-            return self.queryset.filter(
-                student__milgroup__milfaculty=user.milgroup.milfaculty)
-        if user_type == "teacher":
-            return self.queryset.filter(
-                student__milgroup__milfaculty=user.milfaculty)
-        return self.queryset.none()
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
 
-    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+        return self.queryset.filter(student__milgroup__milfaculty=milfaculty)
+
+    def allow_scope_milfaculty_on_create(self, data, personnel: Personnel):
         student = Student.objects.filter(id=data["student"])
         if not student.exists():
             return False
         student = student.first()
 
-        if user_type == "student":
-            return user.milgroup.milfaculty == student.milgroup.milfaculty
-        if user_type == "teacher":
-            return user.milfaculty == student.milgroup.milfaculty
+        match personnel:
+            case Student() | Teacher():
+                return personnel.milfaculty == student.milgroup.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
 
-        return False
+    def handle_scope_milgroup(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(student__milgroup=personnel.milgroup)
+            case Teacher():
+                return self.queryset.filter(student__milgroup__in=personnel.milgroups)
+            case _:
+                assert False, "Unhandled Personnel type"
 
-    def handle_scope_milgroup(self, user_type, user):
-        if user_type == "student":
-            return self.queryset.filter(student__milgroup=user.milgroup)
-
-        if user_type == "teacher":
-            return self.queryset.filter(student__milgroup__in=user.milgroups)
-
-        return self.queryset.none()
-
-    def allow_scope_milgroup_on_create(self, data, user_type, user):
+    def allow_scope_milgroup_on_create(self, data, personnel: Personnel):
         student = Student.objects.filter(id=data["student"])
         if not student.exists():
             return False
         student = student.first()
 
-        if user_type == "student":
-            return student.milgroup == user.milgroup
+        match personnel:
+            case Student():
+                return student.milgroup == personnel.milgroup
+            case Teacher():
+                return student.milgroup in personnel.milgroups
+            case _:
+                assert False, "Unhandled Personnel type"
 
-        if user_type == "teacher":
-            return student.milgroup in user.milgroups
+    def handle_scope_self(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(student=personnel)
+            case Teacher():
+                return self.queryset.none()
+            case _:
+                assert False, "Unhandled Personnel type"
 
-        return False
-
-    def handle_scope_self(self, user_type, user):
-        if user_type == "student":
-            return self.queryset.filter(student=user)
-        return self.queryset.none()
-
-    def allow_scope_self_on_create(self, data, user_type, user):
-        if user_type == "student":
-            return data["student"] == user.id
-        return False
+    def allow_scope_self_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Student():
+                return data["student"] == personnel.id
+            case Teacher():
+                return False
+            case _:
+                assert False, "Unhandled Personnel type"
 
 
 @extend_schema(tags=["absence-journal"],

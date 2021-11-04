@@ -5,6 +5,8 @@ from rest_framework.response import Response
 
 from drf_spectacular.views import extend_schema
 
+from common.utils.date import get_current_semester_range
+
 from lms.models.marks import Mark
 from lms.models.absences import Absence
 from lms.models.lessons import Lesson
@@ -15,8 +17,6 @@ from lms.serializers.students import (
     StudentExtraInfoSerializer,
     StudentSkillsSerializer,
 )
-
-from lms.utils.functions import get_current_semester_range
 
 
 @extend_schema(tags=["students"])
