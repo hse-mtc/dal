@@ -4,16 +4,22 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
-from common.constants import MUTATE_ACTIONS
 
-from lms.models.encouragements import Encouragement
-from lms.serializers.encouragements import (EncouragementSerializer,
-                                            EncouragementMutateSerializer)
-from lms.filters.encouragements import EncouragementFilter
-from lms.utils.mixins import StudentTeacherQuerySetScopingMixin
+from common.constants import MUTATE_ACTIONS
 
 from auth.models import Permission
 from auth.permissions import BasePermission
+
+from lms.models.encouragements import Encouragement
+
+from lms.serializers.encouragements import (
+    EncouragementSerializer,
+    EncouragementMutateSerializer,
+)
+
+from lms.filters.encouragements import EncouragementFilter
+
+from lms.utils.mixins import StudentTeacherQuerySetScopingMixin
 
 
 class EncouragementPermission(BasePermission):

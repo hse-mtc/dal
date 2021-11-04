@@ -5,6 +5,7 @@ from rest_framework.generics import RetrieveUpdateAPIView
 from drf_spectacular.views import extend_schema
 
 from lms.models.absences import AbsenceTime
+
 from lms.serializers.absences import AbsenceTimeSerializer
 
 
@@ -17,7 +18,5 @@ class AbsenceTimeView(RetrieveUpdateAPIView):
 
     def get_object(self) -> AbsenceTime:
         obj = AbsenceTime.objects.last()
-
         self.check_object_permissions(self.request, obj)
-
         return obj
