@@ -5,13 +5,15 @@ from django.db.models import QuerySet
 
 import xlsxwriter
 
-from lms.models.students import Student
-from lms.utils.functions import get_today_date_rus
-from lms.utils.export.formats import Formats
+from common.utils.date import get_today_date_rus
+
+from ams.models.applicants import Applicant
+
+from ams.utils.export.formats import Formats
 
 
-def generate_export(students: QuerySet, milspecialties: QuerySet) -> Path:
-    """Generate an Excel file with information about the students
+def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
+    """Generate an Excel file with information about the applicants
     using the competitive selection protocol template.
 
     Returns:
@@ -32,13 +34,13 @@ def generate_export(students: QuerySet, milspecialties: QuerySet) -> Path:
         )
 
         start = 15
-        studs = students.filter(milspecialty=milspecialty)
+        studs = applicants.filter(milspecialty=milspecialty)
 
-        for row, student in enumerate(studs, start=start):  # Skip header
-            cells = _make_student_row(
-                student=student,
+        for row, applicant in enumerate(studs, start=start):  # Skip header
+            cells = _make_applicant_row(
+                applicant=applicant,
                 formats=formats,
-                index=row - start,  # student order number (from 0 to n)
+                index=row - start,  # applicant order number (from 0 to n)
             )
 
             for col, (data, cell_format) in enumerate(cells):
@@ -49,10 +51,11 @@ def generate_export(students: QuerySet, milspecialties: QuerySet) -> Path:
             worksheet=worksheet,
             formats=formats,
             start_row=start + len(studs),
-            total_students=len(studs),
+            total_applicants=len(studs),
         )
 
     workbook.close()
+
     return path
 
 
@@ -203,32 +206,31 @@ def _fill_header(
     worksheet.write_row(14, 3, list(range(3, 14)), formats.table_center)
 
 
-def _make_student_row(
-    student: Student,
+def _make_applicant_row(
+    applicant: Applicant,
     formats: Formats,
     index: int,
 ) -> list[...]:
     row = [(f"{index+1}.", formats.table_center)]
-    row += [(student.full_name, formats.table_name)]
+    row += [(applicant.name.fullname, formats.table_name)]
 
     # pylint: disable=invalid-name
-    if (bi := student.birth_info) is not None:
+    if (bi := applicant.birth_info) is not None:
         row += [(bi.date, formats.table_date)]
     else:
         row += [("", formats.table_date)]
 
-    if (ui := student.university_info) is not None:
+    if (ui := applicant.university_info) is not None:
         row += [(ui.program.code, formats.table_center)]
     else:
         row += [("", formats.table_center)]
 
-    if (ap := student.application_process) is not None:
+    if (ap := applicant.application_process) is not None:
         row += [
             (ap.get_medical_examination_display(), formats.table_center),
             (ap.get_prof_psy_selection_display(), formats.table_center),
         ]
-        row += [("Да" if ap.preferential_right else "Нет", formats.table_center)
-               ]
+        row += [("Да" if ap.preferential_right else "Нет", formats.table_center)]
 
         row += [
             (ap.pull_ups, formats.int),
@@ -259,7 +261,7 @@ def _fill_footer(
     worksheet: xlsxwriter.Workbook.worksheet_class,
     formats: Formats,
     start_row: int,
-    total_students: int,
+    total_applicants: int,
 ) -> None:
     row = start_row + 4  # 3 blank lines
     worksheet.merge_range(
@@ -270,7 +272,7 @@ def _fill_footer(
     row = row + 4  # 3 blank lines
     lines = [
         ("Изъявили желание пройти обучение по программе военной подготовки -",
-         f"{total_students} чел."),
+         f"{total_applicants} чел."),
         ("Допущены к военной подготовке -", "чел."),
         ("Не допущены к военной подготовке (не прошли по конкурсу) -", "чел."),
         ("Не допущены к конкурсному отбору -", "чел."),
