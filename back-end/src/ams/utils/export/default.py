@@ -5,12 +5,13 @@ from django.db.models import QuerySet
 
 import xlsxwriter
 
-from lms.models.students import Student
-from lms.utils.export.formats import Formats
+from ams.models.applicants import Applicant
+
+from ams.utils.export.formats import Formats
 
 
-def generate_export(students: QuerySet, milspecialties: QuerySet) -> Path:
-    """Generate an Excel file with information about the students.
+def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
+    """Generate an Excel file with information about the applicants.
 
     Returns:
         A path to the generated Excel file.
@@ -25,12 +26,12 @@ def generate_export(students: QuerySet, milspecialties: QuerySet) -> Path:
         _set_row_col_sizes(worksheet)
         _fill_header(worksheet=worksheet, cell_format=formats.table_center)
 
-        for row, student in enumerate(
-                students.filter(milspecialty=milspecialty),
+        for row, applicant in enumerate(
+                applicants.filter(milspecialty=milspecialty),
                 start=1,  # Skip header.
         ):
-            cells = _make_student_row(
-                student=student,
+            cells = _make_applicant_row(
+                applicant=applicant,
                 formats=formats,
             )
             for col, (data, cell_format) in enumerate(cells):
@@ -78,27 +79,27 @@ def _fill_header(
     worksheet.write_row(0, 0, columns, cell_format=cell_format)
 
 
-def _make_student_row(
-    student: Student,
+def _make_applicant_row(
+    applicant: Applicant,
     formats: Formats,
 ) -> list[...]:
-    row = [(student.full_name, formats.table_center)]
+    row = [(applicant.name.fullname, formats.table_center)]
 
     # pylint: disable=invalid-name
-    if (bi := student.birth_info) is not None:
+    if (bi := applicant.birth_info) is not None:
         row += [(bi.date, formats.russian_date)]
     else:
         row += [("", formats.table_center)]
 
-    if (ui := student.university_info) is not None:
+    if (ui := applicant.university_info) is not None:
         row += [
             (ui.program.code, formats.table_center),
-            (ui.get_campus_display(), formats.table_center),
+            (ui.program.faculty.get_campus_display(), formats.table_center),
         ]
     else:
         row += [("", formats.table_center)] * 2
 
-    if (ap := student.application_process) is not None:
+    if (ap := applicant.application_process) is not None:
         row += [
             (ap.mean_grade, formats.float),
             (int(ap.mean_grade * 10), formats.int),
