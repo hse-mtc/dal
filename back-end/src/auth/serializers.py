@@ -10,13 +10,17 @@ from rest_framework import serializers
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from conf.settings import CREATE_PASSWORD_TOKEN_LIFETIME
+from conf import settings
 
 from auth.models import (
     Group,
     Permission,
 )
-from lms.utils.functions import get_user_from_request
+
+from lms.models.students import Student
+from lms.models.teachers import Teacher
+
+from lms.utils.functions import get_personnel_from_request_user
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -185,10 +189,7 @@ class UserSerializer(serializers.ModelSerializer):
         return PermissionSerializer(obj.get_all_permissions(), many=True).data
 
     def get_person(self, obj) -> str:
-        # pylint:disable=(invalid-name)
-        # pylint:disable=(redefined-builtin)
-        # try to find teachers
-        user_type, user = get_user_from_request(obj)
+        # pylint:disable=invalid-name,redefined-builtin
 
         @dataclass
         class PersonObject:
@@ -197,25 +198,23 @@ class UserSerializer(serializers.ModelSerializer):
             milgroups: list[str] = field(default_factory=list)
             milfaculty: str = ""
 
-        if user is None:
+        personnel = get_personnel_from_request_user(obj)
+        if personnel is None:
             return PersonSerializer(PersonObject()).data
 
-        milgroups = []
-        milfaculty = None
-
-        if user_type == "student" and user.milgroup is not None:
-            milgroups = [user.milgroup.id]
-            milfaculty = user.milgroup.milfaculty.id
-
-        if user_type == "teacher":
-            milgroups = user.milgroups.all().values_list("id", flat=True)
-            milfaculty = user.milfaculty.id
+        match personnel:
+            case Student():
+                milgroups = [personnel.milgroup.id]
+            case Teacher():
+                milgroups = personnel.milgroups.all().values_list("id", flat=True)
+            case _:
+                assert False, "Unhandled Personnel type"
 
         person = PersonObject(
-            id=user.id,
-            type=user_type,
+            id=personnel.id,
+            type=personnel.__class__.__name__.lower(),
             milgroups=milgroups,
-            milfaculty=milfaculty,
+            milfaculty=str(personnel.milfaculty.id),
         )
         return PersonSerializer(person).data
 
@@ -331,7 +330,7 @@ class CreatePasswordTokenSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token = token.access_token
-        token.set_exp(lifetime=CREATE_PASSWORD_TOKEN_LIFETIME)
+        token.set_exp(lifetime=settings.CREATE_PASSWORD_TOKEN_LIFETIME)
         return token
 
     def create(self, validated_data):
