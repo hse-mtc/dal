@@ -10,8 +10,11 @@ from conf import settings
 urlpatterns = [
     # Public
     path("api/auth/", include("auth.urls")),
+
+    path("api/ams/", include("ams.urls")),
     path("api/dms/", include("dms.urls")),
     path("api/lms/", include("lms.urls")),
+
     path("api/tgbot/", include("tgbot.urls")),
 
     # Internal
