@@ -1,6 +1,12 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-from common.models.persons import Personnel
+from common.models.personal import (
+    BirthInfo,
+    ContactInfo,
+    Name,
+    Photo,
+)
 
 from lms.models.common import (
     Milfaculty,
@@ -8,41 +14,35 @@ from lms.models.common import (
 )
 
 
-class Rank(models.Model):
-    title = models.CharField(
-        unique=True,
-        max_length=63,
-    )
+class Teacher(models.Model):
 
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = "Military Rank"
-        verbose_name_plural = "Military Ranks"
-
-
-class Teacher(Personnel):
+    # --------------------------------------------------------------------------
 
     class Post(models.TextChoices):
         MTC_HEAD = "CH", "начальник ВУЦ"
         MILFACULTY_HEAD = "FH", "начальник цикла"
         TEACHERS = "TE", "профессорско-преподавательский состав"
 
-    post = models.CharField(
-        max_length=2,
-        choices=Post.choices,
-        default=Post.TEACHERS.value,
-        null=True,
-        blank=True,
+    class Rank(models.TextChoices):
+        CAPTAIN = "CA", "капитан"
+        MAJOR = "MA", "майор"
+        LIEUTENANT_COLONEL = "LC", "подполковник"
+        COLONEL = "CO", "полковник"
+        MAJOR_GENERAL = "MG", "генерал-майор"
+
+    # --------------------------------------------------------------------------
+    # Frequently accessed data.
+
+    name = models.ForeignKey(
+        to=Name,
+        on_delete=models.RESTRICT,
     )
-    rank = models.ForeignKey(
-        to=Rank,
+    user = models.ForeignKey(
+        to=get_user_model(),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-
     milfaculty = models.ForeignKey(
         to=Milfaculty,
         on_delete=models.SET_NULL,
@@ -54,11 +54,44 @@ class Teacher(Personnel):
         blank=True,
     )
 
-    def __str__(self):
-        return f"ID = {str(self.id)}\n" \
-               f"Full name = {str(self.surname)} " \
-               f"{str(self.name)} {str(self.patronymic)}\n"
+    # --------------------------------------------------------------------------
+    # Rarely accessed studying data.
+
+    post = models.CharField(
+        max_length=2,
+        choices=Post.choices,
+        default=Post.TEACHERS.value,
+    )
+    rank = models.CharField(
+        max_length=2,
+        choices=Rank.choices,
+    )
+
+    # --------------------------------------------------------------------------
+    # Rarely accessed personal data.
+
+    photo = models.ForeignKey(
+        to=Photo,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    birth_info = models.ForeignKey(
+        to=BirthInfo,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    contact_info = models.ForeignKey(
+        to=ContactInfo,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Teacher"
         verbose_name_plural = "Teachers"
+
+    def __str__(self):
+        return f"[{self.id}] {self.name}"
