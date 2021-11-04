@@ -1,13 +1,4 @@
-from rest_framework.serializers import (
-    Serializer,
-    ModelSerializer,
-    IntegerField,
-    DateField,
-    SerializerMethodField,
-)
-from rest_framework.serializers import ValidationError
-
-from common.serializers.populate import BaseMutateSerializer
+from rest_framework import serializers
 
 from lms.models.common import Milgroup
 from lms.models.students import Student
@@ -16,11 +7,12 @@ from lms.models.absences import (
     AbsenceTime,
 )
 
-from lms.validators import PresentInDatabaseValidator
 from lms.serializers.students import StudentShortSerializer
 
+from lms.validators import PresentInDatabaseValidator
 
-class AbsenceSerializer(ModelSerializer):
+
+class AbsenceSerializer(serializers.ModelSerializer):
     student = StudentShortSerializer()
 
     class Meta:
@@ -28,22 +20,22 @@ class AbsenceSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class AbsenceMutateSerializer(BaseMutateSerializer):
+class AbsenceMutateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Absence
         fields = "__all__"
 
 
-class AbsenceJournalQuerySerializer(Serializer):
-    milgroup = IntegerField(
+class AbsenceJournalQuerySerializer(serializers.Serializer):
+    milgroup = serializers.IntegerField(
         required=True, validators=[PresentInDatabaseValidator(Milgroup, "id")])
-    date_from = DateField(required=False)
-    date_to = DateField(required=False)
+    date_from = serializers.DateField(required=False)
+    date_to = serializers.DateField(required=False)
 
     def validate(self, attrs):
         if attrs["date_from"] > attrs["date_to"]:
-            raise ValidationError(
+            raise serializers.ValidationError(
                 "date_from should be greater or equal to date_to")
         return attrs
 
@@ -54,30 +46,30 @@ class AbsenceJournalQuerySerializer(Serializer):
         pass
 
 
-class AbsenceShortSerializer(ModelSerializer):
+class AbsenceShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Absence
         fields = ["id", "date", "excuse", "status", "reason", "comment"]
 
 
-class AbsenceJournalSerializer(ModelSerializer):
-    fullname = SerializerMethodField(read_only=True)
-    absences = SerializerMethodField(read_only=True)
+class AbsenceJournalSerializer(serializers.ModelSerializer):
+    fullname = serializers.SerializerMethodField(read_only=True)
+    absences = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Student
         fields = ["id", "fullname", "absences"]
 
-    def get_fullname(self, obj):
-        return f"{obj.surname} {obj.name} {obj.patronymic}"
+    def get_fullname(self, obj: Student) -> str:
+        return obj.name.fullname
 
     def get_absences(self, obj):
         absences = obj.absence_set.filter(date__in=self.context["date_range"])
         return AbsenceShortSerializer(absences, many=True).data
 
 
-class AbsenceTimeSerializer(ModelSerializer):
+class AbsenceTimeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AbsenceTime
