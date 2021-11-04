@@ -25,7 +25,6 @@ from lms.views.reference_book import (
     MilspecialtyViewSet,
     MilgroupViewSet,
     ProgramViewSet,
-    RankViewSet,
     RoomViewSet,
     AchievementTypeViewSet,
     SkillViewSet,
@@ -60,7 +59,6 @@ routers.register('milfaculties', MilfacultyViewSet)
 routers.register('milspecialties', MilspecialtyViewSet)
 routers.register('milgroups', MilgroupViewSet)
 routers.register('programs', ProgramViewSet)
-routers.register('ranks', RankViewSet)
 routers.register('rooms', RoomViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
 routers.register('uniforms', UniformViewSet)
