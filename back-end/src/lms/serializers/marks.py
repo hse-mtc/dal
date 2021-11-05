@@ -69,7 +69,7 @@ class MarkShortSerializer(serializers.ModelSerializer):
 
 
 class MarkJournalSerializer(serializers.ModelSerializer):
-    fullname = serializers.SerializerMethodField(read_only=True)
+    fullname = serializers.CharField(read_only=True)
     marks = serializers.SerializerMethodField(read_only=True)
 
     def get_marks(self, obj):

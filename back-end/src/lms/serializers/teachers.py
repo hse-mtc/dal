@@ -21,7 +21,7 @@ from lms.validators import PresentInDatabaseValidator
 
 
 class TeacherSerializer(serializers.ModelSerializer):
-    fullname = serializers.SerializerMethodField(read_only=True)
+    fullname = serializers.CharField(read_only=True)
     milgroups = MilgroupSerializer(read_only=True, many=True)
     milfaculty = MilfacultySerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
@@ -54,7 +54,7 @@ class TeacherMutateSerializer(
 
 
 class TeacherShortSerializer(serializers.ModelSerializer):
-    fullname = serializers.SerializerMethodField(read_only=True)
+    fullname = serializers.CharField(read_only=True)
     milgroups = MilgroupSerializer(
         read_only=True,
         many=True,

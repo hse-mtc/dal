@@ -209,7 +209,6 @@ export default {
         );
         this.data = data.results.map(item => ({
           id: item.id,
-          fullname: item.full_name,
           birthday: moment(item.birth_date).format("DD.MM.yyyy"),
           passport: item.passport,
           program: item.program_code,
