@@ -34,7 +34,7 @@ export default {
     },
     click: {
       type: Function,
-      required: true,
+      default: () => {},
     },
   },
 };
