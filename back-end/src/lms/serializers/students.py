@@ -13,8 +13,6 @@ from common.serializers.personal import (
     PassportSerializer,
 )
 
-from ams.serializers.applicants import RecruitmentOfficeSerializer
-
 from lms.models.common import Milgroup
 from lms.models.students import (
     Student,
@@ -33,10 +31,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    fullname = serializers.SerializerMethodField(
-        read_only=True,
-        source="name.fullname",
-    )
+    fullname = serializers.CharField(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
 
@@ -65,7 +60,6 @@ class StudentMutateSerializer(
 
     passport = PassportSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
-    recruitment_office = RecruitmentOfficeSerializer(required=False)
     university_info = UniversityInfoSerializer(required=False)
 
     class Meta:
@@ -90,10 +84,7 @@ class StudentMutateSerializer(
 
 
 class StudentShortSerializer(serializers.ModelSerializer):
-    fullname = serializers.CharField(
-        read_only=True,
-        source="name.fullname",
-    )
+    fullname = serializers.CharField(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
 
     class Meta:
@@ -102,10 +93,7 @@ class StudentShortSerializer(serializers.ModelSerializer):
 
 
 class StudentBasicInfoSerializer(serializers.ModelSerializer):
-    fullname = serializers.CharField(
-        read_only=True,
-        source="name.fullname",
-    )
+    fullname = serializers.CharField(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
     photo = PhotoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)

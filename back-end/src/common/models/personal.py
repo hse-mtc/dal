@@ -3,29 +3,6 @@ import uuid
 from django.db import models
 
 
-class Name(models.Model):
-    surname = models.CharField(
-        max_length=64,
-    )
-    name = models.CharField(
-        max_length=64,
-    )
-    patronymic = models.CharField(
-        max_length=64,
-        blank=True,
-    )
-
-    class Meta:
-        abstract = True
-
-    def __str__(self) -> str:
-        return self.fullname
-
-    @property
-    def fullname(self) -> str:
-        return " ".join([self.surname, self.name, self.patronymic])
-
-
 class BirthInfo(models.Model):
     date = models.DateField()
     country = models.CharField(
@@ -114,9 +91,11 @@ class Relative(models.Model):
 
     # --------------------------------------------------------------------------
 
-    name = models.ForeignKey(
-        to=Name,
-        on_delete=models.RESTRICT,
+    surname = models.CharField(max_length=64)
+    name = models.CharField(max_length=64)
+    patronymic = models.CharField(
+        max_length=64,
+        blank=True,
     )
     type = models.CharField(
         max_length=2,
@@ -148,4 +127,8 @@ class Relative(models.Model):
         verbose_name_plural = "Relatives"
 
     def __str__(self) -> str:
-        return f"[{self.type.title()}] {self.name}"
+        return f"[{self.type.title()}] {self.fullname}"
+
+    @property
+    def fullname(self) -> str:
+        return " ".join([self.surname, self.name, self.patronymic])

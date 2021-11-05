@@ -83,7 +83,7 @@ def _make_applicant_row(
     applicant: Applicant,
     formats: Formats,
 ) -> list[...]:
-    row = [(applicant.name.fullname, formats.table_center)]
+    row = [(applicant.fullname, formats.table_center)]
 
     # pylint: disable=invalid-name
     if (bi := applicant.birth_info) is not None:

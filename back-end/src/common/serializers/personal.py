@@ -9,18 +9,10 @@ from drf_extra_fields.fields import Base64ImageField
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Name,
     Passport,
     Photo,
     Relative,
 )
-
-
-class NameSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Name
-        exclude = ["id"]
 
 
 class BirthInfoSerializer(serializers.ModelSerializer):
@@ -79,7 +71,6 @@ class PassportSerializer(serializers.ModelSerializer):
 
 
 class RelativeSerializer(serializers.ModelSerializer):
-    name = NameSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
 

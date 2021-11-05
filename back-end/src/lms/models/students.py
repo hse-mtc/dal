@@ -5,16 +5,12 @@ from common.models.universities import UniversityInfo
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Name,
+    Passport,
     Photo,
     Relative,
 )
 
-from ams.models.applicants import (
-    Applicant,
-    Passport,
-    RecruitmentOffice,
-)
+from ams.models.applicants import Applicant
 
 from lms.models.common import (
     Milfaculty,
@@ -53,11 +49,13 @@ class Student(models.Model):
     # --------------------------------------------------------------------------
     # Frequently accessed data.
 
-    name = models.ForeignKey(
-        to=Name,
-        on_delete=models.RESTRICT,
+    surname = models.CharField(max_length=64)
+    name = models.CharField(max_length=64)
+    patronymic = models.CharField(
+        max_length=64,
+        blank=True,
     )
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         to=get_user_model(),
         on_delete=models.SET_NULL,
         null=True,
@@ -68,7 +66,7 @@ class Student(models.Model):
         # TODO(TmLev): What if `milgroup` needs to be deleted?
         on_delete=models.RESTRICT,
     )
-    contact_info = models.ForeignKey(
+    contact_info = models.OneToOneField(
         to=ContactInfo,
         on_delete=models.RESTRICT,
     )
@@ -95,13 +93,13 @@ class Student(models.Model):
     # --------------------------------------------------------------------------
     # Rarely accessed personal data.
 
-    photo = models.ForeignKey(
+    photo = models.OneToOneField(
         to=Photo,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-    birth_info = models.ForeignKey(
+    birth_info = models.OneToOneField(
         to=BirthInfo,
         on_delete=models.RESTRICT,
     )
@@ -113,15 +111,12 @@ class Student(models.Model):
         max_length=128,
         blank=True,
     )
-    passport = models.ForeignKey(
+    passport = models.OneToOneField(
         to=Passport,
         on_delete=models.RESTRICT,
     )
-    recruitment_office = models.ForeignKey(
-        to=RecruitmentOffice,
-        on_delete=models.RESTRICT,
-    )
-    university_info = models.ForeignKey(
+    recruitment_office = models.CharField(max_length=255)
+    university_info = models.OneToOneField(
         to=UniversityInfo,
         on_delete=models.RESTRICT,
     )
@@ -135,7 +130,15 @@ class Student(models.Model):
         verbose_name_plural = "Students"
 
     def __str__(self):
-        return f"[{self.id}] {self.name}"
+        return f"[{self.id}] {self.fullname}"
+
+    @property
+    def fullname(self) -> str:
+        return " ".join([self.surname, self.name, self.patronymic])
+
+    @property
+    def milfaculty(self) -> Milfaculty:
+        return self.milgroup.milfaculty
 
     @staticmethod
     def from_applicant(
@@ -143,7 +146,9 @@ class Student(models.Model):
         milgroup: Milgroup,
     ) -> "Student":
         student = Student.objects.create(
+            surname=applicant.surname,
             name=applicant.name,
+            patronymic=applicant.patronymic,
             # TODO(TmLev): When is the user created? Maybe here?
             milgroup=milgroup,
             contact_info=applicant.contact_info,
@@ -159,10 +164,6 @@ class Student(models.Model):
         student.family.add(*applicant.family.order_by("id"))
         student.save()
         return student
-
-    @property
-    def milfaculty(self) -> Milfaculty:
-        return self.milgroup.milfaculty
 
 
 class Note(models.Model):
@@ -182,4 +183,4 @@ class Note(models.Model):
         verbose_name_plural = "Notes"
 
     def __str__(self) -> str:
-        return f"[{self.id}] {self.student.name} / {self.student.id}"
+        return f"[{self.id}] {self.student.fullname} / {self.student.id}"
