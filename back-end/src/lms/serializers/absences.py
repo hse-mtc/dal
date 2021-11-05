@@ -54,15 +54,12 @@ class AbsenceShortSerializer(serializers.ModelSerializer):
 
 
 class AbsenceJournalSerializer(serializers.ModelSerializer):
-    fullname = serializers.SerializerMethodField(read_only=True)
+    fullname = serializers.CharField(read_only=True)
     absences = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Student
         fields = ["id", "fullname", "absences"]
-
-    def get_fullname(self, obj: Student) -> str:
-        return obj.name.fullname
 
     def get_absences(self, obj):
         absences = obj.absence_set.filter(date__in=self.context["date_range"])

@@ -9,19 +9,10 @@ from common.models.milspecialties import Milspecialty
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Name,
     Passport,
     Photo,
     Relative,
 )
-
-
-class RecruitmentOffice(models.Model):
-    title = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name = "Recruitment Office"
-        verbose_name_plural = "Recruitment Offices"
 
 
 class ApplicationProcess(models.Model):
@@ -75,16 +66,19 @@ class ApplicationProcess(models.Model):
     university_card_handed_over = models.BooleanField(default=False)
     application_handed_over = models.BooleanField(default=False)
 
+    # Number of pull ups.
     pull_ups = models.SmallIntegerField(
         default=None,
         null=True,
         blank=True,
     )
+    # In seconds.
     speed_run = models.FloatField(
         default=None,
         null=True,
         blank=True,
     )
+    # In minutes.
     long_run = models.FloatField(
         default=None,
         null=True,
@@ -97,14 +91,17 @@ class ApplicationProcess(models.Model):
         verbose_name_plural = "Application Processes"
 
     def __str__(self) -> str:
-        return f"[{self.id}] {self.applicant.name} / {self.applicant.id}"
+        return f"[{self.id}] {self.applicant.fullname} / {self.applicant.id}"
 
 
 class Applicant(models.Model):
-    name = models.ForeignKey(
-        to=Name,
-        on_delete=models.RESTRICT,
+    surname = models.CharField(max_length=64)
+    name = models.CharField(max_length=64)
+    patronymic = models.CharField(
+        max_length=64,
+        blank=True,
     )
+    recruitment_office = models.CharField(max_length=255)
     citizenship = models.CharField(
         max_length=64,
         blank=True,
@@ -113,27 +110,23 @@ class Applicant(models.Model):
         max_length=128,
         blank=True,
     )
-    birth_info = models.ForeignKey(
+    birth_info = models.OneToOneField(
         to=BirthInfo,
         on_delete=models.RESTRICT,
     )
-    passport = models.ForeignKey(
+    passport = models.OneToOneField(
         to=Passport,
         on_delete=models.RESTRICT,
     )
-    university_info = models.ForeignKey(
+    university_info = models.OneToOneField(
         to=UniversityInfo,
         on_delete=models.RESTRICT,
     )
-    recruitment_office = models.ForeignKey(
-        to=RecruitmentOffice,
-        on_delete=models.RESTRICT,
-    )
-    contact_info = models.ForeignKey(
+    contact_info = models.OneToOneField(
         to=ContactInfo,
         on_delete=models.RESTRICT,
     )
-    photo = models.ForeignKey(
+    photo = models.OneToOneField(
         to=Photo,
         on_delete=models.SET_NULL,
         null=True,
@@ -142,6 +135,7 @@ class Applicant(models.Model):
         to=Relative,
         blank=True,
     )
+    # `Applicant` must always have `ApplicationProcess`.
     application_process = models.OneToOneField(
         to=ApplicationProcess,
         on_delete=models.RESTRICT,
@@ -152,4 +146,8 @@ class Applicant(models.Model):
         verbose_name_plural = "Applicants"
 
     def __str__(self):
-        return f"[{self.id}] {self.name}"
+        return f"[{self.id}] {self.fullname}"
+
+    @property
+    def fullname(self) -> str:
+        return " ".join([self.surname, self.name, self.patronymic])

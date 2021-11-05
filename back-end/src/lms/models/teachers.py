@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Name,
     Photo,
 )
 
@@ -33,11 +32,13 @@ class Teacher(models.Model):
     # --------------------------------------------------------------------------
     # Frequently accessed data.
 
-    name = models.ForeignKey(
-        to=Name,
-        on_delete=models.RESTRICT,
+    surname = models.CharField(max_length=64)
+    name = models.CharField(max_length=64)
+    patronymic = models.CharField(
+        max_length=64,
+        blank=True,
     )
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         to=get_user_model(),
         on_delete=models.SET_NULL,
         null=True,
@@ -70,19 +71,19 @@ class Teacher(models.Model):
     # --------------------------------------------------------------------------
     # Rarely accessed personal data.
 
-    photo = models.ForeignKey(
+    photo = models.OneToOneField(
         to=Photo,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-    birth_info = models.ForeignKey(
+    birth_info = models.OneToOneField(
         to=BirthInfo,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-    contact_info = models.ForeignKey(
+    contact_info = models.OneToOneField(
         to=ContactInfo,
         on_delete=models.SET_NULL,
         null=True,
@@ -94,4 +95,8 @@ class Teacher(models.Model):
         verbose_name_plural = "Teachers"
 
     def __str__(self):
-        return f"[{self.id}] {self.name}"
+        return f"[{self.id}] {self.fullname}"
+
+    @property
+    def fullname(self) -> str:
+        return " ".join([self.surname, self.name, self.patronymic])

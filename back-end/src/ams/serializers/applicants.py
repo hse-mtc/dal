@@ -9,23 +9,14 @@ from common.serializers.universities import UniversityInfoSerializer
 from common.serializers.personal import (
     BirthInfoSerializer,
     ContactInfoSerializer,
-    NameSerializer,
     PhotoMutateMixin,
     RelativeSerializer,
 )
 
 from ams.models.applicants import (
-    RecruitmentOffice,
     ApplicationProcess,
     Applicant,
 )
-
-
-class RecruitmentOfficeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = RecruitmentOffice
-        exclude = ["id"]
 
 
 class ApplicationProcessSerializer(serializers.ModelSerializer):
@@ -36,7 +27,6 @@ class ApplicationProcessSerializer(serializers.ModelSerializer):
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
-    name = NameSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
@@ -45,7 +35,6 @@ class ApplicantSerializer(serializers.ModelSerializer):
 
     family = RelativeSerializer(read_only=True, many=True)
 
-    recruitment_office = RecruitmentOfficeSerializer(read_only=True)
     milspecialty = MilspecialtySerializer(read_only=True)
 
     def get_photo(self, obj: Applicant) -> str:
@@ -67,10 +56,7 @@ class ApplicantMutateSerializer(
 
 
 class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
-    fullname = serializers.CharField(
-        read_only=True,
-        source="name.fullname",
-    )
+    fullname = serializers.CharField(read_only=True)
     birth_date = serializers.DateField(
         read_only=True,
         source="birth_info.date",

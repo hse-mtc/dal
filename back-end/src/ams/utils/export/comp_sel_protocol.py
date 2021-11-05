@@ -212,7 +212,7 @@ def _make_applicant_row(
     index: int,
 ) -> list[...]:
     row = [(f"{index+1}.", formats.table_center)]
-    row += [(applicant.name.fullname, formats.table_name)]
+    row += [(applicant.fullname, formats.table_name)]
 
     # pylint: disable=invalid-name
     if (bi := applicant.birth_info) is not None:
