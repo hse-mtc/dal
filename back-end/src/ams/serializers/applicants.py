@@ -75,7 +75,7 @@ class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
         model = Applicant
         fields = [
             "id",
-            "full_name",
+            "fullname",
             "birth_date",
             "program_code",
             "faculty",

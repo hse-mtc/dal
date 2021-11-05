@@ -65,7 +65,7 @@ class BirthdayAlertView(APIView):
             temp = {
                 "id": person.id,
                 "birthday": born,
-                "full_name": person.full_name,
+                "fullname": person.fullname,
                 "how_old_will_be": how_old,
             }
             response.append(temp)
