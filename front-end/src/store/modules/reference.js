@@ -57,9 +57,6 @@ class Reference extends VuexModule {
   _ranks = [];
   _ranksLoaded = false;
 
-  _studentStatuses = [];
-  _studentStatusesLoaded = false;
-
   _studentPosts = [];
   _studentPostsLoaded = false;
 
@@ -208,33 +205,14 @@ class Reference extends VuexModule {
   }
 
   // STUDENTS STATUSES
-  @Mutation
-  SET_STUDENT_STATUSES(payload) {
-    this._studentStatuses = payload;
-  }
-
-  @Action
-  async fetchStudentStatuses() {
-    return await getFetchRequest(
-      () => [
-        { code: "ST", label: "Обучающийся" },
-        { code: "EX", label: "Отчислен" },
-        { code: "GR", label: "Выпустился" },
-      ],
-      data => {
-        this.SET_STUDENT_STATUSES(data);
-        this.SET_IS_LOADED({ field: "_studentStatusesLoaded", value: true });
-      },
-      "статусов студентов",
-    ).call(this);
-  }
 
   get studentStatuses() {
-    if (!this._studentStatusesLoaded) {
-      ReferenceModule.fetchStudentStatuses();
-    }
-
-    return this._studentStatuses;
+    return {
+      ENROLLED: { value: "EN", label: "Зачислен" },
+      STUDYING: { value: "ST", label: "Обучается" },
+      EXPELLED: { value: "EX", label: "Отчислен" },
+      GRADUATED: { value: "GR", label: "Выпустился" },
+    };
   }
 
   // STUDENT POSTS

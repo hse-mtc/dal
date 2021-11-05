@@ -26,13 +26,6 @@ export const STUDENT_POSTS = {
   SC: "Командир отделения",
 };
 
-export const STUDENT_STATUSES = {
-  AP: "Абитуриент",
-  ST: "Обучающийся",
-  EX: "Отчислен",
-  GR: "Выпустился",
-};
-
 export const WEEKDAYS = [
   "Понедельник",
   "Вторник",

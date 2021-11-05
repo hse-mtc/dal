@@ -107,14 +107,14 @@
               style="display: block"
             >
               <el-option
-                v-for="(value, key) in STUDENT_STATUSES"
-                :key="key"
-                :label="value"
-                :value="key"
+                v-for="status in studentStatuses"
+                :key="status.value"
+                :label="status.label"
+                :value="status.value"
               />
             </el-select>
             <span v-else class="field-value">
-              {{ STUDENT_STATUSES[displayInfo.status] || "---" }}
+              {{ displayStudentStatus(displayInfo.status) }}
             </span>
           </transition>
         </el-form-item>
@@ -199,11 +199,13 @@ import { findStudentBasic, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
-import { STUDENT_POSTS, STUDENT_STATUSES } from "@/utils/enums";
+import { STUDENT_POSTS } from "@/utils/enums";
+import { studentStatusMixin } from "@/mixins/students";
 
 export default {
   name: "StudentGeneral",
   components: { ExpandBox },
+  mixins: [studentStatusMixin],
   props: {
     milgroup: {
       type: Object,
@@ -213,7 +215,6 @@ export default {
   data() {
     return {
       STUDENT_POSTS,
-      STUDENT_STATUSES,
       modify: false,
       displayInfo: {},
       modifyInfo: {},
@@ -260,7 +261,7 @@ export default {
         status: [
           {
             required: true,
-            message: "Пожалуйста, выберите взвод",
+            message: "Пожалуйста, выберите статус",
             trigger: "change",
           },
         ],
