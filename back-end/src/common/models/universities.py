@@ -13,9 +13,10 @@ class Faculty(models.Model):
         choices=Campus.choices,
         max_length=2,
     )
-    title = models.CharField(
-        unique=True,
-        max_length=127,
+    title = models.CharField(max_length=127)
+    abbreviation = models.CharField(
+        max_length=31,
+        blank=True,
     )
 
     def __str__(self):
@@ -24,6 +25,7 @@ class Faculty(models.Model):
     class Meta:
         verbose_name = "Faculty"
         verbose_name_plural = "Faculties"
+        unique_together = [["campus", "title"]]
 
 
 class Program(models.Model):
