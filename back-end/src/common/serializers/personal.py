@@ -42,7 +42,7 @@ class PhotoSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
-class PhotoMutateMixin(serializers.Serializer, ABC):
+class PhotoMutateMixin(serializers.Serializer):
     image = Base64ImageField(write_only=True, required=False)
 
     def create_photo(self, validated_data):
