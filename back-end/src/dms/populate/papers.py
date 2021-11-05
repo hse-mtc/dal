@@ -1,5 +1,7 @@
 import random
 
+from common.utils.populate import get_or_create
+
 from dms.models.common import Author
 from dms.models.documents import File
 from dms.models.papers import (
@@ -10,19 +12,16 @@ from dms.models.papers import (
 
 
 def create_categories() -> list[Category]:
-    data = [
+    categories = [
         dict(title="Научные статьи"),
         dict(title="Научно-исследовательские работы"),
         dict(title="Приказы Министерства образования"),
     ]
 
-    categories = []
-
-    for fields in data:
-        category, _ = Category.objects.get_or_create(**fields)
-        categories.append(category)
-
-    return categories
+    return [
+        get_or_create(Category, **fields)
+        for fields in categories
+    ]
 
 
 def create_papers(
@@ -50,11 +49,13 @@ def create_papers(
     ]
 
     for file in files:
-        paper, _ = Paper.objects.get_or_create(
+        fields = dict(
             title=random.choice(titles),
             category=random.choice(categories),
             file=file,
         )
+
+        paper = get_or_create(Paper, **fields)
 
         for _ in range(random.randint(1, 2)):
             paper.authors.add(random.choice(authors))
