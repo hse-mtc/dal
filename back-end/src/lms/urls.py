@@ -2,6 +2,21 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
+from lms.views.teachers import TeacherViewSet
+from lms.views.punishments import PunishmentViewSet
+from lms.views.encouragements import EncouragementViewSet
+from lms.views.achievements import AchievementViewSet
+from lms.views.subjects import LessonSubjectViewSet
+from lms.views.uniforms import UniformViewSet
+from lms.views.personnel import SearchPersonnelUsersViewSet
+from lms.views.lessons import (
+    LessonViewSet,
+    LessonJournalView,
+)
+from lms.views.marks import (
+    MarkViewSet,
+    MarkJournalView,
+)
 from lms.views.students import (
     StudentViewSet,
     ActivateStudentViewSet,
@@ -13,12 +28,11 @@ from lms.views.dashboard import (
     StudentPerformanceView,
     StudentSkillsView,
 )
-from lms.views.teachers import TeacherViewSet
-from lms.views.absences import AbsenceViewSet, AbsenceJournalView
-from lms.views.absence_time import AbsenceTimeView
-from lms.views.punishments import PunishmentViewSet
-from lms.views.encouragements import EncouragementViewSet
-from lms.views.achievements import AchievementViewSet
+from lms.views.absences import (
+    AbsenceViewSet,
+    AbsenceJournalView,
+    AbsenceTimeView,
+)
 from lms.views.reference_book import (
     ReferenceBookView,
     MilfacultyViewSet,
@@ -30,11 +44,6 @@ from lms.views.reference_book import (
     SkillViewSet,
     MilgroupLeadersView,
 )
-from lms.views.subjects import LessonSubjectViewSet
-from lms.views.lessons import LessonViewSet, LessonJournalView
-from lms.views.marks import MarkViewSet, MarkJournalView
-from lms.views.uniforms import UniformViewSet
-from lms.views.personnel import SearchPersonnelUsersViewSet
 from lms.views.birthdays import (
     StudentBirthdayAlertView,
     TeacherBirthdayAlertView,
