@@ -1,12 +1,13 @@
 from datetime import datetime
 
 from rest_framework import status
+from rest_framework import generics
 
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import GenericAPIView
 from rest_framework.filters import SearchFilter
+from rest_framework.permissions import AllowAny
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -24,16 +25,20 @@ from auth.models import Permission
 from auth.permissions import BasePermission
 
 from lms.models.common import Milgroup
-from lms.models.absences import Absence
 from lms.models.students import Student
 from lms.models.teachers import Teacher
+from lms.models.absences import (
+    Absence,
+    AbsenceTime,
+)
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.absences import (
-    AbsenceSerializer,
-    AbsenceJournalSerializer,
     AbsenceJournalQuerySerializer,
+    AbsenceJournalSerializer,
     AbsenceMutateSerializer,
+    AbsenceSerializer,
+    AbsenceTimeSerializer,
 )
 
 from lms.filters.absences import AbsenceFilter
@@ -150,7 +155,7 @@ class AbsenceViewSet(QuerySetScopingMixin, ModelViewSet):
                                     required=True,
                                     type=OpenApiTypes.DATE),
                ])
-class AbsenceJournalView(GenericAPIView):
+class AbsenceJournalView(generics.GenericAPIView):
     permission_classes = [AbsencePermission]
     scoped_permission_class = AbsencePermission
 
@@ -205,3 +210,16 @@ class AbsenceJournalView(GenericAPIView):
             many=True).data
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=["absence-time"])
+class AbsenceTimeView(generics.RetrieveUpdateAPIView):
+    serializer_class = AbsenceTimeSerializer
+    queryset = AbsenceTime.objects.all()
+
+    permission_classes = [AllowAny]
+
+    def get_object(self) -> AbsenceTime:
+        obj = AbsenceTime.objects.last()
+        self.check_object_permissions(self.request, obj)
+        return obj
