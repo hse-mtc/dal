@@ -23,7 +23,7 @@ def get_or_create(
     """
 
     with transaction.atomic():
-        if not model.objects.filter(**fields).exists():
-            model.objects.create(**fields)
-
-    return model.objects.filter(**fields).first()
+        if (queryset := model.objects.filter(**fields)).exists():
+            return queryset.first()
+        else:
+            return model.objects.create(**fields)
