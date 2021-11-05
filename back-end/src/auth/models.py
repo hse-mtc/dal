@@ -69,7 +69,7 @@ class Permission(models.Model):
         verbose_name_plural = "Permissions"
 
     def __str__(self):
-        return str(self.name)
+        return self.name
 
 
 class Group(models.Model):
