@@ -42,10 +42,10 @@
           @change="onFilter"
         >
           <el-option
-            v-for="value, key in STUDENT_STATUSES"
-            :key="key"
-            :label="value"
-            :value="key"
+            v-for="status in studentStatuses"
+            :key="status.value"
+            :label="status.label"
+            :value="status"
           />
         </el-select>
       </el-col>
@@ -93,7 +93,7 @@
           column-key="birthday"
         />
         <PrimeColumn
-          :field="(row) => STUDENT_STATUSES[row.status]"
+          :field="(row) => displayStudentStatus(row.status)"
           header="Статус"
           header-style="width: 150px"
           body-style="width: 150px"
@@ -142,18 +142,18 @@ import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 import { getStudent, deleteStudent } from "@/api/students";
 import { ReferenceModule, UserModule } from "@/store";
-import { STUDENT_STATUSES } from "@/utils/enums";
+import { studentStatusMixin } from "@/mixins/students";
 
 export default {
   name: "Students",
+  mixins: [studentStatusMixin],
   data() {
     return {
-      STUDENT_STATUSES,
       loading: false,
       filter: {
         search: null,
         milgroup: null,
-        status: "ST",
+        status: null,
       },
       students: [],
     };
@@ -176,7 +176,11 @@ export default {
     async onFilter() {
       try {
         this.loading = true;
-        this.students = (await getStudent(this.filter)).data;
+        const filter = {
+          ...this.filter,
+          status: this.filter.status?.value,
+        };
+        this.students = (await getStudent(filter)).data;
       } catch (err) {
         getError("студентов", err.response.status);
       } finally {
