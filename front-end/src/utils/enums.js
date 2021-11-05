@@ -3,12 +3,6 @@ import HA from "@/assets/uniform-picker/hat.svg";
 
 import PC from "@/assets/uniform-picker/pea-coat.svg";
 
-export const TEACHER_POSTS = {
-  CH: "Начальник ВУЦ",
-  FH: "Начальник цикла",
-  TE: "Профессорско-преподавательский состав",
-};
-
 export const CAMPUSES = {
   MO: "Москва",
   SP: "Санкт-Петербург",

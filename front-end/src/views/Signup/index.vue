@@ -156,10 +156,10 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="rank in ranks"
-                    :key="rank.id"
-                    :label="rank.title"
-                    :value="rank.id"
+                    v-for="rank in teacherRanks"
+                    :key="rank.value"
+                    :label="rank.label"
+                    :value="rank.value"
                   />
                 </el-select>
               </el-form-item>
@@ -174,10 +174,10 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="(value, key) in TEACHER_POSTS"
-                    :key="key"
-                    :label="value"
-                    :value="key"
+                    v-for="post in teacherPosts"
+                    :key="post.value"
+                    :label="post.label"
+                    :value="post.value"
                   />
                 </el-select>
               </el-form-item>
@@ -248,13 +248,13 @@ import { validCorEmail } from "@/utils/validate";
 import {
   getMilFaculties,
   getMilGroups,
-  getRanks,
 } from "@/api/reference-book";
 import { registerStudent, registerTeacher } from "@/api/user";
-import { TEACHER_POSTS } from "@/utils/enums";
+import { teacherPostMixin, teacherRankMixin } from "@/mixins/teachers";
 
 export default {
   name: "Signup",
+  mixins: [teacherPostMixin, teacherRankMixin],
 
   data() {
     const validateEmail = (rule, value, callback) => {
@@ -266,8 +266,6 @@ export default {
     };
 
     return {
-      TEACHER_POSTS,
-
       registerForm: {
         email: "",
         role: "",
@@ -282,7 +280,6 @@ export default {
       },
       milgroups: [],
       milfaculties: [],
-      ranks: [],
       roles: [
         { label: "Студент", key: "student" },
         { label: "Преподаватель", key: "teacher" },
@@ -339,9 +336,8 @@ export default {
       const responses = await Promise.all([
         getMilGroups(),
         getMilFaculties(),
-        getRanks(),
       ]);
-      [this.milgroups, this.milfaculties, this.ranks] = responses.map(r => r.data);
+      [this.milgroups, this.milfaculties] = responses.map(r => r.data);
     },
 
     handleRegister() {

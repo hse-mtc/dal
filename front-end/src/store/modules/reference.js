@@ -60,9 +60,6 @@ class Reference extends VuexModule {
   _studentPosts = [];
   _studentPostsLoaded = false;
 
-  _teacherPosts = [];
-  _teacherPostsLoaded = false;
-
   _milfaculties = [];
   _milfacultiesLoaded = false;
 
@@ -242,29 +239,23 @@ class Reference extends VuexModule {
   }
 
   // TEACHER POSTS
-  @Mutation
-  SET_TEACHER_POSTS(payload) {
-    this._teacherPosts = payload;
-  }
-
-  @Action
-  async fetchTeacherPosts() {
-    return await getFetchRequest(
-      getTeacherPosts,
-      data => {
-        this.SET_TEACHER_POSTS(data);
-        this.SET_IS_LOADED({ field: "_teacherPostsLoaded", value: true });
-      },
-      "должностей преподавателей",
-    ).call(this);
-  }
-
   get teacherPosts() {
-    if (!this._teacherPostsLoaded) {
-      ReferenceModule.fetchTeacherPosts();
-    }
+    return {
+      MTC_HEAD: { value: "CH", label: "Начальник ВУЦ" },
+      MILFACULTY_HEAD: { value: "FH", label: "Начальник цикла" },
+      TEACHERS: { value: "TE", label: "Профессорско-преподавательский состав" },
+    };
+  }
 
-    return this._teacherPosts;
+  // TEACHER RANKS
+  get teacherRanks() {
+    return {
+      CAPTAIN: { value: "CA", label: "Капитан" },
+      MAJOR: { value: "MA", label: "Майор" },
+      LIEUTENANT_COLONEL: { value: "LC", label: "Подполковник" },
+      COLONEL: { value: "CO", label: "Полковник" },
+      MAJOR_GENERAL: { value: "MG", label: "Генерал-майор" },
+    };
   }
 
   // MILFACULTIES

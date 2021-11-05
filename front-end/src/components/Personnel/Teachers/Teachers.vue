@@ -60,12 +60,12 @@
           column-key="milfaculty"
         />
         <PrimeColumn
-          :field="teacher => teacher.rank.title"
+          :field="teacher => displayTeacherRank(teacher.rank)"
           header="Звание"
           column-key="rank"
         />
         <PrimeColumn
-          :field="teacher => TEACHER_POSTS[teacher.post]"
+          :field="teacher => displayTeacherPost(teacher.post)"
           header="Должность"
           column-key="teacherPost"
         />
@@ -112,13 +112,13 @@ import { getTeacher, deleteTeacher } from "@/api/teachers";
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
-import { TEACHER_POSTS } from "@/utils/enums";
+import { teacherRankMixin, teacherPostMixin } from "@/mixins/teachers";
 
 export default {
   name: "Teachers",
+  mixins: [teacherRankMixin, teacherPostMixin],
   data() {
     return {
-      TEACHER_POSTS,
       loading: false,
       filter: {
         search: null,
