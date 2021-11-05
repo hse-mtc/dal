@@ -15,7 +15,7 @@ from lms.utils.functions import get_personnel_from_request_user
 from lms.types.personnel import Personnel
 
 
-class QuerySetScopingMixin(generics.GenericAPIView, mixins.CreateModelMixin):
+class QuerySetScopingMixin(mixins.CreateModelMixin, generics.GenericAPIView):
     permission_allow_read_only = False
     scoped_permission_class = None
 
