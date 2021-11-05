@@ -171,8 +171,11 @@ class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
     """
 
     def handle_scope_milfaculty(self, personnel: Personnel):
-        assert (isinstance(personnel, Student) or
-                isinstance(personnel, Teacher), "Unhandled Personnel type")
+        match personnel:
+            case Student() | Teacher():
+                pass
+            case _:
+                assert False, "Unhandled Personnel type"
 
         return self.queryset.filter(
             student__milgroup__milfaculty=personnel.milfaculty,
@@ -180,8 +183,11 @@ class StudentTeacherQuerySetScopingMixin(QuerySetScopingMixin):
         )
 
     def allow_scope_milfaculty_on_create(self, data, personnel: Personnel):
-        assert (isinstance(personnel, Student) or
-                isinstance(personnel, Teacher), "Unhandled Personnel type")
+        match personnel:
+            case Student() | Teacher():
+                pass
+            case _:
+                assert False, "Unhandled Personnel type"
 
         student = Student.objects.filter(id=data["student"])
         teacher = Teacher.objects.filter(id=data["teacher"])
