@@ -11,6 +11,8 @@ from common.serializers.personal import (
     ContactInfoSerializer,
     PhotoMutateMixin,
     RelativeSerializer,
+    PassportSerializer,
+    RelativeMutateSerializer,
 )
 
 from ams.models.applicants import (
@@ -27,6 +29,7 @@ class ApplicationProcessSerializer(serializers.ModelSerializer):
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
@@ -49,10 +52,23 @@ class ApplicantMutateSerializer(
     WritableNestedModelSerializer,
     PhotoMutateMixin,
 ):
+    birth_info = BirthInfoSerializer(required=False)
+    passport = PassportSerializer(required=False)
+    university_info = UniversityInfoSerializer(required=False)
+    contact_info = ContactInfoSerializer(required=False)
+    family = RelativeMutateSerializer(required=False, many=True)
 
     class Meta:
         model = Applicant
         fields = "__all__"
+
+    def create(self, validated_data):
+        self.create_photo(validated_data)
+        return super().create(validated_data)
+
+    def update(self, instance: Applicant, validated_data):
+        self.update_photo(instance, validated_data)
+        return super().update(instance, validated_data)
 
 
 class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
