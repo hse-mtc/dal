@@ -18,7 +18,7 @@ class ApplicantFilter(FilterSet):
 
     def filter_by_campus(self, queryset, name, value):
         # pylint: disable=unused-argument
-        return queryset.filter(university_info__campus=value)
+        return queryset.filter(university_info__program__faculty__campus=value)
 
     class Meta:
         model = Applicant
