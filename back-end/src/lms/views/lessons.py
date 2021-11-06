@@ -17,6 +17,8 @@ from drf_spectacular.views import (
 
 from common.constants import MUTATE_ACTIONS
 
+from common.views.choices import GenericChoicesList
+
 from common.utils.date import get_date_range
 
 from auth.models import Permission
@@ -178,3 +180,8 @@ class LessonJournalView(GenericAPIView):
         data["ordinals"] = ordinals
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+@extend_schema(tags=["lessons", "choices"])
+class LessonTypeChoicesList(GenericChoicesList):
+    choices_class = Lesson.Type

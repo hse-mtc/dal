@@ -6,9 +6,9 @@ import requests
 from django.contrib.auth import get_user_model
 from django.db.models.query import QuerySet
 
-from rest_framework import status
-from rest_framework import permissions
 from rest_framework import pagination
+from rest_framework import permissions
+from rest_framework import status
 
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -28,6 +28,8 @@ from conf.settings import (
 )
 
 from common.constants import MUTATE_ACTIONS
+
+from common.views.choices import GenericChoicesList
 
 from lms.models.applicants import ApplicationProcess
 from lms.models.students import Student, Note
@@ -75,8 +77,8 @@ class XLSXRenderer(BaseRenderer):
 class StudentPermission(BasePermission):
     permission_class = "students"
     view_name_rus = "Студенты"
-    # do not allow student creation in this permission,
-    # as it is handled by the applicant's form procedures
+    # Student creation via POST is not allowed,
+    # as it is handled by the applicant's form procedures.
     methods = ["get", "put", "patch", "delete"]
     scopes = [
         Permission.Scope.ALL,
@@ -430,3 +432,13 @@ class NoteViewSet(ModelViewSet):
 
     # no need to check on create as user id is automatically
     # received from the request by the serializer
+
+
+@extend_schema(tags=["students", "choices"])
+class StudentStatusChoicesList(GenericChoicesList):
+    choices_class = Student.Status
+
+
+@extend_schema(tags=["students", "choices"])
+class StudentPostChoicesList(GenericChoicesList):
+    choices_class = Student.Post
