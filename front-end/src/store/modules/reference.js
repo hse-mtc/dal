@@ -63,12 +63,6 @@ class Reference extends VuexModule {
   _rooms = [];
   _roomsLoaded = false;
 
-  _absenceTypes = [];
-  _absenceTypesLoaded = false;
-
-  _absenceStatuses = [];
-  _absenceStatusesLoaded = false;
-
   _skills = [];
   _skillsLoaded = false;
 
@@ -411,74 +405,6 @@ class Reference extends VuexModule {
     }
 
     return this._rooms;
-  }
-
-  // ABSENCE TYPES
-  @Mutation
-  SET_ABSENCE_TYPES(payload) {
-    this._absenceTypes = payload;
-  }
-
-  @Action({ commit: "SET_ABSENCE_TYPES" })
-  async setAbsenceTypes(absenceTypes) {
-    return absenceTypes;
-  }
-
-  @Action
-  async fetchAbsenceTypes() {
-    try {
-      const data = [
-        { label: "Уважительная", code: "SE" },
-        { label: "Неуважительная", code: "NS" },
-        { label: "Опоздание", code: "LA" },
-      ];
-      this.setAbsenceTypes(data);
-      this.SET_IS_LOADED({ field: "_absenceTypesLoaded", value: true });
-    } catch (err) {
-      getError("типов пропусков", err.response.status);
-    }
-  }
-
-  get absenceTypes() {
-    if (!this._absenceTypesLoaded) {
-      ReferenceModule.fetchAbsenceTypes();
-    }
-
-    return this._absenceTypes;
-  }
-
-  // ABSENCE STATUSES
-  @Mutation
-  SET_ABSENCE_STATUSES(payload) {
-    this._absenceStatuses = payload;
-  }
-
-  @Action({ commit: "SET_ABSENCE_STATUSES" })
-  async setAbsenceStatuses(absenceStatuses) {
-    return absenceStatuses;
-  }
-
-  @Action
-  async fetchAbsenceStatuses() {
-    return await getFetchRequest(
-      () => [
-        { label: "Закрыт", code: "CL" },
-        { label: "Открыт", code: "OP" },
-      ],
-      data => {
-        this.SET_ABSENCE_STATUSES(data);
-        this.SET_IS_LOADED({ field: "_absenceStatusesLoaded", value: true });
-      },
-      "статусов пропусков",
-    ).call(this);
-  }
-
-  get absenceStatuses() {
-    if (!this._absenceStatusesLoaded) {
-      ReferenceModule.fetchAbsenceStatuses();
-    }
-
-    return this._absenceStatuses;
   }
 
   // SKILLS
