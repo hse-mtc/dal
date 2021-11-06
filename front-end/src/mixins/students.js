@@ -1,22 +1,21 @@
-import { ReferenceModule } from "@/store";
+import { ChoicesModule } from "@/store";
 
-export const studentStatusMixin = {
-  computed: {
-    studentStatuses() {
-      return ReferenceModule.studentStatuses;
-    },
+import { defaultChoiceLabelFromValue } from "@/utils/choices";
+
+export const studentStatusesMixin = {
+  data() {
+    return {
+      studentStatuses: {},
+    };
+  },
+
+  async beforeCreate() {
+    this.studentStatuses = await ChoicesModule.studentStatuses;
   },
 
   methods: {
-    displayStudentStatus(value) {
-      const filtered = Object
-        .values(this.studentStatuses)
-        .filter(status => status.value === value);
-
-      if (filtered.length === 1) {
-        return filtered[0].label;
-      }
-      return value;
+    studentStatusLabelFromValue(value) {
+      return defaultChoiceLabelFromValue(this.studentStatuses, value);
     },
   },
 };

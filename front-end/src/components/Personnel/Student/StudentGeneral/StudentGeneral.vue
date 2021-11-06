@@ -114,7 +114,7 @@
               />
             </el-select>
             <span v-else class="field-value">
-              {{ displayStudentStatus(displayInfo.status) }}
+              {{ studentStatusLabelFromValue(displayInfo.status) }}
             </span>
           </transition>
         </el-form-item>
@@ -200,12 +200,12 @@ import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
 import { STUDENT_POSTS } from "@/utils/enums";
-import { studentStatusMixin } from "@/mixins/students";
+import { studentStatusesMixin } from "@/mixins/students";
 
 export default {
   name: "StudentGeneral",
   components: { ExpandBox },
-  mixins: [studentStatusMixin],
+  mixins: [studentStatusesMixin],
   props: {
     milgroup: {
       type: Object,

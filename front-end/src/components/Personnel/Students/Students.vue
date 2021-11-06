@@ -93,7 +93,7 @@
           column-key="birthday"
         />
         <PrimeColumn
-          :field="(row) => displayStudentStatus(row.status)"
+          :field="(row) => studentStatusLabelFromValue(row.status)"
           header="Статус"
           header-style="width: 150px"
           body-style="width: 150px"
@@ -142,11 +142,11 @@ import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 import { getStudent, deleteStudent } from "@/api/students";
 import { ReferenceModule, UserModule } from "@/store";
-import { studentStatusMixin } from "@/mixins/students";
+import { studentStatusesMixin } from "@/mixins/students";
 
 export default {
   name: "Students",
-  mixins: [studentStatusMixin],
+  mixins: [studentStatusesMixin],
   data() {
     return {
       loading: false,
