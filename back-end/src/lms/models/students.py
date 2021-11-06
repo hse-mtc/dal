@@ -37,14 +37,14 @@ class Student(models.Model):
     # --------------------------------------------------------------------------
 
     class Status(models.TextChoices):
-        ENROLLED = "EN", "зачислен"
-        STUDYING = "ST", "обучается"
-        EXPELLED = "EX", "отчислен"
-        GRADUATED = "GR", "выпустился"
+        ENROLLED = "EN", "Зачислен"
+        STUDYING = "ST", "Обучается"
+        EXPELLED = "EX", "Отчислен"
+        GRADUATED = "GR", "Выпустился"
 
     class Post(models.TextChoices):
-        MILGROUP_COMMANDER = "GC", "командир взвода"
-        MILSQUAD_COMMANDER = "SC", "командир отделения"
+        MILGROUP_COMMANDER = "GC", "Командир взвода"
+        MILSQUAD_COMMANDER = "SC", "Командир отделения"
 
     # --------------------------------------------------------------------------
     # Frequently accessed data.

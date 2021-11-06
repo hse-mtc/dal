@@ -18,16 +18,16 @@ class Teacher(models.Model):
     # --------------------------------------------------------------------------
 
     class Post(models.TextChoices):
-        MTC_HEAD = "CH", "начальник ВУЦ"
-        MILFACULTY_HEAD = "FH", "начальник цикла"
-        TEACHERS = "TE", "профессорско-преподавательский состав"
+        MTC_HEAD = "CH", "Начальник ВУЦ"
+        MILFACULTY_HEAD = "FH", "Начальник цикла"
+        TEACHERS = "TE", "Профессорско-преподавательский состав"
 
     class Rank(models.TextChoices):
-        CAPTAIN = "CA", "капитан"
-        MAJOR = "MA", "майор"
-        LIEUTENANT_COLONEL = "LC", "подполковник"
-        COLONEL = "CO", "полковник"
-        MAJOR_GENERAL = "MG", "генерал-майор"
+        CAPTAIN = "CA", "Капитан"
+        MAJOR = "MA", "Майор"
+        LIEUTENANT_COLONEL = "LC", "Подполковник"
+        COLONEL = "CO", "Полковник"
+        MAJOR_GENERAL = "MG", "Генерал-майор"
 
     # --------------------------------------------------------------------------
     # Frequently accessed data.
