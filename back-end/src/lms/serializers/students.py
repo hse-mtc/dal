@@ -50,8 +50,8 @@ class StudentSerializer(serializers.ModelSerializer):
 
 
 class StudentMutateSerializer(
-        WritableNestedModelSerializer,
-        PhotoMutateMixin,
+    WritableNestedModelSerializer,
+    PhotoMutateMixin,
 ):
     milgroup = serializers.PrimaryKeyRelatedField(
         queryset=Milgroup.objects.all(),
@@ -69,14 +69,6 @@ class StudentMutateSerializer(
         fields = "__all__"
 
     def create(self, validated_data):
-        corporate_email = validated_data["contact_info"]["corporate_email"]
-        student_with_same_corporate_email = Student.objects.filter(
-            contact_info__corporate_email=corporate_email)
-
-        if student_with_same_corporate_email.exists():
-            raise serializers.ValidationError(
-                "Cannot create Student: this corporate email already exists")
-
         self.create_photo(validated_data)
         return super().create(validated_data)
 
