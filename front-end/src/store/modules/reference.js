@@ -201,17 +201,6 @@ class Reference extends VuexModule {
     return this._ranks;
   }
 
-  // STUDENTS STATUSES
-
-  get studentStatuses() {
-    return {
-      ENROLLED: { value: "EN", label: "Зачислен" },
-      STUDYING: { value: "ST", label: "Обучается" },
-      EXPELLED: { value: "EX", label: "Отчислен" },
-      GRADUATED: { value: "GR", label: "Выпустился" },
-    };
-  }
-
   // STUDENT POSTS
   @Mutation
   SET_STUDENT_POSTS(payload) {
@@ -236,26 +225,6 @@ class Reference extends VuexModule {
     }
 
     return this._studentPosts;
-  }
-
-  // TEACHER POSTS
-  get teacherPosts() {
-    return {
-      MTC_HEAD: { value: "CH", label: "Начальник ВУЦ" },
-      MILFACULTY_HEAD: { value: "FH", label: "Начальник цикла" },
-      TEACHERS: { value: "TE", label: "Профессорско-преподавательский состав" },
-    };
-  }
-
-  // TEACHER RANKS
-  get teacherRanks() {
-    return {
-      CAPTAIN: { value: "CA", label: "Капитан" },
-      MAJOR: { value: "MA", label: "Майор" },
-      LIEUTENANT_COLONEL: { value: "LC", label: "Подполковник" },
-      COLONEL: { value: "CO", label: "Полковник" },
-      MAJOR_GENERAL: { value: "MG", label: "Генерал-майор" },
-    };
   }
 
   // MILFACULTIES
