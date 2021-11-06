@@ -1,6 +1,6 @@
 <template>
   <el-col
-    v-loading="loading"
+    v-loading="loading || teacherPostsAreLoading || teacherRanksAreLoading"
     :offset="2"
     :span="20"
     class="teacher-page"
@@ -26,7 +26,7 @@
       <ExpandBox title="Основное" non-expandable>
         <div class="teacher-info">
           <el-upload
-            v-loading="loading"
+            v-loading="loading || teacherPostsAreLoading || teacherRanksAreLoading"
             class="avatar-uploader"
             action="/api/lms/students/"
             :show-file-list="false"
@@ -47,7 +47,7 @@
             label-width="200px"
             label-position="right"
             size="mini"
-            :disabled="loading"
+            :disabled="loading || teacherPostsAreLoading || teacherRanksAreLoading"
             hide-required-asterisk
           >
             <el-form-item class="actions">
@@ -256,12 +256,12 @@ import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import moment from "moment";
 import { UserModule, ReferenceModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
-import { teacherPostMixin, teacherRankMixin } from "@/mixins/teachers";
+import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
 export default {
   name: "Teacher",
   components: { ExpandBox, ChangePasswordForm },
-  mixins: [teacherPostMixin, teacherRankMixin],
+  mixins: [TeacherPostsMixin, TeacherRanksMixin],
   data() {
     return {
       dialog: false,

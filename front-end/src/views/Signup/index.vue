@@ -203,7 +203,7 @@
           </div>
 
           <el-button
-            :loading="loading"
+            :loading="loading || teacherPostsAreLoading || teacherRanksAreLoading"
             type="primary"
             :disabled="disabledButton"
             style="width: 190px; margin-bottom: 30px; margin-top: 20px"
@@ -250,11 +250,11 @@ import {
   getMilGroups,
 } from "@/api/reference-book";
 import { registerStudent, registerTeacher } from "@/api/user";
-import { teacherPostMixin, teacherRankMixin } from "@/mixins/teachers";
+import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
 export default {
   name: "Signup",
-  mixins: [teacherPostMixin, teacherRankMixin],
+  mixins: [TeacherPostsMixin, TeacherRanksMixin],
 
   data() {
     const validateEmail = (rule, value, callback) => {
