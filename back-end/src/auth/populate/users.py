@@ -44,7 +44,7 @@ def create_users() -> dict[str, User]:
             password="qwerty",
             is_staff=True,
             is_superuser=True,
-            campuses=[Campus.values]
+            campuses=Campus.values,
         ),
         # TODO (@gakhromov): remove superuser from
         # tgbot user and add appropriate permissions
