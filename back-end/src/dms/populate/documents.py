@@ -9,7 +9,7 @@ def create_files() -> list[File]:
     files = []
 
     for i in range(25):
-        name = f"document_id_{i}.txt",
+        name = f"document_id_{i}.txt"
         fields = dict(
             name=name,
             content=ContentFile("some content here", name=name),
