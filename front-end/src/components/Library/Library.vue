@@ -2,8 +2,8 @@
   <div class="root">
     <PageHeader
       v-if="!(isMyLibrary || isFavoriteBooks)"
-      title="Библиотека"
-      button="+ Добавить учебник"
+      title="Электронная библиотека"
+      button="+ Добавить книгу"
       :click="addNewBook"
       :permissions="['books.post.all']"
     />
@@ -267,11 +267,11 @@ export default {
     },
     getInitBookData() {
       return {
+        bookName: "",
+        annotation: "",
         authors: [],
         publishers: null,
         publishDate: null,
-        bookName: "",
-        annotation: "",
         pageCount: 0,
         subjects: [],
         book: [],
