@@ -24,6 +24,12 @@ def create_faculties() -> dict[str, Faculty]:
             "title": "Факультет компьютерных наук",
             "abbreviation": "ФКН",
         },
+
+        {
+            "campus": Campus.SAINT_PETERSBURG.value,
+            "title": "Юридический факультет",
+            "abbreviation": "ЮрФак",
+        },
     ]
 
     return {
@@ -54,6 +60,12 @@ def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
             "title": "Программная инженерия",
             "faculty": faculties["ФКН"],
         },
+
+        {
+            "code": "40.03.01 Юриспруденция",
+            "title": "Юриспруденция",
+            "faculty": faculties["ЮрФак"],
+        }
     ]
 
     return {
