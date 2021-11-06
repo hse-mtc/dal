@@ -32,6 +32,10 @@ from auth.populate.permissions import (
     get_milfaculty_head_permissions,
 )
 
+# AMS
+
+from ams.populate.applicants import create_applicants
+
 # DMS
 
 from dms.populate.documents import create_files
@@ -92,7 +96,7 @@ class Command(BaseCommand):
         # ----------------------------------------------------------------------
         # Auth
 
-        print("Populate `auth` models...")
+        print("Populating `auth` models...", end="")
 
         User = get_user_model()
 
@@ -122,20 +126,36 @@ class Command(BaseCommand):
         milfaculty_heads.user_set.add(
             User.objects.get(email="dnrepalov@mail.com"))
 
+        print(" OK")
+
         # ----------------------------------------------------------------------
         # Common
 
-        print("Populate `common` models...")
+        print("Populating `common` models...", end="")
 
         subjects = create_subjects()
         milspecialties = create_milspecialties()
         faculties = create_faculties()
         programs = create_programs(faculties)
 
+        print(" OK")
+
+        # ----------------------------------------------------------------------
+        # AMS
+
+        print("Populating `ams` models...", end="")
+
+        applicants = create_applicants(
+            programs=programs,
+            milspecialties=milspecialties,
+        )
+
+        print(" OK")
+
         # ----------------------------------------------------------------------
         # DMS
 
-        print("Populate `dms` models...")
+        print("Populating `dms` models...", end="")
 
         files = create_files()
 
@@ -168,10 +188,12 @@ class Command(BaseCommand):
             User.objects.get(email="dnrepalov@mail.com"),
         )
 
+        print(" OK")
+
         # ----------------------------------------------------------------------
         # LMS
 
-        print("Populate `lms` models...")
+        print("Populating `lms` models...", end="")
 
         milfaculties = create_milfaculties()
         milgroups = create_milgroups(milfaculties)
@@ -236,3 +258,5 @@ class Command(BaseCommand):
         )
 
         create_uniforms(milfaculties=milfaculties)
+
+        print(" OK")
