@@ -1,9 +1,9 @@
 import request from "@/utils/request";
-import { BASE_API_URL, LMS_URLS } from "@/constants/api";
+import { BASE_API_URL, AMS_URLS, LMS_URLS } from "@/constants/api";
 
 const {
   staff: {
-    students, applications, applicationsExport, applicationsCSPExport, notes,
+    students, notes,
   },
 } = LMS_URLS;
 
@@ -63,17 +63,6 @@ export function findStudentExtra(id) {
   });
 }
 
-export function postStudent(data) {
-  return request({
-    url: BASE_API_URL + students,
-    method: "post",
-    data: {
-      ...data,
-      generate_documents: __PROD__,
-    },
-  });
-}
-
 export function patchStudent(data) {
   return request({
     url: `${BASE_API_URL}${students}${data.id}/`,
@@ -88,25 +77,6 @@ export function deleteStudent(id) {
     method: "delete",
   });
 }
-
-export const getApplicationsStudents = (page, pageSize, filters) => request({
-  url: BASE_API_URL + applications,
-  method: "GET",
-  params: {
-    page,
-    page_size: pageSize,
-    ...(filters || {}),
-  },
-});
-
-export const updateStudentApplicationInfo = (id, data) => request({
-  url: `${BASE_API_URL}${students}${id}/application/`,
-  method: "PATCH",
-  data,
-});
-
-export const APPLICATIONS_EXPORT_LINK = `${BASE_API_URL}${applicationsExport}`;
-export const APPLICATIONS_CSP_EXPORT_LINK = `${BASE_API_URL}${applicationsCSPExport}`;
 
 export function findStudentNotes(id) {
   return request({
