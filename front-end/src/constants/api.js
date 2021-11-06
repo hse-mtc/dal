@@ -69,6 +69,17 @@ export const LMS_URLS = {
     students: "lms/birthdays/students",
     teachers: "lms/birthdays/teachers",
   },
+  choices: {
+    absenceExcuses: "lms/choices/absence-excuses/",
+    absenceStatuses: "lms/choices/absence-statuses/",
+    encouragementTypes: "lms/choices/encouragement-types/",
+    lessonTypes: "lms/choices/lesson-types/",
+    punishmentTypes: "lms/choices/punishment-types/",
+    studentPosts: "lms/choices/student-posts/",
+    studentStatuses: "lms/choices/student-statuses/",
+    teacherPosts: "lms/choices/teacher-posts/",
+    teacherRanks: "lms/choices/teacher-ranks/",
+  },
 };
 
 export const DMS_URLS = {
