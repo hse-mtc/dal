@@ -34,7 +34,7 @@
     </el-row>
     <el-row class="table">
       <PrimeTable
-        v-loading="loading"
+        v-loading="loading || teacherRanksAreLoading || teacherPostsAreLoading"
         :value="teachers"
         scrollable
         scroll-height="600px"
@@ -112,11 +112,11 @@ import { getTeacher, deleteTeacher } from "@/api/teachers";
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
-import { teacherRankMixin, teacherPostMixin } from "@/mixins/teachers";
+import { TeacherRanksMixin, TeacherPostsMixin } from "@/mixins/teachers";
 
 export default {
   name: "Teachers",
-  mixins: [teacherRankMixin, teacherPostMixin],
+  mixins: [TeacherRanksMixin, TeacherPostsMixin],
   data() {
     return {
       loading: false,
