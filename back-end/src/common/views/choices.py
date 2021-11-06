@@ -10,12 +10,15 @@ class GenericChoicesList(views.APIView):
 
     permission_classes = [permissions.AllowAny]
 
-    def get(self, request: Request, *args, **kwargs) -> Response:
-        choices = {
+    def make_choices(self, *args, **kwargs) -> dict:
+        return {
             choice.name: {
                 "value": choice.value,
                 "label": choice.label,
             }
             for choice in self.choices_class
         }
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        choices = self.make_choices()
         return Response(data=choices)
