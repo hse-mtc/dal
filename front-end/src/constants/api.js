@@ -10,6 +10,15 @@ export const AUTH_URLS = {
   roles: "auth/group/",
 };
 
+export const AMS_URLS = {
+  applicants: {
+    applicants: "ams/applicants/",
+    applications: "ams/applicants/applications/",
+    applicationsExport: "ams/applicants/applications/export/",
+    applicationsCSPExport: "ams/applicants/applications/competitive-selection-protocol/export/",
+  },
+};
+
 export const LMS_URLS = {
   register: {
     students: "lms/students/registration/",
@@ -54,9 +63,6 @@ export const LMS_URLS = {
     students: "lms/students/",
     teachers: "lms/teachers/",
     approvements: "lms/students/approvals/",
-    applications: "lms/students/applications/",
-    applicationsExport: "lms/students/applications/export/",
-    applicationsCSPExport: "lms/students/applications/competitive-selection-protocol/export/",
     notes: "lms/students/notes/",
   },
   users: {
