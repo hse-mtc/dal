@@ -341,3 +341,7 @@ EMAIL_USE_TLS = os.environ["EMAIL_USE_TLS"].lower() == "true"
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Settings used for tests
+
+TEST_CORPORATE_EMAIL_DOMAIN = "thisistestemaildomain.org"
