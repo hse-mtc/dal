@@ -36,10 +36,10 @@
     </el-row>
     <el-tabs
       v-model="filter.milgroup"
-      v-loading="loading"
+      v-loading="loading || absenceExcusesAreLoading || absenceStatusesAreLoading"
       tab-position="left"
       class="my-tabs"
-      @tab-click="onJournal()"
+      @tab-click="onJournal"
     >
       <el-tab-pane
         v-for="mg in milgroups"
@@ -173,17 +173,17 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
-import { WEEKDAYS, EXCUSES, ABSENCE_STATUSES } from "@/utils/enums";
+import { WEEKDAYS } from "@/utils/enums";
 import GenericForm from "@/common/Form/index.vue";
+import { AbsenceExcusesMixin, AbsenceStatusesMixin } from "@/mixins/absences";
 
 export default {
   name: "Absence",
   components: { GenericForm },
+  mixins: [AbsenceExcusesMixin, AbsenceStatusesMixin],
   data() {
     return {
-      EXCUSES,
       WEEKDAYS,
-      ABSENCE_STATUSES,
       dialogVisible: false,
       loading: false,
       editAbsence: {
@@ -249,15 +249,32 @@ export default {
       },
       journal: {},
 
-      fields: {
+      rules: {
+        excuse: [{ required: true, message: "Обязательное поле" }],
+        reason: [{ required: true, message: "Обязательное поле" }],
+      },
+    };
+  },
+  computed: {
+    milgroups() {
+      return ReferenceModule.milgroups.filter(
+        x => x.weekday === +this.filter.weekday,
+      );
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+
+    fields() {
+      return {
         excuse: {
           component: "select",
           title: "Тип причины",
           props: {
-            options: Object.keys(EXCUSES).map(key => ({
-              value: key,
-              label: EXCUSES[key],
-            })),
+            options: Object.values(this.absenceExcuses),
           },
         },
         status: {
@@ -285,28 +302,14 @@ export default {
             isTextArea: true,
           },
         },
-      },
-
-      rules: {
-        excuse: [{ required: true, message: "Обязательное поле" }],
-        reason: [{ required: true, message: "Обязательное поле" }],
-      },
-    };
-  },
-  computed: {
-    milgroups() {
-      return ReferenceModule.milgroups.filter(
-        x => x.weekday === +this.filter.weekday,
-      );
-    },
-    userMilfaculty() {
-      return UserModule.personMilfaculty;
-    },
-    userMilgroups() {
-      return UserModule.personMilgroups;
+      };
     },
 
     tableData() {
+      if (this.loading) {
+        return [];
+      }
+
       const { students, dates } = this.journal;
 
       return students.map(student => ({
@@ -319,7 +322,6 @@ export default {
               ...memo,
               [date]: {
                 ...rawAbsence,
-                excuse: EXCUSES[rawAbsence.excuse],
               },
             };
           }
@@ -356,11 +358,7 @@ export default {
         : "0";
       await this.onJournal();
     },
-    changeAbsenceStatus(absence) {
-      // todo
-      // eslint-disable-next-line no-param-reassign
-      absence.status = absence.status === "CL" ? "OP" : "CL";
-    },
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     tagByExcuse(excuse) {
       switch (excuse) {
         case "IL":
@@ -371,6 +369,7 @@ export default {
           return "success";
       }
     },
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     iconByAbsenceStatus(status) {
       switch (status) {
         case "OP":
@@ -379,6 +378,7 @@ export default {
           return "el-icon-circle-check";
       }
     },
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     colorByAbsenceStatus(status) {
       switch (status) {
         case "OP":
@@ -478,6 +478,7 @@ export default {
             type: this.tagByExcuse(data.excuse),
             disableTransitions: true,
           },
+          display: this.absenceExcuseLabelFromValue,
         },
         reason: {
           component: "span",
