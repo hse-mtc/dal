@@ -6,7 +6,7 @@ export const PunishmentTypesMixin = {
   data() {
     return {
       punishmentTypes: {},
-      punishmentTypesLoading: true,
+      punishmentTypesAreLoading: true,
     };
   },
 

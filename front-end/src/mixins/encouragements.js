@@ -6,7 +6,7 @@ export const EncouragementTypesMixin = {
   data() {
     return {
       encouragementTypes: {},
-      encouragementTypesLoading: true,
+      encouragementTypesAreLoading: true,
     };
   },
 

@@ -6,7 +6,7 @@ export const LessonTypesMixin = {
   data() {
     return {
       lessonTypes: {},
-      lessonTypesLoading: true,
+      lessonTypesAreLoading: true,
     };
   },
 
