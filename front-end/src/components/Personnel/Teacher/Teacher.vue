@@ -140,7 +140,7 @@
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ displayTeacherRank(displayInfo.rank) }}
+                  {{ teacherRankLabelFromValue(displayInfo.rank) }}
                 </span>
               </transition>
             </el-form-item>
@@ -161,7 +161,7 @@
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ displayTeacherPost(displayInfo.post) }}
+                  {{ teacherPostLabelFromValue(displayInfo.post) }}
                 </span>
               </transition>
             </el-form-item>

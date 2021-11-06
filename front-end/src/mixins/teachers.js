@@ -1,43 +1,39 @@
-import { ReferenceModule } from "@/store";
+import { ChoicesModule } from "@/store";
+
+import { defaultChoiceLabelFromValue } from "@/utils/choices";
 
 export const teacherPostMixin = {
-  computed: {
-    teacherPosts() {
-      return ReferenceModule.teacherPosts;
-    },
+  data() {
+    return {
+      teacherPosts: {},
+    };
+  },
+
+  async beforeCreate() {
+    this.teacherPosts = await ChoicesModule.teacherPosts;
   },
 
   methods: {
-    displayTeacherPost(value) {
-      const filtered = Object
-        .values(this.teacherPosts)
-        .filter(post => post.value === value);
-
-      if (filtered.length === 1) {
-        return filtered[0].label;
-      }
-      return value;
+    teacherPostLabelFromValue(value) {
+      return defaultChoiceLabelFromValue(this.teacherPosts, value);
     },
   },
 };
 
 export const teacherRankMixin = {
-  computed: {
-    teacherRanks() {
-      return ReferenceModule.teacherRanks;
-    },
+  data() {
+    return {
+      teacherRanks: {},
+    };
+  },
+
+  async beforeCreate() {
+    this.teacherRanks = await ChoicesModule.teacherRanks;
   },
 
   methods: {
-    displayTeacherRank(value) {
-      const filtered = Object
-        .values(this.teacherRanks)
-        .filter(rank => rank.value === value);
-
-      if (filtered.length === 1) {
-        return filtered[0].label;
-      }
-      return value;
+    teacherRankLabelFromValue(value) {
+      return defaultChoiceLabelFromValue(this.teacherRanks, value);
     },
   },
 };

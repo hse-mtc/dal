@@ -60,12 +60,12 @@
           column-key="milfaculty"
         />
         <PrimeColumn
-          :field="teacher => displayTeacherRank(teacher.rank)"
+          :field="teacher => teacherRankLabelFromValue(teacher.rank)"
           header="Звание"
           column-key="rank"
         />
         <PrimeColumn
-          :field="teacher => displayTeacherPost(teacher.post)"
+          :field="teacher => teacherPostLabelFromValue(teacher.post)"
           header="Должность"
           column-key="teacherPost"
         />
