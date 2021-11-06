@@ -9,8 +9,8 @@ from lms.models.teachers import Teacher
 class Encouragement(models.Model):
 
     class Type(models.TextChoices):
-        ENCOURAGEMENT = "EN", "благодарность"
-        REMOVE_PUNISHMENT = "RE", "снятие взыскания"
+        ENCOURAGEMENT = "EN", "Благодарность"
+        REMOVE_PUNISHMENT = "RE", "Снятие взыскания"
 
     type = models.CharField(
         max_length=2,

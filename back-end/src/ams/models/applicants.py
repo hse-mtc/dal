@@ -19,13 +19,12 @@ class ApplicationProcess(models.Model):
 
     # --------------------------------------------------------------------------
 
-    # TODO(TmLev): replace russian labels with english?..
     class MedicalExamination(models.TextChoices):
-        FIT = "FI", "годен"
-        FIT_MINOR_RESTRICTIONS = "FMR", "годен с незначительными ограничениями"
-        FIT_LIMITED = "FLI", "ограниченно годен"
-        UNFIT_RESTRICTEDLY = "UR", "ограниченно не годен"
-        UNFIT = "UN", "не годен"
+        FIT = "FI", "Годен"
+        FIT_MINOR_RESTRICTIONS = "FMR", "Годен с незначительными ограничениями"
+        FIT_LIMITED = "FLI", "Ограниченно годен"
+        UNFIT_RESTRICTEDLY = "UR", "Ограниченно не годен"
+        UNFIT = "UN", "Не годен"
 
     class ProfPsySelection(models.TextChoices):
         FIRST = "FI", "I"

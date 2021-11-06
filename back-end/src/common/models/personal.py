@@ -84,10 +84,10 @@ class Relative(models.Model):
     # Relative-specific enums.
 
     class Type(models.TextChoices):
-        FATHER = "FA", "father"
-        MOTHER = "MO", "mother"
-        BROTHER = "BR", "brother"
-        SISTER = "SI", "sister"
+        FATHER = "FA", "Отец"
+        MOTHER = "MO", "Мать"
+        BROTHER = "BR", "Брат"
+        SISTER = "SI", "Сестра"
 
     # --------------------------------------------------------------------------
 
