@@ -1,5 +1,3 @@
-from abc import ABC
-
 from rest_framework import serializers
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
@@ -23,6 +21,27 @@ class BirthInfoSerializer(serializers.ModelSerializer):
 
 
 class ContactInfoSerializer(serializers.ModelSerializer):
+
+    def validate(self, attrs):
+        if "personal_phone_number" not in attrs:
+            return super().validate(attrs)
+
+        number: str = attrs["personal_phone_number"]
+        example = "79098080022"
+
+        correct_len = len(number) == len(example)
+        if not correct_len:
+            raise serializers.ValidationError(
+                f"Personal phone number must consist of {len(example)} symbols"
+            )
+
+        correct_first_symbol = number[0] == example[0]
+        if not correct_first_symbol:
+            raise serializers.ValidationError(
+                f"Personal phone number must start with `{example[0]}`"
+            )
+
+        return super().validate(attrs)
 
     class Meta:
         model = ContactInfo
