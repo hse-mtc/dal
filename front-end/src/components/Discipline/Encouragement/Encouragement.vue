@@ -58,10 +58,10 @@
           @change="onFilter"
         >
           <el-option
-            v-for="(value, key) in ENCOURAGEMENT_TYPES"
-            :key="key"
-            :label="value"
-            :value="key"
+            v-for="type in encouragementTypes"
+            :key="type.value"
+            :label="type.label"
+            :value="type.value"
           />
         </el-select>
       </el-col>
@@ -130,7 +130,7 @@
               :type="tagByEncouragementType(data.type)"
               disable-transitions
             >
-              {{ ENCOURAGEMENT_TYPES[data.type] }}
+              {{ encouragementTypeLabelFromValue(data.type) }}
             </el-tag>
           </template>
         </PrimeColumn>
@@ -252,10 +252,10 @@
             style="display: block"
           >
             <el-option
-              v-for="(value, key) in ENCOURAGEMENT_TYPES"
-              :key="key"
-              :label="value"
-              :value="key"
+              v-for="type in encouragementTypes"
+              :key="type.value"
+              :label="type.label"
+              :value="type.value"
             />
           </el-select>
         </el-form-item>
@@ -295,14 +295,14 @@ import { UserModule, ReferenceModule } from "@/store";
 import moment from "moment";
 import { getStudent, findStudent } from "@/api/students";
 import { getTeacher, findTeacher } from "@/api/teachers";
-import { ENCOURAGEMENT_TYPES } from "@/utils/enums";
 import { getDisciplinePersonsFilters } from "@/utils/permissions";
+import { EncouragementTypesMixin } from "@/mixins/encouragements";
 
 export default {
   name: "Encouragement",
+  mixins: [EncouragementTypesMixin],
   data() {
     return {
-      ENCOURAGEMENT_TYPES,
       editEncouragement: {
         id: 0,
         date: "",
@@ -424,6 +424,7 @@ export default {
         })
         .catch(err => getError("поощрений", err.response.status));
     },
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     tagByEncouragementType(type) {
       switch (type) {
         case "EN":
