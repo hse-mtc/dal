@@ -10,9 +10,6 @@ import store, { ReferenceModule } from "@/store";
 import {
   getMilFaculties,
   getMilGroups,
-  getStudentPosts,
-  getTeacherPosts,
-  getRanks,
   getAchievementTypes,
   getPrograms,
   getRooms,
@@ -31,9 +28,6 @@ import {
   addProgram,
   editProgram,
   deleteProgram,
-  addRank,
-  editRank,
-  deleteRank,
   deleteRoom,
   editRoom,
   addRoom,
@@ -53,12 +47,6 @@ import { getError } from "@/utils/message";
 class Reference extends VuexModule {
   _milgroups = [];
   _milgroupsLoaded = false;
-
-  _ranks = [];
-  _ranksLoaded = false;
-
-  _studentPosts = [];
-  _studentPostsLoaded = false;
 
   _milfaculties = [];
   _milfacultiesLoaded = false;
@@ -143,88 +131,6 @@ class Reference extends VuexModule {
     }
 
     return this._milgroups;
-  }
-
-  // RANKS
-  @Mutation
-  SET_RANKS(payload) {
-    this._ranks = payload;
-  }
-
-  @Action
-  async fetchRanks() {
-    return await getFetchRequest(
-      getRanks,
-      data => {
-        this.SET_RANKS(data);
-        this.SET_IS_LOADED({ field: "_ranksLoaded", value: true });
-      },
-      "званий",
-    ).call(this);
-  }
-
-  @Action
-  async addRank(newItem) {
-    return await getAddRequest(
-      addRank,
-      this.SET_RANKS,
-      "_ranks",
-      "звание",
-    ).call(this, newItem);
-  }
-
-  @Action
-  async editRank({ id, ...newData }) {
-    return await getEditRequest(
-      editRank,
-      this.SET_RANKS,
-      "_ranks",
-      "звание",
-    ).call(this, { id, ...newData });
-  }
-
-  @Action
-  async deleteRank(id) {
-    return await getDeleteRequest(
-      deleteRank,
-      this.SET_RANKS,
-      "_ranks",
-      "звание",
-    ).call(this, id);
-  }
-
-  get ranks() {
-    if (!this._ranksLoaded) {
-      ReferenceModule.fetchRanks();
-    }
-
-    return this._ranks;
-  }
-
-  // STUDENT POSTS
-  @Mutation
-  SET_STUDENT_POSTS(payload) {
-    this._studentPosts = payload;
-  }
-
-  @Action
-  async fetchStudentPosts() {
-    return await getFetchRequest(
-      getStudentPosts,
-      data => {
-        this.SET_STUDENT_POSTS(data);
-        this.SET_IS_LOADED({ field: "_studentPostsLoaded", value: true });
-      },
-      "должностей студентов",
-    ).call(this);
-  }
-
-  get studentPosts() {
-    if (!this._studentPostsLoaded) {
-      ReferenceModule.fetchStudentPosts();
-    }
-
-    return this._studentPosts;
   }
 
   // MILFACULTIES
