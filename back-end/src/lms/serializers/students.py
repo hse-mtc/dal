@@ -57,10 +57,12 @@ class StudentMutateSerializer(
         queryset=Milgroup.objects.all(),
         required=False,
     )
+    contact_info = ContactInfoSerializer(required=False)
 
+    birth_info = BirthInfoSerializer(required=False)
     passport = PassportSerializer(required=False)
-    family = RelativeMutateSerializer(required=False, many=True)
     university_info = UniversityInfoSerializer(required=False)
+    family = RelativeMutateSerializer(required=False, many=True)
 
     class Meta:
         model = Student
