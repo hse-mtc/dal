@@ -34,11 +34,6 @@ class ApplicationProcess(models.Model):
 
     # --------------------------------------------------------------------------
 
-    milspecialty = models.ForeignKey(
-        to=Milspecialty,
-        on_delete=models.RESTRICT,
-    )
-
     mean_grade = models.DecimalField(
         max_digits=4,
         decimal_places=2,
@@ -93,6 +88,16 @@ class ApplicationProcess(models.Model):
         return f"[{self.id}] {self.applicant.fullname} / {self.applicant.id}"
 
 
+class ApplicantManager(models.Manager):
+    """Ensures that every Applicant has ApplicationProcess."""
+
+    def create(self, *args, **kwargs):
+        if "application_process" not in kwargs:
+            kwargs["application_process"] = ApplicationProcess.objects.create()
+
+        return super().create(*args, **kwargs)
+
+
 class Applicant(models.Model):
     surname = models.CharField(max_length=64)
     name = models.CharField(max_length=64)
@@ -139,6 +144,13 @@ class Applicant(models.Model):
         to=ApplicationProcess,
         on_delete=models.RESTRICT,
     )
+    # `Applicant` must always choose some `Milspecialty`.
+    milspecialty = models.ForeignKey(
+        to=Milspecialty,
+        on_delete=models.RESTRICT,
+    )
+
+    objects = ApplicantManager()
 
     class Meta:
         verbose_name = "Applicant"
