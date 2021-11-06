@@ -24,6 +24,7 @@ class BirthInfo(models.Model):
 
 class ContactInfo(models.Model):
     corporate_email = models.EmailField(
+        unique=True,
         null=True,
         blank=True,
     )
