@@ -7,6 +7,8 @@ from drf_spectacular.views import extend_schema
 
 from common.constants import MUTATE_ACTIONS
 
+from common.views.choices import GenericChoicesList
+
 from auth.models import Permission
 from auth.permissions import BasePermission
 
@@ -49,3 +51,8 @@ class PunishmentViewSet(StudentTeacherQuerySetScopingMixin, ModelViewSet):
         if self.action in MUTATE_ACTIONS:
             return PunishmentMutateSerializer
         return PunishmentSerializer
+
+
+@extend_schema(tags=["punishments", "choices"])
+class PunishmentTypeChoicesList(GenericChoicesList):
+    choices_class = Punishment.Type

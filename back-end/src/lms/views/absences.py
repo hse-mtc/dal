@@ -19,6 +19,8 @@ from drf_spectacular.views import (
 
 from common.constants import MUTATE_ACTIONS
 
+from common.views.choices import GenericChoicesList
+
 from common.utils.date import get_date_range
 
 from auth.models import Permission
@@ -223,3 +225,13 @@ class AbsenceTimeView(generics.RetrieveUpdateAPIView):
         obj = AbsenceTime.objects.last()
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+@extend_schema(tags=["absences", "choices"])
+class AbsenceExcuseChoicesList(GenericChoicesList):
+    choices_class = Absence.Excuse
+
+
+@extend_schema(tags=["absences", "choices"])
+class AbsenceStatusChoicesList(GenericChoicesList):
+    choices_class = Absence.Status

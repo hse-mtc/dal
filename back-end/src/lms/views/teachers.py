@@ -13,6 +13,8 @@ from drf_spectacular.views import extend_schema
 
 from common.constants import MUTATE_ACTIONS
 
+from common.views.choices import GenericChoicesList
+
 from auth.models import Permission
 from auth.permissions import BasePermission
 
@@ -115,3 +117,13 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
                 return data["user"] == personnel.user.id
             case _:
                 assert False, "Unhandled Personnel type"
+
+
+@extend_schema(tags=["teachers", "choices"])
+class TeacherRankChoicesList(GenericChoicesList):
+    choices_class = Teacher.Rank
+
+
+@extend_schema(tags=["teachers", "choices"])
+class TeacherPostChoicesList(GenericChoicesList):
+    choices_class = Teacher.Post
