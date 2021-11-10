@@ -33,23 +33,23 @@ def test_trailing_slash_redirect(su_client):
     assert response_right.status_code == 200
 
 
-@pytest.mark.django_db
-def test_post_posts_right_data(su_client, get_new_lesson_data):
-    lesson_data = get_new_lesson_data()
+# @pytest.mark.django_db
+# def test_post_posts_right_data(su_client, get_new_lesson_data):
+#     lesson_data = get_new_lesson_data()
 
-    first_lesson_response = su_client.post("/api/lms/marks/",
-                                           lesson_data,
-                                           content_type="application/json")
+#     first_lesson_response = su_client.post("/api/lms/marks/",
+#                                            lesson_data,
+#                                            content_type="application/json")
 
-    second_lesson_response = su_client.post("/api/lms/marks/",
-                                            lesson_data,
-                                            content_type="application/json")
+#     second_lesson_response = su_client.post("/api/lms/marks/",
+#                                             lesson_data,
+#                                             content_type="application/json")
 
-    assert first_lesson_response.status_code == 201
-    assert second_lesson_response.status_code == 201
+#     assert first_lesson_response.status_code == 201
+#     assert second_lesson_response.status_code == 201
 
-    assert first_lesson_response.data.pop(
-        "id") != second_lesson_response.data.pop("id")
+#     assert first_lesson_response.data.pop(
+#         "id") != second_lesson_response.data.pop("id")
 
-    assert first_lesson_response.data == lesson_data
-    assert second_lesson_response.data == lesson_data
+#     assert first_lesson_response.data == lesson_data
+#     assert second_lesson_response.data == lesson_data
