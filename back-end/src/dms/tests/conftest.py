@@ -10,6 +10,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from PIL import Image
 
+from dms.models.class_materials import Topic, ClassMaterial, Section
 from dms.models.common import Author, Publisher
 from dms.models.documents import File
 
@@ -167,3 +168,39 @@ def book_data(image):
         }
 
     return call_me
+
+
+def create_subject():
+    subj, _ = Subject.objects.get_or_create(
+        title="title",
+        annotation="annotation"
+    )
+    return subj
+
+
+def create_sections():
+    s, _ = Section.objects.get_or_create(
+        title="title",
+        subject=create_subject()
+
+    )
+    return s
+
+
+def create_topic():
+    t, _ = Topic.objects.get_or_create(
+        title="title",
+        annotation="annotations",
+        section=create_sections()
+    )
+    return t
+
+
+@pytest.fixture()
+def create_class_materials():
+    cm, _ = ClassMaterial.objects.get_or_create(
+        type="LE",
+        topic=create_topic()
+
+    )
+    return cm
