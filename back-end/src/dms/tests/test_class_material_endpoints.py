@@ -1,6 +1,17 @@
 from dms.models.class_materials import ClassMaterial
 
 
+def test_get_class_materials(su_client, create_class_materials):
+    count = 3
+    for i in range(count):
+        materials = create_class_materials
+    response = su_client.get("/api/dms/class-materials/")
+    assert response.status_code == 200
+    print(response.data)
+    assert len(response.data) == count
+
+
+    
 def test_class_materials_delete(su_client, create_class_materials):
     material = create_class_materials
 
