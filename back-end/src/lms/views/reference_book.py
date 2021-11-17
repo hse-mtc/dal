@@ -159,6 +159,7 @@ class ProgramViewSet(ModelViewSet):
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
+    filter_backends = [DjangoFilterBackend]
     filterset_class = ProgramFilter
 
 
