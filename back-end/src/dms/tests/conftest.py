@@ -196,11 +196,39 @@ def create_topic():
     return t
 
 
+def get_file_model_data() -> dict:
+    values = {"name": "name"}
+    return values
+
+
+def create_file_model(values=get_file_model_data()):
+    f, _ = File.objects.get_or_create(values)
+    return f
+
+
+@pytest.fixture()
+#pylint-disable: too-many-arguments
+def get_class_material_data():
+    def call_me(topic_id, title="title", annotation="annotation",
+                type_=ClassMaterial.Type.LECTURES.value, upload_date: datetime = datetime.date.today())->dict:
+        values = {
+            "file": get_file_model_data(),
+            # TODO(Altius01): Fill the file data
+            "title": title,
+            "annotation": annotation,
+            "upload_date": upload_date,
+            "type": type_,
+            "topic": topic_id
+        }
+        return values
+    return call_me
+
+
 @pytest.fixture()
 def create_class_materials():
     cm, _ = ClassMaterial.objects.get_or_create(
         type="LE",
-        topic=create_topic()
-
+        topic=create_topic(),
+        file=create_file_model()
     )
     return cm
