@@ -21,3 +21,9 @@ def test_class_materials_patch(su_client, create_class_materials, get_class_mate
     data['id'] = material.id
     su_client.patch(f'/api/dms/class-materials/{material.id}/', data=data)
     #assert material.type == ClassMaterial.Type.SEMINARS.value
+
+
+def test_get_class_materials(su_client, create_class_materials):
+    for i in range(3):
+        material = create_class_materials
+    print(su_client.request)
