@@ -237,9 +237,9 @@ BYTES_IN_MEGABYTE = 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = 80 * BYTES_IN_MEGABYTE  # 80 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 80 * BYTES_IN_MEGABYTE  # 80 MB
 
-# Token lifetime for password creation
+# Default lifetime for registration confirmation token
 
-CREATE_PASSWORD_TOKEN_LIFETIME = timedelta(days=5)
+REGCONF_TOKEN_LIFETIME = timedelta(days=10)
 
 # Custom user model
 
