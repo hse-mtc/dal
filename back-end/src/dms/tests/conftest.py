@@ -200,13 +200,16 @@ def create_topic(create_sections):
 
 
 def get_file_model_data() -> dict:
-    values = {"name": "name",
-              "content": None}
+    values = {"name": "file.txt",
+              "content": ContentFile("file_content_new", name="file.txt"),
+              "extension": "txt"}
     return values
 
 
 def create_file_model(values=get_file_model_data()):
-    f, _ = File.objects.get_or_create(values)
+    val_cp = values.copy()
+    val_cp.pop("extension")
+    f, _ = File.objects.get_or_create(val_cp)
     return f
 
 
@@ -214,7 +217,7 @@ def create_file_model(values=get_file_model_data()):
 # pylint-disable: too-many-arguments
 def get_class_material_data(user):
     def call_me(topic_id, title="title", annotation="annotation",
-                type_=ClassMaterial.Type.LECTURES.value, upload_date: datetime = datetime.date.today()) -> dict:
+                type_=ClassMaterial.Type.LECTURES.value, upload_date: str = str(datetime.date.today())) -> dict:
         values = {
             "file": get_file_model_data(),
             # TODO(Altius01): Fill the file data
