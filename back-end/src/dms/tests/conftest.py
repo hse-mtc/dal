@@ -102,8 +102,11 @@ def paper_data(file):
 @pytest.fixture()
 def image(tmp_path):
 
-    def call_me(name: str = "image.png") -> SimpleUploadedFile:
-        image = Image.new("RGB", size=(1, 1))
+    def call_me(name: str = "image.png", size=1, color=(0, 0, 0)) -> SimpleUploadedFile:
+        image = Image.new("RGB", size=(size, size))
+        for i in range(size):
+            for j in range(size):
+                image.putpixel((i, j), color)
         sub_dir = tmp_path / "sub"
         sub_dir.mkdir(parents=True, exist_ok=True)
         path = sub_dir / name
