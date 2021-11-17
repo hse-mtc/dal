@@ -304,34 +304,8 @@ class TokenPairSerializer(serializers.Serializer):
         pass
 
 
-class CreatePasswordSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-
-    def create(self, validated_data):
-        pass
-
-    def update(self, instance, validated_data):
-        pass
-
-
 class ChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True, required=True)
-
-    def create(self, validated_data):
-        pass
-
-    def update(self, instance, validated_data):
-        pass
-
-
-class CreatePasswordTokenSerializer(TokenObtainPairSerializer):
-
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token = token.access_token
-        token.set_exp(lifetime=settings.CREATE_PASSWORD_TOKEN_LIFETIME)
-        return token
 
     def create(self, validated_data):
         pass
