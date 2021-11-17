@@ -170,34 +170,38 @@ def book_data(image):
     return call_me
 
 
-def create_subject():
+@pytest.fixture()
+def create_subject(user):
     subj, _ = Subject.objects.get_or_create(
         title="title",
-        annotation="annotation"
+        annotation="annotation",
+        user=user
     )
     return subj
 
 
-def create_sections():
+@pytest.fixture()
+def create_sections(create_subject):
     s, _ = Section.objects.get_or_create(
         title="title",
-        subject=create_subject()
-
+        subject=create_subject
     )
     return s
 
 
-def create_topic():
+@pytest.fixture()
+def create_topic(create_sections):
     t, _ = Topic.objects.get_or_create(
         title="title",
         annotation="annotations",
-        section=create_sections()
+        section=create_sections
     )
     return t
 
 
 def get_file_model_data() -> dict:
-    values = {"name": "name"}
+    values = {"name": "name",
+              "content": None}
     return values
 
 
@@ -207,10 +211,10 @@ def create_file_model(values=get_file_model_data()):
 
 
 @pytest.fixture()
-#pylint-disable: too-many-arguments
-def get_class_material_data():
+# pylint-disable: too-many-arguments
+def get_class_material_data(user):
     def call_me(topic_id, title="title", annotation="annotation",
-                type_=ClassMaterial.Type.LECTURES.value, upload_date: datetime = datetime.date.today())->dict:
+                type_=ClassMaterial.Type.LECTURES.value, upload_date: datetime = datetime.date.today()) -> dict:
         values = {
             "file": get_file_model_data(),
             # TODO(Altius01): Fill the file data
@@ -221,14 +225,20 @@ def get_class_material_data():
             "topic": topic_id
         }
         return values
+
     return call_me
 
 
 @pytest.fixture()
-def create_class_materials():
-    cm, _ = ClassMaterial.objects.get_or_create(
+def create_class_materials(get_class_material_data, create_topic, user):
+    data = get_class_material_data(0)
+    cm = ClassMaterial(
         type="LE",
-        topic=create_topic(),
-        file=create_file_model()
+        topic=create_topic,
+        file=create_file_model(),
+        title=data["title"],
+        annotation=data["annotation"],
+        user=user
     )
+    cm.save()
     return cm
