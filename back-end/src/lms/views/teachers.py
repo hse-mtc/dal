@@ -65,22 +65,26 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
             methods=["post"],
             permission_classes=[permissions.AllowAny])
     def registration(self, request):
-        # TODO(TmLev): verify email uniqueness. Create Teacher model.
-
         serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
+        teacher = self.perform_create(serializer)
 
-        email = request.data["email"]
+        # NB: Email uniqueness is guaranteed by ContactInfo.email field.
+        email = serializer.validated_data["contact_info"]["corporate_email"]
         user = get_user_model().objects.create_user(
             email=email,
             password=get_user_model().objects.make_random_password(),
+            campuses=["MO"],
         )
-
-        serializer.save()
-        teacher = Teacher.objects.get(id=serializer.data.id)
         teacher.user = user
         teacher.save()
-        return Response(TeacherSerializer(data=teacher).data)
+
+        # TODO(TmLev): Send confirmation email with link to set password.
+
+        return Response(self.get_serializer(teacher).data)
+
+    def perform_create(self, serializer) -> Teacher:
+        return serializer.save()
 
     def handle_scope_milfaculty(self, personnel: Personnel):
         match personnel:
