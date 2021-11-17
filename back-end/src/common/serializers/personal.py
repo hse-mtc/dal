@@ -26,7 +26,15 @@ class ContactInfoSerializer(serializers.ModelSerializer):
         if "personal_phone_number" not in attrs:
             return super().validate(attrs)
 
-        number: str = attrs["personal_phone_number"]
+        number: str = attrs["personal_phone_number"].strip()
+
+        if not number:
+            attrs.pop("personal_phone_number")
+            return super().validate(attrs)
+
+        if number.startswith("+"):
+            number = number[1:]
+
         example = "79098080022"
 
         correct_len = len(number) == len(example)
@@ -35,12 +43,16 @@ class ContactInfoSerializer(serializers.ModelSerializer):
                 f"Personal phone number must consist of {len(example)} symbols"
             )
 
+        if number.startswith("8"):
+            number = "7" + number[1:]
+
         correct_first_symbol = number[0] == example[0]
         if not correct_first_symbol:
             raise serializers.ValidationError(
                 f"Personal phone number must start with `{example[0]}`"
             )
 
+        attrs["personal_phone_number"] = number
         return super().validate(attrs)
 
     class Meta:
@@ -99,6 +111,8 @@ class RelativeSerializer(serializers.ModelSerializer):
 
 
 class RelativeMutateSerializer(WritableNestedModelSerializer):
+    birth_info = BirthInfoSerializer()
+    contact_info = ContactInfoSerializer()
 
     class Meta:
         model = Relative

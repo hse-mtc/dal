@@ -57,6 +57,7 @@ class ApplicantMutateSerializer(
     university_info = UniversityInfoSerializer(required=False)
     contact_info = ContactInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
+    application_process = ApplicationProcessSerializer(required=False)
 
     class Meta:
         model = Applicant
