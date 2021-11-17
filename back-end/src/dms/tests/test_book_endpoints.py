@@ -1,5 +1,6 @@
 # pylint: disable=redefined-outer-name
 import json
+import os
 
 from uuid import UUID
 
@@ -11,7 +12,7 @@ from django.core.files.base import ContentFile
 from PIL import Image, ImageChops
 
 from dms.models.documents import File
-from dms.models.books import Cover
+from dms.models.books import Cover, Book
 
 from auth.models import Permission
 
@@ -359,3 +360,87 @@ def test_delete_books_with_permissions(su_client, test_client, test_user,
                                                        "self"))
     delete_response = test_client.delete(f"/api/dms/books/{book_id}/")
     assert delete_response.status_code == 204
+
+
+@pytest.mark.django_db
+# pylint: disable=too-many-arguments
+def test_delete_book_deletes_cover_and_file(su_client, book_data, author_data,
+                                            publisher_data, subject_data):
+    data = book_data(author_data, publisher_data, subject_data)
+    create_response = send_create_request(su_client, data)
+
+    book = Book.objects.get(pk=create_response.json()["id"])
+    cover_id = book.cover.pk
+    file_id = book.file.pk
+
+    image_path = f"/back-end/media/covers/{create_response.data['cover']}"
+    assert os.path.isfile(image_path)
+
+    file_path = f"/back-end/{create_response.data['file']['content']}"
+    assert os.path.isfile(file_path)
+
+    assert Cover.objects.filter(pk=cover_id).exists()
+    assert File.objects.filter(pk=file_id).exists()
+
+    book_id = create_response.data["id"]
+    su_client.delete(f"/api/dms/books/{book_id}/")
+
+    assert not Cover.objects.filter(pk=cover_id).exists()
+    assert not File.objects.filter(pk=file_id).exists()
+    assert not os.path.isfile(image_path)
+    assert not os.path.isfile(file_path)
+
+
+@pytest.mark.django_db
+# pylint: disable=too-many-arguments
+def test_change_book_deletes_old_cover_and_file(su_client, book_data,
+                                                author_data, publisher_data,
+                                                subject_data, image):
+    data = book_data(author_data, publisher_data, subject_data)
+    create_response = send_create_request(su_client, data)
+
+    book_id = create_response.json()["id"]
+    book = Book.objects.get(pk=book_id)
+    cover_id = book.cover.pk
+    file_id = book.file.pk
+
+    image_path_before = \
+        f"/back-end/media/covers/{create_response.data['cover']}"
+    assert os.path.isfile(image_path_before)
+    with open(image_path_before, "rb") as f:
+        old_image_content = f.read()
+
+    file_path_before = f"/back-end/{create_response.data['file']['content']}"
+    assert os.path.isfile(file_path_before)
+    with open(file_path_before, "rb") as f:
+        old_file_content = f.read()
+    assert Cover.objects.filter(pk=cover_id).exists()
+    assert File.objects.filter(pk=file_id).exists()
+
+    file = ContentFile("file_content_new", name="file_new.txt")
+    image_file = image("image_new.png", color=(255, 0, 0))
+    content = encode_multipart(
+        boundary=BOUNDARY,
+        data={
+            "content": file,
+            "image": image_file,
+        },
+    )
+    update_response = su_client.patch(f"/api/dms/books/{book_id}/",
+                                      data=content,
+                                      content_type=MULTIPART_CONTENT)
+    assert update_response.status_code == 200
+
+    file_path_after = f"/back-end/{update_response.data['file']['content']}"
+    image_path_after = f"/back-end/media/covers/{update_response.data['cover']}"
+    assert image_path_before == image_path_after
+
+    with open(image_path_after, "rb") as f:
+        new_image_content = f.read()
+        assert old_image_content != new_image_content
+
+    assert file_path_before == file_path_after
+
+    with open(image_path_after, "rb") as f:
+        new_file_content = f.read()
+        assert old_file_content != new_file_content
