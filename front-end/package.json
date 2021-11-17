@@ -3,23 +3,24 @@
   "version": "4.2.1",
   "description": "A vue admin template with Element UI & axios & iconfont & permission control & lint",
   "author": "Pan <panfree23@gmail.com>",
-  "license": "MIT",
   "scripts": {
+    "test:unit": "jest --clearCache && vue-cli-service test:unit --passWithNoTests",
+    "lint": "vue-cli-service lint --no-fix",
     "build:production": "vue-cli-service build --mode production",
     "dev": "vue-cli-service serve",
-    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
-    "test:ci": "npm run lint && npm run test:unit",
-    "test:unit": "jest --clearCache && vue-cli-service test:unit --passWithNoTests",
+    "lint:fix": "vue-cli-service lint",
     "prepare": "cd .. && husky install front-end/.husky",
-    "lint": "vue-cli-service lint --no-fix",
-    "lint:fix": "vue-cli-service lint"
+    "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml",
+    "test:ci": "npm run lint && npm run test:unit"
   },
   "dependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.14.5",
+    "@vue/compat": "^3.2.22",
     "axios": "^0.21.1",
     "bootstrap": "^4.3.1",
     "bootstrap-vue": "^2.1.0",
     "chokidar": "^3.5.2",
+    "core-js": "^3.6.5",
     "element-ui": "^2.15.1",
     "js-cookie": "2.2.0",
     "jwt-decode": "^3.1.1",
@@ -31,7 +32,7 @@
     "path-to-regexp": "2.4.0",
     "primeicons": "^4.1.0",
     "primevue": "^2.4.2",
-    "vue": "^2.6.11",
+    "vue": "^3.2.22",
     "vue-class-component": "^7.2.6",
     "vue-functional-calendar": "^2.6.7",
     "vue-lodash": "^2.1.2",
@@ -47,10 +48,11 @@
     "@babel/plugin-proposal-class-properties": "^7.14.5",
     "@babel/plugin-proposal-decorators": "^7.14.5",
     "@babel/register": "7.0.0",
-    "@vue/cli-plugin-babel": "3.6.0",
-    "@vue/cli-plugin-eslint": "^3.9.1",
-    "@vue/cli-plugin-unit-jest": "3.6.3",
-    "@vue/cli-service": "^3.11.0",
+    "@vue/cli-plugin-babel": "^4.5.15",
+    "@vue/cli-plugin-eslint": "^4.5.15",
+    "@vue/cli-plugin-unit-jest": "^4.5.15",
+    "@vue/cli-service": "^4.5.15",
+    "@vue/compiler-sfc": "^3.2.22",
     "@vue/eslint-config-standard": "^6.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "autoprefixer": "^9.5.1",
@@ -80,15 +82,16 @@
     "svgo": "1.2.2",
     "thenby": "^1.3.4",
     "vue-eslint-parser": "^7.6.0",
-    "vue-template-compiler": "^2.6.11",
+    "vue-loader": "^16.2.0",
     "vuex-module-decorators": "^1.0.1"
-  },
-  "engines": {
-    "node": ">=8.9",
-    "npm": ">= 3.0.0"
   },
   "browserslist": [
     "> 1%",
     "last 2 versions"
-  ]
+  ],
+  "engines": {
+    "node": ">=8.9",
+    "npm": ">= 3.0.0"
+  },
+  "license": "MIT"
 }

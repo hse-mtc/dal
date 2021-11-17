@@ -80,6 +80,21 @@ module.exports = {
     ],
   },
   chainWebpack(config) {
+    // vue3 migration
+    config.resolve.alias.set("vue", "@vue/compat");
+
+    config.module
+      .rule("vue")
+      .use("vue-loader")
+      .tap(options => ({
+        ...options,
+        compilerOptions: {
+          compatConfig: {
+            MODE: 2,
+          },
+        },
+      }));
+
     config.plugins.delete("preload"); // TODO: need test
     config.plugins.delete("prefetch"); // TODO: need test
 
