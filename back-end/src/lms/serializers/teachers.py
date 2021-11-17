@@ -37,7 +37,7 @@ class TeacherMutateSerializer(
         WritableNestedModelSerializer,
         PhotoMutateMixin,
 ):
-    birth_info = BirthInfoSerializer()
+    birth_info = BirthInfoSerializer(required=False)
     contact_info = ContactInfoSerializer()
 
     class Meta:
