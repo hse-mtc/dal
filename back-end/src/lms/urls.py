@@ -39,6 +39,7 @@ from lms.views.students import (
 )
 from lms.views.teachers import (
     TeacherViewSet,
+    ApproveTeacherViewSet,
     TeacherRankChoicesList,
     TeacherPostChoicesList,
 )
@@ -73,6 +74,9 @@ routers.register('students/extra', StudentExtraInfoViewSet)
 routers.register('students/skills', StudentSkillsView)
 routers.register('students', StudentViewSet)
 
+routers.register('teachers/approvals', ApproveTeacherViewSet)
+routers.register('teachers', TeacherViewSet)
+
 routers.register('absences', AbsenceViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
 routers.register('achievements', AchievementViewSet)
@@ -88,7 +92,6 @@ routers.register('punishments', PunishmentViewSet)
 routers.register('rooms', RoomViewSet)
 routers.register('skills', SkillViewSet)
 routers.register('subjects', LessonSubjectViewSet)
-routers.register('teachers', TeacherViewSet)
 routers.register('uniforms', UniformViewSet)
 
 choices = [

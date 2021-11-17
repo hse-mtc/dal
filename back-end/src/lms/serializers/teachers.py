@@ -65,3 +65,34 @@ class TeacherShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
         fields = ["id", "fullname", "milgroups"]
+
+
+class ApproveTeacherSerializer(serializers.ModelSerializer):
+    milfaculty = MilfacultySerializer(read_only=True)
+    milgroups = MilgroupSerializer(
+        read_only=True,
+        many=True,
+    )
+    email = serializers.CharField(
+        read_only=True,
+        source="user.email",
+    )
+
+    class Meta:
+        model = Teacher
+        fields = [
+            "id",
+            "fullname",
+            "milfaculty", "milgroups",
+            "post", "rank",
+            "email",
+        ]
+
+
+class ApproveTeacherMutateSerializer(serializers.Serializer):
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass

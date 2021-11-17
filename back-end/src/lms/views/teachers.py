@@ -1,7 +1,10 @@
 from rest_framework import permissions
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework import mixins
 
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.filters import SearchFilter
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -12,11 +15,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.views import extend_schema
 
 from common.constants import MUTATE_ACTIONS
-
+from common.email.registration import send_regconf_email
 from common.views.choices import GenericChoicesList
 
 from auth.models import Permission
 from auth.permissions import BasePermission
+from auth.tokens.registration import generate_regconf_token
 
 from lms.models.students import Student
 from lms.models.teachers import Teacher
@@ -24,6 +28,8 @@ from lms.models.teachers import Teacher
 from lms.serializers.teachers import (
     TeacherSerializer,
     TeacherMutateSerializer,
+    ApproveTeacherSerializer,
+    ApproveTeacherMutateSerializer,
 )
 
 from lms.filters.teachers import TeacherFilter
@@ -44,7 +50,7 @@ class TeacherPermission(BasePermission):
 
 
 @extend_schema(tags=["teachers"])
-class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
+class TeacherViewSet(QuerySetScopingMixin, viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
 
     permission_classes = [TeacherPermission]
@@ -75,11 +81,10 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
             email=email,
             password=get_user_model().objects.make_random_password(),
             campuses=["MO"],
+            is_active=False,
         )
         teacher.user = user
         teacher.save()
-
-        # TODO(TmLev): Send confirmation email with link to set password.
 
         return Response(self.get_serializer(teacher).data)
 
@@ -119,6 +124,72 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
                 return False
             case Teacher():
                 return data["user"] == personnel.user.id
+            case _:
+                assert False, "Unhandled Personnel type"
+
+
+class ApproveTeacherPermission(BasePermission):
+    permission_class = "approve-teacher"
+    view_name_rus = "Подтверждение регистрации преподавателей"
+    methods = ["get", "patch"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+    ]
+
+
+@extend_schema(tags=["teachers"])
+class ApproveTeacherViewSet(
+    QuerySetScopingMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = Teacher.objects.filter(
+        user__isnull=False,
+        user__is_active=False,
+    )
+
+    permission_classes = [ApproveTeacherPermission]
+    scoped_permission_class = ApproveTeacherPermission
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TeacherFilter
+
+    def get_serializer_class(self):
+        if action in MUTATE_ACTIONS:
+            return ApproveTeacherMutateSerializer
+        return ApproveTeacherSerializer
+
+    def partial_update(self, request: Request, *args, **kwargs) -> Response:
+        teacher = self.get_object()
+
+        if teacher.user is None:
+            return Response(
+                data={"detail": "Teacher has no user and must register first"},
+                status=status.HTTP_428_PRECONDITION_REQUIRED,
+            )
+
+        teacher.user.is_active = True
+        teacher.save()
+
+        if teacher.patronymic:
+            address = f"{teacher.name} {teacher.patronymic}"
+        else:
+            address = f"{teacher.name} {teacher.surname}"
+
+        send_regconf_email(
+            address=address,
+            email=teacher.user.email,
+            url=request.META["HTTP_REFERER"],
+            token=generate_regconf_token(teacher.user)
+        )
+
+        return Response()
+
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                return self.queryset.filter(milfaculty=personnel.milfaculty)
             case _:
                 assert False, "Unhandled Personnel type"
 
