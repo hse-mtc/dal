@@ -231,14 +231,16 @@ def get_class_material_data(user):
 
 @pytest.fixture()
 def create_class_materials(get_class_material_data, create_topic, user):
-    data = get_class_material_data(0)
-    cm = ClassMaterial(
-        type="LE",
-        topic=create_topic,
-        file=create_file_model(),
-        title=data["title"],
-        annotation=data["annotation"],
-        user=user
-    )
-    cm.save()
-    return cm
+    def call_me():
+        data = get_class_material_data(0)
+        cm = ClassMaterial(
+            type="LE",
+            topic=create_topic,
+            file=create_file_model(),
+            title=data["title"],
+            annotation=data["annotation"],
+            user=user
+        )
+        cm.save()
+        return cm
+    return call_me
