@@ -21,7 +21,6 @@ from common.views.choices import GenericChoicesList
 
 from auth.models import Permission
 from auth.permissions import BasePermission
-from auth.serializers import CreatePasswordTokenSerializer
 
 from lms.models.teachers import Teacher
 from lms.models.common import Milgroup
@@ -228,9 +227,7 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         match old_status, new_status:
             case Student.Status.ENROLLED.value, Student.Status.STUDYING.value:
-                email = student.contact_info.corporate_email
-                token = CreatePasswordTokenSerializer.get_token(student.user)
-                confirm_student_registration(email, token)
+                raise NotImplementedError("shrug")
 
         if getattr(student, "_prefetched_objects_cache", None):
             # If "prefetch_related" has been applied to a queryset, we need to
