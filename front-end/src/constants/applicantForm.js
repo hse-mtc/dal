@@ -149,9 +149,9 @@ export const UNIVERSITY_INFO = {
     props: { placeholder: "М123БМИЭФ321" },
   },
   program: {
-    component: "text",
+    component: "select",
     title: "Код образовательной программы",
-    props: { placeholder: "01.02.03" },
+    props: { options: [] },
   },
   group: {
     component: "text",
@@ -294,7 +294,7 @@ export const devInitData = {
   universityInfo: {
     campus: "MO",
     card_id: "Номер студенческого билета",
-    program: "01.12.12",
+    program: 5,
     group: "БИВ123",
   },
   contactInfo: {

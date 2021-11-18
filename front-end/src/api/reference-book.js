@@ -151,6 +151,14 @@ export function getPrograms() {
   });
 }
 
+export function getProgramsByCampus(campus) {
+  return request({
+    url: BASE_API_URL + programs,
+    method: "get",
+    params: { campus },
+  });
+}
+
 export function editProgram(id, data) {
   return request({
     url: `${BASE_API_URL}${programs}${id}/`,
