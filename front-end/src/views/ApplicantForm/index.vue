@@ -164,7 +164,7 @@ import {
   STEPS,
 } from "@/constants/applicantForm";
 
-import { getMilSpecialties } from "@/api/reference-book";
+import { getMilSpecialties, getProgramsByCampus } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
 
 const createData = fields => Object.keys(fields).reduce(
@@ -382,10 +382,6 @@ class ApplicantForm extends Vue {
         ...makeRequired(["campus", "card_id", "program", "group"]),
         program: [
           required,
-          getValidator(
-            /^\d\d(\.\d\d){2}$/,
-            "Введите код программы в формате 01.02.03",
-          ),
         ],
       },
       contactInfo: {
@@ -560,7 +556,7 @@ class ApplicantForm extends Vue {
         birth_info: this.applicantData.birthInfo,
         contact_info: this.applicantData.contactInfo,
         passport: this.applicantData.passport,
-        recruitment_office: this.applicantData.recruitmentOffice,
+        recruitment_office: this.applicantData.recruitmentOffice.title,
         university_info: this.applicantData.universityInfo,
         family,
         generate_documents: true,
@@ -634,6 +630,28 @@ class ApplicantForm extends Vue {
           message: "Ошибка чтения файла",
         });
       }
+    }
+  }
+
+  @Watch("applicantData.universityInfo.campus")
+  async onCampusChange(nextValue) {
+    try {
+      const { data } = await getProgramsByCampus(
+        this.applicantData.universityInfo.campus,
+      );
+      this.fields.universityInfo.program.props.options = data.map(
+        item => ({
+          label: item.code,
+          value: item.id,
+        }),
+      );
+      this.applicantData.universityInfo.program = this.fields.universityInfo.program.props.options[0].value;
+    } catch (e) {
+      this.$message({
+        type: "error",
+        duration: 1000 * 5,
+        message: "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
+      });
     }
   }
 
