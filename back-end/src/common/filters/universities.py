@@ -18,4 +18,4 @@ class ProgramFilter(FilterSet):
 
     class Meta:
         model = Program
-        fields = ["campus"]
+        fields = "__all__"
