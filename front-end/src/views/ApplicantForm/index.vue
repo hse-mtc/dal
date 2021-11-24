@@ -661,7 +661,8 @@ class ApplicantForm extends Vue {
       left: 0,
       top: 0,
     });
-    if (nextValue == STEPS.universityInfo) {
+    console.log(this.applicantData.photo);
+    if (nextValue === STEPS.universityInfo) {
       await this.onCampusChange();
     }
     if (nextValue === STEPS.milspecialty) {

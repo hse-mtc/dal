@@ -329,7 +329,7 @@ export const devInitData = {
   brothers: [],
   sisters: [],
   photo: {
-    photo: null,
+    photo: []
   },
   milspecialty: { milspecialty: 8 },
   agreement: {
