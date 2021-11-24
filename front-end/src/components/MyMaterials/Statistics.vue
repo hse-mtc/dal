@@ -25,6 +25,7 @@
 <script>
 import { SIZES, COLORS } from "@/utils/appConsts";
 import { getStatistics } from "@/api/statistics";
+import { downloadError } from "@/utils/message";
 import CustomText from "@/common/CustomText";
 import { UserModule } from "@/store";
 
@@ -59,8 +60,8 @@ export default {
         .then(res => {
           this.statistics = res.data;
         })
-        .catch(() => {
-          console.log("Проблема с загрузкой данных");
+        .catch(err => {
+          downloadError("данных", err.response?.status);
         });
     },
   },
