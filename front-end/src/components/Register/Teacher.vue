@@ -168,7 +168,7 @@ import { ReferenceModule } from "@/store";
 
 import { TeacherRanksMixin, TeacherPostsMixin } from "@/mixins/teachers";
 import { validCorEmail } from "@/utils/validate";
-import { postError } from "@/utils/message";
+import { postError, downloadError } from "@/utils/message";
 import { registerTeacher } from "@/api/user";
 
 export default {
@@ -251,7 +251,7 @@ export default {
     try {
       await Promise.all(responses);
     } catch (e) {
-      this.$message.error("Не удалось загрузить данные о циклах и взводах");
+      downloadError("данныe о циклах и взводах", e.response?.status);
     } finally {
       this.awaitingResponse = false;
     }

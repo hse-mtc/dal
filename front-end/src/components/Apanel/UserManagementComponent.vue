@@ -69,6 +69,7 @@ import {
   saveUserControl,
   getAllRoles,
 } from "@/api/admin";
+import { downloadError } from "@/utils/message";
 import { hasPermission } from "@/utils/permissions";
 
 export default {
@@ -112,7 +113,7 @@ export default {
           this.roleValue = res.data.groups;
         })
         .catch(err => {
-          this.$message.error("Ошибка загрузки прав пользователя");
+          downloadError("прав пользователя", err.response?.status);
           console.log("[UserManagementComponent Error]: ", err);
           this.permissionLoading = false;
         });
@@ -125,8 +126,8 @@ export default {
             this.options = res.data;
           })
           .catch(err => {
+            downloadError("данных о пользователях", err.response?.status);
             console.log("[UserManagementComponent Error]: ", err);
-            this.$message.error("Ошибка загрузки данных о пользователях");
           })
           .finally(() => { this.loading = false; });
       } else {
@@ -138,7 +139,7 @@ export default {
         this.roleData = (await getAllRoles()).data;
         this.permissionData = (await getAllPermissions()).data;
       } catch (err) {
-        this.$message.error("Ошибка загрузки данных о правах доступа");
+        downloadError("данных о правах доступа", err.response?.status);
         console.log("[UserManagementComponent Error]: ", err);
       }
     },

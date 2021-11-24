@@ -127,7 +127,7 @@ import _isArray from "lodash/isArray";
 import { SubjectsModule, UserModule } from "@/store";
 import { getDeleteRequest } from "@/utils/mutators";
 import { addTopicFile, deleteMaterial } from "@/api/material";
-
+import { downloadError } from "@/utils/message";
 import DownloadFile from "@/common/DownloadFile/index.vue";
 import { FileInput } from "@/common/inputs";
 
@@ -208,7 +208,7 @@ class ClassMaterials extends Vue {
 
       this.materials.push(...files);
     } catch (e) {
-      this.$message.error("Не удалось загрузить файлы");
+      downloadError("файла", e.response?.status);
     }
 
     this.newFiles = [];

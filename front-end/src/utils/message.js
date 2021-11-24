@@ -60,7 +60,7 @@ export function orderError(entity, status) {
 
 export function downloadError(entity, status) {
   Message({
-    message: `Ошибка при удалении ${entity}. ${details(status)}`,
+    message: `Ошибка при загрузке ${entity}. ${details(status)}`,
     type: "error",
   });
 }

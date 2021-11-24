@@ -92,6 +92,10 @@ import {
   getAllPermissions,
   addRole,
 } from "@/api/admin";
+import {
+  deleteError,
+  downloadError,
+} from "@/utils/message";
 import CustomText from "@/common/CustomText";
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
 import { SIZES } from "@/utils/appConsts";
@@ -139,10 +143,7 @@ export default {
         this.options = this.options.filter(i => i.key !== this.roleId);
         this.roleId = null;
       } catch (e) {
-        Message({
-          message: "Не получилось удалить роль",
-          type: "error",
-        });
+        deleteError("роли", e.response?.status);
       }
     },
     submitForm() {
@@ -186,7 +187,7 @@ export default {
           this.permissionValue = res.data.permissions;
         })
         .catch(err => {
-          this.$message.error("Ошибка загрузки прав доступа для роли");
+          downloadError("прав доступа для роли", err.response.status);
           console.log("[RoleManagementComponent Error]: ", err);
           this.permissionLoading = false;
         });
@@ -198,7 +199,7 @@ export default {
         this.permissionData = (await getAllPermissions()).data;
         this.loading = false;
       } catch (err) {
-        this.$message.error("Ошибка загрузки данных о ролях");
+        downloadError("данных о ролях", err.response?.status);
         console.log("[RoleManagementComponent Error]: ", err);
       }
     },
