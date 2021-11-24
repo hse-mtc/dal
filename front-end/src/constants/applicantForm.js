@@ -294,7 +294,7 @@ export const devInitData = {
   universityInfo: {
     campus: "MO",
     card_id: "Номер студенческого билета",
-    program: 5,
+    program: "09.03.01 Информатика и вычислительная техника",
     group: "БИВ123",
   },
   contactInfo: {

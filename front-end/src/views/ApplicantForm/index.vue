@@ -634,7 +634,7 @@ class ApplicantForm extends Vue {
   }
 
   @Watch("applicantData.universityInfo.campus")
-  async onCampusChange(nextValue) {
+  async onCampusChange() {
     try {
       const { data } = await getProgramsByCampus(
         this.applicantData.universityInfo.campus,
@@ -661,7 +661,9 @@ class ApplicantForm extends Vue {
       left: 0,
       top: 0,
     });
-
+    if (nextValue == STEPS.universityInfo) {
+      await this.onCampusChange();
+    }
     if (nextValue === STEPS.milspecialty) {
       try {
         const { data } = await getMilSpecialties(

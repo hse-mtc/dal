@@ -30,7 +30,6 @@ class ProgramMutateSerializer(serializers.ModelSerializer):
 
 
 class UniversityInfoSerializer(serializers.ModelSerializer):
-    program = ProgramSerializer(read_only=True)
 
     class Meta:
         model = UniversityInfo
