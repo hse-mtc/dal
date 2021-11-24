@@ -101,9 +101,8 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         # pylint: disable=too-many-locals
 
         serializer = self.get_serializer(data=request.data)
-        generate_documents = serializer.context["generate_documents"]
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data.pop("generate_document")
+        generate_documents = serializer.validated_data.pop("generate_documents")
         applicant = self.perform_create(serializer)
 
         if generate_documents:
