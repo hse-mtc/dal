@@ -34,8 +34,7 @@ def assert_class_material_equal_to_id(su_client, original_data, material_id):
 
     response_data = get_response.data
     assert_class_materials_equal(data=response_data,
-                                 data_original=original_data
-                                 )
+                                 data_original=original_data)
 
 
 def multipart_cl_material_data(data):
@@ -120,18 +119,18 @@ def test_class_materials_put(su_client, create_class_materials,
                                        file_name="Billy.txt")
     file = data["file"]["content"]
 
-    put_data = {"data": {
-        field_name: data[field_name]
-        for field_name in put_fields
-    }, "content": file}
+    put_data = {
+        "data": {field_name: data[field_name] for field_name in put_fields},
+        "content": file
+    }
 
     content = encode_multipart(
         boundary=BOUNDARY,
         data=multipart_cl_material_data(put_data)
     )
 
-    response = su_client.put(f"/api/dms/class-materials/{material.id}/", data=content,
-                             content_type=MULTIPART_CONTENT)
+    response = su_client.put(f"/api/dms/class-materials/{material.id}/",
+                             data=content, content_type=MULTIPART_CONTENT)
     assert response.status_code == 200
 
     assert_class_material_equal_to_id(su_client=su_client, original_data=data,
@@ -151,27 +150,25 @@ def test_class_materials_patch(su_client, create_class_materials,
     data["annotation"] = "New annotation"
     data["type"] = ClassMaterial.Type.SEMINARS.value
 
-    patch_fields = [
-        "title", "annotation", "upload_date", "type"
-    ]
+    patch_fields = ["title", "annotation", "upload_date", "type"]
 
     data["file"] = get_file_model_data(raw_file_body="Matter of Trust",
                                        file_name="Billy.txt")
     file = data["file"]["content"]
 
-    patch_data = {"data": {
-        field_name: data[field_name]
-        for field_name in patch_fields
-    }, "content": file}
+    patch_data = {
+        "data": {field_name: data[field_name] for field_name in patch_fields},
+        "content": file
+    }
 
-    content = encode_multipart(
-        boundary=BOUNDARY,
-        data=multipart_cl_material_data(patch_data)
-    )
+    content = encode_multipart(boundary=BOUNDARY,
+                               data=multipart_cl_material_data(patch_data))
 
-    response = su_client.patch(f"/api/dms/class-materials/{material.id}/", data=content,
+    response = su_client.patch(f"/api/dms/class-materials/{material.id}/",
+                               data=content,
                                content_type=MULTIPART_CONTENT)
     assert response.status_code == 200
 
-    assert_class_material_equal_to_id(su_client=su_client, original_data=data,
+    assert_class_material_equal_to_id(su_client=su_client,
+                                      original_data=data,
                                       material_id=material.id)

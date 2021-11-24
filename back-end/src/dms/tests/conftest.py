@@ -201,31 +201,42 @@ def create_topic(create_sections):
 
 @pytest.fixture()
 def get_file_model_data():
+
     def call_me(raw_file_body: str = "new_file",
                 file_name: str = "file.txt") -> dict:
-        values = {"name": file_name,
-                  "content": ContentFile(raw_file_body, name=file_name),
-                  "extension": file_name.rsplit(".", maxsplit=1)[-1]}
+        values = {
+            "name": file_name,
+            "content": ContentFile(raw_file_body, name=file_name),
+            "extension": file_name.rsplit(".", maxsplit=1)[-1]
+        }
         return values
+
     return call_me
 
 
 @pytest.fixture()
 def create_file_model(get_file_model_data):
+
     def call_me(values=get_file_model_data()):
         val_cp = values.copy()
         val_cp.pop("extension")
         f, _ = File.objects.get_or_create(val_cp)
         return f
+
     return call_me
 
 
 @pytest.fixture()
 # pylint-disable: too-many-arguments
 def get_class_material_data(user, get_file_model_data):
-    def call_me(topic_id, title="title", annotation="annotation",
-                type_=ClassMaterial.Type.LECTURES.value,
-                upload_date: str = str(datetime.date.today())) -> dict:
+
+    def call_me(
+        topic_id,
+        title="title",
+        annotation="annotation",
+        type_=ClassMaterial.Type.LECTURES.value,
+        upload_date: str = str(datetime.date.today())
+    ) -> dict:
         values = {
             "file": get_file_model_data(),
             "title": title,
@@ -242,6 +253,7 @@ def get_class_material_data(user, get_file_model_data):
 @pytest.fixture()
 def create_class_materials(get_class_material_data, create_file_model,
                            create_topic, user):
+
     def call_me():
         data = get_class_material_data(0)
         cm = ClassMaterial(
@@ -254,4 +266,5 @@ def create_class_materials(get_class_material_data, create_file_model,
         )
         cm.save()
         return cm
+
     return call_me
