@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     # DAL apps
     "auth",
     "common",
+    "ams",
     "dms",
     "lms",
     "tgbot",
@@ -236,9 +237,9 @@ BYTES_IN_MEGABYTE = 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = 80 * BYTES_IN_MEGABYTE  # 80 MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 80 * BYTES_IN_MEGABYTE  # 80 MB
 
-# Token lifetime for password creation
+# Default lifetime for registration confirmation token
 
-CREATE_PASSWORD_TOKEN_LIFETIME = timedelta(days=5)
+REGCONF_TOKEN_LIFETIME = timedelta(days=10)
 
 # Custom user model
 
@@ -330,3 +331,17 @@ LOGGING = {
         }
     },
 }
+
+# Email settings
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.environ["EMAIL_HOST"]
+EMAIL_PORT = os.environ["EMAIL_PORT"]
+EMAIL_USE_TLS = os.environ["EMAIL_USE_TLS"].lower() == "true"
+EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Settings used for tests
+
+TEST_CORPORATE_EMAIL_DOMAIN = "thisistestemaildomain.org"

@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class MilLmsBackendConfig(AppConfig):
-    name = 'lms'
+class LMSConfig(AppConfig):
+    name = "lms"

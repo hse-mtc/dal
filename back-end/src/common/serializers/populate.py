@@ -12,12 +12,3 @@ class PopulateSerializer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         pass
-
-
-class BaseMutateSerializer(serializers.ModelSerializer):
-
-    def get_fields(self):
-        fields = super().get_fields()
-        for field in fields.values():
-            field.required = False
-        return fields

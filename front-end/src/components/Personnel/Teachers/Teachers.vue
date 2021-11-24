@@ -34,7 +34,7 @@
     </el-row>
     <el-row class="table">
       <PrimeTable
-        v-loading="loading"
+        v-loading="loading || teacherRanksAreLoading || teacherPostsAreLoading"
         :value="teachers"
         scrollable
         scroll-height="600px"
@@ -60,12 +60,12 @@
           column-key="milfaculty"
         />
         <PrimeColumn
-          :field="teacher => teacher.rank.title"
+          :field="teacher => teacherRankLabelFromValue(teacher.rank)"
           header="Звание"
           column-key="rank"
         />
         <PrimeColumn
-          :field="teacher => TEACHER_POSTS[teacher.post]"
+          :field="teacher => teacherPostLabelFromValue(teacher.post)"
           header="Должность"
           column-key="teacherPost"
         />
@@ -112,13 +112,13 @@ import { getTeacher, deleteTeacher } from "@/api/teachers";
 import moment from "moment";
 import { getError, deleteError, deleteSuccess } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
-import { TEACHER_POSTS } from "@/utils/enums";
+import { TeacherRanksMixin, TeacherPostsMixin } from "@/mixins/teachers";
 
 export default {
   name: "Teachers",
+  mixins: [TeacherRanksMixin, TeacherPostsMixin],
   data() {
     return {
-      TEACHER_POSTS,
       loading: false,
       filter: {
         search: null,

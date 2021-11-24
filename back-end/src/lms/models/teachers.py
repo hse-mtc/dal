@@ -1,6 +1,11 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-from common.models.persons import Personnel
+from common.models.personal import (
+    BirthInfo,
+    ContactInfo,
+    Photo,
+)
 
 from lms.models.common import (
     Milfaculty,
@@ -8,41 +13,37 @@ from lms.models.common import (
 )
 
 
-class Rank(models.Model):
-    title = models.CharField(
-        unique=True,
-        max_length=63,
-    )
+class Teacher(models.Model):
 
-    def __str__(self):
-        return self.title
-
-    class Meta:
-        verbose_name = "Military Rank"
-        verbose_name_plural = "Military Ranks"
-
-
-class Teacher(Personnel):
+    # --------------------------------------------------------------------------
 
     class Post(models.TextChoices):
-        MTC_HEAD = "CH", "начальник ВУЦ"
-        MILFACULTY_HEAD = "FH", "начальник цикла"
-        TEACHERS = "TE", "профессорско-преподавательский состав"
+        MTC_HEAD = "CH", "Начальник ВУЦ"
+        MILFACULTY_HEAD = "FH", "Начальник цикла"
+        TEACHERS = "TE", "Профессорско-преподавательский состав"
 
-    post = models.CharField(
-        max_length=2,
-        choices=Post.choices,
-        default=Post.TEACHERS.value,
-        null=True,
+    class Rank(models.TextChoices):
+        CAPTAIN = "CA", "Капитан"
+        MAJOR = "MA", "Майор"
+        LIEUTENANT_COLONEL = "LC", "Подполковник"
+        COLONEL = "CO", "Полковник"
+        MAJOR_GENERAL = "MG", "Генерал-майор"
+
+    # --------------------------------------------------------------------------
+    # Frequently accessed data.
+
+    surname = models.CharField(max_length=64)
+    name = models.CharField(max_length=64)
+    patronymic = models.CharField(
+        max_length=64,
         blank=True,
     )
-    rank = models.ForeignKey(
-        to=Rank,
+    user = models.OneToOneField(
+        to=get_user_model(),
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
     )
-
     milfaculty = models.ForeignKey(
         to=Milfaculty,
         on_delete=models.SET_NULL,
@@ -54,11 +55,48 @@ class Teacher(Personnel):
         blank=True,
     )
 
-    def __str__(self):
-        return f"ID = {str(self.id)}\n" \
-               f"Full name = {str(self.surname)} " \
-               f"{str(self.name)} {str(self.patronymic)}\n"
+    # --------------------------------------------------------------------------
+    # Rarely accessed studying data.
+
+    post = models.CharField(
+        max_length=2,
+        choices=Post.choices,
+        default=Post.TEACHERS.value,
+    )
+    rank = models.CharField(
+        max_length=2,
+        choices=Rank.choices,
+    )
+
+    # --------------------------------------------------------------------------
+    # Rarely accessed personal data.
+
+    photo = models.OneToOneField(
+        to=Photo,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    birth_info = models.OneToOneField(
+        to=BirthInfo,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    contact_info = models.OneToOneField(
+        to=ContactInfo,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Teacher"
         verbose_name_plural = "Teachers"
+
+    def __str__(self):
+        return f"[{self.id}] {self.fullname}"
+
+    @property
+    def fullname(self) -> str:
+        return " ".join([self.surname, self.name, self.patronymic])

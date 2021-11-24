@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.root">
-    <h1>Прием документов</h1>
+    <h1>Учет поступления документов</h1>
 
     <div v-loading="loading">
       <el-row class="filter-row" :gutter="20">
@@ -55,7 +55,7 @@
             type="info"
             class="text-center"
             :closable="false"
-            :title="'Всего абитур-ов: ' + entriesAmount"
+            :title="`Всего абитуриентов: ${entriesAmount}`"
           />
         </el-col>
         <el-col v-if="!isStudyOffice" :span="5">
@@ -121,7 +121,7 @@ import {
   updateStudentApplicationInfo,
   APPLICATIONS_EXPORT_LINK,
   APPLICATIONS_CSP_EXPORT_LINK,
-} from "@/api/students";
+} from "@/api/applicants";
 import { getPrograms } from "@/api/reference-book";
 
 import { TextInput } from "@/common/inputs";
@@ -139,6 +139,7 @@ export default {
   },
   filters: {
     campusFilter(campus) {
+      console.log("Campus = ", campus);
       return CAMPUSES[campus] || "Ошибка";
     },
   },
@@ -170,8 +171,16 @@ export default {
       return UserModule.campuses;
     },
   },
+  async beforeCreate() {
+    // Try to fetch user campuses.
+    const { campuses } = UserModule;
+  },
   async created() {
     this.loading = true;
+
+    const { campuses } = UserModule;
+    await this.changeCampus(campuses[0]);
+
     await this.fetchPrograms();
     await this.fetchData();
   },
@@ -186,7 +195,7 @@ export default {
 
     async changeProgram(program) {
       this.selectedProgram = program;
-      this.$router.push({ query: { program } });
+      this.$router.push({ query: { program_code: program } });
       await this.fetchData();
     },
     async changeCampus(campus) {
@@ -197,8 +206,9 @@ export default {
       this.currentPage = page || 1;
       this.loading = true;
 
+      let data;
       try {
-        const { data } = await getApplicationsStudents(
+        const response = await getApplicationsStudents(
           this.currentPage,
           this.pageSize,
           {
@@ -207,21 +217,24 @@ export default {
             program: this.selectedProgram,
           },
         );
-        this.data = data.results.map(item => ({
-          id: item.id,
-          fullname: item.full_name,
-          birthday: moment(item.birth_date).format("DD.MM.yyyy"),
-          passport: item.passport,
-          program: item.program_code,
-          faculty: item.faculty,
-          ...item.application_process,
-        }));
-        this.entriesAmount = data.count;
+        data = response.data;
       } catch (e) {
         console.log("Не удалось данные о студентах", e);
+        return;
+      } finally {
+        this.loading = false;
       }
 
-      this.loading = false;
+      this.data = data.results.map(item => ({
+        birthday: moment(item.birth_date).format("DD.MM.yyyy"),
+        faculty: item.faculty,
+        fullname: item.fullname,
+        id: item.id,
+        passport: item.passport,
+        program: item.program_code,
+        ...item.application_process,
+      }));
+      this.entriesAmount = data.count;
     },
 
     async onPageSizeChange(pageSize) {

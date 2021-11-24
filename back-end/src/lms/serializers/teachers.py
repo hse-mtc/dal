@@ -1,48 +1,32 @@
-from rest_framework.serializers import (
-    SerializerMethodField,
-    ModelSerializer,
-)
+from rest_framework import serializers
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from common.serializers.persons import (
+from common.serializers.personal import (
     BirthInfoSerializer,
     ContactInfoSerializer,
-    PersonnelMutateSerializer,
+    PhotoMutateMixin,
 )
 
 from lms.models.common import Milgroup
-from lms.models.teachers import (
-    Rank,
-    Teacher,
-)
+from lms.models.teachers import Teacher
 
-from lms.validators import PresentInDatabaseValidator
 from lms.serializers.students import PhotoSerializer
 from lms.serializers.common import (
     MilgroupSerializer,
     MilfacultySerializer,
 )
 
-
-class RankSerializer(ModelSerializer):
-
-    class Meta:
-        model = Rank
-        fields = "__all__"
+from lms.validators import PresentInDatabaseValidator
 
 
-class TeacherSerializer(ModelSerializer):
-    fullname = SerializerMethodField(read_only=True)
+class TeacherSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
     milgroups = MilgroupSerializer(read_only=True, many=True)
     milfaculty = MilfacultySerializer(read_only=True)
-    rank = RankSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     photo = PhotoSerializer(read_only=True)
-
-    def get_fullname(self, obj):
-        return f"{obj.surname} {obj.name} {obj.patronymic}"
 
     class Meta:
         model = Teacher
@@ -51,9 +35,9 @@ class TeacherSerializer(ModelSerializer):
 
 class TeacherMutateSerializer(
         WritableNestedModelSerializer,
-        PersonnelMutateSerializer,
+        PhotoMutateMixin,
 ):
-    birth_info = BirthInfoSerializer()
+    birth_info = BirthInfoSerializer(required=False)
     contact_info = ContactInfoSerializer()
 
     class Meta:
@@ -69,17 +53,46 @@ class TeacherMutateSerializer(
         return super().update(instance, validated_data)
 
 
-class TeacherShortSerializer(ModelSerializer):
-    fullname = SerializerMethodField(read_only=True)
+class TeacherShortSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
     milgroups = MilgroupSerializer(
         read_only=True,
         many=True,
+        # TODO(TmLev): This is probably unnecessary.
         validators=[PresentInDatabaseValidator(Milgroup)],
     )
-
-    def get_fullname(self, obj):
-        return f"{obj.surname} {obj.name} {obj.patronymic}"
 
     class Meta:
         model = Teacher
         fields = ["id", "fullname", "milgroups"]
+
+
+class ApproveTeacherSerializer(serializers.ModelSerializer):
+    milfaculty = MilfacultySerializer(read_only=True)
+    milgroups = MilgroupSerializer(
+        read_only=True,
+        many=True,
+    )
+    email = serializers.CharField(
+        read_only=True,
+        source="user.email",
+    )
+
+    class Meta:
+        model = Teacher
+        fields = [
+            "id",
+            "fullname",
+            "milfaculty", "milgroups",
+            "post", "rank",
+            "email",
+        ]
+
+
+class ApproveTeacherMutateSerializer(serializers.Serializer):
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass

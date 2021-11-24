@@ -1,6 +1,6 @@
 <template>
   <el-col
-    v-loading="loading"
+    v-loading="loading || teacherPostsAreLoading || teacherRanksAreLoading"
     :offset="2"
     :span="20"
     class="teacher-page"
@@ -26,7 +26,7 @@
       <ExpandBox title="Основное" non-expandable>
         <div class="teacher-info">
           <el-upload
-            v-loading="loading"
+            v-loading="loading || teacherPostsAreLoading || teacherRanksAreLoading"
             class="avatar-uploader"
             action="/api/lms/students/"
             :show-file-list="false"
@@ -47,7 +47,7 @@
             label-width="200px"
             label-position="right"
             size="mini"
-            :disabled="loading"
+            :disabled="loading || teacherPostsAreLoading || teacherRanksAreLoading"
             hide-required-asterisk
           >
             <el-form-item class="actions">
@@ -128,19 +128,19 @@
               <transition name="el-fade-in" mode="out-in">
                 <el-select
                   v-if="modify"
-                  v-model="modifyInfo.rank.id"
+                  v-model="modifyInfo.rank"
                   value-key="rank"
                   style="display: block"
                 >
                   <el-option
-                    v-for="rank in ranks"
-                    :key="rank.id"
-                    :label="rank.title"
-                    :value="rank.id"
+                    v-for="rank in teacherRanks"
+                    :key="rank.value"
+                    :label="rank.label"
+                    :value="rank.value"
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ displayInfo.rank.title }}
+                  {{ teacherRankLabelFromValue(displayInfo.rank) }}
                 </span>
               </transition>
             </el-form-item>
@@ -154,14 +154,14 @@
                   style="display: block"
                 >
                   <el-option
-                    v-for="(label, value) in TEACHER_POSTS"
-                    :key="value"
-                    :label="label"
-                    :value="value"
+                    v-for="post in teacherPosts"
+                    :key="post.value"
+                    :label="post.label"
+                    :value="post.value"
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ TEACHER_POSTS[displayInfo.post] }}
+                  {{ teacherPostLabelFromValue(displayInfo.post) }}
                 </span>
               </transition>
             </el-form-item>
@@ -182,7 +182,7 @@
                   />
                 </el-select>
                 <span v-else class="field-value">
-                  {{ displayInfo.milfaculty.title }}
+                  {{ milfacultyTitle }}
                 </span>
               </transition>
             </el-form-item>
@@ -229,12 +229,7 @@
                   v-maska="'# (###) ###-##-##'"
                 />
                 <span v-else class="field-value">
-                  {{
-                    displayInfo.contact_info &&
-                      displayInfo.contact_info.personal_phone_number
-                      ? displayInfo.contact_info.personal_phone_number
-                      : "---"
-                  }}
+                  {{ personalPhoneNumber }}
                 </span>
               </transition>
             </el-form-item>
@@ -261,15 +256,14 @@ import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
 import moment from "moment";
 import { UserModule, ReferenceModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
-import { displayTeacherMilgroups } from "@/utils/teachers";
-import { TEACHER_POSTS } from "@/utils/enums";
+import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
 export default {
   name: "Teacher",
   components: { ExpandBox, ChangePasswordForm },
+  mixins: [TeacherPostsMixin, TeacherRanksMixin],
   data() {
     return {
-      TEACHER_POSTS,
       dialog: false,
       loading: false,
       modify: false,
@@ -310,7 +304,7 @@ export default {
         rank: [
           {
             required: true,
-            message: "Пожалуйста, выберите дату рождения",
+            message: "Пожалуйста, выберите звание",
             trigger: "change",
           },
         ],
@@ -344,12 +338,6 @@ export default {
     milfaculties() {
       return ReferenceModule.milfaculties;
     },
-    ranks() {
-      return ReferenceModule.ranks;
-    },
-    teacherPosts() {
-      return ReferenceModule.teacherPosts;
-    },
     id() {
       return this.$route.params.teacherId;
     },
@@ -374,12 +362,22 @@ export default {
     fullname() {
       return this.displayInfo.fullname;
     },
+    personalPhoneNumber() {
+      return this.displayInfo.contact_info
+                      && this.displayInfo.contact_info.personal_phone_number
+        ? this.displayInfo.contact_info.personal_phone_number
+        : "---";
+    },
+    milfacultyTitle() {
+      return this.displayInfo.milfaculty
+        ? this.displayInfo.milfaculty.title
+        : "---";
+    },
   },
   async created() {
     await this.fetchInfo();
   },
   methods: {
-    displayTeacherMilgroups,
     formatDate: date => (moment(date).isValid() ? moment(date).format("DD.MM.YYYY") : "---"),
     async fetchInfo() {
       const id = this.$route.params.teacherId;
@@ -421,7 +419,6 @@ export default {
               ...this.modifyInfo,
               milgroups: this.modifyInfo.milgroups.map(x => x.id),
               milfaculty: this.modifyInfo.milfaculty.id,
-              rank: this.modifyInfo.rank.id,
               surname,
               name,
               patronymic,

@@ -42,3 +42,10 @@ watchdoc/service-account.json
 watchdoc/credentials.json
 watchdoc/tokens.json
 watchdoc/.env
+
+### Tools ###
+## Directories
+
+## Files
+tools/parse-programs/*.docx
+tools/parse-programs/*.json

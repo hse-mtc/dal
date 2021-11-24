@@ -56,8 +56,8 @@ export default {
       tabs: [
         { label: "Дисциплины", value: "disciplines" },
         { label: "Военно-научные работы", value: "works" },
-        { label: "Библиотека", value: "library" },
-        { label: "Сохраненные учебники", value: "books" },
+        { label: "Электронная библиотека", value: "library" },
+        { label: "Сохраненные книги", value: "books" },
       ],
     };
   },

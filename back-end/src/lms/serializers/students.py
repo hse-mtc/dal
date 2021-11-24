@@ -1,21 +1,16 @@
-from django.contrib.auth import get_user_model
-
-from rest_framework.serializers import (
-    SerializerMethodField,
-    ModelSerializer,
-    ImageField,
-    PrimaryKeyRelatedField,
-    BooleanField,
-)
+from rest_framework import serializers
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
-from common.models.persons import Photo
-from common.serializers.persons import (
+from common.serializers.milspecialties import MilspecialtySerializer
+from common.serializers.universities import UniversityInfoSerializer
+from common.serializers.personal import (
     BirthInfoSerializer,
-    RelativeMutateSerializer,
-    PersonnelMutateSerializer,
     ContactInfoSerializer,
+    PhotoSerializer,
+    PhotoMutateMixin,
+    RelativeMutateSerializer,
+    PassportSerializer,
 )
 
 from lms.models.common import Milgroup
@@ -24,92 +19,56 @@ from lms.models.students import (
     Skill,
     Note,
 )
-from lms.serializers.common import (
-    MilgroupSerializer,
-    MilspecialtySerializer,
-)
-from lms.serializers.applicants import (
-    PassportSerializer,
-    RecruitmentOfficeSerializer,
-    ApplicationProcessSerializer,
-)
-from lms.serializers.universities import (
-    UniversityInfoSerializer,
-    UniversityInfoCreateSerializer,
-)
+
+from lms.serializers.common import MilgroupSerializer
 
 
-class PhotoSerializer(ModelSerializer):
-    image = ImageField(
-        use_url=True,
-        allow_null=True,
-        required=False,
-        read_only=True,
-    )
-
-    class Meta:
-        model = Photo
-        exclude = ["id"]
-
-
-class SkillSerializer(ModelSerializer):
+class SkillSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
         fields = "__all__"
 
 
-class StudentSerializer(ModelSerializer):
-    fullname = SerializerMethodField(read_only=True)
-    photo = PhotoSerializer(read_only=True)
-
+class StudentSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
-    skills = SkillSerializer(many=True, read_only=True)
-
-    birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
-    university_info = UniversityInfoSerializer(read_only=True)
 
-    application_process = ApplicationProcessSerializer(read_only=False)
+    skills = SkillSerializer(
+        many=True,
+        read_only=True,
+    )
+
+    photo = PhotoSerializer(read_only=True)
+    birth_info = BirthInfoSerializer(read_only=True)
+    university_info = UniversityInfoSerializer(read_only=True)
 
     class Meta:
         model = Student
         fields = "__all__"
 
-    def get_fullname(self, obj):
-        return f"{obj.surname} {obj.name} {obj.patronymic}"
-
 
 class StudentMutateSerializer(
-        WritableNestedModelSerializer,
-        PersonnelMutateSerializer,
+    WritableNestedModelSerializer,
+    PhotoMutateMixin,
 ):
-    milgroup = PrimaryKeyRelatedField(
+    milgroup = serializers.PrimaryKeyRelatedField(
         queryset=Milgroup.objects.all(),
         required=False,
     )
+    contact_info = ContactInfoSerializer(required=False)
 
+    birth_info = BirthInfoSerializer(required=False)
     passport = PassportSerializer(required=False)
+    university_info = UniversityInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
-    recruitment_office = RecruitmentOfficeSerializer(required=False)
-    university_info = UniversityInfoCreateSerializer(required=False)
 
-    # Send documents to `watchdoc`.
-    generate_documents = BooleanField(default=False, write_only=True)
-
-    class Meta(PersonnelMutateSerializer.Meta):
+    class Meta:
         model = Student
-        exclude = ["application_process"]
+        fields = "__all__"
 
     def create(self, validated_data):
-        corporate_email = validated_data["contact_info"]["corporate_email"]
-        find_student_filter = Student.objects.filter(
-            contact_info__corporate_email=corporate_email)
-
-        if find_student_filter.exists():
-            instance = find_student_filter.last()
-            return self.update(instance, validated_data)
-
         self.create_photo(validated_data)
         return super().create(validated_data)
 
@@ -118,27 +77,21 @@ class StudentMutateSerializer(
         return super().update(instance, validated_data)
 
 
-class StudentShortSerializer(ModelSerializer):
-    fullname = SerializerMethodField(read_only=True)
+class StudentShortSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
-
-    def get_fullname(self, obj):
-        return f"{obj.surname} {obj.name} {obj.patronymic}"
 
     class Meta:
         model = Student
         fields = ["id", "fullname", "milgroup"]
 
 
-class StudentBasicInfoSerializer(ModelSerializer):
-    fullname = SerializerMethodField(read_only=True)
+class StudentBasicInfoSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
     photo = PhotoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     birth_info = BirthInfoSerializer(read_only=True)
-
-    def get_fullname(self, obj):
-        return f"{obj.surname} {obj.name} {obj.patronymic}"
 
     class Meta:
         model = Student
@@ -148,7 +101,7 @@ class StudentBasicInfoSerializer(ModelSerializer):
         ]
 
 
-class StudentExtraInfoSerializer(ModelSerializer):
+class StudentExtraInfoSerializer(serializers.ModelSerializer):
     contact_info = ContactInfoSerializer(read_only=True)
     passport = PassportSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
@@ -162,7 +115,7 @@ class StudentExtraInfoSerializer(ModelSerializer):
         ]
 
 
-class StudentSkillsSerializer(ModelSerializer):
+class StudentSkillsSerializer(serializers.ModelSerializer):
     skills = SkillSerializer(many=True)
 
     class Meta:
@@ -170,18 +123,8 @@ class StudentSkillsSerializer(ModelSerializer):
         fields = ["skills"]
 
 
-class NoteSerializer(ModelSerializer):
-    user = SerializerMethodField(read_only=True)
-
-    # pylint: disable=unused-argument
-    def get_user(self, obj) -> int:
-        return self.context["request"].user.id
-
-    def create(self, validated_data):
-        user_id = self.context["request"].user.id
-        validated_data["user"] = get_user_model().objects.get(id=user_id)
-
-        return super().create(validated_data)
+class NoteSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Note

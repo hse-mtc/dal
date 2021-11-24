@@ -16,7 +16,7 @@
           sortable
         />
         <PrimeColumn
-          :field="row => row.milgroup && row.milgroup.milgroup"
+          :field="row => row.milgroup && row.milgroup.title"
           column-key="milgroup"
           header="Взвод"
           sortable
@@ -27,9 +27,9 @@
           field="status"
           column-key="status"
         >
-          <template #body="{ data }">
-            <el-tag :type="tagByStatus(data.status)">
-              {{ data.status | filterStatus }}
+          <template #body="{ data: student }">
+            <el-tag :type="tagByStatus(student.status)">
+              {{ student.status | filterStatus }}
             </el-tag>
           </template>
         </PrimeColumn>
@@ -37,7 +37,7 @@
           header="Действия с регистрацией"
           column-key="buttons"
         >
-          <template #body="{ data }">
+          <template #body="{ data: student }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -50,8 +50,8 @@
                 type=""
                 circle
                 class="approve-button"
-                :disabled="data.status === 'ST'"
-                @click="approve(scope.row)"
+                :disabled="student.status === 'ST'"
+                @click="approve(student)"
               />
             </el-tooltip>
             <el-tooltip
@@ -66,8 +66,8 @@
                 type=""
                 circle
                 class="wait-button"
-                :disabled="data.status === 'AW'"
-                @click="putOnWait(data)"
+                :disabled="student.status === 'AW'"
+                @click="putOnWait(student)"
               />
             </el-tooltip>
             <el-tooltip
@@ -82,8 +82,8 @@
                 type=""
                 circle
                 class="disapprove-button"
-                :disabled="data.status === 'DE'"
-                @click="disapprove(scope.row)"
+                :disabled="student.status === 'DE'"
+                @click="disapprove(student)"
               />
             </el-tooltip>
           </template>
@@ -130,12 +130,13 @@ export default {
       approveList: [],
     };
   },
-  created() {
-    getUsersToApprove()
-      .then(response => {
-        this.approveList = response.data;
-      })
-      .catch(err => getError("данных для подтверждения активации", err.response.status));
+  async created() {
+    try {
+      const { data } = await getUsersToApprove();
+      this.approveList = data;
+    } catch (err) {
+      getError("данных для подтверждения активации", err.response.status);
+    }
   },
   methods: {
     approve(user) {

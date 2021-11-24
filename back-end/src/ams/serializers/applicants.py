@@ -1,0 +1,100 @@
+import base64
+
+from rest_framework import serializers
+
+from drf_writable_nested.serializers import WritableNestedModelSerializer
+
+from common.serializers.milspecialties import MilspecialtySerializer
+from common.serializers.universities import UniversityInfoSerializer
+from common.serializers.personal import (
+    BirthInfoSerializer,
+    ContactInfoSerializer,
+    PhotoMutateMixin,
+    RelativeSerializer,
+    PassportSerializer,
+    RelativeMutateSerializer,
+)
+
+from ams.models.applicants import (
+    ApplicationProcess,
+    Applicant,
+)
+
+
+class ApplicationProcessSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ApplicationProcess
+        exclude = ["id"]
+
+
+class ApplicantSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
+    birth_info = BirthInfoSerializer(read_only=True)
+    contact_info = ContactInfoSerializer(read_only=True)
+    university_info = UniversityInfoSerializer(read_only=True)
+
+    photo = serializers.SerializerMethodField(read_only=True)
+
+    family = RelativeSerializer(read_only=True, many=True)
+
+    milspecialty = MilspecialtySerializer(read_only=True)
+
+    def get_photo(self, obj: Applicant) -> str:
+        return base64.b64encode(obj.photo.image.read()).decode()
+
+    class Meta:
+        model = Applicant
+        exclude = ["id"]
+
+
+class ApplicantMutateSerializer(
+    WritableNestedModelSerializer,
+    PhotoMutateMixin,
+):
+    birth_info = BirthInfoSerializer(required=False)
+    passport = PassportSerializer(required=False)
+    university_info = UniversityInfoSerializer(required=False)
+    contact_info = ContactInfoSerializer(required=False)
+    family = RelativeMutateSerializer(required=False, many=True)
+    application_process = ApplicationProcessSerializer(required=False)
+
+    class Meta:
+        model = Applicant
+        fields = "__all__"
+
+    def create(self, validated_data):
+        self.create_photo(validated_data)
+        return super().create(validated_data)
+
+    def update(self, instance: Applicant, validated_data):
+        self.update_photo(instance, validated_data)
+        return super().update(instance, validated_data)
+
+
+class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
+    birth_date = serializers.DateField(
+        read_only=True,
+        source="birth_info.date",
+    )
+    program_code = serializers.CharField(
+        read_only=True,
+        source="university_info.program.code",
+    )
+    faculty = serializers.CharField(
+        read_only=True,
+        source="university_info.program.faculty.title",
+    )
+    application_process = ApplicationProcessSerializer(read_only=True)
+
+    class Meta:
+        model = Applicant
+        fields = [
+            "id",
+            "fullname",
+            "birth_date",
+            "program_code",
+            "faculty",
+            "application_process",
+        ]

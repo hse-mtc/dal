@@ -114,50 +114,6 @@ export function addMilFaculty(data) {
   });
 }
 
-export function getRanks() {
-  return request({
-    url: BASE_API_URL + ranks,
-    method: "get",
-  });
-}
-
-export function editRank(id, data) {
-  return request({
-    url: `${BASE_API_URL}${ranks}${id}/`,
-    method: "PATCH",
-    data,
-  });
-}
-
-export function deleteRank(id) {
-  return request({
-    url: `${BASE_API_URL}${ranks}${id}/`,
-    method: "DELETE",
-  });
-}
-
-export function addRank(data) {
-  return request({
-    url: `${BASE_API_URL}${ranks}`,
-    method: "POST",
-    data,
-  });
-}
-
-export function getTeacherPosts() {
-  return request({
-    url: BASE_API_URL + LMS_URLS.reference.teacherPosts,
-    method: "get",
-  });
-}
-
-export function getStudentPosts() {
-  return request({
-    url: BASE_API_URL + LMS_URLS.reference.studentPosts,
-    method: "get",
-  });
-}
-
 export function getAchievementTypes() {
   return request({
     url: BASE_API_URL + achievementTypes,

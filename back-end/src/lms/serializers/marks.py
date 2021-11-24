@@ -1,18 +1,10 @@
-from rest_framework.serializers import (
-    Serializer,
-    ModelSerializer,
-    IntegerField,
-    DateField,
-    SerializerMethodField,
-    ValidationError,
-)
+from rest_framework import serializers
 
 from common.models.subjects import Subject
-from common.serializers.populate import BaseMutateSerializer
 
+from lms.models.common import Milgroup
 from lms.models.marks import Mark
 from lms.models.students import Student
-from lms.models.common import Milgroup
 
 from lms.serializers.lessons import LessonSerializer
 from lms.serializers.students import StudentShortSerializer
@@ -20,7 +12,7 @@ from lms.serializers.students import StudentShortSerializer
 from lms.validators import PresentInDatabaseValidator
 
 
-class MarkSerializer(ModelSerializer):
+class MarkSerializer(serializers.ModelSerializer):
     student = StudentShortSerializer(read_only=True)
     lesson = LessonSerializer(read_only=True)
 
@@ -29,13 +21,13 @@ class MarkSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class MarkMutateSerializer(BaseMutateSerializer):
-    value = IntegerField(min_value=2, max_value=5)
+class MarkMutateSerializer(serializers.ModelSerializer):
+    value = serializers.IntegerField(min_value=2, max_value=5)
 
     def validate(self, attrs):
-        if ("student" in attrs) and ("lesson" in attrs):
+        if "student" in attrs and "lesson" in attrs:
             if attrs["student"].milgroup != attrs["lesson"].milgroup:
-                raise ValidationError(
+                raise serializers.ValidationError(
                     "student milgroup and lesson milgroup should be equal")
         return attrs
 
@@ -44,21 +36,21 @@ class MarkMutateSerializer(BaseMutateSerializer):
         fields = ["student", "lesson", "value"]
 
 
-class MarkJournalQuerySerializer(Serializer):
-    milgroup = IntegerField(
+class MarkJournalQuerySerializer(serializers.Serializer):
+    milgroup = serializers.IntegerField(
         required=True,
         validators=[PresentInDatabaseValidator(Milgroup, "id")],
     )
-    date_from = DateField(required=False)
-    date_to = DateField(required=False)
-    subject = IntegerField(
+    date_from = serializers.DateField(required=False)
+    date_to = serializers.DateField(required=False)
+    subject = serializers.IntegerField(
         required=True,
         validators=[PresentInDatabaseValidator(Subject, "id")],
     )
 
     def validate(self, attrs):
         if attrs["date_from"] > attrs["date_to"]:
-            raise ValidationError(
+            raise serializers.ValidationError(
                 "date_from should be greater or equal to date_to")
         return attrs
 
@@ -69,23 +61,16 @@ class MarkJournalQuerySerializer(Serializer):
         pass
 
 
-class MarkShortSerializer(ModelSerializer):
+class MarkShortSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mark
         fields = ["id", "values", "lesson"]
 
 
-class MarkJournalSerializer(ModelSerializer):
-    fullname = SerializerMethodField(read_only=True)
-    marks = SerializerMethodField(read_only=True)
-
-    class Meta:
-        model = Student
-        fields = ["id", "fullname", "marks"]
-
-    def get_fullname(self, obj):
-        return f"{obj.surname} {obj.name} {obj.patronymic}"
+class MarkJournalSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(read_only=True)
+    marks = serializers.SerializerMethodField(read_only=True)
 
     def get_marks(self, obj):
         marks = obj.mark_set.filter(
@@ -93,3 +78,7 @@ class MarkJournalSerializer(ModelSerializer):
             lesson__subject__id=self.context["subject"],
         )
         return MarkShortSerializer(marks, many=True).data
+
+    class Meta:
+        model = Student
+        fields = ["id", "fullname", "marks"]

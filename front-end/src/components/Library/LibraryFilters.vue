@@ -19,7 +19,7 @@
     </div>
     <div v-if="!isMyLibrary" class="filter">
       <div class="filters-title pl-1 mb-2">
-        Автор
+        Авторы
       </div>
       <el-select
         v-model="author"

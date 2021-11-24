@@ -123,7 +123,7 @@
                           disable-transitions
                         >
                           {{
-                            LESSON_TYPES[data.lessons.find((x) => x.date === d).type]
+                            lessonTypeLabelFromValue(data.lessons.find((x) => x.date === d).type)
                           }}
                         </el-tag>
                       </div>
@@ -194,10 +194,10 @@
             style="display: block"
           >
             <el-option
-              v-for="value, key in LESSON_TYPES"
-              :key="key"
-              :label="value"
-              :value="key"
+              v-for="type in lessonTypes"
+              :key="type.value"
+              :label="type.label"
+              :value="type.value"
             />
           </el-select>
         </el-form-item>
@@ -229,13 +229,14 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
-import { LESSON_TYPES } from "@/utils/enums";
+import { LessonTypesMixin } from "@/mixins/lessons";
 
 export default {
   name: "Schedule",
+  mixins: [LessonTypesMixin],
+
   data() {
     return {
-      LESSON_TYPES,
       dialogVisible: false,
       editLessonFullname: "",
       editLesson: {
@@ -297,6 +298,7 @@ export default {
       },
     };
   },
+
   computed: {
     rooms() {
       return ReferenceModule.rooms;
@@ -311,10 +313,12 @@ export default {
       return UserModule.personMilgroups;
     },
   },
-  created() {
+
+  async created() {
     this.filter.mg = this.milgroups[0].milgroup;
-    this.fetchData();
+    await this.fetchData();
   },
+
   methods: {
     getPermissions(method) {
       return [
@@ -331,7 +335,10 @@ export default {
         },
       ];
     },
+
     formatDate: d => moment(d).format("DD.MM.YY"),
+
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     tagByLessonType(type) {
       switch (type) {
         case "LE":
@@ -376,26 +383,32 @@ export default {
           .format("YYYY-MM-DD");
       }
     },
-    fetchData() {
-      if (this.filter.mg > 0) {
-        this.limitDateRange();
-        getLessonJournal({
+    async fetchData() {
+      if (this.filter.mg <= 0) {
+        return;
+      }
+
+      this.limitDateRange();
+
+      try {
+        const response = await getLessonJournal({
           milgroup: this.filter.mg,
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
-        })
-          .then(response => {
-            this.schedule = response.data;
-          })
-          .catch(err => getError("расписания", err.response.status));
+        });
+        this.schedule = response.data;
+      } catch (err) {
+        getError("расписания", err.response.status);
       }
     },
-    getSubjects() {
-      getSubjects()
-        .then(response => {
-          this.subjects = response.data;
-        })
-        .catch(err => getError("дисциплин", err.response.status));
+
+    async getSubjects() {
+      try {
+        const response = await getSubjects();
+        this.subjects = response.data;
+      } catch (err) {
+        getError("дисциплин", err.response.status);
+      }
     },
 
     onCreate(ordinal, date) {
@@ -416,6 +429,7 @@ export default {
       this.getSubjects();
       this.dialogVisible = true;
     },
+
     handleClose() {
       this.$confirm(
         "Вы уверены, что хотите закрыть окно редактирования?",
@@ -431,25 +445,31 @@ export default {
         })
         .catch(() => {});
     },
-    handleAccept() {
-      if (this.editLesson.id) {
-        patchLesson(this.editLesson)
-          .then(() => {
-            patchSuccess("занятия");
-            this.dialogVisible = false;
-            if (this.filter.mg) this.fetchData();
-          })
-          .catch(err => patchError("занятия", err.response.status));
-      } else {
-        postLesson(this.editLesson)
-          .then(() => {
-            postSuccess("занятия");
-            this.dialogVisible = false;
-            if (this.filter.mg) this.fetchData();
-          })
-          .catch(err => postError("занятия", err.response.status));
+
+    async handleAccept() {
+      const action = this.editLesson.id
+        ? patchLesson
+        : postLesson;
+      const onSuccess = this.editLesson.id
+        ? () => patchSuccess("занятия")
+        : () => postSuccess("занятия");
+      const onError = this.editLesson.id
+        ? err => patchError("занятия", err.response.status)
+        : err => postError("занятия", err.response.status);
+
+      try {
+        await action(this.editLesson);
+        onSuccess();
+      } catch (err) {
+        onError(err);
+        return;
       }
+
+      this.dialogVisible = false;
+
+      await this.fetchData();
     },
+
     handleDelete(id) {
       this.$confirm(
         "Вы уверены, что хотите удалить занятие?",

@@ -31,5 +31,5 @@ export function validEmail(str) {
  * @returns {Boolean}
  */
 export function validCorEmail(str) {
-  return /^[A-Za-z0-9._%+-]+@(hse.ru|edu.hse.ru)$/.test(str);
+  return /^[A-Za-z0-9._%+-]+@(edu\.)?hse\.ru$/.test(str);
 }

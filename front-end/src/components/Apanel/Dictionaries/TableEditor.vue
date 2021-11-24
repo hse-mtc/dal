@@ -130,7 +130,7 @@ class DictionariesTableEditor extends Vue {
       milgroups: {
         title: { title: "Взвод", width: 100, editorType: "input" },
         milfaculty: {
-          title: "Направление",
+          title: "Цикл",
           width: 200,
           editorType: "select",
           props: { options: this.milfacultiesOptions },

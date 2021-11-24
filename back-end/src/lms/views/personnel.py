@@ -11,7 +11,8 @@ from drf_spectacular.views import (
     OpenApiParameter,
 )
 
-from common.models.persons import Personnel
+from lms.models.students import Student
+from lms.models.teachers import Teacher
 
 from lms.serializers.personnel import (
     SearchPersonnelUsersSerializer,
@@ -43,7 +44,7 @@ class SearchPersonnelUsersViewSet(ListModelMixin, GenericViewSet):
 
         results = []
 
-        for model in Personnel.__subclasses__():
+        for model in [Student, Teacher]:
             queryset = model.objects.filter(user__isnull=False).filter(query)
             serializer = PersonnelUsersSerializer(queryset, many=True)
             results.extend(serializer.data)

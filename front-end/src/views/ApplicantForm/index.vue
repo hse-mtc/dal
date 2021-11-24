@@ -23,7 +23,7 @@
         <GenericForm
           :key="step"
           ref="form"
-          v-model="studentData[step]"
+          v-model="applicantData[step]"
           :rules="rules[step]"
           :fields="fields[step]"
         >
@@ -35,15 +35,15 @@
         <div
           v-if="
             step === STEPS.photo &&
-              studentData.photo.photo &&
-              studentData.photo.photo.length
+              applicantData.photo.photo &&
+              applicantData.photo.photo.length
           "
           :style="{
             width: '300px',
             height: '400px',
             background: 'no-repeat center / contain',
             backgroundImage: `url('${getObjUrl(
-              studentData.photo.photo[0].raw,
+              applicantData.photo.photo[0].raw,
             )}')`,
             margin: '10px auto',
           }"
@@ -69,7 +69,7 @@
             @tab-remove="removeTab"
           >
             <el-tab-pane
-              v-for="(item, index) in studentData[step]"
+              v-for="(item, index) in applicantData[step]"
               :key="index"
               :label="item.name || `${tabsLabel[step]} ${index + 1}`"
               :name="`${index}`"
@@ -78,7 +78,7 @@
                 v-if="+tabsIndex[step] === index"
                 ref="form"
                 :key="`${step}-${index}`"
-                v-model="studentData[step][index]"
+                v-model="applicantData[step][index]"
                 :rules="rules[step]"
                 :fields="fields[step]"
               >
@@ -90,7 +90,7 @@
           </el-tabs>
         </div>
 
-        <div v-if="!studentData[step].length">
+        <div v-if="!applicantData[step].length">
           Добавьте {{ tabsLabelMany[step] }} (при наличии)
         </div>
       </template>
@@ -146,7 +146,7 @@ import _omit from "lodash/omit";
 import GenericForm from "@/common/Form/index.vue";
 
 import allowMobileView from "@/utils/allowMobileView";
-import { postStudent } from "@/api/students";
+import { postApplicant } from "@/api/applicants";
 
 import {
   ABOUT,
@@ -184,7 +184,7 @@ class ApplicantForm extends Vue {
 
   data() {
     return {
-      studentData: __DEV__ && ("fill" in this.$route.query)
+      applicantData: __DEV__ && ("fill" in this.$route.query)
       // eslint-disable-next-line global-require
         ? require("@/constants/applicantForm").devInitData
         : {
@@ -247,7 +247,7 @@ class ApplicantForm extends Vue {
   }
 
   get stepIndex() { return Object.keys(STEPS).indexOf(this.step); }
-  get campus() { return this.studentData.universityInfo.campus; }
+  get campus() { return this.applicantData.universityInfo.campus; }
 
   get rules() {
     const required = { required: true, message: "Обязательное поле" };
@@ -306,11 +306,11 @@ class ApplicantForm extends Vue {
       personal_phone_number: [phoneValidator],
     };
 
-    const withMotherRules = Object.values(this.studentData.mother).filter(
+    const withMotherRules = Object.values(this.applicantData.mother).filter(
       Boolean,
     ).length;
 
-    const withFatherRules = Object.values(this.studentData.father).filter(
+    const withFatherRules = Object.values(this.applicantData.father).filter(
       Boolean,
     ).length;
 
@@ -333,7 +333,7 @@ class ApplicantForm extends Vue {
           personal_phone_number: motherFatherPhone,
         };
       }
-    } else if (!this.studentData.mother.personal_phone_number) {
+    } else if (!this.applicantData.mother.personal_phone_number) {
       if (withFatherRules) {
         fatherFields = {
           ...relationFields,
@@ -470,8 +470,8 @@ class ApplicantForm extends Vue {
   }
 
   next() {
-    const { studentData, step } = this;
-    const data = studentData[step];
+    const { applicantData, step } = this;
+    const data = applicantData[step];
 
     Object.keys(data).forEach(key => {
       if (this.lodash.isString(data[key])) {
@@ -497,23 +497,23 @@ class ApplicantForm extends Vue {
     const { step } = this;
 
     if (this.validate()) {
-      this.studentData[step] = [
-        ...this.studentData[step],
+      this.applicantData[step] = [
+        ...this.applicantData[step],
         Object.keys(getRelationData(this.relationsLabel[step])).reduce(
           (memo, item) => ({ ...memo, [item]: "" }),
           {},
         ),
       ];
-      this.tabsIndex[step] = `${this.studentData[step].length - 1}`;
+      this.tabsIndex[step] = `${this.applicantData[step].length - 1}`;
     }
   }
 
   removeTab(index) {
     const { step } = this;
 
-    const newArr = [...this.studentData[step]];
+    const newArr = [...this.applicantData[step]];
     newArr.splice(+index, 1);
-    this.studentData[step] = newArr;
+    this.applicantData[step] = newArr;
     this.tabsIndex = {
       ...this.tabsIndex,
       [step]: +this.tabsIndex[step] ? `${+this.tabsIndex[step] - 1}` : "0",
@@ -528,26 +528,26 @@ class ApplicantForm extends Vue {
     if (this.validate()) {
       const family = [];
 
-      if (Object.values(this.studentData.father).filter(Boolean).length) {
+      if (Object.values(this.applicantData.father).filter(Boolean).length) {
         family.push({
-          ...this.convertFamily(this.studentData.father),
+          ...this.convertFamily(this.applicantData.father),
           type: "FA",
         });
       }
 
-      if (Object.values(this.studentData.mother).filter(Boolean).length) {
+      if (Object.values(this.applicantData.mother).filter(Boolean).length) {
         family.push({
-          ...this.convertFamily(this.studentData.mother),
+          ...this.convertFamily(this.applicantData.mother),
           type: "MO",
         });
       }
 
-      this.studentData.brothers.forEach(brother => family.push({
+      this.applicantData.brothers.forEach(brother => family.push({
         ...this.convertFamily(brother),
         type: "BR",
       }));
 
-      this.studentData.sisters.forEach(sister => family.push({
+      this.applicantData.sisters.forEach(sister => family.push({
         ...this.convertFamily(sister),
         type: "SI",
       }));
@@ -555,13 +555,13 @@ class ApplicantForm extends Vue {
       const reader = new FileReader();
 
       const data = {
-        ...this.studentData.about,
-        ...this.studentData.milspecialty,
-        birth_info: this.studentData.birthInfo,
-        contact_info: this.studentData.contactInfo,
-        passport: this.studentData.passport,
-        recruitment_office: this.studentData.recruitmentOffice,
-        university_info: this.studentData.universityInfo,
+        ...this.applicantData.about,
+        ...this.applicantData.milspecialty,
+        birth_info: this.applicantData.birthInfo,
+        contact_info: this.applicantData.contactInfo,
+        passport: this.applicantData.passport,
+        recruitment_office: this.applicantData.recruitmentOffice,
+        university_info: this.applicantData.universityInfo,
         family,
         generate_documents: true,
       };
@@ -570,7 +570,7 @@ class ApplicantForm extends Vue {
         data.image = reader.result;
 
         try {
-          await postStudent(data);
+          await postApplicant(data);
           this.formSubmitted = true;
         } catch (e) {
           if (e.response.status < 500) {
@@ -625,7 +625,7 @@ class ApplicantForm extends Vue {
 
       try {
         this.isSubmitting = true;
-        reader.readAsDataURL(this.studentData.photo.photo[0].raw);
+        reader.readAsDataURL(this.applicantData.photo.photo[0].raw);
       } catch (e) {
         this.isSubmitting = false;
         console.error("Ошибка чтения файла:", e);
@@ -647,7 +647,7 @@ class ApplicantForm extends Vue {
     if (nextValue === STEPS.milspecialty) {
       try {
         const { data } = await getMilSpecialties(
-          this.studentData.universityInfo.campus,
+          this.applicantData.universityInfo.campus,
         );
         this.fillMilspecialtyOptions(data);
       } catch (e) {

@@ -1,12 +1,11 @@
-from rest_framework.serializers import ModelSerializer
-
-from common.serializers.populate import BaseMutateSerializer
+from rest_framework import serializers
 
 from lms.models.uniforms import Uniform
+
 from lms.serializers.common import MilfacultySerializer
 
 
-class UniformSerializer(ModelSerializer):
+class UniformSerializer(serializers.ModelSerializer):
     milfaculty = MilfacultySerializer(read_only=True)
 
     class Meta:
@@ -14,7 +13,7 @@ class UniformSerializer(ModelSerializer):
         fields = "__all__"
 
 
-class UniformMutateSerializer(BaseMutateSerializer):
+class UniformMutateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Uniform

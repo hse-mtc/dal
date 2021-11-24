@@ -9,7 +9,7 @@
     @keypress.enter.native.prevent="validate"
   >
     <el-form-item
-      v-for="({ component, title, props = {} }, key) in fields"
+      v-for="({ component, title, props = {}, display = (value) => value }, key) in fields"
       :key="key"
       :prop="key"
     >
@@ -34,7 +34,7 @@
           :is="component"
           v-bind="getNotInputProps(props)"
         >
-          {{ formData[key] }}
+          {{ display(formData[key]) }}
         </component>
       </InputsBaseInput>
     </el-form-item>

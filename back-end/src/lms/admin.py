@@ -2,23 +2,16 @@ from django.contrib import admin
 
 from lms.models.encouragements import Encouragement
 from lms.models.punishments import Punishment
-from lms.models.applicants import ApplicationProcess
+from lms.models.teachers import Teacher
+from lms.models.marks import Mark
+from lms.models.uniforms import Uniform
 from lms.models.absences import (
     Absence,
     AbsenceTime,
 )
-from lms.models.universities import (
-    Program,
-    UniversityInfo,
-)
 from lms.models.common import (
     Milgroup,
     Milfaculty,
-    Milspecialty,
-)
-from lms.models.teachers import (
-    Rank,
-    Teacher,
 )
 from lms.models.achievements import (
     AchievementType,
@@ -27,7 +20,7 @@ from lms.models.achievements import (
 from lms.models.students import (
     Student,
     Note,
-    RecruitmentOffice,
+    Skill,
 )
 from lms.models.lessons import (
     Room,
@@ -36,24 +29,18 @@ from lms.models.lessons import (
 
 # Common
 admin.site.register(Milfaculty)
-admin.site.register(Milspecialty)
 admin.site.register(Milgroup)
 
 # Students
-admin.site.register(Student)
-admin.site.register(RecruitmentOffice)
 admin.site.register(Note)
-
-# Applicants
-admin.site.register(ApplicationProcess)
-
-# Universities
-admin.site.register(Program)
-admin.site.register(UniversityInfo)
+admin.site.register(Skill)
+admin.site.register(Student)
 
 # Teachers
-admin.site.register(Rank)
 admin.site.register(Teacher)
+
+# Marks
+admin.site.register(Mark)
 
 # Lessons
 admin.site.register(Room)
@@ -72,3 +59,6 @@ admin.site.register(Punishment)
 # Achievements
 admin.site.register(AchievementType)
 admin.site.register(Achievement)
+
+# Uniforms
+admin.site.register(Uniform)

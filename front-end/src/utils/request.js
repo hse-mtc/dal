@@ -58,7 +58,8 @@ service.interceptors.response.use(
       UserModule.RESET_TOKENS();
 
       const { name, fullPath } = router.currentRoute;
-      if (name !== "Login") {
+      const allowedPathsWithoutAuth = ["Login", "Register"];
+      if (!allowedPathsWithoutAuth.includes(name)) {
         window.location.href = `/login?redirect=${fullPath}`;
 
         Message({

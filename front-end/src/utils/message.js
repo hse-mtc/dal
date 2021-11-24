@@ -1,5 +1,7 @@
 import { Message } from "element-ui";
 
+/// ////////////////////////////////////////////////////////////////////////////
+
 function details(status) {
   switch (status) {
     case 400:
@@ -18,6 +20,8 @@ function details(status) {
       return "Причина неизвестна.";
   }
 }
+
+/// ////////////////////////////////////////////////////////////////////////////
 
 export function getError(entity, status) {
   Message({
@@ -53,6 +57,15 @@ export function orderError(entity, status) {
     type: "error",
   });
 }
+
+export function downloadError(entity, status) {
+  Message({
+    message: `Ошибка при удалении ${entity}. ${details(status)}`,
+    type: "error",
+  });
+}
+
+/// ////////////////////////////////////////////////////////////////////////////
 
 export function postSuccess(entity) {
   Message({

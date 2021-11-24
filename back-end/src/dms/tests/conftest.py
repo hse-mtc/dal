@@ -10,42 +10,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from PIL import Image
 
-from auth.models import User
-
 from dms.models.common import Author, Publisher
 from dms.models.documents import File
 
 from common.models.subjects import Subject
-
-SUPERUSER_EMAIL = "superuserfortests@mail.com"
-SUPERUSER_PASSWORD = "superuserpasswordfortests"
-
-
-@pytest.fixture
-def superuser(db):
-    user = User.objects.filter(email=SUPERUSER_EMAIL)
-    if user.exists():
-        return user.first()
-
-    return User.objects.create_superuser(
-        email=SUPERUSER_EMAIL,
-        password=SUPERUSER_PASSWORD,
-    )
-
-
-@pytest.fixture
-def su_client(superuser):
-    from django.test.client import Client
-    response = Client().post(
-        "/api/auth/tokens/obtain/",
-        {
-            "email": SUPERUSER_EMAIL,
-            "password": SUPERUSER_PASSWORD
-        },
-        content_type="application/json",
-    )
-    access_token = response.data["access"]
-    return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
 
 
 @pytest.fixture
@@ -134,8 +102,11 @@ def paper_data(file):
 @pytest.fixture()
 def image(tmp_path):
 
-    def call_me(name: str = "image.png") -> SimpleUploadedFile:
-        image = Image.new("RGB", size=(1, 1))
+    def call_me(name: str = "image.png", size=1, color=(0, 0, 0)) -> SimpleUploadedFile:
+        image = Image.new("RGB", size=(size, size))
+        for i in range(size):
+            for j in range(size):
+                image.putpixel((i, j), color)
         sub_dir = tmp_path / "sub"
         sub_dir.mkdir(parents=True, exist_ok=True)
         path = sub_dir / name
