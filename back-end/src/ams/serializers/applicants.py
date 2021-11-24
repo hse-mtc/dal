@@ -58,7 +58,7 @@ class ApplicantMutateSerializer(
     contact_info = ContactInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
     application_process = ApplicationProcessSerializer(required=False)
-    generate_documents = serializers.BooleanField()
+    generate_documents = serializers.BooleanField(required=False)
 
     class Meta:
         model = Applicant
