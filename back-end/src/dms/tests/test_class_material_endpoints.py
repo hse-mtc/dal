@@ -1,7 +1,6 @@
 import json
 
 import pytest
-from django.core.files.base import ContentFile
 from django.test.client import MULTIPART_CONTENT, BOUNDARY, encode_multipart
 from dms.models.class_materials import ClassMaterial
 from dms.models.documents import File
@@ -30,7 +29,7 @@ def assert_class_materials_equal(data, data_original):
 
 
 def assert_class_material_equal_to_id(su_client, original_data, material_id):
-    get_response = su_client.get(f'/api/dms/class-materials/{material_id}/')
+    get_response = su_client.get(f"/api/dms/class-materials/{material_id}/")
     assert get_response.status_code == 200
 
     response_data = get_response.data
@@ -65,13 +64,13 @@ def test_class_materials_delete(su_client, create_class_materials):
     material = create_class_materials()
 
     assert len(ClassMaterial.objects.all()) == 1
-    responce = su_client.delete(f'/api/dms/class-materials/{material.id}/')
+    responce = su_client.delete(f"/api/dms/class-materials/{material.id}/")
     assert responce.status_code == 204
     assert len(ClassMaterial.objects.all()) == 0
 
 
 @pytest.mark.django_db
-def test_class_materials_post(su_client, create_topic, get_class_material_data, get_file_model_data):
+def test_class_materials_post(su_client, create_topic, get_class_material_data):
     topic = create_topic
     data = get_class_material_data(topic_id=topic.id)
 
@@ -84,7 +83,7 @@ def test_class_materials_post(su_client, create_topic, get_class_material_data, 
         for field_name in patch_fields
     }, "content": data["file"]["content"]}
 
-    response = su_client.post(f'/api/dms/class-materials/', data=multipart_cl_material_data(patch_data))
+    response = su_client.post("/api/dms/class-materials/", data=multipart_cl_material_data(patch_data))
     data["id"] = response.data["id"]
     assert response.status_code == 201
 
@@ -119,7 +118,7 @@ def test_class_materials_put(su_client, create_class_materials, get_class_materi
         data=multipart_cl_material_data(put_data)
     )
 
-    response = su_client.put(f'/api/dms/class-materials/{material.id}/', data=content,
+    response = su_client.put(f"/api/dms/class-materials/{material.id}/", data=content,
                              content_type=MULTIPART_CONTENT)
     assert response.status_code == 200
 
@@ -127,7 +126,7 @@ def test_class_materials_put(su_client, create_class_materials, get_class_materi
 
 
 @pytest.mark.django_db
-def test_class_materials_patch(su_client, create_class_materials, get_class_material_data, create_file_model,
+def test_class_materials_patch(su_client, create_class_materials, get_class_material_data,
                                get_file_model_data):
     material = create_class_materials()
 
@@ -155,7 +154,7 @@ def test_class_materials_patch(su_client, create_class_materials, get_class_mate
         data=multipart_cl_material_data(patch_data)
     )
 
-    response = su_client.patch(f'/api/dms/class-materials/{material.id}/', data=content,
+    response = su_client.patch(f"/api/dms/class-materials/{material.id}/", data=content,
                                content_type=MULTIPART_CONTENT)
     assert response.status_code == 200
 
