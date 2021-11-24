@@ -7,8 +7,8 @@ from dms.models.documents import File
 
 
 def assert_files_equal(file_data, file_data_original):
-    file = File.objects.get(id=file_data["content"].rsplit(
-        "/", maxsplit=1)[-1].rsplit("_", maxsplit=1)[0])
+    file = File.objects.get(id=file_data["content"].rsplit("/", maxsplit=1)
+                            [-1].rsplit("_", maxsplit=1)[0])
 
     assert file.name == file_data_original["name"]
     assert file.content.open("r").read() == \
@@ -19,13 +19,9 @@ def assert_class_materials_equal(data, data_original):
     compared_fields = data.keys() - ["file"]
 
     assert_files_equal(data["file"], data_original["file"])
-    assert {
-               field_name: data[field_name]
-               for field_name in compared_fields
-           } == {
-               field_name: data_original[field_name]
-               for field_name in compared_fields
-           }
+    assert {field_name: data[field_name] for field_name in compared_fields} == {
+        field_name: data_original[field_name] for field_name in compared_fields
+    }
 
 
 def assert_class_material_equal_to_id(su_client, original_data, material_id):
@@ -44,12 +40,11 @@ def multipart_cl_material_data(data):
 
 
 @pytest.mark.django_db
-def test_get_class_materials(su_client,
-                             create_class_materials,
+def test_get_class_materials(su_client, create_class_materials,
                              get_class_material_data):
     count = 3
     data = []
-    for i in range(count):
+    for _ in range(count):
         c_m = create_class_materials()
         cm_data = get_class_material_data(c_m.topic.id)
         cm_data["id"] = c_m.id
@@ -75,19 +70,16 @@ def test_class_materials_delete(su_client, create_class_materials):
 
 
 @pytest.mark.django_db
-def test_class_materials_post(su_client, create_topic,
-                              get_class_material_data, get_file_model_data):
+def test_class_materials_post(su_client, create_topic, get_class_material_data):
     topic = create_topic
     data = get_class_material_data(topic_id=topic.id)
 
-    patch_fields = [
-        "title", "annotation", "upload_date", "type", "topic"
-    ]
+    patch_fields = ["title", "annotation", "upload_date", "type", "topic"]
 
-    patch_data = {"data": {
-        field_name: data[field_name]
-        for field_name in patch_fields
-    }, "content": data["file"]["content"]}
+    patch_data = {
+        "data": {field_name: data[field_name] for field_name in patch_fields},
+        "content": data["file"]["content"]
+    }
 
     response = su_client.post("/api/dms/class-materials/",
                               data=multipart_cl_material_data(patch_data))
@@ -111,9 +103,7 @@ def test_class_materials_put(su_client, create_class_materials,
     data["annotation"] = "New annotation"
     data["type"] = ClassMaterial.Type.SEMINARS.value
 
-    put_fields = [
-        "title", "annotation", "upload_date", "type", "topic"
-    ]
+    put_fields = ["title", "annotation", "upload_date", "type", "topic"]
 
     data["file"] = get_file_model_data(raw_file_body="Matter of Trust",
                                        file_name="Billy.txt")
@@ -124,23 +114,22 @@ def test_class_materials_put(su_client, create_class_materials,
         "content": file
     }
 
-    content = encode_multipart(
-        boundary=BOUNDARY,
-        data=multipart_cl_material_data(put_data)
-    )
+    content = encode_multipart(boundary=BOUNDARY,
+                               data=multipart_cl_material_data(put_data))
 
     response = su_client.put(f"/api/dms/class-materials/{material.id}/",
-                             data=content, content_type=MULTIPART_CONTENT)
+                             data=content,
+                             content_type=MULTIPART_CONTENT)
     assert response.status_code == 200
 
-    assert_class_material_equal_to_id(su_client=su_client, original_data=data,
+    assert_class_material_equal_to_id(su_client=su_client,
+                                      original_data=data,
                                       material_id=material.id)
 
 
 @pytest.mark.django_db
 def test_class_materials_patch(su_client, create_class_materials,
-                               get_class_material_data,
-                               get_file_model_data):
+                               get_class_material_data, get_file_model_data):
     material = create_class_materials()
 
     data = get_class_material_data(topic_id=material.topic.id)
