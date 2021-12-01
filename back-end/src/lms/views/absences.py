@@ -67,7 +67,7 @@ class AbsencePermission(BasePermission):
 
 class AbsenceAttachmentPermission(BasePermission):
     permission_class = "absence-attachments"
-    view_name_rus = "Приложения"
+    view_name_rus = "Приложения к пропускам"
     methods = ["get", "delete"]
     scopes = [
         Permission.Scope.ALL,
