@@ -420,6 +420,15 @@ class ApplicantForm extends Vue {
     );
   }
 
+  fillProgramOptions(data) {
+      this.fields.universityInfo.program.props.options = data.map(
+        item => ({
+          label: item.code,
+          value: item.id,
+        }),
+      );
+  }
+
   convertFamily(data) {
     return {
       surname: data.surname,
@@ -639,12 +648,7 @@ class ApplicantForm extends Vue {
       const { data } = await getProgramsByCampus(
         this.applicantData.universityInfo.campus,
       );
-      this.fields.universityInfo.program.props.options = data.map(
-        item => ({
-          label: item.code,
-          value: item.id,
-        }),
-      );
+      this.fillProgramOptions(data);
       this.applicantData.universityInfo.program = this.fields.universityInfo.program.props.options[0].value;
     } catch (e) {
       this.$message({
@@ -661,9 +665,11 @@ class ApplicantForm extends Vue {
       left: 0,
       top: 0,
     });
-    console.log(this.applicantData.photo);
-    if (nextValue === STEPS.universityInfo) {
-      await this.onCampusChange();
+    if (nextValue === STEPS.universityInfo && this.applicantData.universityInfo.campus) {
+      const { data } = await getProgramsByCampus(
+          this.applicantData.universityInfo.campus,
+      );
+      this.fillProgramOptions(data);
     }
     if (nextValue === STEPS.milspecialty) {
       try {
