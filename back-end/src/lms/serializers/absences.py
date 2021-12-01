@@ -5,7 +5,7 @@ from lms.models.students import Student
 from lms.models.absences import (
     Absence,
     AbsenceTime,
-    AbsenceAttachment
+    AbsenceAttachment,
 )
 
 from lms.serializers.students import StudentShortSerializer

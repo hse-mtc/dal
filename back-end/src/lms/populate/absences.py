@@ -9,7 +9,7 @@ from common.utils.populate import get_or_create
 from lms.models.students import Student
 from lms.models.absences import (
     Absence,
-    AbsenceTime
+    AbsenceTime,
 )
 
 

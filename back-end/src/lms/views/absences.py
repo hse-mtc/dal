@@ -33,7 +33,7 @@ from lms.models.teachers import Teacher
 from lms.models.absences import (
     Absence,
     AbsenceTime,
-    AbsenceAttachment
+    AbsenceAttachment,
 )
 
 from lms.serializers.common import MilgroupSerializer
