@@ -97,9 +97,7 @@
           </el-row>
           <el-row>
             <PrimeTable
-              v-loading="
-                loading || absenceExcusesAreLoading || absenceStatusesAreLoading
-              "
+              v-loading="loading || absenceExcusesAreLoading || absenceStatusesAreLoading"
               :value="absences"
               :sort-field="dateField"
               :sort-order="-1"
