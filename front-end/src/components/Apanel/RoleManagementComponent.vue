@@ -187,7 +187,7 @@ export default {
           this.permissionValue = res.data.permissions;
         })
         .catch(err => {
-          downloadError("прав доступа для роли", err.response.status);
+          downloadError("прав доступа для роли", err.response?.status);
           console.log("[RoleManagementComponent Error]: ", err);
           this.permissionLoading = false;
         });
