@@ -85,7 +85,10 @@ class ApplicationProcess(models.Model):
         verbose_name_plural = "Application Processes"
 
     def __str__(self) -> str:
-        return f"[{self.id}] {self.applicant.fullname} / {self.applicant.id}"
+        try:
+            return f"[{self.id}] {self.applicant.fullname} / {self.applicant.id}"
+        except Applicant.DoesNotExist:
+            return f"[{self.id}]"
 
 
 class ApplicantManager(models.Manager):

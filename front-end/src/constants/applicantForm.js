@@ -68,7 +68,7 @@ export const BIRTH_INFO = {
       annotation: "не более 64х символов",
     },
   },
-  city: {
+  place: {
     component: "text",
     title: "Город",
     props: {
@@ -221,7 +221,7 @@ export const getRelationData = rel => ({
       annotation: "не более 64х символов",
     },
   },
-  city: {
+  place: {
     component: "text",
     title: `Город рождения ${rel}`,
     props: {
@@ -294,7 +294,7 @@ export const devInitData = {
   birthInfo: {
     date: "2021-04-06",
     country: "Страна",
-    city: "Город",
+    place: "Город",
   },
   passport: {
     series: "1234",
@@ -323,7 +323,7 @@ export const devInitData = {
     permanent_address: "Адрес постоянной регистрации матери",
     date: "2021-05-25",
     country: "Страна рождения матери",
-    city: "Город рождения матери",
+    place: "Город рождения матери",
     personal_email: "test@mail.ru",
     personal_phone_number: "89098080022",
   },
@@ -335,7 +335,7 @@ export const devInitData = {
     permanent_address: "Адрес постоянной регистрации отца",
     date: "2021-04-28",
     country: "Страна рождения отца",
-    city: "Город рождения отца",
+    place: "Город рождения отца",
     personal_email: "test@dkcmsdc.sdcjnis",
     personal_phone_number: "+72345678765",
   },

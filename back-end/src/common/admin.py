@@ -10,6 +10,8 @@ from common.models.personal import (
     Relative,
 )
 
+from common.models.universities import UniversityInfo
+
 # Subjects
 admin.site.register(Subject)
 
@@ -19,3 +21,6 @@ admin.site.register(ContactInfo)
 admin.site.register(Passport)
 admin.site.register(Photo)
 admin.site.register(Relative)
+
+# University
+admin.site.register(UniversityInfo)
