@@ -536,7 +536,7 @@ export default {
           this.dialogVisible = false;
           this.onFilter();
         })
-        .catch(err => patchError("приложения", err.response.status));
+        .catch(err => patchError("приложения", err.response?.status));
     },
     onAttachmentDelete(id) {
       this.$confirm(
