@@ -539,8 +539,8 @@ export default {
         patchError("приложения", err.response?.status);
       }
     },
-    onAttachmentDelete(id) {
-      this.$confirm(
+    async onAttachmentDelete(id) {
+      await this.$confirm(
         "Вы уверены, что хотите удалить приложение?",
         "Подтверждение",
         {
@@ -548,15 +548,14 @@ export default {
           cancelButtonText: "Отмена",
           type: "warning",
         },
-      ).then(async() => {
-        try {
-          await deleteAbsenceAttachment(id);
-          deleteSuccess("приложения");
-          this.onFilter();
-        } catch (err) {
-          deleteError("приложения", err.response.status);
-        }
-      });
+      );
+      try {
+        await deleteAbsenceAttachment(id);
+        deleteSuccess("приложения");
+        this.onFilter();
+      } catch (err) {
+        deleteError("приложения", err.response.status);
+      }
     },
     handleClose() {
       this.$confirm(
