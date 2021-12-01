@@ -337,7 +337,6 @@ export default {
             milfaculty: "",
           },
         },
-        attachment: {},
         reason: "",
         comment: "",
       },
@@ -513,6 +512,7 @@ export default {
     },
     onEdit(row, fn) {
       this.editAbsence = { ...row };
+      this.editAbsence.attachment = undefined;
       this.editAbsence.student = undefined;
       this.editAbsenceFullname = fn;
       this.dialogVisible = true;
@@ -525,18 +525,19 @@ export default {
       this.uploadAttachmentAbsenceId = id;
       this.$refs.attachmentUpload.click();
     },
-    onAttachmentPicked() {
+    async onAttachmentPicked() {
       const formData = new FormData();
       if (this.$refs.attachmentUpload.files[0]) {
         formData.set("image", this.$refs.attachmentUpload.files[0]);
       }
-      patchAbsence(this.uploadAttachmentAbsenceId, formData)
-        .then(() => {
-          patchSuccess("приложения");
-          this.dialogVisible = false;
-          this.onFilter();
-        })
-        .catch(err => patchError("приложения", err.response?.status));
+      try {
+        await patchAbsence(this.uploadAttachmentAbsenceId, formData);
+        patchSuccess("приложения");
+        this.dialogVisible = false;
+        this.onFilter();
+      } catch (err) {
+        patchError("приложения", err.response?.status);
+      }
     },
     onAttachmentDelete(id) {
       this.$confirm(
@@ -547,13 +548,14 @@ export default {
           cancelButtonText: "Отмена",
           type: "warning",
         },
-      ).then(() => {
-        deleteAbsenceAttachment(id)
-          .then(() => {
-            deleteSuccess("приложения");
-            this.onFilter();
-          })
-          .catch(err => deleteError("приложения", err.response.status));
+      ).then(async() => {
+        try {
+          await deleteAbsenceAttachment(id);
+          deleteSuccess("приложения");
+          this.onFilter();
+        } catch (err) {
+          deleteError("приложения", err.response.status);
+        }
       });
     },
     handleClose() {
@@ -572,9 +574,6 @@ export default {
         .catch(() => {});
     },
     handleAccept() {
-      if (this.editAbsence.attachment !== undefined) {
-        delete this.editAbsence.attachment;
-      }
       patchAbsence(this.editAbsence.id, this.editAbsence)
         .then(() => {
           patchSuccess("пропуска");
