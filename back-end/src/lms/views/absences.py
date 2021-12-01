@@ -2,10 +2,11 @@ from datetime import datetime
 
 from rest_framework import status
 from rest_framework import generics
+from rest_framework import mixins
 
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny
 
@@ -32,10 +33,12 @@ from lms.models.teachers import Teacher
 from lms.models.absences import (
     Absence,
     AbsenceTime,
+    AbsenceAttachment
 )
 
 from lms.serializers.common import MilgroupSerializer
 from lms.serializers.absences import (
+    AbsenceAttachmentSerializer,
     AbsenceJournalQuerySerializer,
     AbsenceJournalSerializer,
     AbsenceMutateSerializer,
@@ -60,6 +63,30 @@ class AbsencePermission(BasePermission):
         Permission.Scope.MILGROUP,
         Permission.Scope.SELF,
     ]
+
+
+class AbsenceAttachmentPermission(BasePermission):
+    permission_class = "absence-attachment"
+    view_name_rus = "Приложения"
+    methods = ["get", "delete"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+        Permission.Scope.SELF,
+    ]
+
+
+@extend_schema(tags=["absence-attachment"])
+class AbsenceAttachmentViewSet(mixins.DestroyModelMixin,
+                               mixins.ListModelMixin,
+                               GenericViewSet):
+    queryset = AbsenceAttachment.objects.all()
+    serializer_class = AbsenceAttachmentSerializer
+    permission_classes = [AbsenceAttachmentPermission]
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        return super().destroy(request, pk, *args, **kwargs)
 
 
 @extend_schema(tags=["absences"])

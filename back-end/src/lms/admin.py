@@ -8,6 +8,7 @@ from lms.models.uniforms import Uniform
 from lms.models.absences import (
     Absence,
     AbsenceTime,
+    AbsenceAttachment
 )
 from lms.models.common import (
     Milgroup,
@@ -49,6 +50,7 @@ admin.site.register(Lesson)
 # Absences
 admin.site.register(Absence)
 admin.site.register(AbsenceTime)
+admin.site.register(AbsenceAttachment)
 
 # Encouragements
 admin.site.register(Encouragement)

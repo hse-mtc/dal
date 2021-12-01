@@ -132,6 +132,7 @@ def get_milfaculty_head_permissions():
         "absences.post.milfaculty",
         "absences.patch.milfaculty",
         "absences.delete.milfaculty",
+        "absence-attachment.delete.milfaculty",
         "achievements.get.milfaculty",
         "achievements.post.milfaculty",
         "achievements.patch.milfaculty",

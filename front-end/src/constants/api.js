@@ -27,6 +27,7 @@ export const LMS_URLS = {
   absence: {
     absence: "lms/absences/",
     journal: "lms/absence-journal/",
+    attachment: "lms/absence-attachment/",
   },
   encouragement: {
     encouragement: "lms/encouragements/",

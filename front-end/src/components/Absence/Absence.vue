@@ -1,5 +1,12 @@
 <template>
   <div>
+    <input
+      ref="attachmentUpload"
+      type="file"
+      hidden
+      accept="image/*"
+      @change="onAttachmentPicked"
+    >
     <el-col :offset="1" :span="22" class="Absence">
       <el-row class="pageTitle">
         <h1>{{ $route.meta.title }}</h1>
@@ -90,7 +97,9 @@
           </el-row>
           <el-row>
             <PrimeTable
-              v-loading="loading || absenceExcusesAreLoading || absenceStatusesAreLoading"
+              v-loading="
+                loading || absenceExcusesAreLoading || absenceStatusesAreLoading
+              "
               :value="absences"
               :sort-field="dateField"
               :sort-order="-1"
@@ -162,9 +171,63 @@
                 header="Комментарий"
               />
               <PrimeColumn
-                column-key="buttons"
+                column-key="attachment"
                 header-style="width: 120px"
                 body-style="width: 120px; text-align: center;"
+                header="Приложение"
+              >
+                <template #body="{ data }">
+                  <AZGuard
+                    v-if="data.attachment"
+                    v-slot="{ disabled }"
+                    :permissions="getPermissions('get', data)"
+                    disable
+                  >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-download"
+                      type="primary"
+                      circle
+                      :disabled="disabled"
+                      @click="onAttachmentDownload(data.attachment.image)"
+                    />
+                  </AZGuard>
+                  <AZGuard
+                    v-if="data.attachment"
+                    v-slot="{ disabled }"
+                    :permissions="getPermissions('delete', data)"
+                    disable
+                  >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-document-delete"
+                      type="danger"
+                      circle
+                      :disabled="disabled"
+                      @click="onAttachmentDelete(data.attachment.id)"
+                    />
+                  </AZGuard>
+                  <AZGuard
+                    v-if="!data.attachment"
+                    v-slot="{ disabled }"
+                    :permissions="getPermissions('patch', data)"
+                    disable
+                  >
+                    <el-button
+                      size="mini"
+                      icon="el-icon-camera"
+                      type="primary"
+                      circle
+                      :disabled="disabled"
+                      @click="onAttachmentUpload(data.id)"
+                    />
+                  </AZGuard>
+                </template>
+              </PrimeColumn>
+              <PrimeColumn
+                column-key="buttons"
+                header-style="width: 160px"
+                body-style="width: 160px; text-align: center;"
               >
                 <template #body="{ data }">
                   <AZGuard
@@ -230,7 +293,12 @@
 </template>
 
 <script>
-import { getAbsence, patchAbsence, deleteAbsence } from "@/api/absence";
+import {
+  getAbsence,
+  patchAbsence,
+  deleteAbsence,
+  deleteAbsenceAttachment,
+} from "@/api/absence";
 import moment from "moment";
 import {
   getError,
@@ -271,9 +339,11 @@ export default {
             milfaculty: "",
           },
         },
+        attachment: {},
         reason: "",
         comment: "",
       },
+      uploadAttachmentAbsenceId: 0,
       editAbsenceFullname: "",
       filter: {
         excuse: null,
@@ -449,6 +519,45 @@ export default {
       this.editAbsenceFullname = fn;
       this.dialogVisible = true;
     },
+    onAttachmentDownload(file) {
+      window.open(file, "_blank");
+    },
+    onAttachmentUpload(id) {
+      this.$refs.attachmentUpload.value = null;
+      this.uploadAttachmentAbsenceId = id;
+      this.$refs.attachmentUpload.click();
+    },
+    onAttachmentPicked() {
+      const formData = new FormData();
+      if (this.$refs.attachmentUpload.files[0]) {
+        formData.set("image", this.$refs.attachmentUpload.files[0]);
+      }
+      patchAbsence(this.uploadAttachmentAbsenceId, formData)
+        .then(() => {
+          patchSuccess("приложения");
+          this.dialogVisible = false;
+          this.onFilter();
+        })
+        .catch(err => patchError("приложения", err.response.status));
+    },
+    onAttachmentDelete(id) {
+      this.$confirm(
+        "Вы уверены, что хотите удалить приложение?",
+        "Подтверждение",
+        {
+          confirmButtonText: "Да",
+          cancelButtonText: "Отмена",
+          type: "warning",
+        },
+      ).then(() => {
+        deleteAbsenceAttachment(id)
+          .then(() => {
+            deleteSuccess("приложения");
+            this.onFilter();
+          })
+          .catch(err => deleteError("приложения", err.response.status));
+      });
+    },
     handleClose() {
       this.$confirm(
         "Вы уверены, что хотите закрыть окно редактирования?",
@@ -465,7 +574,10 @@ export default {
         .catch(() => {});
     },
     handleAccept() {
-      patchAbsence(this.editAbsence)
+      if (this.editAbsence.attachment !== undefined) {
+        delete this.editAbsence.attachment;
+      }
+      patchAbsence(this.editAbsence.id, this.editAbsence)
         .then(() => {
           patchSuccess("пропуска");
           this.dialogVisible = false;

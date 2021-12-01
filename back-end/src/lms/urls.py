@@ -10,6 +10,7 @@ from lms.views.absences import (
     AbsenceViewSet,
     AbsenceJournalView,
     AbsenceTimeView,
+    AbsenceAttachmentViewSet,
     AbsenceExcuseChoicesList,
     AbsenceStatusChoicesList,
 )
@@ -74,6 +75,7 @@ routers.register('students/skills', StudentSkillsView)
 routers.register('students', StudentViewSet)
 
 routers.register('absences', AbsenceViewSet)
+routers.register('absence-attachment', AbsenceAttachmentViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
 routers.register('achievements', AchievementViewSet)
 routers.register('encouragements', EncouragementViewSet)
