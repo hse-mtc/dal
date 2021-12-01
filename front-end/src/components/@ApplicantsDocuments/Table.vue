@@ -1,8 +1,9 @@
 <template>
   <PrimeTable
     :value="data"
-    class="p-datatable-gridlines p-datatable-striped"
+    class="p-datatable-gridlines"
     frozen-width="400px"
+    :row-hover="true"
     auto-layout
     scrollable
     edit-mode="cell"
@@ -10,11 +11,15 @@
     @cell-edit-init="savePrevValue"
   >
     <PrimeColumn
-      v-for="({ abbr, title, width }, field) in fields"
+      v-for="({ abbr, title, width, rotate = true }, field) in fields"
       :key="field"
       :column-key="field"
       :field="data => getCellText(data, field)"
-      :header-style="`width: ${width}px; height: 120px`"
+      :header-style="
+        rotate
+          ? `height: 200px; width: ${width}px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: right`
+          : `height: 200px; width: ${width}px`
+      "
       :body-style="`width: ${width}px; height: 110px`"
       :body-class="editableFields.includes(field) ? $style.editableField : ''"
       :frozen="['index', 'fullname'].includes(field)"
@@ -132,61 +137,76 @@ const fields = {
   index: {
     title: "№",
     width: 50,
+    rotate: false,
   },
   fullname: {
-    abbr: "ФИО",
+    abbr: "Фамилия, имя, отчество",
     title: "Фамилия, имя, отчество",
     width: 300,
+    rotate: false,
   },
   birthday: {
     title: "Дата рождения",
     width: 120,
+    rotate: false,
+  },
+  faculty: {
+    abbr: "Факультет",
+    title: "Факультет",
+    width: 250,
+    rotate: false,
   },
   program: {
-    abbr: "КС",
+    abbr: "Код специальности (направление подготовки)",
     title: "Код специальности (направление подготовки)",
-    width: 100,
+    width: 250,
+    rotate: false,
   },
   mean_grade: {
     title: "Средний балл",
     width: 100,
+    rotate: false,
   },
 };
 
 const additionalFields = {
   medical_examination: {
-    abbr: "РМО",
+    abbr: "Результаты медицинского освидетельствования",
     title: "Результаты медицинского освидетельствования",
     width: 200,
+    rotate: false,
   },
   prof_psy_selection: {
-    abbr: "РППО",
+    abbr: "Результаты профессионального психологического отбора",
     title: "Результаты профессионального психологического отбора",
     width: 100,
   },
   preferential_right: {
-    abbr: "ПП",
+    abbr: "Преимущественное право",
     title: "Преимущественное право",
     width: 100,
   },
   characteristic_handed_over: {
-    abbr: "Хар-ка",
+    abbr: "Характеристика",
     title: "Характеристика",
     width: 100,
   },
   criminal_record_handed_over: {
-    abbr: "СН",
+    abbr: "Справка о несудимости",
     title: "Справка о несудимости",
     width: 100,
   },
-  passport_handed_over: { title: "Паспорт", width: 100 },
+  passport_handed_over: {
+    title: "Паспорт",
+    width: 100,
+  },
   registration_certificate_handed_over: {
-    abbr: "ПС",
+    abbr: "Приписное свидетельство",
     title: "Приписное свидетельство",
     width: 100,
   },
   university_card_handed_over: {
-    abbr: "СБ",
+    abbr: "Студенческий билет",
     title: "Студенческий билет",
     width: 100,
   },
@@ -208,7 +228,7 @@ const additionalFields = {
   },
   physical_test_grade: {
     abbr: "ФИЗО",
-    title: "Итоговая оцена за физические испытания",
+    title: "Итоговая оценка за физические испытания",
     width: 100,
   },
 };

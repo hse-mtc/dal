@@ -7,18 +7,29 @@
 <script>
 import request from "@/utils/request";
 
+import { downloadError } from "@/utils/message";
+
 export default {
   name: "DownloadFile",
   props: {
-    url: { type: String, default: "" },
-    fileName: { type: String, default: "" },
+    url: {
+      type: String,
+      required: true,
+    },
+    fileName: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return { isDataLoading: false };
   },
   methods: {
     async downloadFile() {
-      if (!this.url || this.isDataLoading) return;
+      if (!this.url || this.isDataLoading) {
+        return;
+      }
+
       this.isDataLoading = true;
 
       try {
@@ -27,15 +38,14 @@ export default {
           method: "GET",
           responseType: "blob",
         });
-        const blob = new Blob([data]);
 
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
+        link.href = URL.createObjectURL(new Blob([data]));
         link.download = this.fileName;
         link.click();
         URL.revokeObjectURL(link.href);
       } catch (e) {
-        console.error("Не удалось загрузить файл:", e);
+        downloadError("файла", e.response?.status);
       }
 
       this.isDataLoading = false;

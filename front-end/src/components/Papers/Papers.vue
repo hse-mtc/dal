@@ -174,12 +174,6 @@ class Papers extends Vue {
   }
 
   openPaperModal(action, paperToEdit = {}) {
-    console.log(
-      "Open Paper Modal: action = ",
-      action,
-      " to edit = ",
-      paperToEdit,
-    );
     this.paperAction = action;
     this.paperToEdit = paperToEdit;
     this.stopScrolling();

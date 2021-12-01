@@ -2,8 +2,8 @@
   <div class="root">
     <PageHeader
       v-if="!(isMyLibrary || isFavoriteBooks)"
-      title="Библиотека"
-      button="+ Добавить учебник"
+      title="Электронная библиотека"
+      button="+ Добавить книгу"
       :click="addNewBook"
       :permissions="['books.post.all']"
     />
@@ -267,11 +267,11 @@ export default {
     },
     getInitBookData() {
       return {
+        bookName: "",
+        annotation: "",
         authors: [],
         publishers: null,
         publishDate: null,
-        bookName: "",
-        annotation: "",
         pageCount: 0,
         subjects: [],
         book: [],
@@ -330,10 +330,12 @@ export default {
       if (changingId) {
         try {
           const bookData = (await getBook(changingId)).data;
-
           this.books = this.books.map(item => (item.id === changingId ? bookData : item));
         } catch (e) {
-          console.warn(`не удалось отобразить новые данные: ${e}`, e);
+          this.$message.error(
+            "Не удалось отобразить новые данные о книге.",
+          );
+          console.error(`Не удалось отобразить новые данные: ${e}`);
         }
       }
     },

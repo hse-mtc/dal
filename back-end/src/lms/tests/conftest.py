@@ -1,16 +1,30 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name,too-many-arguments,redefined-builtin
+
 from typing import List
 from datetime import datetime
+
 import pytest
 
-from auth.models import User
-from lms.models.lessons import Room, Lesson
-from lms.models.common import Milfaculty, Milgroup
-from lms.models.teachers import Teacher, Rank
+from django.contrib.auth import get_user_model
+
 from common.models.subjects import Subject
+
+from lms.models.teachers import Teacher
+from lms.models.lessons import (
+    Room,
+    Lesson,
+)
+from lms.models.common import (
+    Milfaculty,
+    Milgroup,
+)
+
 
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
+
+
+User = get_user_model()
 
 
 @pytest.fixture
@@ -55,11 +69,10 @@ def get_new_lesson_data() -> dict:
 
         milgroup = create_milgroup(milfaculty=milfaculty)
 
-        rank = create_rank()
-
-        teacher = create_teacher(rank=rank,
-                                 milgroups=None,
-                                 milfaculty=milfaculty)
+        teacher = create_teacher(
+            rank=Teacher.Rank.LIEUTENANT_COLONEL.value,
+            milfaculty=milfaculty,
+        )
 
         if ids_only:
             res = {
@@ -112,7 +125,7 @@ def create_milgroup(
     return milgroup
 
 
-def create_teacher(rank: Rank,
+def create_teacher(rank: str,
                    milfaculty: Milfaculty,
                    milgroups: List[Milgroup] or None = None) -> Teacher:
     value = {
@@ -128,11 +141,6 @@ def create_teacher(rank: Rank,
         teacher.milgroups.add(*milgroups)
 
     return teacher
-
-
-def create_rank(title: str = "Тестовый ранк 1") -> Rank:
-    rank, _ = Rank.objects.get_or_create(title=title)
-    return rank
 
 
 def create_subject(user: User,

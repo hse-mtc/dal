@@ -11,6 +11,19 @@ from django.contrib.auth import get_user_model
 # ------------------------------------------------------------------------------
 # Populate imports
 
+# Common
+
+from common.populate.subjects import create_subjects
+from common.populate.milspecialties import create_milspecialties
+from common.populate.universities import (
+    create_faculties,
+    create_programs,
+)
+
+from common.utils.date import get_date_range
+
+# Auth
+
 from auth.models import Group
 from auth.populate.users import create_users
 from auth.populate.permissions import (
@@ -19,7 +32,11 @@ from auth.populate.permissions import (
     get_milfaculty_head_permissions,
 )
 
-from common.populate.subjects import create_subjects
+# AMS
+
+from ams.populate.applicants import create_applicants
+
+# DMS
 
 from dms.populate.documents import create_files
 from dms.populate.common import (
@@ -40,45 +57,46 @@ from dms.populate.books import (
     create_favorite_books,
 )
 
-from lms.views.populate import (
-    create_faculties,
-    create_programs,
-    create_milfaculties,
-    create_milspecialties,
-    create_milgroups,
-    create_ranks,
-    create_passports,
-    create_recruitments_offices,
-    create_university_infos,
-    create_birth_infos,
-    create_students,
-    create_teachers,
+# LMS
+
+from lms.populate.encouragements import create_encouragements
+from lms.populate.marks import create_marks
+from lms.populate.punishments import create_punishments
+from lms.populate.teachers import create_teachers
+from lms.populate.uniforms import create_uniforms
+from lms.populate.absences import (
     create_absences,
-    create_punishments,
-    create_encouragements,
+    create_absence_restriction_time,
+)
+from lms.populate.achievements import (
     create_achievement_types,
     create_achievements,
-    create_subjects as create_lms_subjects,
+)
+from lms.populate.common import (
+    create_milfaculties,
+    create_milgroups,
+)
+from lms.populate.lessons import (
     create_rooms,
     create_lessons,
-    create_absence_restriction_time,
-    create_marks,
-    create_uniforms,
+)
+from lms.populate.students import (
+    create_students,
     create_skills,
-    create_contact_infos,
 )
 
-from lms.utils.functions import get_date_range
 
 # ------------------------------------------------------------------------------
 
 
 class Command(BaseCommand):
-    help = "Populate database with fake data (dev mode on;y)"
+    help = "Populate database with fake data (dev mode only)"
 
     def handle(self, *args, **options):
         # ----------------------------------------------------------------------
         # Auth
+
+        print("Populating `auth` models...", end="")
 
         User = get_user_model()
 
@@ -108,13 +126,36 @@ class Command(BaseCommand):
         milfaculty_heads.user_set.add(
             User.objects.get(email="dnrepalov@mail.com"))
 
+        print(" OK")
+
         # ----------------------------------------------------------------------
         # Common
 
+        print("Populating `common` models...", end="")
+
         subjects = create_subjects()
+        milspecialties = create_milspecialties()
+        faculties = create_faculties()
+        programs = create_programs(faculties)
+
+        print(" OK")
+
+        # ----------------------------------------------------------------------
+        # AMS
+
+        print("Populating `ams` models...", end="")
+
+        applicants = create_applicants(
+            programs=programs,
+            milspecialties=milspecialties,
+        )
+
+        print(" OK")
 
         # ----------------------------------------------------------------------
         # DMS
+
+        print("Populating `dms` models...", end="")
 
         files = create_files()
 
@@ -142,66 +183,80 @@ class Command(BaseCommand):
             publishers=publishers,
             subjects=subjects,
         )
-        create_favorite_books(books[:11],
-                              User.objects.get(email="dnrepalov@mail.com"))
+        create_favorite_books(
+            books[:11],
+            User.objects.get(email="dnrepalov@mail.com"),
+        )
+
+        print(" OK")
 
         # ----------------------------------------------------------------------
         # LMS
 
-        faculties = create_faculties()
-        programs = create_programs(faculties)
+        print("Populating `lms` models...", end="")
 
         milfaculties = create_milfaculties()
-        milspecialties = create_milspecialties()
         milgroups = create_milgroups(milfaculties)
-
-        ranks = create_ranks()
 
         # nearest day for 18XX milgroups
         nearest_day = datetime.strptime(
             get_date_range(datetime.now() - timedelta(6), datetime.now(), 4)[0],
-            "%Y-%m-%d")
+            "%Y-%m-%d",
+        )
 
-        passports = create_passports()
-        recruitment_offices = create_recruitments_offices()
-        university_infos = create_university_infos(programs)
         skills = create_skills()
-        contact_infos = create_contact_infos()
-        birth_infos = create_birth_infos()
         students = create_students(
-            milgroups=milgroups,
-            milspecialties=milspecialties,
-            passports=passports,
-            recruitment_offices=recruitment_offices,
-            university_infos=university_infos,
-            skills=skills,
-            contact_infos=contact_infos,
-            birth_infos=birth_infos,
             users=users,
+            milgroups=milgroups,
+            skills=skills,
+            programs=programs,
         )
 
         teachers = create_teachers(
             milgroups=milgroups,
             milfaculties=milfaculties,
-            ranks=ranks,
             users=users,
         )
 
-        create_absences(students, nearest_day)
+        create_absence_restriction_time()
+        create_absences(
+            students=students,
+            nearest_day=nearest_day,
+        )
 
-        create_punishments(students, teachers, nearest_day)
+        create_punishments(
+            students=students,
+            teachers=teachers,
+            nearest_day=nearest_day,
+        )
 
-        create_encouragements(students, teachers, nearest_day)
+        create_encouragements(
+            students=students,
+            teachers=teachers,
+            nearest_day=nearest_day,
+        )
 
         achievement_types = create_achievement_types()
-        create_achievements(achievement_types, students, nearest_day)
+        create_achievements(
+            achievement_types=achievement_types,
+            students=students,
+            nearest_day=nearest_day,
+        )
 
-        subjects = create_lms_subjects()
         rooms = create_rooms()
-        lessons = create_lessons(rooms, milgroups, subjects, nearest_day)
+        lessons = create_lessons(
+            subjects=subjects,
+            rooms=rooms,
+            milgroups=milgroups,
+            teachers=teachers,
+            nearest_day=nearest_day,
+        )
 
-        create_absence_restriction_time()
+        create_marks(
+            lessons=lessons,
+            students=students,
+        )
 
-        create_marks(lessons, students)
+        create_uniforms(milfaculties=milfaculties)
 
-        create_uniforms(milfaculties)
+        print(" OK")

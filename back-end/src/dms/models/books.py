@@ -2,6 +2,7 @@ import datetime
 import uuid
 
 from django.db import models
+from django.dispatch import receiver
 
 from dms.models.documents import Document
 from dms.models.common import (
@@ -39,7 +40,7 @@ class Book(Document):
     publication_year = models.PositiveSmallIntegerField(default=current_year)
     publishers = models.ManyToManyField(to=Publisher, blank=True)
     subjects = models.ManyToManyField(to=Subject, blank=True)
-    cover = models.OneToOneField(to=Cover, on_delete=models.CASCADE, null=True)
+    cover = models.OneToOneField(to=Cover, on_delete=models.SET_NULL, null=True)
     page_count = models.PositiveSmallIntegerField(null=True, default=None)
 
     class Meta:
@@ -57,3 +58,33 @@ class FavoriteBook(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.book}"
+
+
+@receiver(models.signals.post_delete, sender=Book)
+def auto_delete_cover_on_book_delete(sender, instance: Book, **kwargs):
+    # pylint: disable=unused-argument
+
+    if instance.cover:
+        instance.cover.delete()
+
+
+@receiver(models.signals.post_delete, sender=Cover)
+def auto_delete_image_on_cover_delete(sender, instance: Cover, **kwargs):
+    # pylint: disable=unused-argument
+
+    if instance and instance.image:
+        instance.image.delete(save=False)
+
+
+@receiver(models.signals.pre_save, sender=Cover)
+def auto_delete_image_on_cover_change(sender, instance: Cover, **kwargs):
+    # pylint: disable=unused-argument
+
+    if not instance.pk:
+        return
+    try:
+        old_instance: Cover = Cover.objects.get(pk=instance.pk)
+    except Cover.DoesNotExist:
+        return
+    if old_instance.image != instance.image and instance.image:
+        old_instance.image.delete(save=False)

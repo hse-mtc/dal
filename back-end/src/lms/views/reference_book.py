@@ -7,47 +7,52 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema, OpenApiParameter
 
-from lms.models.common import (
-    Milfaculty,
-    Milspecialty,
-    Milgroup,
-)
-from lms.models.teachers import Rank
-from lms.models.students import Student
-from lms.models.lessons import Room
-from lms.models.absences import AbsenceTime
-from lms.models.achievements import AchievementType
-from lms.models.universities import Program
-from lms.models.students import Skill
-
-from lms.serializers.common import (
-    MilfacultySerializer,
-    MilspecialtySerializer,
-    MilgroupSerializer,
-    MilgroupMutateSerializer,
-    MilgroupLeadersPhonesSerializer,
-)
-from lms.serializers.universities import ProgramSerializer
-from lms.serializers.teachers import RankSerializer
-from lms.serializers.lessons import RoomSerializer
-from lms.serializers.absences import AbsenceTimeSerializer
-from lms.serializers.achievements import AchievementTypeSerializer
-from lms.serializers.students import SkillSerializer
-
-from lms.filters.reference_books import (
-    MilspecialtyFilter,
-    MilgroupFilter,
-    ProgramFilter,
-)
-from lms.utils.mixins import QuerySetScopingMixin
-
 from common.constants import MUTATE_ACTIONS
+
+from common.models.milspecialties import Milspecialty
+from common.models.universities import Program
+
+from common.serializers.milspecialties import MilspecialtySerializer
+from common.serializers.universities import ProgramSerializer
+
+from common.filters.milspecialties import MilspecialtyFilter
+from common.filters.universities import ProgramFilter
 
 from auth.models import Permission
 from auth.permissions import (
     BasePermission,
     ReadOnly,
 )
+
+from lms.models.absences import AbsenceTime
+from lms.models.achievements import AchievementType
+from lms.models.lessons import Room
+from lms.models.teachers import Teacher
+from lms.models.common import (
+    Milfaculty,
+    Milgroup,
+)
+from lms.models.students import (
+    Student,
+    Skill,
+)
+
+from lms.serializers.absences import AbsenceTimeSerializer
+from lms.serializers.achievements import AchievementTypeSerializer
+from lms.serializers.lessons import RoomSerializer
+from lms.serializers.students import SkillSerializer
+from lms.serializers.common import (
+    MilfacultySerializer,
+    MilgroupSerializer,
+    MilgroupMutateSerializer,
+    MilgroupLeadersPhonesSerializer,
+)
+
+from lms.filters.reference_books import MilgroupFilter
+
+from lms.utils.mixins import QuerySetScopingMixin
+
+from lms.types.personnel import Personnel
 
 
 class ReferenceBookPermission(BasePermission):
@@ -72,7 +77,6 @@ class ReferenceBookView(ListAPIView):
         "milfaculties": (Milfaculty, MilfacultySerializer),
         "milgroups": (Milgroup, MilgroupSerializer),
         "program": (Program, ProgramSerializer),
-        "ranks": (Rank, RankSerializer),
         "rooms": (Room, RoomSerializer),
         "absence_time": (AbsenceTime, AbsenceTimeSerializer),
         "achievement_type": (AchievementType, AchievementTypeSerializer),
@@ -138,13 +142,13 @@ class MilgroupViewSet(QuerySetScopingMixin, ModelViewSet):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
-    def handle_scope_milfaculty(self, user_type, user):
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        elif user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return self.queryset.none()
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
         return self.queryset.filter(milfaculty=milfaculty)
 
 
@@ -156,14 +160,6 @@ class ProgramViewSet(ModelViewSet):
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
     filterset_class = ProgramFilter
-
-
-@extend_schema(tags=["reference-book"])
-class RankViewSet(ModelViewSet):
-    serializer_class = RankSerializer
-    queryset = Rank.objects.all()
-
-    permission_classes = [ReadOnly | ReferenceBookPermission]
 
 
 @extend_schema(tags=["reference-book"])

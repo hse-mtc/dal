@@ -64,10 +64,10 @@
                 @change="onFilter"
               >
                 <el-option
-                  v-for="(value, key) in EXCUSES"
-                  :key="key"
-                  :label="value"
-                  :value="key"
+                  v-for="excuse in absenceExcuses"
+                  :key="excuse.value"
+                  :label="excuse.label"
+                  :value="excuse.value"
                 />
               </el-select>
             </el-col>
@@ -80,17 +80,17 @@
                 @change="onFilter"
               >
                 <el-option
-                  v-for="(value, key) in ABSENCE_STATUSES"
-                  :key="key"
-                  :label="value"
-                  :value="key"
+                  v-for="status in absenceStatuses"
+                  :key="status.value"
+                  :label="status.label"
+                  :value="status.value"
                 />
               </el-select>
             </el-col>
           </el-row>
           <el-row>
             <PrimeTable
-              v-loading="loading"
+              v-loading="loading || absenceExcusesAreLoading || absenceStatusesAreLoading"
               :value="absences"
               :sort-field="dateField"
               :sort-order="-1"
@@ -129,7 +129,7 @@
               >
                 <template #body="{ data: { excuse } }">
                   <el-tag :type="tagByExcuse(excuse)" disable-transitions>
-                    {{ EXCUSES[excuse] }}
+                    {{ absenceExcuseLabelFromValue(excuse) }}
                   </el-tag>
                 </template>
               </PrimeColumn>
@@ -146,7 +146,7 @@
                     :class="iconByAbsenceStatus(status)"
                     :style="colorByAbsenceStatus(status)"
                   />
-                  {{ ABSENCE_STATUSES[status] }}
+                  {{ absenceStatusLabelFromValue(status) }}
                 </template>
               </PrimeColumn>
 
@@ -240,7 +240,7 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
-import { EXCUSES, ABSENCE_STATUSES } from "@/utils/enums";
+import { AbsenceExcusesMixin, AbsenceStatusesMixin } from "@/mixins/absences";
 import GenericForm from "@/common/Form/index.vue";
 import AbsenceJournal from "./AbsenceJournal/AbsenceJournal.vue";
 
@@ -250,10 +250,9 @@ export default {
     AbsenceJournal,
     GenericForm,
   },
+  mixins: [AbsenceExcusesMixin, AbsenceStatusesMixin],
   data() {
     return {
-      ABSENCE_STATUSES,
-      EXCUSES,
       dialogVisible: false,
       loading: false,
       editAbsence: {
@@ -319,15 +318,32 @@ export default {
         ],
       },
 
-      fields: {
+      rules: {
+        excuse: [{ required: true, message: "Обязательное поле" }],
+        reason: [{ required: true, message: "Обязательное поле" }],
+      },
+    };
+  },
+  computed: {
+    milgroups() {
+      return ReferenceModule.milgroups;
+    },
+    userMilfaculty() {
+      return UserModule.personMilfaculty;
+    },
+    userMilgroups() {
+      return UserModule.personMilgroups;
+    },
+    userId() {
+      return UserModule.personId;
+    },
+    fields() {
+      return {
         excuse: {
           component: "select",
           title: "Тип причины",
           props: {
-            options: Object.keys(EXCUSES).map(key => ({
-              value: key,
-              label: EXCUSES[key],
-            })),
+            options: Object.values(this.absenceExcuses),
           },
         },
         status: {
@@ -355,25 +371,7 @@ export default {
             isTextArea: true,
           },
         },
-      },
-      rules: {
-        excuse: [{ required: true, message: "Обязательное поле" }],
-        reason: [{ required: true, message: "Обязательное поле" }],
-      },
-    };
-  },
-  computed: {
-    milgroups() {
-      return ReferenceModule.milgroups;
-    },
-    userMilfaculty() {
-      return UserModule.personMilfaculty;
-    },
-    userMilgroups() {
-      return UserModule.personMilgroups;
-    },
-    userId() {
-      return UserModule.personId;
+      };
     },
   },
   created() {
@@ -395,11 +393,7 @@ export default {
         },
       ];
     },
-    changeAbsenceStatus(absence) {
-      // todo
-      // eslint-disable-next-line no-param-reassign
-      absence.status = absence.status === "CL" ? "OP" : "CL";
-    },
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     tagByExcuse(excuse) {
       switch (excuse) {
         case "IL":
@@ -410,6 +404,7 @@ export default {
           return "success";
       }
     },
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     iconByAbsenceStatus(status) {
       switch (status) {
         case "OP":
@@ -418,6 +413,7 @@ export default {
           return "el-icon-circle-check";
       }
     },
+    // TODO(TmLev): Send this info from back-end in "choices/.../" views.
     colorByAbsenceStatus(status) {
       switch (status) {
         case "OP":

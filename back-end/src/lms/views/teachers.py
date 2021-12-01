@@ -1,23 +1,42 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import permissions
+from rest_framework import status
+from rest_framework import viewsets
+from rest_framework import mixins
+
 from rest_framework.filters import SearchFilter
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import permissions
 
 from django.contrib.auth import get_user_model
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
-from common.constants import MUTATE_ACTIONS
 
-from lms.models.teachers import Teacher
-from lms.serializers.teachers import TeacherSerializer, TeacherMutateSerializer
-from lms.filters.teachers import TeacherFilter
-from lms.utils.mixins import QuerySetScopingMixin
+from common.constants import MUTATE_ACTIONS
+from common.email.registration import send_regconf_email
+from common.views.choices import GenericChoicesList
 
 from auth.models import Permission
 from auth.permissions import BasePermission
+from auth.tokens.registration import generate_regconf_token
+
+from lms.models.students import Student
+from lms.models.teachers import Teacher
+
+from lms.serializers.teachers import (
+    TeacherSerializer,
+    TeacherMutateSerializer,
+    ApproveTeacherSerializer,
+    ApproveTeacherMutateSerializer,
+)
+
+from lms.filters.teachers import TeacherFilter
+
+from lms.utils.mixins import QuerySetScopingMixin
+
+from lms.types.personnel import Personnel
 
 
 class TeacherPermission(BasePermission):
@@ -31,7 +50,7 @@ class TeacherPermission(BasePermission):
 
 
 @extend_schema(tags=["teachers"])
-class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
+class TeacherViewSet(QuerySetScopingMixin, viewsets.ModelViewSet):
     queryset = Teacher.objects.all()
 
     permission_classes = [TeacherPermission]
@@ -52,47 +71,134 @@ class TeacherViewSet(QuerySetScopingMixin, ModelViewSet):
             methods=["post"],
             permission_classes=[permissions.AllowAny])
     def registration(self, request):
-        # TODO(TmLev): verify email uniqueness. Create Teacher model.
-
         serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
+        teacher = self.perform_create(serializer)
 
-        email = request.data["email"]
+        # NB: Email uniqueness is guaranteed by ContactInfo.email field.
+        email = serializer.validated_data["contact_info"]["corporate_email"]
         user = get_user_model().objects.create_user(
             email=email,
             password=get_user_model().objects.make_random_password(),
+            campuses=["MO"],
+            is_active=False,
         )
-
-        serializer.save()
-        teacher = Teacher.objects.get(id=serializer.data.id)
         teacher.user = user
         teacher.save()
-        return Response(TeacherSerializer(data=teacher).data)
 
-    def handle_scope_milfaculty(self, user_type, user):
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        elif user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return self.queryset.none()
+        return Response(self.get_serializer(teacher).data)
+
+    def perform_create(self, serializer) -> Teacher:
+        return serializer.save()
+
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
         return self.queryset.filter(milfaculty=milfaculty)
 
-    def allow_scope_milfaculty_on_create(self, data, user_type, user):
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        elif user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return False
+    def allow_scope_milfaculty_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
         return data["milfaculty"] == milfaculty.id
 
-    def handle_scope_self(self, user_type, user):
-        if user_type == "teacher":
-            return self.queryset.filter(user=self.request.user)
-        return self.queryset.none()
+    def handle_scope_self(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.none()
+            case Teacher():
+                return self.queryset.filter(user=personnel.user)
+            case _:
+                assert False, "Unhandled Personnel type"
 
-    def allow_scope_self_on_create(self, data, user_type, user):
-        if user_type == "teacher":
-            return data["user"] == user.user.id
-        return False
+    def allow_scope_self_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Student():
+                return False
+            case Teacher():
+                return data["user"] == personnel.user.id
+            case _:
+                assert False, "Unhandled Personnel type"
+
+
+class ApproveTeacherPermission(BasePermission):
+    permission_class = "approve-teacher"
+    view_name_rus = "Подтверждение регистрации преподавателей"
+    methods = ["get", "patch"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+    ]
+
+
+@extend_schema(tags=["teachers"])
+class ApproveTeacherViewSet(
+    QuerySetScopingMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = Teacher.objects.filter(
+        user__isnull=False,
+        user__is_active=False,
+    )
+
+    permission_classes = [ApproveTeacherPermission]
+    scoped_permission_class = ApproveTeacherPermission
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = TeacherFilter
+
+    def get_serializer_class(self):
+        if action in MUTATE_ACTIONS:
+            return ApproveTeacherMutateSerializer
+        return ApproveTeacherSerializer
+
+    def partial_update(self, request: Request, *args, **kwargs) -> Response:
+        teacher = self.get_object()
+
+        if teacher.user is None:
+            return Response(
+                data={"detail": "Teacher has no user and must register first"},
+                status=status.HTTP_428_PRECONDITION_REQUIRED,
+            )
+
+        teacher.user.is_active = True
+        teacher.save()
+
+        if teacher.patronymic:
+            address = f"{teacher.name} {teacher.patronymic}"
+        else:
+            address = f"{teacher.name} {teacher.surname}"
+
+        send_regconf_email(
+            address=address,
+            email=teacher.user.email,
+            url=request.META["HTTP_REFERER"],
+            token=generate_regconf_token(teacher.user)
+        )
+
+        return Response()
+
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                return self.queryset.filter(milfaculty=personnel.milfaculty)
+            case _:
+                assert False, "Unhandled Personnel type"
+
+
+@extend_schema(tags=["teachers", "choices"])
+class TeacherRankChoicesList(GenericChoicesList):
+    choices_class = Teacher.Rank
+
+
+@extend_schema(tags=["teachers", "choices"])
+class TeacherPostChoicesList(GenericChoicesList):
+    choices_class = Teacher.Post

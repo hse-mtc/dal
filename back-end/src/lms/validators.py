@@ -8,9 +8,6 @@ from rest_framework.serializers import ValidationError
 class PresentInDatabaseValidator:
 
     def __init__(self, model: tp.Type[Model], field: tp.Optional[str] = None):
-        # False-positive, remove later
-        # See here: https://github.com/PyCQA/pylint/issues/3882
-        # pylint: disable=unsubscriptable-object
         self.model = model
         self.field = field
 
@@ -21,11 +18,14 @@ class PresentInDatabaseValidator:
         else:
             # check not by field, but by the whole data
             query_filter = value
-        if not self.model.objects.filter(**query_filter).exists():
-            if self.field is not None:
-                raise ValidationError(
-                    f'There are no objects with {self.field} = {value} '
-                    f'in model {self.model.__name__}')
+
+        if self.model.objects.filter(**query_filter).exists():
+            return
+
+        if self.field is not None:
             raise ValidationError(
-                f'There are no objects like {str(query_filter)} '
+                f'There are no objects with {self.field} = {value} '
                 f'in model {self.model.__name__}')
+        raise ValidationError(
+            f'There are no objects like {str(query_filter)} '
+            f'in model {self.model.__name__}')

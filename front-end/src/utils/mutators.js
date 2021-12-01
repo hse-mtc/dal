@@ -26,11 +26,7 @@ export const getFetchRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось загрузить ${errorMsg}:`, e);
-
-    if (e.response.status) {
-      getError(errorMsg, e.response.status);
-    }
-
+    getError(errorMsg, e.response?.status);
     return false;
   }
 };
@@ -57,18 +53,14 @@ export const getAddRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось добавить ${errorMsg}:`, e);
-
-    if (e.response.status) {
-      postError(errorMsg, e.response.status);
-    }
-
+    postError(errorMsg, e.response?.status);
     return false;
   }
 };
 
 /**
  *
- * @param {unction} deleteFunc - функция удаления элемента
+ * @param {function} deleteFunc - функция удаления элемента
  * @param {function} mutation - принимает на вход обновленный массив
  * @param {string} mutationFiled - поле в котором хранятся данные
  * @param {string} errorMsg - что не удалось удалить
@@ -87,18 +79,14 @@ export const getDeleteRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось удалить ${errorMsg}:`, e);
-
-    if (e.response.status) {
-      deleteError(errorMsg, e.response.status);
-    }
-
+    deleteError(errorMsg, e.response?.status);
     return false;
   }
 };
 
 /**
  *
- * @param {unction} editFunc - функция изменения элемента
+ * @param {function} editFunc - функция изменения элемента
  * @param {function} mutation - принимает на вход обновленный массив
  * @param {string} mutationFiled - поле в котором хранятся данные
  * @param {string} errorMsg - что не удалось изменить
@@ -122,18 +110,14 @@ export const getEditRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось изменить ${errorMsg}:`, e);
-
-    if (e.response.status) {
-      patchError(errorMsg, e.response.status);
-    }
-
+    patchError(errorMsg, e.response?.status);
     return false;
   }
 };
 
 /**
  *
- * @param {unction} orderFunc - функция перемещения элемента
+ * @param {function} orderFunc - функция перемещения элемента
  * @param {function} mutation - принимает на вход обновленный массив
  * @param {string} mutationFiled - поле в котором хранятся данные
  * @param {string} errorMsg - что не удалось переместить
@@ -162,11 +146,7 @@ export const getOrderChangeRequest = (
     return true;
   } catch (e) {
     console.error(`Не удалось переместить ${errorMsg}:`, e);
-
-    if (e.response.status) {
-      orderError(errorMsg, e.response.status);
-    }
-
+    orderError(errorMsg, e.response?.status);
     return false;
   }
 };

@@ -1,12 +1,14 @@
 from django.db import models
+
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import (
     AbstractUser,
     GroupManager,
     PermissionManager,
 )
-from django.contrib.auth.base_user import BaseUserManager
 
-from django.contrib.postgres.fields import ArrayField
+from common.models.universities import Campus
 
 
 class UserManager(BaseUserManager):
@@ -34,16 +36,6 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-# FIXME(TmLev): temporary solution. It *should* be imported from
-#  `lms.models.universities`, but this may lead to circular import dependency.
-#   Anyhow, this must be removed after application process is finished.
-class UniversityCampus(models.TextChoices):
-    MOSCOW = "MO", "Москва"
-    SAINT_PETERSBURG = "SP", "Санкт-Петербург"
-    NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
-    PERM = "PE", "Пермь"
-
-
 class Permission(models.Model):
 
     class Scope(models.IntegerChoices):
@@ -69,7 +61,7 @@ class Permission(models.Model):
         verbose_name_plural = "Permissions"
 
     def __str__(self):
-        return str(self.name)
+        return self.name
 
 
 class Group(models.Model):
@@ -96,11 +88,10 @@ class User(AbstractUser):
     last_name = None
     email = models.EmailField("email address", unique=True)
 
-    # FIXME(TmLev): should be removed after application process is finished.
     campuses = ArrayField(
         base_field=models.CharField(
             max_length=2,
-            choices=UniversityCampus.choices,
+            choices=Campus.choices,
         ),
         default=list,
     )

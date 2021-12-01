@@ -22,11 +22,11 @@ class Mark(models.Model):
         on_delete=models.CASCADE,
     )
 
-    def __str__(self):
-        return f"Marks {self.values} for StudentID=" \
-               f"{self.student} on LessonID={self.lesson}"
-
     class Meta:
         verbose_name = "Mark"
         verbose_name_plural = "Marks"
         unique_together = [["lesson", "student"]]
+
+    def __str__(self):
+        return f"Marks {self.values} for StudentID=" \
+               f"{self.student} on LessonID={self.lesson}"

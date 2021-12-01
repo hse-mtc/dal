@@ -10,7 +10,7 @@
     >
       <div class="title-container">
         <h3 class="title">
-          Форма авторизации
+          Даль ВУЦ ВШЭ
         </h3>
       </div>
 
@@ -21,7 +21,7 @@
         <el-input
           ref="email"
           v-model="loginForm.email"
-          placeholder="name@mail.com"
+          placeholder="mail@example.com"
           name="email"
           type="text"
           tabindex="1"
@@ -60,16 +60,6 @@
         Вход
       </el-button>
     </el-form>
-    <div class="register">
-      Еще нет аккаунта?
-      <router-link
-        style="color: #0060cf"
-        :to="{ name: 'SignUp' }"
-        replace
-      >
-        Зарегистрироваться
-      </router-link>
-    </div>
   </div>
 </template>
 

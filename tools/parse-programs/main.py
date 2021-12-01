@@ -18,6 +18,26 @@ class DataclassJSONEncoder(json.JSONEncoder):
         return super().default(o)
 
 
+def clean_ws(s: str) -> str:
+    s = s.strip()
+    s = s.replace('\n', ' ')
+    s = " ".join(s.split())
+    return s
+
+
+def remove_hse(s: str) -> str:
+    hse = "Национального исследовательского университета «Высшая школа экономики»"
+    s = s.replace(hse, "")
+    return s
+
+
+def tidy(s: str) -> str:
+    s = clean_ws(s)
+    s = remove_hse(s)
+    s = clean_ws(s)
+    return s
+
+
 @dataclasses.dataclass
 class Program:
     faculty: str
@@ -38,7 +58,7 @@ def parse_programs(
     rows = document.tables[0].rows[1:]
 
     for i, row in enumerate(rows, start=1):
-        cells = [c.text.strip() for c in row.cells]
+        cells = [tidy(c.text) for c in row.cells]
 
         if len(cells) != COLUMNS_IN_TABLE_BY_DEFAULT:
             print(f"Skipping bad program: {cells = }")
@@ -83,6 +103,7 @@ def parse_args() -> argparse.Namespace:
         "--ignore-degree",
         dest="degrees_to_ignore",
         action="append",
+        default=[],
     )
 
     return parser.parse_args()
@@ -90,6 +111,10 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+
+    if not Path(args.programs_docx_path).exists():
+        print(f"File with programs `{args.programs_docx_path}` does not exist, bailing out")
+        exit(1)
 
     programs = parse_programs(
         docx_path=args.programs_docx_path,

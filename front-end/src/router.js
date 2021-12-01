@@ -40,9 +40,9 @@ export const constantRoutes = [
     hidden: true,
   },
   {
-    name: "SignUp",
+    name: "Register",
     path: "/register/",
-    component: () => import("@/views/Signup/index"),
+    component: () => import("@/views/Register/index"),
     hidden: true,
   },
   {

@@ -12,7 +12,7 @@ class SearchPersonnelUsersSerializer(serializers.Serializer):
 
 
 class PersonnelUsersSerializer(serializers.Serializer):
-    full_name = serializers.CharField()
+    fullname = serializers.CharField()
     user_id = serializers.IntegerField(source="user.id")
 
     def create(self, validated_data):

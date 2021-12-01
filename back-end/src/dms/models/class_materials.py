@@ -39,6 +39,7 @@ class Topic(OrderedModel):
 
 class ClassMaterial(Document):
 
+    # TODO(TmLev): Extract to `common` so that `lms.Lesson` can use this too.
     class Type(models.TextChoices):
         LECTURES = "LE", "lectures"
         SEMINARS = "SE", "seminars"

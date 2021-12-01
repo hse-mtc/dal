@@ -2,11 +2,25 @@
   <ModalWindow :opened="true" v-on="$listeners">
     <el-form ref="form" :model="formValues" :rules="rules">
       <el-form-item v-for="(value, key) in formValues" :key="key" :prop="key">
+        <TextInput
+          v-if="key === 'bookName'"
+          v-model="formValues.bookName"
+          title="Название"
+          is-text-area
+        />
+
+        <TextInput
+          v-else-if="key === 'annotation'"
+          v-model="formValues.annotation"
+          title="Аннотация"
+          is-text-area
+        />
+
         <SelectInput
-          v-if="key === 'authors'"
+          v-else-if="key === 'authors'"
           v-model="formValues.authors"
           :options="authors"
-          title="Автор"
+          title="Авторы"
           multiple
           filterable
         />
@@ -45,20 +59,6 @@
             </el-form-item>
           </el-col>
         </template>
-
-        <TextInput
-          v-else-if="key === 'bookName'"
-          v-model="formValues.bookName"
-          title="Название книги"
-          is-text-area
-        />
-
-        <TextInput
-          v-else-if="key === 'annotation'"
-          v-model="formValues.annotation"
-          title="Аннотация"
-          is-text-area
-        />
 
         <SelectInput
           v-else-if="key === 'subjects'"

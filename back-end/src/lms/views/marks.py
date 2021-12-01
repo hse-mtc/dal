@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from rest_framework import status
+
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
@@ -8,17 +9,24 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.viewsets import ModelViewSet
 
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
 
-from common.models.subjects import Subject
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiParameter,
+)
+
 from common.constants import MUTATE_ACTIONS
 
-from lms.filters.marks import MarkFilter
+from common.models.subjects import Subject
+
+from auth.models import Permission
+from auth.permissions import BasePermission
 
 from lms.models.common import Milgroup
 from lms.models.marks import Mark
 from lms.models.students import Student
+from lms.models.teachers import Teacher
 from lms.models.lessons import Lesson
 
 from lms.serializers.common import MilgroupSerializer
@@ -30,11 +38,13 @@ from lms.serializers.marks import (
     MarkJournalSerializer,
     MarkJournalQuerySerializer,
 )
+
+from lms.filters.marks import MarkFilter
+
 from lms.utils.functions import milgroup_allowed_by_scope
 from lms.utils.mixins import QuerySetScopingMixin
 
-from auth.models import Permission
-from auth.permissions import BasePermission
+from lms.types.personnel import Personnel
 
 
 class MarkPermission(BasePermission):
@@ -83,8 +93,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
         return super().create(request, *args, **kwargs)
 
     # override PUT - add mark to array
-    # pylint: disable=W1113
-    # pylint: disable=W0221
+    # pylint: disable=W1113,W0221
     def update(self, request, pk=None, *args, **kwargs):
         qs = self.get_queryset()
         if not qs.exists():
@@ -98,8 +107,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
         return super().update(request, pk, *args, **kwargs)
 
     # override PATCH - change last mark in array
-    # pylint: disable=W1113
-    # pylint: disable=W0221
+    # pylint: disable=W1113,W0221
     def partial_update(self, request, pk=None, *args, **kwargs):
         qs = self.get_queryset()
         if not qs.exists():
@@ -114,8 +122,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
         return super().update(request, pk, partial=True, *args, **kwargs)
 
     # override DELETE - delete last mark in array
-    # pylint: disable=W1113
-    # pylint: disable=W0221
+    # pylint: disable=W1113,W0221
     def destroy(self, request, pk=None, *args, **kwargs):
         qs = self.get_queryset()
         if not qs.exists():
@@ -131,53 +138,67 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
             return super().destroy(request, pk, *args, **kwargs)
         return super().update(request, pk, *args, **kwargs)
 
-    def handle_scope_milfaculty(self, user_type, user):
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        elif user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return self.queryset.none()
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
         return self.queryset.filter(student__milgroup__milfaculty=milfaculty)
 
-    def allow_scope_milfaculty_on_create(self, data, user_type, user):
+    def allow_scope_milfaculty_on_create(self, data, personnel: Personnel):
         # no need to check student existence,
         # as permission check occurs after
         # serializer validation
         student = Student.objects.get(id=data["student"])
-        if user_type == "student":
-            return student.milgroup.milfaculty == user.milgroup.milfaculty
-        if user_type == "teacher":
-            return student.milgroup.milfaculty == user.milfaculty
-        return False
 
-    def handle_scope_milgroup(self, user_type, user):
-        if user_type == "student":
-            return self.queryset.filter(student__milgroup=user.milgroup)
-        if user_type == "teacher":
-            return self.queryset.filter(student__milgroup__in=user.milgroups)
-        return self.queryset.none()
+        match personnel:
+            case Student() | Teacher():
+                return student.milgroup.milfaculty == personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
 
-    def allow_scope_milgroup_on_create(self, data, user_type, user):
+    def handle_scope_milgroup(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(student__milgroup=personnel.milgroup)
+            case Teacher():
+                return self.queryset.filter(student__milgroup__in=personnel.milgroups)
+            case _:
+                assert False, "Unhandled Personnel type"
+
+    def allow_scope_milgroup_on_create(self, data, personnel: Personnel):
         # no need to check student existence,
         # as permission check occurs after
         # serializer validation
         student = Student.objects.get(id=data["student"])
-        if user_type == "student":
-            return student.milgroup == user.milgroup
-        if user_type == "teacher":
-            return student.milgroup in user.milgroups
-        return False
 
-    def handle_scope_self(self, user_type, user):
-        if user_type == "student":
-            return self.queryset.filter(student=user)
-        return self.queryset.none()
+        match personnel:
+            case Student():
+                return student.milgroup == personnel.milgroup
+            case Teacher():
+                return student.milgroup in personnel.milgroups
+            case _:
+                assert False, "Unhandled Personnel type"
 
-    def allow_scope_self_on_create(self, data, user_type, user):
-        if user_type == "student":
-            return data["student"] == user.id
-        return False
+    def handle_scope_self(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(student=personnel)
+            case Teacher():
+                return self.queryset.none()
+            case _:
+                assert False, "Unhandled Personnel type"
+
+    def allow_scope_self_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Student():
+                return data["student"] == personnel.id
+            case Teacher():
+                return False
+            case _:
+                assert False, "Unhandled Personnel type"
 
 
 @extend_schema(tags=["mark-journal"],

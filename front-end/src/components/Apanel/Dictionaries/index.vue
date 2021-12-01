@@ -76,7 +76,6 @@ class Dictionaries extends Vue {
     categories: "tags",
     achievementTypes: "tags",
     milfaculties: "tags",
-    ranks: "tags",
     rooms: "tags",
     skills: "tags",
     milgroups: "table",
@@ -174,14 +173,6 @@ class Dictionaries extends Vue {
     //   delete: ReferenceModule.deleteProgram,
     //   edit: ReferenceModule.editProgram,
     // },
-    ranks: {
-      label: "Звания",
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: ReferenceModule.addRank,
-      delete: ReferenceModule.deleteRank,
-      edit: ReferenceModule.editRank,
-    },
     rooms: {
       label: "Аудитории",
       sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
@@ -225,7 +216,6 @@ class Dictionaries extends Vue {
   get achievementTypes() { return ReferenceModule.achievementTypes; }
   get milspecialties() { return ReferenceModule.milspecialties; }
   get programs() { return ReferenceModule.programs; }
-  get ranks() { return ReferenceModule.ranks; }
   get rooms() { return ReferenceModule.rooms; }
   get skills() { return ReferenceModule.skills; }
 

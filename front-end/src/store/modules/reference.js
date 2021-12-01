@@ -10,9 +10,6 @@ import store, { ReferenceModule } from "@/store";
 import {
   getMilFaculties,
   getMilGroups,
-  getStudentPosts,
-  getTeacherPosts,
-  getRanks,
   getAchievementTypes,
   getPrograms,
   getRooms,
@@ -31,9 +28,6 @@ import {
   addProgram,
   editProgram,
   deleteProgram,
-  addRank,
-  editRank,
-  deleteRank,
   deleteRoom,
   editRoom,
   addRoom,
@@ -54,18 +48,6 @@ class Reference extends VuexModule {
   _milgroups = [];
   _milgroupsLoaded = false;
 
-  _ranks = [];
-  _ranksLoaded = false;
-
-  _studentStatuses = [];
-  _studentStatusesLoaded = false;
-
-  _studentPosts = [];
-  _studentPostsLoaded = false;
-
-  _teacherPosts = [];
-  _teacherPostsLoaded = false;
-
   _milfaculties = [];
   _milfacultiesLoaded = false;
 
@@ -80,12 +62,6 @@ class Reference extends VuexModule {
 
   _rooms = [];
   _roomsLoaded = false;
-
-  _absenceTypes = [];
-  _absenceTypesLoaded = false;
-
-  _absenceStatuses = [];
-  _absenceStatusesLoaded = false;
 
   _skills = [];
   _skillsLoaded = false;
@@ -149,144 +125,6 @@ class Reference extends VuexModule {
     }
 
     return this._milgroups;
-  }
-
-  // RANKS
-  @Mutation
-  SET_RANKS(payload) {
-    this._ranks = payload;
-  }
-
-  @Action
-  async fetchRanks() {
-    return await getFetchRequest(
-      getRanks,
-      data => {
-        this.SET_RANKS(data);
-        this.SET_IS_LOADED({ field: "_ranksLoaded", value: true });
-      },
-      "званий",
-    ).call(this);
-  }
-
-  @Action
-  async addRank(newItem) {
-    return await getAddRequest(
-      addRank,
-      this.SET_RANKS,
-      "_ranks",
-      "звание",
-    ).call(this, newItem);
-  }
-
-  @Action
-  async editRank({ id, ...newData }) {
-    return await getEditRequest(
-      editRank,
-      this.SET_RANKS,
-      "_ranks",
-      "звание",
-    ).call(this, { id, ...newData });
-  }
-
-  @Action
-  async deleteRank(id) {
-    return await getDeleteRequest(
-      deleteRank,
-      this.SET_RANKS,
-      "_ranks",
-      "звание",
-    ).call(this, id);
-  }
-
-  get ranks() {
-    if (!this._ranksLoaded) {
-      ReferenceModule.fetchRanks();
-    }
-
-    return this._ranks;
-  }
-
-  // STUDENTS STATUSES
-  @Mutation
-  SET_STUDENT_STATUSES(payload) {
-    this._studentStatuses = payload;
-  }
-
-  @Action
-  async fetchStudentStatuses() {
-    return await getFetchRequest(
-      () => [
-        { code: "ST", label: "Обучающийся" },
-        { code: "EX", label: "Отчислен" },
-        { code: "GR", label: "Выпустился" },
-      ],
-      data => {
-        this.SET_STUDENT_STATUSES(data);
-        this.SET_IS_LOADED({ field: "_studentStatusesLoaded", value: true });
-      },
-      "статусов студентов",
-    ).call(this);
-  }
-
-  get studentStatuses() {
-    if (!this._studentStatusesLoaded) {
-      ReferenceModule.fetchStudentStatuses();
-    }
-
-    return this._studentStatuses;
-  }
-
-  // STUDENT POSTS
-  @Mutation
-  SET_STUDENT_POSTS(payload) {
-    this._studentPosts = payload;
-  }
-
-  @Action
-  async fetchStudentPosts() {
-    return await getFetchRequest(
-      getStudentPosts,
-      data => {
-        this.SET_STUDENT_POSTS(data);
-        this.SET_IS_LOADED({ field: "_studentPostsLoaded", value: true });
-      },
-      "должностей студентов",
-    ).call(this);
-  }
-
-  get studentPosts() {
-    if (!this._studentPostsLoaded) {
-      ReferenceModule.fetchStudentPosts();
-    }
-
-    return this._studentPosts;
-  }
-
-  // TEACHER POSTS
-  @Mutation
-  SET_TEACHER_POSTS(payload) {
-    this._teacherPosts = payload;
-  }
-
-  @Action
-  async fetchTeacherPosts() {
-    return await getFetchRequest(
-      getTeacherPosts,
-      data => {
-        this.SET_TEACHER_POSTS(data);
-        this.SET_IS_LOADED({ field: "_teacherPostsLoaded", value: true });
-      },
-      "должностей преподавателей",
-    ).call(this);
-  }
-
-  get teacherPosts() {
-    if (!this._teacherPostsLoaded) {
-      ReferenceModule.fetchTeacherPosts();
-    }
-
-    return this._teacherPosts;
   }
 
   // MILFACULTIES
@@ -567,74 +405,6 @@ class Reference extends VuexModule {
     }
 
     return this._rooms;
-  }
-
-  // ABSENCE TYPES
-  @Mutation
-  SET_ABSENCE_TYPES(payload) {
-    this._absenceTypes = payload;
-  }
-
-  @Action({ commit: "SET_ABSENCE_TYPES" })
-  async setAbsenceTypes(absenceTypes) {
-    return absenceTypes;
-  }
-
-  @Action
-  async fetchAbsenceTypes() {
-    try {
-      const data = [
-        { label: "Уважительная", code: "SE" },
-        { label: "Неуважительная", code: "NS" },
-        { label: "Опоздание", code: "LA" },
-      ];
-      this.setAbsenceTypes(data);
-      this.SET_IS_LOADED({ field: "_absenceTypesLoaded", value: true });
-    } catch (err) {
-      getError("типов пропусков", err.response.status);
-    }
-  }
-
-  get absenceTypes() {
-    if (!this._absenceTypesLoaded) {
-      ReferenceModule.fetchAbsenceTypes();
-    }
-
-    return this._absenceTypes;
-  }
-
-  // ABSENCE STATUSES
-  @Mutation
-  SET_ABSENCE_STATUSES(payload) {
-    this._absenceStatuses = payload;
-  }
-
-  @Action({ commit: "SET_ABSENCE_STATUSES" })
-  async setAbsenceStatuses(absenceStatuses) {
-    return absenceStatuses;
-  }
-
-  @Action
-  async fetchAbsenceStatuses() {
-    return await getFetchRequest(
-      () => [
-        { label: "Закрыт", code: "CL" },
-        { label: "Открыт", code: "OP" },
-      ],
-      data => {
-        this.SET_ABSENCE_STATUSES(data);
-        this.SET_IS_LOADED({ field: "_absenceStatusesLoaded", value: true });
-      },
-      "статусов пропусков",
-    ).call(this);
-  }
-
-  get absenceStatuses() {
-    if (!this._absenceStatusesLoaded) {
-      ReferenceModule.fetchAbsenceStatuses();
-    }
-
-    return this._absenceStatuses;
   }
 
   // SKILLS

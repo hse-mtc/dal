@@ -2,21 +2,32 @@ import requests
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import JSONRenderer
-from drf_spectacular.views import extend_schema
+
 from django_filters.rest_framework import DjangoFilterBackend
 
-from lms.models.uniforms import Uniform
-from lms.serializers.uniforms import UniformSerializer, UniformMutateSerializer
-from lms.filters.uniforms import UniformFilter
-from lms.utils.mixins import QuerySetScopingMixin
+from drf_spectacular.views import extend_schema
 
-from conf.settings import (
-    TGBOT_PORT,
-    TGBOT_HOST,
-)
+from conf import settings
+
 from common.constants import MUTATE_ACTIONS
+
 from auth.models import Permission
 from auth.permissions import BasePermission
+
+from lms.models.students import Student
+from lms.models.teachers import Teacher
+from lms.models.uniforms import Uniform
+
+from lms.serializers.uniforms import (
+    UniformSerializer,
+    UniformMutateSerializer,
+)
+
+from lms.filters.uniforms import UniformFilter
+
+from lms.utils.mixins import QuerySetScopingMixin
+
+from lms.types.personnel import Personnel
 
 
 class UniformPermission(BasePermission):
@@ -47,22 +58,24 @@ class UniformViewSet(QuerySetScopingMixin, ModelViewSet):
     def perform_update(self, serializer: UniformSerializer):
         serializer.save()
         requests.post(
-            f"http://{TGBOT_HOST}:{TGBOT_PORT}/uniforms/",
+            f"http://{settings.TGBOT_HOST}:{settings.TGBOT_PORT}/uniforms/",
             data=JSONRenderer().render(serializer.data),
         )
 
-    def handle_scope_milfaculty(self, user_type, user):
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        elif user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return self.queryset.none()
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
         return self.queryset.filter(milfaculty=milfaculty)
 
-    def allow_scope_milfaculty_on_create(self, data, user_type, user):
-        if user_type == "student":
-            return data["milfaculty"] == user.milgroup.milfaculty.id
-        if user_type == "teacher":
-            return data["milfaculty"] == user.milfaculty.id
-        return False
+    def allow_scope_milfaculty_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
+        return data["milfaculty"] == milfaculty.id

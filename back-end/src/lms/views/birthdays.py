@@ -1,6 +1,11 @@
-from datetime import date
+import typing as tp
 
-from django.db.models import QuerySet
+from datetime import (
+    date,
+    timedelta,
+)
+
+from django.db import models
 
 from rest_framework.views import APIView
 from rest_framework.request import Request
@@ -13,7 +18,8 @@ from auth.permissions import BasePermission
 
 from lms.models.students import Student
 from lms.models.teachers import Teacher
-from lms.utils.functions import get_user_from_request
+
+from lms.utils.functions import get_personnel_from_request_user
 
 
 class StudentBirthdayAlertPermission(BasePermission):
@@ -35,8 +41,8 @@ class TeacherBirthdayAlertPermission(BasePermission):
 class BirthdayAlertView(APIView):
     model = None
 
-    def get_birthdays(self) -> QuerySet:
-        return self.model.get_nearest_birthdays()
+    def get_birthdays(self) -> models.QuerySet:
+        return get_nearest_birthdays(self.model)
 
     def get(self, request: Request) -> Response:
         persons = self.get_birthdays()
@@ -59,7 +65,7 @@ class BirthdayAlertView(APIView):
             temp = {
                 "id": person.id,
                 "birthday": born,
-                "full_name": person.full_name,
+                "fullname": person.fullname,
                 "how_old_will_be": how_old,
             }
             response.append(temp)
@@ -73,41 +79,41 @@ class StudentBirthdayAlertView(BirthdayAlertView):
     permission_classes = [StudentBirthdayAlertPermission]
     scoped_permission_class = StudentBirthdayAlertPermission
 
-    def get_milfaculty_scope_filter(self, user_type, user) -> dict:
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        elif user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return {"milgroup__archived": False}
+    def get_milfaculty_scope_filter(self, personnel) -> dict:
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
         return {
             "milgroup__archived": False,
             "milgroup__milfaculty": milfaculty,
         }
 
-    def get_birthdays(self) -> QuerySet:
+    def get_birthdays(self) -> models.QuerySet:
         params = {"milgroup__archived": False}
 
         if self.request.user.is_superuser:
-            return self.model.get_nearest_birthdays(params)
+            return get_nearest_birthdays(self.model, params)
 
         scope = self.request.user.get_perm_scope(
             self.scoped_permission_class.permission_class, self.request.method)
 
         if scope == Permission.Scope.ALL:
-            return self.model.get_nearest_birthdays(params)
+            return get_nearest_birthdays(self.model, params)
 
-        # check if user is a teacher ot a student
-        user_type, user = get_user_from_request(self.request.user)
+        user = get_personnel_from_request_user(self.request.user)
+
+        # return nothing if user is not a student or a teacher
         if user is None:
-            # return nothing if user is not a student or a teacher
-            return QuerySet()
+            return self.model.objects.none()
 
         if scope == Permission.Scope.MILFACULTY:
-            params = self.get_milfaculty_scope_filter(user_type, user)
-            return self.model.get_nearest_birthdays(params)
+            params = self.get_milfaculty_scope_filter(user)
+            return get_nearest_birthdays(self.model, params)
 
-        return QuerySet()
+        return self.model.objects.none()
 
 
 @extend_schema(tags=["birthday"])
@@ -115,3 +121,28 @@ class TeacherBirthdayAlertView(BirthdayAlertView):
     model = Teacher
 
     permission_classes = [TeacherBirthdayAlertPermission]
+
+
+def get_nearest_birthdays(
+    model: tp.Type[models.Model],
+    filter_kwargs: tp.Optional[dict] = None
+) -> models.QuerySet:
+    """Return personnel with birthdays that are in one week to today's date.
+
+    Args:
+        model: Django model to filter.
+        filter_kwargs: additional filters.
+
+    Returns:
+        Filtered queryset.
+    """
+
+    today = date.today()
+    start, end = today, today + timedelta(days=7)
+    return model.objects.select_related("birth_info").filter(
+        birth_info__date__day__gte=start.day,
+        birth_info__date__day__lte=end.day,
+        birth_info__date__month__gte=start.month,
+        birth_info__date__month__lte=end.month,
+        **({} if filter_kwargs is None else filter_kwargs),
+    ).order_by("birth_info__date")

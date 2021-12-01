@@ -57,10 +57,10 @@
           @change="onFilter"
         >
           <el-option
-            v-for="(value, key) in PUNISHMENT_TYPES"
-            :key="key"
-            :label="value"
-            :value="key"
+            v-for="type in punishmentTypes"
+            :key="type.value"
+            :label="type.label"
+            :value="type.value"
           />
         </el-select>
       </el-col>
@@ -124,7 +124,7 @@
         <PrimeColumn header="Тип взыскания" column-key="type">
           <template #body="{ data }">
             <el-tag :type="tagByPunishmentType(data.type)" disable-transitions>
-              {{ PUNISHMENT_TYPES[data.type] }}
+              {{ punishmentTypeLabelFromValue(data.type) }}
             </el-tag>
           </template>
         </PrimeColumn>
@@ -271,10 +271,10 @@
             style="display: block"
           >
             <el-option
-              v-for="(value, key) in PUNISHMENT_TYPES"
-              :key="key"
-              :label="value"
-              :value="key"
+              v-for="type in punishmentTypes"
+              :key="type.value"
+              :label="type.label"
+              :value="type.value"
             />
           </el-select>
         </el-form-item>
@@ -327,8 +327,8 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { UserModule, ReferenceModule } from "@/store";
-import { PUNISHMENT_TYPES } from "@/utils/enums";
 import { getDisciplinePersonsFilters } from "@/utils/permissions";
+import { PunishmentTypesMixin } from "@/mixins/punishments";
 
 export default {
   name: "Punishment",
@@ -344,9 +344,9 @@ export default {
       }
     },
   },
+  mixins: [PunishmentTypesMixin],
   data() {
     return {
-      PUNISHMENT_TYPES,
       editPunishment: {},
       editPunishmentFullname: null,
       dialogVisible: false,

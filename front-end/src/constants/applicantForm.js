@@ -300,7 +300,7 @@ export const devInitData = {
   contactInfo: {
     corporate_email: "test@edu.hse.ru",
     personal_email: "test@mail.ru",
-    personal_phone_number: "+12345678900",
+    personal_phone_number: "72345678900",
   },
   mother: {
     surname: "Фамилия матери",
@@ -312,7 +312,7 @@ export const devInitData = {
     country: "Страна рождения матери",
     city: "Город рождения матери",
     personal_email: "test@mail.ru",
-    personal_phone_number: "",
+    personal_phone_number: "89098080022",
   },
   father: {
     surname: "Фамилия отца",
@@ -324,7 +324,7 @@ export const devInitData = {
     country: "Страна рождения отца",
     city: "Город рождения отца",
     personal_email: "test@dkcmsdc.sdcjnis",
-    personal_phone_number: "+12345678765",
+    personal_phone_number: "+72345678765",
   },
   brothers: [],
   sisters: [],

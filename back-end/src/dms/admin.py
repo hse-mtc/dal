@@ -5,6 +5,7 @@ from dms.models.books import (
     Book,
     FavoriteBook,
 )
+from dms.models.documents import File
 from dms.models.papers import (
     Category,
     Paper,
@@ -28,6 +29,7 @@ admin.site.register(ClassMaterial)
 admin.site.register(Publisher)
 admin.site.register(Section)
 admin.site.register(Topic)
+admin.site.register(File)
 
 
 @admin.register(Paper)

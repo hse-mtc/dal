@@ -75,27 +75,6 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Кампус:">
-          <transition name="el-fade-in" mode="out-in">
-            <el-select
-              v-if="modify"
-              v-model="modifyInfo.university_info.campus"
-              style="display: block"
-            >
-              <el-option
-                v-for="value, key in CAMPUSES"
-                :key="key"
-                :label="value"
-                :value="key"
-              />
-            </el-select>
-            <span v-else class="field-value">
-              {{
-                CAMPUSES[displayInfo.university_info.campus] || "---"
-              }}
-            </span>
-          </transition>
-        </el-form-item>
         <el-form-item label="Учебная группа:">
           <transition name="el-fade-in" mode="out-in">
             <el-input
@@ -126,27 +105,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Военная специальность:">
-          <transition name="el-fade-in" mode="out-in">
-            <el-select
-              v-if="modify"
-              v-model="modifyInfo.milspecialty"
-              value-key="id"
-              style="display: block"
-            >
-              <el-option
-                v-for="item in milspecialties"
-                :key="item.id"
-                :label="item.title"
-                :value="item"
-              />
-            </el-select>
-            <span v-else class="field-value">
-              {{ displayInfo.milspecialty ? displayInfo.milspecialty.title : "---" }}
-            </span>
-          </transition>
-        </el-form-item>
-        <el-form-item label="Серия и номер паспорта:">
+        <el-form-item label="Паспорт, серия и номер:">
           <transition name="el-fade-in" mode="out-in">
             <el-input
               v-if="modify"
@@ -162,7 +121,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Место выдачи паспорта:">
+        <el-form-item label="Паспорт, место выдачи:">
           <transition name="el-fade-in" mode="out-in">
             <el-input v-if="modify" v-model="modifyInfo.passport.ufms_name" />
             <span v-else class="field-value">
@@ -172,7 +131,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Дата выдачи паспорта:">
+        <el-form-item label="Паспорт, дата выдачи:">
           <transition name="el-fade-in" mode="out-in">
             <el-date-picker
               v-if="modify"
@@ -196,7 +155,7 @@
             </span>
           </transition>
         </el-form-item>
-        <el-form-item label="Код подразделения:">
+        <el-form-item label="Паспорт, код подразделения:">
           <transition name="el-fade-in" mode="out-in">
             <el-input
               v-if="modify"

@@ -57,14 +57,14 @@ class PaperMutateSerializer(DocumentMutateSerializer):
         tags = validated_data.pop("tags", None)
         instance = super().create(validated_data)
         if tags:
-            instance.tags.set(*tags)
+            instance.tags.set(tags)
         return instance
 
     def update(self, instance, validated_data):
         tags = validated_data.pop("tags", None)
         instance = super().update(instance, validated_data)
         if tags:
-            instance.tags.set(*tags, clear=True)
+            instance.tags.set(tags, clear=True)
         return instance
 
 

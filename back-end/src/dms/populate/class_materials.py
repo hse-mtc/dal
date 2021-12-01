@@ -1,5 +1,9 @@
 import random
 
+from common.models.subjects import Subject
+
+from common.utils.populate import get_or_create
+
 from dms.models.documents import File
 from dms.models.class_materials import (
     Section,
@@ -7,7 +11,6 @@ from dms.models.class_materials import (
     ClassMaterial,
 )
 
-from common.models.subjects import Subject
 
 
 def create_sections(subject: Subject) -> list[Section]:
@@ -22,10 +25,11 @@ def create_sections(subject: Subject) -> list[Section]:
     ]
 
     for title in titles:
-        section, _ = Section.objects.get_or_create(
+        fields = dict(
             title=title,
             subject=subject,
         )
+        section = get_or_create(Section, **fields)
         sections.append(section)
 
     return sections
@@ -42,11 +46,12 @@ def create_topics(section: Section) -> list[Topic]:
     ]
 
     for title in titles:
-        topic, _ = Topic.objects.get_or_create(
+        fields = dict(
             title=title,
             annotation=f"Пример аннотации для {title}",
             section=section,
         )
+        topic = get_or_create(Topic, **fields)
         topics.append(topic)
 
     return topics
@@ -69,12 +74,13 @@ def create_class_materials(
     ]
 
     for file in files:
-        material, _ = ClassMaterial.objects.get_or_create(
+        fields = dict(
             title=random.choice(titles),
             file=file,
             type=random.choice(ClassMaterial.Type.values),
             topic=random.choice(topics),
         )
+        material = get_or_create(ClassMaterial, **fields)
         materials.append(material)
 
     return materials

@@ -6,8 +6,8 @@ from auth.views import (
     UserRetrieveAPIView,
     UserControlViewSet,
     GroupViewSet,
-    TokenObtainPairExtendedView,
-    TokenRefreshExtendedView,
+    TokenObtainPairView,
+    TokenRefreshView,
     ChangePasswordAPIView,
 )
 
@@ -47,7 +47,7 @@ urlpatterns = [
         })),
     path("", include(router.urls)),
     path("user/", UserRetrieveAPIView.as_view()),
-    path("tokens/obtain/", TokenObtainPairExtendedView.as_view()),
-    path("tokens/refresh/", TokenRefreshExtendedView.as_view()),
+    path("tokens/obtain/", TokenObtainPairView.as_view()),
+    path("tokens/refresh/", TokenRefreshView.as_view()),
     path("password/change/", ChangePasswordAPIView.as_view()),
 ]

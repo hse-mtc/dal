@@ -346,23 +346,11 @@ class ChangePasswordAPIView(generics.GenericAPIView):
         return Response(status=HTTP_200_OK)
 
 
-# ------------------------------------------------------------------------------
-
-
+@extend_schema(tags=["auth"])
 class TokenObtainPairView(jwt_views.TokenObtainPairView):
     permission_classes = [permissions.AllowAny]
 
 
+@extend_schema(tags=["auth"])
 class TokenRefreshView(jwt_views.TokenRefreshView):
     permission_classes = [permissions.AllowAny]
-
-
-TokenObtainPairExtendedView = extend_schema(
-    responses={200: TokenPairSerializer},
-    tags=["auth"],
-)(TokenObtainPairView)
-
-TokenRefreshExtendedView = extend_schema(
-    responses={200: TokenPairSerializer},
-    tags=["auth"],
-)(TokenRefreshView)

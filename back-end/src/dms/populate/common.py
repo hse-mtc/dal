@@ -1,3 +1,5 @@
+from common.utils.populate import get_or_create
+
 from dms.models.common import (
     Author,
     Publisher,
@@ -5,7 +7,7 @@ from dms.models.common import (
 
 
 def create_authors() -> list[Author]:
-    data = [
+    authors = [
         dict(surname="Кашин", name="Андрей", patronymic="Владимирович"),
         dict(surname="Никандров", name="Игорь", patronymic="Владимирович"),
         dict(surname="Пеляк", name="Виктор", patronymic="Степанович"),
@@ -13,26 +15,20 @@ def create_authors() -> list[Author]:
         dict(surname="Усиков", name="Юрий", patronymic="Витальевич"),
     ]
 
-    authors = []
-
-    for fields in data:
-        author, _ = Author.objects.get_or_create(**fields)
-        authors.append(author)
-
-    return authors
+    return [
+        get_or_create(Author, **fields)
+        for fields in authors
+    ]
 
 
 def create_publishers() -> list[Publisher]:
-    data = [
+    publishers = [
         dict(name="Авиация"),
         dict(name="Космонавтика"),
         dict(name="Инженерный журнал"),
     ]
 
-    publishers = []
-
-    for fields in data:
-        publisher, _ = Publisher.objects.get_or_create(**fields)
-        publishers.append(publisher)
-
-    return publishers
+    return [
+        get_or_create(Publisher, **fields)
+        for fields in publishers
+    ]

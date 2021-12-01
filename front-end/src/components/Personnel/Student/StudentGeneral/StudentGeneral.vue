@@ -2,7 +2,7 @@
   <ExpandBox title="Основное" non-expandable>
     <div class="general-info">
       <el-upload
-        v-loading="loading"
+        v-loading="loading || studentPostsAreLoading || studentStatusesAreLoading"
         class="avatar-uploader"
         action="/api/lms/students/"
         :show-file-list="false"
@@ -23,7 +23,7 @@
         label-position="right"
         label-width="200px"
         size="mini"
-        :disabled="loading"
+        :disabled="loading || studentPostsAreLoading || studentPostsAreLoading"
         hide-required-asterisk
       >
         <el-form-item class="actions">
@@ -107,14 +107,14 @@
               style="display: block"
             >
               <el-option
-                v-for="(value, key) in STUDENT_STATUSES"
-                :key="key"
-                :label="value"
-                :value="key"
+                v-for="status in studentStatuses"
+                :key="status.value"
+                :label="status.label"
+                :value="status.value"
               />
             </el-select>
             <span v-else class="field-value">
-              {{ STUDENT_STATUSES[displayInfo.status] || "---" }}
+              {{ studentStatusLabelFromValue(displayInfo.status) }}
             </span>
           </transition>
         </el-form-item>
@@ -128,14 +128,14 @@
               style="display: block"
             >
               <el-option
-                v-for="(value, key) in STUDENT_POSTS"
-                :key="key"
-                :label="value"
-                :value="key"
+                v-for="post in studentPosts"
+                :key="post.value"
+                :label="post.label"
+                :value="post.value"
               />
             </el-select>
             <span v-else class="field-value">
-              {{ STUDENT_POSTS[displayInfo.post] || "---" }}
+              {{ studentPostLabelFromValueOrDefault(displayInfo.post, "---") }}
             </span>
           </transition>
         </el-form-item>
@@ -199,11 +199,12 @@ import { findStudentBasic, patchStudent } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
-import { STUDENT_POSTS, STUDENT_STATUSES } from "@/utils/enums";
+import { StudentStatusesMixin, StudentPostsMixin } from "@/mixins/students";
 
 export default {
   name: "StudentGeneral",
   components: { ExpandBox },
+  mixins: [StudentStatusesMixin, StudentPostsMixin],
   props: {
     milgroup: {
       type: Object,
@@ -212,8 +213,6 @@ export default {
   },
   data() {
     return {
-      STUDENT_POSTS,
-      STUDENT_STATUSES,
       modify: false,
       displayInfo: {},
       modifyInfo: {},
@@ -260,7 +259,7 @@ export default {
         status: [
           {
             required: true,
-            message: "Пожалуйста, выберите взвод",
+            message: "Пожалуйста, выберите статус",
             trigger: "change",
           },
         ],

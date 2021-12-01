@@ -1,7 +1,7 @@
 <template>
   <div class="birthday-item-wrapper">
     <router-link class="name" :to="`/${type}/${person.id}`" @click.native="$emit('clicked')">
-      {{ person.full_name }}
+      {{ person.fullname }}
     </router-link>
     <div class="description">
       <span class="date"> {{ formatDate(person.birthday) }} </span>

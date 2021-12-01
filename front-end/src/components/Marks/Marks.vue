@@ -94,7 +94,7 @@
                                 :type="tagByLessonType(item.type)"
                                 disable-transitions
                               >
-                                {{ LESSON_TYPES[item.type] }}
+                                {{ lessonTypeLabelFromValue(item.type) }}
                               </el-tag>
                               <span>
                                 <svg-icon icon-class="map-marker-outline" />
@@ -309,10 +309,10 @@
             style="display: block"
           >
             <el-option
-              v-for="(value, key) in LESSON_TYPES"
-              :key="key"
-              :label="value"
-              :value="key"
+              v-for="type in lessonTypes"
+              :key="type.value"
+              :label="type.label"
+              :value="type.value"
             />
           </el-select>
         </el-form-item>
@@ -348,14 +348,14 @@ import {
   deleteSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
-import { LESSON_TYPES } from "@/utils/enums";
 import { hasPermission } from "@/utils/permissions";
+import { LessonTypesMixin } from "@/mixins/lessons";
 
 export default {
   name: "Marks",
+  mixins: [LessonTypesMixin],
   data() {
     return {
-      LESSON_TYPES,
       lessonDialogVisible: false,
       editLessonFullname: "",
       editLesson: {
@@ -476,9 +476,6 @@ export default {
       return [];
     },
     formatDate: d => moment(d).format("DD.MM.YY"),
-    isOnlyLesson(marks) {
-      return marks.length === 1;
-    },
     tagByLessonType(type) {
       switch (type) {
         case "LE":

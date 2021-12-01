@@ -4,17 +4,26 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
-from common.constants import MUTATE_ACTIONS
 
-from lms.models.achievements import Achievement
-from lms.models.students import Student
-from lms.serializers.achievements import (AchievementSerializer,
-                                          AchievementMutateSerializer)
-from lms.filters.achievements import AchievementFilter
-from lms.utils.mixins import QuerySetScopingMixin
+from common.constants import MUTATE_ACTIONS
 
 from auth.models import Permission
 from auth.permissions import BasePermission
+
+from lms.models.achievements import Achievement
+from lms.models.students import Student
+from lms.models.teachers import Teacher
+
+from lms.serializers.achievements import (
+    AchievementSerializer,
+    AchievementMutateSerializer,
+)
+
+from lms.filters.achievements import AchievementFilter
+
+from lms.utils.mixins import QuerySetScopingMixin
+
+from lms.types.personnel import Personnel
 
 
 class AchievementPermission(BasePermission):
@@ -44,22 +53,21 @@ class AchievementViewSet(QuerySetScopingMixin, ModelViewSet):
             return AchievementMutateSerializer
         return AchievementSerializer
 
-    def handle_scope_milfaculty(self, user_type, user):
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        if user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return self.queryset.none()
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
         return self.queryset.filter(student__milgroup__milfaculty=milfaculty)
 
-    def allow_scope_milfaculty_on_create(self, data, user_type, user):
-        if user_type == "student":
-            milfaculty = user.milgroup.milfaculty
-        if user_type == "teacher":
-            milfaculty = user.milfaculty
-        else:
-            return False
+    def allow_scope_milfaculty_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
 
         student = Student.objects.filter(id=data["student"])
         if not student.exists():
@@ -67,37 +75,45 @@ class AchievementViewSet(QuerySetScopingMixin, ModelViewSet):
 
         return milfaculty == student.first().milgroup.milfaculty
 
-    def handle_scope_milgroup(self, user_type, user):
-        if user_type == "student":
-            milgroup = user.milgroup
-            return self.queryset.filter(student__milgroup=milgroup)
+    def handle_scope_milgroup(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                milgroup = personnel.milgroup
+                return self.queryset.filter(student__milgroup=milgroup)
+            case Teacher():
+                milgroups = personnel.milgroups
+                return self.queryset.filter(student__milgroup__in=milgroups)
+            case _:
+                assert False, "Unhandled Personnel type"
 
-        if user_type == "teacher":
-            milgroups = user.milgroups
-            return self.queryset.filter(student__milgroup__in=milgroups)
-
-        return self.queryset.none()
-
-    def allow_scope_milgroup_on_create(self, data, user_type, user):
+    def allow_scope_milgroup_on_create(self, data, personnel: Personnel):
         student = Student.objects.filter(id=data["student"])
         if not student.exists():
             return False
         student = student.first()
 
-        if user_type == "student":
-            return student.milgroup == user.milgroup
+        match personnel:
+            case Student():
+                return student.milgroup == personnel.milgroup
+            case Teacher():
+                return student.milgroup in personnel.milgroups
+            case _:
+                assert False, "Unhandled Personnel type"
 
-        if user_type == "teacher":
-            return student.milgroup in user.milgroups
+    def handle_scope_self(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(student=personnel)
+            case Teacher():
+                return self.queryset.none()
+            case _:
+                assert False, "Unhandled Personnel type"
 
-        return False
-
-    def handle_scope_self(self, user_type, user):
-        if user_type == "student":
-            return self.queryset.filter(student=user)
-        return self.queryset.none()
-
-    def allow_scope_self_on_create(self, data, user_type, user):
-        if user_type == "student":
-            return data["student"] == user.id
-        return False
+    def allow_scope_self_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Student():
+                return data["student"] == personnel.id
+            case Teacher():
+                return False
+            case _:
+                assert False, "Unhandled Personnel type"
