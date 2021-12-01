@@ -5,6 +5,7 @@ from lms.models.students import Student
 from lms.models.absences import (
     Absence,
     AbsenceTime,
+    AbsenceAttachment
 )
 
 from lms.serializers.students import StudentShortSerializer
@@ -12,15 +13,45 @@ from lms.serializers.students import StudentShortSerializer
 from lms.validators import PresentInDatabaseValidator
 
 
-class AbsenceSerializer(serializers.ModelSerializer):
-    student = StudentShortSerializer()
+class AbsenceAttachmentSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(
+        use_url=True,
+        allow_null=True,
+        required=False,
+        read_only=True,
+    )
 
     class Meta:
+        model = AbsenceAttachment
+        fields = "__all__"
+
+
+class AbsenceSerializer(serializers.ModelSerializer):
+    student = StudentShortSerializer()
+    attachment = AbsenceAttachmentSerializer(read_only=True)
+
+    class Meta: 
         model = Absence
         fields = "__all__"
 
 
 class AbsenceMutateSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(write_only=True, required=False, allow_null=True)
+
+    def create(self, validated_data):
+        if image := validated_data.pop("image", None):
+            absence_attachment = AbsenceAttachment.objects.create(image=image)
+            validated_data["attachment"] = absence_attachment
+        return super().create(validated_data)
+
+    def update(self, instance: Absence, validated_data):
+        if image := validated_data.pop("image", None):
+            if instance.attachment:
+                instance.attachment.image = image
+                instance.attachment.save()
+            else:
+                instance.attachment = AbsenceAttachment.objects.create(image=image)
+        return super().update(instance, validated_data)
 
     class Meta:
         model = Absence

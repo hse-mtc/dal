@@ -9,7 +9,7 @@ from common.utils.populate import get_or_create
 from lms.models.students import Student
 from lms.models.absences import (
     Absence,
-    AbsenceTime,
+    AbsenceTime
 )
 
 
@@ -25,6 +25,7 @@ def create_absences(
             "status": Absence.Status.CLOSED.value,
             "date": (nearest_day - timedelta(7)).strftime(date_f),
             "reason": "Заболел",
+            "attachment": None,
             "comment": "Болеть будет недолго",
             "student": students["Кацевалов"],
         },
@@ -33,6 +34,7 @@ def create_absences(
             "status": Absence.Status.CLOSED.value,
             "date": nearest_day.strftime(date_f),
             "reason": "Электричка опоздала",
+            "attachment": None,
             "comment": "",
             "student": students["Хромов"],
         },
@@ -41,6 +43,7 @@ def create_absences(
             "status": Absence.Status.OPEN,
             "date": (nearest_day - timedelta(14)).strftime(date_f),
             "reason": "Прогул",
+            "attachment": None,
             "comment": "Лежал дома на диване",
             "student": students["Хромов"],
         },
