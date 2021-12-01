@@ -30,13 +30,15 @@ class AbsenceSerializer(serializers.ModelSerializer):
     student = StudentShortSerializer()
     attachment = AbsenceAttachmentSerializer(read_only=True)
 
-    class Meta: 
+    class Meta:
         model = Absence
         fields = "__all__"
 
 
 class AbsenceMutateSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(write_only=True, required=False, allow_null=True)
+    image = serializers.ImageField(write_only=True,
+                                   required=False,
+                                   allow_null=True)
 
     def create(self, validated_data):
         if image := validated_data.pop("image", None):
@@ -50,7 +52,8 @@ class AbsenceMutateSerializer(serializers.ModelSerializer):
                 instance.attachment.image = image
                 instance.attachment.save()
             else:
-                instance.attachment = AbsenceAttachment.objects.create(image=image)
+                instance.attachment = AbsenceAttachment.objects.create(
+                    image=image)
         return super().update(instance, validated_data)
 
     class Meta:
