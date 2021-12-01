@@ -71,7 +71,9 @@ def test_class_materials_delete(su_client, create_class_materials):
 
 
 @pytest.mark.django_db
-def test_class_materials_post(su_client, create_topic, get_class_material_data):
+def test_class_materials_post(su_client,
+                              create_topic,
+                              get_class_material_data):
     topic = create_topic
     data = get_class_material_data(topic_id=topic.id)
 
@@ -233,9 +235,14 @@ def test_post_class_materials_with_permissions(test_client,
                                 data=multipart_cl_material_data(patch_data))
     assert response.status_code == 400#TODO:I dont know why 400
 
-
+#pylint: disable=too-many-arguments
 @pytest.mark.django_db
-def test_put_with_permissions(test_client, test_user, permission_data, create_class_materials, get_class_material_data, get_file_model_data):
+def test_put_with_permissions(test_client,
+                              test_user,
+                              permission_data,
+                              create_class_materials,
+                              get_class_material_data,
+                              get_file_model_data):
 
     material = create_class_materials()
 
@@ -274,8 +281,14 @@ def test_put_with_permissions(test_client, test_user, permission_data, create_cl
                                content_type=MULTIPART_CONTENT)
     assert response.status_code == 200
 
+#pylint: disable=too-many-arguments
 @pytest.mark.django_db
-def test_patch_with_permissions(test_client, test_user, permission_data, create_class_materials, get_class_material_data, get_file_model_data):
+def test_patch_with_permissions(test_client,
+                                test_user,
+                                permission_data,
+                                create_class_materials,
+                                get_class_material_data,
+                                get_file_model_data):
     material = create_class_materials()
 
     data = get_class_material_data(topic_id=material.topic.id)
