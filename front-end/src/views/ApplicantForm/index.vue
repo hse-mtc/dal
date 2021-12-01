@@ -421,12 +421,12 @@ class ApplicantForm extends Vue {
   }
 
   fillProgramOptions(data) {
-      this.fields.universityInfo.program.props.options = data.map(
-        item => ({
-          label: item.code,
-          value: item.id,
-        }),
-      );
+    this.fields.universityInfo.program.props.options = data.map(
+      item => ({
+        label: item.code,
+        value: item.id,
+      }),
+    );
   }
 
   convertFamily(data) {
@@ -667,7 +667,7 @@ class ApplicantForm extends Vue {
     });
     if (nextValue === STEPS.universityInfo && this.applicantData.universityInfo.campus) {
       const { data } = await getProgramsByCampus(
-          this.applicantData.universityInfo.campus,
+        this.applicantData.universityInfo.campus,
       );
       this.fillProgramOptions(data);
     }
