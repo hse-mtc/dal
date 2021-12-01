@@ -79,7 +79,7 @@ routers.register('teachers/approvals', ApproveTeacherViewSet)
 routers.register('teachers', TeacherViewSet)
 
 routers.register('absences', AbsenceViewSet)
-routers.register('absence-attachment', AbsenceAttachmentViewSet)
+routers.register('absence-attachments', AbsenceAttachmentViewSet)
 routers.register('achievement-types', AchievementTypeViewSet)
 routers.register('achievements', AchievementViewSet)
 routers.register('encouragements', EncouragementViewSet)

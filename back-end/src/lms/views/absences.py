@@ -66,7 +66,7 @@ class AbsencePermission(BasePermission):
 
 
 class AbsenceAttachmentPermission(BasePermission):
-    permission_class = "absence-attachment"
+    permission_class = "absence-attachments"
     view_name_rus = "Приложения"
     methods = ["get", "delete"]
     scopes = [
@@ -77,16 +77,13 @@ class AbsenceAttachmentPermission(BasePermission):
     ]
 
 
-@extend_schema(tags=["absence-attachment"])
+@extend_schema(tags=["absences"])
 class AbsenceAttachmentViewSet(mixins.DestroyModelMixin,
                                mixins.ListModelMixin,
                                GenericViewSet):
     queryset = AbsenceAttachment.objects.all()
     serializer_class = AbsenceAttachmentSerializer
     permission_classes = [AbsenceAttachmentPermission]
-
-    def destroy(self, request, pk=None, *args, **kwargs):
-        return super().destroy(request, pk, *args, **kwargs)
 
 
 @extend_schema(tags=["absences"])
