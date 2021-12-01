@@ -443,7 +443,7 @@ class ApplicantForm extends Vue {
       birth_info: {
         date: data.date,
         country: data.country,
-        city: data.city,
+        place: data.place,
       },
     };
   }
