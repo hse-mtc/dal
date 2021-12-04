@@ -552,7 +552,7 @@ export default {
       try {
         await deleteAbsenceAttachment(id);
         deleteSuccess("приложения");
-        this.onFilter();
+        await this.onFilter();
       } catch (err) {
         deleteError("приложения", err.response.status);
       }
