@@ -557,8 +557,8 @@ export default {
         deleteError("приложения", err.response.status);
       }
     },
-    handleClose() {
-      this.$confirm(
+    async handleClose() {
+      await this.$confirm(
         "Вы уверены, что хотите закрыть окно редактирования?",
         "Подтверждение",
         {
@@ -566,23 +566,23 @@ export default {
           cancelButtonText: "Отмена",
           type: "warning",
         },
-      )
-        .then(() => {
-          this.dialogVisible = false;
-        })
-        .catch(() => {});
+      );
+      try {
+        this.dialogVisible = false;
+      } catch {}
     },
     handleAccept() {
-      patchAbsence(this.editAbsence.id, this.editAbsence)
-        .then(() => {
-          patchSuccess("пропуска");
-          this.dialogVisible = false;
-          this.onFilter();
-        })
-        .catch(err => patchError("пропуска", err.response.status));
+      try {
+        patchAbsence(this.editAbsence.id, this.editAbsence);
+        patchSuccess("пропуска");
+        this.dialogVisible = false;
+        this.onFilter();
+      } catch (err) {
+        patchError("пропуска", err.response.status);
+      }
     },
-    handleDelete(id) {
-      this.$confirm(
+    async handleDelete(id) {
+      await this.$confirm(
         "Вы уверены, что хотите удалить пропуск?",
         "Подтверждение",
         {
@@ -590,14 +590,14 @@ export default {
           cancelButtonText: "Отмена",
           type: "warning",
         },
-      ).then(() => {
-        deleteAbsence({ id })
-          .then(() => {
-            deleteSuccess("пропуска");
-            this.onFilter();
-          })
-          .catch(err => deleteError("пропуска", err.response.status));
-      });
+      );
+      try {
+        deleteAbsence({ id });
+        deleteSuccess("пропуска");
+        this.onFilter();
+      } catch (err) {
+        deleteError("пропуска", err.response.status);
+      }
     },
   },
 };
