@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from common.models.personal import Photo, BirthInfo, ContactInfo
-from common.models.universities import Campus
 
 
 class Staff(models.Model):
@@ -10,7 +9,7 @@ class Staff(models.Model):
     # --------------------------------------------------------------------------
 
     class Post(models.TextChoices):
-        CLERK = "Clerk", "Делопроизводитель"
+        CLERK = "CL", "Делопроизводитель"
 
     # --------------------------------------------------------------------------
     # Frequently accessed data.
@@ -57,11 +56,6 @@ class Staff(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-    )
-
-    campus = models.CharField(
-        choices=Campus.choices,
-        max_length=2,
     )
 
     class Meta:
