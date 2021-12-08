@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 # Populate imports
 
 # Common
-
+from ams.populate.staffs import create_staffs
 from common.populate.subjects import create_subjects
 from common.populate.milspecialties import create_milspecialties
 from common.populate.universities import (
@@ -104,12 +104,16 @@ class Command(BaseCommand):
 
         students, _ = Group.objects.get_or_create(name="Студент")
         teachers, _ = Group.objects.get_or_create(name="Преподаватель")
+        staffs, _ = Group.objects.get_or_create(name="Делопроизводители")
         milfaculty_heads, _ = Group.objects.get_or_create(
             name="Начальник цикла")
 
+        staffs.permissions.set(get_student_permissions())
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
+
+        staffs.user_set.add(User.objects.get(email="zhugina@mail.com"))
 
         students.user_set.add(User.objects.get(email="gakhromov@mail.com"))
         students.user_set.add(User.objects.get(email="askatsevalov@mail.com"))
@@ -148,6 +152,10 @@ class Command(BaseCommand):
         applicants = create_applicants(
             programs=programs,
             milspecialties=milspecialties,
+        )
+
+        staffs_ = create_staffs(
+            users=users,
         )
 
         print(" OK")

@@ -84,6 +84,13 @@ def create_users() -> dict[str, User]:
             campuses=[Campus.MOSCOW.value],
         ),
         Data(
+            email="zhugina@mail.com",
+            password="qwerty",
+            is_staff=True,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
             email="avkurkin@mail.com",
             password="qwerty",
             is_staff=True,

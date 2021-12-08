@@ -1,6 +1,20 @@
 from auth.models import Permission
 
 
+def parse_permissions(values):
+    res = []
+    for val in values:
+        viewset, method, scope = val.split(".")
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(
+            Permission.objects.get(viewset=viewset,
+                                   method=method,
+                                   scope=int(
+                                       getattr(Permission.Scope,
+                                               scope.upper()))))
+    return res
+
+
 def get_student_permissions():
     values = [
         "students.get.self",
@@ -28,6 +42,14 @@ def get_student_permissions():
                                        getattr(Permission.Scope,
                                                scope.upper()))))
     return res
+
+
+def get_staff_permissions():
+    values = [
+        # AMS permissions
+        "applicants.get.all"
+    ]
+    return parse_permissions(values=values)
 
 
 def get_teacher_permissions():
