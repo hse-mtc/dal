@@ -283,7 +283,6 @@ export default {
       }
 
       this.removePaperFromList(id);
-
       this.$message({
         type: "success",
         message: "Статья удалена.",
@@ -305,12 +304,12 @@ export default {
           const { data } = await getPapers(
             this.currentPage,
             this.pageSize,
-            // this.lodash.pickBy({
-            //   limit: this.limit,
-            //   offset: this.documents.length,
-            //   user: this.isMyDocuments ? this.userId : undefined,
-            //   ...this.$route.query,
-            // }),
+            this.lodash.pickBy({
+              limit: this.limit,
+              offset: this.documents.length,
+              user: this.isMyDocuments ? this.userId : undefined,
+              ...this.$route.query,
+            }),
           );
 
           this.documents = [...this.documents, ...data.results];
