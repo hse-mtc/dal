@@ -12,6 +12,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from taggit.models import Tag
 
 from drf_spectacular.views import extend_schema
+from rest_framework import pagination
 
 from auth.permissions import BasePermission
 
@@ -55,6 +56,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
         return super().destroy(request, *args, **kwargs)
 
 
+class PapersPageNumberPagination(pagination.PageNumberPagination):
+    page_size_query_param = "page_size"
+
+
 class TagPermission(BasePermission):
     permission_class = "tags"
     view_name_rus = "Ключевые слова статей"
@@ -87,7 +92,7 @@ class PaperViewSet(viewsets.ModelViewSet):
 
     parser_classes = [MultiPartWithJSONParser, JSONParser]
 
-    pagination_class = LimitOffsetPagination
+    pagination_class = PapersPageNumberPagination
 
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
