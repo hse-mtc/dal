@@ -85,13 +85,12 @@ class PaperViewSet(viewsets.ModelViewSet):
         .order_by("-publication_date", "title", "id")
 
     permission_classes = [PaperPermission]
-    scoped_permission_class = PaperPermission
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = PaperFilter
     search_fields = ["title", "annotation", "tags__name"]
 
-    # parser_classes = [MultiPartWithJSONParser, JSONParser]
+    parser_classes = [MultiPartWithJSONParser, JSONParser]
 
     pagination_class = PapersPageNumberPagination
 
