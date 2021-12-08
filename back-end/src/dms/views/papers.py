@@ -86,8 +86,8 @@ class PaperViewSet(viewsets.ModelViewSet):
 
     permission_classes = [PaperPermission]
 
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_class = PaperFilter
+    filter_backends = None # [DjangoFilterBackend, SearchFilter]
+    filterset_class = None # PaperFilter
     search_fields = ["title", "annotation", "tags__name"]
 
     parser_classes = [MultiPartWithJSONParser, JSONParser]
