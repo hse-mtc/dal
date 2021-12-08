@@ -121,6 +121,17 @@
     <div v-else-if="!loading" class="my-document">
       Документы не найдены
     </div>
+    <div :class="$style.pagination">
+      <el-pagination
+        layout="sizes, prev, pager, next, jumper"
+        :total="count"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :page-sizes="[5, 10, 20]"
+        @current-change="fetchData"
+        @size-change="onPageSizeChange"
+      />
+    </div>
     <div v-loading="loading" class="requests__loader" />
   </div>
 </template>
@@ -161,6 +172,9 @@ export default {
       loading: false,
       documents: [],
       paperToEdit: {},
+      currentPage: 1,
+      pageSize: 10,
+      entriesAmount: 0,
     };
   },
   computed: {
@@ -197,11 +211,11 @@ export default {
         .map(p => p.name)
         .join(", ");
     },
-    loadMore() {
-      if (!this.loading) {
-        this.fetchData();
-      }
-    },
+    // loadMore() {
+    //   if (!this.loading) {
+    //     this.fetchData();
+    //   }
+    // },
     yearChanged(index) {
       if (index === 0) {
         return true;
@@ -276,7 +290,10 @@ export default {
       });
     },
 
-    async fetchData() {
+    async fetchData(page = 1) {
+      this.documents = [];
+      this.currentPage = page || 1;
+      this.loading = true;
       if (!this.$route.query.category && !this.isMyDocuments) {
         return;
       }
@@ -286,12 +303,14 @@ export default {
 
         try {
           const { data } = await getPapers(
-            this.lodash.pickBy({
-              limit: this.limit,
-              offset: this.documents.length,
-              user: this.isMyDocuments ? this.userId : undefined,
-              ...this.$route.query,
-            }),
+            this.currentPage,
+            this.pageSize,
+            // this.lodash.pickBy({
+            //   limit: this.limit,
+            //   offset: this.documents.length,
+            //   user: this.isMyDocuments ? this.userId : undefined,
+            //   ...this.$route.query,
+            // }),
           );
 
           this.documents = [...this.documents, ...data.results];
@@ -303,10 +322,58 @@ export default {
         }
       }
     },
+
+    async onPageSizeChange(pageSize) {
+      this.pageSize = pageSize;
+      await this.fetchData();
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
 @import "serp";
+</style>
+
+<style lang="scss" module>
+.root {
+  padding: 50px;
+}
+
+.label {
+  height: 150px;
+  word-break: break-word !important;
+
+  &.verticalText {
+    writing-mode: vertical-rl;
+  }
+}
+
+.table {
+  margin-top: 20px;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+</style>
+
+<style lang="scss" scoped>
+.filter-row {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/deep/.el-alert__title {
+  font-size: 1em;
+}
+
+.el-alert {
+  background: transparent;
+  border-style: solid;
+  border-color: rgb(220, 223, 230);
+  border-width: 1px;
+}
 </style>

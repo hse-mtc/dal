@@ -5,11 +5,15 @@ const {
   papers: { papers },
 } = DMS_URLS;
 
-export function getPapers(params) {
+export function getPapers(page, pageSize, params) {
   return request({
     url: BASE_API_URL + papers,
     method: "get",
-    params,
+    params: {
+      page,
+      page_size: pageSize,
+      params,
+    },
   });
 }
 
