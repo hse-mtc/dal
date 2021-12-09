@@ -45,12 +45,10 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
         )
         return
 
-    pending_responses = await asyncio.gather(*[
+    [students, today_absences] = await asyncio.gather(
         fetch_students(params={"milgroup": user.milgroup.id}),
         fetch_today_absences(user.milgroup.id),
-    ])
-
-    students, today_absences = pending_responses[0], pending_responses[1]
+    )
 
     students.sort(key=operator.attrgetter("fullname"))
     students_by_id: dict[int, Student] = {student.id: student for student in students}
