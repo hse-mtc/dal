@@ -81,13 +81,18 @@ class Student:
 async def fetch_students(
     *args: tp.Any,
     many: bool = True,
+    authorizing: bool = False,
     **kwargs: tp.Any,
-) -> tp.Union[Student, list[Student]]:
+) -> tp.Union[list[Student], Student]:
     """Fetch students filtering by params."""
 
     response = await client.get("lms/students/", *args, **kwargs)
     data: list[dict[str, tp.Any]] = await response.json()
     students = [Student.from_raw(body) for body in data]
+
+    # Return data as is if we are authorizing the user.
+    if authorizing:
+        return students
 
     if many:
         return students
