@@ -87,8 +87,21 @@ async def authorize(chat_id: int, phone: str) -> AuthorizeResult:
     """Link chat with session using phone."""
 
     params = {"phone": phone}
-    student = await fetch_students(many=False, params=params)
-    session = await fetch_session(params=params)
+
+    match await fetch_students(authorizing=True, params=params):
+        case []:
+            return AuthorizeResult(
+                success=False,
+                details="Студент с таким номером телефона не найден.",
+            )
+        case [student]:
+            pass
+        case _:
+            return AuthorizeResult(
+                success=False,
+                details="Найдено несколько студентов с таким номером телефона.\n"
+                        "Обратитесь к технической поддержке.",
+            )
 
     if not student.is_milgroup_commander():
         return AuthorizeResult(
@@ -96,8 +109,10 @@ async def authorize(chat_id: int, phone: str) -> AuthorizeResult:
             details="Доступ разрешён только командирам взводов.",
         )
 
-    params["chat_id"] = chat_id
+    session = await fetch_session(params=params)
+
     if student.is_milgroup_commander() and not session:
+        params["chat_id"] = chat_id
         await post_session(body=params)
 
     return AuthorizeResult(success=True, details="")
