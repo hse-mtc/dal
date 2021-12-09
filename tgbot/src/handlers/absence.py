@@ -1,3 +1,4 @@
+import asyncio
 import operator
 import typing as tp
 from datetime import datetime
@@ -9,7 +10,10 @@ from aiogram.dispatcher.storage import FSMContext
 from aiogram.utils.markdown import bold as bold_text
 
 from api.auth import fetch_phone
-from api.absence import post_absence
+from api.absence import (
+    post_absence,
+    fetch_today_absences,
+)
 from api.student import (
     fetch_students,
     State,
@@ -35,22 +39,34 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
 
     if user.milgroup.weekday != datetime.now().weekday():
         await message.answer(
-            bold_text("У вас сегодня нет занятий."),
+            bold_text("У вас нет занятий сегодня."),
             parse_mode=MD2,
             reply_markup=main_menu_keyboard(),
         )
         return
 
-    students = await fetch_students(params={"milgroup": user.milgroup.id})
-    students.sort(key=operator.attrgetter("fullname"))
+    pending_responses = await asyncio.gather(*[
+        fetch_students(params={"milgroup": user.milgroup.id}),
+        fetch_today_absences(user.milgroup.id),
+    ])
 
-    students_by_id = {student.id: student for student in students}
+    students, today_absences = pending_responses[0], pending_responses[1]
+
+    students.sort(key=operator.attrgetter("fullname"))
+    students_by_id: dict[int, Student] = {student.id: student for student in students}
+
+    for today_absence in today_absences:
+        students_by_id[today_absence["student"]["id"]].state = State.ABSENT
+
     await state.set_data(students_by_id)
 
     for student in students:
         await message.answer(
             student.fullname,
-            reply_markup=student_absence_keyboard(student.id),
+            reply_markup=student_absence_keyboard(
+                student_id=student.id,
+                selected_button=student.state.value,
+            ),
         )
 
     restriction_time = await fetch_restriction_time()
@@ -95,7 +111,11 @@ async def report_absence(message: Message, state: FSMContext) -> None:
     students_by_id: dict[int, Student] = await state.get_data()
     students = [student for _, student in students_by_id.items()]
     message_text = await post_absence(students)
-    await message.answer(message_text, reply_markup=main_menu_keyboard())
+    await message.answer(
+        message_text,
+        parse_mode=MD2,
+        reply_markup=main_menu_keyboard(),
+    )
 
 
 report_absence.handler_filters = [
