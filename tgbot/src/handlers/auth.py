@@ -1,6 +1,12 @@
+import textwrap
+
 from aiogram.types import Message
 
-from api.student import fetch_students, Post
+from api.student import (
+    fetch_students,
+    Post,
+    Student,
+)
 from api.auth import (
     session_exists,
     authorize,
@@ -37,10 +43,16 @@ async def share_contact(message: Message) -> None:
         return
 
     user = await fetch_students(many=False, params={"phone": phone})
+    assert isinstance(user, Student)
+
     await message.reply(
-        f"Здравия желаю, {user.fullname.strip()}.\n"
-        f"Должность: {getattr(Post, user.post).value}, взвод {user.milgroup.title}.\n\n"
-        f'Нажмите кнопку "{ButtonText.LIST_MILGROUP.value}", '
-        "чтобы вывести список студентов Вашего взвода.",
+        textwrap.dedent(f"""
+            Здравия желаю, {user.fullname.strip()}.
+            
+            Взвод: {user.milgroup.title}.
+            Должность: {getattr(Post, user.post).value}.
+            
+            Нажмите кнопку "{ButtonText.LIST_MILGROUP.value}", чтобы вывести список студентов Вашего взвода.
+        """),
         reply_markup=list_milgroup_keyboard(),
     )
