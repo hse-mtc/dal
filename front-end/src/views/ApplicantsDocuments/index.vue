@@ -309,7 +309,7 @@ export default {
   align-items: center;
 }
 
-/deep/.el-alert__title {
+::v-deep .el-alert__title {
   font-size: 1em;
 }
 

@@ -240,7 +240,7 @@ export default {
 <style scoped lang="scss">
 @import "upsert-modal";
 
-.paperFileUploaded /deep/ .el-upload {
+.paperFileUploaded ::v-deep .el-upload {
   display: block !important;
 }
 </style>

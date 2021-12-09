@@ -1,6 +1,6 @@
 .achievements-info {
   .achievements-table {
-    /deep/ .el-table {
+    ::v-deep .el-table {
       &::before {
         height: 0;
       }
@@ -40,7 +40,7 @@
   vertical-align: bottom;
 }
 
-/deep/ .p-datatable-scrollable-body {
+::v-deep .p-datatable-scrollable-body {
   &::-webkit-scrollbar {
     width: 15px;
     height: 15px;

@@ -11,6 +11,6 @@
   margin-bottom: 15px;
 }
 
-.my-tabs /deep/ .el-tabs__item {
+.my-tabs ::v-deep .el-tabs__item {
   font-size: 1.4rem;
 }

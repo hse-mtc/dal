@@ -243,12 +243,12 @@ $dark_gray: #889aa4;
   text-align: center;
   margin-bottom: 40px;
 }
-/deep/.el-input__inner {
+::v-deep .el-input__inner {
   color: white;
   border: none;
   background-color: transparent !important;
 }
-/deep/.el-input {
+::v-deep .el-input {
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,

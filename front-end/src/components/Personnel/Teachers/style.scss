@@ -13,6 +13,6 @@
   margin: 20px;
 }
 
-/deep/ .clickable {
+::v-deep .clickable {
   cursor: pointer;
 }
