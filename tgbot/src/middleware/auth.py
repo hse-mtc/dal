@@ -13,15 +13,15 @@ class AuthMiddleware(BaseMiddleware):
         super().__init__()
 
     async def on_pre_process_message(self, message: Message, _: dict) -> None:
-        # User is trying to authorize
+        # User is trying to authorize.
         if message.contact:
             return
 
-        # User is already authorized
+        # User is already authorized.
         if await session_exists(chat_id=message.chat.id):
             return
 
-        # User is not authorized and is not trying to authorize, cancel handler
+        # User is not authorized and is not trying to authorize, cancel handler.
         await message.reply(
             "Для работы с ботом необходимо авторизоваться – "
             "поделитесь контактом, чтобы продолжить.",
