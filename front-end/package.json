@@ -80,6 +80,7 @@
     "vue-template-compiler": "^2.6.11",
     "vuex-module-decorators": "^1.0.1"
   },
+  "engineStrict" : true,
   "engines": {
     "node": ">= 14.9",
     "npm": ">= 8.0"
