@@ -1,6 +1,8 @@
-import typing as tp
 import asyncio
 import operator
+import textwrap
+import typing as tp
+
 from datetime import datetime
 
 from api.client import client
@@ -10,22 +12,26 @@ from api.student import (
 )
 
 
-def absence_statistic(students: list[Student]) -> str:
-    absent_students = [s for s in students if s.state == State.ABSENT]
-    absent_students.sort(key=operator.attrgetter("fullname"))
+def absence_statistic(
+    milgroup_title: str,
+    students: list[Student],
+    absent_students: list[Student],
+) -> str:
+    text = textwrap.dedent(f"""
+        Список студентов отправлен\\.
+        
+        ```
+              Взвод: {milgroup_title}
+          По списку: {len(students)}
+             Налицо: {len(students) - len(absent_students)}
+        Отсутствуют: {len(absent_students)}
+        ```
+    """)
 
-    text = f"""
-Список студентов отправлен.
-
-По списку: {len(students)}
-Налицо: {len(students) - len(absent_students)}
-Отсутствуют: {len(absent_students)}
-"""
-
-    # Someone is missing.
-    if len(absent_students) > 0:
-        text += "\nФИО отсутствующих студентов:\n"
-        text += "\n".join([s.fullname for s in absent_students])
+    if absent_students:
+        absent_students.sort(key=operator.attrgetter("fullname"))
+        text += "\nОтсутствующие студенты:\n"
+        text += "\n".join([f"\\- {s.fullname}" for s in absent_students])
 
     return text
 
@@ -33,38 +39,44 @@ def absence_statistic(students: list[Student]) -> str:
 async def fetch_today_absences(milgroup: int) -> list[dict]:
     today = datetime.now().strftime("%Y-%m-%d")
     response = await client.get(
-        f"lms/absences/?milgroup={milgroup}&date_from={today}&date_to={today}"
+        f"lms/absences/",
+        params={
+            "milgroup": milgroup,
+            "date_from": today,
+            "date_to": today,
+        },
     )
     return await response.json()
 
 
-async def post_absence(students: list[Student], *args: tp.Any,
-                       **kwargs: tp.Any) -> str:
-    absent_students = [
-        student for student in students
-        if student.state.value == State.ABSENT.value
-    ]
-    if len(absent_students) == 0:
-        return "Все студенты присутствуют."
+async def post_absence(
+    students: list[Student],
+    *args: tp.Any,
+    **kwargs: tp.Any,
+) -> str:
+    absences = await fetch_today_absences(students[0].milgroup.id)
 
-    absences = await fetch_today_absences(absent_students[0].milgroup.id)
-
-    if len(absences) > 0:
+    if absences:
         pending_responses = [
             client.delete(f"lms/absences/{absence['id']}/")
             for absence in absences
         ]
-        # wait for delete to finish before doing create
         await asyncio.gather(*pending_responses)
 
-    pending_responses = [
-        client.post(
-            "lms/absences/",
-            json=student.to_body(),
-            *args,
-            **kwargs,
-        ) for student in absent_students
+    absent_students = [
+        student for student in students
+        if student.state.value == State.ABSENT.value
     ]
-    await asyncio.gather(*pending_responses)
 
-    return absence_statistic(students)
+    if absent_students:
+        pending_responses = [
+            client.post("lms/absences/", json=student.to_body(), *args, **kwargs)
+            for student in absent_students
+        ]
+        await asyncio.gather(*pending_responses)
+
+    return absence_statistic(
+        milgroup_title=students[0].milgroup.title,
+        students=students,
+        absent_students=absent_students,
+    )
