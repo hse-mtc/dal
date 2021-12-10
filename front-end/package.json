@@ -82,8 +82,8 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">= 14.9",
-    "npm": ">= 8.0"
+    "node": ">= 16",
+    "npm": ">= 8"
   },
   "browserslist": [
     "> 1%",
