@@ -29,7 +29,7 @@ async def post_uniforms(request: web.Request) -> web.Response:
 
     await asyncio.gather(*[
         bot.send_message(chat_id=session.chat_id, text=f"{uniform}")
-        for session in sessions
+        for session in sessions if session is not None
     ])
 
     return web.Response(body={"detail": "Successful uniform notification."})
