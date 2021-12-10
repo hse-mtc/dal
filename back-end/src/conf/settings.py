@@ -40,12 +40,10 @@ INSTALLED_APPS = [
 
     # Addons
     "corsheaders",
-    "debug_toolbar",
     "dbbackup",
     "django_filters",
     "drf_spectacular",
     "ordered_model",
-    "silk",
     "taggit",
 
     # REST framework
@@ -61,6 +59,12 @@ INSTALLED_APPS = [
     "tgbot",
 ]
 
+if DEBUG:
+    INSTALLED_APPS += [
+        "debug_toolbar",
+        "silk",
+    ]
+
 MIDDLEWARE = [
     "common.middleware.LoggingMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -71,9 +75,13 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "silk.middleware.SilkyMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
+if DEBUG:
+    MIDDLEWARE += [
+        "silk.middleware.SilkyMiddleware",
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
 
 ROOT_URLCONF = "conf.urls"
 
