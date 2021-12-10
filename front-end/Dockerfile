@@ -2,7 +2,7 @@
 ## Build front-end app.
 
 # Latest Node image
-FROM node:14.9.0-alpine AS builder
+FROM node:16-alpine AS builder
 
 # Set working directory
 WORKDIR /front-end
@@ -11,7 +11,7 @@ WORKDIR /front-end
 COPY front-end/package*.json ./
 
 # Install python and stuff (for some reason, on ARM, node docker image does not have python)
-RUN apk add --no-cache g++ gcc libgcc libstdc++ linux-headers make python
+RUN apk add --no-cache g++ gcc libgcc libstdc++ linux-headers make python3
 
 # Install packages
 RUN npm install --loglevel=error
