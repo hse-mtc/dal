@@ -1,8 +1,9 @@
 from django.contrib import admin
-from django.conf.urls.static import static
+from django.views.static import serve
 from django.urls import (
     include,
     path,
+    re_path,
 )
 
 from conf import settings
@@ -21,8 +22,11 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 ]
 
-# Serve media files
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve static files (Django admin panel)
+urlpatterns += [re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT})]
+
+# Serve media files (user uploads)
+urlpatterns += [re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT})]
 
 if settings.DEBUG:
     # Swagger
