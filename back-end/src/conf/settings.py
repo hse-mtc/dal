@@ -272,33 +272,46 @@ SPECTACULAR_SETTINGS = {
 
     # Enum namings
     "ENUM_NAME_OVERRIDES": {
+        # ----------------------------------------------------------------------
         # common
-        "RelativeType":
-            "common.models.persons.Relative.Type",
 
+        "RelativeType": "common.models.personal.Relative.Type",
+        "Campus": "common.models.universities.Campus",
+
+        # ----------------------------------------------------------------------
+        # auth
+
+        "PermissionScope": "auth.models.Permission.Scope",
+
+        # ----------------------------------------------------------------------
+        # ams
+
+        "MedicalExamination": "ams.models.applicants.ApplicationProcess.MedicalExamination",
+        "ProfPsySelection": "ams.models.applicants.ApplicationProcess.ProfPsySelection",
+
+        # ----------------------------------------------------------------------
         # dms
-        "ClassMaterialType":
-            "dms.models.class_materials.ClassMaterial.Type",
 
+        "ClassMaterialType": "dms.models.class_materials.ClassMaterial.Type",
+
+        # ----------------------------------------------------------------------
         # lms
-        "AbsenceType":
-            "lms.models.absences.Absence.Type",
-        "AbsenceStatus":
-            "lms.models.absences.Absence.Status",
-        "EncouragementType":
-            "lms.models.encouragements.Encouragement.Type",
-        "LessonType":
-            "lms.models.lessons.Lesson.Type",
-        "PunishmentType":
-            "lms.models.punishments.Punishment.Type",
-        "StudentStatus":
-            "lms.models.students.Student.Status",
-        "UniversityCampus":
-            "lms.models.universities.UniversityInfo.Campus",
-        "MedicalExamination":
-            "lms.models.applicants.ApplicationProcess.MedicalExamination",
-        "ProfPsySelection":
-            "lms.models.applicants.ApplicationProcess.ProfPsySelection",
+
+        "AbsenceExcuse": "lms.models.absences.Absence.Excuse",
+        "AbsenceStatus": "lms.models.absences.Absence.Status",
+
+        "EncouragementType": "lms.models.encouragements.Encouragement.Type",
+        "LessonType": "lms.models.lessons.Lesson.Type",
+        "PunishmentType": "lms.models.punishments.Punishment.Type",
+
+        "StudentStatus": "lms.models.students.Student.Status",
+        "StudentPost": "lms.models.students.Student.Post",
+
+        "TeacherRank": "lms.models.teachers.Teacher.Rank",
+        "TeacherPost": "lms.models.teachers.Teacher.Post",
+
+        "UniformHeaddress": "lms.models.uniforms.Uniform.Headdress",
+        "UniformOuterwear": "lms.models.uniforms.Uniform.Outerwear",
     },
 }
 
