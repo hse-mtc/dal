@@ -40,7 +40,7 @@ services:
     #   - $WATCHDOC_AUTH_PORT:$WATCHDOC_AUTH_PORT
     restart: always
     volumes:
-      - ./watchdoc:/watchdoc
+      - watchdoc-generated:/watchdoc/generated
 
   back-end:
     container_name: back-end
@@ -59,7 +59,8 @@ services:
              python manage.py runserver 0.0.0.0:$BACK_END_PORT"
     restart: always
     volumes:
-      - ./back-end:/back-end
+      - back-end-backups:/back-end/backups
+      - back-end-media:/back-end/media
     depends_on:
       - postgres
 
@@ -95,3 +96,9 @@ services:
     restart: always
     # depends_on:
     #   - back-end
+
+volumes:
+  postgres-data:
+  back-end-backups:
+  back-end-media:
+  watchdoc-generated:
