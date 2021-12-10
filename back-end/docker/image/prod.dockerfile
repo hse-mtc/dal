@@ -17,9 +17,8 @@ ENV PYTHONPATH "src:${PYTHONPATH}"
 COPY back-end/Pipfile* ./
 
 # Install pipenv & dependencies
-# FIXME(TmLev): remove --dev
 RUN pip install pipenv && \
-    pipenv install --system --deploy --dev
+    pipenv install --system --deploy
 
 # Copy tools
 COPY tools /tools
