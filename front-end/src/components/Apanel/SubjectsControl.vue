@@ -79,7 +79,7 @@
         :model="subjectForm"
         label-width="180px"
       >
-        <ElFormItem label="Название дисциплины" prop="title">
+        <ElFormItem label="Название" prop="title">
           <ElInput v-model="subjectForm.title" placeholder="Введите название" />
         </ElFormItem>
 
