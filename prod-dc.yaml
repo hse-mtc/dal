@@ -57,7 +57,7 @@ services:
              python manage.py migrate &&
              python manage.py register_permissions &&
              python manage.py collectstatic &&
-             python manage.py runserver 0.0.0.0:$BACK_END_PORT"
+             gunicorn conf.asgi:application --config src/gunicorn.conf.py"
     restart: always
     volumes:
       - back-end-backups:/back-end/backups
