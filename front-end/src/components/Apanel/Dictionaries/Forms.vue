@@ -180,7 +180,7 @@ class DictionariesForms extends Vue {
   onChange(field, formatter, value) {
     this.dataByTypes[this.type][field] = formatter
       ? formatter(value)
-      : value.trim();
+      : value;
   }
 
   @Watch("initState", { deep: true })
