@@ -56,7 +56,7 @@ services:
       sh -c "/tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
              python manage.py migrate &&
              python manage.py register_permissions &&
-             python manage.py collectstatic &&
+             python manage.py collectstatic --clear &&
              gunicorn conf.asgi:application --config src/gunicorn.conf.py"
     restart: always
     volumes:
