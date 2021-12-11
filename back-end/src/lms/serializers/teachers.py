@@ -8,6 +8,8 @@ from common.serializers.personal import (
     PhotoMutateMixin,
 )
 
+from auth.models import Group
+
 from lms.models.common import Milgroup
 from lms.models.teachers import Teacher
 
@@ -34,8 +36,8 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class TeacherMutateSerializer(
-        WritableNestedModelSerializer,
-        PhotoMutateMixin,
+    PhotoMutateMixin,
+    WritableNestedModelSerializer,
 ):
     birth_info = BirthInfoSerializer(required=False)
     contact_info = ContactInfoSerializer()
@@ -90,9 +92,20 @@ class ApproveTeacherSerializer(serializers.ModelSerializer):
 
 
 class ApproveTeacherMutateSerializer(serializers.Serializer):
+    permission_groups = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(),
+        many=True,
+        write_only=True,
+        required=False,
+    )
 
     def create(self, validated_data):
         pass
 
-    def update(self, instance, validated_data):
-        pass
+    def update(self, teacher: Teacher, validated_data):
+        user = teacher.user
+        user.is_active = True
+        if groups := validated_data.pop("permission_groups", []):
+            user.groups.set(groups)
+        user.save()
+        return teacher
