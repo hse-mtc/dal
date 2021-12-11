@@ -34,7 +34,7 @@ class ContactInfoSerializer(UniqueFieldsMixin, serializers.ModelSerializer):
 
         except ContactInfo.DoesNotExist:
             validated_data["corporate_email"] = corporate_email
-            return self.create(validated_data)
+            return super().create(validated_data)
 
     def update(self, instance, validated_data):
         old_partial = self.partial
