@@ -68,17 +68,17 @@ export function saveRoleChanges(id, data) {
   });
 }
 
-export function getUsersToApprove() {
+export function getTeachersToApprove() {
   return request({
-    url: BASE_API_URL + LMS_URLS.staff.approvements,
+    url: BASE_API_URL + LMS_URLS.staff.teachersApprovals,
     method: "get",
   });
 }
 
-export function changeStudentStatus(id, status) {
+export function approveTeacher(id, data) {
   return request({
-    url: `${BASE_API_URL + LMS_URLS.staff.approvements}${id}/`,
+    url: `${BASE_API_URL + LMS_URLS.staff.teachersApprovals}${id}/`,
     method: "patch",
-    data: { status },
+    data,
   });
 }
