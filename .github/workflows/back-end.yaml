@@ -20,7 +20,7 @@ jobs:
         run:  docker-compose run back-end scripts/test.sh
       - name: "Check code style"
         run:  docker-compose run back-end scripts/format.sh --check
-      - name: "Lint code"
-        run:  docker-compose run back-end scripts/lint.sh
+      # - name: "Lint code"
+      #   run:  docker-compose run back-end scripts/lint.sh
       - name: "Stop all containers"
         run:  docker-compose down
