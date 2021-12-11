@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
+set -e -x
+
 for i in "$@"; do
   case $1 in
-    -d | --diff)
-    diff="--diff"
+    -c | --check)
+    check="--check"
     shift
     ;;
 
@@ -13,9 +15,7 @@ for i in "$@"; do
   esac
 done
 
-yapf \
-  --recursive \
-  --exclude="*migrations*" \
+black \
   --verbose \
-  ${diff:- "--in-place"} \
+  ${check} \
   src
