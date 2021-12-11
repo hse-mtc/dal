@@ -15,6 +15,11 @@ router.beforeEach(async(to, from, next) => {
 
   document.title = getPageTitle(to.meta.title);
 
+  if (to.path.includes("change-password")) {
+    const access = to.query.token;
+    UserModule.SET_TOKENS({ access, refresh: null });
+  }
+
   if (UserModule.accessToken) {
     if (to.path === "/login") {
       next({ path: "/" });
