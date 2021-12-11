@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
+from drf_writable_nested.mixins import UniqueFieldsMixin
 
 from drf_extra_fields.fields import Base64ImageField
 
@@ -20,16 +21,35 @@ class BirthInfoSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
-class ContactInfoSerializer(serializers.ModelSerializer):
+class ContactInfoSerializer(UniqueFieldsMixin, serializers.ModelSerializer):
+
+    def create(self, validated_data):
+        corporate_email = validated_data.pop("corporate_email")
+
+        try:
+            contact_info = ContactInfo.objects.get(corporate_email=corporate_email)
+            result = self.update(contact_info, validated_data)
+            validated_data["corporate_email"] = corporate_email
+            return result
+
+        except ContactInfo.DoesNotExist:
+            validated_data["corporate_email"] = corporate_email
+            return self.create(validated_data)
+
+    def update(self, instance, validated_data):
+        old_partial = self.partial
+        self.partial = True
+        result = super().update(instance, validated_data)
+        self.partial = old_partial
+        return result
 
     def validate(self, attrs):
-        if "personal_phone_number" not in attrs:
+        if not (number := attrs.pop("personal_phone_number", None)):
             return super().validate(attrs)
 
-        number: str = attrs["personal_phone_number"].strip()
+        number: str = number.strip()
 
         if not number:
-            attrs.pop("personal_phone_number")
             return super().validate(attrs)
 
         if number.startswith("+"):
@@ -44,7 +64,7 @@ class ContactInfoSerializer(serializers.ModelSerializer):
             )
 
         if number.startswith("8"):
-            number = "7" + number[1:]
+            number = example[0] + number[1:]
 
         correct_first_symbol = number[0] == example[0]
         if not correct_first_symbol:
