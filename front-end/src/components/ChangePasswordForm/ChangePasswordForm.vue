@@ -106,7 +106,7 @@ export default {
         this.$router.push({ path: "/" });
         return;
       }
-      UserModule.setToken(token);
+      UserModule.SET_TOKENS({ access: token, refresh: null });
     }
   },
   methods: {
@@ -120,31 +120,29 @@ export default {
         this.$refs.password.focus();
       });
     },
-    handleChangePassword() {
-      this.$refs.changePasswordForm.validate(async valid => {
-        if (valid) {
-          this.loading = true;
-          try {
-            await changePassword({
-              password: this.changePasswordForm.password,
-            });
-            if (!this.inDialog) {
-              UserModule.resetToken()
-                .then(() => {
-                  this.$router.push({ path: "/login" });
-                });
-            }
-            this.$emit("submited");
-            return true;
-          } catch (err) {
-            patchError("пароля", err.response.status);
-            return false;
-          } finally {
-            this.loading = false;
-          }
-        }
+    async handleChangePassword() {
+      const valid = this.$refs.changePasswordForm.validate();
+      if (!valid) {
         return false;
-      });
+      }
+
+      this.loading = true;
+      try {
+        await changePassword({
+          password: this.changePasswordForm.password,
+        });
+        if (!this.inDialog) {
+          UserModule.RESET_TOKENS();
+          this.$router.push({ path: "/login" });
+        }
+        this.$emit("submited");
+        return true;
+      } catch (err) {
+        patchError("пароля", err.response.status);
+        return false;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };
