@@ -3,8 +3,10 @@
     <el-row class="pageTitle">
       <h1>Подтверждения регистрации</h1>
     </el-row>
+
     <el-row>
       <PrimeTable
+        v-loading="loading"
         :value="approveList"
         auto-layout
         class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
@@ -15,33 +17,80 @@
           header="ФИО"
           sortable
         />
+
         <PrimeColumn
-          :field="row => row.milgroup && row.milgroup.title"
-          column-key="milgroup"
-          header="Взвод"
+          field="email"
+          column-key="email"
+          header="Почта"
           sortable
         />
+
         <PrimeColumn
-          header="Статус"
+          :field="(teacher) => teacher.milfaculty ? teacher.milfaculty.abbreviation : '---'"
+          column-key="milfaculty"
+          header="Цикл"
           sortable
-          field="status"
-          column-key="status"
+        />
+
+        <PrimeColumn
+          header="Прикреплённые взвода"
+          column-key="milgroups"
         >
-          <template #body="{ data: student }">
-            <el-tag :type="tagByStatus(student.status)">
-              {{ student.status | filterStatus }}
-            </el-tag>
+          <template #body="{ data: teacher }">
+            <ElTag
+              v-for="milgroup in teacher.milgroups"
+              :key="milgroup.id"
+              :closable="false"
+              class="ml-2"
+            >
+              {{ milgroup.title }}
+            </ElTag>
           </template>
         </PrimeColumn>
+
         <PrimeColumn
-          header="Действия с регистрацией"
+          :field="(teacher) => teacherPostLabelFromValue(teacher.post)"
+          column-key="post"
+          header="Должность"
+          sortable
+        />
+
+        <PrimeColumn
+          :field="(teacher) => teacherRankLabelFromValue(teacher.rank)"
+          column-key="rank"
+          header="Звание"
+          sortable
+        />
+
+        <PrimeColumn
+          header="Роли"
+          column-key="roles"
+        >
+          <template #body="{ data: teacher }">
+            <ElSelect
+              v-model="teacher.permission_groups"
+              :multiple="true"
+              placeholder="Выберите роли"
+            >
+              <ElOption
+                v-for="role in roles"
+                :key="role.key"
+                :label="role.label"
+                :value="role.key"
+              />
+            </ElSelect>
+          </template>
+        </PrimeColumn>
+
+        <PrimeColumn
+          header="Действия"
           column-key="buttons"
         >
-          <template #body="{ data: student }">
+          <template #body="{ data: teacher }">
             <el-tooltip
               class="item"
               effect="dark"
-              content="Сделать абитуриента студентом"
+              content="Подтвердить"
               placement="bottom"
             >
               <el-button
@@ -50,40 +99,7 @@
                 type=""
                 circle
                 class="approve-button"
-                :disabled="student.status === 'ST'"
-                @click="approve(student)"
-              />
-            </el-tooltip>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="Поставить в ожидание"
-              placement="bottom"
-            >
-              <el-button
-                size="medium"
-                icon="el-icon-tickets"
-                type=""
-                circle
-                class="wait-button"
-                :disabled="student.status === 'AW'"
-                @click="putOnWait(student)"
-              />
-            </el-tooltip>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="Отклонить регистрацию"
-              placement="bottom"
-            >
-              <el-button
-                size="medium"
-                icon="el-icon-close"
-                type=""
-                circle
-                class="disapprove-button"
-                :disabled="student.status === 'DE'"
-                @click="disapprove(student)"
+                @click="approve(teacher)"
               />
             </el-tooltip>
           </template>
@@ -100,100 +116,81 @@
 </template>
 
 <script>
-import { getUsersToApprove, changeStudentStatus } from "@/api/admin";
-import { getError, postError, deleteError } from "@/utils/message";
+import { getTeachersToApprove, approveTeacher, getAllRoles } from "@/api/admin";
+import { getError, patchError } from "@/utils/message";
+import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
 export default {
-  name: "",
-  filters: {
-    filterStatus(val) {
-      switch (val) {
-        case "AP":
-          return "Абитуриент";
-        case "ST":
-          return "Студент";
-        case "EX":
-          return "Отчислен";
-        case "GR":
-          return "Выпустился";
-        case "AW":
-          return "В ожидании";
-        case "DE":
-          return "Отклонен";
-        default:
-          return "Ошибка";
-      }
-    },
-  },
+  name: "Approve",
+  mixins: [TeacherPostsMixin, TeacherRanksMixin],
+
   data() {
     return {
       approveList: [],
+      roles: [],
+      fetchingData: false,
     };
   },
-  async created() {
-    try {
-      const { data } = await getUsersToApprove();
-      this.approveList = data;
-    } catch (err) {
-      getError("данных для подтверждения активации", err.response.status);
-    }
+
+  computed: {
+    loading() {
+      return this.teacherPostsAreLoading || this.teacherRanksAreLoading || this.fetchingData;
+    },
   },
+
+  async created() {
+    this.fetchingData = true;
+
+    let responses;
+    try {
+      responses = await Promise.all([
+        getTeachersToApprove(),
+        getAllRoles(),
+      ]);
+    } catch (err) {
+      getError("данных для подтверждения активации", err.response?.status);
+      return;
+    } finally {
+      this.fetchingData = false;
+    }
+
+    [this.approveList, this.roles] = responses.map(r => r.data);
+    this.approveList = this.approveList(teacher => ({
+      permission_groups: [],
+      ...teacher,
+    }));
+  },
+
   methods: {
-    approve(user) {
-      changeStudentStatus(user.id, "ST")
-        .then(() => {
-          // todo
-          // eslint-disable-next-line no-param-reassign
-          user.status = "ST";
-        })
-        .catch(err => postError("записи об активированной регистрации", err.response.status));
-    },
-    putOnWait(user) {
-      changeStudentStatus(user.id, "AW")
-        .then(() => {
-          // todo
-          // eslint-disable-next-line no-param-reassign
-          user.status = "AW";
-        })
-        .catch(err => postError("записи об активированной регистрации", err.response.status));
-    },
-    disapprove(user) {
-      this.$confirm(
-        "Вы уверены, что хотите отклонить регистрацию абитуриента?",
-        "Подтверждение",
+    async approve(teacher) {
+      await this.$confirm(
+        "Вы уверены? Отменить подтверждение регистрации нельзя.",
+        "",
         {
           confirmButtonText: "Да",
           cancelButtonText: "Отмена",
           type: "warning",
         },
-      )
-        .then(() => {
-          changeStudentStatus(user.id, "DE")
-            .then(() => {
-              // todo
-              // eslint-disable-next-line no-param-reassign
-              user.status = "DE";
-            })
-            .catch(err => postError(
-              "записи об активированной регистрации",
-              err.response.status,
-            ));
-        })
-        .catch(() => {});
-    },
-    tagByStatus(status) {
-      switch (status) {
-        case "AP":
-          return "info";
-        case "ST":
-          return "success";
-        case "GR":
-          return "info";
-        case "AW":
-          return "warning";
-        default:
-          return "danger";
+      );
+
+      this.fetchingData = true;
+      try {
+        await approveTeacher(teacher.id, {
+          permission_groups: teacher.permission_groups,
+        });
+      } catch (e) {
+        patchError("регистрации преподавателя", e.response?.status);
+        return;
+      } finally {
+        this.fetchingData = false;
       }
+
+      this.approveList = this.approveList.filter(t => t.id !== teacher.id);
+      this.$message({
+        type: "success",
+        message: "Регистрация подтверждена.",
+        duration: 3000,
+      });
     },
   },
 };
