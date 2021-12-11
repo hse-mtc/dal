@@ -18,10 +18,7 @@ def create_categories() -> list[Category]:
         dict(title="Приказы Министерства образования"),
     ]
 
-    return [
-        get_or_create(Category, **fields)
-        for fields in categories
-    ]
+    return [get_or_create(Category, **fields) for fields in categories]
 
 
 def create_papers(

@@ -16,7 +16,6 @@ class EncouragementSerializer(serializers.ModelSerializer):
 
 
 class EncouragementMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Encouragement
         fields = "__all__"

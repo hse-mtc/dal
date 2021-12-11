@@ -15,10 +15,8 @@ from dms.models.books import (
 
 
 class PaperFilter(filters.FilterSet):
-    start_date = filters.DateFilter(field_name="publication_date",
-                                    lookup_expr="gte")
-    end_date = filters.DateFilter(field_name="publication_date",
-                                  lookup_expr="lte")
+    start_date = filters.DateFilter(field_name="publication_date", lookup_expr="gte")
+    end_date = filters.DateFilter(field_name="publication_date", lookup_expr="lte")
     category = filters.CharFilter(method="filter_by_category")
 
     def filter_by_category(self, queryset, name, value):
@@ -37,24 +35,20 @@ class PaperFilter(filters.FilterSet):
 
 
 class SectionFilter(filters.FilterSet):
-
     class Meta:
         model = Section
         fields = ["subject"]
 
 
 class TopicFilter(filters.FilterSet):
-
     class Meta:
         model = Topic
         fields = ["section"]
 
 
 class BookFilter(filters.FilterSet):
-    start_year = filters.NumberFilter(field_name="publication_year",
-                                      lookup_expr="gte")
-    end_year = filters.NumberFilter(field_name="publication_year",
-                                    lookup_expr="lte")
+    start_year = filters.NumberFilter(field_name="publication_year", lookup_expr="gte")
+    end_year = filters.NumberFilter(field_name="publication_year", lookup_expr="lte")
 
     class Meta:
         model = Book
@@ -62,17 +56,18 @@ class BookFilter(filters.FilterSet):
 
 
 class SubjectFilter(filters.FilterSet):
-
     class Meta:
         model = Subject
         fields = ["user"]
 
 
 class FavoriteBookFilter(filters.FilterSet):
-    start_year = filters.NumberFilter(field_name="book__publication_year",
-                                      lookup_expr="gte")
-    end_year = filters.NumberFilter(field_name="book__publication_year",
-                                    lookup_expr="lte")
+    start_year = filters.NumberFilter(
+        field_name="book__publication_year", lookup_expr="gte"
+    )
+    end_year = filters.NumberFilter(
+        field_name="book__publication_year", lookup_expr="lte"
+    )
     authors = filters.ModelMultipleChoiceFilter(
         field_name="book__authors",
         queryset=Author.objects.all(),

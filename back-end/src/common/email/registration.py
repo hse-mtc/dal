@@ -37,7 +37,7 @@ def send_regconf_email(
     parsed = parsed._replace(path="change-password")
     parsed = parsed._replace(query=f"token={str(token)}")
 
-    html_message = (f"""
+    html_message = f"""
         <p>Здравствуйте, {address}!</p>\n
         
         <p>Ваша регистрация в системе Даль ВУЦ ВШЭ была подтверждена. <br />\n
@@ -48,7 +48,7 @@ def send_regconf_email(
         </p>\n
         
         <p>Это письмо было отправлено автоматически; пожалуйста, не отвечайте на него.</p>\n
-    """)
+    """
 
     if email.endswith(settings.TEST_CORPORATE_EMAIL_DOMAIN):
         print(html_message)

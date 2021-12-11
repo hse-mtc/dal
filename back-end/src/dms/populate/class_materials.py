@@ -12,7 +12,6 @@ from dms.models.class_materials import (
 )
 
 
-
 def create_sections(subject: Subject) -> list[Section]:
     sections = []
 

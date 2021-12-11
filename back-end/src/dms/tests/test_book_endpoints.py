@@ -45,26 +45,34 @@ def assert_book_data_equal(su_client, original_data, book_id):
     assert get_response.status_code == 200
 
     response_data = get_response.data
-    file = File.objects.get(id=response_data["file"]["content"].rsplit(
-        "/", maxsplit=1)[-1].rsplit("_", maxsplit=1)[0])
+    file = File.objects.get(
+        id=response_data["file"]["content"]
+        .rsplit("/", maxsplit=1)[-1]
+        .rsplit("_", maxsplit=1)[0]
+    )
     to_compare_fields = [
-        "title", "annotation", "upload_date", "publication_year", "page_count",
-        "authors", "publishers", "subjects"
+        "title",
+        "annotation",
+        "upload_date",
+        "publication_year",
+        "page_count",
+        "authors",
+        "publishers",
+        "subjects",
     ]
 
     image = ""
     if isinstance(response_data["cover"], UUID):
         image = Cover.objects.get(id=response_data["cover"])
     else:
-        img_id = response_data["cover"]["image"].rsplit(
-            "/", maxsplit=1)[-1].split("_")[0]
+        img_id = (
+            response_data["cover"]["image"].rsplit("/", maxsplit=1)[-1].split("_")[0]
+        )
         image = Cover.objects.get(id=img_id)
     assert_images_equal(original_data["image"], image.image)
-    assert file.content.open("r").read() == original_data["content"].open(
-        "r").read()
+    assert file.content.open("r").read() == original_data["content"].open("r").read()
     assert {
-        field_name: response_data[field_name]
-        for field_name in to_compare_fields
+        field_name: response_data[field_name] for field_name in to_compare_fields
     } == {
         field_name: original_data["data"][field_name]
         for field_name in to_compare_fields
@@ -85,8 +93,9 @@ def give_permission_to_user(user, data):
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_post_books_creates_new_book(su_client, book_data, author_data,
-                                     publisher_data, subject_data):
+def test_post_books_creates_new_book(
+    su_client, book_data, author_data, publisher_data, subject_data
+):
     data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
@@ -96,34 +105,38 @@ def test_post_books_creates_new_book(su_client, book_data, author_data,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_put_update_book(su_client, book_data, author_data, publisher_data,
-                         subject_data):
+def test_put_update_book(
+    su_client, book_data, author_data, publisher_data, subject_data
+):
     data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
     book_id = create_response.data["id"]
-    data = book_data(author_data,
-                     publisher_data,
-                     subject_data,
-                     title="new_title",
-                     annotation="new_annotation")
+    data = book_data(
+        author_data,
+        publisher_data,
+        subject_data,
+        title="new_title",
+        annotation="new_annotation",
+    )
     json_data = data.copy()
     json_data["data"] = json.dumps(data["data"])
     content = encode_multipart(
         boundary=BOUNDARY,
         data=json_data,
     )
-    update_response = su_client.put(f"/api/dms/books/{book_id}/",
-                                    data=content,
-                                    content_type=MULTIPART_CONTENT)
+    update_response = su_client.put(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 200
     assert_book_data_equal(su_client, data, book_id)
 
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_patch_update_book(su_client, book_data, author_data, publisher_data,
-                           subject_data):
+def test_patch_update_book(
+    su_client, book_data, author_data, publisher_data, subject_data
+):
     data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
@@ -132,14 +145,11 @@ def test_patch_update_book(su_client, book_data, author_data, publisher_data,
     data["content"] = file
     content = encode_multipart(
         boundary=BOUNDARY,
-        data={
-            "content": file,
-            "data": json.dumps({"title": "new_title_2"})
-        },
+        data={"content": file, "data": json.dumps({"title": "new_title_2"})},
     )
-    update_response = su_client.patch(f"/api/dms/books/{book_id}/",
-                                      data=content,
-                                      content_type=MULTIPART_CONTENT)
+    update_response = su_client.patch(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 200
     data["data"]["title"] = "new_title_2"
     assert_book_data_equal(su_client, data, book_id)
@@ -147,8 +157,7 @@ def test_patch_update_book(su_client, book_data, author_data, publisher_data,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_delete_book(su_client, book_data, author_data, publisher_data,
-                     subject_data):
+def test_delete_book(su_client, book_data, author_data, publisher_data, subject_data):
     data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
@@ -160,8 +169,7 @@ def test_delete_book(su_client, book_data, author_data, publisher_data,
 
 
 @pytest.mark.django_db
-def test_invalid_cover(su_client, book_data, author_data, publisher_data,
-                       subject_data):
+def test_invalid_cover(su_client, book_data, author_data, publisher_data, subject_data):
     data = book_data(author_data, publisher_data, subject_data)
     data["image"] = ContentFile("file_content", name="file_name.png")
     create_response = su_client.post("/api/dms/books/", data=dump_data(data))
@@ -178,9 +186,9 @@ def test_invalid_cover(su_client, book_data, author_data, publisher_data,
         boundary=BOUNDARY,
         data=json_data,
     )
-    update_response = su_client.put(f"/api/dms/books/{book_id}/",
-                                    data=content,
-                                    content_type=MULTIPART_CONTENT)
+    update_response = su_client.put(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 400
     assert "image" in update_response.json()
 
@@ -188,9 +196,9 @@ def test_invalid_cover(su_client, book_data, author_data, publisher_data,
         boundary=BOUNDARY,
         data={"image": ContentFile("file_content", name="file_name.png")},
     )
-    update_response = su_client.patch(f"/api/dms/books/{book_id}/",
-                                      data=content,
-                                      content_type=MULTIPART_CONTENT)
+    update_response = su_client.patch(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 400
     assert "image" in update_response.json()
 
@@ -199,15 +207,15 @@ def test_invalid_cover(su_client, book_data, author_data, publisher_data,
 def test_only_content(su_client):
     create_response = su_client.post(
         "/api/dms/books/",
-        data={"content": ContentFile("file_content_new", name="file.txt")})
+        data={"content": ContentFile("file_content_new", name="file.txt")},
+    )
     assert create_response.status_code == 201
 
     book_id = create_response.data["id"]
     get_response = su_client.get(f"/api/dms/books/{book_id}/")
     assert get_response.status_code == 200
 
-    create_response = su_client.post("/api/dms/books/",
-                                     data={"content": "string"})
+    create_response = su_client.post("/api/dms/books/", data={"content": "string"})
     assert create_response.status_code == 400
     assert "content" in create_response.json()
 
@@ -228,15 +236,20 @@ def test_get_book_with_permissions(test_client, test_user, permission_data):
 
 
 # pylint: disable=too-many-arguments
-def send_create_request_with_permissions(test_client, test_user,
-                                         permission_data, book_data,
-                                         author_data, publisher_data,
-                                         subject_data,
-                                         post_create_permission_scope):
+def send_create_request_with_permissions(
+    test_client,
+    test_user,
+    permission_data,
+    book_data,
+    author_data,
+    publisher_data,
+    subject_data,
+    post_create_permission_scope,
+):
     give_permission_to_user(test_user, permission_data("books", "get", "all"))
     give_permission_to_user(
-        test_user, permission_data("books", "post",
-                                   post_create_permission_scope))
+        test_user, permission_data("books", "post", post_create_permission_scope)
+    )
     data = book_data(author_data, publisher_data, subject_data)
     data["data"]["user"] = test_user.id
     create_response = send_create_request(test_client, data)
@@ -250,31 +263,54 @@ def send_create_request_with_permissions(test_client, test_user,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_post_books_with_permissions(test_client, test_user, permission_data,
-                                     book_data, author_data, publisher_data,
-                                     subject_data):
-    send_create_request_with_permissions(test_client, test_user,
-                                         permission_data, book_data,
-                                         author_data, publisher_data,
-                                         subject_data, "self")
+def test_post_books_with_permissions(
+    test_client,
+    test_user,
+    permission_data,
+    book_data,
+    author_data,
+    publisher_data,
+    subject_data,
+):
+    send_create_request_with_permissions(
+        test_client,
+        test_user,
+        permission_data,
+        book_data,
+        author_data,
+        publisher_data,
+        subject_data,
+        "self",
+    )
 
     test_user.permissions.clear()
 
-    send_create_request_with_permissions(test_client, test_user,
-                                         permission_data, book_data,
-                                         author_data, publisher_data,
-                                         subject_data, "all")
+    send_create_request_with_permissions(
+        test_client,
+        test_user,
+        permission_data,
+        book_data,
+        author_data,
+        publisher_data,
+        subject_data,
+        "all",
+    )
 
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_patch_books_with_permissions(test_client, test_user, permission_data,
-                                      book_data, author_data, publisher_data,
-                                      subject_data):
+def test_patch_books_with_permissions(
+    test_client,
+    test_user,
+    permission_data,
+    book_data,
+    author_data,
+    publisher_data,
+    subject_data,
+):
     give_permission_to_user(test_user, permission_data("books", "get", "all"))
     give_permission_to_user(test_user, permission_data("books", "post", "self"))
-    give_permission_to_user(test_user, permission_data("books", "patch",
-                                                       "self"))
+    give_permission_to_user(test_user, permission_data("books", "patch", "self"))
     data = book_data(author_data, publisher_data, subject_data)
     data["data"]["user"] = test_user.id
     create_response = send_create_request(test_client, data)
@@ -285,23 +321,26 @@ def test_patch_books_with_permissions(test_client, test_user, permission_data,
     data["data"]["user"] = test_user.id
     content = encode_multipart(
         boundary=BOUNDARY,
-        data={
-            "content": file,
-            "data": json.dumps({"title": "new_title_2"})
-        },
+        data={"content": file, "data": json.dumps({"title": "new_title_2"})},
     )
-    update_response = test_client.patch(f"/api/dms/books/{book_id}/",
-                                        data=content,
-                                        content_type=MULTIPART_CONTENT)
+    update_response = test_client.patch(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 200
 
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_patch_books_without_permissions(su_client, test_client, test_user,
-                                         permission_data, book_data,
-                                         author_data, publisher_data,
-                                         subject_data):
+def test_patch_books_without_permissions(
+    su_client,
+    test_client,
+    test_user,
+    permission_data,
+    book_data,
+    author_data,
+    publisher_data,
+    subject_data,
+):
     give_permission_to_user(test_user, permission_data("books", "get", "all"))
     data = book_data(author_data, publisher_data, subject_data)
     data["data"]["user"] = test_user.id
@@ -313,28 +352,32 @@ def test_patch_books_without_permissions(su_client, test_client, test_user,
     data["data"]["user"] = test_user.id
     content = encode_multipart(
         boundary=BOUNDARY,
-        data={
-            "content": file,
-            "data": json.dumps({"title": "new_title_2"})
-        },
+        data={"content": file, "data": json.dumps({"title": "new_title_2"})},
     )
-    update_response = test_client.patch(f"/api/dms/books/{book_id}/",
-                                        data=content,
-                                        content_type=MULTIPART_CONTENT)
+    update_response = test_client.patch(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 403
 
     give_permission_to_user(test_user, permission_data("books", "patch", "all"))
-    update_response = test_client.patch(f"/api/dms/books/{book_id}/",
-                                        data=content,
-                                        content_type=MULTIPART_CONTENT)
+    update_response = test_client.patch(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 200
 
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_delete_books_with_permissions(su_client, test_client, test_user,
-                                       permission_data, book_data, author_data,
-                                       publisher_data, subject_data):
+def test_delete_books_with_permissions(
+    su_client,
+    test_client,
+    test_user,
+    permission_data,
+    book_data,
+    author_data,
+    publisher_data,
+    subject_data,
+):
     data = book_data(author_data, publisher_data, subject_data)
     data["data"]["user"] = test_user.id
     create_response = send_create_request(su_client, data)
@@ -342,8 +385,7 @@ def test_delete_books_with_permissions(su_client, test_client, test_user,
     book_id = create_response.data["id"]
     delete_response = test_client.delete(f"/api/dms/books/{book_id}/")
     assert delete_response.status_code == 403
-    give_permission_to_user(test_user, permission_data("books", "delete",
-                                                       "all"))
+    give_permission_to_user(test_user, permission_data("books", "delete", "all"))
     delete_response = test_client.delete(f"/api/dms/books/{book_id}/")
     assert delete_response.status_code == 204
 
@@ -356,16 +398,16 @@ def test_delete_books_with_permissions(su_client, test_client, test_user,
     book_id = create_response.data["id"]
     delete_response = test_client.delete(f"/api/dms/books/{book_id}/")
     assert delete_response.status_code == 403
-    give_permission_to_user(test_user, permission_data("books", "delete",
-                                                       "self"))
+    give_permission_to_user(test_user, permission_data("books", "delete", "self"))
     delete_response = test_client.delete(f"/api/dms/books/{book_id}/")
     assert delete_response.status_code == 204
 
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_delete_book_deletes_cover_and_file(su_client, book_data, author_data,
-                                            publisher_data, subject_data):
+def test_delete_book_deletes_cover_and_file(
+    su_client, book_data, author_data, publisher_data, subject_data
+):
     data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
@@ -393,9 +435,9 @@ def test_delete_book_deletes_cover_and_file(su_client, book_data, author_data,
 
 @pytest.mark.django_db
 # pylint: disable=too-many-arguments
-def test_change_book_deletes_old_cover_and_file(su_client, book_data,
-                                                author_data, publisher_data,
-                                                subject_data, image):
+def test_change_book_deletes_old_cover_and_file(
+    su_client, book_data, author_data, publisher_data, subject_data, image
+):
     data = book_data(author_data, publisher_data, subject_data)
     create_response = send_create_request(su_client, data)
 
@@ -404,8 +446,7 @@ def test_change_book_deletes_old_cover_and_file(su_client, book_data,
     cover_id = book.cover.pk
     file_id = book.file.pk
 
-    image_path_before = \
-        f"/back-end/media/covers/{create_response.data['cover']}"
+    image_path_before = f"/back-end/media/covers/{create_response.data['cover']}"
     assert os.path.isfile(image_path_before)
     with open(image_path_before, "rb") as f:
         old_image_content = f.read()
@@ -426,9 +467,9 @@ def test_change_book_deletes_old_cover_and_file(su_client, book_data,
             "image": image_file,
         },
     )
-    update_response = su_client.patch(f"/api/dms/books/{book_id}/",
-                                      data=content,
-                                      content_type=MULTIPART_CONTENT)
+    update_response = su_client.patch(
+        f"/api/dms/books/{book_id}/", data=content, content_type=MULTIPART_CONTENT
+    )
     assert update_response.status_code == 200
 
     file_path_after = f"/back-end/{update_response.data['file']['content']}"

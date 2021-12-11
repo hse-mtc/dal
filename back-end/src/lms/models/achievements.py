@@ -35,10 +35,12 @@ class Achievement(models.Model):
     )
 
     def __str__(self):
-        return f"ID = {str(self.id)}\n" \
-               f"StudentID = {str(self.student)}, " \
-               f"Type = {str(self.type)}\n" \
-               f"Date = {str(self.date)}"
+        return (
+            f"ID = {str(self.id)}\n"
+            f"StudentID = {str(self.student)}, "
+            f"Type = {str(self.type)}\n"
+            f"Date = {str(self.date)}"
+        )
 
     class Meta:
         verbose_name = "Achievement Journal"

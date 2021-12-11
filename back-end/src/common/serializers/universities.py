@@ -8,7 +8,6 @@ from common.models.universities import (
 
 
 class FacultySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Faculty
         fields = "__all__"
@@ -23,21 +22,18 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 
 class ProgramMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Program
         fields = "__all__"
 
 
 class UniversityInfoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UniversityInfo
         exclude = ["id"]
 
 
 class UniversityInfoMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UniversityInfo
         fields = "__all__"

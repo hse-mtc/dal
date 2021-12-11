@@ -104,7 +104,4 @@ def create_milgroups(
         },
     ]
 
-    return {
-        fields["title"]: get_or_create(Milgroup, **fields)
-        for fields in milgroups
-    }
+    return {fields["title"]: get_or_create(Milgroup, **fields) for fields in milgroups}

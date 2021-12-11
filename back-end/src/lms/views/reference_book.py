@@ -195,16 +195,19 @@ class SkillViewSet(ModelViewSet):
     permission_classes = [ReferenceBookPermission]
 
 
-@extend_schema(tags=["reference-book"],
-               parameters=[
-                   OpenApiParameter(name="milfaculty",
-                                    description="Filter by milfaculty ID",
-                                    required=True,
-                                    type=int),
-               ],
-               responses={200: MilgroupLeadersPhonesSerializer})
+@extend_schema(
+    tags=["reference-book"],
+    parameters=[
+        OpenApiParameter(
+            name="milfaculty",
+            description="Filter by milfaculty ID",
+            required=True,
+            type=int,
+        ),
+    ],
+    responses={200: MilgroupLeadersPhonesSerializer},
+)
 class MilgroupLeadersView(APIView):
-
     def get(self, request):
         students = Student.objects.select_related(
             "milgroup",
@@ -215,9 +218,7 @@ class MilgroupLeadersView(APIView):
             post=Student.Post.MILGROUP_COMMANDER.value,
         )
         phones = [
-            s.contact_info.personal_phone_number
-            for s in students
-            if s.contact_info
+            s.contact_info.personal_phone_number for s in students if s.contact_info
         ]
         response = {"phones": phones}
         return Response(response)

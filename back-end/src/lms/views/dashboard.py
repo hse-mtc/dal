@@ -44,21 +44,24 @@ class StudentPerformanceView(APIView):
     def get(self, request: Request, pk: int) -> Response:
         date_range = get_current_semester_range()
         marks = Mark.objects.filter(student=pk).select_related(
-            "lesson", "lesson__subject")
-        lessons = Lesson.objects.filter(
-            date__range=date_range).select_related("subject")
+            "lesson", "lesson__subject"
+        )
+        lessons = Lesson.objects.filter(date__range=date_range).select_related(
+            "subject"
+        )
         absences_dates = Absence.objects.filter(
-            student=pk, date__range=date_range).values_list("date", flat=True)
+            student=pk, date__range=date_range
+        ).values_list("date", flat=True)
         student_subject_marks = {}
         subject_dates = {}
         response = []
         # find all marks for subject
         for mark in marks:
-            student_subject_marks.setdefault(mark.lesson.subject.title,
-                                             []).extend(mark.values)
+            student_subject_marks.setdefault(mark.lesson.subject.title, []).extend(
+                mark.values
+            )
         for lesson in lessons:
-            subject_dates.setdefault(lesson.subject.title,
-                                     []).append(lesson.date)
+            subject_dates.setdefault(lesson.subject.title, []).append(lesson.date)
 
         for subject, current_marks in student_subject_marks.items():
             avg = sum(current_marks) / len(current_marks)
@@ -66,13 +69,14 @@ class StudentPerformanceView(APIView):
 
         for subject in subject_dates:
             subject_dates[subject] = len(
-                set(absences_dates) & set(subject_dates[subject]))
+                set(absences_dates) & set(subject_dates[subject])
+            )
 
         for subject, avg_mark in student_subject_marks.items():
             subject_info = {
                 "discipline": subject,
                 "average_mark": round(avg_mark, 2),
-                "absences": subject_dates[subject]
+                "absences": subject_dates[subject],
             }
             response.append(subject_info)
 

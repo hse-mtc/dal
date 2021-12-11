@@ -14,7 +14,6 @@ class UniformSerializer(serializers.ModelSerializer):
 
 
 class UniformMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Uniform
         fields = "__all__"

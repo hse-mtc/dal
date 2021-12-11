@@ -4,7 +4,6 @@ from dms.models.documents import File
 
 
 class FileField(serializers.FileField):
-
     def to_representation(self, value):
         if not value:
             return None
@@ -24,9 +23,9 @@ class FileField(serializers.FileField):
 
 class FileSerializer(serializers.ModelSerializer):
     content = FileField()
-    extension = serializers.CharField(source="get_extension",
-                                      required=False,
-                                      read_only=True)
+    extension = serializers.CharField(
+        source="get_extension", required=False, read_only=True
+    )
 
     class Meta:
         model = File

@@ -40,9 +40,9 @@ class Document(models.Model):
     title = models.TextField(blank=True)
     annotation = models.TextField(blank=True)
     file = models.ForeignKey(to=File, on_delete=models.CASCADE)
-    user = models.ForeignKey(to=User,
-                             on_delete=models.SET_DEFAULT,
-                             default=super_user_id)
+    user = models.ForeignKey(
+        to=User, on_delete=models.SET_DEFAULT, default=super_user_id
+    )
     upload_date = models.DateField(default=datetime.date.today)
 
     class Meta:

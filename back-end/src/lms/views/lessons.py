@@ -110,21 +110,26 @@ class LessonViewSet(QuerySetScopingMixin, ModelViewSet):
                 assert False, "Unhandled Personnel type"
 
 
-@extend_schema(tags=["lesson-journal"],
-               parameters=[
-                   OpenApiParameter(name="milgroup",
-                                    description="Filter by milgroup",
-                                    required=True,
-                                    type=int),
-                   OpenApiParameter(name="date_from",
-                                    description="Filter by date",
-                                    required=True,
-                                    type=OpenApiTypes.DATE),
-                   OpenApiParameter(name="date_to",
-                                    description="Filter by date",
-                                    required=True,
-                                    type=OpenApiTypes.DATE),
-               ])
+@extend_schema(
+    tags=["lesson-journal"],
+    parameters=[
+        OpenApiParameter(
+            name="milgroup", description="Filter by milgroup", required=True, type=int
+        ),
+        OpenApiParameter(
+            name="date_from",
+            description="Filter by date",
+            required=True,
+            type=OpenApiTypes.DATE,
+        ),
+        OpenApiParameter(
+            name="date_to",
+            description="Filter by date",
+            required=True,
+            type=OpenApiTypes.DATE,
+        ),
+    ],
+)
 class LessonJournalView(GenericAPIView):
     permission_classes = [LessonPermission]
 
@@ -143,11 +148,9 @@ class LessonJournalView(GenericAPIView):
         # TODO(@gakhromov): mb allow scope == SELF for journal requests
         if not milgroup_allowed_by_scope(milgroup, request, LessonPermission):
             return Response(
-                {
-                    "detail":
-                        "You do not have permission to perform this action."
-                },
-                status=status.HTTP_403_FORBIDDEN)
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         milgroup = MilgroupSerializer(milgroup).data
         data["milgroup"] = milgroup
@@ -163,7 +166,8 @@ class LessonJournalView(GenericAPIView):
         lessons_filtered = Lesson.objects.filter(
             milgroup=request.query_params["milgroup"],
             date__gte=request.query_params["date_from"],
-            date__lte=request.query_params["date_to"])
+            date__lte=request.query_params["date_to"],
+        )
 
         # ordinals
         ordinals = []
@@ -171,9 +175,8 @@ class LessonJournalView(GenericAPIView):
             lessons = {
                 "ordinal": ordinal,
                 "lessons": LessonSerializer(
-                    lessons_filtered.filter(ordinal=ordinal),
-                    many=True
-                ).data
+                    lessons_filtered.filter(ordinal=ordinal), many=True
+                ).data,
             }
             ordinals.append(lessons)
 

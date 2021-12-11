@@ -59,7 +59,9 @@ def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
     return path
 
 
-def _set_row_col_sizes(worksheet: xlsxwriter.Workbook.worksheet_class,) -> None:
+def _set_row_col_sizes(
+    worksheet: xlsxwriter.Workbook.worksheet_class,
+) -> None:
     worksheet.set_row(12, height=114)
     worksheet.set_row(13, height=114)
     # xlsxwriter has different dimensions for rows and cols
@@ -132,8 +134,7 @@ def _fill_header(
     )
     worksheet.merge_range(
         "A10:N10",
-        "Национальном исследовательском университете "
-        "\"Высшая школа экономики\"",
+        "Национальном исследовательском университете " '"Высшая школа экономики"',
         formats.header,
     )
     worksheet.merge_range(
@@ -267,12 +268,15 @@ def _fill_footer(
     worksheet.merge_range(
         f"A{row}:N{row}",
         "2. Список граждан не допущенных к конкурсному отбору",
-        formats.table_center)
+        formats.table_center,
+    )
 
     row = row + 4  # 3 blank lines
     lines = [
-        ("Изъявили желание пройти обучение по программе военной подготовки -",
-         f"{total_applicants} чел."),
+        (
+            "Изъявили желание пройти обучение по программе военной подготовки -",
+            f"{total_applicants} чел.",
+        ),
         ("Допущены к военной подготовке -", "чел."),
         ("Не допущены к военной подготовке (не прошли по конкурсу) -", "чел."),
         ("Не допущены к конкурсному отбору -", "чел."),
@@ -283,8 +287,7 @@ def _fill_footer(
         row += 1
 
     row = row + 3  # 3 blank lines (already had row += 1)
-    worksheet.merge_range(f"D{row}:E{row}", "Члены комиссии:",
-                          formats.align_left)
+    worksheet.merge_range(f"D{row}:E{row}", "Члены комиссии:", formats.align_left)
     lines = [
         ("подполковник", ""),
         ("подполковник", "М.И. Гвозд"),
@@ -302,5 +305,6 @@ def _fill_footer(
         worksheet.merge_range(f"K{row}:L{row}", line[1], formats.underline)
         row += 1
 
-    worksheet.merge_range(f"D{row-1}:E{row-1}", "Секретарь комиссии:",
-                          formats.align_left)
+    worksheet.merge_range(
+        f"D{row-1}:E{row-1}", "Секретарь комиссии:", formats.align_left
+    )

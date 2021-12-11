@@ -41,11 +41,8 @@ from ams.serializers.applicants import (
 from ams.filters.applicants import ApplicantFilter
 
 from lms.utils.mixins import QuerySetScopingMixin
-from ams.utils.export.default \
-    import generate_export as generate_def_export
-from ams.utils.export.comp_sel_protocol \
-    import generate_export as generate_csp_export
-
+from ams.utils.export.default import generate_export as generate_def_export
+from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
 
 
 class XLSXRenderer(BaseRenderer):
@@ -117,23 +114,20 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     def perform_create(self, serializer):
         return serializer.save()
 
-    @extend_schema(parameters=[
-        OpenApiParameter(name="campus",
-                         description="Filter by campus",
-                         required=True),
-        OpenApiParameter(name="program_code",
-                         description="Filter by program code"),
-    ])
-    @action(detail=False,
-            methods=["get"],
-            permission_classes=[ApplicantPermission])
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="campus", description="Filter by campus", required=True
+            ),
+            OpenApiParameter(name="program_code", description="Filter by program code"),
+        ]
+    )
+    @action(detail=False, methods=["get"], permission_classes=[ApplicantPermission])
     def applications(self, request: Request, *args, **kwargs) -> Response:
         """List all applicants with their applications."""
         return super().list(request, *args, **kwargs)
 
-    @action(detail=True,
-            methods=["patch"],
-            permission_classes=[ApplicantPermission])
+    @action(detail=True, methods=["patch"], permission_classes=[ApplicantPermission])
     def application(self, request: Request, pk=None) -> Response:
         """Create or edit applicant's application."""
 
@@ -167,8 +161,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         students = self.get_queryset()
 
         campus = request.query_params["campus"]
-        milspecialties = Milspecialty.objects.filter(
-            available_for__contains=[campus])
+        milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
 
         path = excel_generator(students, milspecialties)
         with open(path, "rb") as file:
@@ -184,17 +177,20 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
-    @extend_schema(parameters=[
-        OpenApiParameter(name="campus",
-                         description="Filter by campus",
-                         required=True,
-                         type=str)
-    ])
-    @action(methods=["get"],
-            url_path="applications/export",
-            detail=False,
-            renderer_classes=[XLSXRenderer],
-            permission_classes=[ApplicantPermission])
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="campus", description="Filter by campus", required=True, type=str
+            )
+        ]
+    )
+    @action(
+        methods=["get"],
+        url_path="applications/export",
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[ApplicantPermission],
+    )
     def applications_export(self, request: Request) -> Response:
         """
         Send an excel file with info about applicants.
@@ -202,17 +198,20 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         """
         return self.generate_excel_report(request, generate_def_export)
 
-    @extend_schema(parameters=[
-        OpenApiParameter(name="campus",
-                         description="Filter by campus",
-                         required=True,
-                         type=str)
-    ])
-    @action(methods=["get"],
-            url_path="applications/competitive-selection-protocol/export",
-            detail=False,
-            renderer_classes=[XLSXRenderer],
-            permission_classes=[ApplicantPermission])
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="campus", description="Filter by campus", required=True, type=str
+            )
+        ]
+    )
+    @action(
+        methods=["get"],
+        url_path="applications/competitive-selection-protocol/export",
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[ApplicantPermission],
+    )
     def generate_comp_sel_protocol(self, request: Request) -> Response:
         """
         Send an excel protocol file with info about applicants.

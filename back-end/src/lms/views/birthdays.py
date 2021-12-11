@@ -98,7 +98,8 @@ class StudentBirthdayAlertView(BirthdayAlertView):
             return get_nearest_birthdays(self.model, params)
 
         scope = self.request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, self.request.method)
+            self.scoped_permission_class.permission_class, self.request.method
+        )
 
         if scope == Permission.Scope.ALL:
             return get_nearest_birthdays(self.model, params)
@@ -124,8 +125,7 @@ class TeacherBirthdayAlertView(BirthdayAlertView):
 
 
 def get_nearest_birthdays(
-    model: tp.Type[models.Model],
-    filter_kwargs: tp.Optional[dict] = None
+    model: tp.Type[models.Model], filter_kwargs: tp.Optional[dict] = None
 ) -> models.QuerySet:
     """Return personnel with birthdays that are in one week to today's date.
 
@@ -139,10 +139,14 @@ def get_nearest_birthdays(
 
     today = date.today()
     start, end = today, today + timedelta(days=7)
-    return model.objects.select_related("birth_info").filter(
-        birth_info__date__day__gte=start.day,
-        birth_info__date__day__lte=end.day,
-        birth_info__date__month__gte=start.month,
-        birth_info__date__month__lte=end.month,
-        **({} if filter_kwargs is None else filter_kwargs),
-    ).order_by("birth_info__date")
+    return (
+        model.objects.select_related("birth_info")
+        .filter(
+            birth_info__date__day__gte=start.day,
+            birth_info__date__day__lte=end.day,
+            birth_info__date__month__gte=start.month,
+            birth_info__date__month__lte=end.month,
+            **({} if filter_kwargs is None else filter_kwargs),
+        )
+        .order_by("birth_info__date")
+    )

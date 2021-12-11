@@ -5,7 +5,6 @@ from rest_framework.response import Response
 
 
 class LoggingMiddleware:
-
     def __init__(self, get_response):
         self.get_response = get_response
 

@@ -10,9 +10,11 @@ from lms.models.students import Student
 
 
 class Mark(models.Model):
-    values = ArrayField(base_field=models.IntegerField(
-        validators=[MaxValueValidator(5),
-                    MinValueValidator(2)]))
+    values = ArrayField(
+        base_field=models.IntegerField(
+            validators=[MaxValueValidator(5), MinValueValidator(2)]
+        )
+    )
     lesson = models.ForeignKey(
         to=Lesson,
         on_delete=models.CASCADE,
@@ -28,5 +30,7 @@ class Mark(models.Model):
         unique_together = [["lesson", "student"]]
 
     def __str__(self):
-        return f"Marks {self.values} for StudentID=" \
-               f"{self.student} on LessonID={self.lesson}"
+        return (
+            f"Marks {self.values} for StudentID="
+            f"{self.student} on LessonID={self.lesson}"
+        )

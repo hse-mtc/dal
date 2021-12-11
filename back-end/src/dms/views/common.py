@@ -96,13 +96,13 @@ class StatisticsPermission(BasePermission):
     ]
 
 
-@extend_schema(tags=["statistics"],
-               parameters=[
-                   OpenApiParameter("start_date", OpenApiTypes.DATE,
-                                    OpenApiParameter.QUERY),
-                   OpenApiParameter("end_date", OpenApiTypes.DATE,
-                                    OpenApiParameter.QUERY)
-               ])
+@extend_schema(
+    tags=["statistics"],
+    parameters=[
+        OpenApiParameter("start_date", OpenApiTypes.DATE, OpenApiParameter.QUERY),
+        OpenApiParameter("end_date", OpenApiTypes.DATE, OpenApiParameter.QUERY),
+    ],
+)
 class StatisticsAPIView(generics.GenericAPIView):
     # pylint: disable-msg=too-many-locals
     permission_classes = [StatisticsPermission]
@@ -126,7 +126,7 @@ class StatisticsAPIView(generics.GenericAPIView):
         data = {
             "paper_count": paper_filter.count(),
             "book_count": book_filter.count(),
-            "subject_count": subject_filter.count()
+            "subject_count": subject_filter.count(),
         }
 
         return Response(data, status=status.HTTP_200_OK)

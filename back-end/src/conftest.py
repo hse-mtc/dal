@@ -12,7 +12,6 @@ TEST_USER_PASSWORD = "qwerty"
 
 @pytest.fixture
 def format_multipart_for_put_request():
-
     def call_me(data):
         request_data = data.copy()
         request_data["data"] = json.dumps(data["data"])
@@ -23,7 +22,6 @@ def format_multipart_for_put_request():
 
 @pytest.fixture
 def format_multipart_for_post_request():
-
     def call_me(data):
         request_data = data.copy()
         request_data["data"] = json.dumps(data["data"])
@@ -48,10 +46,7 @@ def superuser(db):
 def su_client(superuser):
     response = Client().post(
         "/api/auth/tokens/obtain/",
-        {
-            "email": SUPERUSER_EMAIL,
-            "password": SUPERUSER_PASSWORD
-        },
+        {"email": SUPERUSER_EMAIL, "password": SUPERUSER_PASSWORD},
         content_type="application/json",
     )
     access_token = response.data["access"]
@@ -60,14 +55,11 @@ def su_client(superuser):
 
 @pytest.fixture
 def permission_data():
-
-    def call_me(viewset: str = "null",
-                method: str = "get",
-                scope: str = "self"):
+    def call_me(viewset: str = "null", method: str = "get", scope: str = "self"):
         return {
             "viewset": viewset,
             "method": method,
-            "scope": getattr(Permission.Scope, scope.upper())
+            "scope": getattr(Permission.Scope, scope.upper()),
         }
 
     return call_me
@@ -79,8 +71,7 @@ def test_user(db):
     if user.exists():
         return user.first()
 
-    user = User.objects.create_user(email=TEST_USER_EMAIL,
-                                    password=TEST_USER_PASSWORD)
+    user = User.objects.create_user(email=TEST_USER_EMAIL, password=TEST_USER_PASSWORD)
     user.save()
     return user
 
@@ -89,10 +80,7 @@ def test_user(db):
 def test_client(test_user):
     response = Client().post(
         "/api/auth/tokens/obtain/",
-        {
-            "email": TEST_USER_EMAIL,
-            "password": TEST_USER_PASSWORD
-        },
+        {"email": TEST_USER_EMAIL, "password": TEST_USER_PASSWORD},
         content_type="application/json",
     )
     access_token = response.data["access"]

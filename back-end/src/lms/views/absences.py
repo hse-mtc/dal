@@ -78,9 +78,9 @@ class AbsenceAttachmentPermission(BasePermission):
 
 
 @extend_schema(tags=["absences"])
-class AbsenceAttachmentViewSet(mixins.DestroyModelMixin,
-                               mixins.ListModelMixin,
-                               GenericViewSet):
+class AbsenceAttachmentViewSet(
+    mixins.DestroyModelMixin, mixins.ListModelMixin, GenericViewSet
+):
     queryset = AbsenceAttachment.objects.all()
     serializer_class = AbsenceAttachmentSerializer
     permission_classes = [AbsenceAttachmentPermission]
@@ -166,21 +166,26 @@ class AbsenceViewSet(QuerySetScopingMixin, ModelViewSet):
                 assert False, "Unhandled Personnel type"
 
 
-@extend_schema(tags=["absence-journal"],
-               parameters=[
-                   OpenApiParameter(name="milgroup",
-                                    description="Filter by milgroup",
-                                    required=True,
-                                    type=int),
-                   OpenApiParameter(name="date_from",
-                                    description="Filter by date",
-                                    required=True,
-                                    type=OpenApiTypes.DATE),
-                   OpenApiParameter(name="date_to",
-                                    description="Filter by date",
-                                    required=True,
-                                    type=OpenApiTypes.DATE),
-               ])
+@extend_schema(
+    tags=["absence-journal"],
+    parameters=[
+        OpenApiParameter(
+            name="milgroup", description="Filter by milgroup", required=True, type=int
+        ),
+        OpenApiParameter(
+            name="date_from",
+            description="Filter by date",
+            required=True,
+            type=OpenApiTypes.DATE,
+        ),
+        OpenApiParameter(
+            name="date_to",
+            description="Filter by date",
+            required=True,
+            type=OpenApiTypes.DATE,
+        ),
+    ],
+)
 class AbsenceJournalView(generics.GenericAPIView):
     permission_classes = [AbsencePermission]
     scoped_permission_class = AbsencePermission
@@ -196,14 +201,13 @@ class AbsenceJournalView(generics.GenericAPIView):
         # add milgroup data
         milgroup = Milgroup.objects.get(id=request.query_params["milgroup"])
 
-        if not milgroup_allowed_by_scope(milgroup, request,
-                                         self.scoped_permission_class):
+        if not milgroup_allowed_by_scope(
+            milgroup, request, self.scoped_permission_class
+        ):
             return Response(
-                {
-                    "detail":
-                        "You do not have permission to perform this action."
-                },
-                status=status.HTTP_403_FORBIDDEN)
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         milgroup = MilgroupSerializer(milgroup).data
         data["milgroup"] = milgroup
@@ -220,7 +224,8 @@ class AbsenceJournalView(generics.GenericAPIView):
         # get students
         # if scope == SELF, return only one student
         scope = request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, request.method)
+            self.scoped_permission_class.permission_class, request.method
+        )
 
         if scope == Permission.Scope.SELF:
             filter_kwargs = {"user": request.user}
@@ -233,7 +238,8 @@ class AbsenceJournalView(generics.GenericAPIView):
                 "request": request,
                 "date_range": date_range,
             },
-            many=True).data
+            many=True,
+        ).data
 
         return Response(data, status=status.HTTP_200_OK)
 

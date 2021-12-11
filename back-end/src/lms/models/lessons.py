@@ -27,7 +27,6 @@ class Room(models.Model):
 
 
 class Lesson(models.Model):
-
     class Type(models.TextChoices):
         LECTURE = "LE", "Лекция"
         SEMINAR = "SE", "Семинар"
@@ -72,8 +71,8 @@ class Lesson(models.Model):
     # Lesson #1, #2, #3, etc
     # Номер пары короче
     ordinal = models.PositiveSmallIntegerField(
-        validators=[MaxValueValidator(10),
-                    MinValueValidator(1)])
+        validators=[MaxValueValidator(10), MinValueValidator(1)]
+    )
 
     class Meta:
         verbose_name = "Lesson"

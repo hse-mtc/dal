@@ -25,7 +25,6 @@ def create_teachers(
             "user": users["ivnikandrov@mail.com"],
             "milfaculty": milfaculties["ВКС"],
             "milgroups": [milgroups["1809"]],
-
             "post": Teacher.Post.TEACHERS.value,
             "rank": Teacher.Rank.LIEUTENANT_COLONEL.value,
         },
@@ -36,7 +35,6 @@ def create_teachers(
             "user": users["dnrepalov@mail.com"],
             "milfaculty": milfaculties["ВКС"],
             "milgroups": [milgroups["1808"], milgroups["1809"]],
-
             "post": Teacher.Post.MILFACULTY_HEAD.value,
             "rank": Teacher.Rank.LIEUTENANT_COLONEL.value,
         },
@@ -47,7 +45,6 @@ def create_teachers(
             "user": users["ivmesheryakov@mail.com"],
             "milfaculty": milfaculties["Сержанты"],
             "milgroups": [milgroups["1806"]],
-
             "post": Teacher.Post.TEACHERS.value,
             "rank": Teacher.Rank.MAJOR.value,
         },
@@ -58,7 +55,6 @@ def create_teachers(
             "user": users["ivkovalchuk@mail.com"],
             "milfaculty": milfaculties["Разведка"],
             "milgroups": [milgroups["1801"]],
-
             "post": Teacher.Post.MILFACULTY_HEAD.value,
             "rank": Teacher.Rank.COLONEL.value,
         },
@@ -69,7 +65,6 @@ def create_teachers(
             "user": users["ksgavrilov@mail.com"],
             "milfaculty": milfaculties["РВСН"],
             "milgroups": [],
-
             "post": Teacher.Post.TEACHERS.value,
             "rank": Teacher.Rank.MAJOR_GENERAL.value,
         },

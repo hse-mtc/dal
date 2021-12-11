@@ -36,10 +36,7 @@ def create_skills() -> dict[str, Skill]:
         },
     ]
 
-    return {
-        fields["title"]: get_or_create(Skill, **fields)
-        for fields in skills
-    }
+    return {fields["title"]: get_or_create(Skill, **fields) for fields in skills}
 
 
 def create_students(
@@ -60,11 +57,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000001",
             },
-
             "status": Student.Status.STUDYING.value,
             "post": None,
             "skills": [skills["Футбол"], skills["Гитара"]],
-
             "photo": None,
             "birth_info": {
                 "date": "2000-11-04",
@@ -97,11 +92,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000002",
             },
-
             "status": Student.Status.STUDYING.value,
             "post": Student.Post.MILGROUP_COMMANDER.value,
             "skills": [skills["Плавание"]],
-
             "photo": None,
             "birth_info": {
                 "date": "2000-02-23",
@@ -134,11 +127,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000003",
             },
-
             "status": Student.Status.STUDYING.value,
             "post": Student.Post.MILSQUAD_COMMANDER.value,
             "skills": [skills["Футбол"], skills["Плавание"], skills["Гитара"]],
-
             "photo": None,
             "birth_info": {
                 "date": "1999-08-29",
@@ -171,11 +162,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000004",
             },
-
             "status": Student.Status.STUDYING.value,
             "post": None,
             "skills": [skills["Футбол"], skills["Гитара"]],
-
             "photo": None,
             "birth_info": {
                 "date": "1999-05-04",
@@ -208,11 +197,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000005",
             },
-
             "status": Student.Status.STUDYING.value,
             "post": Student.Post.MILGROUP_COMMANDER.value,
             "skills": [skills["Плавание"], skills["Гитара"]],
-
             "photo": None,
             "birth_info": {
                 "date": "1999-11-12",
@@ -245,11 +232,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000006",
             },
-
             "status": Student.Status.EXPELLED.value,
             "post": Student.Post.MILSQUAD_COMMANDER.value,
             "skills": [skills["Гитара"]],
-
             "photo": None,
             "birth_info": {
                 "date": "1999-05-04",
@@ -282,11 +267,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000007",
             },
-
             "status": Student.Status.GRADUATED.value,
             "post": None,
             "skills": [],
-
             "photo": None,
             "birth_info": {
                 "date": "1998-10-11",
@@ -319,11 +302,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000008",
             },
-
             "status": Student.Status.EXPELLED.value,
             "post": None,
             "skills": [],
-
             "photo": None,
             "birth_info": {
                 "date": "1969-04-12",
@@ -356,11 +337,9 @@ def create_students(
             "contact_info": {
                 "personal_phone_number": "70000000009",
             },
-
             "status": Student.Status.GRADUATED.value,
             "post": None,
             "skills": [],
-
             "photo": None,
             "birth_info": {
                 "date": "1995-06-23",

@@ -18,7 +18,6 @@ from common.models.subjects import Subject
 
 @pytest.fixture
 def publisher_data():
-
     def call_me(name: str = "publisher name") -> dict:
         return {"name": name}
 
@@ -27,10 +26,9 @@ def publisher_data():
 
 @pytest.fixture
 def author_data():
-
-    def call_me(surname: str = "last",
-                name: str = "first",
-                patronymic: str = "patronymic") -> dict:
+    def call_me(
+        surname: str = "last", name: str = "first", patronymic: str = "patronymic"
+    ) -> dict:
         return {"surname": surname, "name": name, "patronymic": patronymic}
 
     return call_me
@@ -38,9 +36,7 @@ def author_data():
 
 @pytest.fixture
 def file():
-
-    def call_me(name: str = "filename",
-                content: str = "file content") -> ContentFile:
+    def call_me(name: str = "filename", content: str = "file content") -> ContentFile:
         content = ContentFile(content, name=name)
         instance = File.objects.create(content=content, name=name)
         instance.save()
@@ -51,7 +47,6 @@ def file():
 
 @pytest.fixture(scope="function")
 def category_data():
-
     def call_me(index: int = 0) -> dict:
         return {
             "title": f"category_{index}",
@@ -73,14 +68,16 @@ def user():
 @pytest.fixture
 def paper_data(file):
     # pylint: disable=too-many-arguments
-    def call_me(file_name: str = "filename",
-                file_content: str = "file content",
-                tags: List[str] = None,
-                title: str = "paper title",
-                annotation: str = "some annotation",
-                upload_date: str = "2021-09-17",
-                publication_date: str = "2021-09-17",
-                is_binned: bool = False):
+    def call_me(
+        file_name: str = "filename",
+        file_content: str = "file content",
+        tags: List[str] = None,
+        title: str = "paper title",
+        annotation: str = "some annotation",
+        upload_date: str = "2021-09-17",
+        publication_date: str = "2021-09-17",
+        is_binned: bool = False,
+    ):
         if tags is None:
             tags = []
 
@@ -92,8 +89,8 @@ def paper_data(file):
                 "annotation": annotation,
                 "upload_date": upload_date,
                 "publication_date": publication_date,
-                "is_binned": is_binned
-            }
+                "is_binned": is_binned,
+            },
         }
 
     return call_me
@@ -101,7 +98,6 @@ def paper_data(file):
 
 @pytest.fixture()
 def image(tmp_path):
-
     def call_me(name: str = "image.png", size=1, color=(0, 0, 0)) -> SimpleUploadedFile:
         image = Image.new("RGB", size=(size, size))
         for i in range(size):
@@ -114,16 +110,13 @@ def image(tmp_path):
         content = ""
         with open(path, "rb") as file:
             content = file.read()
-        return SimpleUploadedFile(name=name,
-                                  content=content,
-                                  content_type="image/png")
+        return SimpleUploadedFile(name=name, content=content, content_type="image/png")
 
     return call_me
 
 
 @pytest.fixture
 def cover_data(image):
-
     def call_me(name: str = "image.png"):
         return {"image": image(name)}
 
@@ -132,7 +125,6 @@ def cover_data(image):
 
 @pytest.fixture
 def subject_data(user):
-
     def call_me(title: str = "title", annotation: str = "annotation"):
         return {"title": title, "annotation": annotation, "user": user}
 
@@ -170,8 +162,8 @@ def book_data(image):
                 "page_count": page_count,
                 "authors": [author.id],
                 "publishers": [publisher.id],
-                "subjects": [subject.id]
-            }
+                "subjects": [subject.id],
+            },
         }
 
     return call_me

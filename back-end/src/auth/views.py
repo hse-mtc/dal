@@ -63,10 +63,10 @@ class UserRetrieveAPIView(RetrieveAPIView):
 
 @extend_schema(tags=["permissions"])
 class UserControlViewSet(
-        mixins.RetrieveModelMixin,
-        mixins.ListModelMixin,
-        mixins.UpdateModelMixin,
-        viewsets.GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = get_user_model().objects.all()
 
@@ -93,9 +93,7 @@ class UserControlViewSet(
         scope = int(getattr(Permission.Scope, scope.upper()))
         user = self.get_object()
 
-        permission = Permission.objects.get(viewset=viewset,
-                                            method=method,
-                                            scope=scope)
+        permission = Permission.objects.get(viewset=viewset, method=method, scope=scope)
         # adding the same permission does nothing,
         # so no need to check for existing permissions
         user.permissions.add(permission)
@@ -117,15 +115,14 @@ class UserControlViewSet(
         scope = int(getattr(Permission.Scope, scope.upper()))
         user = self.get_object()
 
-        permission = user.permissions.filter(viewset=viewset,
-                                             method=method,
-                                             scope=scope)
+        permission = user.permissions.filter(
+            viewset=viewset, method=method, scope=scope
+        )
         if not permission.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={
-                    "detail": "There is no such permission in user permissions"
-                })
+                data={"detail": "There is no such permission in user permissions"},
+            )
         permission = permission[0]
         user.permissions.remove(permission)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -146,7 +143,8 @@ class UserControlViewSet(
             # If data is valid, such group does not exist -> bad request
             return Response(
                 {"detail": f"Group \"{data['name']}\" does not exist."},
-                status=status.HTTP_400_BAD_REQUEST)
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         groupname = data.data["name"]
         user = self.get_object()
@@ -173,7 +171,8 @@ class UserControlViewSet(
         if not group.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "There is no such group in user groups"})
+                data={"detail": "There is no such group in user groups"},
+            )
         group = group[0]
         user.groups.remove(group)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -197,7 +196,8 @@ class UserControlViewSet(
         if not group.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={"detail": "There is no such group in user groups"})
+                data={"detail": "There is no such group in user groups"},
+            )
         group = group[0]
         # add group permissions
         # adding the same permission does nothing,
@@ -223,11 +223,11 @@ class UserControlViewSet(
 
 @extend_schema(tags=["permissions"])
 class GroupViewSet(
-        mixins.RetrieveModelMixin,
-        mixins.ListModelMixin,
-        mixins.DestroyModelMixin,
-        mixins.UpdateModelMixin,
-        viewsets.GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
 ):
     queryset = Group.objects.all()
     permission_classes = [PermissionPermission]
@@ -248,9 +248,7 @@ class GroupViewSet(
         validation.is_valid(raise_exception=True)
 
         # validate permissions
-        perms = [{
-            "codename": codename
-        } for codename in request.data["permissions"]]
+        perms = [{"codename": codename} for codename in request.data["permissions"]]
         validation = PermissionRequestSerializer(data=perms, many=True)
         validation.is_valid(raise_exception=True)
 
@@ -261,9 +259,9 @@ class GroupViewSet(
         for codename in request.data["permissions"]:
             viewset, method, scope = codename.split(".")
             scope = int(getattr(Permission.Scope, scope.upper()))
-            permission = Permission.objects.get(viewset=viewset,
-                                                method=method,
-                                                scope=scope)
+            permission = Permission.objects.get(
+                viewset=viewset, method=method, scope=scope
+            )
             permissions_lst.append(permission)
         group.permissions.add(*permissions_lst)
 
@@ -285,9 +283,7 @@ class GroupViewSet(
         scope = int(getattr(Permission.Scope, scope.upper()))
         group = self.get_object()
 
-        permission = Permission.objects.get(viewset=viewset,
-                                            method=method,
-                                            scope=scope)
+        permission = Permission.objects.get(viewset=viewset, method=method, scope=scope)
         # adding the same permission does nothing,
         # so no need to check for existing permissions
         group.permissions.add(permission)
@@ -309,15 +305,14 @@ class GroupViewSet(
         scope = int(getattr(Permission.Scope, scope.upper()))
         group = self.get_object()
 
-        permission = group.permissions.filter(viewset=viewset,
-                                              method=method,
-                                              scope=scope)
+        permission = group.permissions.filter(
+            viewset=viewset, method=method, scope=scope
+        )
         if not permission.exists():
             return Response(
                 status=status.HTTP_400_BAD_REQUEST,
-                data={
-                    "detail": "There is no such permission in group permissions"
-                })
+                data={"detail": "There is no such permission in group permissions"},
+            )
         permission = permission[0]
         group.permissions.remove(permission)
         return Response(status=status.HTTP_204_NO_CONTENT)

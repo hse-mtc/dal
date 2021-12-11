@@ -4,7 +4,6 @@ from common.models.subjects import Subject
 
 
 class LessonSubjectFilter(FilterSet):
-
     class Meta:
         model = Subject
         fields = ["title"]

@@ -50,7 +50,8 @@ class CategoryViewSet(viewsets.ModelViewSet):
         if Paper.objects.filter(category=category).exists():
             return Response(
                 {"message": "Category has documents and can not be deleted."},
-                status=HTTP_422_UNPROCESSABLE_ENTITY)
+                status=HTTP_422_UNPROCESSABLE_ENTITY,
+            )
 
         return super().destroy(request, *args, **kwargs)
 
@@ -75,9 +76,9 @@ class PaperPermission(BasePermission):
 
 @extend_schema(request=PaperMutateSerializerForSwagger, tags=["papers"])
 class PaperViewSet(viewsets.ModelViewSet):
-    queryset = Paper.objects \
-        .prefetch_related("authors", "category", "publishers", "file", "tags") \
-        .order_by("-publication_date", "title", "id")
+    queryset = Paper.objects.prefetch_related(
+        "authors", "category", "publishers", "file", "tags"
+    ).order_by("-publication_date", "title", "id")
 
     permission_classes = [PaperPermission]
 

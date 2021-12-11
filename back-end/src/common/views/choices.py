@@ -27,10 +27,7 @@ class GenericChoicesList(views.APIView):
     def get_serializer(self):
         serializer = inline_serializer(
             name=self.__class__.__name__ + "Serializer",
-            fields={
-                choice.name: ChoiceSerializer()
-                for choice in self.choices_class
-            },
+            fields={choice.name: ChoiceSerializer() for choice in self.choices_class},
         )
         return serializer
 

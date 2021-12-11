@@ -16,7 +16,6 @@ class PunishmentSerializer(serializers.ModelSerializer):
 
 
 class PunishmentMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Punishment
         fields = "__all__"

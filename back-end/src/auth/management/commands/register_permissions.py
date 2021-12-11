@@ -20,19 +20,20 @@ class Command(BaseCommand):
         permissions = []
         for method in perm_class.methods:
             for scope in perm_class.scopes:
-                permissions.append({
-                    "viewset":
-                        perm_class.permission_class,
-                    "method":
-                        method,
-                    "scope":
-                        scope,
-                    "name":
-                        "".join([
-                            perm_class.view_name_rus, methods_str[method],
-                            scopes_str[scope]
-                        ]),
-                })
+                permissions.append(
+                    {
+                        "viewset": perm_class.permission_class,
+                        "method": method,
+                        "scope": scope,
+                        "name": "".join(
+                            [
+                                perm_class.view_name_rus,
+                                methods_str[method],
+                                scopes_str[scope],
+                            ]
+                        ),
+                    }
+                )
 
         for val in permissions:
             Permission.objects.get_or_create(**val)

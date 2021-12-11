@@ -98,11 +98,9 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
         qs = self.get_queryset()
         if not qs.exists():
             return Response(
-                {
-                    "detail":
-                        "You do not have permission to perform this action."
-                },
-                status=status.HTTP_403_FORBIDDEN)
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         request.data["values"] = qs.get(id=pk).values + [request.data["value"]]
         return super().update(request, pk, *args, **kwargs)
 
@@ -112,11 +110,9 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
         qs = self.get_queryset()
         if not qs.exists():
             return Response(
-                {
-                    "detail":
-                        "You do not have permission to perform this action."
-                },
-                status=status.HTTP_403_FORBIDDEN)
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         request.data["values"] = qs.get(id=pk).values
         request.data["values"][-1] = request.data["value"]
         return super().update(request, pk, partial=True, *args, **kwargs)
@@ -127,11 +123,9 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
         qs = self.get_queryset()
         if not qs.exists():
             return Response(
-                {
-                    "detail":
-                        "You do not have permission to perform this action."
-                },
-                status=status.HTTP_403_FORBIDDEN)
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         request.data["values"] = qs.get(id=pk).values
         request.data["values"].pop(-1)
         if len(request.data["values"]) == 0:
@@ -201,25 +195,29 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
                 assert False, "Unhandled Personnel type"
 
 
-@extend_schema(tags=["mark-journal"],
-               parameters=[
-                   OpenApiParameter(name="milgroup",
-                                    description="Filter by milgroup",
-                                    required=True,
-                                    type=int),
-                   OpenApiParameter(name="subject",
-                                    description="Filter by subject",
-                                    required=True,
-                                    type=int),
-                   OpenApiParameter(name="date_from",
-                                    description="Filter by date",
-                                    required=True,
-                                    type=OpenApiTypes.DATE),
-                   OpenApiParameter(name="date_to",
-                                    description="Filter by date",
-                                    required=True,
-                                    type=OpenApiTypes.DATE),
-               ])
+@extend_schema(
+    tags=["mark-journal"],
+    parameters=[
+        OpenApiParameter(
+            name="milgroup", description="Filter by milgroup", required=True, type=int
+        ),
+        OpenApiParameter(
+            name="subject", description="Filter by subject", required=True, type=int
+        ),
+        OpenApiParameter(
+            name="date_from",
+            description="Filter by date",
+            required=True,
+            type=OpenApiTypes.DATE,
+        ),
+        OpenApiParameter(
+            name="date_to",
+            description="Filter by date",
+            required=True,
+            type=OpenApiTypes.DATE,
+        ),
+    ],
+)
 class MarkJournalView(GenericAPIView):
     permission_classes = [MarkPermission]
     scoped_permission_class = MarkPermission
@@ -235,14 +233,13 @@ class MarkJournalView(GenericAPIView):
         # add milgroup data
         milgroup = Milgroup.objects.get(id=request.query_params["milgroup"])
 
-        if not milgroup_allowed_by_scope(milgroup, request,
-                                         self.scoped_permission_class):
+        if not milgroup_allowed_by_scope(
+            milgroup, request, self.scoped_permission_class
+        ):
             return Response(
-                {
-                    "detail":
-                        "You do not have permission to perform this action."
-                },
-                status=status.HTTP_403_FORBIDDEN)
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         milgroup = MilgroupSerializer(milgroup).data
         data["milgroup"] = milgroup
@@ -262,8 +259,8 @@ class MarkJournalView(GenericAPIView):
             date__lte=date_to,
             date__gte=date_from,
             milgroup=milgroup_id,
-            subject=request.query_params["subject"]).order_by(
-                "date", "ordinal")
+            subject=request.query_params["subject"],
+        ).order_by("date", "ordinal")
         data["lessons"] = LessonSerializer(lessons, many=True).data
         date_range = list({item.date for item in lessons})
 
@@ -273,7 +270,8 @@ class MarkJournalView(GenericAPIView):
         # get students
         # if scope == SELF, return only one student
         scope = request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, request.method)
+            self.scoped_permission_class.permission_class, request.method
+        )
 
         if scope == Permission.Scope.SELF:
             filter_kwargs = {"user": request.user}
@@ -284,8 +282,9 @@ class MarkJournalView(GenericAPIView):
             context={
                 "request": request,
                 "date_range": date_range,
-                "subject": subject_query.id
+                "subject": subject_query.id,
             },
-            many=True).data
+            many=True,
+        ).data
 
         return Response(data, status=status.HTTP_200_OK)

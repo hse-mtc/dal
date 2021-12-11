@@ -27,8 +27,8 @@ def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
         _fill_header(worksheet=worksheet, cell_format=formats.table_center)
 
         for row, applicant in enumerate(
-                applicants.filter(milspecialty=milspecialty),
-                start=1,  # Skip header.
+            applicants.filter(milspecialty=milspecialty),
+            start=1,  # Skip header.
         ):
             cells = _make_applicant_row(
                 applicant=applicant,
@@ -41,7 +41,9 @@ def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
     return path
 
 
-def _set_row_col_sizes(worksheet: xlsxwriter.Workbook.worksheet_class,) -> None:
+def _set_row_col_sizes(
+    worksheet: xlsxwriter.Workbook.worksheet_class,
+) -> None:
     worksheet.set_column(0, 0, 30)  # ФИО
     worksheet.set_column(1, 1, 15)  # Дата рождения
     worksheet.set_column(3, 3, 15)  # Кампус
@@ -108,13 +110,15 @@ def _make_applicant_row(
         ]
 
         for field in [
-                "preferential_right", "characteristic_handed_over",
-                "criminal_record_handed_over", "passport_handed_over",
-                "registration_certificate_handed_over",
-                "university_card_handed_over", "application_handed_over"
+            "preferential_right",
+            "characteristic_handed_over",
+            "criminal_record_handed_over",
+            "passport_handed_over",
+            "registration_certificate_handed_over",
+            "university_card_handed_over",
+            "application_handed_over",
         ]:
-            row.append(
-                ("Да" if getattr(ap, field) else "Нет", formats.table_center))
+            row.append(("Да" if getattr(ap, field) else "Нет", formats.table_center))
 
         row += [
             (ap.pull_ups, formats.int),

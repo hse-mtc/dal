@@ -4,7 +4,6 @@ from tgbot.models import Session
 
 
 class SessionFilter(FilterSet):
-
     class Meta:
         model = Session
-        fields = '__all__'
+        fields = "__all__"

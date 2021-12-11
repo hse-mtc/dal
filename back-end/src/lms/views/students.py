@@ -129,9 +129,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
             case _:
                 assert False, "Unhandled Personnel type"
 
-    @action(detail=False,
-            methods=["patch"],
-            permission_classes=[permissions.AllowAny])
+    @action(detail=False, methods=["patch"], permission_classes=[permissions.AllowAny])
     def registration(self, request):
         User = get_user_model()
 
@@ -141,15 +139,13 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
             password=User.objects.make_random_password(),
         )
 
-        instance = Student.objects.filter(
-            contact_info__corporate_email=email).first()
+        instance = Student.objects.filter(contact_info__corporate_email=email).first()
         instance.milgroup = Milgroup.objects.get(pk=request.data["milgroup"])
         instance.user = user
         instance.save()
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
-
 
 
 @extend_schema(tags=["students"])
@@ -183,15 +179,16 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
     # TODO(TmLev): Revisit.
     def list(self, request: Request, *args, **kwargs) -> Response:
-        queryset = self.get_queryset().filter(status__in=[
-            Student.Status.ENROLLED,
-        ])
+        queryset = self.get_queryset().filter(
+            status__in=[
+                Student.Status.ENROLLED,
+            ]
+        )
 
         user = request.user
 
         if hasattr(user, "teacher"):
-            queryset = queryset.filter(
-                milgroup__in=user.teacher.milgroups.all())
+            queryset = queryset.filter(milgroup__in=user.teacher.milgroups.all())
         if hasattr(user, "student"):
             queryset = queryset.filter(milgroup=user.student.milgroup)
 
@@ -246,11 +243,11 @@ def confirm_student_registration(
     link = f"localhost:9528/change-password?token={str(token)}"
     print(link)
 
-    html_message = (f"""
+    html_message = f"""
         <p>Здравствуйте!</p>\n
         <p>Вы зарегистрировались в системе Даль ВУЦ ВШЭ.</p>\n
         <p>Ссылка для задания пароля: {link}</p>\n
-    """)
+    """
 
     send_mail(
         subject="Подтверждение регистрации в системе Даль",
@@ -278,7 +275,8 @@ class NoteViewSet(ModelViewSet):
             return queryset
 
         scope = self.request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, self.request.method)
+            self.scoped_permission_class.permission_class, self.request.method
+        )
 
         if scope == Permission.Scope.SELF:
             return queryset

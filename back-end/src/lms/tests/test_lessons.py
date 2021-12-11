@@ -34,27 +34,25 @@ def test_trailing_slash_redirect(su_client):
 def test_post_posts_right_data(su_client, get_new_lesson_data):
     lesson_data = get_new_lesson_data()
 
-    first_lesson_response = su_client.post("/api/lms/lessons/",
-                                           lesson_data,
-                                           content_type="application/json")
+    first_lesson_response = su_client.post(
+        "/api/lms/lessons/", lesson_data, content_type="application/json"
+    )
 
-    second_lesson_response = su_client.post("/api/lms/lessons/",
-                                            lesson_data,
-                                            content_type="application/json")
+    second_lesson_response = su_client.post(
+        "/api/lms/lessons/", lesson_data, content_type="application/json"
+    )
 
     assert first_lesson_response.status_code == 201
     assert second_lesson_response.status_code == 201
 
-    assert first_lesson_response.data.pop(
-        "id") != second_lesson_response.data.pop("id")
+    assert first_lesson_response.data.pop("id") != second_lesson_response.data.pop("id")
 
     assert first_lesson_response.data == lesson_data
     assert second_lesson_response.data == lesson_data
 
 
 @pytest.mark.django_db
-def test_get_by_id_returns_right_data(get_new_lesson_data, su_client,
-                                      create_lesson):
+def test_get_by_id_returns_right_data(get_new_lesson_data, su_client, create_lesson):
     lesson_data = get_new_lesson_data(ids_only=False)
     lesson = create_lesson(**lesson_data)
     lesson_data = unpack_lesson(lesson, with_id=True)
@@ -86,9 +84,9 @@ def test_put_changes_data(get_new_lesson_data, su_client, create_lesson):
     lesson_data["type"] = new_type
     lesson_data["ordinal"] += 1
 
-    lesson_response_put = su_client.put(f"/api/lms/lessons/{lesson.id}/",
-                                        lesson_data,
-                                        content_type="application/json")
+    lesson_response_put = su_client.put(
+        f"/api/lms/lessons/{lesson.id}/", lesson_data, content_type="application/json"
+    )
 
     assert lesson_response_put.status_code == 200
     assert lesson_response_put.data["type"] == new_type
@@ -120,8 +118,7 @@ def test_patch_patches_data(
     assert lesson_response_patch.status_code == 200
     assert lesson_response_patch.data["type"] == new_values["type"]
     assert lesson_response_patch.data["type"] != first_lesson_data.type
-    assert (lesson_response_patch.data["ordinal"] -
-            1 == first_lesson_data.ordinal)
+    assert lesson_response_patch.data["ordinal"] - 1 == first_lesson_data.ordinal
 
 
 @pytest.mark.django_db
@@ -130,7 +127,7 @@ def test_delete_deletes_lesson(su_client, get_new_lesson_data, create_lesson):
     first_lesson_data = create_lesson(**lesson_data)
 
     first_lesson_response = su_client.delete(
-        f"/api/lms/lessons/{first_lesson_data.id}/",
-        content_type="application/json")
+        f"/api/lms/lessons/{first_lesson_data.id}/", content_type="application/json"
+    )
 
     assert first_lesson_response.status_code == 204

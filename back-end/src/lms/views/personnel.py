@@ -39,8 +39,11 @@ class SearchPersonnelUsersViewSet(ListModelMixin, GenericViewSet):
         serializer.is_valid(raise_exception=True)
 
         name = serializer.validated_data["name"]
-        query = (Q(surname__icontains=name) | Q(name__icontains=name) |
-                 Q(patronymic__icontains=name))
+        query = (
+            Q(surname__icontains=name)
+            | Q(name__icontains=name)
+            | Q(patronymic__icontains=name)
+        )
 
         results = []
 

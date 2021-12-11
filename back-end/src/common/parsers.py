@@ -4,7 +4,6 @@ from rest_framework.parsers import MultiPartParser
 
 
 class MultiPartWithJSONParser(MultiPartParser):
-
     def parse(self, stream, media_type=None, parser_context=None):
         # pylint: disable=too-many-locals
 

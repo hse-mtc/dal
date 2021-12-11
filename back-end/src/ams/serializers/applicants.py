@@ -22,7 +22,6 @@ from ams.models.applicants import (
 
 
 class ApplicationProcessSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ApplicationProcess
         exclude = ["id"]

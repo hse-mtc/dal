@@ -27,7 +27,6 @@ def create_applicants(
     applicants = [
         # ----------------------------------------------------------------------
         # Campus == MO
-
         {
             "surname": "Иванов",
             "name": "Иван",
@@ -35,7 +34,6 @@ def create_applicants(
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Москва, ул. Тверская, д. 6",
-
             "birth_info": {
                 "date": "2000-11-04",
                 "country": "Россия",
@@ -58,10 +56,8 @@ def create_applicants(
                 "personal_email": f"ivanov@ivanov.ru",
                 "personal_phone_number": "72222222221",
             },
-
             "photo": None,
             "family": [],
-
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
         },
@@ -72,7 +68,6 @@ def create_applicants(
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Челябинск, ул. Ленина, д. 12",
-
             "birth_info": {
                 "date": "2001-10-22",
                 "country": "Россия",
@@ -95,10 +90,8 @@ def create_applicants(
                 "personal_email": f"petrov@petrov.ru",
                 "personal_phone_number": "72222222222",
             },
-
             "photo": None,
             "family": [],
-
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
         },
@@ -109,7 +102,6 @@ def create_applicants(
             "recruitment_office": "Объединённый Одинцовский военкомат",
             "citizenship": "Беларусь",
             "permanent_address": "г. Минск, ул. Картошки, д. Матрёшки",
-
             "birth_info": {
                 "date": "1999-01-31",
                 "country": "Беларусь",
@@ -132,17 +124,13 @@ def create_applicants(
                 "personal_email": f"sidorov@sidorov.ru",
                 "personal_phone_number": "72222222223",
             },
-
             "photo": None,
             "family": [],
-
             # "application_process": {},
             "milspecialty": milspecialties["453000"],
         },
-
         # ----------------------------------------------------------------------
         # Campus == SP
-
         {
             "surname": "Борисов",
             "name": "Никита",
@@ -150,7 +138,6 @@ def create_applicants(
             "recruitment_office": "Ленинградский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Ульяновск, ул. Победы, д. Неведы",
-
             "birth_info": {
                 "date": "2002-04-12",
                 "country": "Россия",
@@ -173,17 +160,13 @@ def create_applicants(
                 "personal_email": f"borisov@borisov.ru",
                 "personal_phone_number": "72222222224",
             },
-
             "photo": None,
             "family": [],
-
             # "application_process": {},
             "milspecialty": milspecialties["106646-543"],
         },
-
         # ----------------------------------------------------------------------
         # Campus == NN
-
         # ----------------------------------------------------------------------
         # Campus == PE
     ]

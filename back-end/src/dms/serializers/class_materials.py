@@ -17,28 +17,24 @@ from dms.serializers.documents import (
 
 
 class SectionSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Section
         fields = "__all__"
 
 
 class TopicSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Topic
         fields = "__all__"
 
 
 class ClassMaterialSerializer(DocumentSerializer):
-
     class Meta:
         model = ClassMaterial
         fields = "__all__"
 
 
 class ClassMaterialMutateSerializer(DocumentMutateSerializer):
-
     class Meta:
         model = ClassMaterial
         fields = "__all__"
@@ -46,9 +42,7 @@ class ClassMaterialMutateSerializer(DocumentMutateSerializer):
 
 ClassMaterialsByType = inline_serializer(
     name="ClassMaterialsByType",
-    fields={
-        label: ClassMaterialSerializer() for label in ClassMaterial.Type.labels
-    },
+    fields={label: ClassMaterialSerializer() for label in ClassMaterial.Type.labels},
 )
 
 

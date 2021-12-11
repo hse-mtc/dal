@@ -11,10 +11,12 @@ class Milspecialty(models.Model):
         unique=True,
         max_length=31,
     )
-    available_for = ArrayField(base_field=models.CharField(
-        max_length=2,
-        choices=Campus.choices,
-    ))
+    available_for = ArrayField(
+        base_field=models.CharField(
+            max_length=2,
+            choices=Campus.choices,
+        )
+    )
 
     class Meta:
         verbose_name = "Military Specialty"

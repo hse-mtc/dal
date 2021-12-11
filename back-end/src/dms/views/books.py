@@ -17,7 +17,7 @@ from dms.filters import (
     BookFilter,
     FavoriteBookFilter,
 )
-from dms.models.books import (Book, FavoriteBook)
+from dms.models.books import Book, FavoriteBook
 from dms.serializers.books import (
     BookMutateSerializer,
     BookMutateSerializerForSwagger,
@@ -53,9 +53,9 @@ class FavoriteBookPermission(BasePermission):
 
 @extend_schema(request=BookMutateSerializerForSwagger, tags=["books"])
 class BookViewSet(QuerySetScopingByUserMixin, viewsets.ModelViewSet):
-    queryset = Book.objects \
-        .prefetch_related("authors", "publishers", "subjects", "file", "user") \
-        .order_by("title", "id")
+    queryset = Book.objects.prefetch_related(
+        "authors", "publishers", "subjects", "file", "user"
+    ).order_by("title", "id")
 
     permission_classes = [BookPermission]
     scoped_permission_class = BookPermission
@@ -79,7 +79,8 @@ class BookViewSet(QuerySetScopingByUserMixin, viewsets.ModelViewSet):
             return self.queryset
 
         scope = self.request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, self.request.method)
+            self.scoped_permission_class.permission_class, self.request.method
+        )
         if scope == Permission.Scope.ALL:
             return self.queryset
 
@@ -93,7 +94,8 @@ class BookViewSet(QuerySetScopingByUserMixin, viewsets.ModelViewSet):
             return True
 
         scope = self.request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, self.request.method)
+            self.scoped_permission_class.permission_class, self.request.method
+        )
         if scope == Permission.Scope.ALL:
             return True
         if scope == Permission.Scope.SELF:
@@ -107,19 +109,18 @@ class BookViewSet(QuerySetScopingByUserMixin, viewsets.ModelViewSet):
         if self.is_creation_allowed_by_scope(request.data):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED,
-                            headers=headers)
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED, headers=headers
+            )
         return Response(
             {"detail": "You do not have permission to perform this action."},
-            status=status.HTTP_403_FORBIDDEN)
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
 
 @extend_schema(tags=["favorite-books"])
 class FavoriteBookViewSet(viewsets.ModelViewSet):
-    queryset = FavoriteBook.objects \
-        .prefetch_related("book", "user") \
-        .order_by("id")
+    queryset = FavoriteBook.objects.prefetch_related("book", "user").order_by("id")
 
     permission_classes = [FavoriteBookPermission]
     scoped_permission_class = FavoriteBookPermission
@@ -142,7 +143,8 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
             return queryset
 
         scope = self.request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, self.request.method)
+            self.scoped_permission_class.permission_class, self.request.method
+        )
 
         if scope == Permission.Scope.SELF:
             return queryset
@@ -154,7 +156,8 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
             return True
 
         scope = self.request.user.get_perm_scope(
-            self.scoped_permission_class.permission_class, self.request.method)
+            self.scoped_permission_class.permission_class, self.request.method
+        )
 
         if scope == Permission.Scope.SELF:
             return self.request.user.id == data["user"]
@@ -167,12 +170,13 @@ class FavoriteBookViewSet(viewsets.ModelViewSet):
         if self.is_creation_allowed_by_scope(request.data):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data,
-                            status=status.HTTP_201_CREATED,
-                            headers=headers)
+            return Response(
+                serializer.data, status=status.HTTP_201_CREATED, headers=headers
+            )
         return Response(
             {"detail": "You do not have permission to perform this action."},
-            status=status.HTTP_403_FORBIDDEN)
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
     def destroy(self, request, *args, pk=None, **kwargs):
         # pylint: disable=unused-argument,invalid-name,arguments-differ

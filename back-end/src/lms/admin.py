@@ -5,11 +5,7 @@ from lms.models.punishments import Punishment
 from lms.models.teachers import Teacher
 from lms.models.marks import Mark
 from lms.models.uniforms import Uniform
-from lms.models.absences import (
-    Absence,
-    AbsenceTime,
-    AbsenceAttachment
-)
+from lms.models.absences import Absence, AbsenceTime, AbsenceAttachment
 from lms.models.common import (
     Milgroup,
     Milfaculty,

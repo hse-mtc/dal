@@ -7,7 +7,6 @@ from lms.models.common import (
 
 
 class MilfacultySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Milfaculty
         fields = "__all__"
@@ -23,7 +22,6 @@ class MilgroupSerializer(serializers.ModelSerializer):
 
 
 class MilgroupMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Milgroup
         fields = "__all__"

@@ -5,7 +5,8 @@ from datetime import (
 
 
 def get_date_range(
-    date_from: datetime, date_to: datetime,
+    date_from: datetime,
+    date_to: datetime,
     weekday: int,
 ) -> list[str]:
     """
@@ -54,4 +55,4 @@ def get_today_date_rus() -> str:
         "ноября",
         "декабря",
     ]
-    return f"\"{today.day}\"  {months[today.month-1]}  {today.year} г."
+    return f'"{today.day}"  {months[today.month-1]}  {today.year} г.'

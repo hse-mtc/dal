@@ -24,7 +24,6 @@ from lms.serializers.common import MilgroupSerializer
 
 
 class SkillSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Skill
         fields = "__all__"
@@ -96,8 +95,14 @@ class StudentBasicInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            "id", "fullname", "milgroup", "photo", "post", "contact_info",
-            "status", "birth_info"
+            "id",
+            "fullname",
+            "milgroup",
+            "photo",
+            "post",
+            "contact_info",
+            "status",
+            "birth_info",
         ]
 
 
@@ -110,8 +115,13 @@ class StudentExtraInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Student
         fields = [
-            "id", "contact_info", "milspecialty", "university_info",
-            "citizenship", "permanent_address", "passport"
+            "id",
+            "contact_info",
+            "milspecialty",
+            "university_info",
+            "citizenship",
+            "permanent_address",
+            "passport",
         ]
 
 

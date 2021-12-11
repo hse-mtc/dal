@@ -15,14 +15,12 @@ from common.models.personal import (
 
 
 class BirthInfoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = BirthInfo
         exclude = ["id"]
 
 
 class ContactInfoSerializer(UniqueFieldsMixin, serializers.ModelSerializer):
-
     def create(self, validated_data):
         corporate_email = validated_data.pop("corporate_email")
 
@@ -115,7 +113,6 @@ class PhotoMutateMixin(serializers.Serializer):
 
 
 class PassportSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Passport
         exclude = ["id"]

@@ -36,9 +36,11 @@ class AbsenceSerializer(serializers.ModelSerializer):
 
 
 class AbsenceMutateSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(write_only=True,
-                                   required=False,
-                                   allow_null=True)
+    image = serializers.ImageField(
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
 
     def create(self, validated_data):
         if image := validated_data.pop("image", None):
@@ -52,8 +54,7 @@ class AbsenceMutateSerializer(serializers.ModelSerializer):
                 instance.attachment.image = image
                 instance.attachment.save()
             else:
-                instance.attachment = AbsenceAttachment.objects.create(
-                    image=image)
+                instance.attachment = AbsenceAttachment.objects.create(image=image)
         return super().update(instance, validated_data)
 
     class Meta:
@@ -63,14 +64,17 @@ class AbsenceMutateSerializer(serializers.ModelSerializer):
 
 class AbsenceJournalQuerySerializer(serializers.Serializer):
     milgroup = serializers.IntegerField(
-        required=True, validators=[PresentInDatabaseValidator(Milgroup, "id")])
+        required=True,
+        validators=[PresentInDatabaseValidator(Milgroup, "id")],
+    )
     date_from = serializers.DateField(required=False)
     date_to = serializers.DateField(required=False)
 
     def validate(self, attrs):
         if attrs["date_from"] > attrs["date_to"]:
             raise serializers.ValidationError(
-                "date_from should be greater or equal to date_to")
+                "date_from should be greater or equal to date_to"
+            )
         return attrs
 
     def create(self, validated_data):
@@ -81,7 +85,6 @@ class AbsenceJournalQuerySerializer(serializers.Serializer):
 
 
 class AbsenceShortSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Absence
         fields = ["id", "date", "excuse", "status", "reason", "comment"]
@@ -101,7 +104,6 @@ class AbsenceJournalSerializer(serializers.ModelSerializer):
 
 
 class AbsenceTimeSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = AbsenceTime
         fields = "__all__"

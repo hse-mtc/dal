@@ -24,7 +24,6 @@ def create_faculties() -> dict[str, Faculty]:
             "title": "Факультет компьютерных наук",
             "abbreviation": "ФКН",
         },
-
         {
             "campus": Campus.SAINT_PETERSBURG.value,
             "title": "Юридический факультет",
@@ -33,8 +32,7 @@ def create_faculties() -> dict[str, Faculty]:
     ]
 
     return {
-        fields["abbreviation"]: get_or_create(Faculty, **fields)
-        for fields in faculties
+        fields["abbreviation"]: get_or_create(Faculty, **fields) for fields in faculties
     }
 
 
@@ -43,7 +41,7 @@ def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
         {
             "code": "09.03.01 Информатика и вычислительная техника",
             "title": "Информатика и вычислительная техника",
-            "faculty": faculties["МИЭМ"]
+            "faculty": faculties["МИЭМ"],
         },
         {
             "code": "10.03.01 Информационная безопасность",
@@ -60,15 +58,11 @@ def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
             "title": "Программная инженерия",
             "faculty": faculties["ФКН"],
         },
-
         {
             "code": "40.03.01 Юриспруденция",
             "title": "Юриспруденция",
             "faculty": faculties["ЮрФак"],
-        }
+        },
     ]
 
-    return {
-        fields["title"]: get_or_create(Program, **fields)
-        for fields in programs
-    }
+    return {fields["title"]: get_or_create(Program, **fields) for fields in programs}

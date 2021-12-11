@@ -27,7 +27,6 @@ class AbsenceAttachment(models.Model):
 
 
 class Absence(models.Model):
-
     class Excuse(models.TextChoices):
         LATE = "LA", "Опоздание"
         LEGITIMATE = "LE", "Уважительная"
@@ -52,7 +51,12 @@ class Absence(models.Model):
         null=True,
         blank=True,
     )
-    attachment = models.ForeignKey(to=AbsenceAttachment, on_delete=models.SET_NULL, null=True, blank=True)
+    attachment = models.ForeignKey(
+        to=AbsenceAttachment,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     comment = models.CharField(
         max_length=127,
         null=True,
@@ -64,10 +68,12 @@ class Absence(models.Model):
     )
 
     def __str__(self):
-        return f"ID = {self.id}\n" \
-               f"Date = {self.date}\n" \
-               f"StudentID = {self.student}, " \
-               f"excuse = {self.excuse}\n"
+        return (
+            f"ID = {self.id}\n"
+            f"Date = {self.date}\n"
+            f"StudentID = {self.student}, "
+            f"excuse = {self.excuse}\n"
+        )
 
     class Meta:
         unique_together = [("date", "student")]
@@ -81,7 +87,8 @@ class AbsenceTime(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk and AbsenceTime.objects.exists():
             raise ValidationError(
-                "There can only be one instance of absence restriction time")
+                "There can only be one instance of absence restriction time"
+            )
         return super().save(*args, **kwargs)
 
     def __str__(self):

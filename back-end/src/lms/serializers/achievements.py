@@ -9,7 +9,6 @@ from lms.serializers.students import StudentShortSerializer
 
 
 class AchievementTypeSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = AchievementType
         fields = "__all__"
@@ -25,7 +24,6 @@ class AchievementSerializer(serializers.ModelSerializer):
 
 
 class AchievementMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Achievement
         fields = "__all__"

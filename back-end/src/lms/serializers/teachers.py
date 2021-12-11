@@ -85,8 +85,10 @@ class ApproveTeacherSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "fullname",
-            "milfaculty", "milgroups",
-            "post", "rank",
+            "milfaculty",
+            "milgroups",
+            "post",
+            "rank",
             "email",
         ]
 

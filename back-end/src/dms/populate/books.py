@@ -63,7 +63,4 @@ def create_favorite_books(
     books: list[Book],
     user: User,
 ) -> list[FavoriteBook]:
-    return [
-        get_or_create(FavoriteBook, **dict(book=book, user=user))
-        for book in books
-    ]
+    return [get_or_create(FavoriteBook, **dict(book=book, user=user)) for book in books]

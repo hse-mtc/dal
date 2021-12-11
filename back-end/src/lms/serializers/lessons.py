@@ -13,7 +13,6 @@ from lms.validators import PresentInDatabaseValidator
 
 
 class RoomSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Room
         fields = "__all__"
@@ -38,7 +37,6 @@ class LessonSerializer(serializers.ModelSerializer):
 
 
 class LessonMutateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Lesson
         fields = "__all__"
@@ -54,8 +52,7 @@ class LessonJournalQuerySerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs["date_from"] > attrs["date_to"]:
-            raise ValueError(
-                "date_to should be greater than or equal to date_from")
+            raise ValueError("date_to should be greater than or equal to date_from")
         return attrs
 
     def create(self, validated_data):

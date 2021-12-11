@@ -6,7 +6,6 @@ from rest_framework.serializers import ValidationError
 
 
 class PresentInDatabaseValidator:
-
     def __init__(self, model: tp.Type[Model], field: tp.Optional[str] = None):
         self.model = model
         self.field = field
@@ -24,8 +23,10 @@ class PresentInDatabaseValidator:
 
         if self.field is not None:
             raise ValidationError(
-                f'There are no objects with {self.field} = {value} '
-                f'in model {self.model.__name__}')
+                f"There are no objects with {self.field} = {value} "
+                f"in model {self.model.__name__}"
+            )
         raise ValidationError(
-            f'There are no objects like {str(query_filter)} '
-            f'in model {self.model.__name__}')
+            f"There are no objects like {str(query_filter)} "
+            f"in model {self.model.__name__}"
+        )

@@ -13,9 +13,9 @@ class Subject(models.Model):
     annotation = models.TextField(blank=True)
 
     # TODO(TmLev): merge migrations, remove default
-    user = models.ForeignKey(to=User,
-                             on_delete=models.SET_DEFAULT,
-                             default=super_user_id)
+    user = models.ForeignKey(
+        to=User, on_delete=models.SET_DEFAULT, default=super_user_id
+    )
 
     class Meta:
         verbose_name = "Subject"

@@ -7,7 +7,6 @@ from lms.models.teachers import Teacher
 
 
 class Encouragement(models.Model):
-
     class Type(models.TextChoices):
         ENCOURAGEMENT = "EN", "Благодарность"
         REMOVE_PUNISHMENT = "RE", "Снятие взыскания"
@@ -34,8 +33,10 @@ class Encouragement(models.Model):
         verbose_name_plural = "Encouragement Journal"
 
     def __str__(self):
-        return f"ID = {str(self.id)}\n" \
-               f"StudentID = {str(self.student)}, " \
-               f"TeacherID = {str(self.teacher)}\n" \
-               f"Type = {str(self.type)}\n" \
-               f"Date = {str(self.date)}"
+        return (
+            f"ID = {str(self.id)}\n"
+            f"StudentID = {str(self.student)}, "
+            f"TeacherID = {str(self.teacher)}\n"
+            f"Type = {str(self.type)}\n"
+            f"Date = {str(self.date)}"
+        )

@@ -67,9 +67,7 @@ class TeacherViewSet(QuerySetScopingMixin, viewsets.ModelViewSet):
             return TeacherMutateSerializer
         return TeacherSerializer
 
-    @action(detail=False,
-            methods=["post"],
-            permission_classes=[permissions.AllowAny])
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny])
     def registration(self, request):
         serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -166,7 +164,7 @@ class ApproveTeacherViewSet(
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        if getattr(teacher, '_prefetched_objects_cache', None):
+        if getattr(teacher, "_prefetched_objects_cache", None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             teacher._prefetched_objects_cache = {}
@@ -180,7 +178,7 @@ class ApproveTeacherViewSet(
             address=address,
             email=teacher.user.email,
             url=request.META["HTTP_REFERER"],
-            token=generate_regconf_token(teacher.user)
+            token=generate_regconf_token(teacher.user),
         )
 
         return Response()

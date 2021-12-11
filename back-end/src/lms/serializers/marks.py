@@ -28,7 +28,8 @@ class MarkMutateSerializer(serializers.ModelSerializer):
         if "student" in attrs and "lesson" in attrs:
             if attrs["student"].milgroup != attrs["lesson"].milgroup:
                 raise serializers.ValidationError(
-                    "student milgroup and lesson milgroup should be equal")
+                    "student milgroup and lesson milgroup should be equal"
+                )
         return attrs
 
     class Meta:
@@ -51,7 +52,8 @@ class MarkJournalQuerySerializer(serializers.Serializer):
     def validate(self, attrs):
         if attrs["date_from"] > attrs["date_to"]:
             raise serializers.ValidationError(
-                "date_from should be greater or equal to date_to")
+                "date_from should be greater or equal to date_to"
+            )
         return attrs
 
     def create(self, validated_data):
@@ -62,7 +64,6 @@ class MarkJournalQuerySerializer(serializers.Serializer):
 
 
 class MarkShortSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Mark
         fields = ["id", "values", "lesson"]

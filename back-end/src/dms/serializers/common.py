@@ -11,14 +11,12 @@ from common.models.subjects import Subject
 
 
 class AuthorSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Author
         fields = ["id", "surname", "name", "patronymic"]
 
 
 class PublisherSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Publisher
         fields = "__all__"

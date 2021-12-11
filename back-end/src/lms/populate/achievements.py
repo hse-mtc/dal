@@ -20,8 +20,7 @@ def create_achievement_types() -> dict[str, AchievementType]:
     ]
 
     return {
-        fields["title"]: get_or_create(AchievementType, **fields)
-        for fields in types
+        fields["title"]: get_or_create(AchievementType, **fields) for fields in types
     }
 
 

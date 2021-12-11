@@ -104,8 +104,7 @@ class Command(BaseCommand):
 
         students, _ = Group.objects.get_or_create(name="Студент")
         teachers, _ = Group.objects.get_or_create(name="Преподаватель")
-        milfaculty_heads, _ = Group.objects.get_or_create(
-            name="Начальник цикла")
+        milfaculty_heads, _ = Group.objects.get_or_create(name="Начальник цикла")
 
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
@@ -123,8 +122,7 @@ class Command(BaseCommand):
         teachers.user_set.add(User.objects.get(email="ivkovalchuk@mail.com"))
         teachers.user_set.add(User.objects.get(email="ksgavrilov@mail.com"))
 
-        milfaculty_heads.user_set.add(
-            User.objects.get(email="dnrepalov@mail.com"))
+        milfaculty_heads.user_set.add(User.objects.get(email="dnrepalov@mail.com"))
 
         print(" OK")
 

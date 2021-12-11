@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # Addons
     "corsheaders",
     "dbbackup",
@@ -45,11 +44,9 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "ordered_model",
     "taggit",
-
     # REST framework
     "rest_framework",
     "rest_framework.authtoken",
-
     # DAL apps
     "auth",
     "common",
@@ -138,19 +135,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation."
-                "UserAttributeSimilarityValidator",
+        "UserAttributeSimilarityValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-                "MinimumLengthValidator",
+        "NAME": "django.contrib.auth.password_validation." "MinimumLengthValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-                "CommonPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation." "CommonPasswordValidator",
     },
     {
-        "NAME": "django.contrib.auth.password_validation."
-                "NumericPasswordValidator",
+        "NAME": "django.contrib.auth.password_validation." "NumericPasswordValidator",
     },
 ]
 
@@ -272,52 +266,37 @@ SPECTACULAR_SETTINGS = {
         "filter": True,
         "persistAuthorization": True,
     },
-
     # Meta info
     "TITLE": "DAL REST API",
     "DESCRIPTION": "API for auth, dms, lms apps",
     "VERSION": "0.7.0",
-
     # Enum namings
     "ENUM_NAME_OVERRIDES": {
         # ----------------------------------------------------------------------
         # common
-
         "RelativeType": "common.models.personal.Relative.Type",
         "Campus": "common.models.universities.Campus",
-
         # ----------------------------------------------------------------------
         # auth
-
         "PermissionScope": "auth.models.Permission.Scope",
-
         # ----------------------------------------------------------------------
         # ams
-
         "MedicalExamination": "ams.models.applicants.ApplicationProcess.MedicalExamination",
         "ProfPsySelection": "ams.models.applicants.ApplicationProcess.ProfPsySelection",
-
         # ----------------------------------------------------------------------
         # dms
-
         "ClassMaterialType": "dms.models.class_materials.ClassMaterial.Type",
-
         # ----------------------------------------------------------------------
         # lms
-
         "AbsenceExcuse": "lms.models.absences.Absence.Excuse",
         "AbsenceStatus": "lms.models.absences.Absence.Status",
-
         "EncouragementType": "lms.models.encouragements.Encouragement.Type",
         "LessonType": "lms.models.lessons.Lesson.Type",
         "PunishmentType": "lms.models.punishments.Punishment.Type",
-
         "StudentStatus": "lms.models.students.Student.Status",
         "StudentPost": "lms.models.students.Student.Post",
-
         "TeacherRank": "lms.models.teachers.Teacher.Rank",
         "TeacherPost": "lms.models.teachers.Teacher.Post",
-
         "UniformHeaddress": "lms.models.uniforms.Uniform.Headdress",
         "UniformOuterwear": "lms.models.uniforms.Uniform.Outerwear",
     },
@@ -349,7 +328,7 @@ LOGGING = {
             "level": "DEBUG",
             "handlers": ["console"],
             "propagate": False,
-        }
+        },
     },
 }
 

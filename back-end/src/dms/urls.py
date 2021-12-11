@@ -43,14 +43,11 @@ router.register("topics", TopicViewSet)
 urlpatterns = [
     # REST router
     path("", include(router.urls)),
-
     # Ordering
     path("sections/<int:id>/order/", SectionOrderUpdateAPIView.as_view()),
     path("topics/<int:id>/order/", TopicOrderUpdateAPIView.as_view()),
-
     # Statistics
     path("statistics/<int:uid>/", StatisticsAPIView.as_view()),
-
     # Papers tags
     path("tags/", TagListAPIView.as_view()),
 ]

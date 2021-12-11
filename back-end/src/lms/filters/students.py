@@ -30,20 +30,16 @@ class StudentFilter(FilterSet):
         model = Student
         fields = [
             "phone",
-
             "milfaculty",
-
             "skill",
             "archived",
             "year_of_admission",
-
             "status",
             "milgroup",
         ]
 
 
 class NoteFilter(FilterSet):
-
     class Meta:
         model = Note
         fields = ["student"]

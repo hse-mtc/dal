@@ -15,10 +15,7 @@ def create_authors() -> list[Author]:
         dict(surname="Усиков", name="Юрий", patronymic="Витальевич"),
     ]
 
-    return [
-        get_or_create(Author, **fields)
-        for fields in authors
-    ]
+    return [get_or_create(Author, **fields) for fields in authors]
 
 
 def create_publishers() -> list[Publisher]:
@@ -28,7 +25,4 @@ def create_publishers() -> list[Publisher]:
         dict(name="Инженерный журнал"),
     ]
 
-    return [
-        get_or_create(Publisher, **fields)
-        for fields in publishers
-    ]
+    return [get_or_create(Publisher, **fields) for fields in publishers]

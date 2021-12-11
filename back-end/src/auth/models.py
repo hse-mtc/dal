@@ -12,7 +12,6 @@ from common.models.universities import Campus
 
 
 class UserManager(BaseUserManager):
-
     def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("The Email must be set")
@@ -37,7 +36,6 @@ class UserManager(BaseUserManager):
 
 
 class Permission(models.Model):
-
     class Scope(models.IntegerChoices):
         ALL = 0, "all"
         MILFACULTY = 10, "milfaculty"
@@ -105,8 +103,7 @@ class User(AbstractUser):
         Group,
         verbose_name="groups",
         blank=True,
-        help_text=
-        "The groups this user belongs to. A user will get all permissions "
+        help_text="The groups this user belongs to. A user will get all permissions "
         "granted to each of their groups.",
         related_name="user_set",
         related_query_name="user",
@@ -137,8 +134,9 @@ class User(AbstractUser):
         perms = self.get_all_permissions().values()
         # using .filter() is not possible after union
         return [
-            perm for perm in perms if (perm["viewset"] == viewset) and
-            (perm["method"] == method.lower())
+            perm
+            for perm in perms
+            if (perm["viewset"] == viewset) and (perm["method"] == method.lower())
         ]
 
     def has_general_perm(self, viewset, method):

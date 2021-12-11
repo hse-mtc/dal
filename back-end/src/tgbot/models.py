@@ -6,8 +6,8 @@ class Session(models.Model):
     chat_id = models.PositiveBigIntegerField(null=True)
 
     def __str__(self):
-        return f'Phone: {self.phone}, chat_id: {self.chat_id}'
+        return f"Phone: {self.phone}, chat_id: {self.chat_id}"
 
     class Meta:
-        verbose_name = 'Telegram Bot Auth Session'
-        verbose_name_plural = 'Telegram Bot Auth Sessions'
+        verbose_name = "Telegram Bot Auth Session"
+        verbose_name_plural = "Telegram Bot Auth Sessions"

@@ -7,7 +7,6 @@ from lms.models.teachers import Teacher
 
 
 class Punishment(models.Model):
-
     class Type(models.TextChoices):
         PUNISHMENT = "PU", "Взыскание"
         REBUKE = "RE", "Выговор"
@@ -38,9 +37,11 @@ class Punishment(models.Model):
         verbose_name_plural = "Punishment Journal"
 
     def __str__(self):
-        return f"ID = {str(self.id)}\n" \
-               f"StudentID = {str(self.student)}, " \
-               f"TeacherID = {str(self.teacher)}\n" \
-               f"Type = {str(self.type)}\n" \
-               f"Date = {str(self.date)}, " \
-               f"Remove Date = {str(self.remove_date)}"
+        return (
+            f"ID = {str(self.id)}\n"
+            f"StudentID = {str(self.student)}, "
+            f"TeacherID = {str(self.teacher)}\n"
+            f"Type = {str(self.type)}\n"
+            f"Date = {str(self.date)}, "
+            f"Remove Date = {str(self.remove_date)}"
+        )

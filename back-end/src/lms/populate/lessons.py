@@ -19,23 +19,25 @@ def create_rooms() -> dict[str, Room]:
     rooms = [
         {
             "title": "510",
-        }, {
+        },
+        {
             "title": "Плац",
-        }, {
+        },
+        {
             "title": "501",
-        }, {
+        },
+        {
             "title": "502",
-        }, {
+        },
+        {
             "title": "503",
-        }, {
+        },
+        {
             "title": "504",
-        }
+        },
     ]
 
-    return {
-        fields["title"]: get_or_create(Room, **fields)
-        for fields in rooms
-    }
+    return {fields["title"]: get_or_create(Room, **fields) for fields in rooms}
 
 
 def create_lessons(
@@ -47,10 +49,7 @@ def create_lessons(
 ) -> list[Lesson]:
     # TODO(TmLev): Link teachers too.
 
-    subjects = {
-        subject.title: subject
-        for subject in subjects
-    }
+    subjects = {subject.title: subject for subject in subjects}
 
     date_f = "%Y-%m-%d"
 
@@ -129,7 +128,4 @@ def create_lessons(
         },
     ]
 
-    return [
-        get_or_create(Lesson, **fields)
-        for fields in lessons
-    ]
+    return [get_or_create(Lesson, **fields) for fields in lessons]

@@ -19,7 +19,4 @@ def create_subjects() -> list[Subject]:
         },
     ]
 
-    return [
-        get_or_create(Subject, **fields)
-        for fields in subjects
-    ]
+    return [get_or_create(Subject, **fields) for fields in subjects]

@@ -4,7 +4,6 @@ from lms.models.common import Milfaculty
 
 
 class Uniform(models.Model):
-
     class Headdress(models.TextChoices):
         CAP = "CA", "Кепка"
         HAT = "HA", "Шапка"

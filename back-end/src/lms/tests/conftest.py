@@ -45,10 +45,7 @@ def su_client(superuser):
 
     response = Client().post(
         "/api/auth/tokens/obtain/",
-        {
-            "email": SUPERUSER_EMAIL,
-            "password": SUPERUSER_PASSWORD
-        },
+        {"email": SUPERUSER_EMAIL, "password": SUPERUSER_PASSWORD},
         content_type="application/json",
     )
     access_token = response.data["access"]
@@ -57,7 +54,6 @@ def su_client(superuser):
 
 @pytest.fixture
 def get_new_lesson_data() -> dict:
-
     def call_me(ids_only: bool = True):
         user = create_test_user()
 
@@ -101,15 +97,19 @@ def get_new_lesson_data() -> dict:
 
 
 def create_room(title: str = "510") -> Room:
-    room, _ = Room.objects.get_or_create(title=title,)
+    room, _ = Room.objects.get_or_create(
+        title=title,
+    )
 
     return room
 
 
-def create_milfaculty(title: str = "Тестовое название цикла 1",
-                      abbreviation: str = "АБР 1") -> Milfaculty:
-    milfaculty, _ = Milfaculty.objects.get_or_create(title=title,
-                                                     abbreviation=abbreviation)
+def create_milfaculty(
+    title: str = "Тестовое название цикла 1", abbreviation: str = "АБР 1"
+) -> Milfaculty:
+    milfaculty, _ = Milfaculty.objects.get_or_create(
+        title=title, abbreviation=abbreviation
+    )
     return milfaculty
 
 
@@ -118,16 +118,16 @@ def create_milgroup(
     title: str = "Тестовое название взвода 1",
     weekday: int = 1,
 ) -> Milgroup:
-    milgroup, _ = Milgroup.objects.get_or_create(title=title,
-                                                 milfaculty=milfaculty,
-                                                 weekday=weekday)
+    milgroup, _ = Milgroup.objects.get_or_create(
+        title=title, milfaculty=milfaculty, weekday=weekday
+    )
 
     return milgroup
 
 
-def create_teacher(rank: str,
-                   milfaculty: Milfaculty,
-                   milgroups: List[Milgroup] or None = None) -> Teacher:
+def create_teacher(
+    rank: str, milfaculty: Milfaculty, milgroups: List[Milgroup] or None = None
+) -> Teacher:
     value = {
         "surname": "Тест_Фам",
         "name": "Тест_Им",
@@ -143,8 +143,7 @@ def create_teacher(rank: str,
     return teacher
 
 
-def create_subject(user: User,
-                   title: str = "Тактическая подготовка 2") -> Subject:
+def create_subject(user: User, title: str = "Тактическая подготовка 2") -> Subject:
     subject, _ = Subject.objects.get_or_create(
         title=title,
         annotation=f"Пример аннотации для '{title.lower()}'",
@@ -156,7 +155,6 @@ def create_subject(user: User,
 
 @pytest.fixture
 def create_lesson():
-
     def call_me(
         room: Room,
         milgroup: Milgroup,
