@@ -1,4 +1,8 @@
+from urllib.parse import urlparse
+
 from django.core.mail import send_mail
+
+from conf import settings
 
 
 def send_regconf_email(
@@ -22,24 +26,33 @@ def send_regconf_email(
         token: Valid auth token to embed in the link.
     """
 
-    if not url.endswith("/"):
-        url += "/"
+    if "localhost" in url:
+        if "http" not in url:
+            url = f"http://{url}"
+    else:
+        if "https" not in url:
+            url = f"https://{url}"
 
-    link = f"{url}change-password?token={str(token)}"
-    print(link)
+    parsed = urlparse(url)
+    parsed = parsed._replace(path="change-password")
+    parsed = parsed._replace(query=f"token={str(token)}")
 
     html_message = (f"""
         <p>Здравствуйте, {address}!</p>\n
         
         <p>Ваша регистрация в системе Даль ВУЦ ВШЭ была подтверждена. <br />\n
         Чтобы задать пароль для входа в систему, 
-        <a href="{link}" target="_blank">
+        <a href="{parsed.geturl()}" target="_blank">
             нажмите сюда.
         </a>
         </p>\n
         
         <p>Это письмо было отправлено автоматически; пожалуйста, не отвечайте на него.</p>\n
     """)
+
+    if email.endswith(settings.TEST_CORPORATE_EMAIL_DOMAIN):
+        print(html_message)
+        return
 
     send_mail(
         subject="Подтверждение регистрации в системе Даль",
