@@ -46,17 +46,17 @@ class QuerySetScopingMixin(mixins.CreateModelMixin, generics.GenericAPIView):
         # pylint: disable=too-many-return-statements
 
         if self.request.user.is_superuser:
-            return self.queryset
+            return self.queryset.all()
 
         if self.permission_allow_read_only:
-            return self.queryset
+            return self.queryset.all()
 
         scope = self.request.user.get_perm_scope(
             self.scoped_permission_class.permission_class, self.request.method
         )
 
         if scope == Permission.Scope.ALL:
-            return self.queryset
+            return self.queryset.all()
 
         personnel = get_personnel_from_request_user(self.request.user)
 

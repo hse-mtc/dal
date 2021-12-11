@@ -85,14 +85,14 @@ class SectionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return self.queryset
+            return self.queryset.all()
 
         scope = self.request.user.get_perm_scope(
             self.scoped_permission_class.permission_class, self.request.method
         )
 
         if scope == Permission.Scope.ALL:
-            return self.queryset
+            return self.queryset.all()
 
         if scope == Permission.Scope.SELF:
             return self.queryset.filter(subject__user=self.request.user)
@@ -153,14 +153,14 @@ class TopicViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return self.queryset
+            return self.queryset.all()
 
         scope = self.request.user.get_perm_scope(
             self.scoped_permission_class.permission_class, self.request.method
         )
 
         if scope == Permission.Scope.ALL:
-            return self.queryset
+            return self.queryset.all()
 
         if scope == Permission.Scope.SELF:
             return self.queryset.filter(section__subject__user=self.request.user)
@@ -228,14 +228,14 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return self.queryset
+            return self.queryset.all()
 
         scope = self.request.user.get_perm_scope(
             self.scoped_permission_class.permission_class, self.request.method
         )
 
         if scope == Permission.Scope.ALL:
-            return self.queryset
+            return self.queryset.all()
 
         if scope == Permission.Scope.SELF:
             return self.queryset.filter(topic__section__subject__user=self.request.user)
