@@ -250,6 +250,8 @@
 </template>
 
 <script>
+import { maska } from "maska";
+
 import { patchTeacher, findTeacher } from "@/api/teachers";
 import { patchError, getError } from "@/utils/message";
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
@@ -260,6 +262,7 @@ import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
 export default {
   name: "Teacher",
+  directives: { maska },
   components: { ExpandBox, ChangePasswordForm },
   mixins: [TeacherPostsMixin, TeacherRanksMixin],
   data() {
@@ -406,37 +409,45 @@ export default {
       }
     },
     async save() {
-      this.$refs.form.validate(async valid => {
-        if (valid) {
-          try {
-            this.loading = true;
-            const [surname, name, ...patronymicArray] = this.modifyInfo.fullname
-              .replace(/\s+/g, " ")
-              .trim()
-              .split(" ");
-            const patronymic = patronymicArray.join(" ");
-            const requestBody = {
-              ...this.modifyInfo,
-              milgroups: this.modifyInfo.milgroups.map(x => x.id),
-              milfaculty: this.modifyInfo.milfaculty.id,
-              surname,
-              name,
-              patronymic,
-              photo: undefined,
-              name_genitive: undefined,
-              surname_genitive: undefined,
-              // contact_info: undefined,
-            };
-            await patchTeacher(requestBody);
-            this.displayInfo = this.modifyInfo;
-            this.modify = false;
-          } catch (err) {
-            patchError("информации о преподавателе", err.response.status);
-          } finally {
-            this.loading = false;
-          }
-        }
-      });
+      const valid = await this.$refs.form.validate();
+      if (!valid) {
+        return;
+      }
+
+      const [surname, name, ...patronymicArray] = this.modifyInfo.fullname
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ");
+      const patronymic = patronymicArray.join(" ");
+
+      const requestBody = {
+        ...this.modifyInfo,
+        milgroups: this.modifyInfo.milgroups.map(x => x.id),
+        milfaculty: this.modifyInfo.milfaculty.id,
+        surname,
+        name,
+        patronymic,
+        photo: undefined,
+        name_genitive: undefined,
+        surname_genitive: undefined,
+      };
+
+      // eslint-disable-next-line max-len
+      requestBody.contact_info.personal_phone_number = this.parsePhone(this.modifyInfo.contact_info.personal_phone_number);
+
+      this.loading = true;
+
+      try {
+        await patchTeacher(requestBody);
+      } catch (err) {
+        patchError("информации о преподавателе", err.response.status);
+        return;
+      } finally {
+        this.loading = false;
+      }
+
+      this.displayInfo = this.modifyInfo;
+      this.modify = false;
     },
     beforeAvatarUpload(file) {
       const isValidType = file.type === "image/jpeg" || file.type === "image/png";
@@ -468,6 +479,19 @@ export default {
 
       return true;
     },
+
+    parsePhone(masked) {
+      if (!masked) {
+        return null;
+      }
+
+      return masked
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll("-", "")
+        .replaceAll(" ", "");
+    },
+
     backToPersonnel() {
       this.$router.push({ name: "Personnel" });
     },
