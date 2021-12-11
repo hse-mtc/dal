@@ -156,21 +156,20 @@ class ApproveTeacherViewSet(
     filterset_class = TeacherFilter
 
     def get_serializer_class(self):
-        if action in MUTATE_ACTIONS:
+        if self.action in MUTATE_ACTIONS:
             return ApproveTeacherMutateSerializer
         return ApproveTeacherSerializer
 
     def partial_update(self, request: Request, *args, **kwargs) -> Response:
         teacher = self.get_object()
+        serializer = self.get_serializer(teacher, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
 
-        if teacher.user is None:
-            return Response(
-                data={"detail": "Teacher has no user and must register first"},
-                status=status.HTTP_428_PRECONDITION_REQUIRED,
-            )
-
-        teacher.user.is_active = True
-        teacher.save()
+        if getattr(teacher, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            teacher._prefetched_objects_cache = {}
 
         if teacher.patronymic:
             address = f"{teacher.name} {teacher.patronymic}"
@@ -185,6 +184,9 @@ class ApproveTeacherViewSet(
         )
 
         return Response()
+
+    def perform_update(self, serializer):
+        serializer.save()
 
     def handle_scope_milfaculty(self, personnel: Personnel):
         match personnel:
