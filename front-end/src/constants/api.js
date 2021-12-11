@@ -63,7 +63,7 @@ export const LMS_URLS = {
   staff: {
     students: "lms/students/",
     teachers: "lms/teachers/",
-    approvements: "lms/students/approvals/",
+    teachersApprovals: "lms/teachers/approvals/",
     notes: "lms/students/notes/",
   },
   users: {
