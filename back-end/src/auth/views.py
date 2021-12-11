@@ -31,7 +31,6 @@ from auth.serializers import (
     GroupMutateSerializer,
     PermissionRequestSerializer,
     PermissionListSerializer,
-    TokenPairSerializer,
     ChangePasswordSerializer,
 )
 
@@ -41,13 +40,6 @@ from common.constants import MUTATE_ACTIONS
 class PermissionPermission(BasePermission):
     permission_class = "permissions"
     view_name_rus = "Права доступа и группы"
-
-
-class PasswordPermission(BasePermission):
-    permission_class = "password"
-    view_name_rus = "Пароль"
-    methods = ["post"]
-    scopes = [Permission.Scope.SELF]
 
 
 @extend_schema(tags=["permissions"])
@@ -334,7 +326,7 @@ class GroupViewSet(
 @extend_schema(tags=["auth"])
 class ChangePasswordAPIView(generics.GenericAPIView):
     serializer_class = ChangePasswordSerializer
-    permission_classes = [PasswordPermission]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request: Request) -> Response:
         serializer = self.get_serializer(data=request.data)
