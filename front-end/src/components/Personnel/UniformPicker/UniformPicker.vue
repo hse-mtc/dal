@@ -1,6 +1,16 @@
 <template>
-  <div class="text-center">
-    <el-tabs type="border-card">
+  <div
+    v-loading="loading"
+    class="text-center"
+  >
+    <div v-if="!milfacultiesFiltered">
+      Циклы не существуют, либо у Вас нет прав.
+    </div>
+
+    <el-tabs
+      v-else
+      type="border-card"
+    >
       <el-tab-pane
         v-for="milfaculty in milfacultiesFiltered"
         :key="milfaculty.id"
@@ -66,14 +76,17 @@ import { UserModule, ReferenceModule } from "@/store";
 import { HEADDRESSES, OUTERWEARS } from "@/utils/enums";
 
 export default {
-  name: "",
+  name: "UniformPicker",
+
   data() {
     return {
       HEADDRESSES,
       OUTERWEARS,
       uniform: {},
+      fetchingData: false,
     };
   },
+
   computed: {
     userMilfaculty() {
       return UserModule.personMilfaculty;
@@ -84,10 +97,19 @@ export default {
     milfacultiesFiltered() {
       return this.milfaculties.filter(x => hasPermission(this.getPermissions(x.id, "get")));
     },
+    loading() {
+      return this.fetchingData;
+    },
   },
-  created() {
-    this.fetchUniform();
+
+  async created() {
+    this.fetchingData = true;
+    await ReferenceModule.fetchMilfaculties();
+    this.fetchingData = false;
+
+    await this.fetchUniform(this.milfaculties ? this.milfaculties[0].id : null);
   },
+
   methods: {
     hasPermission,
     getPermissions(milfaculty, method) {
@@ -99,32 +121,40 @@ export default {
         },
       ];
     },
-    fetchUniform(milfaculty) {
-      getUniforms({
-        milfaculty,
-      })
-        .then(response => {
-          if (response.data.length === 0) {
-            // Create
-            createUniform({
-              headdress: "CA",
-              outerwear: "JA",
-              milfaculty,
-            })
-              .then(resp => {
-                this.uniform = resp.data;
-              })
-              .catch(err => {
-                postError("формы одежды", err.response.status);
-              });
-          } else {
-            [this.uniform] = response.data;
-          }
-        })
-        .catch(err => {
-          getError("информации о форме одежды", err.response.status);
+
+    async fetchUniform(milfaculty) {
+      if (!milfaculty) {
+        return;
+      }
+
+      let response;
+      try {
+        response = await getUniforms({ milfaculty });
+      } catch (err) {
+        getError("информации о форме одежды", err.response.status);
+        return;
+      }
+
+      if (response.data.length > 0) {
+        [this.uniform] = response.data;
+        return;
+      }
+
+      // Create uniform if it does not exist.
+      try {
+        response = await createUniform({
+          headdress: "CA",
+          outerwear: "JA",
+          milfaculty,
         });
+      } catch (e) {
+        postError("формы одежды", e.response?.status);
+        return;
+      }
+
+      this.uniform = response.data;
     },
+
     cycleThroughHeaddresses() {
       const keys = Object.keys(HEADDRESSES);
       const nextIndex = keys.indexOf(this.uniform.headdress) + 1;
@@ -135,20 +165,20 @@ export default {
       const nextIndex = keys.indexOf(this.uniform.outerwear) + 1;
       this.uniform.outerwear = keys[nextIndex % keys.length];
     },
-    confirmUniform() {
-      changeUniform(
-        {
-          headdress: this.uniform.headdress,
-          outerwear: this.uniform.outerwear,
-        },
-        this.uniform.id,
-      )
-        .then(() => {
-          patchSuccess("формы одежды");
-        })
-        .catch(err => {
-          patchError("формы одежды", err.response.status);
-        });
+
+    async confirmUniform() {
+      try {
+        await changeUniform(
+          {
+            headdress: this.uniform.headdress,
+            outerwear: this.uniform.outerwear,
+          },
+          this.uniform.id,
+        );
+        patchSuccess("формы одежды");
+      } catch (err) {
+        patchError("формы одежды", err.response.status);
+      }
     },
   },
 };
