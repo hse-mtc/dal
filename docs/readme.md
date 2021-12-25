@@ -8,9 +8,9 @@
 
 ### Auth Service
 
-![auth-interaction](images/auth-interaction.svg)
+![auth-interaction](images/auth-interaction.png)
 
 ### WatchDoc Service
 
-![watchdoc-interaction](images/watchdoc-interaction.svg)
+![watchdoc-interaction](images/watchdoc-interaction.png)
 
