@@ -34,6 +34,9 @@ Vue.prototype.$moment = moment;
 moment.locale("ru");
 
 Vue.use(BootstrapVue);
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 Vue.use(FunctionalCalendar, {
   dayNames: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
   monthNames: [
