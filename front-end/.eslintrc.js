@@ -8,6 +8,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:vue/recommended",
     "@vue/standard",
+    "@vue/typescript/recommended",
     "airbnb-base",
   ],
   globals: {
@@ -29,7 +30,7 @@ module.exports = {
   },
   parser: "vue-eslint-parser",
   parserOptions: {
-    parser: "babel-eslint",
+    parser: "@typescript-eslint/parser",
     ecmaVersion: 2018,
     sourceType: "module",
   },
