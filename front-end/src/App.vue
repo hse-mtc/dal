@@ -15,7 +15,7 @@ const WHITELIST = [
   name: "App",
 
   metaInfo() {
-    const width: string | number = WHITELIST.includes(this.$route.name!) ? "device-width" : 1200;
+    const width = WHITELIST.includes(this.$route.name!) ? "device-width" : 1200;
     return {
       meta: [
         {
