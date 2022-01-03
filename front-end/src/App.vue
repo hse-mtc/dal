@@ -4,35 +4,38 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { Component, Vue, Watch } from "vue-property-decorator";
+
+const WHITELIST = [
+  "Register", "Login", "ApplicantForm", "Subjects", "Subject",
+];
+
+@Component({
   name: "App",
-  data() {
-    return {
-      whiteList: ["Register", "Login", "ApplicantForm", "Subjects", "Subject"],
-    };
-  },
-  computed: {
-    width() {
-      return this.whiteList.includes(this.$route.name) ? 0 : 1200;
-    },
-  },
+
   metaInfo() {
+    const width: string | number = WHITELIST.includes(this.$route.name!) ? "device-width" : 1200;
     return {
       meta: [
         {
           name: "viewport",
-          content: `width=${
-            this.whiteList.includes(this.$route.name) ? "device-width" : "1200"
-          }, initial-scale=1`,
+          content: `width=${width}, initial-scale=1`,
         },
       ],
     };
   },
-  watch: {
-    width(nextWidth) {
-      document.getElementById("app").style.minWidth = `${nextWidth}px`;
-    },
-  },
-};
+})
+class App extends Vue {
+  get width(): number {
+    return WHITELIST.includes(this.$route.name!) ? 0 : 1200;
+  }
+
+  @Watch("width")
+  onWidthChange(newWidth: number): void {
+    document.getElementById("app")!.style.minWidth = `${newWidth}px`;
+  }
+}
+
+export default App;
 </script>
