@@ -1,3 +1,6 @@
+// FIXME(TmLev): Find a way to properly import webpack, path, settings below.
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 const webpack = require("webpack");
 const path = require("path");
 const defaultSettings = require("./src/settings");
@@ -6,7 +9,7 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 
-const name = defaultSettings.title || "ВУЦ ВШЭ"; // page title
+const title = defaultSettings.title || "ВУЦ ВШЭ";
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -66,7 +69,7 @@ module.exports = {
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
-    name,
+    name: title,
     resolve: {
       alias: {
         "@": resolve("src"),
@@ -112,7 +115,7 @@ module.exports = {
     config
       // https://webpack.js.org/configuration/devtool/#development
       // eslint-disable-next-line no-shadow
-      .when(isDev, config => config.devtool("cheap-source-map"));
+      .when(isDev, config => config.devtool("eval-source-map"));
 
     // eslint-disable-next-line no-shadow
     config.when(!isDev, config => {
