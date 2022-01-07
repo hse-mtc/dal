@@ -1,7 +1,7 @@
-import { Choice } from "@/types/choices";
+import { Choices } from "@/types/choices";
 
 export const defaultChoiceLabelFromValue = (
-  choices: Choice[],
+  choices: Choices,
   value: string,
   defaultLabel: string = value,
 ): string => {
