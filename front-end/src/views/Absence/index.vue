@@ -4,21 +4,16 @@
   </div>
 </template>
 
-<script>
-import Absence from "../../components/Absence/Absence.vue";
+<script lang="ts">
+import { Vue, Component } from "vue-property-decorator";
 
-export default {
-  components: {
-    Absence,
-  },
-  data() {
-    return {};
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    fetchData() {},
-  },
-};
+import Absence from "@/components/Absence/Absence.vue";
+
+@Component({
+  name: "AbsenceView",
+  components: { Absence },
+})
+class AbsenceView extends Vue {}
+
+export default AbsenceView;
 </script>
