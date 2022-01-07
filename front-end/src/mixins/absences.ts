@@ -4,7 +4,7 @@ import { ChoicesModule } from "@/store";
 
 import { defaultChoiceLabelFromValue } from "@/utils/choices";
 
-import { Choices } from "@/types/choices";
+import type { Choices } from "@/types/choices";
 
 @Component
 export class AbsenceExcusesMixin extends Vue {

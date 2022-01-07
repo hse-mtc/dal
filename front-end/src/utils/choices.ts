@@ -1,4 +1,4 @@
-import { Choices } from "@/types/choices";
+import type { Choices } from "@/types/choices";
 
 export const defaultChoiceLabelFromValue = (
   choices: Choices,
