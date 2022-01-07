@@ -4,11 +4,11 @@ import { ChoicesModule } from "@/store";
 
 import { defaultChoiceLabelFromValue } from "@/utils/choices";
 
-import type { Choice } from "@/types/choices";
+import type { Choices } from "@/types/choices";
 
 @Component
 export class EncouragementTypesMixin extends Vue {
-  encouragementTypes: Choice[] = [];
+  encouragementTypes: Choices = {};
   encouragementTypesAreLoading = true;
 
   async beforeCreate(): Promise<void> {
