@@ -7,6 +7,7 @@ module.exports = {
   extends: [
     "eslint:recommended",
     "plugin:vue/recommended",
+    "plugin:import/typescript",
     "@vue/standard",
     "@vue/typescript/recommended",
     "airbnb-base",
@@ -34,7 +35,12 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  plugins: ["vue"],
+  plugins: ["vue", "import"],
+  settings: {
+    "import/resolver": {
+      typescript: {}, // this loads <rootdir>/tsconfig.json to eslint
+    },
+  },
   rules: {
     "max-len": ["error", {
       code: 120, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true,
@@ -44,6 +50,7 @@ module.exports = {
     "import/no-cycle": 0,
     "import/prefer-default-export": 0,
     "import/no-extraneous-dependencies": 0,
+    "import/extensions": "off",
     "arrow-parens": [2, "as-needed"],
     "key-spacing": [
       "warn",
