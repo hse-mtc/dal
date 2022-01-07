@@ -7,7 +7,7 @@ import { defaultChoiceLabelFromValue } from "@/utils/choices";
 import { Choice } from "@/types/choices";
 
 @Component
-class EncouragementTypesMixin extends Vue {
+export class EncouragementTypesMixin extends Vue {
   encouragementTypes: Choice[] = [];
   encouragementTypesAreLoading: boolean = true;
 
