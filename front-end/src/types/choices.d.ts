@@ -1,4 +1,6 @@
-export type Choice = {
+type Choice = {
   value: string,
   label: string,
 }
+
+export type { Choice };
