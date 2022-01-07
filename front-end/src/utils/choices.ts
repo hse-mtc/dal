@@ -1,8 +1,10 @@
+import { Choice } from "@/types/choices";
+
 export const defaultChoiceLabelFromValue = (
-  choices,
-  value,
-  defaultLabel = value,
-) => {
+  choices: Choice[],
+  value: string,
+  defaultLabel: string = value,
+): string => {
   const filtered = Object
     .values(choices)
     .filter(choice => choice.value === value);
