@@ -13,6 +13,5 @@ export function handleClose(done) {
   MessageBox.confirm("Уверены?")
     .then(_ => {
       done();
-    })
-    .catch(_ => {});
+    });
 }

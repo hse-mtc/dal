@@ -45,7 +45,7 @@
   </el-form>
 </template>
 
-<script>
+<script lang="ts">
 import {
   Component,
   Emit,
@@ -87,7 +87,7 @@ class GenericForm extends Vue {
   @Model("change", { type: Object, required: true }) formData
   @Prop({ type: Object, required: true, default: () => ({}) }) fields
   @Prop({ type: Object, default: () => ({}) }) rules
-  @Prop({ type: Function, default: () => {} }) onSubmit
+  @Prop({ type: Function, default: () => ({}) }) onSubmit
   @Prop({ type: Boolean }) leftLabel
   @Prop({ default: "auto" }) labelWidth
 

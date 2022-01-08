@@ -523,8 +523,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
     handleAccept() {
       if (this.editPunishment.id && this.editPunishment.id > 0) {

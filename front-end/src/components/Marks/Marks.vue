@@ -567,8 +567,7 @@ export default {
         .then(() => {
           this.dialogVisible = false;
           this.lessonDialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
     handleAccept() {
       if (this.editMarkMethod === "PATCH") {

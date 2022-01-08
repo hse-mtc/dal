@@ -185,7 +185,7 @@ class ApplicantForm extends Vue {
   data() {
     return {
       applicantData: __DEV__ && ("fill" in this.$route.query)
-      // eslint-disable-next-line global-require
+        // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
         ? require("@/constants/applicantForm").devInitData
         : {
           about: createData(ABOUT),

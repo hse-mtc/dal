@@ -11,14 +11,5 @@ export default {
   components: {
     Discipline,
   },
-  data() {
-    return {};
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    fetchData() {},
-  },
 };
 </script>

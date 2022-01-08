@@ -99,6 +99,7 @@ Vue.use(Tree);
 Vue.use(Upload);
 
 // FIXME(TmLev): Existing code should work, but doesn't for some reason.
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 Vue.use(Scrollbar);
 
