@@ -411,8 +411,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
     handleAccept() {
       if (this.editAbsence.id) {

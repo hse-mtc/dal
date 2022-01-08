@@ -442,8 +442,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
 
     async handleAccept() {

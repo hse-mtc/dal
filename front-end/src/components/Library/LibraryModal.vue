@@ -123,7 +123,7 @@ export default {
   props: {
     submitCallback: {
       type: Function,
-      default: () => () => {},
+      default: () => () => ({}),
     },
     opened: { type: Boolean, default: false },
     initData: { type: Object, required: true },

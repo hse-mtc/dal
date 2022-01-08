@@ -35,12 +35,12 @@ class TextInput extends InputsMixin {
 
   get value() { return this.modelValue; }
 
-  get type() {
-    return this.isTextArea ? "textarea" : "text";
-  }
-
   set value(value) {
     this.$emit("change", this.onlyChars ? value.replace(/\d/g, "") : value);
+  }
+
+  get type() {
+    return this.isTextArea ? "textarea" : "text";
   }
 
   get listeners() {
