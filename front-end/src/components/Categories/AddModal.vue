@@ -17,48 +17,51 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+
 import { Message } from "element-ui";
+
 import { PapersModule } from "@/store";
-import { addPaperCategory } from "@/api/paper_categories";
 
-export default {
-  name: "AddModal",
+import type { Category } from "@/types/category";
 
-  data() {
-    return {
-      form: {
-        title: "",
-      },
-    };
-  },
-
-  computed: {
-    categories() { return PapersModule.categories; },
-  },
-
-  methods: {
-    async onSubmit() {
-      const title = this.form.title.trim();
-
-      const usedCategories = [...this.categories.map(category => category.title.trim().toLowerCase()), "Корзина".toLowerCase()];
-      if (usedCategories.includes(title.toLowerCase())) {
-        Message({
-          message: "Категория с похожим названием уже существует.",
-          type: "error",
-        });
-        return;
-      }
-
-      await PapersModule.addCategory({ title });
-      this.closeModal();
-    },
-
-    closeModal() {
-      this.$emit("closeModal");
-    },
-  },
+type Form = {
+  title: string;
 };
+
+@Component({
+  name: "AddModal",
+})
+class AddModal extends Vue {
+  form: Form = { title: "" };
+
+  get categories(): Category[] {
+    return PapersModule.categories;
+  }
+
+  async onSubmit(): Promise<void> {
+    const title = this.form.title.trim();
+
+    const usedCategories = [...this.categories.map(category => category.title.trim().toLowerCase()), "Корзина".toLowerCase()];
+    if (usedCategories.includes(title.toLowerCase())) {
+      Message({
+        message: "Категория с похожим названием уже существует.",
+        type: "error",
+      });
+      return;
+    }
+
+    await PapersModule.addCategory({ title });
+    this.closeModal();
+  }
+
+  closeModal(): void {
+    this.$emit("closeModal");
+  }
+}
+
+export default AddModal;
 </script>
 
 <style scoped lang="scss">
