@@ -27,7 +27,6 @@ gunicorn = "==20.1"
 pillow = "8.3.2"
 psycopg2-binary = "2.8.6"
 requests = "2.25"
-uvicorn = "==0.16"
 xlsxwriter = "1.4"
 
 [requires]
