@@ -45,7 +45,7 @@
   </el-form>
 </template>
 
-<script lang="ts">
+<script>
 import {
   Component,
   Emit,
