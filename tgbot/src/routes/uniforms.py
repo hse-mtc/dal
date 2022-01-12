@@ -32,4 +32,4 @@ async def post_uniforms(request: web.Request) -> web.Response:
         for session in sessions if session is not None
     ])
 
-    return web.Response(body={"detail": "Successful uniform notification."})
+    return web.json_response({"detail": "Successful uniform notification."})

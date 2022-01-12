@@ -18,7 +18,7 @@ class Client:
 
     def __init__(self, base_url: str = BASE_URL) -> None:
         self.base_url = base_url
-        self.session = ClientSession()
+        self.session = None
         self.auth_headers: dict[str, str] = {}
 
     async def _do_request(
@@ -28,6 +28,10 @@ class Client:
         *args: tp.Any,
         **kwargs: tp.Any,
     ) -> tp.Any:
+        # Initialize session first if needed.
+        if self.session is None:
+            self.session = ClientSession()
+
         # Get provided headers, if any.
         headers: dict[str, tp.Any] = kwargs.pop("headers", {})
         # Add auth headers.
@@ -81,7 +85,7 @@ class Client:
         **kwargs: tp.Any,
     ) -> tp.Any:
         return await self._do_request("patch", method, *args, **kwargs)
-    
+
     async def delete(
         self,
         method: str,
