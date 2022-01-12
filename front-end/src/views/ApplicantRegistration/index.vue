@@ -81,16 +81,23 @@ export default {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
           this.loading = true;
-        
-          await postEmail({
-              email: this.loginForm.email
-          });
 
-          this.$notify({
-            title: 'Письмо отправлено',
-            message: 'Проверьте почту и перейдите по ссылке для задания пароля',
-            type: 'success'
-          });
+          try{
+            await postEmail({
+                email: this.loginForm.email
+            });
+            this.$notify({
+              title: 'Письмо отправлено',
+              message: 'Проверьте почту и перейдите по ссылке для задания пароля',
+              type: 'success'
+            });
+          } catch (error) {
+            this.$notify({
+              title: 'Ошибка',
+              message: 'Пожалуйста, введите корректную корпоративную почту',
+              type: 'error'
+            });
+          }
           this.loading = false;
         }
       });
