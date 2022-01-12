@@ -35,6 +35,8 @@ class Command(BaseCommand):
                     }
                 )
 
+        permissions.append({"scope": Permission.Scope.ALL, "name": "Applicant"})
+
         for val in permissions:
             Permission.objects.get_or_create(**val)
 
