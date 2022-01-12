@@ -14,5 +14,5 @@ router.register("applicants", ApplicantViewSet)
 urlpatterns = [
     # Router.
     path("", include(router.urls)),
-    path("register/", RegisterView.as_view(), name = "register")
+    path("register/", RegisterView.as_view(), name="register"),
 ]
