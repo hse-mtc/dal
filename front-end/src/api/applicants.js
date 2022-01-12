@@ -4,6 +4,7 @@ import { AMS_URLS, BASE_API_URL } from "@/constants/api";
 const {
   applicants: {
     applicants,
+    register,
     applications,
     applicationsExport,
     applicationsCSPExport,
@@ -18,6 +19,14 @@ export function postApplicant(data) {
       ...data,
       generate_documents: __PROD__,
     },
+  });
+}
+
+export function postEmail(data) {
+  return request({
+    url: BASE_API_URL + register,
+    method: "post",
+    data,
   });
 }
 

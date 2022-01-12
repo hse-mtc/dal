@@ -61,6 +61,14 @@ export const constantRoutes = [
   },
 
   {
+    path: "/applicant-registration/",
+    name: "ApplicantRegistration",
+    component: () => import("@/views/ApplicantRegistration/index.vue"),
+    meta: { title: "Регистрация абитуриента" },
+    hidden: true,
+  },
+
+  {
     path: "/",
     redirect: "/my-materials/",
     component: Layout,
