@@ -58,7 +58,7 @@ services:
              python manage.py register_permissions &&
              rm -rf static &&
              python manage.py collectstatic --clear &&
-             gunicorn conf.asgi:application --config src/gunicorn.conf.py"
+             gunicorn conf.wsgi:application --config src/gunicorn.conf.py"
     restart: always
     volumes:
       - back-end-backups:/back-end/backups

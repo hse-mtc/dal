@@ -7,7 +7,7 @@ bind = f"0.0.0.0:{os.environ['BACK_END_PORT']}"
 workers = 4
 
 # The type of workers to use.
-worker_class = "uvicorn.workers.UvicornWorker"
+worker_class = "sync"
 
 # The maximum number of requests a worker will process before restarting.
 max_requests = 100
