@@ -151,7 +151,7 @@ class Subjects extends VuexModule {
 
   @Action
   async fetchSubject() {
-    if (!this.subjectId) return false;
+    if (!this.subjectId) { return false; }
 
     return await getFetchRequest(
       () => getSubject({
@@ -180,7 +180,7 @@ class Subjects extends VuexModule {
 
   @Action
   async fetchSections() {
-    if (!this.subjectId) return false;
+    if (!this.subjectId) { return false; }
 
     return await getFetchRequest(
       () => getSections(this.subjectId),

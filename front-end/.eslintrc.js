@@ -42,6 +42,7 @@ module.exports = {
     },
   },
   rules: {
+    curly: ["error", "all"],
     "max-len": ["error", {
       code: 120, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true,
     }],

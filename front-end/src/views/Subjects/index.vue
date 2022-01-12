@@ -49,7 +49,7 @@ class SubjectsPage extends Vue {
   }
 
   get subjects() {
-    if (!this.searchQuery) return SubjectsModule.subjects;
+    if (!this.searchQuery) { return SubjectsModule.subjects; }
 
     const words = this.searchQuery.toLowerCase().split();
     return SubjectsModule.subjects.filter(({ title, annotation, user: { email } }) => {

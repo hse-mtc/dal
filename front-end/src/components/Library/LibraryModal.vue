@@ -172,7 +172,7 @@ export default {
   methods: {
     onSubmit() {
       this.$refs.form.validate(valid => {
-        if (!valid || (!this.isChanging && !this.formValues.book.length)) return false;
+        if (!valid || (!this.isChanging && !this.formValues.book.length)) { return false; }
 
         this.$emit("save", this.formValues);
         this.$emit("close-modal");

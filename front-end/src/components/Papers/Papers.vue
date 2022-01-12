@@ -222,7 +222,7 @@ class Papers extends Vue {
   }
 
   selectCategory(category) {
-    if (!category) return;
+    if (!category) { return; }
 
     this.category = category;
 
