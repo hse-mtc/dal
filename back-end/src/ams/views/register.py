@@ -1,14 +1,11 @@
 from ams.serializers.register import RegisterSerializer
-from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import generics, status
-from auth.models import User
+from auth.models import Permission, User
 from auth.tokens.registration import generate_regconf_token
 from common.email.registration import send_regconf_email
-from django.contrib.sites.shortcuts import get_current_site
-import jwt
-from django.conf import settings
+from django.contrib.auth.base_user import BaseUserManager
 
 class RegisterView(generics.GenericAPIView):
 
@@ -17,33 +14,24 @@ class RegisterView(generics.GenericAPIView):
 
     def post(self, request):
         user = request.data
-        serializer = self.serializer_class(data = user)
-        serializer.is_valid(raise_exception = True)
-        if User.objects.filter(email = serializer.data['email']).exists():
-            pass
-        else:
-            pass
-        serializer.save()
-        user_data = serializer.data
-        user = User.objects.get(email = user_data["email"])
-        current_site = get_current_site(request).domain
+        email = BaseUserManager.normalize_email(user["email"])
+        if not email.endswith("@edu.hse.ru"):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if not User.objects.filter(email = email).exists():
+            user["password"] = User.objects.make_random_password()
+            serializer = self.serializer_class(data = user)
+            serializer.is_valid(raise_exception = True)
+            serializer.save()
+            
+        user = User.objects.get(email = email)
+        applicant_permission = Permission.objects.get(name = "Applicant")
+        user.permissions.add(applicant_permission)
         send_regconf_email(
             address = user.username,
             email = user.email,
-            url = current_site,
+            url = request.META["HTTP_REFERER"],
             token = generate_regconf_token(user),
         )
 
-        return Response(user_data, status=status.HTTP_201_CREATED)
-
-class VerifyEmail(generics.GenericAPIView):
-    def get(self, request):
-        token = request.GET.get("token")
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY)
-            user = User.objects.get(id = payload["user_id"])
-            if not user.is_verified:
-                user.is_verified = True
-                user.save()
-        except:
-            pass
+        return Response(status=status.HTTP_201_CREATED)
