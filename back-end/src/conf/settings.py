@@ -75,7 +75,9 @@ MIDDLEWARE = [
 ]
 
 if DEBUG:
-    MIDDLEWARE += [
+    MIDDLEWARE = [
+        "common.middleware.LoggingMiddleware",
+    ] + MIDDLEWARE + [
         "silk.middleware.SilkyMiddleware",
         "debug_toolbar.middleware.DebugToolbarMiddleware",
     ]
