@@ -5,6 +5,10 @@ import Router from "vue-router";
 import Layout from "@/layout";
 import AppMain from "@/layout/components/AppMain";
 
+/* Permissions */
+import { hasPermission } from "@/utils/permissions";
+import { UserModule } from "@/store";
+
 Vue.use(Router);
 
 /**
@@ -65,6 +69,14 @@ export const constantRoutes = [
     name: "ApplicantRegistration",
     component: () => import("@/views/ApplicantRegistration/index.vue"),
     meta: { title: "Регистрация абитуриента" },
+    hidden: true,
+  },
+
+  {
+    path: "/applicant-homepage/",
+    name: "ApplicantHomePage",
+    component: () => import("@/views/ApplicantHomePage/index.vue"),
+    meta: { title: "ЛК абитуриента" },
     hidden: true,
   },
 
@@ -263,6 +275,17 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
+});
+
+router.beforeEach((to, from, next) => {
+  UserModule.getUser().then(response => {
+    if (to.name !== "ApplicantHomePage" && hasPermission(["..all"])) {
+      next({ name: "ApplicantHomePage" });
+      console.log("Applicant");
+    } else {
+      next();
+    }
+  });
 });
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
