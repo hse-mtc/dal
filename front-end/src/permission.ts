@@ -4,10 +4,12 @@ import "nprogress/nprogress.css"; // progress bar style
 import router from "@/router";
 import { UserModule } from "@/store";
 import getPageTitle from "@/utils/get-page-title";
+import { hasPermission } from "@/utils/permissions";
 
 NProgress.configure({ showSpinner: false });
 
 const WHITELIST = ["/login/", "/applicant-form/", "/register/", "/applicant-registration/"];
+const APPLICANTLIST = ["/applicant-registration/", "/applicant-homepage/"];
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
@@ -20,10 +22,23 @@ router.beforeEach((to, from, next) => {
   }
 
   if (UserModule.accessToken) {
-    if (to.path === "/login") {
+    if (to.name === "Login") {
       next({ path: "/" });
     } else {
-      next();
+      UserModule.getUser().then(response => {
+        console.log("person", UserModule.personId, "perm", UserModule.permissions);
+        if (to.name !== "ApplicantHomePage" && hasPermission(["..all"]) && !UserModule.isSuperuser) {
+          console.log("Applicant");
+          console.log(!UserModule.isSuperuser);
+          next({ name: "ApplicantHomePage" });
+        } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["..all"])) {
+          next({ path: "/" });
+        } else {
+          console.log("Not an Applicant");
+          console.log("otkuda", from.name, "kuda", to.name);
+          next();
+        }
+      });
     }
   } else if (WHITELIST.indexOf(to.path) !== -1) {
     next();

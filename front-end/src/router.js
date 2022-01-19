@@ -5,10 +5,6 @@ import Router from "vue-router";
 import Layout from "@/layout";
 import AppMain from "@/layout/components/AppMain";
 
-/* Permissions */
-import { hasPermission } from "@/utils/permissions";
-import { UserModule } from "@/store";
-
 Vue.use(Router);
 
 /**
@@ -275,29 +271,6 @@ router.beforeEach((to, from, next) => {
   } else {
     next();
   }
-});
-
-router.beforeEach((to, from, next) => {
-  // Problem: when this hooks is working without the if below, there is
-  // an infinity loop of redirects starts
-  // Solution: make an if wich will pass this hook if user is unauthorised
-  if ((to.name === "Login") || (to.name === "ApplicantRegistration")
-  || (to.path === "/change-password/")) {
-    next();
-    return;
-  }
-
-  UserModule.getUser().then(response => {
-    console.log(UserModule.personId, UserModule.permissions);
-    if (to.name !== "ApplicantHomePage" && hasPermission(["..all"])) {
-      console.log("Applicant");
-      next({ name: "ApplicantHomePage" });
-    } else {
-      console.log("Not an Applicant");
-      console.log(from.name, to.name);
-      next();
-    }
-  });
 });
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
