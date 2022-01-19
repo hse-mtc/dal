@@ -69,14 +69,6 @@ export const constantRoutes = [
   },
 
   {
-    path: "/applicant-homepage/",
-    name: "ApplicantHomePage",
-    component: () => import("@/views/ApplicantHomePage/index.vue"),
-    meta: { title: "ЛК абитуриента" },
-    hidden: true,
-  },
-
-  {
     path: "/",
     redirect: "/my-materials/",
     component: Layout,
@@ -239,6 +231,12 @@ export const constantRoutes = [
         name: "applications",
         component: () => import("@/views/ApplicantsDocuments/index.vue"),
         meta: { title: "Учет поступления документов", icon: "table" },
+      },
+      {
+        path: "/applicant-homepage/",
+        name: "ApplicantHomePage",
+        component: () => import("@/views/ApplicantHomePage/index.vue"),
+        meta: { title: "Личный кабинет абитуриента", icon: "journal", permissions: ["..all"] },
       },
     ],
   },

@@ -27,7 +27,7 @@ router.beforeEach((to, from, next) => {
     } else {
       UserModule.getUser().then(response => {
         console.log("person", UserModule.personId, "perm", UserModule.permissions);
-        if (to.name !== "ApplicantHomePage" && hasPermission(["..all"]) && !UserModule.isSuperuser) {
+        if (to.name !== "ApplicantHomePage" && hasPermission(["..all"]) && !to.path.includes("change-password") && !UserModule.isSuperuser) {
           console.log("Applicant");
           console.log(!UserModule.isSuperuser);
           next({ name: "ApplicantHomePage" });
