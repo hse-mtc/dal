@@ -62,7 +62,7 @@
                 <span class="birthdaysButtonText">Дни рождения</span>
               </button>
             </el-badge>
-          </el-popover> 
+          </el-popover>
         </div>
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper m-0" style="font-size: 19px">
@@ -94,8 +94,8 @@ import { surnameWithInitials } from "@/utils/person";
 import { AppModule, UserModule } from "@/store";
 import { getStudentBirthdays, getTeacherBirthdays } from "@/api/birthdays";
 import { getError } from "@/utils/message";
-import BirthdayItem from "./BirthdayItem.vue";
 import { hasPermission } from "@/utils/permissions";
+import BirthdayItem from "./BirthdayItem.vue";
 
 export default {
   components: {
