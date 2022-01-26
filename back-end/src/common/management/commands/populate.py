@@ -31,6 +31,7 @@ from auth.populate.permissions import (
     get_student_permissions,
     get_teacher_permissions,
     get_milfaculty_head_permissions,
+    get_applicant_permissions,
 )
 
 # AMS
@@ -107,11 +108,13 @@ class Command(BaseCommand):
         students, _ = Group.objects.get_or_create(name="Студент")
         teachers, _ = Group.objects.get_or_create(name="Преподаватель")
         milfaculty_heads, _ = Group.objects.get_or_create(name="Начальник цикла")
+        applicants, _ = Group.objects.get_or_create(name="Абитуриент")
 
         applicants.permissions.set(get_applicant_permissions())
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
+        applicants.permissions.set(get_applicant_permissions())
 
         students.user_set.add(User.objects.get(email="gakhromov@mail.com"))
         students.user_set.add(User.objects.get(email="askatsevalov@mail.com"))
@@ -126,6 +129,8 @@ class Command(BaseCommand):
         teachers.user_set.add(User.objects.get(email="ksgavrilov@mail.com"))
 
         milfaculty_heads.user_set.add(User.objects.get(email="dnrepalov@mail.com"))
+
+        applicants.user_set.add(User.objects.get(email="applicant@edu.hse.ru"))
 
         print(" OK")
 
