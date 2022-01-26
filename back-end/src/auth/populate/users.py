@@ -132,6 +132,13 @@ def create_users() -> dict[str, User]:
             is_superuser=False,
             campuses=[Campus.MOSCOW.value],
         ),
+        Data(
+            email="applicant@edu.hse.ru",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
     ]
 
     return {data.email: create_user(data) for data in users}
