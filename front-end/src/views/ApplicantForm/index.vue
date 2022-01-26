@@ -167,6 +167,7 @@ import {
 import { getMilSpecialties, getProgramsByCampus } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
 import {getUser} from "@/api/user";
+import {dataURLtoFile} from "@/constants/applicantForm.js";
 
 const createData = fields => Object.keys(fields).reduce(
   (memo, item) => ({
@@ -204,6 +205,168 @@ class ApplicantForm extends Vue {
           agreement: createData(AGREEMENT),
         },
     };
+  }
+
+  mounted() {
+    getUser().then(request => {
+      const ap_data = {
+        "fullname": "Фамилия Имя ",
+        "birth_info": {
+          "date": "2021-04-06",
+          "country": "Страна",
+          "place": "Город"
+        },
+        "contact_info": {
+          "corporate_email": "aashishkov@edu.hse.ru",
+          "personal_email": "test@mail.ru",
+          "personal_phone_number": "72345678900"
+        },
+        "university_info": {
+          "group": "БИВ123",
+          "card_id": "Номер студенческого билета",
+          "program": 5
+        },
+        "photo": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjULHy/A8AAtQBp1XLiUMAAAAASUVORK5CYII=",
+        "family": [
+          {
+            "birth_info": {
+              "date": "2021-04-28",
+              "country": "Страна рождения отца",
+              "place": "Город рождения отца"
+            },
+            "contact_info": {
+              "corporate_email": null,
+              "personal_email": "test@dkcmsdc.sdcjnis",
+              "personal_phone_number": "72345678765"
+            },
+            "surname": "Фамилия отца",
+            "name": "Имя отца",
+            "patronymic": "Отчество отца",
+            "type": "FA",
+            "citizenship": "Гражданство отца",
+            "permanent_address": "Адрес постоянной регистрации отца"
+          },
+          {
+            "birth_info": {
+              "date": "2021-05-25",
+              "country": "Страна рождения матери",
+              "place": "Город рождения матери"
+            },
+            "contact_info": {
+              "corporate_email": null,
+              "personal_email": "test@mail.ru",
+              "personal_phone_number": "79098080022"
+            },
+            "surname": "Фамилия матери",
+            "name": "Имя матери",
+            "patronymic": "Отчество матери",
+            "type": "MO",
+            "citizenship": "Гражданство матери",
+            "permanent_address": "Адрес постоянной регистрации матери"
+          },
+          {
+            "birth_info": {
+              "date": "2022-01-12",
+              "country": "sdfg",
+              "place": "3"
+            },
+            "contact_info": {
+              "corporate_email": null,
+              "personal_email": "fsdf@sd.ru",
+              "personal_phone_number": "72936129327"
+            },
+            "surname": "sdfg",
+            "name": "sdfg",
+            "patronymic": "fgd",
+            "type": "BR",
+            "citizenship": "sdfg",
+            "permanent_address": "sdfg"
+          },
+          {
+            "birth_info": {
+              "date": "2001-08-10",
+              "country": "sdfa",
+              "place": "asdf"
+            },
+            "contact_info": {
+              "corporate_email": null,
+              "personal_email": "asf@asdu.ru",
+              "personal_phone_number": "79169661519"
+            },
+            "surname": "sdfg",
+            "name": "sdfg",
+            "patronymic": "sdfg",
+            "type": "SI",
+            "citizenship": "sdf",
+            "permanent_address": "sdf"
+          },
+          {
+            "birth_info": {
+              "date": "2001-08-10",
+              "country": "Russia",
+              "place": "Москва"
+            },
+            "contact_info": {
+              "corporate_email": null,
+              "personal_email": "2asdf@ru.su",
+              "personal_phone_number": "79169661519"
+            },
+            "surname": "qwresdf",
+            "name": "sdfsew",
+            "patronymic": "sdfsdf",
+            "type": "SI",
+            "citizenship": "sdfsdfsd",
+            "permanent_address": "sdfsdfsdfs"
+          }
+        ],
+        "milspecialty": {
+          "id": 8,
+          "title": "Разведывательные, разведчик-оператор СБР, ПСНР",
+          "code": "106646-543",
+          "available_for": [
+            "MO",
+            "SP",
+            "NN",
+            "PE"
+          ]
+        },
+        "surname": "Фамилия",
+        "name": "Имя",
+        "patronymic": "",
+        "recruitment_office": "Состою на воинском учете в военном комиссариате",
+        "citizenship": "Гражданство",
+        "permanent_address": "Адрес постоянной регистрации",
+        "passport": 37,
+        "application_process": 28
+      }
+      this.applicantData.about = {
+        surname: ap_data.surname,
+        name: ap_data.name,
+        citizenship: ap_data.citizenship,
+        permanent_address: ap_data.permanent_address,
+      }
+
+      this.applicantData.birthInfo = ap_data.birth_info;
+      this.applicantData.passport.code = ap_data.passport;
+      this.applicantData.universityInfo = ap_data.university_info;
+      this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
+      this.applicantData.contactInfo = ap_data.contact_info;
+      this.applicantData.photo = {
+        photo: [
+          {
+            name: "photo.png",
+            percentage: 0,
+            raw: dataURLtoFile("data:image/png;base64," + ap_data.photo, "photo.png"),
+            status: "ready",
+          },
+        ],
+      }
+      this.applicantData.father = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "FA"))[0];
+      this.applicantData.mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "MO"))[0];
+      this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "BR"));
+      this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "SI"));
+      this.applicantData.milspecialty.milspecialty = ap_data.milspecialty.id;
+    });
   }
 
   fields = {
@@ -408,6 +571,18 @@ class ApplicantForm extends Vue {
     if (this.$route.hash === "#activate-god-mode") {
       this.step = key;
     }
+  }
+
+  parseFamilyMembers(members) {
+    return members.map(member => ({
+      citizenship: member.citizenship,
+      name: member.name,
+      patronymic: member.patronymic,
+      permanent_address: member.permanent_address,
+      surname: member.surname,
+      ...member.birth_info,
+      ...member.contact_info,
+    }))
   }
 
   fillMilspecialtyOptions(data) {
