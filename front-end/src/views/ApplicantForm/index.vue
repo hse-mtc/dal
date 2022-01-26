@@ -166,6 +166,7 @@ import {
 
 import { getMilSpecialties, getProgramsByCampus } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
+import {getUser} from "@/api/user";
 
 const createData = fields => Object.keys(fields).reduce(
   (memo, item) => ({
@@ -573,6 +574,8 @@ class ApplicantForm extends Vue {
 
       reader.onload = async() => {
         data.image = reader.result;
+        const user = await getUser();
+        data.contact_info.corporate_email = user.data.email;
 
         try {
           await postApplicant(data);
