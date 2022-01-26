@@ -126,16 +126,21 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        generate_documents = serializer.validated_data.pop("generate_documents")
-        applicant = self.perform_create(serializer)
+        if self.is_creation_allowed_by_scope(request.data):
+            generate_documents = serializer.validated_data.pop("generate_documents")
+            applicant = self.perform_create(serializer)
 
-        if generate_documents:
-            generate_documents_for_applicant(applicant)
+            if generate_documents:
+                generate_documents_for_applicant(applicant)
 
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+                headers=self.get_success_headers(serializer.data),
+            )
         return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=self.get_success_headers(serializer.data),
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
     def perform_create(self, serializer):

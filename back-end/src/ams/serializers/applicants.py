@@ -60,7 +60,7 @@ class ApplicantMutateSerializer(
 
     class Meta:
         model = Applicant
-        exclude = ['application_process']
+        exclude = ["application_process"]
 
     def create(self, validated_data):
         self.create_photo(validated_data)
