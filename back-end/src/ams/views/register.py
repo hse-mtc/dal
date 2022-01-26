@@ -2,7 +2,7 @@ from ams.serializers.register import RegisterSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework import generics, status
-from auth.models import Permission, User
+from auth.models import User, Group
 from auth.tokens.registration import generate_regconf_token
 from common.email.registration import send_regconf_email
 from django.contrib.auth.base_user import BaseUserManager
@@ -26,8 +26,8 @@ class RegisterView(generics.GenericAPIView):
             serializer.save()
 
         user = User.objects.get(email=email)
-        applicant_permission = Permission.objects.get(name="Applicant")
-        user.permissions.add(applicant_permission)
+        applicants, _ = Group.objects.get_or_create(name="Абитуриет")
+        applicants.user_set.add(user)
         send_regconf_email(
             address=user.username,
             email=user.email,

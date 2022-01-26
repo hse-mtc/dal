@@ -131,13 +131,13 @@ export default {
     },
   },
   async created() {
-    if (!hasPermission(["..all"])) {
+    if (!hasPermission(["applicant.applicant.all"])) {
       await this.fetchBirthdays();
     }
   },
   methods: {
     hasPerm() {
-      return hasPermission(["..all"]);
+      return hasPermission(["applicant.applicant.all"]);
     },
     surnameWithInitials,
     logout() {

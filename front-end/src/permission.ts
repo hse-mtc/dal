@@ -27,9 +27,9 @@ router.beforeEach((to, from, next) => {
     } else {
       UserModule.getUser().then(response => {
         console.log("person", UserModule.personId, "perm", UserModule.permissions);
-        if ((APPLICANTLIST.indexOf(to.path) === -1) && hasPermission(["..all"]) && !to.path.includes("change-password") && !UserModule.isSuperuser) {
+        if ((APPLICANTLIST.indexOf(to.path) === -1) && hasPermission(["applicant.applicant.all"]) && !to.path.includes("change-password") && !UserModule.isSuperuser) {
           next({ name: "ApplicantHomePage" });
-        } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["..all"])) {
+        } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["applicant.applicant.all"])) {
           next({ path: "/" });
         } else {
           next();

@@ -236,7 +236,7 @@ export const constantRoutes = [
         path: "/applicant-homepage/",
         name: "ApplicantHomePage",
         component: () => import("@/views/ApplicantHomePage/index.vue"),
-        meta: { title: "Личный кабинет абитуриента", icon: "journal", permissions: ["..all"] },
+        meta: { title: "Личный кабинет абитуриента", icon: "journal", permissions: ["applicant.applicant.all"] },
       },
     ],
   },

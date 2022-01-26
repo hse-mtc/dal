@@ -27,7 +27,7 @@ from common.constants import MUTATE_ACTIONS
 
 from common.models.milspecialties import Milspecialty
 
-from auth.permissions import BasePermission
+from auth.permissions import Permission, BasePermission
 
 from ams.models.applicants import Applicant
 
@@ -59,6 +59,10 @@ class ApplicantPermission(BasePermission):
     permission_class = "applicants"
     view_name_rus = "Абитуриенты"
     methods = ["get", "post", "patch"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.SELF
+    ]
 
 
 class ApplicantPageNumberPagination(pagination.PageNumberPagination):
