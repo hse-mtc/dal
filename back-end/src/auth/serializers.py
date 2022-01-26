@@ -19,6 +19,7 @@ from auth.models import (
 
 from lms.models.students import Student
 from lms.models.teachers import Teacher
+from ams.models.applicants import Applicant
 
 from lms.utils.functions import get_personnel_from_request_user
 
@@ -216,6 +217,8 @@ class UserSerializer(serializers.ModelSerializer):
                 milgroups = [personnel.milgroup.id]
             case Teacher():
                 milgroups = personnel.milgroups.all().values_list("id", flat=True)
+            case Applicant():
+                milgroups = []
             case _:
                 assert False, "Unhandled Personnel type"
 
@@ -223,7 +226,7 @@ class UserSerializer(serializers.ModelSerializer):
             id=personnel.id,
             type=personnel.__class__.__name__.lower(),
             milgroups=milgroups,
-            milfaculty=str(personnel.milfaculty.id),
+            milfaculty=str(personnel.milfaculty.id) if hasattr(personnel, "milfaculty") else "",
         )
         return PersonSerializer(person).data
 

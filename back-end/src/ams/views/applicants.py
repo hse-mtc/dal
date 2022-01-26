@@ -41,6 +41,7 @@ from ams.serializers.applicants import (
 from ams.filters.applicants import ApplicantFilter
 
 from lms.utils.mixins import QuerySetScopingMixin
+from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
 
@@ -83,6 +84,29 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     search_fields = ["surname", "name", "patronymic"]
 
     pagination_class = ApplicantPageNumberPagination
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset.all()
+
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method
+        )
+        if scope == Permission.Scope.ALL:
+            return self.queryset.all()
+
+        print(self.action)
+        if scope == Permission.Scope.SELF and (self.action == "partial_update" or self.action == "retrieve"):
+            return self.queryset.filter(user=self.request.user)
+        
+        return self.queryset.none()
+
+    def allow_scope_self_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Applicant():
+                return data["user"] == personnel.user.id
+            case _:
+                assert False, "Unhandled Personnel type"
 
     def get_serializer_class(self):
         if self.action == "applications":
@@ -136,7 +160,6 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         """Create or edit applicant's application."""
 
         # pylint: disable=unused-argument,invalid-name
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

@@ -3,6 +3,7 @@ from django.core.validators import (
     MaxValueValidator,
     MinValueValidator,
 )
+from django.contrib.auth import get_user_model
 
 from common.models.universities import UniversityInfo
 from common.models.milspecialties import Milspecialty
@@ -150,6 +151,10 @@ class Applicant(models.Model):
     # `Applicant` must always choose some `Milspecialty`.
     milspecialty = models.ForeignKey(
         to=Milspecialty,
+        on_delete=models.RESTRICT,
+    )
+    user = models.OneToOneField(
+        to=get_user_model(),
         on_delete=models.RESTRICT,
     )
 

@@ -1,5 +1,7 @@
 from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
 
+from auth.models import User
+
 from common.models.milspecialties import Milspecialty
 from common.models.universities import (
     UniversityInfo,
@@ -60,6 +62,7 @@ def create_applicants(
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
+            "user": User.objects.get(email=f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}"),
         },
         {
             "surname": "Петров",
@@ -94,6 +97,7 @@ def create_applicants(
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
+            "user": User.objects.get(email=f"petrov@{TEST_CORPORATE_EMAIL_DOMAIN}"),
         },
         {
             "surname": "Сидоров",
@@ -128,6 +132,7 @@ def create_applicants(
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["453000"],
+            "user": User.objects.get(email=f"sidorov@{TEST_CORPORATE_EMAIL_DOMAIN}"),
         },
         # ----------------------------------------------------------------------
         # Campus == SP
@@ -164,6 +169,7 @@ def create_applicants(
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["106646-543"],
+            "user": User.objects.get(email=f"borisov@{TEST_CORPORATE_EMAIL_DOMAIN}"),
         },
         # ----------------------------------------------------------------------
         # Campus == NN
