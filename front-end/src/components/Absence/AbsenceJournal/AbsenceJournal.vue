@@ -411,8 +411,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
     handleAccept() {
       if (this.editAbsence.id) {
@@ -420,7 +419,7 @@ export default {
           .then(() => {
             patchSuccess("пропуска");
             this.dialogVisible = false;
-            if (this.filter.milgroup) this.onJournal();
+            if (this.filter.milgroup) { this.onJournal(); }
           })
           .catch(err => patchError("пропуска", err.response.status));
       } else {
@@ -428,7 +427,7 @@ export default {
           .then(() => {
             postSuccess("пропуска");
             this.dialogVisible = false;
-            if (this.filter.milgroup) this.onJournal();
+            if (this.filter.milgroup) { this.onJournal(); }
           })
           .catch(err => postError("пропуска", err.response.status));
       }
@@ -446,7 +445,7 @@ export default {
         deleteAbsence({ id })
           .then(() => {
             deleteSuccess("пропуска");
-            if (this.filter.milgroup) this.onJournal();
+            if (this.filter.milgroup) { this.onJournal(); }
           })
           .catch(err => deleteError("пропуска", err.response.status));
       });

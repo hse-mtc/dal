@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     selectSubject(e) {
-      if (e.target.nodeName === "IMG") return;
+      if (e.target.nodeName === "IMG") { return; }
       this.$router.push({ path: `/discipline-control/subjects/${this.id}/` });
     },
   },

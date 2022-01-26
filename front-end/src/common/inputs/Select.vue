@@ -44,7 +44,7 @@ class SelectInput extends InputsMixin {
 
       const getValue = item => {
         if (isObj) {
-          if (_isObject(item.value)) return JSON.stringify(item.value);
+          if (_isObject(item.value)) { return JSON.stringify(item.value); }
 
           return item.value;
         }
@@ -81,7 +81,7 @@ class SelectInput extends InputsMixin {
   }
 
   encodeValue(value) {
-    if (!value && value !== 0) return value;
+    if (!value && value !== 0) { return value; }
 
     if (_isObject(value)) {
       return JSON.stringify(value);
@@ -91,7 +91,7 @@ class SelectInput extends InputsMixin {
   }
 
   decodeValue(value) {
-    if (!value && value !== 0) return value;
+    if (!value && value !== 0) { return value; }
     try {
       return JSON.parse(value);
     } catch (e) {

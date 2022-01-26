@@ -567,8 +567,7 @@ export default {
         .then(() => {
           this.dialogVisible = false;
           this.lessonDialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
     handleAccept() {
       if (this.editMarkMethod === "PATCH") {
@@ -576,7 +575,7 @@ export default {
           .then(() => {
             patchSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg) this.fetchData();
+            if (this.filter.mg) { this.fetchData(); }
           })
           .catch(err => patchError("оценки", err.response.status));
       } else if (this.editMarkMethod === "POST") {
@@ -584,7 +583,7 @@ export default {
           .then(() => {
             postSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg) this.fetchData();
+            if (this.filter.mg) { this.fetchData(); }
           })
           .catch(err => postError("оценки", err.response.status));
       } else if (this.editMarkMethod === "PUT") {
@@ -592,7 +591,7 @@ export default {
           .then(() => {
             patchSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg) this.fetchData();
+            if (this.filter.mg) { this.fetchData(); }
           })
           .catch(err => patchError("оценки", err.response.status));
       }
@@ -607,7 +606,7 @@ export default {
           .then(() => {
             deleteSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg > 0) this.fetchData();
+            if (this.filter.mg > 0) { this.fetchData(); }
           })
           .catch(err => deleteError("оценки", err.response.status));
       });
@@ -645,7 +644,7 @@ export default {
           .then(() => {
             postSuccess("занятия");
             this.lessonDialogVisible = false;
-            if (this.filter.mg) this.fetchData();
+            if (this.filter.mg) { this.fetchData(); }
           })
           .catch(err => postError("занятия", err.response.status));
       }
@@ -663,7 +662,7 @@ export default {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
-            if (this.filter.mg > 0) this.fetchData();
+            if (this.filter.mg > 0) { this.fetchData(); }
           })
           .catch(err => deleteError("занятия", err.response.status));
       });

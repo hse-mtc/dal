@@ -313,7 +313,7 @@ class ApplicantsDocuments extends Vue {
     const getSelectLabel = (value, options) => {
       const option = options.find(item => item.value === value);
 
-      if (option) return option.label;
+      if (option) { return option.label; }
 
       return "Выбрать";
     };

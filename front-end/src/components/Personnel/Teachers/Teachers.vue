@@ -143,7 +143,7 @@ export default {
   },
   methods: {
     formatDate(d) {
-      if (d) return moment(d.date).format("DD.MM.YYYY");
+      if (d) { return moment(d.date).format("DD.MM.YYYY"); }
       return "Нет данных";
     },
     async onFilter() {

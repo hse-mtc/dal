@@ -58,9 +58,9 @@ export default {
     };
     return {
       loginForm: {
-        email: ""
+        email: "",
       },
-      check: false, 
+      check: false,
       loginRules: {
         email: [{ required: true, trigger: "blur", validator: validateEmail }],
       },
@@ -82,20 +82,20 @@ export default {
         if (valid) {
           this.loading = true;
 
-          try{
+          try {
             await postEmail({
-                email: this.loginForm.email
+              email: this.loginForm.email,
             });
             this.$notify({
-              title: 'Письмо отправлено',
-              message: 'Проверьте почту и перейдите по ссылке для задания пароля',
-              type: 'success'
+              title: "Письмо отправлено",
+              message: "Проверьте почту и перейдите по ссылке для задания пароля",
+              type: "success",
             });
           } catch (error) {
             this.$notify({
-              title: 'Ошибка',
-              message: 'Пожалуйста, введите корректную корпоративную почту',
-              type: 'error'
+              title: "Ошибка",
+              message: "Пожалуйста, введите корректную корпоративную почту",
+              type: "error",
             });
           }
           this.loading = false;

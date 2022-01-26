@@ -28,6 +28,11 @@ export default {
     AppMain,
   },
   mixins: [ResizeMixin],
+  data() {
+    return {
+      hideSidebar: false,
+    };
+  },
   computed: {
     sidebar() {
       return AppModule.sidebar;

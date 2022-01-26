@@ -1,11 +1,11 @@
 # Tools
 
-## YAPF
+## Black
 
 Code formatter.
 
-Check code style for entire project using [`scripts/format.sh`](../scripts/format.sh). 
-Pass flag `-i | --in-place` to reformat code in-place.
+Format `back-end/src` code using [`scripts/format.sh`](../scripts/format.sh). 
+Pass `-c | --check` flag to check for code style conformance.
 
 If you use `PyCharm`, be sure to turn off auto formatter:
 1. Navigate to `Settings / Preferences` > `Appearance & Behavior` > `Scopes`.
@@ -13,19 +13,17 @@ If you use `PyCharm`, be sure to turn off auto formatter:
 1. Navigate to `Settings / Preferences` > `Editor` > `Code Style` > `Formatter Control`.
 1. Add created `python` scope.
 
-Style settings can be found in [`.style.yapf`](../.style.yapf).
-
 ## Pylint
 
 Code linter.
 
-Lint code for entire project using [`scripts/lint.sh`](../scripts/lint.sh)
+Lint code for the entire `back-end` using [`scripts/lint.sh`](../scripts/lint.sh)
 or manually specify directories and modules/files:
 ```shell script
 pylint conf dms/models.py
 ```
 
-In order to display a help message for the given message id pass it to `--help-msg` option:
+In order to display a help message for the given message id, pass it to `--help-msg` option:
 ```shell script
 pylint --help-msg=<id>
 ```
@@ -48,7 +46,7 @@ Lint settings can be found in [`.pylintrc`](../.pylintrc).
 
 Test framework.
 
-Run tests for entire project using [`scripts/test.sh`](../scripts/test.sh).
+Run tests for the entire `back-end` using [`scripts/test.sh`](../scripts/test.sh).
 
 We use default [`pytest`](https://docs.pytest.org/en/stable/) 
 and Django-specific addon [`pytest-django`](https://pytest-django.readthedocs.io/en/latest/).

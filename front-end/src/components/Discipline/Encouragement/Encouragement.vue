@@ -503,8 +503,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
     handleAccept() {
       if (this.editEncouragement.id && this.editEncouragement.id > 0) {

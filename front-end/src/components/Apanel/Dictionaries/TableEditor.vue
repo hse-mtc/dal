@@ -251,9 +251,9 @@ class DictionariesTableEditor extends Vue {
     const fields = Object.keys(this.columns);
 
     const getInitValue = conf => {
-      if (conf.editorType === "select") return conf.props.options[0].value;
-      if (conf.editorType === "checkbox") return false;
-      if (conf.editorType === "input") return "";
+      if (conf.editorType === "select") { return conf.props.options[0].value; }
+      if (conf.editorType === "checkbox") { return false; }
+      if (conf.editorType === "input") { return ""; }
       return "";
     };
 

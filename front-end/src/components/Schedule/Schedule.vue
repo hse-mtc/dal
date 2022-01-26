@@ -442,8 +442,7 @@ export default {
       )
         .then(() => {
           this.dialogVisible = false;
-        })
-        .catch(() => {});
+        });
     },
 
     async handleAccept() {
@@ -483,7 +482,7 @@ export default {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
-            if (this.filter.mg > 0) this.fetchData();
+            if (this.filter.mg > 0) { this.fetchData(); }
           })
           .catch(err => deleteError("занятия", err.response.status));
       });

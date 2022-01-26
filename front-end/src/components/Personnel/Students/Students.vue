@@ -220,7 +220,7 @@ export default {
       return row.milgroup.title;
     },
     dateFilter(value) {
-      if (value) return moment(value).format("DD.MM.YYYY");
+      if (value) { return moment(value).format("DD.MM.YYYY"); }
       return "Нет данных";
     },
   },

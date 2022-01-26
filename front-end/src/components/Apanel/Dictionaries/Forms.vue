@@ -149,7 +149,7 @@ class DictionariesForms extends Vue {
   }
 
   onSubmit(e) {
-    if (e) e.preventDefault();
+    if (e) { e.preventDefault(); }
 
     const data = this.dataByTypes[this.type];
     const keys = Object.keys(data);

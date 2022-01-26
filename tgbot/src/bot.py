@@ -18,7 +18,7 @@ import middleware
 from routes import uniforms
 
 
-def main() -> None:
+async def main() -> None:
     # Logging
     logging.basicConfig(
         level=logging.DEBUG if config.DEBUG else logging.INFO,
@@ -36,21 +36,22 @@ def main() -> None:
     app = web.Application()
     app.add_routes(uniforms.routes)
     app[config.BOT] = bot
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", config.TGBOT_PORT)
 
     # Run everything
     while True:
         try:
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(dp.skip_updates())
-            loop.create_task(dp.start_polling())
-            web.run_app(
-                app=app,
-                host="0.0.0.0",
-                port=config.TGBOT_PORT,
+            await dp.skip_updates()
+            await asyncio.gather(
+                dp.start_polling(),
+                site.start(),
             )
+
         except Exception as e:
             print(f"Error: {e}")
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

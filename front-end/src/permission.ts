@@ -8,8 +8,8 @@ import { hasPermission } from "@/utils/permissions";
 
 NProgress.configure({ showSpinner: false });
 
-const WHITELIST = ["/login/", "/applicant-form/", "/register/", "/applicant-registration/"];
-const APPLICANTLIST = ["/applicant-registration/", "/applicant-homepage/"];
+const WHITELIST = ["/login/", "/register/", "/applicant-registration/"];
+const APPLICANTLIST = ["/applicant-registration/", "/applicant-homepage/", "/applicant-form/"];
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
@@ -27,15 +27,11 @@ router.beforeEach((to, from, next) => {
     } else {
       UserModule.getUser().then(response => {
         console.log("person", UserModule.personId, "perm", UserModule.permissions);
-        if (to.name !== "ApplicantHomePage" && hasPermission(["..all"]) && !UserModule.isSuperuser) {
-          console.log("Applicant");
-          console.log(!UserModule.isSuperuser);
+        if ((APPLICANTLIST.indexOf(to.path) === -1) && hasPermission(["..all"]) && !to.path.includes("change-password") && !UserModule.isSuperuser) {
           next({ name: "ApplicantHomePage" });
         } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["..all"])) {
           next({ path: "/" });
         } else {
-          console.log("Not an Applicant");
-          console.log("otkuda", from.name, "kuda", to.name);
           next();
         }
       });

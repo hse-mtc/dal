@@ -39,7 +39,7 @@ export function deleteAbsenceAttachment(id) {
 export function postAbsence(data) {
   // todo
   // eslint-disable-next-line no-param-reassign
-  if (data.studentid !== undefined) data.studentid = { id: data.studentid.id };
+  if (data.studentid !== undefined) { data.studentid = { id: data.studentid.id }; }
   return request({
     url: BASE_API_URL + absence,
     method: "post",

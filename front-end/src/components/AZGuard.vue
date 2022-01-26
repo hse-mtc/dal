@@ -25,6 +25,7 @@ export default {
   render() {
     return this.$scopedSlots.default
       && (this.disable || hasPermission(this.permissions))
+      && !((this.permissions.length === 0) && hasPermission(["..all"]))
       ? this.$scopedSlots.default({ disabled: this.disabled })
       : null;
   },

@@ -11,14 +11,5 @@ export default {
   components: {
     Marks,
   },
-  data() {
-    return {};
-  },
-  created() {
-    this.fetchData();
-  },
-  methods: {
-    fetchData() {},
-  },
 };
 </script>
