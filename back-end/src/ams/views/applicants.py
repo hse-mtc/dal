@@ -60,10 +60,7 @@ class ApplicantPermission(BasePermission):
     permission_class = "applicants"
     view_name_rus = "Абитуриенты"
     methods = ["get", "post", "patch"]
-    scopes = [
-        Permission.Scope.ALL,
-        Permission.Scope.SELF
-    ]
+    scopes = [Permission.Scope.ALL, Permission.Scope.SELF]
 
 
 class ApplicantPageNumberPagination(pagination.PageNumberPagination):
@@ -96,9 +93,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             return self.queryset.all()
 
         print(self.action)
-        if scope == Permission.Scope.SELF and (self.action == "partial_update" or self.action == "retrieve"):
+        if scope == Permission.Scope.SELF and (
+            self.action == "partial_update" or self.action == "retrieve"
+        ):
             return self.queryset.filter(user=self.request.user)
-        
+
         return self.queryset.none()
 
     def allow_scope_self_on_create(self, data, personnel: Personnel):

@@ -56,12 +56,11 @@ class ApplicantMutateSerializer(
     university_info = UniversityInfoSerializer(required=False)
     contact_info = ContactInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
-    application_process = ApplicationProcessSerializer(required=False)
     generate_documents = serializers.BooleanField(required=False)
 
     class Meta:
         model = Applicant
-        fields = "__all__"
+        exclude = ['application_process']
 
     def create(self, validated_data):
         self.create_photo(validated_data)
