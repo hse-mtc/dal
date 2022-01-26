@@ -38,9 +38,11 @@ def send_regconf_email(
     parsed = parsed._replace(query=f"token={str(token)}")
     if address != None:
         address = f", {address}"
+    else:
+        address = ""
 
     html_message = f"""
-        <p>Здравствуйте, абитуриент!</p>\n
+        <p>Здравствуйте{address}!</p>\n
         
         <p>Ваша регистрация в системе Даль ВУЦ ВШЭ была подтверждена. <br />\n
         Чтобы задать пароль для входа в систему, 
