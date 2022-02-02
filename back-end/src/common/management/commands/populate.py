@@ -147,8 +147,6 @@ class Command(BaseCommand):
 
         milfaculty_heads.user_set.add(User.objects.get(email="dnrepalov@mail.com"))
 
-        applicants.user_set.add(User.objects.get(email="applicant@edu.hse.ru"))
-
         print(" OK")
 
         # ----------------------------------------------------------------------
