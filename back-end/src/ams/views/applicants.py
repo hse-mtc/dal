@@ -99,12 +99,21 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
         return self.queryset.none()
 
-    def allow_scope_self_on_create(self, data, personnel: Personnel):
-        match personnel:
-            case Applicant():
-                return data["user"] == personnel.user.id
-            case _:
-                assert False, "Unhandled Personnel type"
+    def is_creation_allowed_by_scope(
+        self,
+        data: dict,
+    ) -> bool:
+        if self.request.user.is_superuser:
+            return True
+
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method
+        )
+
+        if scope == Permission.Scope.ALL or scope == Permission.Scope.SELF:
+            return True
+
+        return False
 
     def get_serializer_class(self):
         if self.action == "applications":
@@ -123,6 +132,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     def create(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals
 
+        request.data["user"] = self.request.user.id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         if self.is_creation_allowed_by_scope(request.data):
