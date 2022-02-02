@@ -1,6 +1,13 @@
+import os
+import io
+from os import listdir
+from readline import get_history_item
+
 from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
 
 from auth.models import User
+
+from PIL import Image
 
 from common.models.milspecialties import Milspecialty
 from common.models.universities import (
@@ -12,6 +19,7 @@ from common.models.personal import (
     Passport,
     ContactInfo,
     Relative,
+    Photo,
 )
 
 from common.utils.populate import get_or_create
@@ -20,6 +28,8 @@ from ams.models.applicants import (
     ApplicationProcess,
     Applicant,
 )
+
+from django.core.files import File
 
 
 def create_applicants(
@@ -58,7 +68,7 @@ def create_applicants(
                 "personal_email": f"ivanov@ivanov.ru",
                 "personal_phone_number": "72222222221",
             },
-            "photo": None,
+            "photo": 0,
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
@@ -93,7 +103,7 @@ def create_applicants(
                 "personal_email": f"petrov@petrov.ru",
                 "personal_phone_number": "72222222222",
             },
-            "photo": None,
+            "photo": 1,
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
@@ -128,7 +138,7 @@ def create_applicants(
                 "personal_email": f"sidorov@sidorov.ru",
                 "personal_phone_number": "72222222223",
             },
-            "photo": None,
+            "photo": 2,
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["453000"],
@@ -165,7 +175,7 @@ def create_applicants(
                 "personal_email": f"borisov@borisov.ru",
                 "personal_phone_number": "72222222224",
             },
-            "photo": None,
+            "photo": 3,
             "family": [],
             # "application_process": {},
             "milspecialty": milspecialties["106646-543"],
@@ -178,6 +188,8 @@ def create_applicants(
     ]
 
     objects = {}
+
+    photos = get_photos(4)
 
     for fields in applicants:
         assert _campus_matches(fields)
@@ -198,6 +210,7 @@ def create_applicants(
             ContactInfo,
             **fields.pop("contact_info"),
         )
+        fields["photo"] = photos[fields.pop("photo")]
 
         family = [
             get_or_create(Relative, **relative_fields)
@@ -219,6 +232,25 @@ def create_applicants(
 
     return objects
 
+
+def get_photos(num_of_photos):
+    photos = []
+    photos_root_dir = './media/photos/'
+    if os.path.exists(photos_root_dir):
+        for filename in listdir(photos_root_dir):
+            if len(photos) == num_of_photos:
+                return photos
+            photo = Photo.objects.create(id = filename, image=File(open(photos_root_dir + filename, 'rb')))   
+            photos.append(photo)
+    for i in range(num_of_photos - len(photos)):
+        image = Image.new("RGB", size=(1, 1))
+        image.putpixel((0, 0), (0, 0, 0))
+        buf = io.BytesIO()
+        image.save(buf, format='PNG')
+        photo = Photo.objects.create(image=None)
+        photo.image.save('Image.png', File(buf))
+        photos.append(photo)
+    return photos
 
 def _campus_matches(fields) -> bool:
     program: Program = fields["university_info"]["program"]
