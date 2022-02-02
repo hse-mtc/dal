@@ -92,7 +92,6 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         if scope == Permission.Scope.ALL:
             return self.queryset.all()
 
-        print(self.action)
         if scope == Permission.Scope.SELF and (
             self.action == "partial_update" or self.action == "retrieve"
         ):
