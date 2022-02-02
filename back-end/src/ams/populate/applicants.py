@@ -239,11 +239,12 @@ def get_photos(num_of_photos):
         image = Image.new("RGB", size=(1, 1))
         image.putpixel((0, 0), (0, 0, 0))
         buf = io.BytesIO()
-        image.save(buf, format='PNG')
+        image.save(buf, format="PNG")
         photo = Photo.objects.create(image=None)
-        photo.image.save('Image.png', File(buf))
+        photo.image.save("Image.png", File(buf))
         photos.append(photo)
     return photos
+
 
 def _campus_matches(fields) -> bool:
     program: Program = fields["university_info"]["program"]
