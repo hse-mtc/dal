@@ -46,5 +46,10 @@ export const updateStudentApplicationInfo = (id, data) => request({
   data,
 });
 
+export const findApplicant = id => request({
+  url: `${BASE_API_URL}${applicants}${id}/`,
+  method: "GET",
+});
+
 export const APPLICATIONS_EXPORT_LINK = `${BASE_API_URL}${applicationsExport}`;
 export const APPLICATIONS_CSP_EXPORT_LINK = `${BASE_API_URL}${applicationsCSPExport}`;
