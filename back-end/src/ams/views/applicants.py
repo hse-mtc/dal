@@ -44,6 +44,7 @@ from lms.utils.mixins import QuerySetScopingMixin
 from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
+from django.db import transaction
 
 
 class XLSXRenderer(BaseRenderer):
@@ -152,6 +153,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             status=status.HTTP_403_FORBIDDEN,
         )
 
+    @transaction.atomic
     def perform_create(self, serializer):
         return serializer.save()
 

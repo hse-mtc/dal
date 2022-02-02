@@ -127,7 +127,7 @@ class Command(BaseCommand):
             User.objects.get(email=f"borisov@{TEST_CORPORATE_EMAIL_DOMAIN}")
         )
         applicants.user_set.add(
-            User.objects.get(email=f"nskheushchev@{TEST_CORPORATE_EMAIL_DOMAIN}")
+            User.objects.get(email=f"nskhrushchev@{TEST_CORPORATE_EMAIL_DOMAIN}")
         )
 
         students.user_set.add(User.objects.get(email="gakhromov@mail.com"))
