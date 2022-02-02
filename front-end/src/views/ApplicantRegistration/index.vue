@@ -33,6 +33,7 @@
         :loading="loading"
         type="primary"
         style="width: 100%; margin-bottom: 30px"
+        :disabled="disablebtn"
         @click.native.prevent="handleLogin"
       >
         Зарегистрироваться
@@ -57,6 +58,7 @@ export default {
       }
     };
     return {
+      disablebtn: false,
       loginForm: {
         email: "",
       },
@@ -81,29 +83,31 @@ export default {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
           this.loading = true;
-
+          this.disablebtn = true;
           try {
             await postEmail({
               email: this.loginForm.email,
             });
-            this.$notify({
+            this.$message({
               title: "Письмо отправлено",
               message: "Проверьте почту и перейдите по ссылке для задания пароля",
               type: "success",
             });
           } catch (error) {
-            this.$notify({
+            this.$message({
               title: "Ошибка",
               message: "Пожалуйста, введите корректную корпоративную почту",
               type: "error",
             });
           }
           this.loading = false;
+          this.$router.push({ path: "/login" });
         }
       });
     },
   },
 };
+
 </script>
 
 <style lang="scss" scoped>
@@ -117,6 +121,7 @@ $dark_gray: #889aa4;
     color: $cursor;
   }
 }
+
 
 /* reset element-ui css */
 .login-container {
