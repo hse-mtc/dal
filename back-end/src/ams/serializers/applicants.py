@@ -32,7 +32,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
-
+    passport = PassportSerializer(read_only=True)
     photo = serializers.SerializerMethodField(read_only=True)
 
     family = RelativeSerializer(read_only=True, many=True)
