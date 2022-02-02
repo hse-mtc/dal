@@ -224,6 +224,7 @@ class ApplicantForm extends Vue {
       this.applicantData.about = {
         surname: ap_data.surname,
         name: ap_data.name,
+        patronymic: ap_data.patronymic,
         citizenship: ap_data.citizenship,
         permanent_address: ap_data.permanent_address,
       }
