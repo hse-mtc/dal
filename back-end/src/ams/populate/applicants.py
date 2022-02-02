@@ -235,14 +235,7 @@ def create_applicants(
 
 def get_photos(num_of_photos):
     photos = []
-    photos_root_dir = './media/photos/'
-    if os.path.exists(photos_root_dir):
-        for filename in listdir(photos_root_dir):
-            if len(photos) == num_of_photos:
-                return photos
-            photo = Photo.objects.create(id = filename, image=File(open(photos_root_dir + filename, 'rb')))   
-            photos.append(photo)
-    for i in range(num_of_photos - len(photos)):
+    for i in range(num_of_photos):
         image = Image.new("RGB", size=(1, 1))
         image.putpixel((0, 0), (0, 0, 0))
         buf = io.BytesIO()
