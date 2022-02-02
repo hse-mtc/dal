@@ -41,6 +41,7 @@ from ams.serializers.applicants import (
 from ams.filters.applicants import ApplicantFilter
 
 from lms.utils.mixins import QuerySetScopingMixin
+from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
 
@@ -59,10 +60,7 @@ class ApplicantPermission(BasePermission):
     permission_class = "applicants"
     view_name_rus = "Абитуриенты"
     methods = ["get", "post", "patch"]
-    scopes = [
-        Permission.Scope.ALL,
-        Permission.Scope.SELF
-    ]
+    scopes = [Permission.Scope.ALL, Permission.Scope.SELF]
 
 
 class ApplicantPageNumberPagination(pagination.PageNumberPagination):
@@ -84,6 +82,30 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
     pagination_class = ApplicantPageNumberPagination
 
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset.all()
+
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method
+        )
+        if scope == Permission.Scope.ALL:
+            return self.queryset.all()
+
+        if scope == Permission.Scope.SELF and (
+            self.action == "partial_update" or self.action == "retrieve"
+        ):
+            return self.queryset.filter(user=self.request.user)
+
+        return self.queryset.none()
+
+    def allow_scope_self_on_create(self, data, personnel: Personnel):
+        match personnel:
+            case Applicant():
+                return data["user"] == personnel.user.id
+            case _:
+                assert False, "Unhandled Personnel type"
+
     def get_serializer_class(self):
         if self.action == "applications":
             return ApplicantWithApplicationProcessSerializer
@@ -103,16 +125,21 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        generate_documents = serializer.validated_data.pop("generate_documents")
-        applicant = self.perform_create(serializer)
+        if self.is_creation_allowed_by_scope(request.data):
+            generate_documents = serializer.validated_data.pop("generate_documents")
+            applicant = self.perform_create(serializer)
 
-        if generate_documents:
-            generate_documents_for_applicant(applicant)
+            if generate_documents:
+                generate_documents_for_applicant(applicant)
 
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+                headers=self.get_success_headers(serializer.data),
+            )
         return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=self.get_success_headers(serializer.data),
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
     def perform_create(self, serializer):
@@ -136,7 +163,6 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         """Create or edit applicant's application."""
 
         # pylint: disable=unused-argument,invalid-name
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

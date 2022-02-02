@@ -36,13 +36,13 @@ class Command(BaseCommand):
                 )
 
         permissions.append(
-                    {
-                        "viewset": "applicant",
-                        "method": "applicant",
-                        "scope": Permission.Scope.SELF,
-                        "name": "Абитуриент",
-                    }
-                )
+            {
+                "viewset": "applicant",
+                "method": "applicant",
+                "scope": Permission.Scope.SELF,
+                "name": "Абитуриент",
+            }
+        )
 
         for val in permissions:
             Permission.objects.get_or_create(**val)

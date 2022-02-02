@@ -1,3 +1,5 @@
+from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
+
 from collections import namedtuple
 
 from django.contrib.auth import get_user_model
@@ -133,7 +135,35 @@ def create_users() -> dict[str, User]:
             campuses=[Campus.MOSCOW.value],
         ),
         Data(
-            email="applicant@edu.hse.ru",
+            email=f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email=f"petrov@{TEST_CORPORATE_EMAIL_DOMAIN}",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email=f"sidorov@{TEST_CORPORATE_EMAIL_DOMAIN}",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email=f"borisov@{TEST_CORPORATE_EMAIL_DOMAIN}",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.SAINT_PETERSBURG.value],
+        ),
+        Data(
+            email=f"nskheushchev@{TEST_CORPORATE_EMAIL_DOMAIN}",
             password="qwerty",
             is_staff=False,
             is_superuser=False,

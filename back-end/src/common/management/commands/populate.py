@@ -4,6 +4,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
@@ -115,6 +116,22 @@ class Command(BaseCommand):
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
         applicants.permissions.set(get_applicant_permissions())
+
+        applicants.user_set.add(
+            User.objects.get(email=f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"petrov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"sidorov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"borisov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"nskheushchev@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
 
         students.user_set.add(User.objects.get(email="gakhromov@mail.com"))
         students.user_set.add(User.objects.get(email="askatsevalov@mail.com"))
