@@ -6,6 +6,7 @@ def get_applicant_permissions():
         "applicant.applicant.self",
         "applicants.get.self",
         "applicants.post.self",
+        "applicants.put.self",
         "applicants.patch.self",
     ]
     res = []

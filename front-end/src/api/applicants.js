@@ -22,6 +22,17 @@ export function postApplicant(data) {
   });
 }
 
+export function putApplicant(id, data) {
+  return request({
+    url: `${BASE_API_URL}${applicants}${id}/`,
+    method: "put",
+    data: {
+      ...data,
+      generate_documents: __PROD__,
+    },
+  });
+}
+
 export function postEmail(data) {
   return request({
     url: BASE_API_URL + register,

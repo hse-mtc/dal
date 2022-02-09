@@ -60,7 +60,7 @@ class XLSXRenderer(BaseRenderer):
 class ApplicantPermission(BasePermission):
     permission_class = "applicants"
     view_name_rus = "Абитуриенты"
-    methods = ["get", "post", "patch"]
+    methods = ["get", "post", "patch", "put"]
     scopes = [Permission.Scope.ALL, Permission.Scope.SELF]
 
 
@@ -94,7 +94,9 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             return self.queryset.all()
 
         if scope == Permission.Scope.SELF and (
-            self.action == "partial_update" or self.action == "retrieve"
+            self.action == "partial_update"
+            or self.action == "retrieve"
+            or self.action == "update"
         ):
             return self.queryset.filter(user__applicant=self.request.user.applicant)
 
@@ -154,6 +156,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             {"detail": "You do not have permission to perform this action."},
             status=status.HTTP_403_FORBIDDEN,
         )
+
+    def update(self, request, **kwargs):
+        request.data["user"] = Applicant.objects.get(pk=kwargs["pk"]).user.id
+        return super(ApplicantViewSet, self).update(request, **kwargs)
 
     @transaction.atomic
     def perform_create(self, serializer):

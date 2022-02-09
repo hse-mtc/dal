@@ -153,7 +153,7 @@ import _omit from "lodash/omit";
 import GenericForm from "@/common/Form/index.vue";
 
 import allowMobileView from "@/utils/allowMobileView";
-import { findApplicant, postApplicant } from "@/api/applicants";
+import { findApplicant, postApplicant, putApplicant } from "@/api/applicants";
 
 import {
   ABOUT,
@@ -651,7 +651,11 @@ class ApplicantForm extends Vue {
         data.image = reader.result;
 
         try {
-          await postApplicant(data);
+          if (UserModule.personType === 'applicant') {
+            await putApplicant(UserModule.personId, data);
+          } else {
+            await postApplicant(data);
+          }
           this.formSubmitted = true;
         } catch (e) {
           if (e.response.status < 500) {
