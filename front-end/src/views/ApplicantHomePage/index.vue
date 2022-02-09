@@ -55,6 +55,11 @@
               </el-row>
             </div>
           </div>
+          <router-link to="/applicant-form/">
+            <el-button type="primary">
+              Исправить форму
+            </el-button>
+          </router-link>
         </div>
       </el-col>
     </el-row>
@@ -78,19 +83,19 @@ export default {
     };
   },
   computed: {
-    userId() { return UserModule.personId; },
+    personId() { return UserModule.personId; },
     personType() { return UserModule.personType; },
   },
   mounted() {
+    console.log(this.personId);
     this.fetchDocs();
-    console.log(UserModule);
   },
   methods: {
     getObjUrl(file) {
       return URL.createObjectURL(file);
     },
     async fetchDocs() {
-      const dataRequest = await findApplicant(this.userId);
+      const dataRequest = await findApplicant(this.personId);
       const { data } = dataRequest;
       this.stages = [
         {

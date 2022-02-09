@@ -132,6 +132,13 @@
       <div :class="$style.thanks">
         <h2>Форма успешно отправлена</h2>
       </div>
+      <div style="display: block; margin: 15px auto">
+        <router-link to="/">
+          <el-button type="primary">
+            На главную
+          </el-button>
+        </router-link>
+      </div>
     </template>
   </div>
 </template>
