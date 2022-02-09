@@ -94,6 +94,7 @@ export default {
   },
   computed: {
     permissions() {
+      console.log("пермишн", this.onlyOneChild?.meta?.permissions);
       return this.onlyOneChild?.meta?.permissions;
     },
   },

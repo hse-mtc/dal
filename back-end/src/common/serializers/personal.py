@@ -20,8 +20,11 @@ class BirthInfoSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
-class ContactInfoSerializer(UniqueFieldsMixin, serializers.ModelSerializer):
+class ContactInfoSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
+        if "corporate_email" not in validated_data:
+            return super().create(validated_data)
+
         corporate_email = validated_data.pop("corporate_email")
 
         try:

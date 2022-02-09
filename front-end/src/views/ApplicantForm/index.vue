@@ -146,7 +146,7 @@ import _omit from "lodash/omit";
 import GenericForm from "@/common/Form/index.vue";
 
 import allowMobileView from "@/utils/allowMobileView";
-import { postApplicant } from "@/api/applicants";
+import {findApplicant, postApplicant} from "@/api/applicants";
 
 import {
   ABOUT,
@@ -162,10 +162,13 @@ import {
   STEPS_RU,
   getRelationData,
   STEPS,
+  dataURLtoFile,
 } from "@/constants/applicantForm";
 
 import { getMilSpecialties, getProgramsByCampus } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
+import {UserModule} from "@/store";
+import {hasPermission} from "@/utils/permissions";
 
 const createData = fields => Object.keys(fields).reduce(
   (memo, item) => ({
@@ -178,6 +181,14 @@ const createData = fields => Object.keys(fields).reduce(
 @Component({
   name: "ApplicantForm",
   components: { GenericForm },
+  computed: {
+    userId() {
+      return UserModule.userId;
+    },
+    personId() {
+      return UserModule.personId;
+    },
+  },
 })
 class ApplicantForm extends Vue {
   @Ref() form
@@ -203,6 +214,49 @@ class ApplicantForm extends Vue {
           agreement: createData(AGREEMENT),
         },
     };
+  }
+
+  mounted() {
+    const id = this.userId;
+    findApplicant(this.personId).then(request => {
+      const ap_data = request.data;
+      console.log(ap_data);
+      this.applicantData.about = {
+        surname: ap_data.surname,
+        name: ap_data.name,
+        patronymic: ap_data.patronymic,
+        citizenship: ap_data.citizenship,
+        permanent_address: ap_data.permanent_address,
+      }
+
+      this.applicantData.birthInfo = ap_data.birth_info;
+      this.applicantData.passport = ap_data.passport;
+      this.applicantData.universityInfo = ap_data.university_info;
+      this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
+      this.applicantData.contactInfo = ap_data.contact_info;
+      this.applicantData.photo = {
+        photo: [
+          {
+            name: "photo.png",
+            percentage: 0,
+            raw: dataURLtoFile("data:image/png;base64," + ap_data.photo, "photo.png"),
+            status: "ready",
+          },
+        ],
+      }
+      const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "FA"));
+      console.log(father);
+      const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "MO"));
+      if (father.length > 0) {
+        this.applicantData.mother = father[0];
+      }
+      if (mother.length > 0) {
+        this.applicantData.mother = mother[0];
+      }
+      this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "BR"));
+      this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "SI"));
+      this.applicantData.milspecialty.milspecialty = ap_data.milspecialty.id;
+    })
   }
 
   fields = {
@@ -407,6 +461,18 @@ class ApplicantForm extends Vue {
     if (this.$route.hash === "#activate-god-mode") {
       this.step = key;
     }
+  }
+
+  parseFamilyMembers(members) {
+    return members.map(member => ({
+      citizenship: member.citizenship,
+      name: member.name,
+      patronymic: member.patronymic,
+      permanent_address: member.permanent_address,
+      surname: member.surname,
+      ...member.birth_info,
+      ...member.contact_info,
+    }))
   }
 
   fillMilspecialtyOptions(data) {

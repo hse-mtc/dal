@@ -79,11 +79,6 @@ export const BIRTH_INFO = {
 };
 
 export const CONTACT_INFO = {
-  corporate_email: {
-    component: "text",
-    title: "Корпоративная почта",
-    props: { placeholder: "apchekhov@edu.hse.ru" },
-  },
   personal_email: {
     component: "text",
     title: "Личная почта",
@@ -311,7 +306,6 @@ export const devInitData = {
     group: "БИВ123",
   },
   contactInfo: {
-    corporate_email: "test@edu.hse.ru",
     personal_email: "test@mail.ru",
     personal_phone_number: "72345678900",
   },
