@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100vh">
+  <div>
     <ElForm
       ref="form"
       :model="student"
