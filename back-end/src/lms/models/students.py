@@ -102,6 +102,7 @@ class Student(models.Model):
     birth_info = models.OneToOneField(
         to=BirthInfo,
         on_delete=models.RESTRICT,
+        blank=True,
     )
     citizenship = models.CharField(
         max_length=64,
@@ -114,11 +115,16 @@ class Student(models.Model):
     passport = models.OneToOneField(
         to=Passport,
         on_delete=models.RESTRICT,
+        blank=True,
     )
-    recruitment_office = models.CharField(max_length=255)
+    recruitment_office = models.CharField(
+        max_length=255,
+        blank=True,
+    )
     university_info = models.OneToOneField(
         to=UniversityInfo,
         on_delete=models.RESTRICT,
+        blank=True,
     )
     family = models.ManyToManyField(
         to=Relative,
