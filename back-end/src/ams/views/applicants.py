@@ -96,7 +96,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         if scope == Permission.Scope.SELF and (
             self.action == "partial_update" or self.action == "retrieve"
         ):
-            return self.queryset.filter(user=self.request.user)
+            return self.queryset.filter(user__applicant=self.request.user.applicant)
 
         return self.queryset.none()
 
@@ -136,6 +136,8 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         request.data["user"] = self.request.user.id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        self.request.user.campuses = [self.request.data["university_info"]["campus"]]
+        self.request.user.save()
         if self.is_creation_allowed_by_scope(request.data):
             generate_documents = serializer.validated_data.pop("generate_documents")
             applicant = self.perform_create(serializer)
