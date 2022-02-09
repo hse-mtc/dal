@@ -146,7 +146,7 @@ import _omit from "lodash/omit";
 import GenericForm from "@/common/Form/index.vue";
 
 import allowMobileView from "@/utils/allowMobileView";
-import {findApplicant, postApplicant} from "@/api/applicants";
+import { findApplicant, postApplicant } from "@/api/applicants";
 
 import {
   ABOUT,
@@ -167,8 +167,8 @@ import {
 
 import { getMilSpecialties, getProgramsByCampus } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
-import {UserModule} from "@/store";
-import {hasPermission} from "@/utils/permissions";
+import { UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 
 const createData = fields => Object.keys(fields).reduce(
   (memo, item) => ({
@@ -219,6 +219,7 @@ class ApplicantForm extends Vue {
   mounted() {
     const id = this.userId;
     findApplicant(this.personId).then(request => {
+      // eslint-disable-next-line camelcase
       const ap_data = request.data;
       console.log(ap_data);
       this.applicantData.about = {
@@ -227,7 +228,7 @@ class ApplicantForm extends Vue {
         patronymic: ap_data.patronymic,
         citizenship: ap_data.citizenship,
         permanent_address: ap_data.permanent_address,
-      }
+      };
 
       this.applicantData.birthInfo = ap_data.birth_info;
       this.applicantData.passport = ap_data.passport;
@@ -239,24 +240,26 @@ class ApplicantForm extends Vue {
           {
             name: "photo.png",
             percentage: 0,
-            raw: dataURLtoFile("data:image/png;base64," + ap_data.photo, "photo.png"),
+            raw: dataURLtoFile(`data:image/png;base64,${ap_data.photo}`, "photo.png"),
             status: "ready",
           },
         ],
-      }
-      const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "FA"));
+      };
+      const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "FA"));
       console.log(father);
-      const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "MO"));
+      const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "MO"));
       if (father.length > 0) {
+        // eslint-disable-next-line prefer-destructuring
         this.applicantData.mother = father[0];
       }
       if (mother.length > 0) {
+        // eslint-disable-next-line prefer-destructuring
         this.applicantData.mother = mother[0];
       }
-      this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "BR"));
-      this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type == "SI"));
+      this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "BR"));
+      this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "SI"));
       this.applicantData.milspecialty.milspecialty = ap_data.milspecialty.id;
-    })
+    });
   }
 
   fields = {
@@ -472,7 +475,7 @@ class ApplicantForm extends Vue {
       surname: member.surname,
       ...member.birth_info,
       ...member.contact_info,
-    }))
+    }));
   }
 
   fillMilspecialtyOptions(data) {
