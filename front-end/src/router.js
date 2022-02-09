@@ -47,7 +47,7 @@ export const constantRoutes = [
   },
   {
     name: "StudentRegister",
-    path: "/student/register/",
+    path: "/student-register/",
     component: () => import("@/views/StudentsRegistration/index"),
     hidden: true,
   },
