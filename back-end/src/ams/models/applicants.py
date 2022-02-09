@@ -109,6 +109,12 @@ class Applicant(models.Model):
         max_length=64,
         blank=True,
     )
+    surname_genitive = models.CharField(max_length=64)
+    name_genitive = models.CharField(max_length=64)
+    patronymic_genitive = models.CharField(
+        max_length=64,
+        blank=True,
+    )
     recruitment_office = models.CharField(max_length=255)
     citizenship = models.CharField(
         max_length=64,
