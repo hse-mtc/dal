@@ -47,7 +47,6 @@ from ams.utils.export.comp_sel_protocol \
     import generate_export as generate_csp_export
 
 
-
 class XLSXRenderer(BaseRenderer):
     media_type = "application/xlsx"
     format = "xlsx"
