@@ -55,11 +55,13 @@
               </el-row>
             </div>
           </div>
-          <router-link to="/applicant-form/">
-            <el-button type="primary">
-              Исправить форму
-            </el-button>
-          </router-link>
+          <div style="margin-bottom: 30px">
+            <router-link to="/applicant-form/">
+              <el-button type="primary">
+                Исправить форму
+              </el-button>
+            </router-link>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -87,8 +89,9 @@ export default {
     personType() { return UserModule.personType; },
   },
   mounted() {
-    console.log(this.personId);
-    this.fetchDocs();
+    if (this.personType === "applicant") {
+      this.fetchDocs();
+    }
   },
   methods: {
     getObjUrl(file) {
