@@ -125,23 +125,26 @@ export default {
       if (!valid) {
         return false;
       }
-
-      this.loading = true;
-      try {
-        await changePassword({
-          password: this.changePasswordForm.password,
-        });
-        if (!this.inDialog) {
-          UserModule.RESET_TOKENS();
-          this.$router.push({ path: "/login" });
+      if (this.changePasswordForm.password === this.changePasswordForm.passwordAgain) {
+        this.loading = true;
+        try {
+          await changePassword({
+            password: this.changePasswordForm.password,
+          });
+          if (!this.inDialog) {
+            UserModule.RESET_TOKENS();
+            this.$router.push({ path: "/login" });
+          }
+          this.$emit("submited");
+          return true;
+        } catch (err) {
+          patchError("пароля", err.response.status);
+          return false;
+        } finally {
+          this.loading = false;
         }
-        this.$emit("submited");
-        return true;
-      } catch (err) {
-        patchError("пароля", err.response.status);
+      } else {
         return false;
-      } finally {
-        this.loading = false;
       }
     },
   },
