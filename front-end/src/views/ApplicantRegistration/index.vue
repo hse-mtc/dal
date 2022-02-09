@@ -122,7 +122,6 @@ $dark_gray: #889aa4;
   }
 }
 
-
 /* reset element-ui css */
 .login-container {
   .el-input {
