@@ -236,6 +236,12 @@ export const constantRoutes = [
         component: () => import("@/views/ApplicantHomePage/index.vue"),
         meta: { title: "Личный кабинет абитуриента", icon: "journal", permissions: ["applicant.applicant.self"] },
       },
+      {
+        path: "/applicant-to-student/",
+        name: "ApplicantToStudent",
+        component: () => import("@/views/ApplicantToStudent/index.vue"),
+        meta: { title: "Регистрация студента", icon: "journal", permissions: ["applicant.applicant.self"] },
+      },
     ],
   },
 

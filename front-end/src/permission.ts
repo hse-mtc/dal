@@ -9,7 +9,7 @@ import { hasPermission } from "@/utils/permissions";
 NProgress.configure({ showSpinner: false });
 
 const WHITELIST = ["/login/", "/register/", "/applicant-registration/"];
-const APPLICANTLIST = ["/applicant-registration/", "/applicant-homepage/", "/applicant-form/"];
+const APPLICANTLIST = ["/applicant-registration/", "/applicant-homepage/", "/applicant-form/", "/applicant-to-student/"];
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
