@@ -31,10 +31,9 @@ router.beforeEach((to, from, next) => {
           next({ name: "ApplicantHomePage" });
         } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["applicant.applicant.self"])) {
           next({ path: "/" });
-        } else {
-          next();
         }
       });
+      next();
     }
   } else if (WHITELIST.indexOf(to.path) !== -1) {
     next();
