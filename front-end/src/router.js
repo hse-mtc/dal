@@ -185,8 +185,7 @@ export const constantRoutes = [
         path: "apanel/",
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
-        meta: { title: "Панель администратора", icon: "journal" },
-        permissions: ["permissions.get.all", "subjects.get.all", "subjects.get.self"],
+        meta: { title: "Панель администратора", icon: "journal", permissions: ["permissions.get.all", "subjects.get.all", "subjects.get.self"] },
         children: [
           {
             path: "approve/",
@@ -225,12 +224,11 @@ export const constantRoutes = [
           },
         ],
       },
-
       {
         path: "applications/",
         name: "applications",
         component: () => import("@/views/ApplicantsDocuments/index.vue"),
-        meta: { title: "Учет поступления документов", icon: "table" },
+        meta: { title: "Учет поступления документов", icon: "table", permissions: ["marks.get.self"] }, // ToDo give right permissions
       },
       {
         path: "/applicant-homepage/",
