@@ -75,6 +75,9 @@ class StudentMutateSerializer(
         self.update_photo(instance, validated_data)
         return super().update(instance, validated_data)
 
+    def validate(self, data):
+        return super().validate(data)
+
 
 class StudentShortSerializer(serializers.ModelSerializer):
     fullname = serializers.CharField(read_only=True)

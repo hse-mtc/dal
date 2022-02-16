@@ -102,6 +102,7 @@ class Student(models.Model):
     birth_info = models.OneToOneField(
         to=BirthInfo,
         on_delete=models.RESTRICT,
+        null=True,
         blank=True,
     )
     citizenship = models.CharField(
@@ -115,6 +116,7 @@ class Student(models.Model):
     passport = models.OneToOneField(
         to=Passport,
         on_delete=models.RESTRICT,
+        null=True,
         blank=True,
     )
     recruitment_office = models.CharField(
@@ -124,10 +126,12 @@ class Student(models.Model):
     university_info = models.OneToOneField(
         to=UniversityInfo,
         on_delete=models.RESTRICT,
+        null=True,
         blank=True,
     )
     family = models.ManyToManyField(
         to=Relative,
+        null=True,
         blank=True,
     )
 

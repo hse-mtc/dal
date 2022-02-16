@@ -98,7 +98,8 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     pagination_class = StudentPageNumberPagination
 
     def get_serializer_class(self):
-        if self.action in MUTATE_ACTIONS:
+        mutate_actions = MUTATE_ACTIONS + ["registration", "registration_for_existing_students"]
+        if self.action in mutate_actions:
             return StudentMutateSerializer
         return StudentSerializer
 
@@ -146,6 +147,25 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @registration.mapping.post
+    def registration_for_existing_students(self, request):
+        request.data["status"] = "ST"
+        serializer = self.get_serializer_class()(data=request.data)
+        
+        student = serializer.save()
+
+        email = serializer.validated_data["contact_info"]["corporate_email"]
+        user = get_user_model().objects.create_user(
+            email=email,
+            password=get_user_model().objects.make_random_password(),
+            campuses=["MO"],
+            is_active=False,
+        )
+        student.user = user
+        student.save()
+
+        return Response(self.get_serializer(student).data)
 
 
 @extend_schema(tags=["students"])

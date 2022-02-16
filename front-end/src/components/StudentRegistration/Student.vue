@@ -145,6 +145,7 @@ import { ReferenceModule } from "@/store";
 import { StudentPostsMixin } from "@/mixins/students";
 import { validCorEmail } from "@/utils/validate";
 import { postError, downloadError } from "@/utils/message";
+import { registerStudent } from "@/api/user";
 
 export default {
   mixins: [StudentPostsMixin],
@@ -203,7 +204,7 @@ export default {
       rules: {
         surname: [requiredRule],
         name: [requiredRule],
-        milfaculty: [requiredRule],
+        milgroup: [requiredRule],
         rank: [requiredRule],
         "contact_info.personal_phone_number": [phoneRule],
         "contact_info.corporate_email": [emailRule],
@@ -256,10 +257,10 @@ export default {
 
       console.log("Student:\n", this.student);
       try {
-        // await registerStudent(this.student);
+        await registerStudent(this.student);
         this.$emit("registration-completed");
       } catch (e) {
-        postError("преподавателя", e.response?.status);
+        postError("студента", e.response?.status);
       } finally {
         this.awaitingResponse = false;
       }
