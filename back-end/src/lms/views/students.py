@@ -1,5 +1,6 @@
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
+from django.db.models import QuerySet
 
 from rest_framework import pagination, viewsets
 from rest_framework import permissions
@@ -336,10 +337,7 @@ class ApproveStudentViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = Student.objects.filter(
-        user__isnull=False,
-        user__is_active=False,
-    )
+    queryset = Student.objects.all()
 
     permission_classes = [ApproveStudentPermission]
     scoped_permission_class = ApproveStudentPermission
@@ -347,10 +345,21 @@ class ApproveStudentViewSet(
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
 
+    def get_queryset(self) -> QuerySet:
+        print("get_query")
+        return Student.objects.filter(
+            user__isnull=False,
+            user__is_active=False,
+        )
+
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
             return ApproveStudentMutateSerializer
-        return ApproveStudentSerializer
+        return
+
+    def list(self, request, *args, **kwargs):
+        print("Stud aprov list")
+        return super().list(request, *args, **kwargs)
 
     def partial_update(self, request: Request, *args, **kwargs) -> Response:
         student = self.get_object()
@@ -362,11 +371,6 @@ class ApproveStudentViewSet(
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             student._prefetched_objects_cache = {}
-
-        if student.patronymic:
-            address = f"{student.name} {student.patronymic}"
-        else:
-            address = f"{student.name} {student.surname}"
 
         confirm_student_registration(
             email=student.user.email,
