@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
+from auth.models import Group
 from common.serializers.milspecialties import MilspecialtySerializer
 from common.serializers.universities import UniversityInfoSerializer
 from common.serializers.personal import (
@@ -177,7 +178,6 @@ class ApproveStudentMutateSerializer(serializers.Serializer):
     def update(self, student: Student, validated_data):
         user = student.user
         user.is_active = True
-        #Сделать
-        #user.groups.set(Group.)
+        user.groups.set(Group.objects.filter(name="Студент"))
         user.save()
         return student
