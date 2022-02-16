@@ -16,7 +16,8 @@ import { UserModule } from "@/store";
 })
 class AdminPanelPage extends Vue {
   defaultTabs = [
-    { label: "Подтверждения регистрации", to: "/apanel/approve/", permissions: [] },
+    { label: "Подтверждения преподавателей", to: "/apanel/approve-teachers/", permissions: [] },
+    { label: "Подтверждения студентов", to: "/apanel/approve-students/", permissions: [] },
     { label: "Управление пользователями", to: "/apanel/userManagement/", permissions: ["permissions.get.all", "permissions.patch.all", "permissions.post.all", "permissions.delete.all"] },
     { label: "Управление ролями", to: "/apanel/roleManagement/", permissions: ["permissions.get.all", "permissions.patch.all", "permissions.post.all", "permissions.delete.all"] },
     { label: "Справочники", to: "/apanel/dictionaries/", permissions: [] },

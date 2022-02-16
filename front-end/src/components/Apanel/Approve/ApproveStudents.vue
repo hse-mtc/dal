@@ -1,19 +1,7 @@
 <template>
   <div>
-    <div style="margin: -20px 0 20px 0">
-      <router-link to="/register/">
-        <el-button type="primary">
-          Зарегистрировать преподавателя
-        </el-button>
-      </router-link>
-      <router-link to="/student-register/" style="margin-left: 10px">
-        <el-button type="primary">
-          Зарегистрировать студента
-        </el-button>
-      </router-link>
-    </div>
     <el-row class="pageTitle" style="margin-bottom: 15px">
-      <h1>Подтверждения регистрации</h1>
+      <h1>Подтверждения студентов</h1>
     </el-row>
 
     <el-row>
@@ -38,67 +26,33 @@
         />
 
         <PrimeColumn
-          :field="(teacher) => teacher.milfaculty ? teacher.milfaculty.abbreviation : '---'"
-          column-key="milfaculty"
-          header="Цикл"
+          field="phone"
+          column-key="phone"
+          header="Телефон"
           sortable
         />
 
         <PrimeColumn
-          header="Прикреплённые взвода"
-          column-key="milgroups"
-        >
-          <template #body="{ data: teacher }">
-            <ElTag
-              v-for="milgroup in teacher.milgroups"
-              :key="milgroup.id"
-              :closable="false"
-              class="ml-2"
-            >
-              {{ milgroup.title }}
-            </ElTag>
-          </template>
-        </PrimeColumn>
+          field="milgroup"
+          header="Взвод"
+          column-key="milgroup"
+          sortable
+        />
+
+        <!-- :field="(student) => teacherPostLabelFromValue(student.post)" -->
 
         <PrimeColumn
-          :field="(teacher) => teacherPostLabelFromValue(teacher.post)"
+          field="post"
           column-key="post"
           header="Должность"
           sortable
         />
 
         <PrimeColumn
-          :field="(teacher) => teacherRankLabelFromValue(teacher.rank)"
-          column-key="rank"
-          header="Звание"
-          sortable
-        />
-
-        <PrimeColumn
-          header="Роли"
-          column-key="roles"
-        >
-          <template #body="{ data: teacher }">
-            <ElSelect
-              v-model="teacher.permission_groups"
-              :multiple="true"
-              placeholder="Выберите роли"
-            >
-              <ElOption
-                v-for="role in roles"
-                :key="role.key"
-                :label="role.label"
-                :value="role.key"
-              />
-            </ElSelect>
-          </template>
-        </PrimeColumn>
-
-        <PrimeColumn
           header="Действия"
           column-key="buttons"
         >
-          <template #body="{ data: teacher }">
+          <template #body="{ data: student }">
             <el-tooltip
               class="item"
               effect="dark"
@@ -111,7 +65,7 @@
                 type=""
                 circle
                 class="approve-button"
-                @click="approve(teacher)"
+                @click="approve(student)"
               />
             </el-tooltip>
           </template>
@@ -128,13 +82,11 @@
 </template>
 
 <script>
-import { getTeachersToApprove, approveTeacher, getAllRoles } from "@/api/admin";
+import { getStudentsToApprove, approveStudent, getAllRoles } from "@/api/admin";
 import { getError, patchError } from "@/utils/message";
-import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
 export default {
-  name: "Approve",
-  mixins: [TeacherPostsMixin, TeacherRanksMixin],
+  name: "ApproveStudents",
 
   data() {
     return {
@@ -146,7 +98,7 @@ export default {
 
   computed: {
     loading() {
-      return this.teacherPostsAreLoading || this.teacherRanksAreLoading || this.fetchingData;
+      return this.fetchingData;
     },
   },
 
@@ -156,7 +108,7 @@ export default {
     let responses;
     try {
       responses = await Promise.all([
-        getTeachersToApprove(),
+        getStudentsToApprove(),
         getAllRoles(),
       ]);
     } catch (err) {
@@ -167,14 +119,14 @@ export default {
     }
 
     [this.approveList, this.roles] = responses.map(r => r.data);
-    this.approveList = this.approveList(teacher => ({
+    this.approveList = this.approveList(student => ({
       permission_groups: [],
-      ...teacher,
+      ...student,
     }));
   },
 
   methods: {
-    async approve(teacher) {
+    async approve(student) {
       await this.$confirm(
         "Вы уверены? Отменить подтверждение регистрации нельзя.",
         "",
@@ -187,8 +139,8 @@ export default {
 
       this.fetchingData = true;
       try {
-        await approveTeacher(teacher.id, {
-          permission_groups: teacher.permission_groups,
+        await approveStudent(student.id, {
+          permission_groups: student.permission_groups,
         });
       } catch (e) {
         patchError("регистрации преподавателя", e.response?.status);
@@ -197,7 +149,7 @@ export default {
         this.fetchingData = false;
       }
 
-      this.approveList = this.approveList.filter(t => t.id !== teacher.id);
+      this.approveList = this.approveList.filter(s => s.id !== student.id);
       this.$message({
         type: "success",
         message: "Регистрация подтверждена.",
