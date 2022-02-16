@@ -337,7 +337,10 @@ class ApproveStudentViewSet(
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = Student.objects.all()
+    queryset = Student.objects.filter(
+            user__isnull=False,
+            user__is_active=False,
+        )
 
     permission_classes = [ApproveStudentPermission]
     scoped_permission_class = ApproveStudentPermission
@@ -345,21 +348,10 @@ class ApproveStudentViewSet(
     filter_backends = [DjangoFilterBackend]
     filterset_class = StudentFilter
 
-    def get_queryset(self) -> QuerySet:
-        print("get_query")
-        return Student.objects.filter(
-            user__isnull=False,
-            user__is_active=False,
-        )
-
     def get_serializer_class(self):
         if self.action in MUTATE_ACTIONS:
             return ApproveStudentMutateSerializer
-        return
-
-    def list(self, request, *args, **kwargs):
-        print("Stud aprov list")
-        return super().list(request, *args, **kwargs)
+        return ApproveStudentSerializer
 
     def partial_update(self, request: Request, *args, **kwargs) -> Response:
         student = self.get_object()

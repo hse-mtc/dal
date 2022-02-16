@@ -145,13 +145,16 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class ApproveStudentSerializer(serializers.ModelSerializer):
-    milgroups = MilgroupSerializer(
+    milgroup = MilgroupSerializer(
         read_only=True,
-        many=True,
     )
     email = serializers.CharField(
         read_only=True,
         source="user.email",
+    )
+    phone = serializers.CharField(
+        read_only=True,
+        source="contact_info.personal_phone_number",
     )
 
     class Meta:
@@ -162,7 +165,7 @@ class ApproveStudentSerializer(serializers.ModelSerializer):
             "milgroup",
             "post",
             "email",
-            "contact_info",
+            "phone",
         ]
 
 
