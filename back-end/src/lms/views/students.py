@@ -1,9 +1,10 @@
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 
-from rest_framework import pagination
+from rest_framework import pagination, viewsets
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework import mixins
 
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -15,6 +16,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
+from auth.tokens.registration import generate_regconf_token
 from common.constants import MUTATE_ACTIONS
 
 from common.views.choices import GenericChoicesList
@@ -32,7 +34,7 @@ from lms.models.students import (
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
-    NoteSerializer,
+    NoteSerializer, ApproveStudentMutateSerializer, ApproveStudentSerializer,
 )
 
 from lms.filters.students import (
@@ -315,3 +317,69 @@ class StudentStatusChoicesList(GenericChoicesList):
 @extend_schema(tags=["students", "choices"])
 class StudentPostChoicesList(GenericChoicesList):
     choices_class = Student.Post
+
+
+class ApproveStudentPermission(BasePermission):
+    permission_class = "approve-student"
+    view_name_rus = "Подтверждение регистрации студентов"
+    methods = ["get", "patch"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.MILFACULTY,
+    ]
+
+
+@extend_schema(tags=["students"])
+class ApproveStudentViewSet(
+    QuerySetScopingMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = Student.objects.filter(
+        user__isnull=False,
+        user__is_active=False,
+    )
+
+    permission_classes = [ApproveStudentPermission]
+    scoped_permission_class = ApproveStudentPermission
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = StudentFilter
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return ApproveStudentMutateSerializer
+        return ApproveStudentSerializer
+
+    def partial_update(self, request: Request, *args, **kwargs) -> Response:
+        student = self.get_object()
+        serializer = self.get_serializer(student, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(student, "_prefetched_objects_cache", None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            student._prefetched_objects_cache = {}
+
+        if student.patronymic:
+            address = f"{student.name} {student.patronymic}"
+        else:
+            address = f"{student.name} {student.surname}"
+
+        confirm_student_registration(
+            email=student.user.email,
+            token=generate_regconf_token(student.user),
+        )
+
+        return Response()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(milfaculty=personnel.milfaculty)
+            case _:
+                assert False, "Unhandled Personnel type"

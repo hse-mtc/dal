@@ -36,7 +36,7 @@ from lms.views.students import (
     ActivateStudentViewSet,
     NoteViewSet,
     StudentStatusChoicesList,
-    StudentPostChoicesList,
+    StudentPostChoicesList, ApproveStudentViewSet,
 )
 from lms.views.teachers import (
     TeacherViewSet,
@@ -73,6 +73,7 @@ routers.register("students/approvals", ActivateStudentViewSet)
 routers.register("students/basic", StudentBasicInfoViewSet)
 routers.register("students/extra", StudentExtraInfoViewSet)
 routers.register("students/skills", StudentSkillsView)
+routers.register("students/approvals", ApproveStudentViewSet)
 routers.register("students", StudentViewSet)
 
 routers.register("teachers/approvals", ApproveTeacherViewSet)

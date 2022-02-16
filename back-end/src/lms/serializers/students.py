@@ -142,3 +142,39 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = "__all__"
+
+
+class ApproveStudentSerializer(serializers.ModelSerializer):
+    milgroups = MilgroupSerializer(
+        read_only=True,
+        many=True,
+    )
+    email = serializers.CharField(
+        read_only=True,
+        source="user.email",
+    )
+
+    class Meta:
+        model = Student
+        fields = [
+            "id",
+            "fullname",
+            "milgroup",
+            "post",
+            "email",
+            "contact_info",
+        ]
+
+
+class ApproveStudentMutateSerializer(serializers.Serializer):
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, student: Student, validated_data):
+        user = student.user
+        user.is_active = True
+        #Сделать
+        #user.groups.set(Group.)
+        user.save()
+        return student
