@@ -651,7 +651,7 @@ class ApplicantForm extends Vue {
         data.image = reader.result;
 
         try {
-          if (UserModule.personType === 'applicant') {
+          if (UserModule.personType === "applicant") {
             await putApplicant(UserModule.personId, data);
           } else {
             await postApplicant(data);
