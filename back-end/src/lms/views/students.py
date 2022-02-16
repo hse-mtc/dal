@@ -154,6 +154,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     def registration_for_existing_students(self, request):
         request.data["status"] = "ST"
         serializer = self.get_serializer_class()(data=request.data)
+        serializer.is_valid(raise_exception=True)
         
         student = serializer.save()
 
