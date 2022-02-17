@@ -33,20 +33,20 @@
         />
 
         <PrimeColumn
-          field="milgroup"
+          field="milgroup.title"
           header="Взвод"
           column-key="milgroup"
           sortable
         />
 
-        <!-- :field="(student) => teacherPostLabelFromValue(student.post)" -->
-
         <PrimeColumn
-          field="post"
+          :field="(student) => student.post"
           column-key="post"
           header="Должность"
           sortable
         />
+
+        {{ studentPosts }}
 
         <PrimeColumn
           header="Действия"
@@ -84,9 +84,11 @@
 <script>
 import { getStudentsToApprove, approveStudent, getAllRoles } from "@/api/admin";
 import { getError, patchError } from "@/utils/message";
+import { StudentPostsMixin } from "@/mixins/students";
 
 export default {
   name: "ApproveStudents",
+  mixins: [StudentPostsMixin],
 
   data() {
     return {
