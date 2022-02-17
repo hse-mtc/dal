@@ -26,7 +26,7 @@
         />
 
         <PrimeColumn
-          field="phone"
+          :field="(student) => phoneNumberMixin(student.phone)"
           column-key="phone"
           header="Телефон"
           sortable
@@ -40,13 +40,11 @@
         />
 
         <PrimeColumn
-          :field="(student) => student.post"
+          :field="(student) => studentPostLabelFromValueOrDefault(student.post, 'Студент')"
           column-key="post"
           header="Должность"
           sortable
         />
-
-        {{ studentPosts }}
 
         <PrimeColumn
           header="Действия"
@@ -128,6 +126,9 @@ export default {
   },
 
   methods: {
+    phoneNumberMixin(phoneNumber) {
+      return '+'.concat(phoneNumber)
+    },
     async approve(student) {
       await this.$confirm(
         "Вы уверены? Отменить подтверждение регистрации нельзя.",
