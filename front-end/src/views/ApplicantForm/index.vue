@@ -235,6 +235,9 @@ class ApplicantForm extends Vue {
         patronymic: ap_data.patronymic,
         citizenship: ap_data.citizenship,
         permanent_address: ap_data.permanent_address,
+        surname_genitive: ap_data.surname_genitive,
+        name_genitive: ap_data.name_genitive,
+        patronymic_genitive: ap_data.patronymic_genitive,
       };
 
       this.applicantData.birthInfo = ap_data.birth_info;
