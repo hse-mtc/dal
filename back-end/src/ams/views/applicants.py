@@ -46,6 +46,7 @@ from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
 from django.db import transaction
 
+
 class XLSXRenderer(BaseRenderer):
     media_type = "application/xlsx"
     format = "xlsx"
