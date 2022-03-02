@@ -171,7 +171,6 @@ class ApproveStudentSerializer(serializers.ModelSerializer):
 
 
 class ApproveStudentMutateSerializer(serializers.Serializer):
-
     def create(self, validated_data):
         pass
 

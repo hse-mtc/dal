@@ -36,7 +36,8 @@ from lms.views.students import (
     ActivateStudentViewSet,
     NoteViewSet,
     StudentStatusChoicesList,
-    StudentPostChoicesList, ApproveStudentViewSet,
+    StudentPostChoicesList,
+    ApproveStudentViewSet,
 )
 from lms.views.teachers import (
     TeacherViewSet,

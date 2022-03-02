@@ -35,7 +35,9 @@ from lms.models.students import (
 from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
-    NoteSerializer, ApproveStudentMutateSerializer, ApproveStudentSerializer,
+    NoteSerializer,
+    ApproveStudentMutateSerializer,
+    ApproveStudentSerializer,
 )
 
 from lms.filters.students import (
@@ -101,7 +103,10 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     pagination_class = StudentPageNumberPagination
 
     def get_serializer_class(self):
-        mutate_actions = MUTATE_ACTIONS + ["registration", "registration_for_existing_students"]
+        mutate_actions = MUTATE_ACTIONS + [
+            "registration",
+            "registration_for_existing_students",
+        ]
         if self.action in mutate_actions:
             return StudentMutateSerializer
         return StudentSerializer
@@ -156,7 +161,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         request.data["status"] = "ST"
         serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         student = serializer.save()
 
         email = serializer.validated_data["contact_info"]["corporate_email"]
@@ -323,10 +328,12 @@ class StudentPostChoicesList(GenericChoicesList):
 
 class ApproveStudentPermission(BasePermission):
     permission_class = "approve-student"
+    viewset = "approve-student"
     view_name_rus = "Подтверждение регистрации студентов"
     methods = ["get", "patch"]
     scopes = [
         Permission.Scope.ALL,
+        Permission.Scope.SELF,
         Permission.Scope.MILFACULTY,
         Permission.Scope.MILGROUP,
     ]
@@ -339,9 +346,9 @@ class ApproveStudentViewSet(
     viewsets.GenericViewSet,
 ):
     queryset = Student.objects.filter(
-            user__isnull=False,
-            user__is_active=False,
-        )
+        user__isnull=False,
+        user__is_active=False,
+    )
 
     permission_classes = [ApproveStudentPermission]
     scoped_permission_class = ApproveStudentPermission

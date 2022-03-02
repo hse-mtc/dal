@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
 
+from auth.populate.permissions import get_student_milgroup_commander_permissions
 from common.models.universities import UniversityInfo
 from common.models.personal import (
     BirthInfo,
@@ -174,6 +178,24 @@ class Student(models.Model):
         student.family.add(*applicant.family.order_by("id"))
         student.save()
         return student
+
+
+@receiver(models.signals.pre_save, sender=Student)
+def student_post_callback(sender, instance: Student, *args, **kwargs):
+    # pylint: disable=unused-argument
+
+    if not instance.pk:
+        return
+
+    print("Даем доп пермишны студентам")
+    match instance.post:
+        case Student.Post.MILGROUP_COMMANDER:
+            print("Даем доп пермишны КВ")
+            instance.user.permissions.add(*get_student_milgroup_commander_permissions())
+            print("Все ок!")
+            instance.user.save()
+        case _:
+            return
 
 
 class Note(models.Model):

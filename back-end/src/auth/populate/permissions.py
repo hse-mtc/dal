@@ -176,3 +176,25 @@ def get_milfaculty_head_permissions():
             )
         )
     return res
+
+
+def get_student_milgroup_commander_permissions():
+    values = [
+        "approve-student.get.self",
+        "approve-student.get.milgroup",
+        "approve-student.patch.self",
+        "approve-student.patch.milgroup",
+        "permissions.get.all",
+    ]
+    res = []
+    for val in values:
+        viewset, method, scope = val.split(".")
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(
+            Permission.objects.get(
+                viewset=viewset,
+                method=method,
+                scope=int(getattr(Permission.Scope, scope.upper())),
+            )
+        )
+    return res
