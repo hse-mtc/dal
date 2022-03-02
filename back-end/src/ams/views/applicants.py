@@ -157,8 +157,15 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             status=status.HTTP_403_FORBIDDEN,
         )
 
-    def update(self, request, **kwargs):
-        request.data["user"] = Applicant.objects.get(pk=kwargs["pk"]).user.id
+    def update(self, request, *args, **kwargs):
+        applicant = Applicant.objects.get(pk=kwargs["pk"])
+        request.data["user"] = applicant.user.id
+        if request.data["contact_info"]["corporate_email"] != applicant.contact_info.corporate_email:
+            return Response(
+                {"detail": "Bad request"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         return super(ApplicantViewSet, self).update(request, **kwargs)
 
     @transaction.atomic

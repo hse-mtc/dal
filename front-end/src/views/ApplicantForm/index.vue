@@ -256,11 +256,10 @@ class ApplicantForm extends Vue {
         ],
       };
       const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "FA"));
-      console.log(father);
       const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "MO"));
       if (father.length > 0) {
         // eslint-disable-next-line prefer-destructuring
-        this.applicantData.mother = father[0];
+        this.applicantData.father = father[0];
       }
       if (mother.length > 0) {
         // eslint-disable-next-line prefer-destructuring
@@ -652,6 +651,7 @@ class ApplicantForm extends Vue {
 
       reader.onload = async() => {
         data.image = reader.result;
+        data.contact_info.corporate_email = UserModule.email;
 
         try {
           if (UserModule.personType === "applicant") {

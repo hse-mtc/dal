@@ -31,7 +31,6 @@ class ContactInfoSerializer(serializers.ModelSerializer):
             contact_info = ContactInfo.objects.exclude(
                 corporate_email__isnull=True
             ).get(corporate_email=corporate_email)
-            print(contact_info)
             result = self.update(contact_info, validated_data)
             validated_data["corporate_email"] = corporate_email
             return result
@@ -82,6 +81,11 @@ class ContactInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactInfo
         exclude = ["id"]
+        extra_kwargs = {
+            'corporate_email': {
+                'validators': []
+            }
+        }
 
 
 class PhotoSerializer(serializers.ModelSerializer):
