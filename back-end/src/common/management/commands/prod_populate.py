@@ -9,6 +9,7 @@ from auth.populate.permissions import (
     get_milfaculty_head_permissions,
 )
 
+
 class Command(BaseCommand):
     help = "Populate database with prod data (for prod usage)"
 
