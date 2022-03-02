@@ -127,7 +127,7 @@ export default {
 
   methods: {
     phoneNumberMixin(phoneNumber) {
-      return '+'.concat(phoneNumber)
+      return "+".concat(phoneNumber);
     },
     async approve(student) {
       await this.$confirm(
