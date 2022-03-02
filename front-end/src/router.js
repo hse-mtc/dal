@@ -55,7 +55,6 @@ export const constantRoutes = [
     path: "/applicant-form/",
     name: "ApplicantForm",
     component: () => import("@/views/ApplicantForm/index.vue"),
-    // component: () => import("@/views/TechnicalWorks/index.vue"),
     meta: { title: "Форма поступления" },
     hidden: true,
   },
@@ -65,6 +64,14 @@ export const constantRoutes = [
     name: "ApplicantRegistration",
     component: () => import("@/views/ApplicantRegistration/index.vue"),
     meta: { title: "Регистрация абитуриента" },
+    hidden: true,
+  },
+
+  {
+    path: "/applicant-to-student/",
+    name: "ApplicantToStudent",
+    component: () => import("@/views/ApplicantToStudent/index.vue"),
+    meta: { title: "Регистрация студента", icon: "journal", permissions: ["applicant.applicant.self"] },
     hidden: true,
   },
 
@@ -235,12 +242,6 @@ export const constantRoutes = [
         name: "ApplicantHomePage",
         component: () => import("@/views/ApplicantHomePage/index.vue"),
         meta: { title: "Личный кабинет абитуриента", icon: "journal", permissions: ["applicant.applicant.self"] },
-      },
-      {
-        path: "/applicant-to-student/",
-        name: "ApplicantToStudent",
-        component: () => import("@/views/ApplicantToStudent/index.vue"),
-        meta: { title: "Регистрация студента", icon: "journal", permissions: ["applicant.applicant.self"] },
       },
     ],
   },
