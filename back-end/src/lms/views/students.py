@@ -328,6 +328,7 @@ class ApproveStudentPermission(BasePermission):
     scopes = [
         Permission.Scope.ALL,
         Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
     ]
 
 
@@ -378,5 +379,12 @@ class ApproveStudentViewSet(
         match personnel:
             case Student():
                 return self.queryset.filter(milfaculty=personnel.milfaculty)
+            case _:
+                assert False, "Unhandled Personnel type"
+
+    def handle_scope_milgroup(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(milgroup=personnel.milgroup)
             case _:
                 assert False, "Unhandled Personnel type"

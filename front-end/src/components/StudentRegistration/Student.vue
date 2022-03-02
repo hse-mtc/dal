@@ -85,6 +85,21 @@
       </div>
 
       <div class="field-title">
+        Дата рождения
+      </div>
+      <ElFormItem prop="birth_date">
+        <ElInput
+              ref="patronymic"
+              v-model="student.birth_info.date"
+              placeholder="Укажите дату рождения"
+              name="patronymic"
+              type="date"
+              tabindex="1"
+              auto-complete="on"
+            />
+      </ElFormItem>
+
+      <div class="field-title">
         Взвод
       </div>
       <ElFormItem prop="milgroup">
@@ -199,6 +214,9 @@ export default {
           corporate_email: "",
           personal_phone_number: "",
         },
+        birth_info: {
+          date: "",
+        },
       },
 
       rules: {
@@ -208,6 +226,7 @@ export default {
         rank: [requiredRule],
         "contact_info.personal_phone_number": [phoneRule],
         "contact_info.corporate_email": [emailRule],
+        "birth_info.date": [requiredRule],
       },
     };
   },
