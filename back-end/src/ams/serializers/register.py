@@ -12,6 +12,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 f"Corporate email must end with {corporate_email_ending}"
             )
+        attrs["email"] = email
         return super().validate(attrs)
 
     class Meta:
