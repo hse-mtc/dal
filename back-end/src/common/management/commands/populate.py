@@ -104,7 +104,7 @@ class Command(BaseCommand):
 
         users = create_users()
 
-        applicants, _ = Group.objects.get_or_create(name="Абитуриет")
+        applicants, _ = Group.objects.get_or_create(name="Абитуриент")
         students, _ = Group.objects.get_or_create(name="Студент")
         teachers, _ = Group.objects.get_or_create(name="Преподаватель")
         milfaculty_heads, _ = Group.objects.get_or_create(name="Начальник цикла")
