@@ -81,11 +81,7 @@ class ContactInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactInfo
         exclude = ["id"]
-        extra_kwargs = {
-            'corporate_email': {
-                'validators': []
-            }
-        }
+        extra_kwargs = {"corporate_email": {"validators": []}}
 
 
 class PhotoSerializer(serializers.ModelSerializer):

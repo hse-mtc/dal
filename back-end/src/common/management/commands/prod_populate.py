@@ -1,13 +1,16 @@
 from django.core.management.base import BaseCommand
 
-from django.contrib.auth import get_user_model
-
 from auth.models import Group
 from auth.populate.permissions import (
     get_applicant_permissions,
     get_student_permissions,
     get_teacher_permissions,
     get_milfaculty_head_permissions,
+)
+
+from common.populate.prod_universities import (
+    create_faculties,
+    create_programs,
 )
 
 
@@ -29,5 +32,8 @@ class Command(BaseCommand):
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
+
+        faculties = create_faculties()
+        programs = create_programs(faculties)
 
         print(" OK")

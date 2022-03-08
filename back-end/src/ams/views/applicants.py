@@ -160,7 +160,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     def update(self, request, *args, **kwargs):
         applicant = Applicant.objects.get(pk=kwargs["pk"])
         request.data["user"] = applicant.user.id
-        if request.data["contact_info"]["corporate_email"] != applicant.contact_info.corporate_email:
+        if (
+            request.data["contact_info"]["corporate_email"]
+            != applicant.contact_info.corporate_email
+        ):
             return Response(
                 {"detail": "Bad request"},
                 status=status.HTTP_400_BAD_REQUEST,
