@@ -1,10 +1,13 @@
 import NProgress from "nprogress"; // progress bar
 import "nprogress/nprogress.css"; // progress bar style
 
+// eslint-disable-next-line import/no-duplicates
 import router from "@/router";
 import { UserModule } from "@/store";
 import getPageTitle from "@/utils/get-page-title";
 import { hasPermission } from "@/utils/permissions";
+// eslint-disable-next-line import/no-duplicates
+import { constantRoutes } from "@/router";
 
 NProgress.configure({ showSpinner: false });
 
@@ -22,19 +25,33 @@ router.beforeEach((to, from, next) => {
   }
 
   if (UserModule.accessToken) {
-    if (to.name === "Login") {
-      next({ path: "/" });
-    } else {
-      UserModule.getUser().then(response => {
-        console.log("person", UserModule.personId, "perm", UserModule.permissions);
-        if ((APPLICANTLIST.indexOf(to.path) === -1) && hasPermission(["applicant.applicant.self"]) && !to.path.includes("change-password") && !UserModule.isSuperuser) {
-          next({ name: "ApplicantHomePage" });
-        } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["applicant.applicant.self"])) {
-          next({ path: "/" });
+    UserModule.getUser().then(response => {
+      if (to.name === "Login") {
+        next({ path: "/" });
+      }
+      if ((APPLICANTLIST.indexOf(to.path) === -1) && hasPermission(["applicant.applicant.self"]) && !to.path.includes("change-password") && !UserModule.isSuperuser) {
+        let counter = 0;
+        while (counter < constantRoutes.length) {
+          if (constantRoutes[counter].path === "/") {
+            constantRoutes[counter].redirect = "/applicant-homepage/";
+          }
+          // eslint-disable-next-line no-plusplus
+          counter++;
         }
-      });
+        next({ name: "ApplicantHomePage" });
+      } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["applicant.applicant.self"])) {
+        let counter = 0;
+        while (counter < constantRoutes.length) {
+          if (constantRoutes[counter].path === "/") {
+            constantRoutes[counter].redirect = "/my-materials/";
+          }
+          // eslint-disable-next-line no-plusplus
+          counter++;
+        }
+        next({ path: "/" });
+      }
       next();
-    }
+    });
   } else if (WHITELIST.indexOf(to.path) !== -1) {
     next();
   } else {
