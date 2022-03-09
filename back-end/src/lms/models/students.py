@@ -187,12 +187,9 @@ def student_post_callback(sender, instance: Student, *args, **kwargs):
     if not instance.pk:
         return
 
-    print("Даем доп пермишны студентам")
     match instance.post:
         case Student.Post.MILGROUP_COMMANDER:
-            print("Даем доп пермишны КВ")
             instance.user.permissions.add(*get_student_milgroup_commander_permissions())
-            print("Все ок!")
             instance.user.save()
         case _:
             return

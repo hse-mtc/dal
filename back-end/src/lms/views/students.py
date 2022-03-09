@@ -22,7 +22,7 @@ from common.constants import MUTATE_ACTIONS
 
 from common.views.choices import GenericChoicesList
 
-from auth.models import Permission
+from auth.models import Permission, Group
 from auth.permissions import BasePermission
 
 from lms.models.teachers import Teacher
@@ -171,6 +171,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
             campuses=["MO"],
             is_active=False,
         )
+
         student.user = user
         student.save()
 
@@ -278,6 +279,7 @@ def confirm_student_registration(
         <p>Ссылка для задания пароля: {link}</p>\n
     """
 
+    print("Sending reg mail")
     send_mail(
         subject="Подтверждение регистрации в системе Даль",
         message=None,  # Send `html_message`.
@@ -362,6 +364,7 @@ class ApproveStudentViewSet(
         return ApproveStudentSerializer
 
     def partial_update(self, request: Request, *args, **kwargs) -> Response:
+        print("Getting form")
         student = self.get_object()
         serializer = self.get_serializer(student, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
