@@ -76,8 +76,8 @@ class StudentMutateSerializer(
         self.update_photo(instance, validated_data)
         return super().update(instance, validated_data)
 
-    def validate(self, data):
-        return super().validate(data)
+    def validate(self, attrs):
+        return super().validate(attrs)
 
 
 class StudentShortSerializer(serializers.ModelSerializer):
@@ -174,9 +174,9 @@ class ApproveStudentMutateSerializer(serializers.Serializer):
     def create(self, validated_data):
         pass
 
-    def update(self, student: Student, validated_data):
-        user = student.user
+    def update(self, instance: Student, validated_data):
+        user = instance.user
         user.is_active = True
         user.groups.set(Group.objects.filter(name="Студент"))
         user.save()
-        return student
+        return instance

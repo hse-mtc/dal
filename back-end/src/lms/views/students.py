@@ -1,6 +1,5 @@
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
-from django.db.models import QuerySet
 
 from rest_framework import pagination, viewsets
 from rest_framework import permissions
@@ -17,13 +16,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema
 
-from auth.tokens.registration import generate_regconf_token
 from common.constants import MUTATE_ACTIONS
 
 from common.views.choices import GenericChoicesList
 
-from auth.models import Permission, Group
+from auth.models import Permission
 from auth.permissions import BasePermission
+from auth.tokens.registration import generate_regconf_token
 
 from lms.models.teachers import Teacher
 from lms.models.common import Milgroup
@@ -140,12 +139,12 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
     @action(detail=False, methods=["patch"], permission_classes=[permissions.AllowAny])
     def registration(self, request):
-        User = get_user_model()
+        user_ = get_user_model()
 
         email = request.data["email"]
-        user = User.objects.create_user(
+        user = user_.objects.create_user(
             email=email,
-            password=User.objects.make_random_password(),
+            password=user_.objects.make_random_password(),
         )
 
         instance = Student.objects.filter(contact_info__corporate_email=email).first()
