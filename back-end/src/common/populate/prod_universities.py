@@ -37,10 +37,10 @@ def add_programs_from_file(programs, faculties, file_name):
 def create_faculties() -> dict[str, Faculty]:
     faculties = []
     files = {
-        Campus.MOSCOW.value: "../data/mo-programs.json",
-        Campus.NIZHNY_NOVGOROD.value: "../data/nn-programs.json",
-        Campus.PERM.value: "../data/pe-programs.json",
-        Campus.SAINT_PETERSBURG.value: "../data/sp-programs.json",
+        Campus.MOSCOW.value: "src/common/data/mo-programs.json",
+        Campus.NIZHNY_NOVGOROD.value: "src/common/data/nn-programs.json",
+        Campus.PERM.value: "src/common/data/pe-programs.json",
+        Campus.SAINT_PETERSBURG.value: "src/common/data/sp-programs.json",
     }
 
     for key in files:
@@ -52,10 +52,10 @@ def create_faculties() -> dict[str, Faculty]:
 def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
     programs = []
     files = {
-        Campus.MOSCOW.value: "../data/mo-programs.json",
-        Campus.NIZHNY_NOVGOROD.value: "../data/nn-programs.json",
-        Campus.PERM.value: "../data/pe-programs.json",
-        Campus.SAINT_PETERSBURG.value: "../data/sp-programs.json",
+        Campus.MOSCOW.value: "src/common/data/mo-programs.json",
+        Campus.NIZHNY_NOVGOROD.value: "src/common/data/nn-programs.json",
+        Campus.PERM.value: "src/common/data/pe-programs.json",
+        Campus.SAINT_PETERSBURG.value: "src/common/data/sp-programs.json",
     }
 
     for key in files:

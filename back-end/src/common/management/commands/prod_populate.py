@@ -13,7 +13,6 @@ from common.populate.prod_universities import (
     create_programs,
 )
 
-
 class Command(BaseCommand):
     help = "Populate database with prod data (for prod usage)"
 

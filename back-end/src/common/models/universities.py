@@ -13,7 +13,7 @@ class Faculty(models.Model):
         choices=Campus.choices,
         max_length=2,
     )
-    title = models.CharField(max_length=127)
+    title = models.CharField(max_length=255)
     abbreviation = models.CharField(
         max_length=31,
         blank=True,
