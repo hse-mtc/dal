@@ -174,11 +174,6 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         student.user = user
         student.save()
 
-        confirm_student_registration(
-            email=student.user.email,
-            token=generate_regconf_token(student.user),
-        )
-
         return Response(self.get_serializer(student).data)
 
 
@@ -378,6 +373,11 @@ class ApproveStudentViewSet(
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             student._prefetched_objects_cache = {}
+
+        confirm_student_registration(
+            email=student.user.email,
+            token=generate_regconf_token(student.user),
+        )
 
         return Response()
 
