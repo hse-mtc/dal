@@ -17,6 +17,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.views import extend_schema
 
 from common.constants import MUTATE_ACTIONS
+from common.email.registration import send_regconf_email
 
 from common.views.choices import GenericChoicesList
 
@@ -374,8 +375,10 @@ class ApproveStudentViewSet(
             # forcibly invalidate the prefetch cache on the instance.
             student._prefetched_objects_cache = {}
 
-        confirm_student_registration(
+        send_regconf_email(
+            address=student.fullname,
             email=student.user.email,
+            url=request.META["HTTP_REFERER"],
             token=generate_regconf_token(student.user),
         )
 
