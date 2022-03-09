@@ -29,24 +29,15 @@ router.beforeEach((to, from, next) => {
       if (to.name === "Login") {
         next({ path: "/" });
       }
+      const route = constantRoutes.find(elem => elem.path === "/");
       if ((APPLICANTLIST.indexOf(to.path) === -1) && hasPermission(["applicant.applicant.self"]) && !to.path.includes("change-password") && !UserModule.isSuperuser) {
-        let counter = 0;
-        while (counter < constantRoutes.length) {
-          if (constantRoutes[counter].path === "/") {
-            constantRoutes[counter].redirect = "/applicant-homepage/";
-          }
-          // eslint-disable-next-line no-plusplus
-          counter++;
+        if (route) {
+          route.redirect = "/applicant-homepage/";
         }
         next({ name: "ApplicantHomePage" });
       } else if ((APPLICANTLIST.indexOf(to.path) !== -1) && !hasPermission(["applicant.applicant.self"])) {
-        let counter = 0;
-        while (counter < constantRoutes.length) {
-          if (constantRoutes[counter].path === "/") {
-            constantRoutes[counter].redirect = "/my-materials/";
-          }
-          // eslint-disable-next-line no-plusplus
-          counter++;
+        if (route) {
+          route.redirect = "/my-materials/";
         }
         next({ path: "/" });
       }
