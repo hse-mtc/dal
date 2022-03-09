@@ -16,8 +16,6 @@ class RegisterView(generics.GenericAPIView):
     def post(self, request):
         user = request.data
         email = BaseUserManager.normalize_email(user["email"])
-        if not email.endswith("@edu.hse.ru"):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if not User.objects.filter(email=email).exists():
             user["password"] = User.objects.make_random_password()
@@ -26,7 +24,7 @@ class RegisterView(generics.GenericAPIView):
             serializer.save()
 
         user = User.objects.get(email=email)
-        applicants, _ = Group.objects.get_or_create(name="Абитуриет")
+        applicants, _ = Group.objects.get_or_create(name="Абитуриент")
         applicants.user_set.add(user)
         send_regconf_email(
             address=user.username,

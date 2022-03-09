@@ -235,6 +235,9 @@ class ApplicantForm extends Vue {
         patronymic: ap_data.patronymic,
         citizenship: ap_data.citizenship,
         permanent_address: ap_data.permanent_address,
+        surname_genitive: ap_data.surname_genitive,
+        name_genitive: ap_data.name_genitive,
+        patronymic_genitive: ap_data.patronymic_genitive,
       };
 
       this.applicantData.birthInfo = ap_data.birth_info;
@@ -253,11 +256,10 @@ class ApplicantForm extends Vue {
         ],
       };
       const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "FA"));
-      console.log(father);
       const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "MO"));
       if (father.length > 0) {
         // eslint-disable-next-line prefer-destructuring
-        this.applicantData.mother = father[0];
+        this.applicantData.father = father[0];
       }
       if (mother.length > 0) {
         // eslint-disable-next-line prefer-destructuring
@@ -649,6 +651,7 @@ class ApplicantForm extends Vue {
 
       reader.onload = async() => {
         data.image = reader.result;
+        data.contact_info.corporate_email = UserModule.email;
 
         try {
           if (UserModule.personType === "applicant") {

@@ -3,7 +3,17 @@ from auth.models import User
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    # password = serializers.CharField(max_length = 50, min_length = 6, write_only = True)
+    def validate(self, attrs):
+        if not (email := attrs.pop("email", None)):
+            return super().validate(attrs)
+
+        corporate_email_ending = "@edu.hse.ru"
+        if not email.endswith(corporate_email_ending):
+            raise serializers.ValidationError(
+                f"Corporate email must end with {corporate_email_ending}"
+            )
+        attrs["email"] = email
+        return super().validate(attrs)
 
     class Meta:
         model = User
