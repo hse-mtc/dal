@@ -29,6 +29,7 @@ class ProgramMutateSerializer(serializers.ModelSerializer):
 
 class UniversityInfoSerializer(serializers.ModelSerializer):
     campus = serializers.SerializerMethodField(read_only=True)
+    program = ProgramSerializer(read_only=True)
 
     def get_campus(self, obj: UniversityInfo) -> str:
         return obj.campus

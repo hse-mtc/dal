@@ -13,7 +13,6 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
-from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
 
@@ -168,8 +167,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 {"detail": "Bad request"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        return super(ApplicantViewSet, self).update(request, **kwargs)
+        result = super(ApplicantViewSet, self).update(request, **kwargs)
+        generate_documents = request.data["generate_documents"]
+        if generate_documents:
+            generate_documents_for_applicant(applicant)
+        return result
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -285,7 +287,7 @@ def generate_documents_for_applicant(applicant: Applicant) -> None:
     data = ApplicantSerializer(instance=applicant).data
     response = requests.post(
         f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/applicants/",
-        data=JSONRenderer().render(data),
+        json=data,
     )
     # TODO(TmLev): remove debug print
     print(response.json())
