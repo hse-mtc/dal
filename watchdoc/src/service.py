@@ -6,7 +6,7 @@ import jinja2
 from docxtpl import DocxTemplate
 
 from auth import obtain_credentials
-from gmail import GmailService
+from email_service import EmailService
 from drive import DriveService
 from campuses import Campus
 from family import RelativeType
@@ -110,7 +110,7 @@ class WatchDocService:
     def notify(self, applicant: Applicant, folder_link: str):
         email = applicant.contact_info.corporate_email
         msg = create_message(to=email, link=folder_link)
-        self.gs.send_message(body=msg)
+        self.email_service.send_message(email, body=msg)
 
     # --------------------------------------------------------------------------
     # Internal methods
@@ -123,7 +123,7 @@ class WatchDocService:
         credentials = obtain_credentials()
 
         # Gmail
-        self.gs = GmailService(credentials)
+        self.email_service = EmailService()
 
         # Drive
         self.ds = DriveService(credentials)
