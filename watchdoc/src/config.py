@@ -17,7 +17,6 @@ TOKENS_PATH = BASE_DIR / "tokens.json"
 
 SCOPES = [
     "https://www.googleapis.com/auth/drive",
-    "https://www.googleapis.com/auth/gmail.send",
 ]
 
 # ------------------------------------------------------------------------------
