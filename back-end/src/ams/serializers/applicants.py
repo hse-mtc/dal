@@ -5,7 +5,10 @@ from rest_framework import serializers
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from common.serializers.milspecialties import MilspecialtySerializer
-from common.serializers.universities import UniversityInfoSerializer, UniversityInfoMutateSerializer
+from common.serializers.universities import (
+    UniversityInfoSerializer,
+    UniversityInfoMutateSerializer,
+)
 from common.serializers.personal import (
     BirthInfoSerializer,
     ContactInfoSerializer,
