@@ -168,9 +168,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         result = super(ApplicantViewSet, self).update(request, **kwargs)
+        updated_applicant = Applicant.objects.get(pk=kwargs["pk"])
         generate_documents = request.data["generate_documents"]
         if generate_documents:
-            generate_documents_for_applicant(applicant)
+            generate_documents_for_applicant(updated_applicant)
         return result
 
     @transaction.atomic
