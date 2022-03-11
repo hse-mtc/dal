@@ -14,6 +14,11 @@ from proto import Applicant
 from config import (
     TEMPLATES_DIR,
     GENERATED_DIR,
+    EMAIL_HOST,
+    EMAIL_PORT,
+    EMAIL_HOST_USER,
+    EMAIL_HOST_PASSWORD,
+    EMAIL_USE_TLS,
 )
 
 from email_utils import create_message
@@ -122,8 +127,14 @@ class WatchDocService:
         # Credentials
         credentials = obtain_credentials()
 
-        # Gmail
-        self.email_service = EmailService()
+        # Email
+        self.email_service = EmailService(
+            EMAIL_HOST,
+            EMAIL_PORT,
+            EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD,
+            EMAIL_USE_TLS
+        )
 
         # Drive
         self.ds = DriveService(credentials)
