@@ -76,7 +76,7 @@ import PageHeader from "@/common/PageHeader";
 import { UserModule } from "@/store";
 import { findApplicant } from "@/api/applicants";
 import { dataURLtoFile } from "@/constants/applicantForm";
-import {CAMPUSES} from "@/utils/enums";
+import { CAMPUSES } from "@/utils/enums";
 
 export default {
   name: "ApplicantHomePage",
