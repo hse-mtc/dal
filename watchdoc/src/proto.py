@@ -75,4 +75,3 @@ class Applicant(Person):
     recruitment_office: str
 
     milspecialty: Milspecialty
-

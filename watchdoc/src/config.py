@@ -35,3 +35,7 @@ EMAIL_USE_TLS = os.environ["EMAIL_USE_TLS"].lower() == "true"
 EMAIL_HOST_USER = os.environ["EMAIL_HOST_USER"]
 EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
 DEFAULT_FROM_EMAIL = f"Даль ВУЦ ВШЭ <{EMAIL_HOST_USER}>"
+
+# ------------------------------------------------------------------------------
+# YaDisk
+YADISK_TOKEN = os.environ["YADISK_TOKEN"]
