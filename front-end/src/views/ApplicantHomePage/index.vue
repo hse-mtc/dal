@@ -14,6 +14,9 @@
           </router-link>
         </div>
         <div v-if="personType === 'applicant'">
+          <div v-if="stages.length === 0">
+            Подождите, загрузка данных...
+          </div>
           <div v-for="(stage, i) in stages" :key="i">
             <div class="h4" style="margin-top: 30px">
               {{ stage.name }}
@@ -73,6 +76,7 @@ import PageHeader from "@/common/PageHeader";
 import { UserModule } from "@/store";
 import { findApplicant } from "@/api/applicants";
 import { dataURLtoFile } from "@/constants/applicantForm";
+import { CAMPUSES } from "@/utils/enums";
 
 export default {
   name: "ApplicantHomePage",
@@ -165,7 +169,7 @@ export default {
           fields: [
             {
               name: "Кампус",
-              content: data.university_info.program,
+              content: CAMPUSES[data.university_info.program.faculty.campus],
             },
             {
               name: "Номер студенческого билета",
@@ -173,7 +177,7 @@ export default {
             },
             {
               name: "Код образовательной программы",
-              content: data.university_info.program,
+              content: data.university_info.program.code,
             },
             {
               name: "Номер группы",

@@ -10,7 +10,7 @@ from family import RelativeType
 class BirthInfo(BaseModel):
     date: datetime.date
     country: str
-    city: str
+    place: str
 
 
 class ContactInfo(BaseModel):
@@ -58,7 +58,7 @@ class RecruitmentOffice(BaseModel):
 
 class Milspecialty(BaseModel):
     code: str
-    milspecialty: str
+    title: str
 
 
 class Applicant(Person):
@@ -72,7 +72,7 @@ class Applicant(Person):
     family: list[Relative]
 
     university_info: UniversityInfo
-    recruitment_office: RecruitmentOffice
+    recruitment_office: str
 
     milspecialty: Milspecialty
 
