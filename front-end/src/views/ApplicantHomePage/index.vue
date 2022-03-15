@@ -176,7 +176,7 @@ export default {
               content: data.university_info.card_id,
             },
             {
-              name: "Код образовательной программы",
+              name: "Образовательная программа",
               content: data.university_info.program.code,
             },
             {
