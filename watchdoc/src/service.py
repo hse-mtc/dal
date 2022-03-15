@@ -3,6 +3,8 @@ import logging as log
 
 import jinja2
 
+import shutil
+
 from docxtpl import DocxTemplate
 
 from auth import obtain_credentials
@@ -49,6 +51,9 @@ class WatchDocService:
     """
     def generate_documents(self, applicant: Applicant):
         applicant_dir = GENERATED_DIR / applicant.contact_info.corporate_email
+
+        if applicant_dir.exists():
+            shutil.rmtree(applicant_dir, ignore_errors=True)
         applicant_dir.mkdir(exist_ok=True)
 
         parents = [

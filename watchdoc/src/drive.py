@@ -52,7 +52,8 @@ class DriveService:
         )
 
         if response["files"]:
-            return response["files"][0]
+            for file in response["files"]:
+                self.delete_file(file["id"])
 
         body = {
             "mimeType": FOLDER_MIME_TYPE,
