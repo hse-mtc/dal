@@ -99,6 +99,7 @@ class WatchDocService:
         applicant_folder = self.ds.obtain_folder(
             name=folder_name,
             parents=[self._campus_folders[campus]["id"]],
+            delete_if_exists=True
         )
 
         for (_, rus) in DOCUMENTS:

@@ -36,6 +36,7 @@ class DriveService:
         parents=None,
         list_kwargs=None,
         create_kwargs=None,
+        delete_if_exists=False
     ):
         parents = parents or []
         list_kwargs = list_kwargs or {}
@@ -52,8 +53,11 @@ class DriveService:
         )
 
         if response["files"]:
-            for file in response["files"]:
-                self.delete_file(file["id"])
+            if delete_if_exists:
+                for file in response["files"]:
+                    self.delete_file(file["id"])
+            else:
+                return response["files"][0]
 
         body = {
             "mimeType": FOLDER_MIME_TYPE,
