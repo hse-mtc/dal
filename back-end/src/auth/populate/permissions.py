@@ -84,6 +84,8 @@ def get_teacher_permissions():
         "uniforms.get.milfaculty",
         "student-birthday-alert.get.milfaculty",
         "teacher-birthday-alert.get.all",
+        "approve-teacher.get.milfaculty",
+        "approve-teacher.patch.milfaculty",
     ]
 
     res = []
@@ -165,6 +167,8 @@ def get_milfaculty_head_permissions():
         "uniforms.patch.milfaculty",
         "student-birthday-alert.get.milfaculty",
         "teacher-birthday-alert.get.all",
+        "approve-teacher.get.milfaculty",
+        "approve-teacher.patch.milfaculty",
     ]
 
     res = []
