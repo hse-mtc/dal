@@ -93,7 +93,9 @@ export default {
               message: "Проверьте почту и перейдите по ссылке для задания пароля",
               type: "success",
             });
+            this.$router.push({ path: "/login" });
           } catch (error) {
+            this.loginForm.email = "";
             this.$message({
               title: "Ошибка",
               message: "Пожалуйста, введите корректную корпоративную почту",
@@ -101,7 +103,6 @@ export default {
             });
           }
           this.loading = false;
-          this.$router.push({ path: "/login" });
         }
       });
     },

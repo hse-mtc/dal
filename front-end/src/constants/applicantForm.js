@@ -145,7 +145,7 @@ export const UNIVERSITY_INFO = {
   },
   program: {
     component: "select",
-    title: "Код образовательной программы",
+    title: "Образовательная программа",
     props: { options: [] },
   },
   group: {
