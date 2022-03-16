@@ -390,13 +390,19 @@ class ApproveStudentViewSet(
     def handle_scope_milfaculty(self, personnel: Personnel):
         match personnel:
             case Student():
-                return self.queryset.filter(milfaculty=personnel.milfaculty)
+                return self.queryset.filter(milgroup__milfaculty=personnel.milgroup.milfaculty)
+            case Teacher():
+                print(f"QS: {self.queryset}")
+                print(f"MF: {personnel.milfaculty}")
+                return self.queryset.filter(milgroup__milfaculty=personnel.milfaculty)
             case _:
                 assert False, "Unhandled Personnel type"
 
     def handle_scope_milgroup(self, personnel: Personnel):
         match personnel:
             case Student():
+                return self.queryset.filter(milgroup=personnel.milgroup)
+            case Teacher():
                 return self.queryset.filter(milgroup=personnel.milgroup)
             case _:
                 assert False, "Unhandled Personnel type"

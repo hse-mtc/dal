@@ -109,10 +109,8 @@ class Command(BaseCommand):
 
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
-        milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
-
-        ## Additional permissions for student registration
-        milfaculty_heads.permissions.set(get_student_registration_milfaculty_head_permissions())
+        milfaculty_heads.permissions.set(get_milfaculty_head_permissions() +
+                                         get_student_registration_milfaculty_head_permissions())
 
         students.user_set.add(User.objects.get(email="gakhromov@mail.com"))
         students.user_set.add(User.objects.get(email="askatsevalov@mail.com"))

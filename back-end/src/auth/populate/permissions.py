@@ -116,6 +116,9 @@ def get_milfaculty_head_permissions():
         "favorite-books.patch.self",
         "favorite-books.delete.self",
         "sections.get.all",
+        "subjects.get.all",
+        "statistics.get.self",
+        "student-birthday-alert.get.all",
         # LMS permissions
         "students.get.milfaculty",
         "students.patch.milfaculty",
