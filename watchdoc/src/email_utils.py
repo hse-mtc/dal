@@ -1,6 +1,7 @@
+import email.header
 from email.mime.text import MIMEText
 
-from config import DEFAULT_FROM_EMAIL
+from config import EMAIL_HOST_USER, EMAIL_FROM_NAME
 
 
 def create_message(to, link):
@@ -44,6 +45,8 @@ def create_message(to, link):
     )
 
     message["to"] = to
-    message["from"] = DEFAULT_FROM_EMAIL
+    from_header = email.header.Header(EMAIL_FROM_NAME, "ascii")
+    from_header.append(f"<{EMAIL_HOST_USER}>")
+    message["from"] = from_header
     message["subject"] = "Поступление в Военный учебный центр"
     return message.as_string()
