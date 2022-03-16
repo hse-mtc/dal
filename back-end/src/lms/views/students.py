@@ -390,7 +390,9 @@ class ApproveStudentViewSet(
     def handle_scope_milfaculty(self, personnel: Personnel):
         match personnel:
             case Student():
-                return self.queryset.filter(milgroup__milfaculty=personnel.milgroup.milfaculty)
+                return self.queryset.filter(
+                    milgroup__milfaculty=personnel.milgroup.milfaculty
+                )
             case Teacher():
                 print(f"QS: {self.queryset}")
                 print(f"MF: {personnel.milfaculty}")
