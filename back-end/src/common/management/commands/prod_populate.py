@@ -8,6 +8,7 @@ from auth.populate.permissions import (
     get_milfaculty_head_permissions,
 )
 
+from common.populate.milspecialties import create_milspecialties
 from common.populate.prod_universities import (
     create_faculties,
     create_programs,
@@ -33,7 +34,15 @@ class Command(BaseCommand):
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
 
+        print(" OK")
+
+        # ----------------------------------------------------------------------
+        # Common
+
+        print("Populating `common` models...", end="")
+
+        create_milspecialties()
         faculties = create_faculties()
-        programs = create_programs(faculties)
+        create_programs(faculties)
 
         print(" OK")
