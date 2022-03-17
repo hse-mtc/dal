@@ -122,7 +122,7 @@
       <div :class="$style.footer">
         <p :class="$style.footerText">
           При возникновении технических трудностей обращайтесь по адресу
-          <a href="mailto:dal.mec.hse@gmail.com">dal.mec.hse@gmail.com</a>. В
+          <a href="mailto:hse.mec.dal@gmail.com">hse.mec.dal@gmail.com</a>. В
           письме подробно опишите ситуацию и проблему, с которой Вы столкнулись.
         </p>
       </div>
@@ -663,7 +663,7 @@ class ApplicantForm extends Vue {
         } catch (e) {
           if (e.response.status < 500) {
             this.$alert(
-              "Проверьте правильность заполненных данных. Если проблема не решится, отправьте текст ошибки нам на почту: <a href=\"mailto:dal.mec.hse@gmail.com\">dal.mec.hse@gmail.com</a>",
+              "Проверьте правильность заполненных данных. Если проблема не решится, отправьте текст ошибки нам на почту: <a href=\"mailto:hse.mec.dal@gmail.com\">hse.mec.dal@gmail.com</a>",
               "Не удалось отправить форму",
               {
                 confirmButtonText: "Скопировать текст ошибки",
