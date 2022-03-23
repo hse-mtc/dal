@@ -85,7 +85,7 @@ export const constantRoutes = [
         path: "my-materials/",
         name: "Мои материалы",
         component: () => import("@/views/myMaterials/index"),
-        meta: { title: "Мои материалы", icon: "materials", permissions: ["subjects.get.self, papers.get.self, books.get.self, favorite-books.get.self"] },
+        meta: { title: "Мои материалы", icon: "materials", permissions: ["subjects.get.self", "papers.get.self", "books.get.self", "favorite-books.get.self"] },
       },
 
       {

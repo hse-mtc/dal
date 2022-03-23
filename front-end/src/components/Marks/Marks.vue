@@ -519,7 +519,7 @@ export default {
           .then(response => {
             this.journal = response.data;
           })
-          .catch(err => getError("расписания", err.response.status));
+          .catch(err => getError("оценок", err.response.status));
       }
     },
     async getSubjects() {
