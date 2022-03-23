@@ -22,8 +22,8 @@
           </div>
 
           <!-- eslint-disable vue/html-quotes -->
-          <RegisterTeacher
-            v-if='personnel === "teacher"'
+          <RegisterStudent
+            v-if='personnel === "student"'
             @registration-completed="registrationCompleted"
           />
           <!-- eslint-enable vue/html-quotes -->
@@ -49,14 +49,14 @@
 </template>
 
 <script>
-import RegisterTeacher from "@/components/Register/Teacher";
+import RegisterStudent from "@/components/StudentRegistration/Student";
 
 export default {
-  components: { RegisterTeacher },
+  components: { RegisterStudent },
 
   data() {
     return {
-      personnel: "teacher",
+      personnel: "student",
       registrationComplete: false,
     };
   },
@@ -64,8 +64,8 @@ export default {
   computed: {
     personnelToRegisterTitle() {
       switch (this.personnel) {
-        case "teacher":
-          return "преподавателя";
+        case "student":
+          return "студента";
         default:
           return "";
       }

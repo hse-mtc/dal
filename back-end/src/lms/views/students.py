@@ -1,9 +1,10 @@
 from django.core.mail import send_mail
 from django.contrib.auth import get_user_model
 
-from rest_framework import pagination
+from rest_framework import pagination, viewsets
 from rest_framework import permissions
 from rest_framework import status
+from rest_framework import mixins
 
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -16,11 +17,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.views import extend_schema
 
 from common.constants import MUTATE_ACTIONS
+from common.email.registration import send_regconf_email
 
 from common.views.choices import GenericChoicesList
 
 from auth.models import Permission
 from auth.permissions import BasePermission
+from auth.tokens.registration import generate_regconf_token
 
 from lms.models.teachers import Teacher
 from lms.models.common import Milgroup
@@ -33,6 +36,8 @@ from lms.serializers.students import (
     StudentSerializer,
     StudentMutateSerializer,
     NoteSerializer,
+    ApproveStudentMutateSerializer,
+    ApproveStudentSerializer,
 )
 
 from lms.filters.students import (
@@ -98,7 +103,11 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     pagination_class = StudentPageNumberPagination
 
     def get_serializer_class(self):
-        if self.action in MUTATE_ACTIONS:
+        mutate_actions = MUTATE_ACTIONS + [
+            "registration",
+            "registration_for_existing_students",
+        ]
+        if self.action in mutate_actions:
             return StudentMutateSerializer
         return StudentSerializer
 
@@ -131,12 +140,12 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
     @action(detail=False, methods=["patch"], permission_classes=[permissions.AllowAny])
     def registration(self, request):
-        User = get_user_model()
+        user_ = get_user_model()
 
         email = request.data["email"]
-        user = User.objects.create_user(
+        user = user_.objects.create_user(
             email=email,
-            password=User.objects.make_random_password(),
+            password=user_.objects.make_random_password(),
         )
 
         instance = Student.objects.filter(contact_info__corporate_email=email).first()
@@ -146,6 +155,27 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @registration.mapping.post
+    def registration_for_existing_students(self, request):
+        request.data["status"] = "ST"
+        serializer = self.get_serializer_class()(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        student = serializer.save()
+
+        email = serializer.validated_data["contact_info"]["corporate_email"]
+        user = get_user_model().objects.create_user(
+            email=email,
+            password=get_user_model().objects.make_random_password(),
+            campuses=["MO"],
+            is_active=False,
+        )
+
+        student.user = user
+        student.save()
+
+        return Response(self.get_serializer(student).data)
 
 
 @extend_schema(tags=["students"])
@@ -249,6 +279,7 @@ def confirm_student_registration(
         <p>Ссылка для задания пароля: {link}</p>\n
     """
 
+    print("Sending reg mail")
     send_mail(
         subject="Подтверждение регистрации в системе Даль",
         message=None,  # Send `html_message`.
@@ -295,3 +326,85 @@ class StudentStatusChoicesList(GenericChoicesList):
 @extend_schema(tags=["students", "choices"])
 class StudentPostChoicesList(GenericChoicesList):
     choices_class = Student.Post
+
+
+class ApproveStudentPermission(BasePermission):
+    permission_class = "approve-student"
+    viewset = "approve-student"
+    view_name_rus = "Подтверждение регистрации студентов"
+    methods = ["get", "patch"]
+    scopes = [
+        Permission.Scope.ALL,
+        Permission.Scope.SELF,
+        Permission.Scope.MILFACULTY,
+        Permission.Scope.MILGROUP,
+    ]
+
+
+@extend_schema(tags=["students"])
+class ApproveStudentViewSet(
+    QuerySetScopingMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    queryset = Student.objects.filter(
+        user__isnull=False,
+        user__is_active=False,
+    )
+
+    permission_classes = [ApproveStudentPermission]
+    scoped_permission_class = ApproveStudentPermission
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = StudentFilter
+
+    def get_serializer_class(self):
+        if self.action in MUTATE_ACTIONS:
+            return ApproveStudentMutateSerializer
+        return ApproveStudentSerializer
+
+    def partial_update(self, request: Request, *args, **kwargs) -> Response:
+        print("Getting form")
+        student = self.get_object()
+        serializer = self.get_serializer(student, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        if getattr(student, "_prefetched_objects_cache", None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            student._prefetched_objects_cache = {}
+
+        send_regconf_email(
+            address=student.fullname,
+            email=student.user.email,
+            url=request.META["HTTP_REFERER"],
+            token=generate_regconf_token(student.user),
+        )
+
+        return Response()
+
+    def perform_update(self, serializer):
+        serializer.save()
+
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(
+                    milgroup__milfaculty=personnel.milgroup.milfaculty
+                )
+            case Teacher():
+                print(f"QS: {self.queryset}")
+                print(f"MF: {personnel.milfaculty}")
+                return self.queryset.filter(milgroup__milfaculty=personnel.milfaculty)
+            case _:
+                assert False, "Unhandled Personnel type"
+
+    def handle_scope_milgroup(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(milgroup=personnel.milgroup)
+            case Teacher():
+                return self.queryset.filter(milgroup=personnel.milgroup)
+            case _:
+                assert False, "Unhandled Personnel type"

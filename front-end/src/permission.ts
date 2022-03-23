@@ -11,7 +11,7 @@ import { constantRoutes } from "@/router";
 
 NProgress.configure({ showSpinner: false });
 
-const WHITELIST = ["/login/", "/register/", "/applicant-registration/"];
+const WHITELIST = ["/login/", "/register/", "/applicant-registration/", "/student-register/"];
 const APPLICANTLIST = ["/applicant-registration/", "/applicant-homepage/", "/applicant-form/", "/applicant-to-student/"];
 
 router.beforeEach((to, from, next) => {

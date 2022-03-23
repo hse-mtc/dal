@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
 
+from auth.populate.permissions import get_student_milgroup_commander_permissions
 from common.models.universities import UniversityInfo
 from common.models.personal import (
     BirthInfo,
@@ -102,6 +106,8 @@ class Student(models.Model):
     birth_info = models.OneToOneField(
         to=BirthInfo,
         on_delete=models.RESTRICT,
+        null=True,
+        blank=True,
     )
     citizenship = models.CharField(
         max_length=64,
@@ -114,14 +120,22 @@ class Student(models.Model):
     passport = models.OneToOneField(
         to=Passport,
         on_delete=models.RESTRICT,
+        null=True,
+        blank=True,
     )
-    recruitment_office = models.CharField(max_length=255)
+    recruitment_office = models.CharField(
+        max_length=255,
+        blank=True,
+    )
     university_info = models.OneToOneField(
         to=UniversityInfo,
         on_delete=models.RESTRICT,
+        null=True,
+        blank=True,
     )
     family = models.ManyToManyField(
         to=Relative,
+        null=True,
         blank=True,
     )
 
@@ -164,6 +178,21 @@ class Student(models.Model):
         student.family.add(*applicant.family.order_by("id"))
         student.save()
         return student
+
+
+@receiver(models.signals.pre_save, sender=Student)
+def student_post_callback(sender, instance: Student, *args, **kwargs):
+    # pylint: disable=unused-argument
+
+    if not instance.pk:
+        return
+
+    match instance.post:
+        case Student.Post.MILGROUP_COMMANDER:
+            instance.user.permissions.add(*get_student_milgroup_commander_permissions())
+            instance.user.save()
+        case _:
+            return
 
 
 class Note(models.Model):

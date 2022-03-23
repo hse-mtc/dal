@@ -46,6 +46,12 @@ export const constantRoutes = [
     hidden: true,
   },
   {
+    name: "StudentRegister",
+    path: "/student-register/",
+    component: () => import("@/views/StudentsRegistration/index"),
+    hidden: true,
+  },
+  {
     path: "/change-password/",
     component: () => import("@/views/ChangePassword/index"),
     hidden: true,
@@ -195,9 +201,16 @@ export const constantRoutes = [
         meta: { title: "Панель администратора", icon: "journal", permissions: ["permissions.get.all", "subjects.get.all", "subjects.get.self"] },
         children: [
           {
-            path: "approve/",
-            name: "approve",
-            component: () => import("@/components/Apanel/Approve/Approve.vue"),
+            path: "approve-teachers/",
+            name: "approve-teachers",
+            component: () => import("@/components/Apanel/Approve/ApproveTeachers.vue"),
+            meta: { title: "Подтверждения" },
+            hidden: true,
+          },
+          {
+            path: "approve-students/",
+            name: "approve-students",
+            component: () => import("@/components/Apanel/Approve/ApproveStudents.vue"),
             meta: { title: "Подтверждения" },
             hidden: true,
           },
