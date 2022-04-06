@@ -89,11 +89,6 @@ class FavoriteBookSerializer(serializers.ModelSerializer):
 
 
 class FavoriteBookMutateSerializer(serializers.ModelSerializer):
-    user = UserSerializer(
-        write_only=True,
-        default=serializers.CurrentUserDefault(),
-    )
-
     class Meta:
         model = FavoriteBook
         fields = "__all__"
