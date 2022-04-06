@@ -28,6 +28,7 @@ import { getStatistics } from "@/api/statistics";
 import { downloadError } from "@/utils/message";
 import CustomText from "@/common/CustomText";
 import { UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 
 // TODO make one component with Subjects for ex if u have a param,
 // than hide title and search and do a request with user id
@@ -56,13 +57,15 @@ export default {
   },
   methods: {
     fetchData() {
-      getStatistics(this.userId)
-        .then(res => {
-          this.statistics = res.data;
-        })
-        .catch(err => {
-          downloadError("данных", err.response?.status);
-        });
+      if (hasPermission(["statistics.get.self"])) {
+        getStatistics(this.userId)
+          .then(res => {
+            this.statistics = res.data;
+          })
+          .catch(err => {
+            downloadError("данных", err.response?.status);
+          });
+      }
     },
   },
 };
