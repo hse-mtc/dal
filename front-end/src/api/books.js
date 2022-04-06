@@ -28,6 +28,7 @@ export function deleteBook(id) {
 }
 
 export function uploadBook(data) {
+  console.log(data);
   return request({
     url: BASE_API_URL + books,
     method: "POST",
@@ -52,6 +53,7 @@ export function getFavoriteBooks(params) {
 }
 
 export function saveFavBook(data) {
+  console.log(data);
   return request({
     url: BASE_API_URL + favorite,
     method: "post",

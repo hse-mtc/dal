@@ -5,7 +5,7 @@
       <Statistics />
     </el-col>
     <el-col :span="24">
-      <div class="tabs">
+      <div v-if="personType !== 'student'" class="tabs">
         <div
           v-for="item in tabs"
           :key="item.value"
@@ -40,6 +40,7 @@ import PageHeader from "@/common/PageHeader";
 import MyDisciplines from "@/components/MyMaterials/MyDisciplines";
 import MyDocuments from "@/components/MyMaterials/MyDocuments";
 import Library from "@/components/Library/Library";
+import { UserModule } from "@/store";
 
 export default {
   name: "MyMaterials",
@@ -61,6 +62,18 @@ export default {
       ],
     };
   },
+  computed: {
+    personType() {
+      return UserModule.personType;
+    },
+  },
+
+  mounted() {
+    if (this.personType === "student") {
+      this.activeTab = "books";
+    }
+  },
+
   methods: {
     changeTab(value) {
       this.activeTab = value;
