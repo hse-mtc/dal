@@ -216,6 +216,13 @@ def get_milfaculty_head_permissions():
         "publishers.get.all",
         "approve-teacher.get.milfaculty",
         "permissions.get.all",
+        "approve-student.get.self",
+        "approve-student.get.milgroup",
+        "approve-student.patch.self",
+        "approve-student.patch.milgroup",
+        "subjects.post.all",
+        "subjects.patch.all",
+        "subjects.delete.all",
     ]
 
     res = []
