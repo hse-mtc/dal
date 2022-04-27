@@ -198,20 +198,20 @@ export const constantRoutes = [
         path: "apanel/",
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
-        meta: { title: "Панель администратора", icon: "journal", permissions: ["approve-teacher.get.self", "permissions.get.self", "publishers.get.self", "subjects.get.self"] },
+        meta: { title: "Панель администратора", icon: "journal", permissions: ["approve-student.get.self"] },
         children: [
           {
             path: "approve-teachers/",
             name: "approve-teachers",
             component: () => import("@/components/Apanel/Approve/ApproveTeachers.vue"),
-            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.self"]  },
+            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.self"] },
             hidden: true,
           },
           {
             path: "approve-students/",
             name: "approve-students",
             component: () => import("@/components/Apanel/Approve/ApproveStudents.vue"),
-            meta: { title: "Подтверждения" },
+            meta: { title: "Подтверждения", permissions: ["approve-student.get.self"] },
             hidden: true,
           },
           {

@@ -16,12 +16,12 @@ import { UserModule } from "@/store";
 })
 class AdminPanelPage extends Vue {
   defaultTabs = [
-    { label: "Подтверждения преподавателей", to: "/apanel/approve-teachers/", permissions: [] },
-    { label: "Подтверждения студентов", to: "/apanel/approve-students/", permissions: [] },
+    { label: "Подтверждения преподавателей", to: "/apanel/approve-teachers/", permissions: ["approve-teacher.get.self"] },
+    { label: "Подтверждения студентов", to: "/apanel/approve-students/", permissions: ["approve-student.get.self"] },
     { label: "Управление пользователями", to: "/apanel/userManagement/", permissions: ["permissions.get.all", "permissions.patch.all", "permissions.post.all", "permissions.delete.all"] },
     { label: "Управление ролями", to: "/apanel/roleManagement/", permissions: ["permissions.get.all", "permissions.patch.all", "permissions.post.all", "permissions.delete.all"] },
-    { label: "Справочники", to: "/apanel/dictionaries/", permissions: [] },
-    { label: "Учебные дисциплины", to: "/apanel/subjects/", permissions: ["subjects.get.all", "subjects.get.self", "subjects.post.all", "subjects.patch.all", "subjects.delete.all"] },
+    { label: "Справочники", to: "/apanel/dictionaries/", permissions: ["publishers.post.all", "authors.post.all", "milgroups.post.milfaculty", "achievements.post.milfaculty"] },
+    { label: "Учебные дисциплины", to: "/apanel/subjects/", permissions: ["subjects.post.all", "subjects.patch.all", "subjects.delete.all"] },
   ]
 
   tabs = []
