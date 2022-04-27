@@ -340,8 +340,13 @@ class ApplicantForm extends Vue {
     });
 
     const getMaxLengthValidator = max => ({
-      max,
-      message: `Максимальное количество символов - ${max}`,
+      validator: (rule, value, cb) => {
+        if (value && value.length > max) {
+          cb(new Error(`Максимальное количество символов - ${max}`));
+        } else {
+          cb();
+        }
+      },
     });
 
     const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
@@ -366,7 +371,7 @@ class ApplicantForm extends Vue {
         "permanent_address",
         "date",
       ]),
-      city: [required, getMaxLengthValidator(64)],
+      place: [required, getMaxLengthValidator(64)],
       country: [required, getMaxLengthValidator(64)],
       personal_email: [mailValidator],
       personal_phone_number: [phoneValidator],
@@ -423,7 +428,7 @@ class ApplicantForm extends Vue {
       birthInfo: {
         ...makeRequired(["date"]),
         country: [required, getMaxLengthValidator(64)],
-        city: [required, getMaxLengthValidator(64)],
+        place: [required, getMaxLengthValidator(64)],
       },
       passport: {
         ...makeRequired(["ufms_name", "issue_date"]),
