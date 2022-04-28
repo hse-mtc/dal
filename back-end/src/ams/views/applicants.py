@@ -226,7 +226,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         campus = request.query_params["campus"]
         milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
 
-        path = excel_generator(students.filter(university_info__program__faculty__campus=campus), milspecialties)
+        path = excel_generator(
+            students.filter(university_info__program__faculty__campus=campus),
+            milspecialties,
+        )
         with open(path, "rb") as file:
             export = file.read()
         path.unlink(missing_ok=True)
