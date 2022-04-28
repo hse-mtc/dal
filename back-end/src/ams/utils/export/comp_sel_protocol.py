@@ -222,7 +222,7 @@ def _make_applicant_row(
         row += [("", formats.table_date)]
 
     if (ui := applicant.university_info) is not None:
-        row += [(ui.program.code, formats.table_center)]
+        row += [(f"{ui.program.title} ({ui.program.code})", formats.table_center)]
     else:
         row += [("", formats.table_center)]
 

@@ -46,6 +46,7 @@ def _set_row_col_sizes(
 ) -> None:
     worksheet.set_column(0, 0, 30)  # ФИО
     worksheet.set_column(1, 1, 15)  # Дата рождения
+    worksheet.set_column(2, 2, 45)  # Дата рождения
     worksheet.set_column(3, 3, 15)  # Кампус
     worksheet.set_column(5, 5, 13)  # Средний балл / 100
     worksheet.set_column(6, 6, 34)  # РМО
@@ -95,7 +96,7 @@ def _make_applicant_row(
 
     if (ui := applicant.university_info) is not None:
         row += [
-            (ui.program.code, formats.table_center),
+            (f"{ui.program.title} ({ui.program.code})", formats.table_center),
             (ui.program.faculty.get_campus_display(), formats.table_center),
         ]
     else:
