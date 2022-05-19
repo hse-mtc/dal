@@ -39,6 +39,13 @@ class Program(models.Model):
     def __str__(self):
         return f"[{self.code}] {self.title}"
 
+    @property
+    def digit_code(self) -> str:
+        words = self.code.split()
+        if len(words) > 0:
+            return words[0]
+        return ""
+
     class Meta:
         verbose_name = "Educational Program"
         verbose_name_plural = "Educational Programs"
