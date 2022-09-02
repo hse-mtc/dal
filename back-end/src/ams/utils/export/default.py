@@ -52,8 +52,8 @@ def _set_row_col_sizes(
     worksheet.set_column(6, 6, 15)  # Кампус
     worksheet.set_column(6, 6, 13)  # Средний балл / 100
     worksheet.set_column(7, 7, 34)  # РМО
-    worksheet.set_default_row(30) # Высота строки
-    worksheet.set_row(0, 40) # Заголовок
+    worksheet.set_default_row(30)  # Высота строки
+    worksheet.set_row(0, 40)  # Заголовок
 
 
 def _fill_header(
