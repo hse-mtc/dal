@@ -166,7 +166,7 @@ export default {
       this.awaitingResponse = false;
     }
 
-    this.studentPosts.PRIVATE_STUDENT = { label:"-", value: null };
+    this.studentPosts.PRIVATE_STUDENT = { label: "-", value: null };
   },
 
   methods: {
