@@ -5,7 +5,10 @@ from rest_framework import serializers
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from common.serializers.milspecialties import MilspecialtySerializer
-from common.serializers.universities import UniversityInfoSerializer
+from common.serializers.universities import (
+    UniversityInfoSerializer,
+    UniversityInfoMutateSerializer,
+)
 from common.serializers.personal import (
     BirthInfoSerializer,
     ContactInfoSerializer,
@@ -32,7 +35,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
-
+    passport = PassportSerializer(read_only=True)
     photo = serializers.SerializerMethodField(read_only=True)
 
     family = RelativeSerializer(read_only=True, many=True)
@@ -53,15 +56,14 @@ class ApplicantMutateSerializer(
 ):
     birth_info = BirthInfoSerializer(required=False)
     passport = PassportSerializer(required=False)
-    university_info = UniversityInfoSerializer(required=False)
+    university_info = UniversityInfoMutateSerializer(required=False)
     contact_info = ContactInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
-    application_process = ApplicationProcessSerializer(required=False)
     generate_documents = serializers.BooleanField(required=False)
 
     class Meta:
         model = Applicant
-        fields = "__all__"
+        exclude = ["application_process"]
 
     def create(self, validated_data):
         self.create_photo(validated_data)

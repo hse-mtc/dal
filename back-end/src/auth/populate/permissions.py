@@ -1,6 +1,28 @@
 from auth.models import Permission
 
 
+def get_applicant_permissions():
+    values = [
+        "applicant.applicant.self",
+        "applicants.get.self",
+        "applicants.post.self",
+        "applicants.put.self",
+        "applicants.patch.self",
+    ]
+    res = []
+    for val in values:
+        viewset, method, scope = val.split(".")
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(
+            Permission.objects.get(
+                viewset=viewset,
+                method=method,
+                scope=int(getattr(Permission.Scope, scope.upper())),
+            )
+        )
+    return res
+
+
 def get_student_permissions():
     values = [
         "students.get.self",

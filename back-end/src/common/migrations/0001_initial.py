@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('campus', models.CharField(choices=[('MO', 'Москва'), ('SP', 'Санкт-Петербург'), ('NN', 'Нижний Новгород'), ('PE', 'Пермь')], max_length=2)),
-                ('title', models.CharField(max_length=127)),
+                ('title', models.CharField(max_length=255)),
                 ('abbreviation', models.CharField(blank=True, max_length=31)),
             ],
             options={

@@ -3,10 +3,12 @@ import logging as log
 
 import jinja2
 
+import shutil
+
 from docxtpl import DocxTemplate
 
 from auth import obtain_credentials
-from gmail import GmailService
+from email_service import EmailService
 from drive import DriveService
 from campuses import Campus
 from family import RelativeType
@@ -14,6 +16,11 @@ from proto import Applicant
 from config import (
     TEMPLATES_DIR,
     GENERATED_DIR,
+    EMAIL_HOST,
+    EMAIL_PORT,
+    EMAIL_HOST_USER,
+    EMAIL_HOST_PASSWORD,
+    EMAIL_USE_TLS,
 )
 
 from email_utils import create_message
@@ -49,6 +56,9 @@ class WatchDocService:
     """
     def generate_documents(self, applicant: Applicant):
         applicant_dir = GENERATED_DIR / applicant.contact_info.corporate_email
+
+        if applicant_dir.exists():
+            shutil.rmtree(applicant_dir, ignore_errors=True)
         applicant_dir.mkdir(exist_ok=True)
 
         parents = [
@@ -89,6 +99,7 @@ class WatchDocService:
         applicant_folder = self.ds.obtain_folder(
             name=folder_name,
             parents=[self._campus_folders[campus]["id"]],
+            delete_if_exists=True
         )
 
         for (_, rus) in DOCUMENTS:
@@ -110,7 +121,7 @@ class WatchDocService:
     def notify(self, applicant: Applicant, folder_link: str):
         email = applicant.contact_info.corporate_email
         msg = create_message(to=email, link=folder_link)
-        self.gs.send_message(body=msg)
+        self.email_service.send_message(email, body=msg)
 
     # --------------------------------------------------------------------------
     # Internal methods
@@ -122,8 +133,14 @@ class WatchDocService:
         # Credentials
         credentials = obtain_credentials()
 
-        # Gmail
-        self.gs = GmailService(credentials)
+        # Email
+        self.email_service = EmailService(
+            EMAIL_HOST,
+            EMAIL_PORT,
+            EMAIL_HOST_USER,
+            EMAIL_HOST_PASSWORD,
+            EMAIL_USE_TLS
+        )
 
         # Drive
         self.ds = DriveService(credentials)

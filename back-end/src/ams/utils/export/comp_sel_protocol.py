@@ -45,6 +45,7 @@ def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
 
             for col, (data, cell_format) in enumerate(cells):
                 worksheet.write(row, col, data, cell_format)
+            worksheet.set_row(row, height=50)
 
         # row = index of last element
         _fill_footer(
@@ -62,25 +63,26 @@ def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
 def _set_row_col_sizes(
     worksheet: xlsxwriter.Workbook.worksheet_class,
 ) -> None:
-    worksheet.set_row(12, height=114)
-    worksheet.set_row(13, height=114)
+    worksheet.set_row(12, height=130)
+    worksheet.set_row(13, height=130)
     # xlsxwriter has different dimensions for rows and cols
     # for some odd reason. All values here are gixen in pixels
     # (and then divided by 6)
-    worksheet.set_column(0, 0, width=28 / 6)
-    worksheet.set_column(1, 1, width=180 / 6)
-    worksheet.set_column(2, 2, width=75 / 6)
-    worksheet.set_column(3, 3, width=93 / 6)
-    worksheet.set_column(4, 4, width=53 / 6)
-    worksheet.set_column(5, 5, width=48 / 6)
-    worksheet.set_column(6, 6, width=46 / 6)
-    worksheet.set_column(7, 7, width=49 / 6)
-    worksheet.set_column(8, 8, width=53 / 6)
-    worksheet.set_column(9, 9, width=48 / 6)
-    worksheet.set_column(10, 10, width=56 / 6)
-    worksheet.set_column(11, 11, width=53 / 6)
-    worksheet.set_column(12, 12, width=74 / 6)
-    worksheet.set_column(13, 13, width=77 / 6)
+    worksheet.set_column(0, 0, width=51 / 6)
+    worksheet.set_column(1, 1, width=171 / 6)
+    worksheet.set_column(2, 2, width=94 / 6)
+    worksheet.set_column(3, 3, width=92 / 6)
+    worksheet.set_column(4, 4, width=177 / 6)
+    worksheet.set_column(5, 5, width=43 / 6)
+    worksheet.set_column(6, 6, width=48 / 6)
+    worksheet.set_column(7, 7, width=46 / 6)
+    worksheet.set_column(8, 8, width=49 / 6)
+    worksheet.set_column(9, 9, width=53 / 6)
+    worksheet.set_column(10, 10, width=48 / 6)
+    worksheet.set_column(11, 11, width=56 / 6)
+    worksheet.set_column(12, 12, width=53 / 6)
+    worksheet.set_column(13, 13, width=74 / 6)
+    worksheet.set_column(14, 14, width=77 / 6)
 
 
 def _fill_header(
@@ -90,55 +92,55 @@ def _fill_header(
 ) -> None:
     # Insert header
     worksheet.merge_range(
-        "K1:N1",
+        "L1:O1",
         "УТВЕРЖДАЮ",
         formats.align_center,
     )
     worksheet.merge_range(
-        "K2:N2",
+        "L2:O2",
         "Председатель конкурсной комиссии",
         formats.align_center,
     )
     worksheet.merge_range(
-        "K3:M3",
+        "L3:N3",
         "полковник",
         formats.align_left,
     )
     worksheet.write(
-        "N3",
+        "O3",
         "А.Е. Усик",
         formats.align_center,
     )
 
     worksheet.merge_range(
-        "K5:N5",
+        "L5:O5",
         get_today_date_rus(),
         formats.align_center,
     )
 
     worksheet.merge_range(
-        "A7:N7",
+        "A7:O7",
         "ПРОТОКОЛ",
         formats.header,
     )
     worksheet.merge_range(
-        "A8:N8",
+        "A8:O8",
         "конкурсного отбора граждан, изъявивших желание "
         "заключить договор об обучении по программе военной подготовки",
         formats.header,
     )
     worksheet.merge_range(
-        "A9:N9",
+        "A9:O9",
         "офицеров (сержантов, солдат) запаса в военном учебном центре при",
         formats.header,
     )
     worksheet.merge_range(
-        "A10:N10",
+        "A10:O10",
         "Национальном исследовательском университете " '"Высшая школа экономики"',
         formats.header,
     )
     worksheet.merge_range(
-        "A11:N11",
+        "A11:O11",
         f"по военно-учетной специальности {milspecialty_code}",
         formats.header,
     )
@@ -160,51 +162,56 @@ def _fill_header(
     )
     worksheet.merge_range(
         "E13:E14",
+        "Наименование программы",
+        formats.table_center,
+    )
+    worksheet.merge_range(
+        "F13:F14",
         "Результаты медицинского освидетельствования",
         formats.table_center_vertical,
     )
     worksheet.merge_range(
-        "F13:F14",
+        "G13:G14",
         "Результаты профессионального психологического отбора",
         formats.table_center_vertical,
     )
     worksheet.merge_range(
-        "G13:G14",
+        "H13:H14",
         "Преимущественное право",
         formats.table_center_vertical,
     )
     worksheet.merge_range(
-        "H13:K13",
+        "I13:L13",
         "Результаты проверки уровня\nфизической подготовленности",
         formats.table_center,
     )
-    worksheet.write("H14", "Сила", formats.table_center_vertical)
-    worksheet.write("I14", "Скорость", formats.table_center_vertical)
-    worksheet.write("J14", "Выносливость", formats.table_center_vertical)
+    worksheet.write("I14", "Сила", formats.table_center_vertical)
+    worksheet.write("J14", "Скорость", formats.table_center_vertical)
+    worksheet.write("K14", "Выносливость", formats.table_center_vertical)
     worksheet.write(
-        "K14",
+        "L14",
         "Результат по 100 бальной шкале",
         formats.table_center_vertical,
     )
     worksheet.merge_range(
-        "L13:L14",
+        "M13:M14",
         "Оценка текущей успеваемости\n(по 100 бальной шкале)",
         formats.table_center_vertical,
     )
     worksheet.merge_range(
-        "M13:M14",
+        "N13:N14",
         "Итоговый результат",
         formats.table_center,
     )
     worksheet.merge_range(
-        "N13:N14",
+        "O13:O14",
         "Решение о допуске к военной подготовке в военном учебном центре",
         formats.table_center_vertical,
     )
 
     worksheet.write("A15", "1", formats.table_center)
     worksheet.merge_range("B15:C15", "2", formats.table_center)
-    worksheet.write_row(14, 3, list(range(3, 14)), formats.table_center)
+    worksheet.write_row(14, 3, list(range(3, 15)), formats.table_center)
 
 
 def _make_applicant_row(
@@ -222,7 +229,8 @@ def _make_applicant_row(
         row += [("", formats.table_date)]
 
     if (ui := applicant.university_info) is not None:
-        row += [(ui.program.code, formats.table_center)]
+        row += [(ui.program.digit_code, formats.table_center)]
+        row += [(ui.program.title, formats.table_center)]
     else:
         row += [("", formats.table_center)]
 
@@ -266,7 +274,7 @@ def _fill_footer(
 ) -> None:
     row = start_row + 4  # 3 blank lines
     worksheet.merge_range(
-        f"A{row}:N{row}",
+        f"A{row}:O{row}",
         "2. Список граждан не допущенных к конкурсному отбору",
         formats.table_center,
     )

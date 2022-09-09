@@ -20,12 +20,17 @@ class BirthInfoSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
-class ContactInfoSerializer(UniqueFieldsMixin, serializers.ModelSerializer):
+class ContactInfoSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
+        if "corporate_email" not in validated_data:
+            return super().create(validated_data)
+
         corporate_email = validated_data.pop("corporate_email")
 
         try:
-            contact_info = ContactInfo.objects.get(corporate_email=corporate_email)
+            contact_info = ContactInfo.objects.exclude(
+                corporate_email__isnull=True
+            ).get(corporate_email=corporate_email)
             result = self.update(contact_info, validated_data)
             validated_data["corporate_email"] = corporate_email
             return result
@@ -76,6 +81,7 @@ class ContactInfoSerializer(UniqueFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = ContactInfo
         exclude = ["id"]
+        extra_kwargs = {"corporate_email": {"validators": []}}
 
 
 class PhotoSerializer(serializers.ModelSerializer):

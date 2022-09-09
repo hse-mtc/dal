@@ -83,7 +83,7 @@ class User extends VuexModule {
     const { email, password } = userInfo;
 
     try {
-      const { data } = await login({ email: email.trim(), password });
+      const { data } = await login({ email: email.trim().toLowerCase(), password });
       this.SET_TOKENS(data);
       this.SET_USER_ID(tokenService.userId);
       return true;

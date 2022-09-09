@@ -22,9 +22,9 @@
           >
             <el-option
               v-for="item in programs"
-              :key="item.code"
-              :label="item.code"
-              :value="item.code"
+              :key="item"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-col>
@@ -122,7 +122,7 @@ import {
   APPLICATIONS_EXPORT_LINK,
   APPLICATIONS_CSP_EXPORT_LINK,
 } from "@/api/applicants";
-import { getPrograms } from "@/api/reference-book";
+import { getProgramsByCampus } from "@/api/reference-book";
 
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
@@ -187,7 +187,9 @@ export default {
   methods: {
     async fetchPrograms() {
       try {
-        this.programs = (await getPrograms()).data;
+        const programs = (await getProgramsByCampus(this.selectedCampus)).data;
+        const uniquePrograms = [...new Set(programs.map(program => program.code))];
+        this.programs = uniquePrograms;
       } catch (e) {
         console.log("Не удалось загрузить программы", e);
       }
@@ -200,6 +202,7 @@ export default {
     },
     async changeCampus(campus) {
       this.selectedCampus = campus;
+      await this.fetchPrograms();
       await this.fetchData();
     },
     async fetchData(page = 1) {
@@ -214,7 +217,7 @@ export default {
           {
             search: this.searchQuery,
             campus: this.selectedCampus,
-            program: this.selectedProgram,
+            program_code: this.selectedProgram,
           },
         );
         data = response.data;

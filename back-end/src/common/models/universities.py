@@ -13,7 +13,7 @@ class Faculty(models.Model):
         choices=Campus.choices,
         max_length=2,
     )
-    title = models.CharField(max_length=127)
+    title = models.CharField(max_length=255)
     abbreviation = models.CharField(
         max_length=31,
         blank=True,
@@ -38,6 +38,13 @@ class Program(models.Model):
 
     def __str__(self):
         return f"[{self.code}] {self.title}"
+
+    @property
+    def digit_code(self) -> str:
+        words = self.code.split()
+        if len(words) > 0:
+            return words[0]
+        return ""
 
     class Meta:
         verbose_name = "Educational Program"
