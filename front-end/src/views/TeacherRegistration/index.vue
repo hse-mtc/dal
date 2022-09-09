@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Register from "@/components/Register/index";
+import Register from "@/components/TeacherRegistration/index";
 
 export default {
   components: { Register },

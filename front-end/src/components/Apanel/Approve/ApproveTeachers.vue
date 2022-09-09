@@ -1,17 +1,5 @@
 <template>
   <div>
-    <div style="margin: -20px 0 20px 0">
-      <router-link to="/register/">
-        <el-button type="primary">
-          Зарегистрировать преподавателя
-        </el-button>
-      </router-link>
-      <router-link to="/student-register/" style="margin-left: 10px">
-        <el-button type="primary">
-          Зарегистрировать студента
-        </el-button>
-      </router-link>
-    </div>
     <el-row class="pageTitle" style="margin-bottom: 15px">
       <h1>Подтверждения преподавателей</h1>
     </el-row>

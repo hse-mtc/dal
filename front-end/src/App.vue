@@ -8,7 +8,7 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 
 const WHITELIST = [
-  "Register", "Login", "ApplicantForm", "Subjects", "Subject",
+  "TeacherRegistration", "Login", "ApplicantForm", "Subjects", "Subject",
 ];
 
 @Component({

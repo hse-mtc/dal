@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import RegisterTeacher from "@/components/Register/Teacher";
+import RegisterTeacher from "@/components/TeacherRegistration/Teacher";
 
 export default {
   components: { RegisterTeacher },

@@ -7,7 +7,7 @@ import getPageTitle from "@/utils/get-page-title";
 
 NProgress.configure({ showSpinner: false });
 
-const WHITELIST = ["/login/", "/applicant-form/", "/register/", "/student-register/"];
+const WHITELIST = ["/login/", "/applicant-form/", "/teacher-registration/", "/student-registration/"];
 
 router.beforeEach((to, from, next) => {
   NProgress.start();
