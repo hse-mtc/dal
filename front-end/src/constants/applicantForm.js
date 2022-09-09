@@ -79,11 +79,6 @@ export const BIRTH_INFO = {
 };
 
 export const CONTACT_INFO = {
-  corporate_email: {
-    component: "text",
-    title: "Корпоративная почта",
-    props: { placeholder: "apchekhov@edu.hse.ru" },
-  },
   personal_email: {
     component: "text",
     title: "Личная почта",
@@ -150,7 +145,7 @@ export const UNIVERSITY_INFO = {
   },
   program: {
     component: "select",
-    title: "Код образовательной программы",
+    title: "Образовательная программа",
     props: { options: [] },
   },
   group: {
@@ -267,7 +262,7 @@ export const HEADERS_BY_STEPS = {
   agreement: "Соглашение",
 };
 
-function dataURLtoFile(dataurl, filename) {
+export function dataURLtoFile(dataurl, filename) {
   const arr = dataurl.split(",");
   const mime = arr[0].match(/:(.*?);/)[1];
   const bstr = atob(arr[1]);
@@ -311,7 +306,6 @@ export const devInitData = {
     group: "БИВ123",
   },
   contactInfo: {
-    corporate_email: "test@edu.hse.ru",
     personal_email: "test@mail.ru",
     personal_phone_number: "72345678900",
   },

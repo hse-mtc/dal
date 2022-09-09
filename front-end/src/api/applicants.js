@@ -4,6 +4,7 @@ import { AMS_URLS, BASE_API_URL } from "@/constants/api";
 const {
   applicants: {
     applicants,
+    register,
     applications,
     applicationsExport,
     applicationsCSPExport,
@@ -21,6 +22,25 @@ export function postApplicant(data) {
   });
 }
 
+export function putApplicant(id, data) {
+  return request({
+    url: `${BASE_API_URL}${applicants}${id}/`,
+    method: "put",
+    data: {
+      ...data,
+      generate_documents: __PROD__,
+    },
+  });
+}
+
+export function postEmail(data) {
+  return request({
+    url: BASE_API_URL + register,
+    method: "post",
+    data,
+  });
+}
+
 export const getApplicationsStudents = (page, pageSize, filters) => request({
   url: BASE_API_URL + applications,
   method: "GET",
@@ -35,6 +55,11 @@ export const updateStudentApplicationInfo = (id, data) => request({
   url: `${BASE_API_URL}${applicants}${id}/application/`,
   method: "PATCH",
   data,
+});
+
+export const findApplicant = id => request({
+  url: `${BASE_API_URL}${applicants}${id}/`,
+  method: "GET",
 });
 
 export const APPLICATIONS_EXPORT_LINK = `${BASE_API_URL}${applicationsExport}`;

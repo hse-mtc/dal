@@ -121,11 +121,6 @@ class GenericForm extends Vue {
 
         isValid = true;
       } else {
-        this.$message({
-          type: "error",
-          message: "Проверьте правильность заполняемых полей",
-        });
-
         isValid = false;
       }
     });

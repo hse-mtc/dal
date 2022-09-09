@@ -13,6 +13,7 @@ export const AUTH_URLS = {
 export const AMS_URLS = {
   applicants: {
     applicants: "ams/applicants/",
+    register: "ams/register/",
     applications: "ams/applicants/applications/",
     applicationsExport: "ams/applicants/applications/export/",
     applicationsCSPExport: "ams/applicants/applications/competitive-selection-protocol/export/",

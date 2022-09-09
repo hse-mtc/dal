@@ -4,6 +4,7 @@ from datetime import (
     datetime,
     timedelta,
 )
+from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
@@ -27,6 +28,7 @@ from common.utils.date import get_date_range
 from auth.models import Group
 from auth.populate.users import create_users
 from auth.populate.permissions import (
+    get_applicant_permissions,
     get_student_permissions,
     get_teacher_permissions,
     get_milfaculty_head_permissions,
@@ -103,15 +105,33 @@ class Command(BaseCommand):
 
         users = create_users()
 
+        applicants, _ = Group.objects.get_or_create(name="Абитуриент")
         students, _ = Group.objects.get_or_create(name="Студент")
         teachers, _ = Group.objects.get_or_create(name="Преподаватель")
         milfaculty_heads, _ = Group.objects.get_or_create(name="Начальник цикла")
 
+        applicants.permissions.set(get_applicant_permissions())
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(
             get_milfaculty_head_permissions()
             + get_student_registration_milfaculty_head_permissions()
+        )
+
+        applicants.user_set.add(
+            User.objects.get(email=f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"petrov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"sidorov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"borisov@{TEST_CORPORATE_EMAIL_DOMAIN}")
+        )
+        applicants.user_set.add(
+            User.objects.get(email=f"nskhrushchev@{TEST_CORPORATE_EMAIL_DOMAIN}")
         )
 
         students.user_set.add(User.objects.get(email="gakhromov@mail.com"))

@@ -11,57 +11,59 @@
       <Breadcrumb class="breadcrumb-container" />
 
       <div class="right-menu">
-        <el-popover v-model="birthdaysVisible" width="500" placement="bottom-end">
-          <div class="birthdays-list">
-            <div class="teachers">
-              <el-divider content-position="left" class="title">
-                Преподаватели
-              </el-divider>
-              <template v-if="teachers.length">
-                <BirthdayItem
-                  v-for="item in teachers"
-                  :key="item.id"
-                  :person="item"
-                  type="teacher"
-                  @clicked="birthdaysVisible = false"
-                />
-              </template>
-              <span v-else class="empty">
-                В течение ближайшей недели именинников нет
-                <SvgIcon icon-class="sad" />
-              </span>
-            </div>
+        <div v-if="!hasPerm()">
+          <el-popover v-model="birthdaysVisible" width="500" placement="bottom-end">
+            <div class="birthdays-list">
+              <div class="teachers">
+                <el-divider content-position="left" class="title">
+                  Преподаватели
+                </el-divider>
+                <template v-if="teachers.length">
+                  <BirthdayItem
+                    v-for="item in teachers"
+                    :key="item.id"
+                    :person="item"
+                    type="teacher"
+                    @clicked="birthdaysVisible = false"
+                  />
+                </template>
+                <span v-else class="empty">
+                  В течение ближайшей недели именинников нет
+                  <SvgIcon icon-class="sad" />
+                </span>
+              </div>
 
-            <div class="students">
-              <el-divider content-position="left" class="title">
-                Студенты
-              </el-divider>
-              <template v-if="students.length">
-                <BirthdayItem
-                  v-for="item in students"
-                  :key="item.id"
-                  :person="item"
-                  type="student"
-                  @clicked="birthdaysVisible = false"
-                />
-              </template>
-              <span v-else class="empty">
-                В течение ближайшей недели именинников нет
-                <SvgIcon icon-class="sad" />
-              </span>
+              <div class="students">
+                <el-divider content-position="left" class="title">
+                  Студенты
+                </el-divider>
+                <template v-if="students.length">
+                  <BirthdayItem
+                    v-for="item in students"
+                    :key="item.id"
+                    :person="item"
+                    type="student"
+                    @clicked="birthdaysVisible = false"
+                  />
+                </template>
+                <span v-else class="empty">
+                  В течение ближайшей недели именинников нет
+                  <SvgIcon icon-class="sad" />
+                </span>
+              </div>
             </div>
-          </div>
-          <el-badge
-            slot="reference"
-            :is-dot="anyBirthday"
-            class="birthdays-trigger"
-          >
-            <button class="birthdaysButton">
-              <SvgIcon icon-class="gift" />
-              <span class="birthdaysButtonText">Дни рождения</span>
-            </button>
-          </el-badge>
-        </el-popover>
+            <el-badge
+              slot="reference"
+              :is-dot="anyBirthday"
+              class="birthdays-trigger"
+            >
+              <button class="birthdaysButton">
+                <SvgIcon icon-class="gift" />
+                <span class="birthdaysButtonText">Дни рождения</span>
+              </button>
+            </el-badge>
+          </el-popover>
+        </div>
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper m-0" style="font-size: 19px">
             <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
@@ -92,6 +94,7 @@ import { surnameWithInitials } from "@/utils/person";
 import { AppModule, UserModule } from "@/store";
 import { getStudentBirthdays, getTeacherBirthdays } from "@/api/birthdays";
 import { getError } from "@/utils/message";
+import { hasPermission } from "@/utils/permissions";
 import BirthdayItem from "./BirthdayItem.vue";
 
 export default {
@@ -128,9 +131,14 @@ export default {
     },
   },
   async created() {
-    await this.fetchBirthdays();
+    if (!hasPermission(["applicant.applicant.self"])) {
+      await this.fetchBirthdays();
+    }
   },
   methods: {
+    hasPerm() {
+      return hasPermission(["applicant.applicant.self"]);
+    },
     surnameWithInitials,
     logout() {
       UserModule.logout();

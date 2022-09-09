@@ -122,7 +122,7 @@
       <div :class="$style.footer">
         <p :class="$style.footerText">
           При возникновении технических трудностей обращайтесь по адресу
-          <a href="mailto:dal.mec.hse@gmail.com">dal.mec.hse@gmail.com</a>. В
+          <a href="mailto:hse.mec.dal@gmail.com">hse.mec.dal@gmail.com</a>. В
           письме подробно опишите ситуацию и проблему, с которой Вы столкнулись.
         </p>
       </div>
@@ -131,6 +131,13 @@
     <template v-else>
       <div :class="$style.thanks">
         <h2>Форма успешно отправлена</h2>
+      </div>
+      <div style="display: block; margin: 15px auto">
+        <router-link to="/">
+          <el-button type="primary">
+            На главную
+          </el-button>
+        </router-link>
       </div>
     </template>
   </div>
@@ -146,7 +153,7 @@ import _omit from "lodash/omit";
 import GenericForm from "@/common/Form/index.vue";
 
 import allowMobileView from "@/utils/allowMobileView";
-import { postApplicant } from "@/api/applicants";
+import { findApplicant, postApplicant, putApplicant } from "@/api/applicants";
 
 import {
   ABOUT,
@@ -162,10 +169,13 @@ import {
   STEPS_RU,
   getRelationData,
   STEPS,
+  dataURLtoFile,
 } from "@/constants/applicantForm";
 
 import { getMilSpecialties, getProgramsByCampus } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
+import { UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 
 const createData = fields => Object.keys(fields).reduce(
   (memo, item) => ({
@@ -178,6 +188,14 @@ const createData = fields => Object.keys(fields).reduce(
 @Component({
   name: "ApplicantForm",
   components: { GenericForm },
+  computed: {
+    userId() {
+      return UserModule.userId;
+    },
+    personId() {
+      return UserModule.personId;
+    },
+  },
 })
 class ApplicantForm extends Vue {
   @Ref() form
@@ -203,6 +221,54 @@ class ApplicantForm extends Vue {
           agreement: createData(AGREEMENT),
         },
     };
+  }
+
+  mounted() {
+    const id = this.userId;
+    findApplicant(this.personId).then(request => {
+      // eslint-disable-next-line camelcase
+      const ap_data = request.data;
+      console.log(ap_data);
+      this.applicantData.about = {
+        surname: ap_data.surname,
+        name: ap_data.name,
+        patronymic: ap_data.patronymic,
+        citizenship: ap_data.citizenship,
+        permanent_address: ap_data.permanent_address,
+        surname_genitive: ap_data.surname_genitive,
+        name_genitive: ap_data.name_genitive,
+        patronymic_genitive: ap_data.patronymic_genitive,
+      };
+
+      this.applicantData.birthInfo = ap_data.birth_info;
+      this.applicantData.passport = ap_data.passport;
+      this.applicantData.universityInfo = ap_data.university_info;
+      this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
+      this.applicantData.contactInfo = ap_data.contact_info;
+      this.applicantData.photo = {
+        photo: [
+          {
+            name: "photo.png",
+            percentage: 0,
+            raw: dataURLtoFile(`data:image/png;base64,${ap_data.photo}`, "photo.png"),
+            status: "ready",
+          },
+        ],
+      };
+      const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "FA"));
+      const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "MO"));
+      if (father.length > 0) {
+        // eslint-disable-next-line prefer-destructuring
+        this.applicantData.father = father[0];
+      }
+      if (mother.length > 0) {
+        // eslint-disable-next-line prefer-destructuring
+        this.applicantData.mother = mother[0];
+      }
+      this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "BR"));
+      this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "SI"));
+      this.applicantData.milspecialty.milspecialty = ap_data.milspecialty.id;
+    });
   }
 
   fields = {
@@ -274,8 +340,13 @@ class ApplicantForm extends Vue {
     });
 
     const getMaxLengthValidator = max => ({
-      max,
-      message: `Максимальное количество символов - ${max}`,
+      validator: (rule, value, cb) => {
+        if (value && value.length > max) {
+          cb(new Error(`Максимальное количество символов - ${max}`));
+        } else {
+          cb();
+        }
+      },
     });
 
     const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
@@ -300,7 +371,7 @@ class ApplicantForm extends Vue {
         "permanent_address",
         "date",
       ]),
-      city: [required, getMaxLengthValidator(64)],
+      place: [required, getMaxLengthValidator(64)],
       country: [required, getMaxLengthValidator(64)],
       personal_email: [mailValidator],
       personal_phone_number: [phoneValidator],
@@ -357,7 +428,7 @@ class ApplicantForm extends Vue {
       birthInfo: {
         ...makeRequired(["date"]),
         country: [required, getMaxLengthValidator(64)],
-        city: [required, getMaxLengthValidator(64)],
+        place: [required, getMaxLengthValidator(64)],
       },
       passport: {
         ...makeRequired(["ufms_name", "issue_date"]),
@@ -409,6 +480,18 @@ class ApplicantForm extends Vue {
     }
   }
 
+  parseFamilyMembers(members) {
+    return members.map(member => ({
+      citizenship: member.citizenship,
+      name: member.name,
+      patronymic: member.patronymic,
+      permanent_address: member.permanent_address,
+      surname: member.surname,
+      ...member.birth_info,
+      ...member.contact_info,
+    }));
+  }
+
   fillMilspecialtyOptions(data) {
     this.fields.milspecialty.milspecialty.props.options = data.map(
       item => ({
@@ -423,7 +506,7 @@ class ApplicantForm extends Vue {
   fillProgramOptions(data) {
     this.fields.universityInfo.program.props.options = data.map(
       item => ({
-        label: item.code,
+        label: item.title,
         value: item.id,
       }),
     );
@@ -573,14 +656,19 @@ class ApplicantForm extends Vue {
 
       reader.onload = async() => {
         data.image = reader.result;
+        data.contact_info.corporate_email = UserModule.email;
 
         try {
-          await postApplicant(data);
+          if (UserModule.personType === "applicant") {
+            await putApplicant(UserModule.personId, data);
+          } else {
+            await postApplicant(data);
+          }
           this.formSubmitted = true;
         } catch (e) {
           if (e.response.status < 500) {
             this.$alert(
-              "Проверьте правильность заполненных данных. Если проблема не решится, отправьте текст ошибки нам на почту: <a href=\"mailto:dal.mec.hse@gmail.com\">dal.mec.hse@gmail.com</a>",
+              "Проверьте правильность заполненных данных. Если проблема не решится, отправьте текст ошибки нам на почту: <a href=\"mailto:hse.mec.dal@gmail.com\">hse.mec.dal@gmail.com</a>",
               "Не удалось отправить форму",
               {
                 confirmButtonText: "Скопировать текст ошибки",

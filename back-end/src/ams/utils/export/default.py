@@ -8,6 +8,7 @@ import xlsxwriter
 from ams.models.applicants import Applicant
 
 from ams.utils.export.formats import Formats
+from common.models.universities import Program
 
 
 def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
@@ -46,9 +47,13 @@ def _set_row_col_sizes(
 ) -> None:
     worksheet.set_column(0, 0, 30)  # ФИО
     worksheet.set_column(1, 1, 15)  # Дата рождения
-    worksheet.set_column(3, 3, 15)  # Кампус
-    worksheet.set_column(5, 5, 13)  # Средний балл / 100
-    worksheet.set_column(6, 6, 34)  # РМО
+    worksheet.set_column(2, 2, 30)  # Код специальности
+    worksheet.set_column(3, 3, 45)  # Направление специальности
+    worksheet.set_column(6, 6, 15)  # Кампус
+    worksheet.set_column(6, 6, 13)  # Средний балл / 100
+    worksheet.set_column(7, 7, 34)  # РМО
+    worksheet.set_default_row(30)  # Высота строки
+    worksheet.set_row(0, 40)  # Заголовок
 
 
 def _fill_header(
@@ -58,7 +63,8 @@ def _fill_header(
     columns = [
         "ФИО",
         "Дата рождения",
-        "Код ОП",
+        "Код специальности (направление подготовки)",
+        "Наименование программы",
         "Кампус",
         "Ср. балл",
         "Ср. балл (100)",
@@ -95,7 +101,8 @@ def _make_applicant_row(
 
     if (ui := applicant.university_info) is not None:
         row += [
-            (ui.program.code, formats.table_center),
+            (ui.program.digit_code, formats.table_center),
+            (ui.program.title, formats.table_center),
             (ui.program.faculty.get_campus_display(), formats.table_center),
         ]
     else:

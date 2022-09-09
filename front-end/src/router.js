@@ -61,8 +61,23 @@ export const constantRoutes = [
     path: "/applicant-form/",
     name: "ApplicantForm",
     component: () => import("@/views/ApplicantForm/index.vue"),
-    // component: () => import("@/views/TechnicalWorks/index.vue"),
     meta: { title: "Форма поступления" },
+    hidden: true,
+  },
+
+  {
+    path: "/applicant-registration/",
+    name: "ApplicantRegistration",
+    component: () => import("@/views/ApplicantRegistration/index.vue"),
+    meta: { title: "Регистрация абитуриента" },
+    hidden: true,
+  },
+
+  {
+    path: "/applicant-to-student/",
+    name: "ApplicantToStudent",
+    component: () => import("@/views/ApplicantToStudent/index.vue"),
+    meta: { title: "Регистрация студента", icon: "journal", permissions: ["applicant.applicant.self"] },
     hidden: true,
   },
 
@@ -183,8 +198,7 @@ export const constantRoutes = [
         path: "apanel/",
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
-        meta: { title: "Панель администратора", icon: "journal" },
-        permissions: ["permissions.get.all", "subjects.get.all", "subjects.get.self"],
+        meta: { title: "Панель администратора", icon: "journal", permissions: ["permissions.get.all", "subjects.get.all", "subjects.get.self"] },
         children: [
           {
             path: "approve-teachers/",
@@ -230,12 +244,17 @@ export const constantRoutes = [
           },
         ],
       },
-
       {
         path: "applications/",
         name: "applications",
         component: () => import("@/views/ApplicantsDocuments/index.vue"),
-        meta: { title: "Учет поступления документов", icon: "table" },
+        meta: { title: "Учет поступления документов", icon: "table", permissions: ["applicants.get.all"] },
+      },
+      {
+        path: "/applicant-homepage/",
+        name: "ApplicantHomePage",
+        component: () => import("@/views/ApplicantHomePage/index.vue"),
+        meta: { title: "Личный кабинет абитуриента", icon: "journal", permissions: ["applicant.applicant.self"] },
       },
     ],
   },

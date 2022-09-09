@@ -22,7 +22,7 @@ def get_personnel_from_request_user(user) -> tp.Optional[Personnel]:
         personnel: Personnel object.
     """
 
-    candidates = ["student", "teacher"]
+    candidates = ["student", "teacher", "applicant"]
 
     for candidate in candidates:
         if hasattr(user, candidate):

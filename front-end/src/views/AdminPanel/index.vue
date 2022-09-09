@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import { hasPermission } from "@/utils/permissions";
 import { UserModule } from "@/store";
 
@@ -43,11 +43,6 @@ class AdminPanelPage extends Vue {
         this.$router.push(tabs[0].to);
       }
     }
-  }
-
-  @Watch("permissions")
-  onPermissionsChange() {
-    this.getTabs();
   }
 }
 

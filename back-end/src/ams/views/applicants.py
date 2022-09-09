@@ -13,7 +13,6 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
-from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.renderers import BaseRenderer
 
@@ -27,7 +26,7 @@ from common.constants import MUTATE_ACTIONS
 
 from common.models.milspecialties import Milspecialty
 
-from auth.permissions import BasePermission
+from auth.permissions import Permission, BasePermission
 
 from ams.models.applicants import Applicant
 
@@ -41,8 +40,10 @@ from ams.serializers.applicants import (
 from ams.filters.applicants import ApplicantFilter
 
 from lms.utils.mixins import QuerySetScopingMixin
+from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
+from django.db import transaction
 
 
 class XLSXRenderer(BaseRenderer):
@@ -58,7 +59,8 @@ class XLSXRenderer(BaseRenderer):
 class ApplicantPermission(BasePermission):
     permission_class = "applicants"
     view_name_rus = "Абитуриенты"
-    methods = ["get", "post", "patch"]
+    methods = ["get", "post", "patch", "put"]
+    scopes = [Permission.Scope.ALL, Permission.Scope.SELF]
 
 
 class ApplicantPageNumberPagination(pagination.PageNumberPagination):
@@ -80,6 +82,41 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
     pagination_class = ApplicantPageNumberPagination
 
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset.all()
+
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method
+        )
+        if scope == Permission.Scope.ALL:
+            return self.queryset.all()
+
+        if scope == Permission.Scope.SELF and (
+            self.action == "partial_update"
+            or self.action == "retrieve"
+            or self.action == "update"
+        ):
+            return self.queryset.filter(user__applicant=self.request.user.applicant)
+
+        return self.queryset.none()
+
+    def is_creation_allowed_by_scope(
+        self,
+        data: dict,
+    ) -> bool:
+        if self.request.user.is_superuser:
+            return True
+
+        scope = self.request.user.get_perm_scope(
+            self.scoped_permission_class.permission_class, self.request.method
+        )
+
+        if scope == Permission.Scope.ALL or scope == Permission.Scope.SELF:
+            return True
+
+        return False
+
     def get_serializer_class(self):
         if self.action == "applications":
             return ApplicantWithApplicationProcessSerializer
@@ -97,20 +134,47 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     def create(self, request, *args, **kwargs):
         # pylint: disable=too-many-locals
 
+        request.data["user"] = self.request.user.id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        generate_documents = serializer.validated_data.pop("generate_documents")
-        applicant = self.perform_create(serializer)
+        self.request.user.campuses = [self.request.data["university_info"]["campus"]]
+        self.request.user.save()
+        if self.is_creation_allowed_by_scope(request.data):
+            generate_documents = serializer.validated_data.pop("generate_documents")
+            applicant = self.perform_create(serializer)
 
-        if generate_documents:
-            generate_documents_for_applicant(applicant)
+            if generate_documents:
+                generate_documents_for_applicant(applicant)
 
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED,
+                headers=self.get_success_headers(serializer.data),
+            )
         return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
-            headers=self.get_success_headers(serializer.data),
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN,
         )
 
+    def update(self, request, *args, **kwargs):
+        applicant = Applicant.objects.get(pk=kwargs["pk"])
+        request.data["user"] = applicant.user.id
+        if (
+            request.data["contact_info"]["corporate_email"]
+            != applicant.contact_info.corporate_email
+        ):
+            return Response(
+                {"detail": "Bad request"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        result = super(ApplicantViewSet, self).update(request, **kwargs)
+        updated_applicant = Applicant.objects.get(pk=kwargs["pk"])
+        generate_documents = request.data["generate_documents"]
+        if generate_documents:
+            generate_documents_for_applicant(updated_applicant)
+        return result
+
+    @transaction.atomic
     def perform_create(self, serializer):
         return serializer.save()
 
@@ -132,7 +196,6 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         """Create or edit applicant's application."""
 
         # pylint: disable=unused-argument,invalid-name
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -163,7 +226,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         campus = request.query_params["campus"]
         milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
 
-        path = excel_generator(students, milspecialties)
+        path = excel_generator(
+            students.filter(university_info__program__faculty__campus=campus),
+            milspecialties,
+        )
         with open(path, "rb") as file:
             export = file.read()
         path.unlink(missing_ok=True)
@@ -225,7 +291,7 @@ def generate_documents_for_applicant(applicant: Applicant) -> None:
     data = ApplicantSerializer(instance=applicant).data
     response = requests.post(
         f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/applicants/",
-        data=JSONRenderer().render(data),
+        json=data,
     )
     # TODO(TmLev): remove debug print
     print(response.json())

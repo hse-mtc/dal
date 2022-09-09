@@ -36,6 +36,10 @@ def send_regconf_email(
     parsed = urlparse(url)
     parsed = parsed._replace(path="change-password")
     parsed = parsed._replace(query=f"token={str(token)}")
+    if address != None:
+        address = f", {address}"
+    else:
+        address = ""
 
     html_message = f"""
         <p>Здравствуйте, {address}!</p>\n
