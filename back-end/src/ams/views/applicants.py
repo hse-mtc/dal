@@ -249,7 +249,9 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     ) -> Response:
 
         applicants = self.get_queryset()
-        data = [ApplicantSerializer(instance=applicant).data for applicant in applicants]
+        data = [
+            ApplicantSerializer(instance=applicant).data for applicant in applicants
+        ]
 
         response = requests.get(
             f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/generate_docs/",
@@ -318,7 +320,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         url_path="generate-docs",
         detail=False,
         renderer_classes=[XLSXRenderer],
-        permission_classes=[],
+        permission_classes=[ApplicantPermission],
     )
     def applications_generate_docs(self, request: Request) -> Response:
         """
