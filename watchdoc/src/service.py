@@ -55,7 +55,7 @@ class WatchDocService:
         folder_link = wds.upload_documents(applicant)
         wds.notify(applicant, folder_link)
     """
-    def generate_documents(self, applicant: Applicant):
+    def generate_documents(self, applicant: Applicant, docs=DOCUMENTS):
         applicant_dir = GENERATED_DIR / applicant.contact_info.corporate_email
 
         if applicant_dir.exists():
@@ -86,7 +86,7 @@ class WatchDocService:
             **data,
         }
 
-        for (en, rus) in DOCUMENTS:
+        for (en, rus) in docs:
             doc = DocxTemplate(TEMPLATES_DIR / en)
             doc.render(context, self.jinja_env)
             doc.replace_media(DUMMY_IMAGE, photo_path)
