@@ -249,15 +249,26 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     ) -> Response:
 
         applicants = self.get_queryset()
-        for applicant in applicants:
-            data = ApplicantSerializer(instance=applicant).data
-            response = requests.post(
-                f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/generate_docs/",
-                json=data,
-            )
-        return Response(
-            status=status.HTTP_200_OK,
+        data = [ApplicantSerializer(instance=applicant).data for applicant in applicants]
+
+        response = requests.get(
+            f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/generate_docs/",
+            json=data,
         )
+
+        if response.ok:
+            return Response(
+                response.content,
+                headers={
+                    "Content-Disposition": "attachment; filename=docs.zip",
+                },
+                content_type=response.headers.get("content-type"),
+                status=response.status_code,
+            )
+        else:
+            return Response(
+                status=response.status_code,
+            )
 
     @extend_schema(
         parameters=[
