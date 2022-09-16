@@ -11,7 +11,7 @@
       <el-row class="pageTitle">
         <h1>{{ $route.meta.title }}</h1>
       </el-row>
-      <el-tabs value="absences" stretch @click="onFilter">
+      <el-tabs value="absences" stretch @tab-click="onFilter">
         <el-tab-pane label="Пропуски" name="absences">
           <el-row class="filterRow" :gutter="20">
             <el-col :span="8">
@@ -534,7 +534,7 @@ export default {
         await patchAbsence(this.uploadAttachmentAbsenceId, formData);
         patchSuccess("приложения");
         this.dialogVisible = false;
-        this.onFilter();
+        await this.onFilter();
       } catch (err) {
         patchError("приложения", err.response?.status);
       }
@@ -571,12 +571,12 @@ export default {
         this.dialogVisible = false;
       } catch {}
     },
-    handleAccept() {
+    async handleAccept() {
       try {
-        patchAbsence(this.editAbsence.id, this.editAbsence);
+        await patchAbsence(this.editAbsence.id, this.editAbsence);
         patchSuccess("пропуска");
         this.dialogVisible = false;
-        this.onFilter();
+        await this.onFilter();
       } catch (err) {
         patchError("пропуска", err.response.status);
       }
@@ -592,9 +592,9 @@ export default {
         },
       );
       try {
-        deleteAbsence({ id });
+        await deleteAbsence({ id });
         deleteSuccess("пропуска");
-        this.onFilter();
+        await this.onFilter();
       } catch (err) {
         deleteError("пропуска", err.response.status);
       }
