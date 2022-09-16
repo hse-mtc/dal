@@ -4,8 +4,6 @@
     type="flex"
   >
     <ElCol
-      :xl="12"
-      :lg="12"
       class="register-col"
     >
       <div class="register-container">
@@ -47,15 +45,11 @@
         </p>
       </ElDialog>
     </ElCol>
-    <ElCol
-      :span="12"
-      class="hidden-md-and-down register-col register-col-last"
-    />
   </ElRow>
 </template>
 
 <script>
-import RegisterTeacher from "@/components/Register/Teacher";
+import RegisterTeacher from "@/components/TeacherRegistration/Teacher";
 
 export default {
   components: { RegisterTeacher },

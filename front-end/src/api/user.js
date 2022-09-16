@@ -27,10 +27,11 @@ export function changePassword(data) {
 export function registerStudent(data) {
   return request({
     url: BASE_API_URL + LMS_URLS.register.students,
-    method: "patch",
+    method: "post",
     data,
   });
 }
+
 export function registerTeacher(data) {
   return request({
     url: BASE_API_URL + LMS_URLS.register.teachers,

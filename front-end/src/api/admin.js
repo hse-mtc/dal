@@ -75,9 +75,24 @@ export function getTeachersToApprove() {
   });
 }
 
+export function getStudentsToApprove() {
+  return request({
+    url: BASE_API_URL + LMS_URLS.staff.studentsApprovals,
+    method: "get",
+  });
+}
+
 export function approveTeacher(id, data) {
   return request({
     url: `${BASE_API_URL + LMS_URLS.staff.teachersApprovals}${id}/`,
+    method: "patch",
+    data,
+  });
+}
+
+export function approveStudent(id, data) {
+  return request({
+    url: `${BASE_API_URL + LMS_URLS.staff.studentsApprovals}${id}/`,
     method: "patch",
     data,
   });
