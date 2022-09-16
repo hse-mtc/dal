@@ -100,15 +100,15 @@ class AbsenceTime(models.Model):
 
 
 @receiver(models.signals.post_delete, sender=Absence)
-def auto_delete_cover_on_book_delete(sender, instance: Absence, **kwargs):
+def auto_delete_attachment_on_absence_delete(sender, instance: Absence, **kwargs):
     # pylint: disable=unused-argument
 
-    if instance.cover:
-        instance.cover.delete()
+    if instance.attachment:
+        instance.attachment.delete()
 
 
 @receiver(models.signals.post_delete, sender=AbsenceAttachment)
-def auto_delete_image_on_cover_delete(sender, instance: AbsenceAttachment, **kwargs):
+def auto_delete_image_on_attachment_delete(sender, instance: AbsenceAttachment, **kwargs):
     # pylint: disable=unused-argument
 
     if instance and instance.image:
