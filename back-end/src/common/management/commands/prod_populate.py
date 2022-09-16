@@ -35,14 +35,3 @@ class Command(BaseCommand):
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
 
         print(" OK")
-
-        # ----------------------------------------------------------------------
-        # Common
-
-        print("Populating `common` models...", end="")
-
-        create_milspecialties()
-        faculties = create_faculties()
-        create_programs(faculties)
-
-        print(" OK")
