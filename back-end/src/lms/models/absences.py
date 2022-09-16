@@ -108,7 +108,9 @@ def auto_delete_attachment_on_absence_delete(sender, instance: Absence, **kwargs
 
 
 @receiver(models.signals.post_delete, sender=AbsenceAttachment)
-def auto_delete_image_on_attachment_delete(sender, instance: AbsenceAttachment, **kwargs):
+def auto_delete_image_on_attachment_delete(
+    sender, instance: AbsenceAttachment, **kwargs
+):
     # pylint: disable=unused-argument
 
     if instance and instance.image:
