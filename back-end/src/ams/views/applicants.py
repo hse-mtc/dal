@@ -170,6 +170,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         result = super(ApplicantViewSet, self).update(request, **kwargs)
         updated_applicant = Applicant.objects.get(pk=kwargs["pk"])
         generate_documents = request.data["generate_documents"]
+
         if generate_documents:
             generate_documents_for_applicant(updated_applicant)
         return result
@@ -243,6 +244,21 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    def generate_docs(
+        self,
+    ) -> Response:
+
+        applicants = self.get_queryset()
+        for applicant in applicants:
+            data = ApplicantSerializer(instance=applicant).data
+            response = requests.post(
+                f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/generate_docs/",
+                json=data,
+            )
+        return Response(
+            status=status.HTTP_200_OK,
+        )
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -285,6 +301,21 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         File includes a header from a template.
         """
         return self.generate_excel_report(request, generate_csp_export)
+
+    @action(
+        methods=["get"],
+        url_path="generate-docs",
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[],
+    )
+    def applications_generate_docs(self, request: Request) -> Response:
+        """
+        Send an excel file with info about applicants.
+        Applicants are filtered by campus, specified in request query params.
+        """
+        print("Regenerating docs")
+        return self.generate_docs()
 
 
 def generate_documents_for_applicant(applicant: Applicant) -> None:
