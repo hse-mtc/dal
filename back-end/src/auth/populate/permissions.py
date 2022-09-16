@@ -191,6 +191,13 @@ def get_milfaculty_head_permissions():
         "teacher-birthday-alert.get.all",
         "approve-teacher.get.milfaculty",
         "approve-teacher.patch.milfaculty",
+        "approve-student.get.self",
+        "approve-student.get.milgroup",
+        "approve-student.get.milfaculty",
+        "approve-student.patch.self",
+        "approve-student.patch.milgroup",
+        "approve-student.patch.milfaculty",
+        "permissions.get.all",
     ]
 
     res = []
@@ -213,30 +220,6 @@ def get_student_milgroup_commander_permissions():
         "approve-student.get.milgroup",
         "approve-student.patch.self",
         "approve-student.patch.milgroup",
-        "permissions.get.all",
-    ]
-    res = []
-    for val in values:
-        viewset, method, scope = val.split(".")
-        # We can't use .get(codename=val) here as codename is stored at runtime
-        res.append(
-            Permission.objects.get(
-                viewset=viewset,
-                method=method,
-                scope=int(getattr(Permission.Scope, scope.upper())),
-            )
-        )
-    return res
-
-
-def get_student_registration_milfaculty_head_permissions():
-    values = [
-        "approve-student.get.self",
-        "approve-student.get.milgroup",
-        "approve-student.get.milfaculty",
-        "approve-student.patch.self",
-        "approve-student.patch.milgroup",
-        "approve-student.patch.milfaculty",
         "permissions.get.all",
     ]
     res = []

@@ -32,7 +32,6 @@ from auth.populate.permissions import (
     get_student_permissions,
     get_teacher_permissions,
     get_milfaculty_head_permissions,
-    get_student_registration_milfaculty_head_permissions,
 )
 
 # AMS
@@ -113,10 +112,7 @@ class Command(BaseCommand):
         applicants.permissions.set(get_applicant_permissions())
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
-        milfaculty_heads.permissions.set(
-            get_milfaculty_head_permissions()
-            + get_student_registration_milfaculty_head_permissions()
-        )
+        milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
 
         applicants.user_set.add(
             User.objects.get(email=f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}")
