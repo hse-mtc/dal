@@ -1,4 +1,6 @@
 import logging as log
+import os
+import zipfile
 
 from fastapi import (
     FastAPI,
@@ -9,7 +11,7 @@ from service import WatchDocService
 from proto import Applicant
 from config import (
     WATCHDOC_PORT,
-    DEBUG,
+    DEBUG, GENERATED_DIR,
 )
 
 log.basicConfig(
@@ -46,6 +48,15 @@ def post_docs(applicant: Applicant, background_tasks: BackgroundTasks):
 
         log.info(f"{email}: generating documents...")
         wds.generate_documents(applicant)
+
+        fantasy_zip = zipfile.ZipFile(GENERATED_DIR + '\\docs.zip', 'w')
+
+        for folder, subfolders, files in os.walk(GENERATED_DIR):
+            for file in files:
+                if file.endswith('.docx'):
+                    fantasy_zip.write(os.path.join(folder, file),
+                                      os.path.relpath(os.path.join(folder, file), GENERATED_DIR),
+                                      compress_type=zipfile.ZIP_DEFLATED)
 
         # log.info(f"{email}: uploading documents...")
         # folder_link = wds.upload_documents(applicant)
