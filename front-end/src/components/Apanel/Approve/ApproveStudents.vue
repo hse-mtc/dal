@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row class="pageTitle" style="margin-bottom: 15px">
-      <h1>Подтверждения студентов</h1>
+      <h1>Подтверждения регистрации студентов</h1>
     </el-row>
 
     <el-row>
