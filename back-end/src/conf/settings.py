@@ -76,10 +76,7 @@ MIDDLEWARE = [
 
 if DEBUG:
     MIDDLEWARE = (
-        [
-            "common.middleware.LoggingMiddleware",
-        ]
-        + MIDDLEWARE
+        MIDDLEWARE
         + [
             "silk.middleware.SilkyMiddleware",
             "debug_toolbar.middleware.DebugToolbarMiddleware",
@@ -334,7 +331,7 @@ LOGGING = {
         "dal.logging": {
             "level": "DEBUG",
             "handlers": ["console"],
-            "propagate": False,
+            "propagate": True,
         },
     },
 }
