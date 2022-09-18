@@ -1,6 +1,7 @@
 import logging
 
 from django.core.handlers.wsgi import WSGIRequest
+from django.http import HttpResponse
 from rest_framework.response import Response
 
 
@@ -9,7 +10,7 @@ class LoggingMiddleware:
         self.get_response = get_response
 
         # One-time configuration and initialization.
-        self.logger = logging.getLogger("dal.logs")
+        self.logger = logging.getLogger("dal.logging")
 
     def _log_request(self, request: WSGIRequest) -> None:
         try:
@@ -17,9 +18,13 @@ class LoggingMiddleware:
         except AttributeError as exc:
             self.logger.error("Failed to log request: %s", exc)
 
-    def _log_response(self, response: Response) -> None:
+    def _log_response(self, response: HttpResponse) -> None:
         try:
-            self.logger.debug("Response: %s", response.data.copy())
+            if isinstance(response, Response):
+                self.logger.debug("Response: %s", response.data.copy())
+            else:
+                self.logger.debug("Response: %s", response)
+
         except AttributeError as exc:
             self.logger.error("Failed to log response: %s", exc)
 
