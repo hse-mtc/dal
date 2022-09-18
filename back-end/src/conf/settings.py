@@ -75,13 +75,10 @@ MIDDLEWARE = [
 ]
 
 if DEBUG:
-    MIDDLEWARE = (
-        MIDDLEWARE
-        + [
-            "silk.middleware.SilkyMiddleware",
-            "debug_toolbar.middleware.DebugToolbarMiddleware",
-        ]
-    )
+    MIDDLEWARE = MIDDLEWARE + [
+        "silk.middleware.SilkyMiddleware",
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
 
 ROOT_URLCONF = "conf.urls"
 
