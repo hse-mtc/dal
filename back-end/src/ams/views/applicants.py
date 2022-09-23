@@ -63,6 +63,13 @@ class ApplicantPermission(BasePermission):
     scopes = [Permission.Scope.ALL, Permission.Scope.SELF]
 
 
+class ApplicantDocsPermission(BasePermission):
+    permission_class = "applicant_docs"
+    view_name_rus = "Документы Абитуриента"
+    methods = ["get"]
+    scopes = [Permission.Scope.ALL]
+
+
 class ApplicantPageNumberPagination(pagination.PageNumberPagination):
     page_size_query_param = "page_size"
 
@@ -320,14 +327,13 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         url_path="generate-docs",
         detail=False,
         renderer_classes=[XLSXRenderer],
-        permission_classes=[ApplicantPermission],
+        permission_classes=[ApplicantDocsPermission],
     )
     def applications_generate_docs(self, request: Request) -> Response:
         """
-        Send an excel file with info about applicants.
+        Send an zip file with docs about applicants.
         Applicants are filtered by campus, specified in request query params.
         """
-        print("Regenerating docs")
         return self.generate_docs()
 
 
