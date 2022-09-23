@@ -89,14 +89,14 @@
       </div>
       <ElFormItem prop="birth_date">
         <ElInput
-              ref="patronymic"
-              v-model="student.birth_info.date"
-              placeholder="Укажите дату рождения"
-              name="patronymic"
-              type="date"
-              tabindex="1"
-              auto-complete="on"
-            />
+          ref="patronymic"
+          v-model="student.birth_info.date"
+          placeholder="Укажите дату рождения"
+          name="patronymic"
+          type="date"
+          tabindex="1"
+          auto-complete="on"
+        />
       </ElFormItem>
 
       <div class="field-title">
@@ -262,7 +262,7 @@ export default {
       this.awaitingResponse = false;
     }
 
-    this.studentPosts.PRIVATE_STUDENT = { label:"-", value: null };
+    this.studentPosts.PRIVATE_STUDENT = { label: "-", value: null };
   },
 
   methods: {
