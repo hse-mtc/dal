@@ -56,7 +56,7 @@ def get_docs(applicants: list[Applicant], background_tasks: BackgroundTasks):
         wds.generate_documents(applicant, 
             docs=[("applicant-form.docx", "Анкета абитуриента.docx")])
 
-        docs_zip = zipfile.ZipFile(TEMP_DIR / "docs.zip", "w")
+    docs_zip = zipfile.ZipFile(TEMP_DIR / "docs.zip", "w")
 
     for folder, subfolders, files in os.walk(GENERATED_DIR):
         for file in files:
