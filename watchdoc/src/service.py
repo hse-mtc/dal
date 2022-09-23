@@ -56,7 +56,9 @@ class WatchDocService:
         wds.notify(applicant, folder_link)
     """
     def generate_documents(self, applicant: Applicant, docs=DOCUMENTS):
-        applicant_dir = GENERATED_DIR / applicant.contact_info.corporate_email
+        applicant_path = applicant.full_name + ' ' +\
+            applicant.contact_info.corporate_email
+        applicant_dir = GENERATED_DIR / applicant_path
 
         if applicant_dir.exists():
             shutil.rmtree(applicant_dir, ignore_errors=True)
