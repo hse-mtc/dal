@@ -35,7 +35,9 @@ tgbot/.env
 ### WatchDoc ###
 ## Directories
 watchdoc/generated/*
+watchdoc/temp/*
 !watchdoc/generated/.gitkeep
+!watchdoc/temp/.gitkeep
 
 ## Files
 watchdoc/service-account.json
