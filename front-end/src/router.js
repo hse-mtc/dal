@@ -205,7 +205,7 @@ export const constantRoutes = [
             path: "approve-teachers/",
             name: "approve-teachers",
             component: () => import("@/components/Apanel/Approve/ApproveTeachers.vue"),
-            meta: { title: "Подтверждения" },
+            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.self"] },
             hidden: true,
           },
           {
