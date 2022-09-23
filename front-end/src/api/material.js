@@ -15,5 +15,6 @@ export function addTopicFile(data) {
     url: BASE_API_URL + classMaterials,
     method: "post",
     data,
+    timeout: 60000, 
   });
 }

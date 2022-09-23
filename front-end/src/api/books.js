@@ -32,6 +32,7 @@ export function uploadBook(data) {
     url: BASE_API_URL + books,
     method: "POST",
     data,
+    timeout: 60000,
   });
 }
 
