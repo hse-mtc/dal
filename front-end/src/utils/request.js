@@ -8,7 +8,7 @@ import { UserModule } from "@/store";
 
 const service = axios.create({
   baseURL: "/",
-  timeout: 10000,
+  timeout: 60000,
 });
 
 service.interceptors.request.use(
