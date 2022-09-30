@@ -191,7 +191,6 @@ def get_milfaculty_head_permissions():
         "punishments.post.milfaculty",
         "punishments.patch.milfaculty",
         "punishments.delete.milfaculty",
-        "subjects.get.all",
         "lesson-subjects.get.all",
         "lessons.get.all",
         "lessons.post.milfaculty",
