@@ -122,6 +122,7 @@ export const constantRoutes = [
         name: "DisciplineControl",
         meta: { title: "Учебные дисциплины", icon: "book" },
         component: AppMain,
+        redirect: "/my-materials/",
         children: [
           {
             path: "subjects/",
@@ -199,20 +200,20 @@ export const constantRoutes = [
         path: "apanel/",
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
-        meta: { title: "Панель администратора", icon: "journal", permissions: ["approve-teacher.get.self", "permissions.get.self", "publishers.get.self", "subjects.get.self"] },
+        meta: { title: "Панель администратора", icon: "journal", permissions: ["approve-teacher.get.milfaculty", "approve-student.get.self", "permissions.get.self", "subjects.patch.self"] },
         children: [
           {
             path: "approve-teachers/",
             name: "approve-teachers",
             component: () => import("@/components/Apanel/Approve/ApproveTeachers.vue"),
-            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.self"] },
+            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.milfaculty"] },
             hidden: true,
           },
           {
             path: "approve-students/",
             name: "approve-students",
             component: () => import("@/components/Apanel/Approve/ApproveStudents.vue"),
-            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.self"] },
+            meta: { title: "Подтверждения", permissions: ["approve-student.get.self"] },
             hidden: true,
           },
           {
@@ -240,7 +241,7 @@ export const constantRoutes = [
             path: "subjects/",
             name: "subjects",
             component: () => import("@/components/Apanel/SubjectsControl.vue"),
-            meta: { title: "Предметы", permissions: ["subjects.get.self"] },
+            meta: { title: "Предметы", permissions: ["subjects.patch.self"] },
             hidden: true,
           },
         ],

@@ -438,7 +438,10 @@ export default {
       return ReferenceModule.rooms;
     },
     milgroups() {
-      return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1);
+      if (!UserModule.isSuperuser) {
+        return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1);
+      }
+      return ReferenceModule.milgroups;
     },
     userMilfaculty() {
       return UserModule.personMilfaculty;
@@ -450,8 +453,8 @@ export default {
   async created() {
     await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
+    this.filter.mg = this.milgroups[0]?.id.toString();
     this.fetchData();
-    this.filter.mg = this.milgroups[0]?.id;
   },
   methods: {
     hasPermission,

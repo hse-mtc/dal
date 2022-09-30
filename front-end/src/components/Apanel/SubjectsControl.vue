@@ -33,6 +33,7 @@
         column-key="annotation"
       />
       <PrimeColumn
+        v-if="hasPerm"
         header="Управление"
         width="120"
         column-key="buttons"
@@ -112,6 +113,7 @@ import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import CustomText from "@/common/CustomText";
 import { SIZES } from "@/utils/appConsts";
 import { SubjectsModule, UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 
 @Component({
   name: "SubjectsControl",
@@ -193,6 +195,14 @@ class SubjectsControl extends Vue {
         type: "error",
       });
     }
+  }
+
+  hasPerm = false;
+
+  created() {
+    if (hasPermission(["subjects.patch.all"]) && hasPermission(["subjects.delete.all"])) {
+      this.hasPerm = true;
+    } else { this.hasPerm = false; }
   }
 }
 

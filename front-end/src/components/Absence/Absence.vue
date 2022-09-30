@@ -393,6 +393,9 @@ export default {
   },
   computed: {
     milgroups() {
+      if (!UserModule.isSuperuser) {
+        return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1);
+      }
       return ReferenceModule.milgroups;
     },
     userMilfaculty() {
