@@ -56,6 +56,11 @@ export const constantRoutes = [
     component: () => import("@/views/ChangePassword/index"),
     hidden: true,
   },
+  {
+    path: "/recovery/",
+    component: () => import("@/views/Recovery/index"),
+    hidden: true,
+  },
 
   {
     path: "/applicant-form/",

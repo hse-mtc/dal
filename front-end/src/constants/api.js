@@ -89,6 +89,9 @@ export const LMS_URLS = {
     teacherPosts: "lms/choices/teacher-posts/",
     teacherRanks: "lms/choices/teacher-ranks/",
   },
+  recovery: {
+    recovery: "lms/recovery/",
+  },
 };
 
 export const DMS_URLS = {
