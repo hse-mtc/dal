@@ -75,16 +75,10 @@ MIDDLEWARE = [
 ]
 
 if DEBUG:
-    MIDDLEWARE = (
-        [
-            "common.middleware.LoggingMiddleware",
-        ]
-        + MIDDLEWARE
-        + [
-            "silk.middleware.SilkyMiddleware",
-            "debug_toolbar.middleware.DebugToolbarMiddleware",
-        ]
-    )
+    MIDDLEWARE = MIDDLEWARE + [
+        "silk.middleware.SilkyMiddleware",
+        "debug_toolbar.middleware.DebugToolbarMiddleware",
+    ]
 
 ROOT_URLCONF = "conf.urls"
 
@@ -178,6 +172,7 @@ REST_FRAMEWORK = {
         "auth.permissions.ReadOnly",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
 }
 
 # Static files (CSS, JavaScript, Images)
@@ -333,7 +328,7 @@ LOGGING = {
         "dal.logging": {
             "level": "DEBUG",
             "handlers": ["console"],
-            "propagate": False,
+            "propagate": True,
         },
     },
 }

@@ -21,6 +21,7 @@ export function postPaper(data) {
       "Content-Type": "multipart/form-data",
     },
     data,
+    timeout: 60000,
   });
 }
 
@@ -32,5 +33,6 @@ export function patchPaper(id, data) {
       "Content-Type": "multipart/form-data",
     },
     data,
+    timeout: 60000,
   });
 }
