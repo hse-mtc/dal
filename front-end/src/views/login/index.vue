@@ -54,11 +54,18 @@
       <el-button
         :loading="loading"
         type="primary"
-        style="width: 100%; margin-bottom: 30px"
+        style="width: 100%; margin-bottom: 10px"
         @click.native.prevent="handleLogin"
       >
         Вход
       </el-button>
+
+      <a
+        href="/recovery"
+        style="color: gray; font-size: smaller;"
+      >
+        Забыли пароль?
+      </a>
     </el-form>
   </div>
 </template>
