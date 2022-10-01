@@ -5,7 +5,7 @@
       title="Электронная библиотека"
       button="+ Добавить книгу"
       :click="addNewBook"
-      :permissions="['books.post.all']"
+      :permissions="['books.post.self']"
     />
     <Modal
       v-if="showModal"
@@ -293,6 +293,7 @@ export default {
             publishers: data.publishers,
             subjects: data.subjects,
             page_count: data.pageCount,
+            user: this.userId,
           }),
         ),
       );

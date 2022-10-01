@@ -30,7 +30,7 @@
       </div>
       <div class="column">
         <StudentAchievements :milgroup="milgroup" />
-        <StudentNotes />
+        <StudentNotes v-if="personType !== 'student'" />
       </div>
     </div>
 

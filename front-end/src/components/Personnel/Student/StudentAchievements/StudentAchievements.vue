@@ -108,7 +108,6 @@
           >
             <template #body="{ data }">
               <AZGuard
-                v-slot="{ disabled }"
                 :permissions="[
                   'achievements.delete.all',
                   {
@@ -125,7 +124,6 @@
                     validator: () => +id === userId,
                   },
                 ]"
-                disable
               >
                 <el-button
                   size="mini"

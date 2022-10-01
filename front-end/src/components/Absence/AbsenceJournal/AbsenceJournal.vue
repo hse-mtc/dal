@@ -257,6 +257,10 @@ export default {
   },
   computed: {
     milgroups() {
+      if (!UserModule.isSuperuser) {
+        return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1)
+          .filter(x => x.weekday === +this.filter.weekday);
+      }
       return ReferenceModule.milgroups.filter(
         x => x.weekday === +this.filter.weekday,
       );

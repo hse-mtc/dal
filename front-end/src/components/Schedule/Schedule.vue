@@ -255,7 +255,7 @@ export default {
         room: "",
       },
       filter: {
-        mg: null,
+        mg: "0",
         dateRange: [
           moment().format("YYYY-MM-DD"),
           moment()
@@ -304,6 +304,9 @@ export default {
       return ReferenceModule.rooms;
     },
     milgroups() {
+      if (!UserModule.isSuperuser) {
+        return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1);
+      }
       return ReferenceModule.milgroups;
     },
     userMilfaculty() {
@@ -315,7 +318,7 @@ export default {
   },
 
   async created() {
-    this.filter.mg = this.milgroups[0].milgroup;
+    this.filter.mg = this.milgroups[0]?.id.toString();
     await this.fetchData();
   },
 
@@ -390,16 +393,15 @@ export default {
 
       this.limitDateRange();
 
-      try {
-        const response = await getLessonJournal({
-          milgroup: this.filter.mg,
-          date_from: this.filter.dateRange[0],
-          date_to: this.filter.dateRange[1],
-        });
-        this.schedule = response.data;
-      } catch (err) {
-        getError("расписания", err.response.status);
-      }
+      getLessonJournal({
+        milgroup: this.filter.mg,
+        date_from: this.filter.dateRange[0],
+        date_to: this.filter.dateRange[1],
+      })
+        .then(response => {
+          this.schedule = response.data;
+        })
+        .catch(err => getError("расписания", err.response.status));
     },
 
     async getSubjects() {
