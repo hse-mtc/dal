@@ -97,3 +97,17 @@ export function approveStudent(id, data) {
     data,
   });
 }
+
+export function disapproveStudent(id) {
+  return request({
+    url: `${BASE_API_URL + LMS_URLS.staff.students}${id}/`,
+    method: "delete",
+  });
+}
+
+export function disapproveTeacher(id) {
+  return request({
+    url: `${BASE_API_URL + LMS_URLS.staff.teachers}${id}/`,
+    method: "delete",
+  });
+}
