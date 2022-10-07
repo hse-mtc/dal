@@ -172,7 +172,7 @@ export default {
     }
 
     [this.approveList, this.roles] = responses.map(r => r.data);
-    this.roles = this.roles.filter(role => role.label !== "Студент");
+    this.roles = this.roles.filter(role => role.label !== "Студент" && role.label !== "Абитуриент");
     this.approveList = this.approveList(teacher => ({
       permission_groups: [],
       ...teacher,
