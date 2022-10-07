@@ -133,7 +133,9 @@
 </template>
 
 <script>
-import { getTeachersToApprove, approveTeacher, getAllRoles, disapproveTeacher } from "@/api/admin";
+import {
+  getTeachersToApprove, approveTeacher, getAllRoles, disapproveTeacher,
+} from "@/api/admin";
 import { getError, patchError } from "@/utils/message";
 import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
