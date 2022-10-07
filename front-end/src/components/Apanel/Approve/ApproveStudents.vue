@@ -96,7 +96,9 @@
 </template>
 
 <script>
-import { getStudentsToApprove, approveStudent, getAllRoles, disapproveStudent } from "@/api/admin";
+import {
+  getStudentsToApprove, approveStudent, getAllRoles, disapproveStudent,
+} from "@/api/admin";
 import { getError, patchError } from "@/utils/message";
 import { StudentPostsMixin } from "@/mixins/students";
 
