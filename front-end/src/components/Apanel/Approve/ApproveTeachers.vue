@@ -35,6 +35,7 @@
         <PrimeColumn
           header="Прикреплённые взвода"
           column-key="milgroups"
+          :body-style="`width: 200px`"
         >
           <template #body="{ data: teacher }">
             <ElTag
@@ -243,7 +244,4 @@ export default {
 
 <style scoped lang="scss">
 @import "style";
-.el-button+.el-button, .el-checkbox.is-bordered+.el-checkbox.is-bordered {
-  margin-left: 0;
-}
 </style>
