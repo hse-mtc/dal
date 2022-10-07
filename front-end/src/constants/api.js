@@ -8,6 +8,7 @@ export const AUTH_URLS = {
   permissions: "auth/permissions/",
   userControl: "auth/user-control/",
   roles: "auth/group/",
+  recovery: "auth/recovery/",
 };
 
 export const AMS_URLS = {
@@ -88,9 +89,6 @@ export const LMS_URLS = {
     studentStatuses: "lms/choices/student-statuses/",
     teacherPosts: "lms/choices/teacher-posts/",
     teacherRanks: "lms/choices/teacher-ranks/",
-  },
-  recovery: {
-    recovery: "lms/recovery/",
   },
 };
 

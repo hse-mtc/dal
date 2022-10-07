@@ -66,7 +66,6 @@ from lms.views.reference_book import (
     SkillViewSet,
     MilgroupLeadersView,
 )
-from lms.views.recovery import RecoveryView
 
 routers = DefaultRouter()
 
@@ -126,6 +125,4 @@ urlpatterns = [
     path("birthdays/teachers", TeacherBirthdayAlertView.as_view()),
     # Choices lists.
     path("choices/", include(choices)),
-    # Password reset
-    path("recovery/", RecoveryView.as_view()),
 ]
