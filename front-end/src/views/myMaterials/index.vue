@@ -41,6 +41,7 @@ import MyDisciplines from "@/components/MyMaterials/MyDisciplines";
 import MyDocuments from "@/components/MyMaterials/MyDocuments";
 import Library from "@/components/Library/Library";
 import { UserModule } from "@/store";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "MyMaterials",
@@ -53,13 +54,8 @@ export default {
   },
   data() {
     return {
-      activeTab: "disciplines",
-      tabs: [
-        { label: "Дисциплины", value: "disciplines" },
-        { label: "Военно-научные работы", value: "works" },
-        { label: "Электронная библиотека", value: "library" },
-        { label: "Сохраненные книги", value: "books" },
-      ],
+      activeTab: "",
+      tabs: [],
     };
   },
   computed: {
@@ -69,8 +65,26 @@ export default {
   },
 
   mounted() {
+    if (hasPermission(["subjects.post.self"])) {
+      this.tabs.push({ label: "Дисциплины", value: "disciplines" });
+    }
+
+    if (hasPermission(["papers.post.self"])) {
+      this.tabs.push({ label: "Военно-научные работы", value: "works" });
+    }
+
+    if (hasPermission(["books.post.self"])) {
+      this.tabs.push({ label: "Электронная библиотека", value: "library" });
+    }
+
+    if (hasPermission(["favorite-books.post.self"])) {
+      this.tabs.push({ label: "Сохраненные книги", value: "books" });
+    }
+
     if (this.personType === "student") {
       this.activeTab = "books";
+    } else {
+      this.activeTab = this.tabs[0].value;
     }
   },
 

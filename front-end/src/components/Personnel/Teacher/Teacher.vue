@@ -31,6 +31,7 @@
             action="/api/lms/students/"
             :show-file-list="false"
             :before-upload="beforeAvatarUpload"
+            :disabled="disableUpload"
           >
             <img
               v-if="displayInfo.photo"
@@ -259,6 +260,7 @@ import moment from "moment";
 import { UserModule, ReferenceModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
 import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "Teacher",
@@ -267,6 +269,7 @@ export default {
   mixins: [TeacherPostsMixin, TeacherRanksMixin],
   data() {
     return {
+      disableUpload: false,
       dialog: false,
       loading: false,
       modify: false,
@@ -379,6 +382,11 @@ export default {
   },
   async created() {
     await this.fetchInfo();
+    if (parseInt(this.$route.params.teacherId, 16) !== this.userId) {
+      this.disableUpload = true;
+    } else {
+      this.disableUpload = false;
+    }
   },
   methods: {
     formatDate: date => (moment(date).isValid() ? moment(date).format("DD.MM.YYYY") : "---"),
