@@ -2,6 +2,8 @@ import uuid
 
 from django.db import models
 
+from django.dispatch import receiver
+
 
 class BirthInfo(models.Model):
     date = models.DateField()
@@ -65,6 +67,14 @@ class Photo(models.Model):
 
     def __str__(self) -> str:
         return self.image.name
+
+
+@receiver(models.signals.post_delete, sender=Photo)
+def auto_delete_image_on_cover_delete(sender, instance: Photo, **kwargs):
+    # pylint: disable=unused-argument
+
+    if instance and instance.image:
+        instance.image.delete(save=False)
 
 
 class Passport(models.Model):
