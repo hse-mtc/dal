@@ -27,7 +27,7 @@
         </el-col>
       </el-col>
     </el-row>
-    <div v-if="mySubjects && mySubjects.length === 0">
+    <div v-if="mySubjects && mySubjects.length === 0" style="margin-top: 3rem">
       У вас пока нет добавленных дисциплин
     </div>
   </el-col>

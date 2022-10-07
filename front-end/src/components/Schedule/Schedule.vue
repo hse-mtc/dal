@@ -317,10 +317,10 @@ export default {
     },
   },
 
-  async created() {
-    this.filter.mg = this.milgroups[0]?.id.toString();
-    await this.fetchData();
-  },
+  // async created() {
+  //   this.filter.mg = this.milgroups[0]?.id.toString();
+  //   await this.fetchData();
+  // },
 
   methods: {
     getPermissions(method) {

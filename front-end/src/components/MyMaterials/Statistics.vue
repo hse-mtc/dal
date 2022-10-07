@@ -61,6 +61,17 @@ export default {
         getStatistics(this.userId)
           .then(res => {
             this.statistics = res.data;
+            if (!hasPermission(["subjects.post.self"])) {
+              delete this.statistics.subject_count;
+            }
+
+            if (!hasPermission(["papers.post.self"])) {
+              delete this.statistics.paper_count;
+            }
+
+            if (!hasPermission(["books.post.self"])) {
+              delete this.statistics.book_count;
+            }
           })
           .catch(err => {
             downloadError("данных", err.response?.status);

@@ -22,7 +22,7 @@
       :delete="deleteSearchInput"
     />
     <CustomText
-      v-if="!(isMyLibrary || isFavoriteBooks)"
+      v-if="!isFavoriteBooks"
       :mt="SIZES.m"
       variant="paragraph"
     >
