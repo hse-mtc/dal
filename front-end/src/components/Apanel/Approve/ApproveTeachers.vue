@@ -102,6 +102,22 @@
                 @click="approve(teacher)"
               />
             </el-tooltip>
+
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Отклонить"
+              placement="bottom"
+            >
+              <el-button
+                size="medium"
+                icon="el-icon-close"
+                type=""
+                circle
+                class="disapprove-button"
+                @click="disapprove(teacher)"
+              />
+            </el-tooltip>
           </template>
         </PrimeColumn>
 
@@ -116,7 +132,7 @@
 </template>
 
 <script>
-import { getTeachersToApprove, approveTeacher, getAllRoles } from "@/api/admin";
+import { getTeachersToApprove, approveTeacher, getAllRoles, disapproveTeacher } from "@/api/admin";
 import { getError, patchError } from "@/utils/message";
 import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
 
@@ -193,10 +209,41 @@ export default {
         duration: 3000,
       });
     },
+    async disapprove(teacher) {
+      await this.$confirm(
+        "Вы уверены, что хотите отклонить регистрацию?",
+        "",
+        {
+          confirmButtonText: "Да",
+          cancelButtonText: "Отмена",
+          type: "warning",
+        },
+      );
+
+      this.fetchingData = true;
+      try {
+        await disapproveTeacher(teacher.id);
+      } catch (e) {
+        patchError("отклонения регистрации преподавателя", e.response?.status);
+        return;
+      } finally {
+        this.fetchingData = false;
+      }
+
+      this.approveList = this.approveList.filter(s => s.id !== teacher.id);
+      this.$message({
+        type: "success",
+        message: "Регистрация отклонена.",
+        duration: 3000,
+      });
+    },
   },
 };
 </script>
 
 <style scoped lang="scss">
 @import "style";
+.el-button+.el-button, .el-checkbox.is-bordered+.el-checkbox.is-bordered {
+  margin-left: 0;
+}
 </style>
