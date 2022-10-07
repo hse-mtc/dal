@@ -39,8 +39,13 @@ class Relative(Person):
     type: RelativeType
 
 
+class Faculty(BaseModel):
+    title: str
+
+
 class Program(BaseModel):
     code: str
+    faculty: Faculty
 
 
 class UniversityInfo(BaseModel):
