@@ -53,6 +53,7 @@ def get_student_permissions():
         "teacher-birthday-alert.get.all",
         "sections.get.self",
         "sections.get.all",
+        "students.patch.self",
     ]
     res = []
     for val in values:
@@ -163,6 +164,7 @@ def get_milfaculty_head_permissions():
         "statistics.get.self",
         "student-birthday-alert.get.all",
         # LMS permissions
+        "students.patch.all",
         "students.get.milfaculty",
         "students.patch.milfaculty",
         "students.delete.milfaculty",
