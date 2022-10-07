@@ -119,7 +119,6 @@
                     userMilgroups.some((x) => x === data.milgroup.milgroup),
                 },
               ]"
-              disable
             >
               <el-button
                 size="mini"

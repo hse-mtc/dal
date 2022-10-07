@@ -63,6 +63,13 @@ class ApplicantPermission(BasePermission):
     scopes = [Permission.Scope.ALL, Permission.Scope.SELF]
 
 
+class ApplicantDocsPermission(BasePermission):
+    permission_class = "applicant_docs"
+    view_name_rus = "Документы Абитуриента"
+    methods = ["get"]
+    scopes = [Permission.Scope.ALL]
+
+
 class ApplicantPageNumberPagination(pagination.PageNumberPagination):
     page_size_query_param = "page_size"
 
@@ -170,6 +177,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         result = super(ApplicantViewSet, self).update(request, **kwargs)
         updated_applicant = Applicant.objects.get(pk=kwargs["pk"])
         generate_documents = request.data["generate_documents"]
+
         if generate_documents:
             generate_documents_for_applicant(updated_applicant)
         return result
@@ -243,6 +251,34 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             status=status.HTTP_200_OK,
         )
 
+    def generate_docs(
+        self,
+    ) -> Response:
+
+        applicants = self.get_queryset()
+        data = [
+            ApplicantSerializer(instance=applicant).data for applicant in applicants
+        ]
+
+        response = requests.get(
+            f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/generate_docs/",
+            json=data,
+        )
+
+        if response.ok:
+            return Response(
+                response.content,
+                headers={
+                    "Content-Disposition": "attachment; filename=docs.zip",
+                },
+                content_type=response.headers.get("content-type"),
+                status=response.status_code,
+            )
+        else:
+            return Response(
+                status=response.status_code,
+            )
+
     @extend_schema(
         parameters=[
             OpenApiParameter(
@@ -285,6 +321,20 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         File includes a header from a template.
         """
         return self.generate_excel_report(request, generate_csp_export)
+
+    @action(
+        methods=["get"],
+        url_path="generate-docs",
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[ApplicantDocsPermission],
+    )
+    def applications_generate_docs(self, request: Request) -> Response:
+        """
+        Send an zip file with docs about applicants.
+        Applicants are filtered by campus, specified in request query params.
+        """
+        return self.generate_docs()
 
 
 def generate_documents_for_applicant(applicant: Applicant) -> None:

@@ -40,9 +40,15 @@ export const constantRoutes = [
     hidden: true,
   },
   {
-    name: "Register",
-    path: "/register/",
-    component: () => import("@/views/Register/index"),
+    name: "TeacherRegistration",
+    path: "/teacher-registration/",
+    component: () => import("@/views/TeacherRegistration/index"),
+    hidden: true,
+  },
+  {
+    name: "StudentRegistration",
+    path: "/student-registration/",
+    component: () => import("@/views/StudentsRegistration/index"),
     hidden: true,
   },
   {
@@ -67,13 +73,14 @@ export const constantRoutes = [
     hidden: true,
   },
 
-  {
-    path: "/applicant-to-student/",
-    name: "ApplicantToStudent",
-    component: () => import("@/views/ApplicantToStudent/index.vue"),
-    meta: { title: "Регистрация студента", icon: "journal", permissions: ["applicant.applicant.self"] },
-    hidden: true,
-  },
+  // FIXME(ShishckovA): doesn't work, have to change (i.e. pushing instead of patching), fix and test
+  // {
+  //   path: "/applicant-to-student/",
+  //   name: "ApplicantToStudent",
+  //   component: () => import("@/views/ApplicantToStudent/index.vue"),
+  //   meta: { title: "Регистрация студента", icon: "journal", permissions: ["applicant.applicant.self"] },
+  //   hidden: true,
+  // },
 
   {
     path: "/",
@@ -85,21 +92,21 @@ export const constantRoutes = [
         path: "my-materials/",
         name: "Мои материалы",
         component: () => import("@/views/myMaterials/index"),
-        meta: { title: "Мои материалы", icon: "materials" },
+        meta: { title: "Мои материалы", icon: "materials", permissions: ["subjects.get.self", "papers.get.self", "books.get.self", "favorite-books.get.self"] },
       },
 
       {
         path: "papers/",
         name: "Papers",
         component: () => import("@/views/Papers/index"),
-        meta: { title: "Военно-научные работы", icon: "study", permissions: ["papers.get.all"] },
+        meta: { title: "Военно-научные работы", icon: "study", permissions: ["papers.get.self"] },
       },
 
       {
         path: "library/",
         name: "Library",
         component: () => import("@/views/Library/index"),
-        meta: { title: "Электронная библиотека", icon: "books", permissions: ["books.get.all", "books.get.self"] },
+        meta: { title: "Электронная библиотека", icon: "books", permissions: ["books.get.self"] },
       },
 
       {
@@ -115,12 +122,13 @@ export const constantRoutes = [
         name: "DisciplineControl",
         meta: { title: "Учебные дисциплины", icon: "book" },
         component: AppMain,
+        redirect: "/my-materials/",
         children: [
           {
             path: "subjects/",
             name: "Subjects",
             component: () => import("@/views/Subjects/index"),
-            meta: { title: "Методические материалы", icon: "presentation", permissions: ["class-materials.get.all", "class-materials.get.self"] },
+            meta: { title: "Методические материалы", icon: "presentation", permissions: ["subjects.get.self"] },
           },
           {
             path: "subjects/:subjectId/",
@@ -133,13 +141,13 @@ export const constantRoutes = [
             path: "schedule/",
             name: "Schedule",
             component: () => import("@/views/Schedule/index"),
-            meta: { title: "Расписание занятий", icon: "calendar", permissions: ["lessons.get.all", "lessons.get.milfaculty", "lessons.get.milgroup"] },
+            meta: { title: "Расписание занятий", icon: "calendar", permissions: ["lessons.get.self"] },
           },
           {
             path: "marks/",
             name: "Marks",
             component: () => import("@/views/Marks/index"),
-            meta: { title: "Журнал оценок", icon: "journal", permissions: ["marks.get.all", "marks.get.milfaculty", "marks.get.milgroup", "marks.get.self"] },
+            meta: { title: "Журнал оценок", icon: "journal", permissions: ["marks.get.self"] },
           },
         ],
       },
@@ -170,7 +178,7 @@ export const constantRoutes = [
         path: "absence/",
         name: "Absence",
         component: () => import("@/views/Absence/index"),
-        meta: { title: "Журнал посещаемости", icon: "session-log", permissions: ["absences.get.all", "absences.get.milfaculty", "absences.get.milgroup", "absences.get.self"] },
+        meta: { title: "Журнал посещаемости", icon: "session-log", permissions: ["absences.get.self"] },
       },
 
       {
@@ -182,8 +190,8 @@ export const constantRoutes = [
           icon: "cross",
           permissions:
             [
-              "encouragements.get.all", "encouragements.get.milfaculty", "encouragements.get.milgroup", "encouragements.get.self",
-              "punishments.get.all", "punishments.get.milfaculty", "punishments.get.milgroup", "punishments.get.self",
+              "encouragements.get.self",
+              "punishments.get.self",
             ],
         },
       },
@@ -192,41 +200,48 @@ export const constantRoutes = [
         path: "apanel/",
         name: "AdminPanel",
         component: () => import("@/views/AdminPanel/index"),
-        meta: { title: "Панель администратора", icon: "journal", permissions: ["permissions.get.all", "subjects.get.all", "subjects.get.self"] },
+        meta: { title: "Панель администратора", icon: "journal", permissions: ["approve-teacher.get.milfaculty", "approve-student.get.self", "permissions.get.self", "subjects.patch.self"] },
         children: [
           {
-            path: "approve/",
-            name: "approve",
-            component: () => import("@/components/Apanel/Approve/Approve.vue"),
-            meta: { title: "Подтверждения" },
+            path: "approve-teachers/",
+            name: "approve-teachers",
+            component: () => import("@/components/Apanel/Approve/ApproveTeachers.vue"),
+            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.milfaculty"] },
+            hidden: true,
+          },
+          {
+            path: "approve-students/",
+            name: "approve-students",
+            component: () => import("@/components/Apanel/Approve/ApproveStudents.vue"),
+            meta: { title: "Подтверждения", permissions: ["approve-student.get.self"] },
             hidden: true,
           },
           {
             path: "userManagement/",
             name: "userManagement",
             component: () => import("@/components/Apanel/UserManagementComponent.vue"),
-            meta: { title: "Управление пользователями" },
+            meta: { title: "Управление пользователями", permissions: ["permissions.get.self"] },
             hidden: true,
           },
           {
             path: "roleManagement/",
             name: "roleManagement",
             component: () => import("@/components/Apanel/RoleManagementComponent.vue"),
-            meta: { title: "Управление ролями" },
+            meta: { title: "Управление ролями", permissions: ["permissions.get.self"] },
             hidden: true,
           },
           {
             path: "dictionaries/",
             name: "dictionaries",
             component: () => import("@/components/Apanel/Dictionaries/index.vue"),
-            meta: { title: "Справочники" },
+            meta: { title: "Справочники", permissions: ["publishers.get.self"] },
             hidden: true,
           },
           {
             path: "subjects/",
             name: "subjects",
             component: () => import("@/components/Apanel/SubjectsControl.vue"),
-            meta: { title: "Предметы" },
+            meta: { title: "Предметы", permissions: ["subjects.patch.self"] },
             hidden: true,
           },
         ],
@@ -235,7 +250,7 @@ export const constantRoutes = [
         path: "applications/",
         name: "applications",
         component: () => import("@/views/ApplicantsDocuments/index.vue"),
-        meta: { title: "Учет поступления документов", icon: "table", permissions: ["applicants.get.all"] },
+        meta: { title: "Учет поступления документов", icon: "table", permissions: ["applicants.get.self"] },
       },
       {
         path: "/applicant-homepage/",

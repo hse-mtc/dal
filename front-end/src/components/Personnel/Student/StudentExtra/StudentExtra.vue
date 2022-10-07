@@ -1,5 +1,6 @@
 <template>
-  <ExpandBox title="Дополнительная информация" @toggled="toggled">
+  <ExpandBox v-if="show" title="Дополнительная информация" @toggled="toggled">
+    {{ show }}
     <div class="extra-info">
       <el-form
         ref="form"
@@ -239,6 +240,7 @@ export default {
         passport: {},
       },
       modifyInfo: {},
+      show: true,
       loading: false,
     };
   },
@@ -261,6 +263,14 @@ export default {
     userId() {
       return UserModule.personId;
     },
+  },
+  async mounted() {
+    await this.fetch();
+    if (this.displayInfo.passport === null && this.displayInfo.citizenship === "") {
+      this.show = false;
+    } else {
+      this.show = true;
+    }
   },
   methods: {
     formatDate: date => moment(date).format("DD.MM.YYYY"),

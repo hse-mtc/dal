@@ -11,59 +11,56 @@
       <Breadcrumb class="breadcrumb-container" />
 
       <div class="right-menu">
-        <div v-if="!hasPerm()">
-          <el-popover v-model="birthdaysVisible" width="500" placement="bottom-end">
-            <div class="birthdays-list">
-              <div class="teachers">
-                <el-divider content-position="left" class="title">
-                  Преподаватели
-                </el-divider>
-                <template v-if="teachers.length">
-                  <BirthdayItem
-                    v-for="item in teachers"
-                    :key="item.id"
-                    :person="item"
-                    type="teacher"
-                    @clicked="birthdaysVisible = false"
-                  />
-                </template>
-                <span v-else class="empty">
-                  В течение ближайшей недели именинников нет
-                  <SvgIcon icon-class="sad" />
-                </span>
-              </div>
-
-              <div class="students">
-                <el-divider content-position="left" class="title">
-                  Студенты
-                </el-divider>
-                <template v-if="students.length">
-                  <BirthdayItem
-                    v-for="item in students"
-                    :key="item.id"
-                    :person="item"
-                    type="student"
-                    @clicked="birthdaysVisible = false"
-                  />
-                </template>
-                <span v-else class="empty">
-                  В течение ближайшей недели именинников нет
-                  <SvgIcon icon-class="sad" />
-                </span>
-              </div>
+        <el-popover v-model="birthdaysVisible" width="500" placement="bottom-end">
+          <div class="birthdays-list">
+            <div class="teachers">
+              <el-divider content-position="left" class="title">
+                Преподаватели
+              </el-divider>
+              <template v-if="teachers.length">
+                <BirthdayItem
+                  v-for="item in teachers"
+                  :key="item.id"
+                  :person="item"
+                  type="teacher"
+                  @clicked="birthdaysVisible = false"
+                />
+              </template>
+              <span v-else class="empty">
+                В течение ближайшей недели именинников нет
+                <SvgIcon icon-class="sad" />
+              </span>
             </div>
-            <el-badge
-              slot="reference"
-              :is-dot="anyBirthday"
-              class="birthdays-trigger"
-            >
-              <button class="birthdaysButton">
-                <SvgIcon icon-class="gift" />
-                <span class="birthdaysButtonText">Дни рождения</span>
-              </button>
-            </el-badge>
-          </el-popover>
-        </div>
+            <div class="students">
+              <el-divider content-position="left" class="title">
+                Студенты
+              </el-divider>
+              <template v-if="students.length">
+                <BirthdayItem
+                  v-for="item in students"
+                  :key="item.id"
+                  :person="item"
+                  type="student"
+                  @clicked="birthdaysVisible = false"
+                />
+              </template>
+              <span v-else class="empty">
+                В течение ближайшей недели именинников нет
+                <SvgIcon icon-class="sad" />
+              </span>
+            </div>
+          </div>
+          <el-badge
+            slot="reference"
+            :is-dot="anyBirthday"
+            class="birthdays-trigger"
+          >
+            <button class="birthdaysButton">
+              <SvgIcon icon-class="gift" />
+              <span class="birthdaysButtonText">Дни рождения</span>
+            </button>
+          </el-badge>
+        </el-popover>
         <el-dropdown class="avatar-container" trigger="click">
           <div class="avatar-wrapper m-0" style="font-size: 19px">
             <!--          <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">-->
@@ -136,9 +133,6 @@ export default {
     }
   },
   methods: {
-    hasPerm() {
-      return hasPermission(["applicant.applicant.self"]);
-    },
     surnameWithInitials,
     logout() {
       UserModule.logout();

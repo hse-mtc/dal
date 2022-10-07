@@ -19,28 +19,29 @@
           :name="field"
           :label="label"
         >
-          <template v-if="currentTab === field">
-            <TabsEditor
-              v-if="editorsTypes[currentTab] === 'tags'"
-              :type="currentTab"
-              :tags="tagsItems"
-              :editing-item="editingData"
-              @addItem="onAddItem"
-              @startEdit="onStartEdit"
-              @abortEdit="onAbortEdit"
-              @submitEdit="onSubmitEdit"
-              @delete="onDelete"
-            />
-
-            <TableEditor
-              v-else-if="editorsTypes[currentTab] === 'table'"
-              :type="currentTab"
-              :data="tagsItems"
-              @addItem="onAddItem"
-              @submitEdit="onTableEdit"
-              @delete="onDelete"
-            />
-          </template>
+          <AZGuard :permissions="[field + '.patch.all']">
+            <template v-if="currentTab === field">
+              <TabsEditor
+                v-if="editorsTypes[currentTab] === 'tags'"
+                :type="currentTab"
+                :tags="tagsItems"
+                :editing-item="editingData"
+                @addItem="onAddItem"
+                @startEdit="onStartEdit"
+                @abortEdit="onAbortEdit"
+                @submitEdit="onSubmitEdit"
+                @delete="onDelete"
+              />
+              <TableEditor
+                v-else-if="editorsTypes[currentTab] === 'table'"
+                :type="currentTab"
+                :data="tagsItems"
+                @addItem="onAddItem"
+                @submitEdit="onTableEdit"
+                @delete="onDelete"
+              />
+            </template>
+          </AZGuard>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -53,6 +54,7 @@ import _omit from "lodash/omit";
 
 import { PapersModule, ReferenceModule } from "@/store";
 
+import { hasPermission } from "@/utils/permissions";
 import { WEEKDAYS } from "@/utils/enums";
 import TabsEditor from "./TagsEditor.vue";
 import TableEditor from "./TableEditor.vue";
@@ -83,115 +85,22 @@ class Dictionaries extends Vue {
     programs: "table",
   }
 
-  tabs = {
-    publishers: {
-      label: "Издатели",
-      mapFunc: item => ({ title: item.name, id: item.id }),
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: PapersModule.addPublisher,
-      delete: PapersModule.deletePublisher,
-      edit: PapersModule.editPublisher,
-    },
-    authors: {
-      label: "Авторы",
-      mapFunc: item => ({
-        id: item.id,
-        title: [item.surname, item.name, item.patronymic].filter(Boolean).join(" "),
-      }),
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: PapersModule.addAuthor,
-      delete: PapersModule.deleteAuthor,
-      edit: PapersModule.editAuthors,
-    },
-    categories: {
-      label: "Категории",
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: PapersModule.addCategory,
-      delete: PapersModule.deleteCategory,
-      edit: PapersModule.editCategories,
-    },
-    milgroups: {
-      label: "Взвода",
-      mapFunc: item => ({ ...item, milfaculty: item.milfaculty.id }),
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => {
-        const stringItem = `${item.title} ${
-          this.milfaculties.find(milfaculty => milfaculty.id === item.milfaculty).title
-        } ${WEEKDAYS[item.weekday]}`
-          .toLowerCase();
-        return query.split(" ")
-          .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
-      },
-      add: ReferenceModule.addMilgroup,
-      delete: ReferenceModule.deleteMilgroup,
-      edit: ReferenceModule.editMilgroup,
-    },
-    achievementTypes: {
-      label: "Достижения",
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: ReferenceModule.addAchievementType,
-      delete: ReferenceModule.deleteAchievementType,
-      edit: ReferenceModule.editAchievementType,
-    },
-    milfaculties: {
-      label: "Циклы",
-      mapFunc: item => ({
-        id: item.id,
-        title: item.title + (item.abbreviation ? ` (${item.abbreviation})` : ""),
-      }),
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: ReferenceModule.addMilfaculty,
-      delete: ReferenceModule.deleteMilfaculty,
-      edit: ReferenceModule.editMilfaculty,
-    },
-    milspecialties: {
-      label: "Направления",
-      sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
-      filterFunc: (item, query) => {
-        const stringItem = `${item.code} ${item.title}`.toLowerCase();
-        return query.split(" ")
-          .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
-      },
-      add: ReferenceModule.addMilSpecialty,
-      delete: ReferenceModule.deleteMilSpecialty,
-      edit: ReferenceModule.editMilSpecialty,
-    },
-    // programs: {
-    //   label: "Программы",
-    //   sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
-    //   filterFunc: (item, query) => {
-    //     const stringItem = `${item.code} ${item.title} ${item.faculty}`.toLowerCase();
-    //     return query.split(" ")
-    //       .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
-    //   },
-    //   add: ReferenceModule.addProgram,
-    //   delete: ReferenceModule.deleteProgram,
-    //   edit: ReferenceModule.editProgram,
-    // },
-    rooms: {
-      label: "Аудитории",
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: ReferenceModule.addRoom,
-      delete: ReferenceModule.deleteRoom,
-      edit: ReferenceModule.editRoom,
-    },
-    skills: {
-      label: "Умения",
-      sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
-      filterFunc: (item, query) => item.title.toLowerCase().includes(query),
-      add: ReferenceModule.addSkill,
-      delete: ReferenceModule.deleteSkill,
-      edit: ReferenceModule.editSkill,
-    },
-  }
+  tabs = {}
 
-  currentTab = "publishers"
+  // programs: {
+  //   label: "Программы",
+  //   sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
+  //   filterFunc: (item, query) => {
+  //     const stringItem = `${item.code} ${item.title} ${item.faculty}`.toLowerCase();
+  //     return query.split(" ")
+  //       .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
+  //   },
+  //   add: ReferenceModule.addProgram,
+  //   delete: ReferenceModule.deleteProgram,
+  //   edit: ReferenceModule.editProgram,
+  // },
+
+  currentTab = ""
 
   get tagsItems() {
     const { mapFunc, sortFunc, filterFunc } = this.tabs[this.currentTab];
@@ -204,7 +113,6 @@ class Dictionaries extends Vue {
       const query = this.searchQuery.toLowerCase();
       return data.filter(item => filterFunc(item, query));
     }
-
     return data;
   }
 
@@ -274,8 +182,123 @@ class Dictionaries extends Vue {
     this.editingItemId = null;
     this.editingData = null;
   }
-}
 
+  created() {
+    if (hasPermission(["publishers.patch.all"])) {
+      this.tabs.publishers = {
+        label: "Издатели",
+        mapFunc: item => ({ title: item.name, id: item.id }),
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+        add: PapersModule.addPublisher,
+        delete: PapersModule.deletePublisher,
+        edit: PapersModule.editPublisher,
+      };
+    }
+    if (hasPermission(["authors.patch.all"])) {
+      this.tabs.authors = {
+        label: "Авторы",
+        mapFunc: item => ({
+          id: item.id,
+          title: [item.surname, item.name, item.patronymic].filter(Boolean).join(" "),
+        }),
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+        add: PapersModule.addAuthor,
+        delete: PapersModule.deleteAuthor,
+        edit: PapersModule.editAuthors,
+      };
+    }
+    if (hasPermission(["categories.patch.all"])) {
+      this.tabs.categories = {
+        label: "Категории",
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+        add: PapersModule.addCategory,
+        delete: PapersModule.deleteCategory,
+        edit: PapersModule.editCategories,
+      };
+    }
+    if (hasPermission(["milgroups.patch.all"])) {
+      this.tabs.milgroups = {
+        label: "Взвода",
+        mapFunc: item => ({ ...item, milfaculty: item.milfaculty.id }),
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => {
+          const stringItem = `${item.title} ${
+            this.milfaculties.find(milfaculty => milfaculty.id === item.milfaculty).title
+          } ${WEEKDAYS[item.weekday]}`
+            .toLowerCase();
+          return query.split(" ")
+            .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
+        },
+        add: ReferenceModule.addMilgroup,
+        delete: ReferenceModule.deleteMilgroup,
+        edit: ReferenceModule.editMilgroup,
+      };
+    }
+    if (hasPermission(["achievementTypes.patch.all"])) {
+      this.tabs.achievementTypes = {
+        label: "Достижения",
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+        add: ReferenceModule.addAchievementType,
+        delete: ReferenceModule.deleteAchievementType,
+        edit: ReferenceModule.editAchievementType,
+      };
+    }
+    if (hasPermission(["milfaculties.patch.all"])) {
+      this.tabs.milfaculties = {
+        label: "Циклы",
+        mapFunc: item => ({
+          id: item.id,
+          title: item.title + (item.abbreviation ? ` (${item.abbreviation})` : ""),
+        }),
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+        add: ReferenceModule.addMilfaculty,
+        delete: ReferenceModule.deleteMilfaculty,
+        edit: ReferenceModule.editMilfaculty,
+      };
+    }
+    if (hasPermission(["milspecialties.patch.all"])) {
+      this.tabs.milspecialties = {
+        label: "Направления",
+        sortFunc: (left, right) => (left.code > right.code ? 1 : -1),
+        filterFunc: (item, query) => {
+          const stringItem = `${item.code} ${item.title}`.toLowerCase();
+          return query.split(" ")
+            .reduce((memo, word) => memo && (!word || stringItem.includes(word)), true);
+        },
+        add: ReferenceModule.addMilSpecialty,
+        delete: ReferenceModule.deleteMilSpecialty,
+        edit: ReferenceModule.editMilSpecialty,
+      };
+    }
+    if (hasPermission(["rooms.patch.all"])) {
+      this.tabs.rooms = {
+        label: "Аудитории",
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+        add: ReferenceModule.addRoom,
+        delete: ReferenceModule.deleteRoom,
+        edit: ReferenceModule.editRoom,
+      };
+    }
+    if (hasPermission(["skills.patch.all"])) {
+      this.tabs.skills = {
+        label: "Умения",
+        sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
+        filterFunc: (item, query) => item.title.toLowerCase().includes(query),
+        add: ReferenceModule.addSkill,
+        delete: ReferenceModule.deleteSkill,
+        edit: ReferenceModule.editSkill,
+      };
+    }
+    // eslint-disable-next-line prefer-destructuring
+    this.currentTab = Object.keys(this.tabs)[0];
+  }
+}
 export default Dictionaries;
 </script>
 

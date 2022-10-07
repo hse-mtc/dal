@@ -16,11 +16,12 @@ import { UserModule } from "@/store";
 })
 class AdminPanelPage extends Vue {
   defaultTabs = [
-    { label: "Подтверждения регистрации", to: "/apanel/approve/", permissions: [] },
-    { label: "Управление пользователями", to: "/apanel/userManagement/", permissions: ["permissions.get.all", "permissions.patch.all", "permissions.post.all", "permissions.delete.all"] },
-    { label: "Управление ролями", to: "/apanel/roleManagement/", permissions: ["permissions.get.all", "permissions.patch.all", "permissions.post.all", "permissions.delete.all"] },
-    { label: "Справочники", to: "/apanel/dictionaries/", permissions: [] },
-    { label: "Учебные дисциплины", to: "/apanel/subjects/", permissions: ["subjects.get.all", "subjects.get.self", "subjects.post.all", "subjects.patch.all", "subjects.delete.all"] },
+    { label: "Подтверждения преподавателей", to: "/apanel/approve-teachers/", permissions: ["approve-teacher.get.milfaculty"] },
+    { label: "Подтверждения студентов", to: "/apanel/approve-students/", permissions: ["approve-student.get.self"] },
+    { label: "Управление пользователями", to: "/apanel/userManagement/", permissions: ["permissions.patch.all"] },
+    { label: "Управление ролями", to: "/apanel/roleManagement/", permissions: ["permissions.patch.all"] },
+    { label: "Справочники", to: "/apanel/dictionaries/", permissions: ["publishers.patch.all", "authors.patch.all", "categories.patch.all", "milgroups.patch.all", "achievements.patch.all"] },
+    { label: "Учебные дисциплины", to: "/apanel/subjects/", permissions: ["approve-teacher.get.milfaculty"] },
   ]
 
   tabs = []

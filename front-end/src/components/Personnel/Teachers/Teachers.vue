@@ -89,7 +89,6 @@
                   validator: () => userMilfaculty === data.milfaculty,
                 },
               ]"
-              disable
             >
               <el-button
                 size="mini"

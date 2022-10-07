@@ -38,6 +38,21 @@ def get_student_permissions():
         "milgroups.get.milfaculty",
         "reference-books.get.all",
         "uniforms.get.milfaculty",
+        "papers.get.all",
+        "categories.get.all",
+        "publishers.get.all",
+        "subjects.get.self",
+        "favorite-books.get.self",
+        "favorite-books.post.self",
+        "favorite-books.patch.self",
+        "favorite-books.delete.self",
+        "books.get.self",
+        "books.get.all",
+        "authors.get.all",
+        "student-birthday-alert.get.milfaculty",
+        "teacher-birthday-alert.get.all",
+        "sections.get.self",
+        "sections.get.all",
     ]
     res = []
     for val in values:
@@ -106,6 +121,12 @@ def get_teacher_permissions():
         "uniforms.get.milfaculty",
         "student-birthday-alert.get.milfaculty",
         "teacher-birthday-alert.get.all",
+        "approve-teacher.get.milfaculty",
+        "approve-teacher.patch.milfaculty",
+        "statistics.get.self",
+        "papers.get.all",
+        "categories.get.all",
+        "publishers.get.all",
     ]
 
     res = []
@@ -138,6 +159,9 @@ def get_milfaculty_head_permissions():
         "favorite-books.patch.self",
         "favorite-books.delete.self",
         "sections.get.all",
+        "subjects.get.all",
+        "statistics.get.self",
+        "student-birthday-alert.get.all",
         # LMS permissions
         "students.get.milfaculty",
         "students.patch.milfaculty",
@@ -167,7 +191,6 @@ def get_milfaculty_head_permissions():
         "punishments.post.milfaculty",
         "punishments.patch.milfaculty",
         "punishments.delete.milfaculty",
-        "subjects.get.all",
         "lesson-subjects.get.all",
         "lessons.get.all",
         "lessons.post.milfaculty",
@@ -184,8 +207,43 @@ def get_milfaculty_head_permissions():
         "uniforms.patch.milfaculty",
         "student-birthday-alert.get.milfaculty",
         "teacher-birthday-alert.get.all",
+        "statistics.get.self",
+        "papers.get.all",
+        "categories.get.all",
+        "publishers.get.all",
+        "approve-teacher.get.milfaculty",
+        "permissions.get.all",
+        "approve-teacher.patch.milfaculty",
+        "approve-student.get.self",
+        "approve-student.get.milgroup",
+        "approve-student.get.milfaculty",
+        "approve-student.patch.self",
+        "approve-student.patch.milgroup",
+        "approve-student.patch.milfaculty",
     ]
 
+    res = []
+    for val in values:
+        viewset, method, scope = val.split(".")
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(
+            Permission.objects.get(
+                viewset=viewset,
+                method=method,
+                scope=int(getattr(Permission.Scope, scope.upper())),
+            )
+        )
+    return res
+
+
+def get_student_milgroup_commander_permissions():
+    values = [
+        "approve-student.get.self",
+        "approve-student.get.milgroup",
+        "approve-student.patch.self",
+        "approve-student.patch.milgroup",
+        "permissions.get.all",
+    ]
     res = []
     for val in values:
         viewset, method, scope = val.split(".")

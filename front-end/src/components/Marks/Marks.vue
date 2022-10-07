@@ -438,6 +438,9 @@ export default {
       return ReferenceModule.rooms;
     },
     milgroups() {
+      if (!UserModule.isSuperuser) {
+        return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1);
+      }
       return ReferenceModule.milgroups;
     },
     userMilfaculty() {
@@ -450,7 +453,7 @@ export default {
   async created() {
     await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
-    this.filter.mg = this.milgroups[0]?.id;
+    this.filter.mg = this.milgroups[0]?.id.toString();
     this.fetchData();
   },
   methods: {
@@ -519,7 +522,7 @@ export default {
           .then(response => {
             this.journal = response.data;
           })
-          .catch(err => getError("расписания", err.response.status));
+          .catch(err => getError("оценок", err.response.status));
       }
     },
     async getSubjects() {

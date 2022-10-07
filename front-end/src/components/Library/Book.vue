@@ -130,7 +130,7 @@ export default {
       return surnameWithInitials(author);
     },
     saveBook() {
-      saveFavBook({ book: this.data.id }).then(() => {
+      saveFavBook({ book: this.data.id, user: this.userId }).then(() => {
         // todo
         // eslint-disable-next-line vue/no-mutating-props
         this.data.favorite = true;

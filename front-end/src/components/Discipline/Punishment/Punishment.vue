@@ -144,9 +144,7 @@
         >
           <template #body="{ data }">
             <AZGuard
-              v-slot="{ disabled }"
               :permissions="getPermissions('patch', data)"
-              disable
             >
               <el-tooltip
                 v-if="!data.remove_date"
@@ -166,9 +164,7 @@
               </el-tooltip>
             </AZGuard>
             <AZGuard
-              v-slot="{ disabled }"
               :permissions="getPermissions('patch', data)"
-              disable
             >
               <el-button
                 size="mini"
@@ -180,9 +176,7 @@
               />
             </AZGuard>
             <AZGuard
-              v-slot="{ disabled }"
               :permissions="getPermissions('delete', data)"
-              disable
             >
               <el-button
                 size="mini"

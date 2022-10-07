@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
+from auth.models import Group
 from common.serializers.milspecialties import MilspecialtySerializer
 from common.serializers.universities import UniversityInfoSerializer
 from common.serializers.personal import (
@@ -75,6 +76,9 @@ class StudentMutateSerializer(
         self.update_photo(instance, validated_data)
         return super().update(instance, validated_data)
 
+    def validate(self, attrs):
+        return super().validate(attrs)
+
 
 class StudentShortSerializer(serializers.ModelSerializer):
     fullname = serializers.CharField(read_only=True)
@@ -139,3 +143,40 @@ class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
         fields = "__all__"
+
+
+class ApproveStudentSerializer(serializers.ModelSerializer):
+    milgroup = MilgroupSerializer(
+        read_only=True,
+    )
+    email = serializers.CharField(
+        read_only=True,
+        source="user.email",
+    )
+    phone = serializers.CharField(
+        read_only=True,
+        source="contact_info.personal_phone_number",
+    )
+
+    class Meta:
+        model = Student
+        fields = [
+            "id",
+            "fullname",
+            "milgroup",
+            "post",
+            "email",
+            "phone",
+        ]
+
+
+class ApproveStudentMutateSerializer(serializers.Serializer):
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance: Student, validated_data):
+        user = instance.user
+        user.is_active = True
+        user.groups.set(Group.objects.filter(name="Студент"))
+        user.save()
+        return instance
