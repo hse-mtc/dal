@@ -201,6 +201,20 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="Преподаватель: " required>
+          <el-select
+            v-model="editLesson.teacher"
+            placeholder="Выберите тип занятия"
+            style="display: block"
+          >
+            <el-option
+              v-for="t in teachers"
+              :key="t.id"
+              :label="t.fullname"
+              :value="t.id"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Отмена</el-button>
