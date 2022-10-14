@@ -382,7 +382,7 @@ export default {
   },
   async created() {
     await this.fetchInfo();
-    if (parseInt(this.$route.params.teacherId, 16) !== this.userId) {
+    if (parseInt(this.$route.params.teacherId, 16) !== this.userId || this.personType === "student") {
       this.disableUpload = true;
     } else {
       this.disableUpload = false;
