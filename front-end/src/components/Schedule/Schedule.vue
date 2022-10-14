@@ -317,10 +317,19 @@ export default {
     },
   },
 
-  // async created() {
-  //   this.filter.mg = this.milgroups[0]?.id.toString();
-  //   await this.fetchData();
-  // },
+  watch: {
+    milgroups(newValue) {
+      this.filter.mg = this.milgroups[0]?.id.toString();
+      this.fetchData();
+    },
+  },
+
+  async created() {
+    this.filter.mg = this.milgroups[0]?.id.toString();
+    if (this.filter.mg !== undefined) {
+      await this.fetchData();
+    }
+  },
 
   methods: {
     getPermissions(method) {
