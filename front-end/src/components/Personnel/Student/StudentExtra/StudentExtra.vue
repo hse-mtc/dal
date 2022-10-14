@@ -1,6 +1,5 @@
 <template>
   <ExpandBox v-if="show" title="Дополнительная информация" @toggled="toggled">
-    {{ show }}
     <div class="extra-info">
       <el-form
         ref="form"
