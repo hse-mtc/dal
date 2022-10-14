@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from django.dispatch import receiver
+
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
@@ -23,6 +25,8 @@ class Teacher(models.Model):
         TEACHERS = "TE", "Профессорско-преподавательский состав"
 
     class Rank(models.TextChoices):
+        LIEUTENANT = "LI", "Лейтенант"
+        SENIOR_LIEUTENANT = "SL", "Старший лейтенант"
         CAPTAIN = "CA", "Капитан"
         MAJOR = "MA", "Майор"
         LIEUTENANT_COLONEL = "LC", "Подполковник"
@@ -100,3 +104,17 @@ class Teacher(models.Model):
     @property
     def fullname(self) -> str:
         return " ".join([self.surname, self.name, self.patronymic])
+
+
+@receiver(models.signals.post_delete, sender=Teacher)
+def post_delete_fields(sender, instance: Teacher, **kwargs):
+    attributes_to_delete = [
+        "user",
+        "contact_info",
+        "birth_info",
+        "photo",
+    ]
+    for attr in attributes_to_delete:
+        attr_to_delete = getattr(instance, attr, None)
+        if attr_to_delete is not None:
+            attr_to_delete.delete()

@@ -66,6 +66,22 @@
                 @click="approve(student)"
               />
             </el-tooltip>
+
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="Отклонить"
+              placement="bottom"
+            >
+              <el-button
+                size="medium"
+                icon="el-icon-close"
+                type=""
+                circle
+                class="disapprove-button"
+                @click="disapprove(student)"
+              />
+            </el-tooltip>
           </template>
         </PrimeColumn>
 
@@ -80,7 +96,9 @@
 </template>
 
 <script>
-import { getStudentsToApprove, approveStudent, getAllRoles } from "@/api/admin";
+import {
+  getStudentsToApprove, approveStudent, getAllRoles, disapproveStudent,
+} from "@/api/admin";
 import { getError, patchError } from "@/utils/message";
 import { StudentPostsMixin } from "@/mixins/students";
 
@@ -146,7 +164,7 @@ export default {
           permission_groups: student.permission_groups,
         });
       } catch (e) {
-        patchError("регистрации преподавателя", e.response?.status);
+        patchError("регистрации студента", e.response?.status);
         return;
       } finally {
         this.fetchingData = false;
@@ -156,6 +174,34 @@ export default {
       this.$message({
         type: "success",
         message: "Регистрация подтверждена.",
+        duration: 3000,
+      });
+    },
+    async disapprove(student) {
+      await this.$confirm(
+        "Вы уверены, что хотите отклонить регистрацию?",
+        "",
+        {
+          confirmButtonText: "Да",
+          cancelButtonText: "Отмена",
+          type: "warning",
+        },
+      );
+
+      this.fetchingData = true;
+      try {
+        await disapproveStudent(student.id);
+      } catch (e) {
+        patchError("отклонения регистрации студента", e.response?.status);
+        return;
+      } finally {
+        this.fetchingData = false;
+      }
+
+      this.approveList = this.approveList.filter(s => s.id !== student.id);
+      this.$message({
+        type: "success",
+        message: "Регистрация отклонена.",
         duration: 3000,
       });
     },
