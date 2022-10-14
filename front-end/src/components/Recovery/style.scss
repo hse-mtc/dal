@@ -1,0 +1,37 @@
+.el-input {
+    ::v-deep input {
+      background: transparent;
+      border: none !important;
+      -webkit-appearance: none;
+      border-radius: 0px;
+    }
+  }
+  .el-form-item {
+    border: 1px solid #dcdfe6;
+    border-radius: 5px;
+  
+    ::v-deep &__content {
+      display: flex;
+      align-items: center;
+  
+      .show-pwd {
+        cursor: pointer;
+        padding: 0 10px;
+      }
+    }
+  }
+  .recovery-container {
+    $dark_gray: #889aa4;
+    $light_gray: #eee;
+    .title-container {
+      position: relative;
+      .title {
+        font-size: 26px;
+        color: $light-gray;
+        margin: 0px auto 40px auto;
+        text-align: center;
+        font-weight: bold;
+      }
+    }
+  }
+  

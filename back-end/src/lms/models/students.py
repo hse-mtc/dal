@@ -195,6 +195,23 @@ def student_post_callback(sender, instance: Student, *args, **kwargs):
             return
 
 
+@receiver(models.signals.post_delete, sender=Student)
+def post_delete_fields(sender, instance: Student, **kwargs):
+    # pylint: disable=unused-argument
+    attributes_to_delete = [
+        "user",
+        "contact_info",
+        "birth_info",
+        "passport",
+        "university_info",
+        "photo",
+    ]
+    for attr in attributes_to_delete:
+        attr_to_delete = getattr(instance, attr, None)
+        if attr_to_delete is not None:
+            attr_to_delete.delete()
+
+
 class Note(models.Model):
     text = models.TextField()
     # author of the note
