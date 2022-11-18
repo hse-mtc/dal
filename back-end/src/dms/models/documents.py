@@ -44,6 +44,7 @@ class Document(models.Model):
         to=User, on_delete=models.SET_DEFAULT, default=super_user_id
     )
     upload_date = models.DateField(default=datetime.date.today)
+    visible_to_students = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
