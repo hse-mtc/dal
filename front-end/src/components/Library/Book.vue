@@ -11,7 +11,7 @@
         :src="
           data.cover
             ? data.cover.image
-            : 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/387928/book%20placeholder.png'
+            : 'https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png'
         "
         alt=""
       >

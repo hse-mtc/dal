@@ -7,6 +7,7 @@
         action="/api/lms/students/"
         :show-file-list="false"
         :before-upload="beforeAvatarUpload"
+        :disabled="disableUpload"
       >
         <img
           v-if="displayInfo.photo"
@@ -200,6 +201,7 @@ import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
 import { StudentStatusesMixin, StudentPostsMixin } from "@/mixins/students";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "StudentGeneral",
@@ -213,6 +215,7 @@ export default {
   },
   data() {
     return {
+      disableUpload: false,
       modify: false,
       displayInfo: {},
       modifyInfo: {},
@@ -282,9 +285,17 @@ export default {
     userId() {
       return UserModule.personId;
     },
+    personType() {
+      return UserModule.personType;
+    },
   },
   async created() {
     await this.fetchInfo();
+    if (parseInt(this.$route.params.studentId, 16) !== this.userId || this.personType === "teacher") {
+      this.disableUpload = true;
+    } else {
+      this.disableUpload = false;
+    }
   },
   methods: {
     formatDate: date => moment(date).format("DD.MM.YYYY"),

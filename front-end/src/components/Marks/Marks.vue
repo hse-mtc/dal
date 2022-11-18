@@ -433,6 +433,7 @@ export default {
       },
     };
   },
+
   computed: {
     rooms() {
       return ReferenceModule.rooms;
@@ -450,11 +451,21 @@ export default {
       return UserModule.personMilgroups;
     },
   },
+
+  watch: {
+    milgroups(newValue) {
+      this.filter.mg = this.milgroups[0]?.id.toString();
+      this.fetchData();
+    },
+  },
+
   async created() {
     await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
     this.filter.mg = this.milgroups[0]?.id.toString();
-    this.fetchData();
+    if (this.filter.mg !== undefined) {
+      await this.fetchData();
+    }
   },
   methods: {
     hasPermission,
