@@ -317,9 +317,18 @@ export default {
     },
   },
 
+  watch: {
+    milgroups(newValue) {
+      this.filter.mg = this.milgroups[0]?.id.toString();
+      this.fetchData();
+    },
+  },
+
   async created() {
     this.filter.mg = this.milgroups[0]?.id.toString();
-    await this.fetchData();
+    if (this.filter.mg !== undefined) {
+      await this.fetchData();
+    }
   },
 
   methods: {
