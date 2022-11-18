@@ -156,7 +156,7 @@ class TopicViewSet(viewsets.ModelViewSet):
 
     def get_serializer(self, *args, **kwargs):
         serializer_class = self.get_serializer_class()
-        kwargs.setdefault('context', self.get_serializer_context())
+        kwargs.setdefault("context", self.get_serializer_context())
         is_student = False
         personel = get_personnel_from_request_user(self.request.user)
         match personel:
@@ -166,7 +166,7 @@ class TopicViewSet(viewsets.ModelViewSet):
                 is_student = True
         if self.request.user.is_superuser:
             is_student = False
-        kwargs['context']['is_student'] = is_student
+        kwargs["context"]["is_student"] = is_student
         return serializer_class(*args, **kwargs)
 
     def get_queryset(self):

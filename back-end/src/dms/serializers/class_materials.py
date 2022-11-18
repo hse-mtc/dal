@@ -55,7 +55,9 @@ class TopicRetrieveSerializer(TopicSerializer):
         is_student = self.context.get("is_student", False)
         for value, label in ClassMaterial.Type.choices:
             if is_student:
-                materials = obj.class_materials.filter(type=value, visible_to_students = True)
+                materials = obj.class_materials.filter(
+                    type=value, visible_to_students=True
+                )
             else:
                 materials = obj.class_materials.filter(type=value)
             data[label] = ClassMaterialSerializer(
