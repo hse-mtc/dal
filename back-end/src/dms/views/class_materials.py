@@ -34,6 +34,9 @@ from common.parsers import MultiPartWithJSONParser
 from auth.models import Permission
 from auth.permissions import BasePermission
 
+from lms.utils.functions import get_personnel_from_request_user
+from lms.models.teachers import Teacher
+
 
 class SectionPermission(BasePermission):
     permission_class = "sections"
@@ -150,6 +153,21 @@ class TopicViewSet(viewsets.ModelViewSet):
         if self.action in ["retrieve", "list"]:
             return TopicRetrieveSerializer
         return TopicSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs.setdefault('context', self.get_serializer_context())
+        is_student = False
+        personel = get_personnel_from_request_user(self.request.user)
+        match personel:
+            case Teacher():
+                is_student = False
+            case _:
+                is_student = True
+        if self.request.user.is_superuser:
+            is_student = False
+        kwargs['context']['is_student'] = is_student
+        return serializer_class(*args, **kwargs)
 
     def get_queryset(self):
         if self.request.user.is_superuser:

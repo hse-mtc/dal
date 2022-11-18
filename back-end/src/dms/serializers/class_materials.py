@@ -52,8 +52,12 @@ class TopicRetrieveSerializer(TopicSerializer):
     @extend_schema_field(ClassMaterialsByType)
     def get_class_materials(self, obj: Topic):
         data = {}
+        is_student = self.context.get("is_student", False)
         for value, label in ClassMaterial.Type.choices:
-            materials = obj.class_materials.filter(type=value)
+            if is_student:
+                materials = obj.class_materials.filter(type=value, visible_to_students = True)
+            else:
+                materials = obj.class_materials.filter(type=value)
             data[label] = ClassMaterialSerializer(
                 materials,
                 many=True,
