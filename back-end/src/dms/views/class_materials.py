@@ -1,7 +1,9 @@
+import json
+
 from rest_framework import status
 from rest_framework import viewsets
 
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import JSONParser, MultiPartParser, BaseParser
 from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -286,10 +288,14 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
 
         many_content = request.data.pop("content")
+        many_fields_new = []
         for fields, content in zip(many_fields, many_content):
+            if isinstance(fields, str):
+                fields = json.loads(fields)
             fields["content"] = content
+            many_fields_new.append(fields)
 
-        serializer = self.get_serializer(data=many_fields, many=True)
+        serializer = self.get_serializer(data=many_fields_new, many=True)
         serializer.is_valid(raise_exception=True)
         # check scoping
         if self.is_creation_allowed_by_scope(request.data):
