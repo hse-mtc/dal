@@ -425,6 +425,9 @@ export default {
     },
     onEdit(row) {
       this.editLesson = { ...row };
+      if (typeof this.editLesson.room === "object" && this.editLesson.room !== null) {
+        this.editLesson.room = this.editLesson.room.id;
+      }
       this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
       this.editLesson.subject = this.editLesson.subject.id;
       this.editLessonFullname = "Редактирование занятия";
