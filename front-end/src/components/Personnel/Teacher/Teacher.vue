@@ -35,7 +35,7 @@
           >
             <img
               v-if="displayInfo.photo"
-              :src="displayInfo.photo.image"
+              :src="`/` + displayInfo.photo.image"
               class="avatar"
             >
             <i v-else class="el-icon-user avatar-uploader-icon" />
