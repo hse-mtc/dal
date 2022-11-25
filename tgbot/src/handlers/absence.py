@@ -54,7 +54,7 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
     students_by_id: dict[int, Student] = {student.id: student for student in students}
 
     for today_absence in today_absences:
-        students_by_id[today_absence["student"]["id"]].state = State.ABSENT
+        students_by_id[today_absence["student"]["id"]].state = State.ABSENT_LA
 
     await state.set_data(students_by_id)
 
@@ -80,6 +80,17 @@ list_milgroup.handler_filters = [
 ]
 
 
+def matchStates(state):
+    if state == State.ABSENT_LA.value:
+        return "LA"
+    elif state == State.ABSENT_IL.value:
+        return "IL"
+    elif state == State.ABSENT_LE.value:
+        return "LE"
+    else:
+        return ""
+
+
 async def toggle_student_absence_status(
     callback_query: CallbackQuery,
     state: FSMContext,
@@ -87,6 +98,7 @@ async def toggle_student_absence_status(
     new_state, id_ = map(int, callback_query.data.split())
     students_by_id = await state.get_data()
     students_by_id[id_].state = State(new_state)
+    students_by_id[id_].excuse = matchStates(students_by_id[id_].state.value)
     await state.set_data(students_by_id)
     await callback_query.message.edit_reply_markup(
         reply_markup=student_absence_keyboard(id_, new_state),)
