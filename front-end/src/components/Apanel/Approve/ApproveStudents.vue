@@ -135,9 +135,8 @@ export default {
     } finally {
       this.fetchingData = false;
     }
-
     [this.approveList, this.roles] = responses.map(r => r.data);
-    this.approveList = this.approveList(student => ({
+    this.approveList = this.approveList.map(student => ({
       permission_groups: [],
       ...student,
     }));
