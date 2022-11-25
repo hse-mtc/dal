@@ -10,7 +10,9 @@ from api.client import client
 
 
 class State(Enum):
-    ABSENT = auto()
+    ABSENT_LA = auto()
+    ABSENT_IL = auto()
+    ABSENT_LE = auto()
     PRESENT = auto()
 
 
@@ -41,8 +43,9 @@ class Student:
     fullname: str
     state: State
     milgroup: tp.Optional[Milgroup] = None
-    excuse: str = "IL"
+    excuse: str = "IL"  # GC
     status: str = "OP"
+    reason: str = ""  # GC
     post: tp.Optional[str] = None
 
     def is_milgroup_commander(self) -> bool:
