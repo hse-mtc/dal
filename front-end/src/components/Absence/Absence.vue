@@ -15,7 +15,8 @@
         v-model="activeName"
         stretch
         @value="absences"
-        @tab-click="onFilter">
+        @tab-click="onFilter"
+      >
         <el-tab-pane label="Пропуски" name="absences">
           <el-row class="filterRow" :gutter="20">
             <el-col :span="8">

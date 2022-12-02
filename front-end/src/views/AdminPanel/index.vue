@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.root">
-    <PrimeTabMenu :model="tabs" :activeIndex="null" />
+    <PrimeTabMenu :model="tabs" :active-index="null" />
     <router-view :class="$style.page" />
   </div>
 </template>
