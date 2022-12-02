@@ -86,7 +86,7 @@ class ContactInfoSerializer(serializers.ModelSerializer):
 
 class PhotoSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(
-        use_url=True,
+        use_url=False,
         allow_null=True,
         required=False,
         read_only=True,

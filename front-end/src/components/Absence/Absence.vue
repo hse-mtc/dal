@@ -11,7 +11,11 @@
       <el-row class="pageTitle">
         <h1>{{ $route.meta.title }}</h1>
       </el-row>
-      <el-tabs value="absences" stretch @tab-click="onFilter">
+      <el-tabs
+        v-model="activeName"
+        stretch
+        @value="absences"
+        @tab-click="onFilter">
         <el-tab-pane label="Пропуски" name="absences">
           <el-row class="filterRow" :gutter="20">
             <el-col :span="8">
@@ -262,7 +266,7 @@
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="Журнал" name="journal">
-          <AbsenceJournal />
+          <AbsenceJournal ref="AbsenceJournal" />
         </el-tab-pane>
       </el-tabs>
     </el-col>
@@ -319,6 +323,7 @@ export default {
   mixins: [AbsenceExcusesMixin, AbsenceStatusesMixin],
   data() {
     return {
+      activeName: "absences",
       dialogVisible: false,
       loading: false,
       editAbsence: {
@@ -506,6 +511,7 @@ export default {
             date_to: this.filter.dateRange ? this.filter.dateRange[1] : undefined,
           })
         ).data;
+        await this.$refs.AbsenceJournal.onWeekdayChanged();
       } catch (err) {
         console.log(err);
         getError("пропусков", err.response?.status);

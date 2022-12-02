@@ -201,6 +201,20 @@
             />
           </el-select>
         </el-form-item>
+        <el-form-item label="Преподаватель: " required>
+          <el-select
+            v-model="editLesson.teacher"
+            placeholder="Выберите тип занятия"
+            style="display: block"
+          >
+            <el-option
+              v-for="t in teachers"
+              :key="t.id"
+              :label="t.fullname"
+              :value="t.id"
+            />
+          </el-select>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">Отмена</el-button>
@@ -317,9 +331,18 @@ export default {
     },
   },
 
+  watch: {
+    milgroups(newValue) {
+      this.filter.mg = this.milgroups[0]?.id.toString();
+      this.fetchData();
+    },
+  },
+
   async created() {
     this.filter.mg = this.milgroups[0]?.id.toString();
-    await this.fetchData();
+    if (this.filter.mg !== undefined) {
+      await this.fetchData();
+    }
   },
 
   methods: {
@@ -425,6 +448,9 @@ export default {
     },
     onEdit(row) {
       this.editLesson = { ...row };
+      if (typeof this.editLesson.room === "object" && this.editLesson.room !== null) {
+        this.editLesson.room = this.editLesson.room.id;
+      }
       this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
       this.editLesson.subject = this.editLesson.subject.id;
       this.editLessonFullname = "Редактирование занятия";

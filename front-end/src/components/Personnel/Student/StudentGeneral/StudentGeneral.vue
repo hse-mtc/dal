@@ -7,10 +7,11 @@
         action="/api/lms/students/"
         :show-file-list="false"
         :before-upload="beforeAvatarUpload"
+        :disabled="disableUpload"
       >
         <img
           v-if="displayInfo.photo"
-          :src="displayInfo.photo.image"
+          :src="`/media/` + displayInfo.photo.image"
           class="avatar"
         >
         <i v-else class="el-icon-user avatar-uploader-icon" />
@@ -56,6 +57,7 @@
                 ]"
               >
                 <el-button
+                  v-if="isSuperuser"
                   type="info"
                   plain
                   icon="el-icon-edit"
@@ -143,7 +145,7 @@
           <transition name="el-fade-in" mode="out-in">
             <el-select
               v-if="modify"
-              v-model="modifyInfo.milgroup.id"
+              v-model="modifyInfo.milgroup.title"
               value-key="milgroup"
               style="display: block"
             >
@@ -151,7 +153,7 @@
                 v-for="item in milgroups"
                 :key="item.id"
                 :label="item.title"
-                :value="item"
+                :value="item.title"
               >
                 <span style="float: left">{{ item.title }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{
@@ -200,6 +202,7 @@ import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
 import { StudentStatusesMixin, StudentPostsMixin } from "@/mixins/students";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "StudentGeneral",
@@ -213,6 +216,7 @@ export default {
   },
   data() {
     return {
+      disableUpload: false,
       modify: false,
       displayInfo: {},
       modifyInfo: {},
@@ -282,9 +286,20 @@ export default {
     userId() {
       return UserModule.personId;
     },
+    personType() {
+      return UserModule.personType;
+    },
+    isSuperuser() {
+      return UserModule.isSuperuser;
+    },
   },
   async created() {
     await this.fetchInfo();
+    if ((parseInt(this.$route.params.studentId, 16) !== this.userId || this.personType === "teacher") && !this.isSuperuser) {
+      this.disableUpload = true;
+    } else {
+      this.disableUpload = false;
+    }
   },
   methods: {
     formatDate: date => moment(date).format("DD.MM.YYYY"),

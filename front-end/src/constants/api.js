@@ -8,6 +8,7 @@ export const AUTH_URLS = {
   permissions: "auth/permissions/",
   userControl: "auth/user-control/",
   roles: "auth/group/",
+  recovery: "auth/recovery/",
 };
 
 export const AMS_URLS = {

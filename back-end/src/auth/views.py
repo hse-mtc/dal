@@ -17,10 +17,7 @@ from rest_framework_simplejwt import views as jwt_views
 from drf_spectacular.views import extend_schema
 
 from auth.permissions import BasePermission
-from auth.models import (
-    Permission,
-    Group,
-)
+from auth.models import Permission, Group, User
 from auth.serializers import (
     UserSerializer,
     UserDetailedSerializer,
@@ -34,7 +31,13 @@ from auth.serializers import (
     ChangePasswordSerializer,
 )
 
+
+from django.contrib.auth.base_user import BaseUserManager
+
 from common.constants import MUTATE_ACTIONS
+
+from auth.tokens.registration import generate_regconf_token
+from common.email.registration import send_change_password_email
 
 
 class PermissionPermission(BasePermission):
@@ -341,3 +344,25 @@ class TokenObtainPairView(jwt_views.TokenObtainPairView):
 @extend_schema(tags=["auth"])
 class TokenRefreshView(jwt_views.TokenRefreshView):
     permission_classes = [permissions.AllowAny]
+
+
+class RecoveryView(generics.GenericAPIView):
+
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        data = request.data
+        email = BaseUserManager.normalize_email(data["email"])
+
+        if not User.objects.filter(email=email).exists():
+            return Response(status=status.HTTP_200_OK)
+
+        user = User.objects.get(email=email)
+
+        send_change_password_email(
+            email=email,
+            url=request.META["HTTP_REFERER"],
+            token=generate_regconf_token(user),
+        )
+
+        return Response(status=status.HTTP_200_OK)

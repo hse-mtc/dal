@@ -31,10 +31,11 @@
             action="/api/lms/students/"
             :show-file-list="false"
             :before-upload="beforeAvatarUpload"
+            :disabled="disableUpload"
           >
             <img
               v-if="displayInfo.photo"
-              :src="displayInfo.photo.image"
+              :src="`/media/` + displayInfo.photo.image"
               class="avatar"
             >
             <i v-else class="el-icon-user avatar-uploader-icon" />
@@ -80,6 +81,7 @@
                     ]"
                   >
                     <el-button
+                      v-if="isSuperuser"
                       type="info"
                       plain
                       icon="el-icon-edit"
@@ -259,6 +261,7 @@ import moment from "moment";
 import { UserModule, ReferenceModule } from "@/store";
 import ChangePasswordForm from "@/components/ChangePasswordForm/ChangePasswordForm.vue";
 import { TeacherPostsMixin, TeacherRanksMixin } from "@/mixins/teachers";
+import { hasPermission } from "@/utils/permissions";
 
 export default {
   name: "Teacher",
@@ -267,6 +270,7 @@ export default {
   mixins: [TeacherPostsMixin, TeacherRanksMixin],
   data() {
     return {
+      disableUpload: false,
       dialog: false,
       loading: false,
       modify: false,
@@ -376,9 +380,17 @@ export default {
         ? this.displayInfo.milfaculty.title
         : "---";
     },
+    isSuperuser() {
+      return UserModule.isSuperuser;
+    },
   },
   async created() {
     await this.fetchInfo();
+    if ((parseInt(this.$route.params.teacherId, 16) !== this.userId || this.personType === "student") && !this.isSuperuser) {
+      this.disableUpload = true;
+    } else {
+      this.disableUpload = false;
+    }
   },
   methods: {
     formatDate: date => (moment(date).isValid() ? moment(date).format("DD.MM.YYYY") : "---"),

@@ -1,7 +1,9 @@
+import json
+
 from rest_framework import status
 from rest_framework import viewsets
 
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import JSONParser, MultiPartParser, BaseParser
 from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
@@ -33,6 +35,9 @@ from common.parsers import MultiPartWithJSONParser
 
 from auth.models import Permission
 from auth.permissions import BasePermission
+
+from lms.utils.functions import get_personnel_from_request_user
+from lms.models.teachers import Teacher
 
 
 class SectionPermission(BasePermission):
@@ -151,6 +156,21 @@ class TopicViewSet(viewsets.ModelViewSet):
             return TopicRetrieveSerializer
         return TopicSerializer
 
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs.setdefault("context", self.get_serializer_context())
+        is_student = False
+        personel = get_personnel_from_request_user(self.request.user)
+        match personel:
+            case Teacher():
+                is_student = False
+            case _:
+                is_student = True
+        if self.request.user.is_superuser:
+            is_student = False
+        kwargs["context"]["is_student"] = is_student
+        return serializer_class(*args, **kwargs)
+
     def get_queryset(self):
         if self.request.user.is_superuser:
             return self.queryset.all()
@@ -268,10 +288,14 @@ class ClassMaterialViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
 
         many_content = request.data.pop("content")
+        many_fields_new = []
         for fields, content in zip(many_fields, many_content):
+            if isinstance(fields, str):
+                fields = json.loads(fields)
             fields["content"] = content
+            many_fields_new.append(fields)
 
-        serializer = self.get_serializer(data=many_fields, many=True)
+        serializer = self.get_serializer(data=many_fields_new, many=True)
         serializer.is_valid(raise_exception=True)
         # check scoping
         if self.is_creation_allowed_by_scope(request.data):

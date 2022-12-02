@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from auth.views import (
     PermissionRetrieveView,
+    RecoveryView,
     UserRetrieveAPIView,
     UserControlViewSet,
     GroupViewSet,
@@ -56,4 +57,5 @@ urlpatterns = [
     path("tokens/obtain/", TokenObtainPairView.as_view()),
     path("tokens/refresh/", TokenRefreshView.as_view()),
     path("password/change/", ChangePasswordAPIView.as_view()),
+    path("recovery/", RecoveryView.as_view()),
 ]

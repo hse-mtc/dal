@@ -56,6 +56,11 @@ export const constantRoutes = [
     component: () => import("@/views/ChangePassword/index"),
     hidden: true,
   },
+  {
+    path: "/recovery/",
+    component: () => import("@/views/Recovery/index"),
+    hidden: true,
+  },
 
   {
     path: "/applicant-form/",
@@ -206,14 +211,14 @@ export const constantRoutes = [
             path: "approve-teachers/",
             name: "approve-teachers",
             component: () => import("@/components/Apanel/Approve/ApproveTeachers.vue"),
-            meta: { title: "Подтверждения", permissions: ["approve-teacher.get.milfaculty"] },
+            meta: { title: "Подтверждения преподавателей", permissions: ["approve-teacher.get.milfaculty"] },
             hidden: true,
           },
           {
             path: "approve-students/",
             name: "approve-students",
             component: () => import("@/components/Apanel/Approve/ApproveStudents.vue"),
-            meta: { title: "Подтверждения", permissions: ["approve-student.get.self"] },
+            meta: { title: "Подтверждения студентов", permissions: ["approve-student.get.self"] },
             hidden: true,
           },
           {
