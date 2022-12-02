@@ -69,7 +69,24 @@ def create_applicants(
                 "personal_phone_number": "72222222221",
             },
             "photo": 0,
-            "family": [],
+            "family": [
+                {
+                    'surname': 'Иванов', 'name': 'Иван', 'patronymic': 'Петрович',
+                    'type': 'FA', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                },
+                {
+                    'surname': 'Иванова', 'name': 'Евгения', 'patronymic': 'Сергеевна',
+                    'type': 'MO', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                },
+                {
+                    'surname': 'Иванов', 'name': 'Евгений', 'patronymic': 'Иванович',
+                    'type': 'BR', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                },
+                {
+                    'surname': 'Иванова', 'name': 'Елизавета', 'patronymic': 'Ивановна',
+                    'type': 'SI', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                },
+            ],
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
             "user": User.objects.get(email=f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}"),
