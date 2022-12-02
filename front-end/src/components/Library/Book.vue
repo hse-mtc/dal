@@ -11,7 +11,7 @@
         :src="
           data.cover
             ? data.cover.image
-            : 'https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png'
+            : '@assets/book-cover-placeholder.png'
         "
         alt=""
       >
