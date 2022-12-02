@@ -454,26 +454,28 @@ export default {
       }
     },
 
-    onCreate(ordinal, date) {
+    async onCreate(ordinal, date) {
       this.editLesson = {
         ordinal,
         date,
         milgroup: this.filter.mg,
       };
       this.editLessonFullname = "Новое занятие";
-      this.getSubjects();
-      this.getTeachers();
+      await this.getSubjects();
+      await this.getTeachers();
       this.dialogVisible = true;
     },
-    onEdit(row) {
+    async onEdit(row) {
       this.editLesson = { ...row };
       if (typeof this.editLesson.room === "object" && this.editLesson.room !== null) {
         this.editLesson.room = this.editLesson.room.id;
       }
       this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
       this.editLesson.subject = this.editLesson.subject.id;
+      this.editLesson.teacher = this.editLesson.teacher.id;
       this.editLessonFullname = "Редактирование занятия";
-      this.getSubjects();
+      await this.getSubjects();
+      await this.getTeachers();
       this.dialogVisible = true;
     },
 
