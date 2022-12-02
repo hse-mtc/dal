@@ -8,6 +8,7 @@ from lms.models.lessons import (
 
 from lms.serializers.subjects import LessonSubjectSerializer
 from lms.serializers.common import MilgroupSerializer
+from lms.serializers.teachers import TeacherSerializer
 
 from lms.validators import PresentInDatabaseValidator
 
@@ -30,6 +31,7 @@ class LessonSerializer(serializers.ModelSerializer):
     subject = LessonSubjectSerializer(read_only=True)
     milgroup = MilgroupSerializer(read_only=True)
     room = RoomSerializer(read_only=True)
+    teacher = TeacherSerializer(read_only=True)
 
     class Meta:
         model = Lesson
