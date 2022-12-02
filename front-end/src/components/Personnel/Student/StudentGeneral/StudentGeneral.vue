@@ -180,7 +180,7 @@
               v-model="modifyInfo.contact_info.personal_phone_number"
               v-maska="'# (###) ###-##-##'"
             />
-            <span v-else class="field-value">
+            <span v-else class="field-value">+
               {{
                 displayInfo.contact_info &&
                   displayInfo.contact_info.personal_phone_number
@@ -326,6 +326,17 @@ export default {
         this.$set(this.modifyInfo, "contact_info", {});
       }
     },
+    parsePhone(masked) {
+      if (!masked) {
+        return null;
+      }
+
+      return masked
+        .replaceAll("(", "")
+        .replaceAll(")", "")
+        .replaceAll("-", "")
+        .replaceAll(" ", "");
+    },
     async save() {
       this.$refs.form.validate(async valid => {
         if (valid) {
@@ -345,6 +356,8 @@ export default {
               patronymic,
               photo: undefined,
             };
+            // eslint-disable-next-line max-len
+            requestBody.contact_info.personal_phone_number = this.parsePhone(this.modifyInfo.contact_info.personal_phone_number);
             await patchStudent(requestBody);
             this.displayInfo = this.modifyInfo;
             this.modify = false;
