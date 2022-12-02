@@ -273,7 +273,7 @@ export default {
         ordinal: 0,
         type: "",
         room: "",
-        teacher: ""
+        teacher: "",
       },
       filter: {
         mg: "0",
