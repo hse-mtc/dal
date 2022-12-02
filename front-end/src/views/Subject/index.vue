@@ -33,13 +33,20 @@
         <Menu :class="$style.menu" />
       </div>
       <div :class="$style.sectionsWrapper">
-        <el-button
-          type="primary"
-          :class="$style.bigAddButton"
-          @click="addSection"
+        <AZGuard
+          :permissions="['sections.post.all', {
+            codename: 'sections.post.self',
+            validator: () => userId === subjectOwnerId,
+          }]"
         >
-          + Добавить раздел
-        </el-button>
+          <el-button
+            type="primary"
+            :class="$style.bigAddButton"
+            @click="addSection"
+          >
+            + Добавить раздел
+          </el-button>
+        </AZGuard>
 
         <SectionsCards :class="$style.sections" />
       </div>

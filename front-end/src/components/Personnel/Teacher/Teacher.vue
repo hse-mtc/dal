@@ -35,7 +35,7 @@
           >
             <img
               v-if="displayInfo.photo"
-              :src="displayInfo.photo.image"
+              :src="`/media/` + displayInfo.photo.image"
               class="avatar"
             >
             <i v-else class="el-icon-user avatar-uploader-icon" />
@@ -81,6 +81,7 @@
                     ]"
                   >
                     <el-button
+                      v-if="isSuperuser"
                       type="info"
                       plain
                       icon="el-icon-edit"
@@ -379,10 +380,13 @@ export default {
         ? this.displayInfo.milfaculty.title
         : "---";
     },
+    isSuperuser() {
+      return UserModule.isSuperuser;
+    },
   },
   async created() {
     await this.fetchInfo();
-    if (parseInt(this.$route.params.teacherId, 16) !== this.userId || this.personType === "student") {
+    if ((parseInt(this.$route.params.teacherId, 16) !== this.userId || this.personType === "student") && !this.isSuperuser) {
       this.disableUpload = true;
     } else {
       this.disableUpload = false;
