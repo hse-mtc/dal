@@ -71,20 +71,36 @@ def create_applicants(
             "photo": 0,
             "family": [
                 {
-                    'surname': 'Иванов', 'name': 'Иван', 'patronymic': 'Петрович',
-                    'type': 'FA', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                    "surname": "Иванов",
+                    "name": "Иван",
+                    "patronymic": "Петрович",
+                    "type": "FA",
+                    "citizenship": "Россия",
+                    "permanent_address": "Россия, Москва",
                 },
                 {
-                    'surname': 'Иванова', 'name': 'Евгения', 'patronymic': 'Сергеевна',
-                    'type': 'MO', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                    "surname": "Иванова",
+                    "name": "Евгения",
+                    "patronymic": "Сергеевна",
+                    "type": "MO",
+                    "citizenship": "Россия",
+                    "permanent_address": "Россия, Москва",
                 },
                 {
-                    'surname': 'Иванов', 'name': 'Евгений', 'patronymic': 'Иванович',
-                    'type': 'BR', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                    "surname": "Иванов",
+                    "name": "Евгений",
+                    "patronymic": "Иванович",
+                    "type": "BR",
+                    "citizenship": "Россия",
+                    "permanent_address": "Россия, Москва",
                 },
                 {
-                    'surname': 'Иванова', 'name': 'Елизавета', 'patronymic': 'Ивановна',
-                    'type': 'SI', 'citizenship': 'Россия', 'permanent_address': 'Россия, Москва'
+                    "surname": "Иванова",
+                    "name": "Елизавета",
+                    "patronymic": "Ивановна",
+                    "type": "SI",
+                    "citizenship": "Россия",
+                    "permanent_address": "Россия, Москва",
                 },
             ],
             # "application_process": {},

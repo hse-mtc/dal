@@ -335,7 +335,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         url_path="applications/applicants-detail/export",
         detail=False,
         renderer_classes=[XLSXRenderer],
-        permission_classes=[ApplicantPermission]
+        permission_classes=[ApplicantPermission],
     )
     def generate_applicants_detail_excel(self, request: Request) -> Response:
         return self.generate_excel_report(request, generate_applicants_detail)

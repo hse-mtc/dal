@@ -13,9 +13,7 @@ from ams.utils.export.formats import Formats
 
 
 def _make_applicant_detail_row(
-        applicant: Applicant,
-        formats: Formats,
-        index: int
+    applicant: Applicant, formats: Formats, index: int
 ) -> list[...]:
     row = [(f"{index + 1}.", formats.table_center)]
     row += [(applicant.fullname, formats.table_name)]
@@ -24,7 +22,7 @@ def _make_applicant_detail_row(
         row += [
             (uni_info.program.faculty.title, formats.table_center),
             (uni_info.program.title, formats.table_center),
-            (uni_info.group, formats.table_center)
+            (uni_info.group, formats.table_center),
         ]
     else:
         row += [("", formats.table_center)] * 3
@@ -33,7 +31,7 @@ def _make_applicant_detail_row(
     if (bi := applicant.birth_info) is not None:
         row += [
             (bi.date, formats.table_date),
-            (f"{bi.country}, {bi.place}", formats.table_center)
+            (f"{bi.country}, {bi.place}", formats.table_center),
         ]
     else:
         row += [("", formats.table_date)] * 2
@@ -60,26 +58,34 @@ def _make_applicant_detail_row(
         mother = fam.filter(type="MO").first()
         brothers = list(fam.filter(type="BR").all())
         sisters = list(fam.filter(type="SI").all())
-        row += [
-            (
-                f"{father.fullname}, {father.birth_info.date + ',' if father.birth_info else ''} "
-                f"{father.permanent_address if father.permanent_address else ''}",
-                formats.align_left
-            )
-        ] if father else [("", formats.align_left)]
-        row += [
-            (
-                f"{mother.fullname} {mother.birth_info.date + ',' if mother.birth_info else ''} "
-                f"{mother.permanent_address if mother.permanent_address else ''}",
-                formats.align_left
-            )
-        ] if mother else [("", formats.align_left)]
+        row += (
+            [
+                (
+                    f"{father.fullname}, {father.birth_info.date + ',' if father.birth_info else ''} "
+                    f"{father.permanent_address if father.permanent_address else ''}",
+                    formats.align_left,
+                )
+            ]
+            if father
+            else [("", formats.align_left)]
+        )
+        row += (
+            [
+                (
+                    f"{mother.fullname} {mother.birth_info.date + ',' if mother.birth_info else ''} "
+                    f"{mother.permanent_address if mother.permanent_address else ''}",
+                    formats.align_left,
+                )
+            ]
+            if mother
+            else [("", formats.align_left)]
+        )
         for bro in brothers:
             row += [
                 (
                     f"{bro.fullname}, {bro.birth_info.date + ',' if bro.birth_info else ''} "
                     f"{bro.permanent_address if bro.permanent_address else ''}",
-                    formats.align_left
+                    formats.align_left,
                 )
             ]
         for sis in sisters:
@@ -87,7 +93,7 @@ def _make_applicant_detail_row(
                 (
                     f"{sis.fullname}, {sis.birth_info.date + ',' if sis.birth_info else ''} "
                     f"{sis.permanent_address if sis.permanent_address else ''}",
-                    formats.align_left
+                    formats.align_left,
                 )
             ]
     else:
@@ -111,10 +117,7 @@ def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
         start = 1
-        _fill_applicant_detail_header(
-            worksheet=worksheet,
-            formats=formats
-        )
+        _fill_applicant_detail_header(worksheet=worksheet, formats=formats)
         studs = applicants.filter(milspecialty=milspecialty)
         for row, applicant in enumerate(studs, start=start):  # Skip header
             cells = _make_applicant_detail_row(
@@ -132,13 +135,23 @@ def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -
 
 
 def _fill_applicant_detail_header(
-        worksheet: xlsxwriter.Workbook.worksheet_class,
-        formats,
+    worksheet: xlsxwriter.Workbook.worksheet_class,
+    formats,
 ):
     row = (
-        "№", "ФИО", "Название факультета", "Название ОП", "Номер группы",
-        "Дата рождения", "Место рождения", "Гражданство",
-        "Адрес прописки", "Военкомат", "Отец", "Мать", "Братья/сестры"
+        "№",
+        "ФИО",
+        "Название факультета",
+        "Название ОП",
+        "Номер группы",
+        "Дата рождения",
+        "Место рождения",
+        "Гражданство",
+        "Адрес прописки",
+        "Военкомат",
+        "Отец",
+        "Мать",
+        "Братья/сестры",
     )
     worksheet.write_row(0, 0, row, formats.table_center)
 
