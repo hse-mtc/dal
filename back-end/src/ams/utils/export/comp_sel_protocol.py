@@ -12,6 +12,137 @@ from ams.models.applicants import Applicant
 from ams.utils.export.formats import Formats
 
 
+def _make_applicant_detail_row(
+        applicant: Applicant,
+        formats: Formats,
+        index: int
+) -> list[...]:
+    row = [(f"{index + 1}.", formats.table_center)]
+    row += [(applicant.fullname, formats.table_name)]
+
+    if (uni_info := applicant.university_info) is not None:
+        row += [
+            (uni_info.program.faculty.title, formats.table_center),
+            (uni_info.program.title, formats.table_center),
+            (uni_info.group, formats.table_center)
+        ]
+    else:
+        row += [("", formats.table_center)] * 3
+
+    # pylint: disable=invalid-name
+    if (bi := applicant.birth_info) is not None:
+        row += [
+            (bi.date, formats.table_date),
+            (f"{bi.country}, {bi.place}", formats.table_center)
+        ]
+    else:
+        row += [("", formats.table_date)] * 2
+
+    if (citizenship := applicant.citizenship) is not None:
+        row += [(citizenship, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (pa := applicant.permanent_address) is not None:
+        row += [(pa, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (ro := applicant.recruitment_office) is not None:
+        row += [(ro, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if fam := applicant.family.all():
+        fam = applicant.family.all()
+        print(fam, len(fam))
+        father = fam.filter(type="FA").first()
+        mother = fam.filter(type="MO").first()
+        brothers = list(fam.filter(type="BR").all())
+        sisters = list(fam.filter(type="SI").all())
+        row += [
+            (
+                f"{father.fullname}, {father.birth_info.date + ',' if father.birth_info else ''} "
+                f"{father.permanent_address if father.permanent_address else ''}",
+                formats.align_left
+            )
+        ] if father else [("", formats.align_left)]
+        row += [
+            (
+                f"{mother.fullname} {mother.birth_info.date + ',' if mother.birth_info else ''} "
+                f"{mother.permanent_address if mother.permanent_address else ''}",
+                formats.align_left
+            )
+        ] if mother else [("", formats.align_left)]
+        for bro in brothers:
+            row += [
+                (
+                    f"{bro.fullname}, {bro.birth_info.date + ',' if bro.birth_info else ''} "
+                    f"{bro.permanent_address if bro.permanent_address else ''}",
+                    formats.align_left
+                )
+            ]
+        for sis in sisters:
+            row += [
+                (
+                    f"{sis.fullname}, {sis.birth_info.date + ',' if sis.birth_info else ''} "
+                    f"{sis.permanent_address if sis.permanent_address else ''}",
+                    formats.align_left
+                )
+            ]
+    else:
+        row += [("", formats.align_left)] * 3
+
+    return row
+
+
+def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -> Path:
+    """Generate an Excel file with information about the applicants
+    using the competitive selection protocol template.
+
+    Returns:
+        A path to the generated Excel file.
+    """
+
+    path = Path(f"/tmp/{uuid.uuid4()}.xlsx")
+    workbook = xlsxwriter.Workbook(path)
+    formats = Formats.from_workbook(workbook)
+
+    for milspecialty in milspecialties:
+        worksheet = workbook.add_worksheet(milspecialty.code)
+        start = 1
+        _fill_applicant_detail_header(
+            worksheet=worksheet,
+            formats=formats
+        )
+        studs = applicants.filter(milspecialty=milspecialty)
+        for row, applicant in enumerate(studs, start=start):  # Skip header
+            cells = _make_applicant_detail_row(
+                applicant=applicant,
+                formats=formats,
+                index=row - start,  # applicant order number (from 0 to n)
+            )
+
+            for col, (data, cell_format) in enumerate(cells):
+                worksheet.write(row, col, data, cell_format)
+            worksheet.set_row(row, height=50)
+
+    workbook.close()
+    return path
+
+
+def _fill_applicant_detail_header(
+        worksheet: xlsxwriter.Workbook.worksheet_class,
+        formats,
+):
+    row = (
+        "№", "ФИО", "Название факультета", "Название ОП", "Номер группы",
+        "Дата рождения", "Место рождения", "Гражданство",
+        "Адрес прописки", "Военкомат", "Отец", "Мать", "Братья/сестры"
+    )
+    worksheet.write_row(0, 0, row, formats.table_center)
+
+
 def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
     """Generate an Excel file with information about the applicants
     using the competitive selection protocol template.

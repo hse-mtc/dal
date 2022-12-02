@@ -43,6 +43,7 @@ from lms.utils.mixins import QuerySetScopingMixin
 from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
+from ams.utils.export.comp_sel_protocol import generate_applicants_detail
 from django.db import transaction
 
 
@@ -321,6 +322,23 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         File includes a header from a template.
         """
         return self.generate_excel_report(request, generate_csp_export)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="campus", description="Filter by campus", required=True, type=str
+            )
+        ]
+    )
+    @action(
+        methods=["get"],
+        url_path="applications/applicants-detail/export",
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[ApplicantPermission]
+    )
+    def generate_applicants_detail_excel(self, request: Request) -> Response:
+        return self.generate_excel_report(request, generate_applicants_detail)
 
     @action(
         methods=["get"],
