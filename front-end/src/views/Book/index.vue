@@ -19,7 +19,7 @@
               :src="
                 book.cover
                   ? book.cover.image
-                  : '@assets/book-cover-placeholder.png'
+                  : require('@/assets/icons/book-cover-placeholder.png')
               "
               alt=""
             >

@@ -11,7 +11,7 @@
         :src="
           data.cover
             ? data.cover.image
-            : '@assets/book-cover-placeholder.png'
+            : require('@/assets/icons/book-cover-placeholder.png')
         "
         alt=""
       >
