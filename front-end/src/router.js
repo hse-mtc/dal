@@ -161,7 +161,7 @@ export const constantRoutes = [
         path: "personnel/",
         name: "Personnel",
         component: () => import("@/views/Personnel/index"),
-        meta: { title: "Личный состав ВУЦ", icon: "people" },
+        meta: { title: "Личный состав ВУЦ", icon: "people", permissions: ["teachers.get.all", "students.get.all", "uniforms.get.milfaculty"] },
       },
 
       {
