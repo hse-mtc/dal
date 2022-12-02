@@ -24,27 +24,29 @@
       </template>
       <div v-else>
         <AZGuard :permissions="permissions">
-          <el-submenu
-            ref="subMenu"
-            :index="resolvePath(item.path)"
-            popper-append-to-body
-          >
-            <template slot="title">
-              <Item
-                v-if="item.meta"
-                :icon="item.meta && item.meta.icon"
-                :title="item.meta.title"
+          <div>
+            <el-submenu
+              ref="subMenu"
+              :index="resolvePath(item.path)"
+              popper-append-to-body
+            >
+              <template slot="title">
+                <Item
+                  v-if="item.meta"
+                  :icon="item.meta && item.meta.icon"
+                  :title="item.meta.title"
+                />
+              </template>
+              <sidebar-item
+                v-for="child in item.children"
+                :key="child.path"
+                :is-nest="true"
+                :item="child"
+                :base-path="resolvePath(child.path)"
+                class="nest-menu"
               />
-            </template>
-            <sidebar-item
-              v-for="child in item.children"
-              :key="child.path"
-              :is-nest="true"
-              :item="child"
-              :base-path="resolvePath(child.path)"
-              class="nest-menu"
-            />
-          </el-submenu>
+            </el-submenu>
+          </div>
         </AZGuard>
       </div>
     </template>
