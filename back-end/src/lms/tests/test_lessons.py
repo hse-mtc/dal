@@ -66,6 +66,7 @@ def test_get_by_id_returns_right_data(get_new_lesson_data, su_client, create_les
     lesson_response_get["milgroup"] = lesson_response_get["milgroup"]["id"]
     lesson_response_get["subject"] = lesson_response_get["subject"]["id"]
     lesson_response_get["room"] = lesson_response_get["room"]["id"]
+    lesson_response_get["teacher"] = lesson_response_get["teacher"]["id"]
 
     assert lesson_response_get == lesson_data
 

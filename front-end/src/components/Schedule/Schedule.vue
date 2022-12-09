@@ -126,6 +126,11 @@
                             lessonTypeLabelFromValue(data.lessons.find((x) => x.date === d).type)
                           }}
                         </el-tag>
+
+                        <div>
+                          <svg-icon icon-class="user" />
+                          {{ data.lessons.find((x) => x.date === d).teacher.fullname }}
+                        </div>
                       </div>
                     </el-popover>
                   </AZGuard>
@@ -194,17 +199,17 @@
             style="display: block"
           >
             <el-option
-              v-for="type in lessonTypes"
-              :key="type.value"
-              :label="type.label"
-              :value="type.value"
+              v-for="lessonType in lessonTypes"
+              :key="lessonType.value"
+              :label="lessonType.label"
+              :value="lessonType.value"
             />
           </el-select>
         </el-form-item>
         <el-form-item label="Преподаватель: " required>
           <el-select
             v-model="editLesson.teacher"
-            placeholder="Выберите тип занятия"
+            placeholder="Выберите преподавателя"
             style="display: block"
           >
             <el-option
@@ -232,6 +237,7 @@ import {
   postLesson,
   deleteLesson,
 } from "@/api/lesson";
+import { getTeacher, findTeacher } from "@/api/teachers";
 import { getSubjects } from "@/api/subjects-lms";
 import {
   getError,
@@ -267,6 +273,7 @@ export default {
         ordinal: 0,
         type: "",
         room: "",
+        teacher: "",
       },
       filter: {
         mg: "0",
@@ -278,6 +285,7 @@ export default {
         ],
       },
       subjects: [],
+      teachers: [],
       schedule: {},
       pickerOptions: {
         shortcuts: [
@@ -436,25 +444,38 @@ export default {
       }
     },
 
-    onCreate(ordinal, date) {
+    async getTeachers() {
+      try {
+        const response = await getTeacher();
+        this.teachers = response.data;
+      } catch (err) {
+        console.log(err);
+        getError("преподавателей", err.response.status);
+      }
+    },
+
+    async onCreate(ordinal, date) {
       this.editLesson = {
         ordinal,
         date,
         milgroup: this.filter.mg,
       };
       this.editLessonFullname = "Новое занятие";
-      this.getSubjects();
+      await this.getSubjects();
+      await this.getTeachers();
       this.dialogVisible = true;
     },
-    onEdit(row) {
+    async onEdit(row) {
       this.editLesson = { ...row };
       if (typeof this.editLesson.room === "object" && this.editLesson.room !== null) {
         this.editLesson.room = this.editLesson.room.id;
       }
       this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
       this.editLesson.subject = this.editLesson.subject.id;
+      this.editLesson.teacher = this.editLesson.teacher.id;
       this.editLessonFullname = "Редактирование занятия";
-      this.getSubjects();
+      await this.getSubjects();
+      await this.getTeachers();
       this.dialogVisible = true;
     },
 
