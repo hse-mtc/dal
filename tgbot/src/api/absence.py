@@ -11,6 +11,8 @@ from api.student import (
     State,
 )
 
+ABSENCES_LIST = [State.ABSENT_LA.value, State.ABSENT_LE.value, State.ABSENT_IL.value]
+
 
 def absence_statistic(
     milgroup_title: str,
@@ -65,9 +67,8 @@ async def post_absence(
 
     absent_students = [
         student for student in students
-        if student.state.value in [State.ABSENT_LA.value, State.ABSENT_LE.value, State.ABSENT_IL.value]
+        if student.state in ABSENCES_LIST
     ]
-    print("\n"*10, absent_students, "\n"*10)
 
     if absent_students:
         pending_responses = [
