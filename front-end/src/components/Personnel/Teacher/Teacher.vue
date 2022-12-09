@@ -57,7 +57,7 @@
                   <el-button type="primary" plain @click="save">
                     Сохранить
                   </el-button>
-                  <el-button type="warning" plain @click="modify = false">
+                  <el-button type="warning" plain @click="reset">
                     Отмена
                   </el-button>
                 </div>
@@ -274,6 +274,7 @@ export default {
       dialog: false,
       loading: false,
       modify: false,
+      phoneBackup: "",
       displayInfo: {},
       modifyInfo: {},
       rules: {
@@ -391,6 +392,8 @@ export default {
     } else {
       this.disableUpload = false;
     }
+    // eslint-disable-next-line max-len
+    this.displayInfo.contact_info.personal_phone_number = this.maskPhone(this.displayInfo.contact_info.personal_phone_number);
   },
   methods: {
     formatDate: date => (moment(date).isValid() ? moment(date).format("DD.MM.YYYY") : "---"),
@@ -419,6 +422,18 @@ export default {
       if (!this.modifyInfo.contact_info) {
         this.$set(this.modifyInfo, "contact_info", {});
       }
+      this.phoneBackup = this.displayInfo.contact_info.personal_phone_number;
+    },
+    maskPhone(phoneBefore) {
+      if (phoneBefore.length === 11) {
+        return `+ ${phoneBefore[0]} (${phoneBefore[1]}${phoneBefore[2]}${phoneBefore[3]}) ${phoneBefore[4]}${phoneBefore[5]}${phoneBefore[6]}-${phoneBefore[7]}${phoneBefore[8]}-${phoneBefore[9]}${phoneBefore[10]}`;
+      }
+      return `+ ${phoneBefore}`;
+    },
+    reset() {
+      this.modifyInfo.contact_info.personal_phone_number = this.phoneBackup;
+      this.modify = false;
+      this.$refs.form.clearValidate();
     },
     async save() {
       const valid = await this.$refs.form.validate();
@@ -434,6 +449,11 @@ export default {
 
       const requestBody = {
         ...this.modifyInfo,
+        contact_info: {
+          corporate_email: null,
+          personal_email: null,
+          personal_phone_number: this.parsePhone(this.modifyInfo.contact_info.personal_phone_number),
+        },
         milgroups: this.modifyInfo.milgroups.map(x => x.id),
         milfaculty: this.modifyInfo.milfaculty.id,
         surname,
@@ -445,7 +465,7 @@ export default {
       };
 
       // eslint-disable-next-line max-len
-      requestBody.contact_info.personal_phone_number = this.parsePhone(this.modifyInfo.contact_info.personal_phone_number);
+      this.modifyInfo.contact_info.personal_phone_number = this.maskPhone(this.modifyInfo.contact_info.personal_phone_number);
 
       this.loading = true;
 
