@@ -180,7 +180,7 @@
               v-model="modifyInfo.contact_info.personal_phone_number"
               v-maska="'# (###) ###-##-##'"
             />
-            <span v-else class="field-value">+
+            <span v-else class="field-value">
               {{
                 displayInfo.contact_info &&
                   displayInfo.contact_info.personal_phone_number
@@ -221,6 +221,7 @@ export default {
       displayInfo: {},
       modifyInfo: {},
       loading: false,
+      phoneBackup: "",
       rules: {
         fullname: [
           {
@@ -300,6 +301,8 @@ export default {
     } else {
       this.disableUpload = false;
     }
+    // eslint-disable-next-line max-len
+    this.displayInfo.contact_info.personal_phone_number = this.maskPhone(this.displayInfo.contact_info.personal_phone_number);
   },
   methods: {
     formatDate: date => moment(date).format("DD.MM.YYYY"),
@@ -325,6 +328,7 @@ export default {
       if (!this.modifyInfo.contact_info) {
         this.$set(this.modifyInfo, "contact_info", {});
       }
+      this.phoneBackup = this.displayInfo.contact_info.personal_phone_number;
     },
     parsePhone(masked) {
       if (!masked) {
@@ -336,6 +340,12 @@ export default {
         .replaceAll(")", "")
         .replaceAll("-", "")
         .replaceAll(" ", "");
+    },
+    maskPhone(phoneBefore) {
+      if (phoneBefore.length === 11) {
+        return `+ ${phoneBefore[0]} (${phoneBefore[1]}${phoneBefore[2]}${phoneBefore[3]}) ${phoneBefore[4]}${phoneBefore[5]}${phoneBefore[6]}-${phoneBefore[7]}${phoneBefore[8]}-${phoneBefore[9]}${phoneBefore[10]}`;
+      }
+      return `+ ${phoneBefore}`;
     },
     async save() {
       this.$refs.form.validate(async valid => {
@@ -350,17 +360,22 @@ export default {
             const patronymic = patronymicArray.join(" ");
             const requestBody = {
               ...this.modifyInfo,
+              contact_info: {
+                corporate_email: null,
+                personal_email: null,
+                personal_phone_number: this.parsePhone(this.modifyInfo.contact_info.personal_phone_number),
+              },
               milgroup: this.modifyInfo.milgroup.id,
               surname,
               name,
               patronymic,
               photo: undefined,
             };
-            // eslint-disable-next-line max-len
-            requestBody.contact_info.personal_phone_number = this.parsePhone(this.modifyInfo.contact_info.personal_phone_number);
             await patchStudent(requestBody);
             this.displayInfo = this.modifyInfo;
             this.modify = false;
+            // eslint-disable-next-line max-len
+            this.modifyInfo.contact_info.personal_phone_number = this.maskPhone(this.modifyInfo.contact_info.personal_phone_number);
           } catch (err) {
             patchError("информации о студенте", err.response.status);
           } finally {
@@ -370,6 +385,7 @@ export default {
       });
     },
     reset() {
+      this.modifyInfo.contact_info.personal_phone_number = this.phoneBackup;
       this.modify = false;
       this.$refs.form.clearValidate();
     },
