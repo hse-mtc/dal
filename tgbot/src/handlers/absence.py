@@ -80,7 +80,7 @@ list_milgroup.handler_filters = [
 ]
 
 
-def matchStates(state):
+def match_states(state):
     if state == State.ABSENT_LA.value:
         return "LA"
     elif state == State.ABSENT_IL.value:
@@ -98,7 +98,7 @@ async def toggle_student_absence_status(
     new_state, id_ = map(int, callback_query.data.split())
     students_by_id = await state.get_data()
     students_by_id[id_].state = State(new_state)
-    students_by_id[id_].excuse = matchStates(students_by_id[id_].state.value)
+    students_by_id[id_].excuse = match_states(students_by_id[id_].state.value)
     await state.set_data(students_by_id)
     await callback_query.message.edit_reply_markup(
         reply_markup=student_absence_keyboard(id_, new_state),)

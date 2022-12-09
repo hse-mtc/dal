@@ -136,7 +136,7 @@ class WatchDocService:
         self.jinja_env = self._init_jinja_env()
 
         # Credentials
-        # credentials = obtain_credentials()
+        credentials = obtain_credentials()
 
         # Email
         self.email_service = EmailService(
@@ -148,11 +148,11 @@ class WatchDocService:
         )
 
         # Drive
-        # self.ds = DriveService(credentials)
-        # self._watchdoc_folder = self._init_watchdoc_folder()
-        # self._applicants_folder = self._init_applicants_folder()
-        # self._campuses_folder = self._init_campuses_folder()
-        # self._campus_folders = self._init_campus_folders()
+        self.ds = DriveService(credentials)
+        self._watchdoc_folder = self._init_watchdoc_folder()
+        self._applicants_folder = self._init_applicants_folder()
+        self._campuses_folder = self._init_campuses_folder()
+        self._campus_folders = self._init_campus_folders()
 
     def _init_jinja_env(self):
         env = jinja2.Environment()
