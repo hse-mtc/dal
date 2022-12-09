@@ -11,7 +11,7 @@ from api.student import (
     State,
 )
 
-ABSENCES_LIST = [State.ABSENT_LA.value, State.ABSENT_LE.value, State.ABSENT_IL.value]
+ABSENCES_LIST = [State.ABSENT_LA, State.ABSENT_LE, State.ABSENT_IL]
 
 
 def absence_statistic(
