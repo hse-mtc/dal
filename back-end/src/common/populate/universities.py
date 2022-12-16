@@ -29,6 +29,11 @@ def create_faculties() -> dict[str, Faculty]:
             "title": "Юридический факультет",
             "abbreviation": "ЮрФак",
         },
+        {
+            "campus": Campus.MOSCOW.value,
+            "title": "Факультет физики",
+            "abbreviation": "ФФ",
+        },
     ]
 
     return {
@@ -62,6 +67,11 @@ def create_programs(faculties: dict[str, Faculty]) -> dict[str, Program]:
             "code": "40.03.01 Юриспруденция",
             "title": "Юриспруденция",
             "faculty": faculties["ЮрФак"],
+        },
+        {
+            "code": "03.03.02 Физика",
+            "title": "Физика",
+            "faculty": faculties["ФФ"],
         },
     ]
 
