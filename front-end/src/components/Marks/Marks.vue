@@ -31,7 +31,6 @@
             range-separator="по"
             start-placeholder="Начальная дата"
             end-placeholder="Конечная дата"
-            :picker-options="pickerOptions"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
             @change="fetchData"
@@ -275,6 +274,7 @@
             style="width: 100%"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
+            :picker-options="{ firstDayOfWeek: 1 }"
           />
         </el-form-item>
         <el-form-item label="Номер занятия: " required>

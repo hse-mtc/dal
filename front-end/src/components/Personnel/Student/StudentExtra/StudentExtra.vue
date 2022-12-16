@@ -142,6 +142,7 @@
                 disabledDate(time) {
                   return time.getTime() > Date.now();
                 },
+                firstDayOfWeek: 1,
               }"
               format="dd.MM.yyyy"
               value-format="yyyy-MM-dd"
@@ -212,7 +213,7 @@
 
 <script>
 import ExpandBox from "@/components/ExpandBox/ExpandBox.vue";
-import { findStudentExtra, patchStudent } from "@/api/students";
+import { findStudentExtra, patchStudent, findStudentBasic } from "@/api/students";
 import { getError, patchError } from "@/utils/message";
 import moment from "moment";
 import { ReferenceModule, UserModule } from "@/store";
@@ -307,11 +308,27 @@ export default {
         );
         this.modifyInfo.passport.series = series;
         this.modifyInfo.passport.code = code;
-        const requestBody = { ...this.modifyInfo };
+        let requestBody = { ...this.modifyInfo };
         requestBody.university_info.program = this.modifyInfo.university_info.program.id;
-        requestBody.milspecialty = this.modifyInfo.milspecialty.id;
+        // eslint-disable-next-line max-len
+        requestBody.university_info.program = { ...this.programs.filter(program => program.id === this.modifyInfo.university_info.program)[0] };
+        const genData = (await findStudentBasic(this.id)).data;
+        requestBody = Object.assign(requestBody, genData);
+        requestBody.milgroup = requestBody.milgroup.id;
+        const [
+          surname,
+          name,
+          ...patronymicArray
+        ] = requestBody.fullname.split(" ");
+        const patronymic = patronymicArray.join(" ");
+        requestBody.name = name;
+        requestBody.surname = surname;
+        requestBody.patronymic = patronymic;
+        delete requestBody.fullname;
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
+        // eslint-disable-next-line max-len
+        this.displayInfo.university_info.program = { ...this.programs.filter(program => program.id === this.modifyInfo.university_info.program)[0] };
         this.modify = false;
       } catch (err) {
         patchError("дополнительной информации о студенте", err.response.status);
