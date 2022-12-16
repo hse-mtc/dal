@@ -319,6 +319,7 @@ export default {
       students: [],
       teachers: [],
       pickerOptions: {
+        firstDayOfWeek: 1,
         shortcuts: [
           {
             text: "Неделя",
