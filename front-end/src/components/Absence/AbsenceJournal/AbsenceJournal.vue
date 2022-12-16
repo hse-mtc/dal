@@ -343,7 +343,6 @@ export default {
       this.filter.weekday = moment().day() - 1;
     }
     await this.onWeekdayChanged();
-    console.log(this.filter);
   },
   methods: {
     getPermissions(method) {
@@ -425,7 +424,7 @@ export default {
     },
     handleAccept() {
       if (this.editAbsence.id) {
-        patchAbsence(this.editAbsence)
+        patchAbsence(this.editAbsence.id, this.editAbsence)
           .then(() => {
             patchSuccess("пропуска");
             this.dialogVisible = false;
@@ -433,7 +432,7 @@ export default {
           })
           .catch(err => patchError("пропуска", err.response.status));
       } else {
-        postAbsence(this.editAbsence)
+        postAbsence(this.editAbsence.id, this.editAbsence)
           .then(() => {
             postSuccess("пропуска");
             this.dialogVisible = false;
