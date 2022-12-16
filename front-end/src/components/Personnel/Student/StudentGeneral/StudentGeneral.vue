@@ -86,6 +86,7 @@
                 disabledDate(time) {
                   return time.getTime() > Date.now();
                 },
+                firstDayOfWeek: 1,
               }"
               format="dd.MM.yyyy"
               value-format="yyyy-MM-dd"

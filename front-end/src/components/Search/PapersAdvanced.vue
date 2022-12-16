@@ -65,6 +65,7 @@
             unlink-panels
             start-placeholder="Начало"
             end-placeholder="Конец"
+            :picker-options="{ firstDayOfWeek: 1 }"
             @change="updateQuery"
           />
         </el-col>
