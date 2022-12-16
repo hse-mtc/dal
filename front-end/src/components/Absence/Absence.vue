@@ -360,6 +360,7 @@ export default {
       },
       absences: [],
       pickerOptions: {
+        firstDayOfWeek: 1,
         shortcuts: [
           {
             text: "Неделя",

@@ -401,6 +401,7 @@ export default {
       subjects: [],
       journal: {},
       pickerOptions: {
+        firstDayOfWeek: 1,
         shortcuts: [
           {
             text: "Неделя",

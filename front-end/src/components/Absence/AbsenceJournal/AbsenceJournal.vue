@@ -217,6 +217,7 @@ export default {
         ],
       },
       pickerOptions: {
+        firstDayOfWeek: 1,
         shortcuts: [
           {
             text: "Неделя",
@@ -336,8 +337,13 @@ export default {
     },
   },
   async created() {
-    this.filter.weekday = moment().day() - 1;
+    if (moment().day() === 0) {
+      this.filter.weekday = 6;
+    } else {
+      this.filter.weekday = moment().day() - 1;
+    }
     await this.onWeekdayChanged();
+    console.log(this.filter);
   },
   methods: {
     getPermissions(method) {
