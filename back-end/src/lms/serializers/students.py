@@ -4,7 +4,10 @@ from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from auth.models import Group
 from common.serializers.milspecialties import MilspecialtySerializer
-from common.serializers.universities import UniversityInfoSerializer, UniversityInfoMutateSerializer
+from common.serializers.universities import (
+    UniversityInfoSerializer,
+    UniversityInfoMutateSerializer,
+)
 from common.serializers.personal import (
     BirthInfoSerializer,
     ContactInfoSerializer,
