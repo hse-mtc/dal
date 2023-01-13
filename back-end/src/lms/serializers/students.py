@@ -4,7 +4,7 @@ from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from auth.models import Group
 from common.serializers.milspecialties import MilspecialtySerializer
-from common.serializers.universities import UniversityInfoSerializer
+from common.serializers.universities import UniversityInfoSerializer, UniversityInfoMutateSerializer
 from common.serializers.personal import (
     BirthInfoSerializer,
     ContactInfoSerializer,
@@ -61,7 +61,7 @@ class StudentMutateSerializer(
 
     birth_info = BirthInfoSerializer(required=False)
     passport = PassportSerializer(required=False)
-    university_info = UniversityInfoSerializer(required=False)
+    university_info = UniversityInfoMutateSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
 
     class Meta:
