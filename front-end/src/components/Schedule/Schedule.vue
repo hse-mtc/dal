@@ -472,7 +472,7 @@ export default {
       }
       this.editLesson.milgroup = this.editLesson.milgroup.milgroup;
       this.editLesson.subject = this.editLesson.subject.id;
-      this.editLesson.teacher = this.editLesson.teacher.id;
+      this.editLesson.teacher = this.editLesson.teacher ? this.editLesson.teacher.id : null;
       this.editLessonFullname = "Редактирование занятия";
       await this.getSubjects();
       await this.getTeachers();
