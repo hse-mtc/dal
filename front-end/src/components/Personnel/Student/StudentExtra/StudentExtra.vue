@@ -299,6 +299,7 @@ export default {
       this.modifyInfo.passport.seriesAndCode = this.displayInfo.passport
         ? `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`
         : "";
+      console.log("Modify Info", this.modifyInfo.university_info.program);
     },
     async save() {
       try {
@@ -308,31 +309,19 @@ export default {
         );
         this.modifyInfo.passport.series = series;
         this.modifyInfo.passport.code = code;
-        let requestBody = { ...this.modifyInfo };
-        requestBody.university_info.program = this.modifyInfo.university_info.program.id;
+        const requestBody = { ...this.modifyInfo };
         // eslint-disable-next-line max-len
-        requestBody.university_info.program = { ...this.programs.filter(program => program.id === this.modifyInfo.university_info.program)[0] };
-        const genData = (await findStudentBasic(this.id)).data;
-        requestBody = Object.assign(requestBody, genData);
-        requestBody.milgroup = requestBody.milgroup.id;
-        const [
-          surname,
-          name,
-          ...patronymicArray
-        ] = requestBody.fullname.split(" ");
-        const patronymic = patronymicArray.join(" ");
-        requestBody.name = name;
-        requestBody.surname = surname;
-        requestBody.patronymic = patronymic;
-        delete requestBody.fullname;
+        const programFiltered = this.programs.filter(program => program.id === this.modifyInfo.university_info.program.id);
+        requestBody.university_info.program = { ...programFiltered[0] };
+        requestBody.university_info.program = requestBody.university_info.program.id;
         await patchStudent(requestBody);
         this.displayInfo = this.modifyInfo;
-        // eslint-disable-next-line max-len
-        this.displayInfo.university_info.program = { ...this.programs.filter(program => program.id === this.modifyInfo.university_info.program)[0] };
+        this.displayInfo.university_info = requestBody.university_info;
         this.modify = false;
       } catch (err) {
         patchError("дополнительной информации о студенте", err.response.status);
       } finally {
+        await this.fetchInfo();
         this.loading = false;
       }
     },
