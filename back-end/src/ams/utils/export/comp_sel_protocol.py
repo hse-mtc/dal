@@ -112,9 +112,11 @@ def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -
     workbook = xlsxwriter.Workbook(path)
     formats = Formats.from_workbook(workbook)
     formats.align_left.set_border()
+    formats.align_left.set_align('vcenter')
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
+        set_col_size_details(worksheet)
         start = 1
         _fill_applicant_detail_header(worksheet=worksheet, formats=formats)
         studs = applicants.filter(milspecialty=milspecialty)
@@ -157,6 +159,22 @@ def _fill_applicant_detail_header(
         "Братья/сестры",
     )
     worksheet.write_row(0, 0, row, formats.table_center)
+
+
+def set_col_size_details(
+        worksheet: xlsxwriter.Workbook.worksheet_class
+):
+    worksheet.set_column(0, 0, width=25 / 6)
+    worksheet.set_column(1, 1, width=171 / 6)
+    worksheet.set_column(2, 2, width=171 / 6)
+    worksheet.set_column(3, 3, width=150 / 6)
+    worksheet.set_column(4, 4, width=50 / 6)
+    worksheet.set_column(5, 5, width=50 / 6)
+    worksheet.set_column(6, 6, width=80 / 6)
+    worksheet.set_column(7, 7, width=70 / 6)
+    worksheet.set_column(8, 8, width=100 / 6)
+    worksheet.set_column(9, 9, width=100 / 6)
+    worksheet.set_column(10, 20, width=250 / 6)
 
 
 def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
