@@ -299,7 +299,6 @@ export default {
       this.modifyInfo.passport.seriesAndCode = this.displayInfo.passport
         ? `${this.displayInfo.passport.series} ${this.displayInfo.passport.code}`
         : "";
-      console.log("Modify Info", this.modifyInfo.university_info.program);
     },
     async save() {
       try {
