@@ -127,7 +127,7 @@
                           }}
                         </el-tag>
 
-                        <div>
+                        <div v-if="data.lessons.find((x) => x.date === d).teacher">
                           <svg-icon icon-class="user" />
                           {{ data.lessons.find((x) => x.date === d).teacher.fullname }}
                         </div>
@@ -206,7 +206,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Преподаватель: " required>
+        <el-form-item label="Преподаватель: ">
           <el-select
             v-model="editLesson.teacher"
             placeholder="Выберите преподавателя"
