@@ -169,6 +169,31 @@ def create_users() -> dict[str, User]:
             is_superuser=False,
             campuses=[Campus.MOSCOW.value],
         ),
+    # Generated
+    Data(email='baZakudrjaev@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='daDemchin@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='aaTishanov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='dfZakudrjaev@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='aaZakudrjaev@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='abHodilov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='dpZakudrjaev@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='afTishanov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='fbDemchin@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='baDemchin@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='fbHodilov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='pbHodilov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='fdZakudrjaev@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='abDemchin@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='adKretkov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='bfZakudrjaev@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='bbTishanov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='daTishanov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='dbTishanov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='aaDemchin@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='fpDemchin@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='paHodilov@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+Data(email='paDemchin@mail.com', password='qwerty', is_staff=False, is_superuser=False, campuses=[('MO', 'Москва')]),
+
     ]
 
     return {data.email: create_user(data) for data in users}
