@@ -52,7 +52,6 @@ def _make_applicant_detail_row(
         row += [("", formats.table_center)]
 
     if fam := applicant.family.all():
-        print(fam, len(fam))
         father = fam.filter(type="FA").first()
         mother = fam.filter(type="MO").first()
         brothers = list(fam.filter(type="BR").all())
@@ -131,7 +130,7 @@ def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -
                 worksheet.write(row, col, data, cell_format)
             if len(cells) < max_cols:
                 for col in range(len(cells), max_cols):
-                    worksheet.write(row, col, '', formats.align_left)
+                    worksheet.write(row, col, "", formats.align_left)
             worksheet.set_row(row, height=50)
 
     workbook.close()
