@@ -52,7 +52,6 @@ def _make_applicant_detail_row(
         row += [("", formats.table_center)]
 
     if fam := applicant.family.all():
-        fam = applicant.family.all()
         print(fam, len(fam))
         father = fam.filter(type="FA").first()
         mother = fam.filter(type="MO").first()
@@ -113,21 +112,26 @@ def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -
     path = Path(f"/tmp/{uuid.uuid4()}.xlsx")
     workbook = xlsxwriter.Workbook(path)
     formats = Formats.from_workbook(workbook)
+    formats.align_left.set_border()
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
         start = 1
         _fill_applicant_detail_header(worksheet=worksheet, formats=formats)
         studs = applicants.filter(milspecialty=milspecialty)
+        max_cols = 0
         for row, applicant in enumerate(studs, start=start):  # Skip header
             cells = _make_applicant_detail_row(
                 applicant=applicant,
                 formats=formats,
                 index=row - start,  # applicant order number (from 0 to n)
             )
-
+            max_cols = max(max_cols, len(cells))
             for col, (data, cell_format) in enumerate(cells):
                 worksheet.write(row, col, data, cell_format)
+            if len(cells) < max_cols:
+                for col in range(len(cells), max_cols):
+                    worksheet.write(row, col, '', formats.align_left)
             worksheet.set_row(row, height=50)
 
     workbook.close()
