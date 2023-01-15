@@ -36,14 +36,14 @@ jobs:
       - name: Adding Known Hosts
         run: ssh-keyscan -p ${{ secrets.SSH_PORT}} -H ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
 
-      - name: Restart
-        uses: appleboy/ssh-action@master
+      - name: Rebuild and deploy
+        uses: fifsky/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
+          user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: |
+          command: |
             cd /home/dal/dal/
             git pull origin master
             docker-compose build back-end front-end watchdoc
