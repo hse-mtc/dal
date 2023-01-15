@@ -37,7 +37,7 @@ jobs:
         run: ssh-keyscan -p ${{ secrets.SSH_PORT}} -H ${{ secrets.SSH_HOST }}  >> ~/.ssh/known_hosts
 
       - name: Rebuild and deploy
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
