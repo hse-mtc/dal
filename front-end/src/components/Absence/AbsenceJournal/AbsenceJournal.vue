@@ -432,7 +432,7 @@ export default {
           })
           .catch(err => patchError("пропуска", err.response.status));
       } else {
-        postAbsence(this.editAbsence.id, this.editAbsence)
+        postAbsence(this.editAbsence)
           .then(() => {
             postSuccess("пропуска");
             this.dialogVisible = false;
