@@ -39,6 +39,11 @@ import SectionCard from "./SectionCard.vue";
 class SectionsCards extends Vue {
   openedCards = {}
 
+  created() {
+    SubjectsModule.setCurrentSubjectId(this.$route.params.subjectId);
+    SubjectsModule.fetchSections();
+  }
+
   get userId() { return UserModule.userId; }
   get sections() { return SubjectsModule.currentSections; }
   get dragOptions() {
