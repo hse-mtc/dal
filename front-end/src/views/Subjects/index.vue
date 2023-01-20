@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.root">
-    <h1>Методические материалы</h1>
+    <h1>Учебно-методические материалы</h1>
 
     <div :class="$style.searchWrapper">
       <input
