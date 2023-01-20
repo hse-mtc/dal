@@ -5,7 +5,7 @@
         :to="{ name: 'Subjects' }"
         :class="$style.arrow"
       >
-        <i class="el-icon-arrow-left" />
+        <i @click="clear" class="el-icon-arrow-left" />
       </router-link>
 
       <h1 :class="$style.title">
@@ -76,6 +76,11 @@ class SubjectPage extends Vue {
 
   mounted() {
     SubjectsModule.setCurrentSubjectId(this.$route.params.subjectId);
+  }
+
+  clear() {
+    this.sections.length = 0;
+    this.subjectInfo.title = "";
   }
 
   async addSection() {
