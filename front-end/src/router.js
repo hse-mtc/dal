@@ -133,7 +133,7 @@ export const constantRoutes = [
             path: "subjects/",
             name: "Subjects",
             component: () => import("@/views/Subjects/index"),
-            meta: { title: "Методические материалы", icon: "presentation", permissions: ["subjects.get.self"] },
+            meta: { title: "Учебно-методические материалы", icon: "presentation", permissions: ["subjects.get.self"] },
           },
           {
             path: "subjects/:subjectId/",
