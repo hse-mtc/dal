@@ -91,17 +91,17 @@ def create_milgroups(
         },
         {
             "title": "1810",
-            "milfaculty": milfaculties["РВСН"],
+            "milfaculty": milfaculties["БПЛА"],
             "weekday": 4,
         },
         {
             "title": "1811",
-            "milfaculty": milfaculties["РВСН"],
+            "milfaculty": milfaculties["БПЛА"],
             "weekday": 4,
         },
         {
             "title": "1812",
-            "milfaculty": milfaculties["РВСН"],
+            "milfaculty": milfaculties["ЗИТ"],
             "weekday": 4,
         },
         {
