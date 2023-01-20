@@ -112,7 +112,7 @@ def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -
     workbook = xlsxwriter.Workbook(path)
     formats = Formats.from_workbook(workbook)
     formats.align_left.set_border()
-    formats.align_left.set_align('vcenter')
+    formats.align_left.set_align("vcenter")
 
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
@@ -161,9 +161,7 @@ def _fill_applicant_detail_header(
     worksheet.write_row(0, 0, row, formats.table_center)
 
 
-def set_col_size_details(
-        worksheet: xlsxwriter.Workbook.worksheet_class
-):
+def set_col_size_details(worksheet: xlsxwriter.Workbook.worksheet_class):
     worksheet.set_column(0, 0, width=25 / 6)
     worksheet.set_column(1, 1, width=171 / 6)
     worksheet.set_column(2, 2, width=171 / 6)
