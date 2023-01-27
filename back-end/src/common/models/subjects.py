@@ -13,7 +13,13 @@ def super_user_id():
 class Subject(models.Model):
     title = models.CharField(max_length=255)
     annotation = models.TextField(blank=True)
-    milspecialty = models.ForeignKey(to=Milspecialty, on_delete=models.CASCADE, default=None, null=True, related_name="milspecialties")
+    milspecialty = models.ForeignKey(
+        to=Milspecialty,
+        on_delete=models.CASCADE,
+        default=None,
+        null=True,
+        related_name="milspecialties",
+    )
 
     # TODO(TmLev): merge migrations, remove default
     user = models.ForeignKey(
