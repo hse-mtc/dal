@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from auth.serializers import UserSerializer
+from common.serializers.milspecialties import MilspecialtySerializer
 
 from dms.models.common import (
     Author,
@@ -24,6 +25,7 @@ class PublisherSerializer(serializers.ModelSerializer):
 
 class SubjectSerializer(serializers.ModelSerializer):
     user = UserSerializer(default=serializers.CurrentUserDefault())
+    milspecialty = MilspecialtySerializer
 
     class Meta:
         model = Subject
