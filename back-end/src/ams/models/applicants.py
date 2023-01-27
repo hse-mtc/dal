@@ -5,6 +5,7 @@ from django.core.validators import (
 )
 from django.contrib.auth import get_user_model
 
+from ams.utils.common import get_current_admission_year
 from common.models.universities import UniversityInfo
 from common.models.milspecialties import Milspecialty
 from common.models.personal import (
@@ -60,6 +61,7 @@ class ApplicationProcess(models.Model):
     registration_certificate_handed_over = models.BooleanField(default=False)
     university_card_handed_over = models.BooleanField(default=False)
     application_handed_over = models.BooleanField(default=False)
+    mtc_admission_year = models.IntegerField(default=0)
 
     # Number of pull ups.
     pull_ups = models.SmallIntegerField(
@@ -97,8 +99,11 @@ class ApplicantManager(models.Manager):
 
     def create(self, *args, **kwargs):
         if "application_process" not in kwargs:
-            kwargs["application_process"] = ApplicationProcess.objects.create()
+            app_process = ApplicationProcess.objects.create()
+            app_process.mtc_admission_year = get_current_admission_year()
+            app_process.save()
 
+            kwargs["application_process"] = app_process
         return super().create(*args, **kwargs)
 
 
