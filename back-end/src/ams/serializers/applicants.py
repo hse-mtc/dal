@@ -32,7 +32,9 @@ class ApplicationProcessSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         cur_adm_year = get_current_admission_year()
-        validated_data["mtc_admission_year"] = validated_data.get("mtc_admission_year", cur_adm_year)
+        validated_data["mtc_admission_year"] = validated_data.get(
+            "mtc_admission_year", cur_adm_year
+        )
         return super().create(validated_data)
 
 
