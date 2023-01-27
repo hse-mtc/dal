@@ -1,19 +1,23 @@
 <template>
   <div :class="$style.root">
     <h1>Методические материалы</h1>
-
-    <div :class="$style.searchWrapper">
-      <input
-        v-model="searchQuery"
-        :class="$style.wordsSearch"
-        placeholder="Введите название предмета, аннотацию или email"
-      >
-      <i
-        :class="['el-icon-close', $style.deleteCross]"
-        @click="searchQuery = ''"
-      />
-      <i :class="['el-icon-search', $style.searchIcon]" />
-    </div>
+    <el-row class="filterRow" style="margin-top: 25px" :gutter="20">
+      <el-col :span="6">
+        <el-select
+          v-model="selectedFaculty"
+          filterable
+          placeholder="ВУС"
+          style="display: block"
+        >
+          <el-option
+            v-for="item in milfaculties"
+            :key="item.id"
+            :label="item.title"
+            :value="item.title"
+          />
+        </el-select>
+      </el-col>
+    </el-row>
 
     <div :class="$style.cardsWrapper">
       <SubjectsCards
@@ -31,14 +35,35 @@
 import { Component, Vue } from "vue-property-decorator";
 
 import { SubjectsModule } from "@/store";
-
+import { ReferenceModule, UserModule } from "@/store";
 import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue";
 
 @Component({
   name: "SubjectsPage",
   components: { SubjectsCards },
+  computed: {
+    milfaculties() {
+      if (!UserModule.isSuperuser) {
+        return ReferenceModule.milfaculties.filter(milfaculty => UserModule.personMilfaculty.indexOf(milfaculty.id) > -1);
+      }
+      return ReferenceModule.milfaculties;
+    }
+  },
+  watch: {
+    milfaculties(newValue) {
+      this.selectedFaculty = this.milfaculties[0].title;
+    },
+  },
+  data() {
+    return {
+      selectedFaculty: "",
+    }
+  },
 })
 class SubjectsPage extends Vue {
+  mounted() {
+    this.selectedFaculty = this.milfaculties[0].title;
+  }
   get searchQuery() { return this.$route.query.subjectsSearch || ""; }
   set searchQuery(newValue) {
     this.$router.replace({
@@ -76,7 +101,7 @@ export default SubjectsPage;
 }
 
 .cardsWrapper {
-  margin-top: 50px;
+  margin-top: 35px;
 
   @media screen and (max-width: 640px) {
     margin-top: 20px;
