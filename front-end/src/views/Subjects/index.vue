@@ -1,23 +1,26 @@
 <template>
   <div :class="$style.root">
     <h1>Методические материалы</h1>
-    <el-row class="filterRow" style="margin-top: 25px" :gutter="20">
-      <el-col :span="6">
-        <el-select
-          v-model="selectedFaculty"
-          filterable
-          placeholder="ВУС"
-          style="display: block"
-        >
-          <el-option
-            v-for="item in milfaculties"
-            :key="item.id"
-            :label="item.title"
-            :value="item.title"
-          />
-        </el-select>
-      </el-col>
-    </el-row>
+    <div style="margin-top: 25px" v-if="personType !== 'student'">
+      <span>ВУС</span>
+      <el-row class="filterRow" :gutter="20">
+        <el-col :span="6">
+          <el-select
+            v-model="milspecialty"
+            filterable
+            placeholder="ВУС"
+            style="display: block"
+          >
+            <el-option
+              v-for="item in milspecialties"
+              :key="item.id"
+              :label="item.code"
+              :value="item.code"
+            />
+          </el-select>
+        </el-col>
+      </el-row>
+    </div>
 
     <div :class="$style.cardsWrapper">
       <SubjectsCards
@@ -34,36 +37,31 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 
-import { SubjectsModule } from "@/store";
-import { ReferenceModule, UserModule } from "@/store";
+import { SubjectsModule, UserModule } from "@/store";
+import { getMilSpecialties } from "@/api/reference-book";
 import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue";
 
 @Component({
   name: "SubjectsPage",
   components: { SubjectsCards },
-  computed: {
-    milfaculties() {
-      if (!UserModule.isSuperuser) {
-        return ReferenceModule.milfaculties.filter(milfaculty => UserModule.personMilfaculty.indexOf(milfaculty.id) > -1);
-      }
-      return ReferenceModule.milfaculties;
-    }
-  },
-  watch: {
-    milfaculties(newValue) {
-      this.selectedFaculty = this.milfaculties[0].title;
-    },
-  },
   data() {
     return {
-      selectedFaculty: "",
-    }
+      milspecialty: "",
+      milspecialties: [],
+    };
+  },
+  computed: {
+    personType() {
+      return UserModule.personType;
+    },
   },
 })
 class SubjectsPage extends Vue {
-  mounted() {
-    this.selectedFaculty = this.milfaculties[0].title;
+  async mounted() {
+    this.milspecialties = (await getMilSpecialties()).data;
+    this.milspecialty = this.milspecialties[0].code;
   }
+
   get searchQuery() { return this.$route.query.subjectsSearch || ""; }
   set searchQuery(newValue) {
     this.$router.replace({
