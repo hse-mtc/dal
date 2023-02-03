@@ -1,15 +1,14 @@
 <template>
   <div :class="$style.root">
     <h1>Учебно-методические материалы</h1>
-    <div style="margin-top: 25px" v-if="personType !== 'student'">
-      <span>ВУС</span>
+    <div v-if="personType !== 'student'" style="margin-top: 25px">
       <el-row class="filterRow" :gutter="20">
         <el-col :span="6">
+          <span style="margin-right: 15px; font-weight: bold">ВУС</span>
           <el-select
             v-model="milspecialty"
             filterable
             placeholder="ВУС"
-            style="display: block"
           >
             <el-option
               v-for="item in milspecialties"
@@ -28,7 +27,7 @@
         :cards="subjects"
       />
       <div v-else>
-        Предметов с таким названием не найдено.
+        Предметов с такой ВУС не найдено.
       </div>
     </div>
   </div>
