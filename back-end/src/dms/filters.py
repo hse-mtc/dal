@@ -58,7 +58,7 @@ class BookFilter(filters.FilterSet):
 class SubjectFilter(filters.FilterSet):
     class Meta:
         model = Subject
-        fields = ["user"]
+        fields = ["user", "milspecialty"]
 
 
 class FavoriteBookFilter(filters.FilterSet):

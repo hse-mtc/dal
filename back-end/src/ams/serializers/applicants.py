@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 
+from ams.utils.common import get_current_admission_year
 from common.serializers.milspecialties import MilspecialtySerializer
 from common.serializers.universities import (
     UniversityInfoSerializer,
@@ -28,6 +29,13 @@ class ApplicationProcessSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationProcess
         exclude = ["id"]
+
+    def create(self, validated_data):
+        cur_adm_year = get_current_admission_year()
+        validated_data["mtc_admission_year"] = validated_data.get(
+            "mtc_admission_year", cur_adm_year
+        )
+        return super().create(validated_data)
 
 
 class ApplicantSerializer(serializers.ModelSerializer):
