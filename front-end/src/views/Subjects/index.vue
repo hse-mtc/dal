@@ -1,18 +1,24 @@
 <template>
   <div :class="$style.root">
     <h1>Учебно-методические материалы</h1>
-
-    <div :class="$style.searchWrapper">
-      <input
-        v-model="searchQuery"
-        :class="$style.wordsSearch"
-        placeholder="Введите название предмета, аннотацию или email"
-      >
-      <i
-        :class="['el-icon-close', $style.deleteCross]"
-        @click="searchQuery = ''"
-      />
-      <i :class="['el-icon-search', $style.searchIcon]" />
+    <div v-if="personType !== 'student'" style="margin-top: 25px">
+      <el-row class="filterRow" :gutter="20">
+        <el-col :span="6">
+          <span style="margin-right: 15px; font-weight: bold">ВУС</span>
+          <el-select
+            v-model="milspecialty"
+            filterable
+            placeholder="ВУС"
+          >
+            <el-option
+              v-for="item in milspecialties"
+              :key="item.id"
+              :label="item.code"
+              :value="item.id"
+            />
+          </el-select>
+        </el-col>
+      </el-row>
     </div>
 
     <div :class="$style.cardsWrapper">
@@ -21,7 +27,7 @@
         :cards="subjects"
       />
       <div v-else>
-        Предметов с таким названием не найдено.
+        Предметов с такой ВУС не найдено.
       </div>
     </div>
   </div>
@@ -30,15 +36,31 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 
-import { SubjectsModule } from "@/store";
-
+import { SubjectsModule, UserModule } from "@/store";
+import { getMilSpecialties } from "@/api/reference-book";
 import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue";
 
 @Component({
   name: "SubjectsPage",
   components: { SubjectsCards },
+  data() {
+    return {
+      milspecialty: "",
+      milspecialties: [],
+    };
+  },
+  computed: {
+    personType() {
+      return UserModule.personType;
+    },
+  },
 })
 class SubjectsPage extends Vue {
+  async mounted() {
+    this.milspecialties = (await getMilSpecialties()).data;
+    this.milspecialty = this.milspecialties[0].id;
+  }
+
   get searchQuery() { return this.$route.query.subjectsSearch || ""; }
   set searchQuery(newValue) {
     this.$router.replace({
@@ -49,10 +71,13 @@ class SubjectsPage extends Vue {
   }
 
   get subjects() {
-    if (!this.searchQuery) { return SubjectsModule.subjects; }
+    const milSpecSubjects = SubjectsModule.subjects.filter(
+      subj => subj.milspecialty === this.milspecialty,
+    );
+    if (!this.searchQuery) { return milSpecSubjects; }
 
     const words = this.searchQuery.toLowerCase().split();
-    return SubjectsModule.subjects.filter(({ title, annotation, user: { email } }) => {
+    return milSpecSubjects.filter(({ title, annotation, user: { email } }) => {
       const subjectKey = `${title} ${annotation} ${email}`.toLowerCase();
 
       return words.reduce(
@@ -76,7 +101,7 @@ export default SubjectsPage;
 }
 
 .cardsWrapper {
-  margin-top: 50px;
+  margin-top: 35px;
 
   @media screen and (max-width: 640px) {
     margin-top: 20px;
