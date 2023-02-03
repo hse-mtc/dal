@@ -15,7 +15,7 @@
               v-for="item in milspecialties"
               :key="item.id"
               :label="item.code"
-              :value="item.code"
+              :value="item.id"
             />
           </el-select>
         </el-col>
@@ -59,7 +59,7 @@ import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue
 class SubjectsPage extends Vue {
   async mounted() {
     this.milspecialties = (await getMilSpecialties()).data;
-    this.milspecialty = this.milspecialties[0].code;
+    this.milspecialty = this.milspecialties[0].id;
   }
 
   get searchQuery() { return this.$route.query.subjectsSearch || ""; }
@@ -72,10 +72,13 @@ class SubjectsPage extends Vue {
   }
 
   get subjects() {
-    if (!this.searchQuery) { return SubjectsModule.subjects; }
+    const milSpecSubjects = SubjectsModule.subjects.filter(
+      subj => subj.milspecialty === this.milspecialty,
+    );
+    if (!this.searchQuery) { return milSpecSubjects; }
 
     const words = this.searchQuery.toLowerCase().split();
-    return SubjectsModule.subjects.filter(({ title, annotation, user: { email } }) => {
+    return milSpecSubjects.filter(({ title, annotation, user: { email } }) => {
       const subjectKey = `${title} ${annotation} ${email}`.toLowerCase();
 
       return words.reduce(
