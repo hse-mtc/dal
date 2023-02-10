@@ -34,30 +34,37 @@
         />
 
         <template v-else-if="key === 'publishDate'">
-          <el-col :span="11">
-            <el-form-item prop="publishDate">
-              <DateInput
-                v-model="formValues.publishDate"
-                title="Год издания"
-                type="year"
-                format="yyyy"
-                value-format="yyyy"
-              />
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="2">
-&nbsp;
-          </el-col>
-
-          <el-col :span="11">
-            <el-form-item>
-              <NumberInput
-                v-model="formValues.pageCount"
-                title="Количество страниц"
-              />
-            </el-form-item>
-          </el-col>
+          <el-row :gutter="20">
+            <el-col :span="12">
+              <el-form-item prop="publishDate">
+                <span class="InputsBase_title_1SHIu">Год издания</span>
+                <el-date-picker
+                  v-model="formValues.publishDate"
+                  type="date"
+                  :picker-options="{
+                    disabledDate(time) {
+                      return time.getTime() > Date.now();
+                    },
+                    firstDayOfWeek: 1,
+                  }"
+                  format="dd.MM.yyyy"
+                  value-format="yyyy-MM-dd"
+                  placeholder="Выберите дату"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item>
+                <span class="InputsBase_title_1SHIu">Количество страниц</span>
+                <el-input-number
+                  v-model="formValues.pageCount"
+                  :controls="false"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
         </template>
 
         <SelectInput
@@ -67,6 +74,7 @@
           multiple
           filterable
           :options="subjects"
+          style="margin-top: -22px"
         />
 
         <FileInput
@@ -101,9 +109,7 @@
 <script>
 import {
   SelectInput,
-  DateInput,
   TextInput,
-  NumberInput,
   FileInput,
 } from "@/common/inputs";
 
@@ -115,9 +121,7 @@ export default {
   components: {
     ModalWindow,
     SelectInput,
-    DateInput,
     TextInput,
-    NumberInput,
     FileInput,
   },
   props: {
