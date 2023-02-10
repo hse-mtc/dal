@@ -83,26 +83,44 @@ Data = namedtuple(
 
 
 class Campus:
-    MOSCOW = "Campus.MOSCOW.value"
-    SAINT_PETERSBURG = "Campus.SAINT_PETERSBURG.value"
-    NIZHNY_NOVGOROD = "Campus.NIZHNY_NOVGOROD.value"
-    PERM = "Campus.PERM.value"
+    MOSCOW = "MO", "Москва"
+    SAINT_PETERSBURG = "SP", "Санкт-Петербург"
+    NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
+    PERM = "PE", "Пермь"
 
 
 # GLEB TODO: дополни список имен на русском и первую букву транслитом
-names = [('Алексей', 'a'), ('Борис', 'b'), ('Феликс', 'f'), ('Паша', 'p'), ('Александр', 'a'), ('Дмитрий', 'd'),]
+names = [
+    ("Алексей", "a"),
+    ("Борис", "b"),
+    ("Флекс", "f"),
+]
 # GLEB TODO: дополни список отчеств на русском и первую букву транслитом
-patronymics = [('Алексеевич', 'a'), ('Флексеевич', 'f'), ('Павлович', 'p'), ('Александрович', 'a'), ('Дмитриевич', 'd'), ('Борисович', 'b'), ('Олегович', 'Olegovich')]
+patronymics = [
+    ("Алексеевич", "a"),
+    ("Флексеевич", "f"),
+]
 # GLEB TODO: дополни список фамилий на русском и транслите
-surnames = [('Ходилов', 'Hodilov'), ('Кретков', 'Kretkov'), ('Тишанов', 'Tishanov'), ('Закудряев', 'Zakudrjaev'), ('Демчин', 'Demchin'), ('Смирнов', 'Smirnov')]
+surnames = [
+    ("Милос", "milos"),
+    ("Елочкин", "elochkin"),
+    ("Веточкин", "vetochkin"),
+]
 # GLEB TODO: дополни список улиц
-streets = ['Пушкина', 'Электрозаводская', 'Флотская', 'Ботаническая', 'Академика Королева', 'Петровка', 'Дмитровская', 'Солнечная']
+streets = [
+    "Пушкина",
+    "Электрозаводская",
+    "Флотская",
+]
 # GLEB TODO: дополни список городов России
-cities = ['Москва', 'Санкт-Петербург', 'Архангельск', 'Астрахань', 'Барнаул', 'Белгород', 'Биробиджан']
+cities = [
+    "Москва",
+    "Санкт-Петербург",
+]
 
 
-def create_email(name, surname, patronymic):
-    return str(name) + str(patronymic) + str(surname) + "@mail.com"
+def create_email(name, surname, patronimic):
+    return name + patronimic + surname + "@mail.com"
 
 
 def create_milfaculties() -> dict[str]:
@@ -122,14 +140,6 @@ def create_milfaculties() -> dict[str]:
         {
             "title": "Ракетные войска стратегического назначения",
             "abbreviation": "РВСН",
-        },
-        {
-            "title": "Офицеры ЗИТ",
-            "abbreviation": "ЗИТ",
-        },
-        {
-            "title": "Беспилотные летательные аппараты",
-            "abbreviation": "БПЛА",
         },
     ]
 
@@ -187,33 +197,21 @@ def create_milgroups(
         },
         {
             "title": "1810",
-            "milfaculty": milfaculties["БПЛА"],
+            "milfaculty": milfaculties["РВСН"],
             "weekday": 4,
         },
         {
             "title": "1811",
-            "milfaculty": milfaculties["БПЛА"],
+            "milfaculty": milfaculties["РВСН"],
             "weekday": 4,
         },
         {
             "title": "1812",
-            "milfaculty": milfaculties["ЗИТ"],
-            "weekday": 4,
-        },
-        {
-            "title": "1813",
             "milfaculty": milfaculties["РВСН"],
             "weekday": 4,
-            "archived": True,
         },
         {
-            "title": "1814",
-            "milfaculty": milfaculties["РВСН"],
-            "weekday": 4,
-            "archived": True,
-        },
-        {
-            "title": "1614",
+            "title": "1612",
             "milfaculty": milfaculties["РВСН"],
             "weekday": 4,
             "archived": True,
@@ -304,15 +302,8 @@ def create_user(name, surname, patronimic) -> Data:
         password="qwerty",
         is_staff=False,
         is_superuser=False,
-        campuses=[Campus.MOSCOW],
+        campuses=[Campus.MOSCOW],  # TODO: add .value
     )
-
-
-def print_user(user, file=None):
-    _str = str(user)
-    _str = _str.replace('\'Campus', 'Campus')
-    _str = _str.replace('.value\'', '.value')
-    print(_str + ', ', file=file)
 
 
 def generate_phone():
@@ -440,68 +431,49 @@ generate_university_info.group = 0
 generate_university_info.card_id = 0
 
 
-def find_email(email: str, users_list):
-    for u in users_list:
-        if u.email == email:
-            return True
-    return False
-
-
-def create_uniq_name(users_list):
-    name = random.choice(names)
-    surname = random.choice(surnames)
-    patronymic = random.choice(patronymics)
-    while find_email(create_email(name[1], surname[1], patronymic[1]), users_list):
-        name = random.choice(names)
-        surname = random.choice(surnames)
-        patronymic = random.choice(patronymics)
-
-    print(f"Created users: {len(users_list)}")
-    return name, surname, patronymic
-
 def generate():
     users_list = []
-    with open("students.txt", "w") as students:
-        for i, m_group in enumerate(milgroups):
-            GC, SC1, SC2, SC3 = random.sample(set(range(12)), 4)
+    for i, m_group in enumerate(milgroups):
+        GC, SC1, SC2, SC3 = random.sample(set(range(12)), 4)
 
-            for i in range(12):
-                name, surname, patronymic = create_uniq_name(users_list)
-                user = create_user(name[1], surname[1], patronymic[1])
-                users_list.append(user)
+        for i in range(12):
+            name = random.choice(names)
+            surname = random.choice(surnames)
+            patronymic = random.choice(patronymics)
+            user = create_user(name[1], surname[1], patronymic[1])
+            users_list.append(user)
 
-                if i == GC:
-                    post = Posts.MILGROUP_COMMANDER
-                elif i == SC1 or i == SC2 or i == SC3:
-                    post = Posts.MILSQUAD_COMMANDER
-                else:
-                    post = Posts.NO_POST
+            if i == GC:
+                post = Posts.MILGROUP_COMMANDER
+            elif i == SC1 or i == SC2 or i == SC3:
+                post = Posts.MILSQUAD_COMMANDER
+            else:
+                post = Posts.NO_POST
 
-                permanent_adress, city = generate_permanent_adress()
-                print(
-                    generate_student(
-                        [
-                            surname[0],
-                            name[0],
-                            patronymic[0],
-                            user.email,
-                            m_group,
-                            generate_phone(),
-                            generate_post(post),
-                            generate_skills(skills),
-                            generate_birth_info(),
-                            permanent_adress,
-                            generate_passport(city),
-                            generate_university_info(programs),
-                        ]
-                    )
-                , file=students)
+            permanent_adress, city = generate_permanent_adress()
+            print(
+                generate_student(
+                    [
+                        surname[0],
+                        name[0],
+                        patronymic[0],
+                        user.email,
+                        m_group,
+                        generate_phone(),
+                        generate_post(post),
+                        generate_skills(skills),
+                        generate_birth_info(),
+                        permanent_adress,
+                        generate_passport(city),
+                        generate_university_info(programs),
+                    ]
+                )
+            )
 
-    with open("user.txt", "w") as users:
-        print("users = [", file=users)
-        for user in users_list:
-            print_user(user, file=users)
-        print("]", file=users)
+    print("users = [")
+    for user in users_list:
+        print(str(user) + ",")
+    print("]")
 
 
 generate()
