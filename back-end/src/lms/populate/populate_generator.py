@@ -94,10 +94,6 @@ names = [('Алексей', 'a'), ('Борис', 'b'), ('Флекс', 'f'),]
 patronymics = [('Алексеевич', 'a'), ('Флексеевич', 'f'),]
 # GLEB TODO: дополни список фамилий на русском и транслите
 surnames = [('Милос', 'milos'), ('Елочкин', 'elochkin'), ('Веточкин', 'vetochkin'),]
-# GLEB TODO: дополни список улиц
-streets = ['Пушкина', 'Электрозаводская', 'Флотская', ]
-# GLEB TODO: дополни список городов России
-cities = ['Москва', 'Санкт-Петербург', ]
 
 def create_email(name, surname, patronimic):
     return name + patronimic + surname + "@mail.com"
@@ -296,13 +292,6 @@ def generate_phone():
     return generate_phone.last_phone
 
 
-def generate_permanent_adress():
-    city = random.choice(cities)
-    _street = random.choice(streets)
-    house = random.randint(1, 100)
-    return f'г. {city}, ул. {_street}, дом {house}', city
-
-
 class Posts(Enum):
     NO_POST = "None"
     MILGROUP_COMMANDER = "Student.Post.MILGROUP_COMMANDER.value"
@@ -310,6 +299,7 @@ class Posts(Enum):
 
 
 def generate_post(post: Posts):
+    # "post": Student.Post.MILGROUP_COMMANDER.value,
     return '''{}'''.format(post.value) 
 
 
@@ -342,19 +332,31 @@ def generate_birth_info():
         }}'''.format(date)
 
 
-def generate_passport(city):
+def generate_passport():
+    # "passport": {
+    #             "series": "0000",
+    #             "code": "111111",
+    #             "ufms_name": "УФМС гор. Москвы",
+    #             "ufms_code": "740-056",
+    #             "issue_date": "2020-10-02",
+    #         },
     generate_passport.series += 1
     generate_passport.number += 1
     return '''{{
             "series": "{}",
             "code": "{}",
-            "ufms_name": "УФМС гор. {}",
+            "ufms_name": "УФМС гор. Москвы",
             "ufms_code": "740-056",
             "issue_date": "2020-10-02",
-        }}'''.format(generate_passport.series, generate_passport.number, city)
+        }}'''.format(generate_passport.series, generate_passport.number)
 
 
 def generate_university_info(programs):
+    # "university_info": {
+    #             "program": programs["Информатика и вычислительная техника"],
+    #             "group": "ГРПП01",
+    #             "card_id": "СТДБ01",
+    #         },
     generate_university_info.group += 1
     generate_university_info.card_id += 1
 
@@ -367,7 +369,7 @@ def generate_university_info(programs):
 
 
 def generate_student(args):
-    # args: surname, name, patronymic, mail, milgroup, phone, post, skills, birth_info, adress, passport, university info
+    # args: surname, name, patronymic, mail, milgroup, phone, post, skills
     return """{{
         "surname": "{}",
         "name": "{}",
@@ -383,7 +385,7 @@ def generate_student(args):
         "photo": None,
         "birth_info": {},
         "citizenship": "РФ",
-        "permanent_address": "{}",
+        "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
         "passport": {},
         "recruitment_office": "Московский военкомат",
         "university_info": {},
@@ -398,6 +400,9 @@ faculties = create_faculties()
 programs = create_programs(faculties)
 posts = [Posts.NO_POST, Posts.MILGROUP_COMMANDER, Posts.MILSQUAD_COMMANDER]
 
+# print(create_user('абырвалг', 'хуй', 'хуевич'))
+# print(milfaculties)
+# print(milgroups)
 
 generate_phone.last_phone = 79850000002
 generate_passport.series = 1111
@@ -424,14 +429,13 @@ def generate():
                 post = Posts.MILSQUAD_COMMANDER
             else:
                 post = Posts.NO_POST
-            
-            permanent_adress, city = generate_permanent_adress()
+
             print(generate_student([
                     surname[0], name[0], patronymic[0], 
                     user.email, m_group, generate_phone(), 
                     generate_post(post), generate_skills(skills),
-                    generate_birth_info(), permanent_adress,
-                    generate_passport(city), generate_university_info(programs),
+                    generate_birth_info(), generate_passport(),
+                    generate_university_info(programs),
                 ]))
 
 
