@@ -227,8 +227,10 @@ def create_applicants(
     for fields in applicants:
         assert _campus_matches(fields)
 
-        fields["birth_info"] = BirthInfo.objects.create(**fields.pop("birth_info"),)
-        
+        fields["birth_info"] = get_or_create(
+            BirthInfo,
+            **fields.pop("birth_info"),
+        )
         fields["passport"] = get_or_create(
             Passport,
             **fields.pop("passport"),
