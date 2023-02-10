@@ -89,50 +89,16 @@ class Campus:
     PERM = "Campus.PERM.value"
 
 
-names = [
-    ("Алексей", "a"),
-    ("Борис", "b"),
-    ("Феликс", "f"),
-    ("Паша", "p"),
-    ("Александр", "a"),
-    ("Дмитрий", "d"),
-]
-patronymics = [
-    ("Алексеевич", "a"),
-    ("Флексеевич", "f"),
-    ("Павлович", "p"),
-    ("Александрович", "a"),
-    ("Дмитриевич", "d"),
-    ("Борисович", "b"),
-    ("Олегович", "Olegovich"),
-]
-surnames = [
-    ("Ходилов", "Hodilov"),
-    ("Кретков", "Kretkov"),
-    ("Тишанов", "Tishanov"),
-    ("Закудряев", "Zakudrjaev"),
-    ("Демчин", "Demchin"),
-    ("Смирнов", "Smirnov"),
-]
-streets = [
-    "Пушкина",
-    "Электрозаводская",
-    "Флотская",
-    "Ботаническая",
-    "Академика Королева",
-    "Петровка",
-    "Дмитровская",
-    "Солнечная",
-]
-cities = [
-    "Москва",
-    "Санкт-Петербург",
-    "Архангельск",
-    "Астрахань",
-    "Барнаул",
-    "Белгород",
-    "Биробиджан",
-]
+# GLEB TODO: дополни список имен на русском и первую букву транслитом
+names = [('Алексей', 'a'), ('Борис', 'b'), ('Феликс', 'f'), ('Паша', 'p'), ('Александр', 'a'), ('Дмитрий', 'd'),]
+# GLEB TODO: дополни список отчеств на русском и первую букву транслитом
+patronymics = [('Алексеевич', 'a'), ('Флексеевич', 'f'), ('Павлович', 'p'), ('Александрович', 'a'), ('Дмитриевич', 'd'), ('Борисович', 'b'), ('Олегович', 'Olegovich')]
+# GLEB TODO: дополни список фамилий на русском и транслите
+surnames = [('Ходилов', 'Hodilov'), ('Кретков', 'Kretkov'), ('Тишанов', 'Tishanov'), ('Закудряев', 'Zakudrjaev'), ('Демчин', 'Demchin'), ('Смирнов', 'Smirnov')]
+# GLEB TODO: дополни список улиц
+streets = ['Пушкина', 'Электрозаводская', 'Флотская', 'Ботаническая', 'Академика Королева', 'Петровка', 'Дмитровская', 'Солнечная']
+# GLEB TODO: дополни список городов России
+cities = ['Москва', 'Санкт-Петербург', 'Архангельск', 'Астрахань', 'Барнаул', 'Белгород', 'Биробиджан']
 
 
 def create_email(name, surname, patronymic):
@@ -344,9 +310,9 @@ def create_user(name, surname, patronimic) -> Data:
 
 def print_user(user, file=None):
     _str = str(user)
-    _str = _str.replace("'Campus", "Campus")
-    _str = _str.replace(".value'", ".value")
-    print(_str + ", ", file=file)
+    _str = _str.replace('\'Campus', 'Campus')
+    _str = _str.replace('.value\'', '.value')
+    print(_str + ', ', file=file)
 
 
 def generate_phone():
@@ -493,10 +459,9 @@ def create_uniq_name(users_list):
     print(f"Created users: {len(users_list)}")
     return name, surname, patronymic
 
-
 def generate():
     users_list = []
-    with open("../students.txt", "w") as students:
+    with open("students.txt", "w") as students:
         for i, m_group in enumerate(milgroups):
             GC, SC1, SC2, SC3 = random.sample(set(range(12)), 4)
 
@@ -529,9 +494,8 @@ def generate():
                             generate_passport(city),
                             generate_university_info(programs),
                         ]
-                    ),
-                    file=students,
-                )
+                    )
+                , file=students)
 
     with open("user.txt", "w") as users:
         print("users = [", file=users)
