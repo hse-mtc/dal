@@ -7,7 +7,7 @@
       >
         <i @click="clear" class="el-icon-arrow-left" />
       </router-link>
-      <h1 v-if="show" :class="$style.title">
+      <h1 :class="$style.title">
         {{ subjectInfo.title }}
       </h1>
       <AZGuard
