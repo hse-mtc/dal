@@ -68,13 +68,6 @@ def create_teachers(
             "post": Teacher.Post.TEACHERS.value,
             "rank": Teacher.Rank.MAJOR_GENERAL.value,
         },
-        # new teachers
-        # Офицеры разведка 1-3
-        # Сержанты МСВ 4-6
-        # Офицеры ВКС 7-9
-        # Офицеры БПЛА 10-11
-        # Офицеры ЗИТ 12
-        # Офицеры РВСН 13-14
     ]
 
     objects = {}
