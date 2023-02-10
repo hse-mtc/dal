@@ -10,7 +10,7 @@
         class="file-image"
         :src="
           data.cover
-            ? data.cover.image
+            ? 'media/' + data.cover.image
             : require('@/assets/icons/book-cover-placeholder.png')
         "
         alt=""
