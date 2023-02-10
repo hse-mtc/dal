@@ -1,3 +1,48 @@
+# User example populate
+# Data(
+#     email="superuser@mail.com",
+#     password="qwerty",
+#     is_staff=True,
+#     is_superuser=True,
+#     campuses=[Campus.MOSCOW.value],
+# ),
+
+# student example
+# {
+#     "surname": "Хромов",
+#     "name": "Григорий",
+#     "patronymic": "Александрович",
+#     "user": users["gakhromov@mail.com"],
+#     "milgroup": milgroups["1809"],
+#     "contact_info": {
+#         "personal_phone_number": "70000000001",
+#     },
+#     "status": Student.Status.STUDYING.value,
+#     "post": None,
+#     "skills": [skills["Футбол"], skills["Гитара"]],
+#     "photo": None,
+#     "birth_info": {
+#         "date": "2000-11-04",
+#         "country": "Россия",
+#         "place": "Москва",
+#     },
+#     "citizenship": "РФ",
+#     "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
+#     "passport": {
+#         "series": "0000",
+#         "code": "111111",
+#         "ufms_name": "УФМС гор. Москвы",
+#         "ufms_code": "740-056",
+#         "issue_date": "2020-10-02",
+#     },
+#     "recruitment_office": "Московский военкомат",
+#     "university_info": {
+#         "program": programs["Информатика и вычислительная техника"],
+#         "group": "ГРПП00",
+#         "card_id": "СТДБ00",
+#     },
+#     "family": [],
+# },
 import time
 import random
 from enum import Enum
@@ -48,7 +93,7 @@ names = [
     ("Алексей", "a"),
     ("Борис", "b"),
     ("Феликс", "f"),
-    ("Павел", "p"),
+    ("Паша", "p"),
     ("Александр", "a"),
     ("Дмитрий", "d"),
 ]
@@ -59,15 +104,15 @@ patronymics = [
     ("Александрович", "a"),
     ("Дмитриевич", "d"),
     ("Борисович", "b"),
-    ("Олегович", "o"),
+    ("Олегович", "Olegovich"),
 ]
 surnames = [
-    ("Ходилов", "hodilov"),
-    ("Кретков", "kretkov"),
-    ("Тишанов", "tishanov"),
-    ("Закудряев", "zakudrjaev"),
-    ("Демчин", "demchin"),
-    ("Смирнов", "smirnov"),
+    ("Ходилов", "Hodilov"),
+    ("Кретков", "Kretkov"),
+    ("Тишанов", "Tishanov"),
+    ("Закудряев", "Zakudrjaev"),
+    ("Демчин", "Demchin"),
+    ("Смирнов", "Smirnov"),
 ]
 streets = [
     "Пушкина",
