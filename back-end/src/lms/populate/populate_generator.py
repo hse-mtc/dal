@@ -43,31 +43,7 @@
 #     },
 #     "family": [],
 # },
-import time
-import random
-from enum import Enum
 from collections import namedtuple
-    
-def str_time_prop(start, end, time_format, prop):
-    """Get a time at a proportion of a range of two formatted times.
-
-    start and end should be strings specifying times formatted in the
-    given format (strftime-style), giving an interval [start, end].
-    prop specifies how a proportion of the interval to be taken after
-    start.  The returned time will be in the specified format.
-    """
-
-    stime = time.mktime(time.strptime(start, time_format))
-    etime = time.mktime(time.strptime(end, time_format))
-
-    ptime = stime + prop * (etime - stime)
-
-    return time.strftime(time_format, time.localtime(ptime))
-
-
-def random_date(start, end, prop):
-    return str_time_prop(start, end, '%Y-%m-%d', prop)
-
 
 Data = namedtuple(
     "Data",
@@ -200,83 +176,6 @@ def create_milgroups(
     return {fields["title"]: "" for fields in milgroups}
 
 
-def create_skills() -> dict[str]:
-    skills = [
-        {
-            "title": "Футбол",
-        },
-        {
-            "title": "Гитара",
-        },
-        {
-            "title": "Плавание",
-        },
-    ]
-
-    return {fields["title"]: "" for fields in skills}
-
-
-def create_faculties() -> dict[str]:
-    faculties = [
-        {
-            "campus": Campus.MOSCOW, #.value,
-            "title": "Московский институт электроники и математики им. А.Н. Тихонова",
-            "abbreviation": "МИЭМ",
-        },
-        {
-            "campus": Campus.MOSCOW, #.value,
-            "title": "Факультет экономических наук",
-            "abbreviation": "ФЭН",
-        },
-        {
-            "campus": Campus.MOSCOW, #.value,
-            "title": "Факультет компьютерных наук",
-            "abbreviation": "ФКН",
-        },
-        {
-            "campus": Campus.SAINT_PETERSBURG, #.value,
-            "title": "Юридический факультет",
-            "abbreviation": "ЮрФак",
-        },
-    ]
-
-    return {
-        fields["abbreviation"]: '' for fields in faculties
-    }
-
-
-def create_programs(faculties: dict[str]) -> dict[str]:
-    programs = [
-        {
-            "code": "09.03.01 Информатика и вычислительная техника",
-            "title": "Информатика и вычислительная техника",
-            "faculty": faculties["МИЭМ"],
-        },
-        {
-            "code": "10.03.01 Информационная безопасность",
-            "title": "Информационная безопасность",
-            "faculty": faculties["МИЭМ"],
-        },
-        {
-            "code": "38.03.01 Экономика",
-            "title": "Экономика",
-            "faculty": faculties["ФКН"],
-        },
-        {
-            "code": "09.03.04 Программная инженерия",
-            "title": "Программная инженерия",
-            "faculty": faculties["ФКН"],
-        },
-        {
-            "code": "40.03.01 Юриспруденция",
-            "title": "Юриспруденция",
-            "faculty": faculties["ЮрФак"],
-        },
-    ]
-
-    return {fields["title"]: "" for fields in programs}
-
-
 def create_user(name, surname, patronimic) -> Data:
     return Data(
         email=create_email(name, surname, patronimic),
@@ -287,156 +186,18 @@ def create_user(name, surname, patronimic) -> Data:
     )
 
 
-def generate_phone():
-    generate_phone.last_phone += 1
-    return generate_phone.last_phone
-
-
-class Posts(Enum):
-    NO_POST = "None"
-    MILGROUP_COMMANDER = "Student.Post.MILGROUP_COMMANDER.value"
-    MILSQUAD_COMMANDER = "Student.Post.MILSQUAD_COMMANDER.value"
-
-
-def generate_post(post: Posts):
-    # "post": Student.Post.MILGROUP_COMMANDER.value,
-    return '''{}'''.format(post.value) 
-
-
-def generate_skills(skills: dict):
-    _skills = []
-
-    values = set(skills.keys())
-    skills_count = random.randint(0, len(values))
-
-    for i in range(skills_count):
-        value = random.choice(list(values))
-        _skills.append(value)
-        values.remove(value)
-
-    result = ""
-    for i, s in enumerate(_skills):
-        if i < len(_skills) - 1:
-            result += '''skills["{}"], '''.format(s)
-        else:
-            result += '''skills["{}"]'''.format(s)
-    return '''{}'''.format(result)
-
-
-def generate_birth_info():
-    date = random_date("2000-1-1", "2000-12-31", random.random())
-    return '''{{
-            "date": "{}",
-            "country": "Россия",
-            "place": "Москва",
-        }}'''.format(date)
-
-
-def generate_passport():
-    # "passport": {
-    #             "series": "0000",
-    #             "code": "111111",
-    #             "ufms_name": "УФМС гор. Москвы",
-    #             "ufms_code": "740-056",
-    #             "issue_date": "2020-10-02",
-    #         },
-    generate_passport.series += 1
-    generate_passport.number += 1
-    return '''{{
-            "series": "{}",
-            "code": "{}",
-            "ufms_name": "УФМС гор. Москвы",
-            "ufms_code": "740-056",
-            "issue_date": "2020-10-02",
-        }}'''.format(generate_passport.series, generate_passport.number)
-
-
-def generate_university_info(programs):
-    # "university_info": {
-    #             "program": programs["Информатика и вычислительная техника"],
-    #             "group": "ГРПП01",
-    #             "card_id": "СТДБ01",
-    #         },
-    generate_university_info.group += 1
-    generate_university_info.card_id += 1
-
-    return '''{{
-                "program": programs["{}"],
-                "group": "ГРПП{}",
-                "card_id": "СТДБ{}",
-            }}'''.format(random.choice(list(programs.keys())), 
-                    generate_university_info.group, generate_university_info.card_id)
-
-
-def generate_student(args):
-    # args: surname, name, patronymic, mail, milgroup, phone, post, skills
-    return """{{
-        "surname": "{}",
-        "name": "{}",
-        "patronymic": "{}",
-        "user": users["{}"],
-        "milgroup": milgroups["{}"],
-        "contact_info": {{
-            "personal_phone_number": "{}",
-        }},
-        "status": Student.Status.STUDYING.value,
-        "post": {},
-        "skills": [{}],
-        "photo": None,
-        "birth_info": {},
-        "citizenship": "РФ",
-        "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
-        "passport": {},
-        "recruitment_office": "Московский военкомат",
-        "university_info": {},
-        "family": [],
-    }},""".format(*args)
+def create_student() -> dict[str]:
+    pass
 
 
 milfaculties = create_milfaculties()
 milgroups = create_milgroups(milfaculties)
-skills = create_skills()
-faculties = create_faculties()
-programs = create_programs(faculties)
-posts = [Posts.NO_POST, Posts.MILGROUP_COMMANDER, Posts.MILSQUAD_COMMANDER]
-
-# print(create_user('абырвалг', 'хуй', 'хуевич'))
-# print(milfaculties)
-# print(milgroups)
-
-generate_phone.last_phone = 79850000002
-generate_passport.series = 1111
-generate_passport.number = 111111
-
-generate_university_info.group = 0
-generate_university_info.card_id = 0
-
-print(generate_birth_info())
-
-def generate():
-    for i, m_group in enumerate(milgroups):
-        GC, SC1, SC2, SC3 = random.sample(set(range(12)), 4)
-
-        for i in range(12):
-            name = random.choice(names)
-            surname = random.choice(surnames)
-            patronymic = random.choice(patronymics)
-            user = create_user(name[1], surname[1], patronymic[1])
-            
-            if i == GC:
-                post = Posts.MILGROUP_COMMANDER
-            elif i == SC1 or i == SC2 or i == SC3:
-                post = Posts.MILSQUAD_COMMANDER
-            else:
-                post = Posts.NO_POST
-
-            print(generate_student([
-                    surname[0], name[0], patronymic[0], 
-                    user.email, m_group, generate_phone(), 
-                    generate_post(post), generate_skills(skills),
-                    generate_birth_info(), generate_passport(),
-                    generate_university_info(programs),
-                ]))
 
 
-generate()
+print(create_user('абырвалг', 'хуй', 'хуевич'))
+print(milfaculties)
+print(milgroups)
+
+for m_fac in milfaculties:
+    for m_group in milgroups:
+        pass
