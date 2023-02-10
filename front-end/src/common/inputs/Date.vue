@@ -15,7 +15,9 @@
       v-bind="$attrs"
       :format="format"
       :value-format="valueFormat"
-      :picker-options="pickerOptions"
+      :picker-options="{
+        firstDayOfWeek: 1,
+      }"
     />
   </InputsBase>
 </template>
@@ -34,14 +36,5 @@ class DateInput extends InputsMixin {
   @Prop({ type: String, default: "yyyy-MM-dd" }) valueFormat
 }
 
-export default {
-  name: "DateInput",
-  data() {
-    return {
-      pickerOptions: {
-        firstDayOfWeek: 1,
-      },
-    };
-  },
-};
+export default DateInput;
 </script>
