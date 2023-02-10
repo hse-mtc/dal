@@ -47,8 +47,7 @@ import time
 import random
 from enum import Enum
 from collections import namedtuple
-
-
+    
 def str_time_prop(start, end, time_format, prop):
     """Get a time at a proportion of a range of two formatted times.
 
@@ -67,7 +66,7 @@ def str_time_prop(start, end, time_format, prop):
 
 
 def random_date(start, end, prop):
-    return str_time_prop(start, end, "%Y-%m-%d", prop)
+    return str_time_prop(start, end, '%Y-%m-%d', prop)
 
 
 Data = namedtuple(
@@ -82,42 +81,23 @@ Data = namedtuple(
 )
 
 
-class Campus:
+class Campus():
     MOSCOW = "MO", "Москва"
     SAINT_PETERSBURG = "SP", "Санкт-Петербург"
     NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
     PERM = "PE", "Пермь"
 
 
-# GLEB TODO: дополни список имен на русском и первую букву транслитом
-names = [
-    ("Алексей", "a"),
-    ("Борис", "b"),
-    ("Флекс", "f"),
-]
+# GLEB TODO: дополни список имен на русском и первую букву транслитом 
+names = [('Алексей', 'a'), ('Борис', 'b'), ('Флекс', 'f'),]
 # GLEB TODO: дополни список отчеств на русском и первую букву транслитом
-patronymics = [
-    ("Алексеевич", "a"),
-    ("Флексеевич", "f"),
-]
+patronymics = [('Алексеевич', 'a'), ('Флексеевич', 'f'),]
 # GLEB TODO: дополни список фамилий на русском и транслите
-surnames = [
-    ("Милос", "milos"),
-    ("Елочкин", "elochkin"),
-    ("Веточкин", "vetochkin"),
-]
+surnames = [('Милос', 'milos'), ('Елочкин', 'elochkin'), ('Веточкин', 'vetochkin'),]
 # GLEB TODO: дополни список улиц
-streets = [
-    "Пушкина",
-    "Электрозаводская",
-    "Флотская",
-]
+streets = ['Пушкина', 'Электрозаводская', 'Флотская', ]
 # GLEB TODO: дополни список городов России
-cities = [
-    "Москва",
-    "Санкт-Петербург",
-]
-
+cities = ['Москва', 'Санкт-Петербург', ]
 
 def create_email(name, surname, patronimic):
     return name + patronimic + surname + "@mail.com"
@@ -143,7 +123,10 @@ def create_milfaculties() -> dict[str]:
         },
     ]
 
-    return {fields["abbreviation"]: "" for fields in milfaculties}
+    return {
+        fields["abbreviation"]: ""
+        for fields in milfaculties
+    }
 
 
 def create_milgroups(
@@ -240,28 +223,30 @@ def create_skills() -> dict[str]:
 def create_faculties() -> dict[str]:
     faculties = [
         {
-            "campus": Campus.MOSCOW,  # .value,
+            "campus": Campus.MOSCOW, #.value,
             "title": "Московский институт электроники и математики им. А.Н. Тихонова",
             "abbreviation": "МИЭМ",
         },
         {
-            "campus": Campus.MOSCOW,  # .value,
+            "campus": Campus.MOSCOW, #.value,
             "title": "Факультет экономических наук",
             "abbreviation": "ФЭН",
         },
         {
-            "campus": Campus.MOSCOW,  # .value,
+            "campus": Campus.MOSCOW, #.value,
             "title": "Факультет компьютерных наук",
             "abbreviation": "ФКН",
         },
         {
-            "campus": Campus.SAINT_PETERSBURG,  # .value,
+            "campus": Campus.SAINT_PETERSBURG, #.value,
             "title": "Юридический факультет",
             "abbreviation": "ЮрФак",
         },
     ]
 
-    return {fields["abbreviation"]: "" for fields in faculties}
+    return {
+        fields["abbreviation"]: '' for fields in faculties
+    }
 
 
 def create_programs(faculties: dict[str]) -> dict[str]:
@@ -300,9 +285,9 @@ def create_user(name, surname, patronimic) -> Data:
     return Data(
         email=create_email(name, surname, patronimic),
         password="qwerty",
-        is_staff=False,
+        is_staff=True,
         is_superuser=False,
-        campuses=[Campus.MOSCOW],  # TODO: add .value
+        campuses=[Campus.MOSCOW], # TODO: add .value
     )
 
 
@@ -315,7 +300,7 @@ def generate_permanent_adress():
     city = random.choice(cities)
     _street = random.choice(streets)
     house = random.randint(1, 100)
-    return f"г. {city}, ул. {_street}, дом {house}", city
+    return f'г. {city}, ул. {_street}, дом {house}', city
 
 
 class Posts(Enum):
@@ -325,7 +310,7 @@ class Posts(Enum):
 
 
 def generate_post(post: Posts):
-    return """{}""".format(post.value)
+    return '''{}'''.format(post.value) 
 
 
 def generate_skills(skills: dict):
@@ -342,50 +327,43 @@ def generate_skills(skills: dict):
     result = ""
     for i, s in enumerate(_skills):
         if i < len(_skills) - 1:
-            result += """skills["{}"], """.format(s)
+            result += '''skills["{}"], '''.format(s)
         else:
-            result += """skills["{}"]""".format(s)
-    return """{}""".format(result)
+            result += '''skills["{}"]'''.format(s)
+    return '''{}'''.format(result)
 
 
 def generate_birth_info():
     date = random_date("2000-1-1", "2000-12-31", random.random())
-    return """{{
+    return '''{{
             "date": "{}",
             "country": "Россия",
             "place": "Москва",
-        }}""".format(
-        date
-    )
+        }}'''.format(date)
 
 
 def generate_passport(city):
     generate_passport.series += 1
     generate_passport.number += 1
-    return """{{
+    return '''{{
             "series": "{}",
             "code": "{}",
             "ufms_name": "УФМС гор. {}",
             "ufms_code": "740-056",
             "issue_date": "2020-10-02",
-        }}""".format(
-        generate_passport.series, generate_passport.number, city
-    )
+        }}'''.format(generate_passport.series, generate_passport.number, city)
 
 
 def generate_university_info(programs):
     generate_university_info.group += 1
     generate_university_info.card_id += 1
 
-    return """{{
+    return '''{{
                 "program": programs["{}"],
                 "group": "ГРПП{}",
                 "card_id": "СТДБ{}",
-            }}""".format(
-        random.choice(list(programs.keys())),
-        generate_university_info.group,
-        generate_university_info.card_id,
-    )
+            }}'''.format(random.choice(list(programs.keys())), 
+                    generate_university_info.group, generate_university_info.card_id)
 
 
 def generate_student(args):
@@ -410,9 +388,7 @@ def generate_student(args):
         "recruitment_office": "Московский военкомат",
         "university_info": {},
         "family": [],
-    }},""".format(
-        *args
-    )
+    }},""".format(*args)
 
 
 milfaculties = create_milfaculties()
@@ -430,9 +406,9 @@ generate_passport.number = 111111
 generate_university_info.group = 0
 generate_university_info.card_id = 0
 
+print(generate_birth_info())
 
 def generate():
-    users_list = []
     for i, m_group in enumerate(milgroups):
         GC, SC1, SC2, SC3 = random.sample(set(range(12)), 4)
 
@@ -441,39 +417,22 @@ def generate():
             surname = random.choice(surnames)
             patronymic = random.choice(patronymics)
             user = create_user(name[1], surname[1], patronymic[1])
-            users_list.append(user)
-
+            
             if i == GC:
                 post = Posts.MILGROUP_COMMANDER
             elif i == SC1 or i == SC2 or i == SC3:
                 post = Posts.MILSQUAD_COMMANDER
             else:
                 post = Posts.NO_POST
-
+            
             permanent_adress, city = generate_permanent_adress()
-            print(
-                generate_student(
-                    [
-                        surname[0],
-                        name[0],
-                        patronymic[0],
-                        user.email,
-                        m_group,
-                        generate_phone(),
-                        generate_post(post),
-                        generate_skills(skills),
-                        generate_birth_info(),
-                        permanent_adress,
-                        generate_passport(city),
-                        generate_university_info(programs),
-                    ]
-                )
-            )
-
-    print("users = [")
-    for user in users_list:
-        print(str(user) + ",")
-    print("]")
+            print(generate_student([
+                    surname[0], name[0], patronymic[0], 
+                    user.email, m_group, generate_phone(), 
+                    generate_post(post), generate_skills(skills),
+                    generate_birth_info(), permanent_adress,
+                    generate_passport(city), generate_university_info(programs),
+                ]))
 
 
 generate()
