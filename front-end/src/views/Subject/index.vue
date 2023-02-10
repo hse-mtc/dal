@@ -7,11 +7,9 @@
       >
         <i @click="clear" class="el-icon-arrow-left" />
       </router-link>
-
-      <h1 :class="$style.title">
+      <h1 v-if="show" :class="$style.title">
         {{ subjectInfo.title }}
       </h1>
-
       <AZGuard
         :permissions="['sections.post.all', {
           codename: 'sections.post.self',
@@ -75,12 +73,12 @@ class SubjectPage extends Vue {
   get sections() { return SubjectsModule.currentSections; }
 
   mounted() {
+    this.subjectInfo.title = "";
     SubjectsModule.setCurrentSubjectId(this.$route.params.subjectId);
   }
 
   clear() {
     this.sections.length = 0;
-    this.subjectInfo.title = "";
   }
 
   async addSection() {
