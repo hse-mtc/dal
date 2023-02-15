@@ -8,7 +8,7 @@ from dms.models.documents import File
 def create_files() -> list[File]:
     files = []
 
-    for i in range(25):
+    for i in range(10):
         name = f"document_id_{i}.txt"
         fields = dict(
             name=name,

@@ -39,7 +39,7 @@ class Document(models.Model):
 
     title = models.TextField(blank=True)
     annotation = models.TextField(blank=True)
-    file = models.ForeignKey(to=File, on_delete=models.CASCADE)
+    file = models.OneToOneField(to=File, on_delete=models.CASCADE)
     user = models.ForeignKey(
         to=User, on_delete=models.SET_DEFAULT, default=super_user_id
     )

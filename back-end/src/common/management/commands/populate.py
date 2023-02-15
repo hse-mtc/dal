@@ -175,7 +175,7 @@ class Command(BaseCommand):
 
         print("Populating `dms` models...", end="")
 
-        files = create_files()
+        paper_files = create_files()
 
         authors = create_authors()
         publishers = create_publishers()
@@ -185,19 +185,22 @@ class Command(BaseCommand):
             authors=authors,
             categories=categories,
             publishers=publishers,
-            files=files,
+            files=paper_files,
         )
+
+        class_material_files = create_files()
 
         sections = create_sections(subjects[0])
         topics = create_topics(sections[0])
         create_class_materials(
-            files=files,
+            files=class_material_files,
             topics=topics,
         )
 
+        book_files = create_files()
         books = create_books(
             authors=authors,
-            files=files,
+            files=book_files,
             publishers=publishers,
             subjects=subjects,
         )
