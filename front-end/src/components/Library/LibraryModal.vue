@@ -185,7 +185,7 @@ export default {
       });
     },
     close() {
-      this.$emit("close-modal");
+      this.$emit("close-modal", true);
     },
   },
 };
