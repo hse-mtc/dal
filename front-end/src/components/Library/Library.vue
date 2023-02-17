@@ -355,9 +355,11 @@ export default {
       this.showModal = true;
       this.changingId = item.id;
     },
-    onClose() {
-      this.showModal = false;
-      this.modalData = this.getInitBookData();
+    onClose(fromModal) {
+      if (fromModal) {
+        this.showModal = false;
+        this.modalData = this.getInitBookData();
+      }
     },
   },
 };
