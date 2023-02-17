@@ -54,10 +54,11 @@ class AddModal extends Vue {
 
     await PapersModule.addCategory({ title });
     this.closeModal();
+    this.$emit("closeModal", true);
   }
 
   closeModal(): void {
-    this.$emit("closeModal");
+    this.$emit("closeModal", true);
   }
 }
 
