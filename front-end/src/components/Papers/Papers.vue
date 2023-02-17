@@ -119,7 +119,6 @@
     <div
       v-if="paperAction || addNewCategory"
       class="background"
-      @click="closeModal"
     />
   </div>
 </template>
@@ -179,11 +178,13 @@ class Papers extends Vue {
     this.stopScrolling();
   }
 
-  closeModal() {
-    this.paperAction = "";
-    this.paperToEdit = {};
-    this.addNewCategory = false;
-    this.startScrolling();
+  closeModal(fromModal) {
+    if (fromModal) {
+      this.paperAction = "";
+      this.paperToEdit = {};
+      this.addNewCategory = false;
+      this.startScrolling();
+    }
   }
 
   rotateArrow() {
