@@ -92,6 +92,20 @@
             :autosize="{ minRows: 2 }"
           />
         </ElFormItem>
+        <ElFormItem label="ВУС" prop="milspecialty">
+          <ElSelect
+            v-model="subjectForm.milspecialty"
+            filterable
+            placeholder="ВУС"
+          >
+            <ElOption
+              v-for="item in milspecialties"
+              :key="item.id"
+              :label="item.code"
+              :value="item.id"
+            />
+          </ElSelect>
+        </ElFormItem>
         <ElFormItem>
           <ElButton type="primary" @click="submitForm('subjectForm')">
             Отправить
@@ -114,12 +128,18 @@ import CustomText from "@/common/CustomText";
 import { SIZES } from "@/utils/appConsts";
 import { SubjectsModule, UserModule } from "@/store";
 import { hasPermission } from "@/utils/permissions";
+import { getMilSpecialties } from "@/api/reference-book";
 
 @Component({
   name: "SubjectsControl",
   components: {
     CustomText,
     ModalWindow,
+  },
+  data() {
+    return {
+      milspecialties: [],
+    };
   },
   computed: {
     userId() { return UserModule.userId; },
@@ -132,11 +152,18 @@ class SubjectsControl extends Vue {
     id: null,
     title: "",
     annotation: "",
+    milspecialty: null,
   }
 
   rules = {
     title: [{ required: true, message: "Обязательное поле" }],
     annotation: [{ required: true, message: "Обязательное поле" }],
+    milspecialty: [{ required: true, message: "Обязательное поле" }],
+  }
+
+  async mounted() {
+    this.milspecialties = (await getMilSpecialties()).data;
+    this.subjectForm.milspecialty = this.milspecialties[0].id;
   }
 
   get subjects() { return SubjectsModule.subjects; }
@@ -146,6 +173,10 @@ class SubjectsControl extends Vue {
       if (valid) {
         if (await SubjectsModule.upsertSubject(this.subjectForm)) {
           this.closeModal();
+          Message({
+            message: "Форма успешно отправлена!",
+            type: "success",
+          });
         } else {
           Message({
             message: "Ошибка отправки формы",
@@ -157,10 +188,12 @@ class SubjectsControl extends Vue {
   }
 
   editSubject(id) {
-    const { title, annotation } = this.subjects.find(
+    const { title, annotation, milspecialty } = this.subjects.find(
       subject => subject.id === id,
     );
-    this.subjectForm = { id, title, annotation };
+    this.subjectForm = {
+      id, title, annotation, milspecialty,
+    };
     this.windowModal = true;
   }
 
@@ -169,6 +202,7 @@ class SubjectsControl extends Vue {
       id: null,
       title: "",
       annotation: "",
+      milspecialty: null,
     };
     this.windowModal = false;
   }
