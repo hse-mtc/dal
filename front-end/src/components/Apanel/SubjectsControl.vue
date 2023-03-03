@@ -182,12 +182,12 @@ class SubjectsControl extends Vue {
         if (await SubjectsModule.upsertSubject(this.subjectForm)) {
           this.closeModal();
           Message({
-            message: "Форма успешно отправлена!",
+            message: "Дисциплина успешно создана!",
             type: "success",
           });
         } else {
           Message({
-            message: "Ошибка отправки формы",
+            message: "Ошибка создания дисциплины",
             type: "error",
           });
         }
