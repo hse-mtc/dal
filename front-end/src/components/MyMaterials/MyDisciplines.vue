@@ -21,8 +21,10 @@
             :id="item.id"
             :annotation="item.annotation"
             :title="item.title"
+            :milspecialty="milspecaltyCode(item.milspecialty)"
             :is-my-subject="true"
             :owner="`${item.user.email}`"
+            style="margin-bottom: 20px; margin-top: -20px"
           />
         </el-col>
       </el-col>
@@ -40,6 +42,7 @@ import CustomText from "@/common/CustomText";
 import ModalWindow from "@/components/ModalWindow/ModalWindow";
 import SubjectCard from "@/components/@Subjects/SubjectsPage/SubjectCard/index.vue";
 import { UserModule } from "@/store";
+import { getMilSpecialties } from "@/api/reference-book";
 
 @Component({
   name: "MyDisciplines",
@@ -56,8 +59,9 @@ class MyDisciplines extends Vue {
   mySubjects = null
   loading = false
 
-  created() {
+  async created() {
     this.fetchData();
+    this.milspecialties = (await getMilSpecialties()).data;
   }
 
   fetchData() {
@@ -66,6 +70,13 @@ class MyDisciplines extends Vue {
       this.mySubjects = res.data;
       this.loading = false;
     });
+  }
+
+  milspecaltyCode(milspecialtyId) {
+    if (milspecialtyId) {
+      return `ВУС: ${this.milspecialties.filter(milspecialty => milspecialty.id === milspecialtyId)[0].code}`;
+    }
+    return "";
   }
 }
 
