@@ -25,7 +25,7 @@
         </el-button>
       </AZGuard>
     </div>
-
+    <div style="margin-bottom: 30px">{{ milspecaltyCode(subjectInfo.milspecialty) }}</div>
     <div :class="$style.content">
       <div :class="$style.menuWrapper">
         <Menu :class="$style.menu" />
@@ -55,7 +55,7 @@
 <script>
 import { SubjectsModule } from "@/store";
 import { Component, Vue } from "vue-property-decorator";
-
+import { getMilSpecialties } from "@/api/reference-book";
 import Menu from "@/components/@Subjects/SubjectPage/SectionsMenu.vue";
 import SectionCard from "@/components/@Subjects/SubjectPage/SectionCard.vue";
 import SectionsCards from "@/components/@Subjects/SubjectPage/SectionsCards.vue";
@@ -72,13 +72,21 @@ class SubjectPage extends Vue {
   get subjectInfo() { return SubjectsModule.currentSubject; }
   get sections() { return SubjectsModule.currentSections; }
 
-  mounted() {
+  async mounted() {
     this.subjectInfo.title = "";
     SubjectsModule.setCurrentSubjectId(this.$route.params.subjectId);
+    this.milspecialties = (await getMilSpecialties()).data;
   }
 
   clear() {
     this.sections.length = 0;
+  }
+
+  milspecaltyCode(milspecialtyId) {
+    if (milspecialtyId) {
+      return `ВУС: ${this.milspecialties.filter(milspecialty => milspecialty.id === milspecialtyId)[0].code}`;
+    }
+    return "";
   }
 
   async addSection() {
@@ -119,7 +127,7 @@ export default SubjectPage;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 50px;
+  margin-bottom: 10px;
 
   .arrow {
     margin-right: 15px;

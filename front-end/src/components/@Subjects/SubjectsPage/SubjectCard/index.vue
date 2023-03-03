@@ -8,6 +8,11 @@
         >
           {{ title }}
         </CustomText>
+        <CustomText
+          variant="milspecialty"
+        >
+          {{ milspecialty }}
+        </CustomText>
       </div>
       <CustomText
         class="annotation"
@@ -42,6 +47,10 @@ export default {
       required: true,
     },
     title: {
+      type: String,
+      required: true,
+    },
+    milspecialty: {
       type: String,
       required: true,
     },
