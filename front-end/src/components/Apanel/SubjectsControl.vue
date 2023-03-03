@@ -33,6 +33,14 @@
         column-key="annotation"
       />
       <PrimeColumn
+        field="milspecialty"
+        header="ВУС"
+        column-key="milspecialty">
+        <template #body="{ data }">
+          <div>{{ milspecaltyCode(data.milspecialty) }}</div>
+        </template>
+      </PrimeColumn>
+      <PrimeColumn
         v-if="hasPerm"
         header="Управление"
         width="120"
@@ -161,12 +169,12 @@ class SubjectsControl extends Vue {
     milspecialty: [{ required: true, message: "Обязательное поле" }],
   }
 
+  get subjects() { return SubjectsModule.subjects; }
+
   async mounted() {
     this.milspecialties = (await getMilSpecialties()).data;
     this.subjectForm.milspecialty = this.milspecialties[0].id;
   }
-
-  get subjects() { return SubjectsModule.subjects; }
 
   submitForm(name) {
     this.$refs[name].validate(async valid => {
@@ -185,6 +193,13 @@ class SubjectsControl extends Vue {
         }
       }
     });
+  }
+
+  milspecaltyCode(milspecialtyId) {
+    if (milspecialtyId) {
+      return this.milspecialties.filter(milspecialty => milspecialty.id === milspecialtyId)[0].code;
+    }
+    return "-";
   }
 
   editSubject(id) {
