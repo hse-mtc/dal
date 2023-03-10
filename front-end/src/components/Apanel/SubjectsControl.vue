@@ -35,7 +35,8 @@
       <PrimeColumn
         field="milspecialty"
         header="ВУС"
-        column-key="milspecialty">
+        column-key="milspecialty"
+      >
         <template #body="{ data }">
           <div>{{ milspecaltyCode(data.milspecialty) }}</div>
         </template>

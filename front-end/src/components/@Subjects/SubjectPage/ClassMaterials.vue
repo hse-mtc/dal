@@ -42,7 +42,7 @@
             :limit="3"
           />
 
-          <el-checkbox v-model="visibleToStudents" label="доступно для студентов" style="margin-top: 20px"/>
+          <el-checkbox v-model="visibleToStudents" label="доступно для студентов" style="margin-top: 20px" />
 
           <span slot="footer" class="dialog-footer">
             <el-button @click="cancelFile">Отмена</el-button>
