@@ -217,7 +217,7 @@ class Command(BaseCommand):
         print("Populating `lms` models...", end="")
 
         milfaculties = create_milfaculties()
-        milgroups = create_milgroups(milfaculties)
+        milgroups = create_milgroups(milfaculties, milspecialties)
 
         # nearest day for 18XX milgroups
         nearest_day = datetime.strptime(
