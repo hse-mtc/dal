@@ -366,7 +366,7 @@ def create_students(
             "family": [],
         },
     ]
-    
+
     students = students + get_students(users, milgroups, skills, programs)
     objects = {}
 
