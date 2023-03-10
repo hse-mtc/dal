@@ -1,10 +1,6 @@
 from common.utils.populate import get_or_create
 
-from lms.models.common import (
-    Milfaculty,
-    Milgroup,
-    Milspecialty
-)
+from lms.models.common import Milfaculty, Milgroup, Milspecialty
 
 
 def create_milfaculties() -> dict[str, Milfaculty]:
@@ -34,8 +30,7 @@ def create_milfaculties() -> dict[str, Milfaculty]:
 
 
 def create_milgroups(
-    milfaculties: dict[str, Milfaculty],
-    milspecialties: dict[str, Milspecialty]
+    milfaculties: dict[str, Milfaculty], milspecialties: dict[str, Milspecialty]
 ) -> dict[str, Milgroup]:
     milgroups = [
         {
