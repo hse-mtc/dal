@@ -439,7 +439,8 @@ export default {
     async getSubjects() {
       try {
         const response = await getSubjects();
-        this.subjects = response.data;
+        // eslint-disable-next-line max-len
+        this.subjects = response.data.filter(subject => subject.milspecialty === this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg, 10))[0].milfaculty.id);
       } catch (err) {
         getError("дисциплин", err.response.status);
       }
