@@ -84,6 +84,12 @@
               >
                 Протокол конкурсного отбора
               </el-dropdown-item>
+              <el-dropdown-item
+                icon="el-icon-document-copy"
+                command="DET"
+              >
+                Детализированная информация
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -121,6 +127,7 @@ import {
   updateStudentApplicationInfo,
   APPLICATIONS_EXPORT_LINK,
   APPLICATIONS_CSP_EXPORT_LINK,
+  APPLICATIONS_DET_EXPORT_LINK,
 } from "@/api/applicants";
 import { getProgramsByCampus } from "@/api/reference-book";
 
@@ -266,6 +273,8 @@ export default {
       switch (this.selectedExportOption) {
         case APPLICATIONS_EXPORT_OPTIONS.CSP:
           return `${APPLICATIONS_CSP_EXPORT_LINK}?campus=${this.selectedCampus}`;
+        case APPLICATIONS_EXPORT_OPTIONS.DET:
+          return `${APPLICATIONS_DET_EXPORT_LINK}?campus=${this.selectedCampus}`;
         default:
           return `${APPLICATIONS_EXPORT_LINK}?campus=${this.selectedCampus}`;
       }
