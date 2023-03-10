@@ -190,7 +190,7 @@ export default {
     };
     const emailRule = {
       required: true,
-      trigger: "blue",
+      trigger: "blur",
       validator: validateEmail,
     };
 
