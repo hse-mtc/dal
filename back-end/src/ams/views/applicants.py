@@ -235,6 +235,12 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
         students = self.get_queryset()
 
+        if "mtc_admission_year" in request.query_params:
+            mtc_admission_year = request.query_params["mtc_admission_year"]
+            students = students.filter(
+                application_process__mtc_admission_year=mtc_admission_year
+            )
+
         campus = request.query_params["campus"]
         milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
 
