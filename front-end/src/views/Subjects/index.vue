@@ -36,7 +36,7 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 
-import { SubjectsModule, UserModule } from "@/store";
+import {ReferenceModule, SubjectsModule, UserModule} from "@/store";
 import { getMilSpecialties } from "@/api/reference-book";
 import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue";
 
@@ -53,12 +53,22 @@ import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue
     personType() {
       return UserModule.personType;
     },
+    milgroup() {
+      if (UserModule.personType === "student") {
+        return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1);
+      }
+      return ReferenceModule.milgroups;
+    },
   },
 })
 class SubjectsPage extends Vue {
   async mounted() {
     this.milspecialties = (await getMilSpecialties()).data;
     this.milspecialty = this.milspecialties[0].id;
+    if (UserModule.personType === "student") {
+      const milspecialtyId = ReferenceModule.milgroups.find(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1).milspecialty.id;
+      this.milspecialty = this.milspecialties.find(milspecialty => milspecialty.id === milspecialtyId);
+    }
   }
 
   get searchQuery() { return this.$route.query.subjectsSearch || ""; }
