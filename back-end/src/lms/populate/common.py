@@ -21,6 +21,14 @@ def create_milfaculties() -> dict[str, Milfaculty]:
             "title": "Ракетные войска стратегического назначения",
             "abbreviation": "РВСН",
         },
+        {
+            "title": "Офицеры ЗИТ",
+            "abbreviation": "ЗИТ",
+        },
+        {
+            "title": "Беспилотные летательные аппараты",
+            "abbreviation": "БПЛА",
+        },
     ]
 
     return {
@@ -108,6 +116,24 @@ def create_milgroups(
         {
             "title": "1612",
             "milspecialty": milspecialties["411300"],
+            "milfaculty": milfaculties["РВСН"],
+            "weekday": 4,
+            "archived": True,
+        },
+        {
+            "title": "1813",
+            "milfaculty": milfaculties["РВСН"],
+            "weekday": 4,
+            "archived": True,
+        },
+        {
+            "title": "1814",
+            "milfaculty": milfaculties["РВСН"],
+            "weekday": 4,
+            "archived": True,
+        },
+        {
+            "title": "1614",
             "milfaculty": milfaculties["РВСН"],
             "weekday": 4,
             "archived": True,

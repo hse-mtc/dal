@@ -1,3 +1,5 @@
+from auth.populate.users_gen import get_users
+
 from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
 
 from collections import namedtuple
@@ -169,6 +171,43 @@ def create_users() -> dict[str, User]:
             is_superuser=False,
             campuses=[Campus.MOSCOW.value],
         ),
+        Data(
+            email="aadolgih@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="snermeenko@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="vspelyak@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="evmaslenkin@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="appolyakov@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
     ]
+
+    users = users + get_users()
 
     return {data.email: create_user(data) for data in users}

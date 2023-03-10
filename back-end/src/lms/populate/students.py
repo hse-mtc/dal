@@ -18,6 +18,7 @@ from lms.models.students import (
     Skill,
     Student,
 )
+from lms.populate.students_gen import get_students
 
 
 User = get_user_model()
@@ -67,7 +68,7 @@ def create_students(
                 "place": "Москва",
             },
             "citizenship": "РФ",
-            "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
+            "permanent_address": "г. Москва, ул. Неглинка, дом 5",
             "passport": {
                 "series": "0000",
                 "code": "111111",
@@ -98,11 +99,11 @@ def create_students(
             "photo": None,
             "birth_info": {
                 "date": "2000-02-23",
-                "country": "Украина",
-                "place": "Донбасс",
+                "country": "Россия",
+                "place": "Томск",
             },
             "citizenship": "Подольск",
-            "permanent_address": "г. Подольск, ул. Кац, дом Цак",
+            "permanent_address": "г. Подольск, ул. Корабелов, дом 10",
             "passport": {
                 "series": "1111",
                 "code": "111111",
@@ -168,11 +169,11 @@ def create_students(
             "photo": None,
             "birth_info": {
                 "date": "1999-05-04",
-                "country": "Дагестан",
+                "country": "Россия",
                 "place": "Махачкала",
             },
-            "citizenship": "Дагестан",
-            "permanent_address": "г. Махачкала, ул. Рамзана Кадырова, дом 228",
+            "citizenship": "РФ",
+            "permanent_address": "г. Махачкала, ул. Ленина, дом 15",
             "passport": {
                 "series": "3333",
                 "code": "111111",
@@ -238,11 +239,11 @@ def create_students(
             "photo": None,
             "birth_info": {
                 "date": "1999-05-04",
-                "country": "Литва",
-                "place": "Литвения",
+                "country": "Россия",
+                "place": "Звенигород",
             },
             "citizenship": "РФ",
-            "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
+            "permanent_address": "г. Москва, ул. Ходынка, дом 9",
             "passport": {
                 "series": "5555",
                 "code": "111111",
@@ -273,11 +274,11 @@ def create_students(
             "photo": None,
             "birth_info": {
                 "date": "1998-10-11",
-                "country": "Германия",
-                "place": "Мюнхен",
+                "country": "Россия",
+                "place": "Сыктывкар",
             },
-            "citizenship": "Узбекистан",
-            "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
+            "citizenship": "РФ",
+            "permanent_address": "г. Москва, ул. Флотская, дом 6",
             "passport": {
                 "series": "6666",
                 "code": "111111",
@@ -311,8 +312,8 @@ def create_students(
                 "country": "Швейцария",
                 "place": "Цюрих",
             },
-            "citizenship": "Узбекистан",
-            "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
+            "citizenship": "РФ",
+            "permanent_address": "г. Москва, ул. Флотская, дом 6",
             "passport": {
                 "series": "7777",
                 "code": "111111",
@@ -343,11 +344,11 @@ def create_students(
             "photo": None,
             "birth_info": {
                 "date": "1995-06-23",
-                "country": "Беларусь",
-                "place": "Минск",
+                "country": "Россия",
+                "place": "Владимир",
             },
-            "citizenship": "Узбекистан",
-            "permanent_address": "г. Москва, ул. Пупкина, дом Кукушкина",
+            "citizenship": "РФ",
+            "permanent_address": "г. Москва, ул. Ленина, дом 2",
             "passport": {
                 "series": "8888",
                 "code": "111111",
@@ -365,6 +366,8 @@ def create_students(
         },
     ]
 
+    students = students + get_students(users, milgroups, skills, programs)
+
     objects = {}
 
     for fields in students:
@@ -372,8 +375,7 @@ def create_students(
             ContactInfo,
             **fields.pop("contact_info"),
         )
-        fields["birth_info"] = get_or_create(
-            BirthInfo,
+        fields["birth_info"] = BirthInfo.objects.create(
             **fields.pop("birth_info"),
         )
         fields["passport"] = get_or_create(
