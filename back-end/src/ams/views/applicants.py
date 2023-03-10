@@ -193,6 +193,9 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 name="campus", description="Filter by campus", required=True
             ),
             OpenApiParameter(name="program_code", description="Filter by program code"),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(detail=False, methods=["get"], permission_classes=[ApplicantPermission])
@@ -284,7 +287,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         parameters=[
             OpenApiParameter(
                 name="campus", description="Filter by campus", required=True, type=str
-            )
+            ),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(
@@ -305,7 +311,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         parameters=[
             OpenApiParameter(
                 name="campus", description="Filter by campus", required=True, type=str
-            )
+            ),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(
@@ -327,7 +336,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         parameters=[
             OpenApiParameter(
                 name="campus", description="Filter by campus", required=True, type=str
-            )
+            ),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(
