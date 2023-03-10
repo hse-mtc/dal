@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from common.serializers.milspecialties import MilspecialtySerializer
+
 from lms.models.common import (
     Milfaculty,
     Milgroup,
@@ -15,6 +17,7 @@ class MilfacultySerializer(serializers.ModelSerializer):
 class MilgroupSerializer(serializers.ModelSerializer):
     milfaculty = MilfacultySerializer(read_only=True)
     weekday = serializers.IntegerField(read_only=True)
+    milspecialty = MilspecialtySerializer(read_only=True)
 
     class Meta:
         model = Milgroup
