@@ -1,3 +1,5 @@
+from lms.populate.students_gen import get_students
+
 from django.contrib.auth import get_user_model
 
 from common.models.universities import (
@@ -364,7 +366,8 @@ def create_students(
             "family": [],
         },
     ]
-
+    
+    students = students + get_students(users, milgroups, skills, programs)
     objects = {}
 
     for fields in students:
