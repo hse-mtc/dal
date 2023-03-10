@@ -36,8 +36,8 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 
-import {ReferenceModule, SubjectsModule, UserModule} from "@/store";
-import { getMilSpecialties } from "@/api/reference-book";
+import { ReferenceModule, SubjectsModule, UserModule } from "@/store";
+import { getMilSpecialties, getMilGroups } from "@/api/reference-book";
 import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue";
 
 @Component({
@@ -53,12 +53,6 @@ import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue
     personType() {
       return UserModule.personType;
     },
-    milgroup() {
-      if (UserModule.personType === "student") {
-        return ReferenceModule.milgroups.filter(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1);
-      }
-      return ReferenceModule.milgroups;
-    },
   },
 })
 class SubjectsPage extends Vue {
@@ -66,8 +60,8 @@ class SubjectsPage extends Vue {
     this.milspecialties = (await getMilSpecialties()).data;
     this.milspecialty = this.milspecialties[0].id;
     if (UserModule.personType === "student") {
-      const milspecialtyId = ReferenceModule.milgroups.find(milgroup => UserModule.personMilgroups.indexOf(milgroup.id) > -1).milspecialty.id;
-      this.milspecialty = this.milspecialties.find(milspecialty => milspecialty.id === milspecialtyId);
+      const milgroups = (await getMilGroups()).data;
+      this.milspecialty = milgroups.find(milgroup => milgroup.id === UserModule.personMilgroups[0]).milspecialty.id;
     }
   }
 

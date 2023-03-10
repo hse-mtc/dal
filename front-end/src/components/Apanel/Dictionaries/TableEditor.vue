@@ -126,10 +126,6 @@ class DictionariesTableEditor extends Vue {
   newItemData = null
 
   get columnsByTypes() {
-    console.log("this.milfacultiesOptions");
-    console.log(this.milfacultiesOptions);
-    console.log("this.milfacultiesOptions");
-    console.log(this.milspecialtiesOptions);
     return {
       milgroups: {
         title: { title: "Взвод", width: 100, editorType: "input" },
@@ -143,7 +139,7 @@ class DictionariesTableEditor extends Vue {
           title: "ВУС",
           width: 300,
           editorType: "select",
-          props: { options: this.milspecialtiesOptions }
+          props: { options: this.milspecialtiesOptions },
         },
         weekday: {
           title: "День посещения",

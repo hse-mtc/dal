@@ -5,7 +5,7 @@
         :to="{ name: 'Subjects' }"
         :class="$style.arrow"
       >
-        <i @click="clear" class="el-icon-arrow-left" />
+        <i class="el-icon-arrow-left" @click="clear" />
       </router-link>
       <h1 :class="$style.title">
         {{ subjectInfo.title }}
