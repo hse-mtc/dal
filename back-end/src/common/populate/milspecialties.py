@@ -5,7 +5,6 @@ from common.utils.populate import get_or_create
 
 
 def create_milspecialties() -> dict[str, Milspecialty]:
-    # WARNING!!! Method is used in prod populate, be cautious
     milspecialties = [
         {
             "code": "453000",
