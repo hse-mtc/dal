@@ -126,6 +126,10 @@ class DictionariesTableEditor extends Vue {
   newItemData = null
 
   get columnsByTypes() {
+    console.log("this.milfacultiesOptions");
+    console.log(this.milfacultiesOptions);
+    console.log("this.milfacultiesOptions");
+    console.log(this.milspecialtiesOptions);
     return {
       milgroups: {
         title: { title: "Взвод", width: 100, editorType: "input" },
@@ -134,6 +138,12 @@ class DictionariesTableEditor extends Vue {
           width: 200,
           editorType: "select",
           props: { options: this.milfacultiesOptions },
+        },
+        milspecialty: {
+          title: "ВУС",
+          width: 300,
+          editorType: "select",
+          props: { options: this.milspecialtiesOptions }
         },
         weekday: {
           title: "День посещения",
@@ -194,6 +204,13 @@ class DictionariesTableEditor extends Vue {
   get milfacultiesOptions() {
     return ReferenceModule.milfaculties.map(item => ({
       label: item.title,
+      value: item.id,
+    }));
+  }
+
+  get milspecialtiesOptions() {
+    return ReferenceModule.milspecialties.map(item => ({
+      label: item.code,
       value: item.id,
     }));
   }
