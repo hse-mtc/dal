@@ -18,6 +18,7 @@ export const AMS_URLS = {
     applications: "ams/applicants/applications/",
     applicationsExport: "ams/applicants/applications/export/",
     applicationsCSPExport: "ams/applicants/applications/competitive-selection-protocol/export/",
+    applicationsDETExport: "ams/applicants/applications/applicants-detail/export/",
   },
 };
 

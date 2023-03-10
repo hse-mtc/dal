@@ -8,6 +8,7 @@ const {
     applications,
     applicationsExport,
     applicationsCSPExport,
+    applicationsDETExport,
   },
 } = AMS_URLS;
 
@@ -64,3 +65,4 @@ export const findApplicant = id => request({
 
 export const APPLICATIONS_EXPORT_LINK = `${BASE_API_URL}${applicationsExport}`;
 export const APPLICATIONS_CSP_EXPORT_LINK = `${BASE_API_URL}${applicationsCSPExport}`;
+export const APPLICATIONS_DET_EXPORT_LINK = `${BASE_API_URL}${applicationsDETExport}`;
