@@ -338,11 +338,11 @@ def generate_skills(skills: dict):
         values.remove(value)
 
     result = ""
-    for i, s in enumerate(_skills):
+    for i, skill in enumerate(_skills):
         if i < len(_skills) - 1:
-            result += """skills["{}"], """.format(s)
+            result += """skills["{}"], """.format(skill)
         else:
-            result += """skills["{}"]""".format(s)
+            result += """skills["{}"]""".format(skill)
     return """{}""".format(result)
 
 
@@ -452,7 +452,8 @@ def create_uniq_name(users_list):
 def generate():
     users_list = []
     with open("students_gen.py", "w") as students:
-        print("""
+        print(
+            """
 from django.contrib.auth import get_user_model
 
 from common.models.universities import (
@@ -479,7 +480,9 @@ def get_students(users,
     skills,
     programs):
     return [
-        """, file=students)
+        """,
+            file=students,
+        )
         for i, m_group in enumerate(milgroups):
             GC, SC1, SC2, SC3 = random.sample(set(range(12)), 4)
 
@@ -490,7 +493,7 @@ def get_students(users,
 
                 if i == GC:
                     post = Posts.MILGROUP_COMMANDER
-                elif i == SC1 or i == SC2 or i == SC3:
+                elif i in (SC1, SC2, SC3):
                     post = Posts.MILSQUAD_COMMANDER
                 else:
                     post = Posts.NO_POST
@@ -517,9 +520,9 @@ def get_students(users,
                 )
         print("]", file=students)
 
-
     with open("users_gen.py", "w") as users:
-        print("""
+        print(
+            """
 from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
 from collections import namedtuple
 
@@ -542,7 +545,9 @@ Data = namedtuple(
 
 def get_users():
     return [
-        """, file=users)
+        """,
+            file=users,
+        )
         for user in users_list:
             print_user(user, file=users)
         print("]", file=users)

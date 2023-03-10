@@ -171,6 +171,41 @@ def create_users() -> dict[str, User]:
             is_superuser=False,
             campuses=[Campus.MOSCOW.value],
         ),
+        Data(
+            email="aadolgih@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="snermeenko@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="vspelyak@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="evmaslenkin@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
+        Data(
+            email="appolyakov@mail.com",
+            password="qwerty",
+            is_staff=False,
+            is_superuser=False,
+            campuses=[Campus.MOSCOW.value],
+        ),
     ]
 
     users = users + get_users()
