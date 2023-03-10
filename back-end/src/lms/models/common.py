@@ -29,10 +29,7 @@ class Milgroup(models.Model):
     weekday = models.SmallIntegerField()
     archived = models.BooleanField(default=False)
     milspecialty = models.ForeignKey(
-        to=Milspecialty,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
+        to=Milspecialty, null=True, blank=True, on_delete=models.SET_NULL
     )
 
     class Meta:
