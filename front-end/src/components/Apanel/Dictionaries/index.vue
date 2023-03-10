@@ -222,7 +222,11 @@ class Dictionaries extends Vue {
     if (hasPermission(["milgroups.patch.all"])) {
       this.tabs.milgroups = {
         label: "Взвода",
-        mapFunc: item => ({ ...item, milfaculty: item.milfaculty.id }),
+        mapFunc: item => ({
+          ...item,
+          milfaculty: item.milfaculty.id,
+          milspecialty: item.milspecialty ? item.milspecialty.id : 0,
+        }),
         sortFunc: (left, right) => (left.title > right.title ? 1 : -1),
         filterFunc: (item, query) => {
           const stringItem = `${item.title} ${
