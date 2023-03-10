@@ -451,7 +451,35 @@ def create_uniq_name(users_list):
 
 def generate():
     users_list = []
-    with open("../students.txt", "w") as students:
+    with open("students_gen.py", "w") as students:
+        print("""
+from django.contrib.auth import get_user_model
+
+from common.models.universities import (
+    Program,
+    UniversityInfo,
+)
+from common.models.personal import (
+    ContactInfo,
+    BirthInfo,
+    Passport,
+    Relative,
+)
+
+from common.utils.populate import get_or_create
+
+from lms.models.common import Milgroup
+from lms.models.students import (
+    Skill,
+    Student,
+)
+
+def get_students(users,
+    milgroups,
+    skills,
+    programs):
+    return [
+        """, file=students)
         for i, m_group in enumerate(milgroups):
             GC, SC1, SC2, SC3 = random.sample(set(range(12)), 4)
 
@@ -487,9 +515,34 @@ def generate():
                     ),
                     file=students,
                 )
+        print("]", file=students)
 
-    with open("user.txt", "w") as users:
-        print("users = [", file=users)
+
+    with open("users_gen.py", "w") as users:
+        print("""
+from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
+from collections import namedtuple
+
+from django.contrib.auth import get_user_model
+
+from conf.settings import TGBOT_EMAIL, TGBOT_PASSWORD
+
+from common.models.universities import Campus
+
+Data = namedtuple(
+    "Data",
+    [
+        "email",
+        "password",
+        "is_staff",
+        "is_superuser",
+        "campuses",
+    ],
+)
+
+def get_users():
+    return [
+        """, file=users)
         for user in users_list:
             print_user(user, file=users)
         print("]", file=users)
