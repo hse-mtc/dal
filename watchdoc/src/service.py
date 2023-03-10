@@ -94,8 +94,6 @@ class WatchDocService:
             doc.replace_media(DUMMY_IMAGE, photo_path)
             doc.save(applicant_dir / rus)
 
-
-
     def upload_documents(self, applicant: Applicant):
         email = applicant.contact_info.corporate_email
         campus = applicant.university_info.campus.value
@@ -114,7 +112,7 @@ class WatchDocService:
             }
             self.ds.upload_docx(
                 body=body,
-                path=GENERATED_DIR / email / rus,
+                path=GENERATED_DIR / folder_name / rus,
             )
 
         self.ds.read_share_folder_with_anyone(
