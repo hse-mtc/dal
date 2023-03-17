@@ -1,10 +1,9 @@
 from common.models.subjects import Subject
-from common.models.milspecialties import Milspecialty
 
 from common.utils.populate import get_or_create
 
 
-def create_subjects(milspecialties: Milspecialty) -> list[Subject]:
+def create_subjects(milspecialties: dict) -> list[Subject]:
     milspecialties_codes = ["453000", "453100", "461300", "094001"]
     milspecialties = {code: milspecialties[code] for code in milspecialties_codes}
     subjects = [
