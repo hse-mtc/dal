@@ -33,7 +33,7 @@
 
         <el-dialog
           :visible.sync="dialogVisible"
-          width="300px"
+          width="350px"
           :before-close="handleClose"
         >
           <FileInput
@@ -41,6 +41,8 @@
             title="Не более 3х"
             :limit="3"
           />
+
+          <el-checkbox v-model="visibleToStudents" label="доступно для студентов" style="margin-top: 20px" />
 
           <span slot="footer" class="dialog-footer">
             <el-button @click="cancelFile">Отмена</el-button>
@@ -150,6 +152,8 @@ class ClassMaterials extends Vue {
 
   newFiles = []
 
+  visibleToStudents = false;
+
   get subjectOwnerId() { return SubjectsModule.currentSubject.user.id; }
   get userId() { return UserModule.userId; }
 
@@ -198,6 +202,7 @@ class ClassMaterials extends Vue {
         JSON.stringify({
           type: this.code,
           topic: this.topicId,
+          visible_to_students: this.visibleToStudents,
         }),
       );
     });

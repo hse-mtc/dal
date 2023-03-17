@@ -13,6 +13,7 @@ export const CAMPUSES = {
 export const APPLICATIONS_EXPORT_OPTIONS = {
   DEF: "по умолч.",
   CSP: "протокол",
+  DET: "детализ.",
 };
 
 export const WEEKDAYS = [
