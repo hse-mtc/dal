@@ -1,6 +1,5 @@
 from common.models.subjects import Subject
 from common.models.milspecialties import Milspecialty
-from common.models.universities import Campus
 
 from common.utils.populate import get_or_create
 
