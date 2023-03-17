@@ -50,6 +50,20 @@
             :title="campuses[0] | campusFilter"
           />
         </el-col>
+        <el-col :span="4">
+          <el-select
+            v-model="currentYear"
+            placeholder="Год поступления"
+            @change="changeAdmissionYear"
+          >
+            <el-option
+              v-for="item in admissionYears"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-col>
         <el-col :span="3">
           <el-alert
             type="info"
@@ -146,7 +160,6 @@ export default {
   },
   filters: {
     campusFilter(campus) {
-      console.log("Campus = ", campus);
       return CAMPUSES[campus] || "Ошибка";
     },
   },
@@ -167,6 +180,7 @@ export default {
       selectedCampus,
       selectedProgram: this.$route.query.program,
       selectedExportOption: APPLICATIONS_EXPORT_OPTIONS.DEF,
+      currentYear: new Date().getFullYear(),
     };
   },
   computed: {
@@ -176,6 +190,13 @@ export default {
     },
     campuses() {
       return UserModule.campuses;
+    },
+    admissionYears() {
+      const possibleYears = [];
+      for (let year = 2022; year <= new Date().getFullYear(); year += 1) {
+        possibleYears.push(year);
+      }
+      return possibleYears;
     },
   },
   async beforeCreate() {
@@ -212,6 +233,10 @@ export default {
       await this.fetchPrograms();
       await this.fetchData();
     },
+    async changeAdmissionYear(admissionYear) {
+      this.currentYear = admissionYear;
+      await this.fetchData();
+    },
     async fetchData(page = 1) {
       this.currentPage = page || 1;
       this.loading = true;
@@ -225,6 +250,7 @@ export default {
             search: this.searchQuery,
             campus: this.selectedCampus,
             program_code: this.selectedProgram,
+            mtc_admission_year: this.currentYear,
           },
         );
         data = response.data;
@@ -272,11 +298,11 @@ export default {
     makeExportLink() {
       switch (this.selectedExportOption) {
         case APPLICATIONS_EXPORT_OPTIONS.CSP:
-          return `${APPLICATIONS_CSP_EXPORT_LINK}?campus=${this.selectedCampus}`;
+          return `${APPLICATIONS_CSP_EXPORT_LINK}?campus=${this.selectedCampus}&mtc_admission_year=${this.currentYear}`;
         case APPLICATIONS_EXPORT_OPTIONS.DET:
-          return `${APPLICATIONS_DET_EXPORT_LINK}?campus=${this.selectedCampus}`;
+          return `${APPLICATIONS_DET_EXPORT_LINK}?campus=${this.selectedCampus}&mtc_admission_year=${this.currentYear}`;
         default:
-          return `${APPLICATIONS_EXPORT_LINK}?campus=${this.selectedCampus}`;
+          return `${APPLICATIONS_EXPORT_LINK}?campus=${this.selectedCampus}&mtc_admission_year=${this.currentYear}`;
       }
     },
     makeExportFilename() {
