@@ -21,6 +21,7 @@ def absence_statistic(
 ) -> str:
     text = textwrap.dedent(f"""
         Список студентов отправлен\\.
+        Проверка личного состава произведена\\.
         
         ```
               Взвод: {milgroup_title}

@@ -35,6 +35,7 @@ class Milgroup:
     milfaculty: Milfaculty
     weekday: int
     archived: bool
+    milspecialty: int
 
 
 @dataclass
