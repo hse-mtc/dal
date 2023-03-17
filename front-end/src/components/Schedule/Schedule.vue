@@ -23,7 +23,7 @@
         </el-col>
       </el-row>
       <el-tabs
-        v-model="filter.mg"
+        v-model="filter.mg.id"
         tab-position="left"
         class="my-tabs"
         @tab-click="fetchData()"
@@ -342,14 +342,20 @@ export default {
 
   watch: {
     milgroups(newValue) {
-      this.filter.mg = this.milgroups[0]?.id.toString();
+      this.filter.mg = {
+        id: this.milgroups[0]?.id.toString(),
+        milspecialty: this.milgroups[0]?.milspecialty.id,
+      };
       this.fetchData();
     },
   },
 
   async created() {
-    this.filter.mg = this.milgroups[0]?.id.toString();
-    if (this.filter.mg !== undefined) {
+    this.filter.mg = {
+      id: this.milgroups[0]?.id.toString(),
+      milspecialty: this.milgroups[0]?.milspecialty.id,
+    };
+    if (this.filter.mg.id !== undefined) {
       await this.fetchData();
     }
   },
@@ -419,14 +425,16 @@ export default {
       }
     },
     async fetchData() {
-      if (this.filter.mg <= 0) {
+      if (parseInt(this.filter.mg.id, 10) <= 0) {
         return;
       }
+      // eslint-disable-next-line max-len
+      this.filter.mg.milfaculty = this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))[0].milfaculty.id;
 
       this.limitDateRange();
 
       getLessonJournal({
-        milgroup: this.filter.mg,
+        milgroup: parseInt(this.filter.mg.id, 10),
         date_from: this.filter.dateRange[0],
         date_to: this.filter.dateRange[1],
       })
@@ -440,7 +448,9 @@ export default {
       try {
         const response = await getSubjects();
         // eslint-disable-next-line max-len
-        this.subjects = response.data.filter(subject => subject.milspecialty === this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg, 10))[0].milfaculty.id);
+        this.filter.mg.milspecialty = this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))[0].milspecialty.id;
+        // eslint-disable-next-line max-len
+        this.subjects = response.data.filter(subject => subject.milspecialty === this.milgroups.filter(milgroup => milgroup.milspecialty.id === this.filter.mg.milspecialty)[0].milspecialty.id);
       } catch (err) {
         getError("дисциплин", err.response.status);
       }
@@ -460,7 +470,7 @@ export default {
       this.editLesson = {
         ordinal,
         date,
-        milgroup: this.filter.mg,
+        milgroup: this.filter.mg.id,
       };
       this.editLessonFullname = "Новое занятие";
       await this.getSubjects();
@@ -533,7 +543,7 @@ export default {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
-            if (this.filter.mg > 0) { this.fetchData(); }
+            if (parseInt(this.filter.mg.id, 10) > 0) { this.fetchData(); }
           })
           .catch(err => deleteError("занятия", err.response.status));
       });
