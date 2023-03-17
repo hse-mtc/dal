@@ -36,8 +36,8 @@
 <script>
 import { Component, Vue } from "vue-property-decorator";
 
-import { SubjectsModule, UserModule } from "@/store";
-import { getMilSpecialties } from "@/api/reference-book";
+import { ReferenceModule, SubjectsModule, UserModule } from "@/store";
+import { getMilSpecialties, getMilGroups } from "@/api/reference-book";
 import SubjectsCards from "@/components/@Subjects/SubjectsPage/SubjectsCards.vue";
 
 @Component({
@@ -59,6 +59,10 @@ class SubjectsPage extends Vue {
   async mounted() {
     this.milspecialties = (await getMilSpecialties()).data;
     this.milspecialty = this.milspecialties[0].id;
+    if (UserModule.personType === "student") {
+      const milgroups = (await getMilGroups()).data;
+      this.milspecialty = milgroups.find(milgroup => milgroup.id === UserModule.personMilgroups[0]).milspecialty.id;
+    }
   }
 
   get searchQuery() { return this.$route.query.subjectsSearch || ""; }
