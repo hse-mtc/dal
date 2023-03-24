@@ -433,8 +433,13 @@ export default {
       if (parseInt(this.filter.mg.id, 10) <= 0) {
         return;
       }
+      console.log("fetch");
+      console.log("this.filter.mg.id", this.filter.mg.id);
+      console.log("this.milgroups", this.milgroups);
+      console.log("this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))", this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10)));
       // eslint-disable-next-line max-len
       this.filter.mg.milfaculty = this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))[0].milfaculty.id;
+      console.log("end fetch");
       console.log("fetchData filter", this.filter);
       console.log("fetchData milgroups", this.milgroups);
       this.limitDateRange();
