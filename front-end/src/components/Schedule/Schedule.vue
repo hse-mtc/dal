@@ -345,10 +345,6 @@ export default {
 
   watch: {
     milgroups(newValue) {
-      console.log("watch");
-      console.log("this.milgroups", this.milgroups);
-      console.log("this.milgroups[0]?.id", this.milgroups[0]?.id);
-      console.log("this.milgroups[0]?.milspecialty.id", this.milgroups[0]?.milspecialty.id);
       this.filter.mg = {
         id: this.milgroups[0]?.id.toString(),
         milspecialty: this.milgroups[0]?.milspecialty.id,
@@ -365,8 +361,6 @@ export default {
     if (this.filter.mg.id !== undefined) {
       await this.fetchData();
     }
-    console.log("created filter", this.filter);
-    console.log("created milgroups", this.milgroups);
   },
 
   methods: {
@@ -434,18 +428,11 @@ export default {
       }
     },
     async fetchData() {
-      console.log("fetch");
       if (parseInt(this.filter.mg.id, 10) <= 0) {
         return;
       }
-      console.log("this.filter.mg.id", this.filter.mg.id);
-      console.log("this.milgroups", this.milgroups);
-      console.log("this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))", this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10)));
       // eslint-disable-next-line max-len
       this.filter.mg.milfaculty = this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))[0].milfaculty.id;
-      console.log("end fetch");
-      console.log("fetchData filter", this.filter);
-      console.log("fetchData milgroups", this.milgroups);
       this.limitDateRange();
 
       getLessonJournal({
@@ -466,10 +453,6 @@ export default {
         this.filter.mg.milspecialty = this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))[0].milspecialty.id;
         // eslint-disable-next-line max-len
         this.subjects = response.data.filter(subject => subject.milspecialty === this.milgroups.filter(milgroup => milgroup.milspecialty.id === this.filter.mg.milspecialty)[0].milspecialty.id);
-
-        console.log("getSubjects filter", this.filter);
-        console.log("getSubjects milgroups", this.milgroups);
-        console.log("getSubjects subjects", this.subjects);
       } catch (err) {
         getError("дисциплин", err.response.status);
       }
