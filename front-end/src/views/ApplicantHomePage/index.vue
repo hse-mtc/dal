@@ -101,6 +101,11 @@ export default {
     getObjUrl(file) {
       return URL.createObjectURL(file);
     },
+
+    getFormattedProgram(program) {
+      return `${program.code} – ${program.title}`;
+    },
+
     async fetchDocs() {
       const dataRequest = await findApplicant(this.personId);
       const { data } = dataRequest;
@@ -177,7 +182,7 @@ export default {
             },
             {
               name: "Образовательная программа",
-              content: data.university_info.program.code,
+              content: this.getFormattedProgram(data.university_info.program),
             },
             {
               name: "Номер группы",
