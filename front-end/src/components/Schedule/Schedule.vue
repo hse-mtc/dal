@@ -276,7 +276,10 @@ export default {
         teacher: "",
       },
       filter: {
-        mg: "0",
+        mg: {
+          id: null,
+          milspecialty: null,
+        },
         dateRange: [
           moment().format("YYYY-MM-DD"),
           moment()
