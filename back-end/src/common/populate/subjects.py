@@ -3,7 +3,9 @@ from common.models.subjects import Subject
 from common.utils.populate import get_or_create
 
 
-def create_subjects() -> list[Subject]:
+def create_subjects(milspecialties: dict) -> list[Subject]:
+    milspecialties_codes = ["453000", "453100", "461300", "094001"]
+    milspecialties = {code: milspecialties[code] for code in milspecialties_codes}
     subjects = [
         {
             "title": "Тактическая подготовка",
@@ -18,5 +20,10 @@ def create_subjects() -> list[Subject]:
             "annotation": "Предмет обучения военнослужащих и подразделений умению выполнять команды, строевые приёмы с оружием и без оружия.",
         },
     ]
+    subjects_final = []
+    for subject in subjects:
+        for milspecialty in milspecialties:
+            subjects_final.append(subject.copy())
+            subjects_final[-1].update({"milspecialty": milspecialties[milspecialty]})
 
-    return [get_or_create(Subject, **fields) for fields in subjects]
+    return [get_or_create(Subject, **fields) for fields in subjects_final]

@@ -151,8 +151,8 @@ class Command(BaseCommand):
 
         print("Populating `common` models...", end="")
 
-        subjects = create_subjects()
         milspecialties = create_milspecialties()
+        subjects = create_subjects(milspecialties)
         faculties = create_faculties()
         programs = create_programs(faculties)
 

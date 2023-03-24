@@ -193,6 +193,9 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 name="campus", description="Filter by campus", required=True
             ),
             OpenApiParameter(name="program_code", description="Filter by program code"),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(detail=False, methods=["get"], permission_classes=[ApplicantPermission])
@@ -231,6 +234,12 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         students = self.get_queryset()
+
+        if "mtc_admission_year" in request.query_params:
+            mtc_admission_year = request.query_params["mtc_admission_year"]
+            students = students.filter(
+                application_process__mtc_admission_year=mtc_admission_year
+            )
 
         campus = request.query_params["campus"]
         milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
@@ -284,7 +293,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         parameters=[
             OpenApiParameter(
                 name="campus", description="Filter by campus", required=True, type=str
-            )
+            ),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(
@@ -305,7 +317,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         parameters=[
             OpenApiParameter(
                 name="campus", description="Filter by campus", required=True, type=str
-            )
+            ),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(
@@ -327,7 +342,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         parameters=[
             OpenApiParameter(
                 name="campus", description="Filter by campus", required=True, type=str
-            )
+            ),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
         ]
     )
     @action(

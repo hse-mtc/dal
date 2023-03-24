@@ -11,7 +11,7 @@ def student_absence_keyboard(
     selected_button: int = State.PRESENT.value,
 ) -> InlineKeyboardMarkup:
     base_text = {
-        State.PRESENT.value: ('Присутствует ✅', 'Отсутствует'),
+        State.PRESENT.value: ('✅ Присутствует', 'Отсутствует'),
         State.ABSENT_LA.value: ('Присутствует', '✅ Отсутствует', '☑️ Опаздывает', 'Уважительная', 'Неуважительная'),
         State.ABSENT_LE.value: ('Присутствует', '✅ Отсутствует', 'Опаздывает', '☑️ Уважительная', 'Неуважительная'),
         State.ABSENT_IL.value: ('Присутствует', '✅ Отсутствует', 'Опаздывает', 'Уважительная', '☑️ Неуважительная'),
