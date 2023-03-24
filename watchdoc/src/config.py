@@ -6,6 +6,7 @@ from pathlib import Path
 # Navigation
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+SECRETS_DIR = BASE_DIR / "secrets"
 TEMPLATES_DIR = BASE_DIR / "templates"
 GENERATED_DIR = BASE_DIR / "generated"
 TEMP_DIR = BASE_DIR / "temp"
@@ -13,8 +14,8 @@ TEMP_DIR = BASE_DIR / "temp"
 # ------------------------------------------------------------------------------
 # Google Auth
 
-CREDENTIALS_PATH = BASE_DIR / "credentials.json"
-TOKENS_PATH = BASE_DIR / "tokens.json"
+CREDENTIALS_PATH = SECRETS_DIR / "credentials.json"
+TOKENS_PATH = SECRETS_DIR / "tokens.json"
 
 SCOPES = [
     "https://www.googleapis.com/auth/drive",

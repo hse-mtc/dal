@@ -41,6 +41,7 @@ services:
     restart: always
     volumes:
       - watchdoc-generated:/watchdoc/generated
+      - watchdoc-secrets:/watchdoc/secrets
 
   back-end:
     container_name: back-end
@@ -104,3 +105,4 @@ volumes:
   back-end-backups:
   back-end-media:
   watchdoc-generated:
+  watchdoc-secrets:
