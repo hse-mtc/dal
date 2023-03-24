@@ -1,14 +1,12 @@
-from auth.populate.users_gen import get_users
-
-from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
-
 from collections import namedtuple
 
 from django.contrib.auth import get_user_model
 
-from conf.settings import TGBOT_EMAIL, TGBOT_PASSWORD
+from conf.settings import TGBOT_EMAIL, TGBOT_PASSWORD, TEST_CORPORATE_EMAIL_DOMAIN
 
 from common.models.universities import Campus
+
+from auth.populate.users_gen import get_users
 
 User = get_user_model()
 
