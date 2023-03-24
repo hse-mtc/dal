@@ -1,7 +1,4 @@
-import os
 import io
-from os import listdir
-from readline import get_history_item
 
 from conf.settings import TEST_CORPORATE_EMAIL_DOMAIN
 
@@ -43,6 +40,9 @@ def create_applicants(
             "surname": "Иванов",
             "name": "Иван",
             "patronymic": "Иванович",
+            "surname_genitive": "Иванова",
+            "name_genitive": "Ивана",
+            "patronymic_genitive": "Ивановича",
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Москва, ул. Тверская, д. 6",
@@ -77,6 +77,11 @@ def create_applicants(
                     "type": "FA",
                     "citizenship": "Россия",
                     "permanent_address": "Россия, Москва",
+                    "birth_info": {
+                        "date": "1960-12-05",
+                        "country": "Россия",
+                        "place": "Москва",
+                    },
                 },
                 {
                     "surname": "Иванова",
@@ -85,6 +90,15 @@ def create_applicants(
                     "type": "MO",
                     "citizenship": "Россия",
                     "permanent_address": "Россия, Москва",
+                    "birth_info": {
+                        "date": "1961-10-03",
+                        "country": "Россия",
+                        "place": "Москва",
+                    },
+                    "contact_info": {
+                        "personal_email": f"ivanov@ivanov.ru",
+                        "personal_phone_number": "72222222221",
+                    },
                 },
                 {
                     "surname": "Иванов",
@@ -93,6 +107,11 @@ def create_applicants(
                     "type": "BR",
                     "citizenship": "Россия",
                     "permanent_address": "Россия, Москва",
+                    "birth_info": {
+                        "date": "2005-01-09",
+                        "country": "Россия",
+                        "place": "Саратов",
+                    },
                 },
                 {
                     "surname": "Иванова",
@@ -101,16 +120,25 @@ def create_applicants(
                     "type": "SI",
                     "citizenship": "Россия",
                     "permanent_address": "Россия, Москва",
+                    "birth_info": {
+                        "date": "2009-02-10",
+                        "country": "Россия",
+                        "place": "Саратов",
+                    },
                 },
             ],
             # "application_process": {},
             "milspecialty": milspecialties["453100"],
             "user": User.objects.get(email=f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}"),
         },
+        # TODO(sha43): Add family for other applicants
         {
             "surname": "Петров",
             "name": "Иван",
-            "patronymic": "",
+            "patronymic": "Евгеньевич",
+            "surname_genitive": "Петрова",
+            "name_genitive": "Ивана",
+            "patronymic_genitive": "Евгеньевича",
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Челябинск, ул. Ленина, д. 12",
@@ -145,7 +173,10 @@ def create_applicants(
         {
             "surname": "Сидоров",
             "name": "Николай",
-            "patronymic": "",
+            "patronymic": "Александрович",
+            "surname_genitive": "Сидорова",
+            "name_genitive": "Николая",
+            "patronymic_genitive": "Александровича",
             "recruitment_office": "Объединённый Одинцовский военкомат",
             "citizenship": "Беларусь",
             "permanent_address": "г. Минск, ул. Картошки, д. Матрёшки",
@@ -183,6 +214,9 @@ def create_applicants(
             "surname": "Борисов",
             "name": "Никита",
             "patronymic": "Олегович",
+            "surname_genitive": "Борисов",
+            "name_genitive": "Никиты",
+            "patronymic_genitive": "Олеговича",
             "recruitment_office": "Ленинградский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Ульяновск, ул. Победы, д. Неведы",
@@ -245,18 +279,28 @@ def create_applicants(
         )
         fields["photo"] = photos[fields.pop("photo")]
 
-        family = [
-            get_or_create(Relative, **relative_fields)
-            for relative_fields in fields.pop("family")
-        ]
+        family = []
+        for relative_fields in fields.pop("family"):
+            relative_fields["birth_info"] = get_or_create(
+                BirthInfo,
+                **relative_fields.pop("birth_info"),
+            )
+            if "contact_info" in relative_fields:
+                relative_fields["contact_info"] = get_or_create(
+                    ContactInfo,
+                    **relative_fields.pop("contact_info"),
+                )
+            family.append(get_or_create(Relative, **relative_fields))
 
         if "application_process" in fields:
             fields["application_process"] = get_or_create(
                 ApplicationProcess,
                 **fields.pop("application_process"),
             )
-
-        object_ = get_or_create(Applicant, **fields)
+        if (queryset := Applicant.objects.filter(**{k: v for k, v in fields.items() if k != "photo"})).exists():
+            object_ = queryset.first()
+        else:
+            object_ = Applicant.objects.create(**fields)
 
         object_.family.add(*family)
         object_.save()
