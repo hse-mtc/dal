@@ -297,7 +297,11 @@ def create_applicants(
                 ApplicationProcess,
                 **fields.pop("application_process"),
             )
-        if (queryset := Applicant.objects.filter(**{k: v for k, v in fields.items() if k != "photo"})).exists():
+        if (
+            queryset := Applicant.objects.filter(
+                **{k: v for k, v in fields.items() if k != "photo"}
+            )
+        ).exists():
             object_ = queryset.first()
         else:
             object_ = Applicant.objects.create(**fields)
