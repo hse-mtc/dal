@@ -506,7 +506,7 @@ class ApplicantForm extends Vue {
   fillProgramOptions(data) {
     this.fields.universityInfo.program.props.options = data.map(
       item => ({
-        label: item.title,
+        label: `${item.code} – ${item.title}`,
         value: item.id,
       }),
     );
