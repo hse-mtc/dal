@@ -70,13 +70,13 @@ export const constantRoutes = [
     hidden: true,
   },
 
-  // {
-  //   path: "/applicant-registration/",
-  //   name: "ApplicantRegistration",
-  //   component: () => import("@/views/ApplicantRegistration/index.vue"),
-  //   meta: { title: "Регистрация абитуриента" },
-  //   hidden: true,
-  // },
+  {
+    path: "/applicant-registration/",
+    name: "ApplicantRegistration",
+    component: () => import("@/views/ApplicantRegistration/index.vue"),
+    meta: { title: "Регистрация абитуриента" },
+    hidden: true,
+  },
 
   // FIXME(ShishckovA): doesn't work, have to change (i.e. pushing instead of patching), fix and test
   // {
