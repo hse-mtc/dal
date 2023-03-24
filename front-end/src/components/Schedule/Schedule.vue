@@ -346,6 +346,9 @@ export default {
   watch: {
     milgroups(newValue) {
       console.log("watch");
+      console.log("this.milgroups", this.milgroups);
+      console.log("this.milgroups[0]?.id", this.milgroups[0]?.id);
+      console.log("this.milgroups[0]?.milspecialty.id", this.milgroups[0]?.milspecialty.id);
       this.filter.mg = {
         id: this.milgroups[0]?.id.toString(),
         milspecialty: this.milgroups[0]?.milspecialty.id,
