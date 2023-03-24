@@ -44,7 +44,11 @@ def create_milspecialties() -> dict[str, Milspecialty]:
         {
             "code": "106646-543",
             "title": "Разведывательные, разведчик-оператор СБР, ПСНР",
-            "available_for": [Campus.SAINT_PETERSBURG.value, Campus.NIZHNY_NOVGOROD.value, Campus.PERM.value],
+            "available_for": [
+                Campus.SAINT_PETERSBURG.value,
+                Campus.NIZHNY_NOVGOROD.value,
+                Campus.PERM.value,
+            ],
         },
     ]
 
