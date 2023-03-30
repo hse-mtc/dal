@@ -41,8 +41,8 @@ watchdoc/temp/*
 
 ## Files
 watchdoc/service-account.json
-watchdoc/credentials.json
-watchdoc/tokens.json
+watchdoc/secrets/credentials.json
+watchdoc/secrets/tokens.json
 watchdoc/.env
 
 ### Tools ###
