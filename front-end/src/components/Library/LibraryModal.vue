@@ -114,7 +114,7 @@ import {
 } from "@/common/inputs";
 
 import ModalWindow from "@/components/ModalWindow/ModalWindow.vue";
-import {PapersModule, ReferenceModule, SubjectsModule} from "@/store";
+import { PapersModule, ReferenceModule, SubjectsModule } from "@/store";
 
 export default {
   name: "LibraryModal",
@@ -148,7 +148,7 @@ export default {
   },
   computed: {
     subjects() {
-      let milspecialties = ReferenceModule.milspecialties;
+      const { milspecialties } = ReferenceModule;
       return SubjectsModule.subjects.map(subject => ({
         label: `${subject.title} ${milspecialties.find(x => x.id === subject.milspecialty).code}`,
         value: subject.id,
