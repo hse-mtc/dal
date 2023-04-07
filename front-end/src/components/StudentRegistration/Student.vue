@@ -279,8 +279,8 @@ export default {
         this.$emit("registration-completed");
       } catch (e) {
         if (e.response.data) {
-          if (e.response.data.includes("already exists")) {
-            this.$message.error("Ошибка регистрации. Возможно Вы уже подали заявку, используя этот адрес электронной почты. Ожидайте подтверждения.");
+          if (e.response.data.error_message) {
+            this.$message.error(e.response.data.error_message);
           } else {
             postError("студента", e.response?.status);
           }
