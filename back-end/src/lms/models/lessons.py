@@ -77,6 +77,7 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = "Lesson"
         verbose_name_plural = "Lessons"
+        unique_together = [["ordinal", "date", "milgroup"]]
 
     def __str__(self):
         return f"Lesson {self.subject} on {self.date}, #{self.ordinal}"
