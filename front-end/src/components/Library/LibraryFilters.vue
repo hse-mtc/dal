@@ -72,7 +72,7 @@
           v-for="item in subjects"
           :key="item.id"
           :value="item.id"
-          :label="item.title"
+          :label="`${item.title} ${milspecialties.find(x => x.id === item.milspecialty).code}`"
         />
       </el-select>
     </div>
@@ -83,7 +83,7 @@
 import { SIZES, COLORS } from "@/utils/appConsts";
 import CustomText from "@/common/CustomText";
 import { surnameWithInitials } from "@/utils/person";
-import { PapersModule, SubjectsModule } from "@/store";
+import {PapersModule, ReferenceModule, SubjectsModule} from "@/store";
 
 export default {
   name: "LibraryFilters",
@@ -111,6 +111,7 @@ export default {
   computed: {
     subjects() { return SubjectsModule.subjects; },
     authors() { return PapersModule.authors; },
+    milspecialties() { return ReferenceModule.milspecialties; }
   },
   created() {
     this.author = this.$route.query.author
