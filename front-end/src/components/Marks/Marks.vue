@@ -11,7 +11,7 @@
             filterable
             placeholder="Дисциплина"
             style="display: block"
-            @change="fetchData()"
+            @change="fetchData(false)"
           >
             <el-option
               v-for="item in subjects"
@@ -38,10 +38,10 @@
         </el-col>
       </el-row>
       <el-tabs
-        v-model="filter.mg"
+        v-model="filter.mg.id"
         tab-position="left"
         class="my-tabs"
-        @tab-click="fetchData()"
+        @tab-click="fetchData(true)"
       >
         <el-tab-pane
           v-for="mg in milgroups"
@@ -298,7 +298,7 @@
               v-for="item in rooms"
               :key="item.id"
               :label="item.title"
-              :value="item.key"
+              :value="item.id"
             />
           </el-select>
         </el-form-item>
@@ -455,19 +455,26 @@ export default {
 
   watch: {
     milgroups(newValue) {
-      this.filter.mg = this.milgroups[0]?.id.toString();
-      this.fetchData();
+      this.filter.mg = {
+        id: this.milgroups[0]?.id.toString(),
+        milspecialty: this.milgroups[0]?.milspecialty.id,
+      };
+      this.fetchData(true);
     },
   },
 
   async created() {
+    this.filter.mg = {
+      id: this.milgroups[0]?.id.toString(),
+      milspecialty: this.milgroups[0]?.milspecialty.id,
+    };
+    if (this.filter.mg.id !== undefined) {
+      await this.fetchData(true);
+    }
     await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
-    this.filter.mg = this.milgroups[0]?.id.toString();
-    if (this.filter.mg !== undefined) {
-      await this.fetchData();
-    }
   },
+
   methods: {
     hasPermission,
     getPermissions(method, entity) {
@@ -523,10 +530,14 @@ export default {
           return "info";
       }
     },
-    fetchData() {
-      if (this.filter.mg > 0 && this.filter.subject_id > 0) {
+    async fetchData(subjects) {
+      await this.getSubjects();
+      if (subjects) {
+        this.filter.subject_id = this.subjects[0].id;
+      }
+      if (this.filter.mg.id > 0 && this.filter.subject_id > 0) {
         getMarkJournal({
-          milgroup: this.filter.mg,
+          milgroup: this.filter.mg.id,
           subject: this.filter.subject_id,
           date_from: this.filter.dateRange[0],
           date_to: this.filter.dateRange[1],
@@ -538,7 +549,15 @@ export default {
       }
     },
     async getSubjects() {
-      this.subjects = (await getSubjects()).data;
+      try {
+        const response = await getSubjects();
+        // eslint-disable-next-line max-len
+        this.filter.mg.milspecialty = this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg.id, 10))[0].milspecialty.id;
+        // eslint-disable-next-line max-len
+        this.subjects = response.data.filter(subject => subject.milspecialty === this.filter.mg.milspecialty);
+      } catch (err) {
+        getError("дисциплин", err.response.status);
+      }
     },
 
     onCreate(student, lesson, mark) {
@@ -590,7 +609,7 @@ export default {
           .then(() => {
             patchSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg) { this.fetchData(); }
+            if (this.filter.mg.id) { this.fetchData(false); }
           })
           .catch(err => patchError("оценки", err.response.status));
       } else if (this.editMarkMethod === "POST") {
@@ -598,7 +617,7 @@ export default {
           .then(() => {
             postSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg) { this.fetchData(); }
+            if (this.filter.mg.id) { this.fetchData(false); }
           })
           .catch(err => postError("оценки", err.response.status));
       } else if (this.editMarkMethod === "PUT") {
@@ -606,7 +625,7 @@ export default {
           .then(() => {
             patchSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg) { this.fetchData(); }
+            if (this.filter.mg.id) { this.fetchData(false); }
           })
           .catch(err => patchError("оценки", err.response.status));
       }
@@ -621,14 +640,14 @@ export default {
           .then(() => {
             deleteSuccess("оценки");
             this.dialogVisible = false;
-            if (this.filter.mg > 0) { this.fetchData(); }
+            if (this.filter.mg.id > 0) { this.fetchData(false); }
           })
           .catch(err => deleteError("оценки", err.response.status));
       });
     },
     onCreateLesson() {
       this.editLesson = {
-        milgroup: this.filter.mg,
+        milgroup: this.filter.mg.id,
         subject: this.filter.subject_id,
         ordinal: 1,
         date: moment().format("YYYY-MM-DD"),
@@ -649,8 +668,8 @@ export default {
           .then(() => {
             patchSuccess("занятия");
             this.lessonDialogVisible = false;
-            if (this.filter.mg) {
-              this.fetchData();
+            if (this.filter.mg.id) {
+              this.fetchData(false);
             }
           })
           .catch(err => patchError("занятия", err.response.status));
@@ -659,7 +678,7 @@ export default {
           .then(() => {
             postSuccess("занятия");
             this.lessonDialogVisible = false;
-            if (this.filter.mg) { this.fetchData(); }
+            if (this.filter.mg.id) { this.fetchData(false); }
           })
           .catch(err => postError("занятия", err.response.status));
       }
@@ -677,7 +696,7 @@ export default {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
-            if (this.filter.mg > 0) { this.fetchData(); }
+            if (this.filter.mg.id > 0) { this.fetchData(false); }
           })
           .catch(err => deleteError("занятия", err.response.status));
       });
