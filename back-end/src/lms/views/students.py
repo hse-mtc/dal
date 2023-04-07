@@ -1,5 +1,4 @@
 from django.core.mail import send_mail
-from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth import get_user_model
 
 from rest_framework import pagination, viewsets
@@ -19,7 +18,7 @@ from drf_spectacular.views import extend_schema
 
 from common.constants import MUTATE_ACTIONS
 from common.email.registration import send_regconf_email
-from common.models.personal import ContactInfo
+from common.serializers.personal import check_email_exists
 
 from common.views.choices import GenericChoicesList
 
@@ -166,16 +165,15 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         email = serializer.validated_data["contact_info"]["corporate_email"]
 
-        contact_info_exists = True
-        try:
-            ContactInfo.objects.exclude(
-                    corporate_email__isnull=True
-                ).get(corporate_email=email)
-        except ContactInfo.DoesNotExist:
-            contact_info_exists = False
-
-        if contact_info_exists:
-            raise SuspiciousOperation("Аккаунт с такой электронной почтой уже существует!")
+        if check_email_exists(email):
+            return Response(
+                {
+                    "error_message": "Ошибка регистрации. \
+                Аккаунт с такой электронной почтой уже существует! \
+                    Если Вы уже подали заявку, ожидайте подтверждения"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         student = serializer.save()
 
