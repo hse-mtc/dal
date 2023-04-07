@@ -1,5 +1,4 @@
 from django.core.mail import send_mail
-from django.core.exceptions import SuspiciousOperation
 from django.contrib.auth import get_user_model
 
 from rest_framework import pagination, viewsets
@@ -167,10 +166,14 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         email = serializer.validated_data["contact_info"]["corporate_email"]
 
         if check_email_exists(email):
-            return Response({'error_message': 'Ошибка регистрации. \
+            return Response(
+                {
+                    "error_message": "Ошибка регистрации. \
                 Аккаунт с такой электронной почтой уже существует! \
-                    Если Вы уже подали заявку, ожидайте подтверждения'}, 
-                    status=status.HTTP_400_BAD_REQUEST)
+                    Если Вы уже подали заявку, ожидайте подтверждения"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         student = serializer.save()
 
