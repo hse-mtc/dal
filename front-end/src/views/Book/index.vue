@@ -147,7 +147,9 @@ import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook, deleteBook } from "@/api/books";
 import { surnameWithInitials } from "@/utils/person";
 import CtaButton from "@/common/CtaButton";
-import {PapersModule, ReferenceModule, SubjectsModule, UserModule} from "@/store";
+import {
+  PapersModule, ReferenceModule, SubjectsModule, UserModule,
+} from "@/store";
 
 export default {
   name: "Book",
@@ -172,7 +174,7 @@ export default {
     authors() { return PapersModule.authors; },
     publishers() { return PapersModule.publishers; },
     userId() { return UserModule.userId; },
-    milspecialties() { return ReferenceModule.milspecialties; }
+    milspecialties() { return ReferenceModule.milspecialties; },
   },
   created() {
     this.fetchData();
