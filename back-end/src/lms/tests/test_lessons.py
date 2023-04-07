@@ -38,17 +38,19 @@ def test_post_posts_right_data(su_client, get_new_lesson_data):
         "/api/lms/lessons/", lesson_data, content_type="application/json"
     )
 
+    first_id = first_lesson_response.data.pop("id")
+    assert first_lesson_response.status_code == 201
+    assert first_lesson_response.data == lesson_data
+
+    lesson_data["ordinal"] += 1
     second_lesson_response = su_client.post(
         "/api/lms/lessons/", lesson_data, content_type="application/json"
     )
 
-    assert first_lesson_response.status_code == 201
+    second_id = second_lesson_response.data.pop("id")
     assert second_lesson_response.status_code == 201
-
-    assert first_lesson_response.data.pop("id") != second_lesson_response.data.pop("id")
-
-    assert first_lesson_response.data == lesson_data
     assert second_lesson_response.data == lesson_data
+    assert first_id != second_id
 
 
 @pytest.mark.django_db
