@@ -20,7 +20,7 @@ class Faculty(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return f"[{self.campus}] {self.title}"
 
     class Meta:
         verbose_name = "Faculty"

@@ -11,7 +11,7 @@ from common.models.personal import (
     Relative,
 )
 
-from common.models.universities import UniversityInfo, Program
+from common.models.universities import UniversityInfo, Program, Faculty
 
 # Subjects
 admin.site.register(Subject)
@@ -26,6 +26,7 @@ admin.site.register(Relative)
 # University
 admin.site.register(UniversityInfo)
 admin.site.register(Program)
+admin.site.register(Faculty)
 
 # Milspeciality
 admin.site.register(Milspecialty)
