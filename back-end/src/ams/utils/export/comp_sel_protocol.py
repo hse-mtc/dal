@@ -93,7 +93,7 @@ def _make_applicant_detail_row(
             row += [
                 (
                     f"{sis.fullname}, "
-                    f"{father.birth_info.date.strftime('%d.%m.%Y') + ',' if sis.birth_info else ''} "
+                    f"{sis.birth_info.date.strftime('%d.%m.%Y') + ',' if sis.birth_info else ''} "
                     f"{sis.permanent_address if sis.permanent_address else ''}",
                     formats.align_left,
                 )
