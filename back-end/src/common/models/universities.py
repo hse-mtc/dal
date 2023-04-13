@@ -35,6 +35,7 @@ class Program(models.Model):
         to=Faculty,
         on_delete=models.RESTRICT,
     )
+    available_to_choose_for_applicants = models.BooleanField(default=True)
 
     def __str__(self):
         return f"[{self.code}] {self.title}"

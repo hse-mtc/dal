@@ -172,10 +172,9 @@ import {
   dataURLtoFile,
 } from "@/constants/applicantForm";
 
-import { getMilSpecialties, getProgramsByCampus } from "@/api/reference-book";
+import { getAvailableForApplicantsProgramsByCampus, getMilSpecialties } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
 import { UserModule } from "@/store";
-import { hasPermission } from "@/utils/permissions";
 
 const createData = fields => Object.keys(fields).reduce(
   (memo, item) => ({
@@ -733,7 +732,7 @@ class ApplicantForm extends Vue {
   @Watch("applicantData.universityInfo.campus")
   async onCampusChange() {
     try {
-      const { data } = await getProgramsByCampus(
+      const { data } = await getAvailableForApplicantsProgramsByCampus(
         this.applicantData.universityInfo.campus,
       );
       this.fillProgramOptions(data);
@@ -754,7 +753,7 @@ class ApplicantForm extends Vue {
       top: 0,
     });
     if (nextValue === STEPS.universityInfo && this.applicantData.universityInfo.campus) {
-      const { data } = await getProgramsByCampus(
+      const { data } = await getAvailableForApplicantsProgramsByCampus(
         this.applicantData.universityInfo.campus,
       );
       this.fillProgramOptions(data);
