@@ -6,6 +6,7 @@ from config import EMAIL_HOST_USER, EMAIL_FROM_NAME
 
 def create_message(to, link):
     mec_link = "https://www.hse.ru/org/hse/ouk/mil/"
+    student_centre_link = "https://studentcentre.hse.ru/#contacts"
 
     message = MIMEText(
         _text="<p>Здравствуйте!</p>\n"
@@ -27,7 +28,8 @@ def create_message(to, link):
         "чтобы Вы могли заполнить их карандашом и позже исправить.</li>\n"
         
         "<li>В случае, если военный комиссариат откажется принимать подписанную"
-        " версию направления, Вам необходимо посетить ВУЦ с неподписанной "
+        " версию направления, Вам необходимо посетить Центр сервиса "
+        f"<a href=\"{student_centre_link}\">\"Студент\"</a> (Покровский бульвар, 11) с неподписанной"
         " версией, чтобы на документ поставили все необходимые печати и "
         "подписали от руки.</li>\n"
         
