@@ -80,7 +80,7 @@ def create_milgroups(
         {
             "title": "1807",
             "milfaculty": milfaculties["ВКС"],
-            "milspecialty": milspecialties["453100"],
+            "milspecialty": milspecialties["453000"],
             "weekday": 4,
         },
         {
@@ -114,6 +114,18 @@ def create_milgroups(
             "weekday": 4,
         },
         {
+            "title": "1813",
+            "milspecialty": milspecialties["411300"],
+            "milfaculty": milfaculties["РВСН"],
+            "weekday": 4,
+        },
+        {
+            "title": "1814",
+            "milspecialty": milspecialties["411300"],
+            "milfaculty": milfaculties["РВСН"],
+            "weekday": 4,
+        },
+        {
             "title": "1612",
             "milspecialty": milspecialties["411300"],
             "milfaculty": milfaculties["РВСН"],
@@ -121,19 +133,15 @@ def create_milgroups(
             "archived": True,
         },
         {
-            "title": "1813",
-            "milfaculty": milfaculties["РВСН"],
-            "weekday": 4,
-            "archived": True,
-        },
-        {
-            "title": "1814",
+            "title": "1613",
+            "milspecialty": milspecialties["411300"],
             "milfaculty": milfaculties["РВСН"],
             "weekday": 4,
             "archived": True,
         },
         {
             "title": "1614",
+            "milspecialty": milspecialties["411300"],
             "milfaculty": milfaculties["РВСН"],
             "weekday": 4,
             "archived": True,
