@@ -22,7 +22,9 @@ class MarkSerializer(serializers.ModelSerializer):
 
 
 class MarkMutateSerializer(serializers.ModelSerializer):
-    values = serializers.ListField(child=serializers.IntegerField(min_value=2, max_value=5))
+    values = serializers.ListField(
+        child=serializers.IntegerField(min_value=2, max_value=5)
+    )
 
     def validate(self, attrs):
         if "student" in attrs and "lesson" in attrs:
