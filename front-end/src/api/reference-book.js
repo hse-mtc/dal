@@ -159,6 +159,14 @@ export function getProgramsByCampus(campus) {
   });
 }
 
+export function getAvailableForApplicantsProgramsByCampus(campus) {
+  return request({
+    url: BASE_API_URL + programs,
+    method: "get",
+    params: { campus, available_to_choose_for_applicants: true },
+  });
+}
+
 export function editProgram(id, data) {
   return request({
     url: `${BASE_API_URL}${programs}${id}/`,

@@ -59,7 +59,8 @@ def _make_applicant_detail_row(
         row += (
             [
                 (
-                    f"{father.fullname}, {father.birth_info.date + ',' if father.birth_info else ''} "
+                    f"{father.fullname}, "
+                    f"{father.birth_info.date.strftime('%d.%m.%Y') + ',' if father.birth_info else ''} "
                     f"{father.permanent_address if father.permanent_address else ''}",
                     formats.align_left,
                 )
@@ -70,7 +71,8 @@ def _make_applicant_detail_row(
         row += (
             [
                 (
-                    f"{mother.fullname} {mother.birth_info.date + ',' if mother.birth_info else ''} "
+                    f"{mother.fullname} "
+                    f"{mother.birth_info.date.strftime('%d.%m.%Y') + ',' if mother.birth_info else ''} "
                     f"{mother.permanent_address if mother.permanent_address else ''}",
                     formats.align_left,
                 )
@@ -81,7 +83,8 @@ def _make_applicant_detail_row(
         for bro in brothers:
             row += [
                 (
-                    f"{bro.fullname}, {bro.birth_info.date + ',' if bro.birth_info else ''} "
+                    f"{bro.fullname}, "
+                    f"{bro.birth_info.date.strftime('%d.%m.%Y') + ',' if bro.birth_info else ''} "
                     f"{bro.permanent_address if bro.permanent_address else ''}",
                     formats.align_left,
                 )
@@ -89,7 +92,8 @@ def _make_applicant_detail_row(
         for sis in sisters:
             row += [
                 (
-                    f"{sis.fullname}, {sis.birth_info.date + ',' if sis.birth_info else ''} "
+                    f"{sis.fullname}, "
+                    f"{sis.birth_info.date.strftime('%d.%m.%Y') + ',' if sis.birth_info else ''} "
                     f"{sis.permanent_address if sis.permanent_address else ''}",
                     formats.align_left,
                 )
