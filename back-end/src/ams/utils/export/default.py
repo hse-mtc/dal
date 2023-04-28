@@ -42,8 +42,8 @@ def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
     _set_row_col_sizes(worksheet)
     _fill_header(worksheet=worksheet, cell_format=formats.table_center)
     for row, applicant in enumerate(
-            applicants,
-            start=1,  # Skip header.
+        applicants,
+        start=1,  # Skip header.
     ):
         cells = _make_applicant_row(
             applicant=applicant,
