@@ -168,9 +168,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         if check_email_exists(email):
             return Response(
                 {
-                    "error_message": "Ошибка регистрации. \
-                Аккаунт с такой электронной почтой уже существует! \
-                    Если Вы уже подали заявку, ожидайте подтверждения"
+                    "error_message": "email_already_exists"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

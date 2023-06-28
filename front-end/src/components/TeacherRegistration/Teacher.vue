@@ -270,7 +270,13 @@ export default {
         await registerTeacher(this.teacher);
         this.$emit("registration-completed");
       } catch (e) {
-        postError("преподавателя", e.response?.status);
+        if (e.response.data) {
+          if (e.response.data.error_message) {
+            this.$message.error("Ошибка регистрации. Аккаунт с такой электронной почтой уже существует! Если Вы уже подали заявку, ожидайте подтверждения");
+          } else {
+            postError("преподавателя", e.response?.status);
+          }
+        }
       } finally {
         this.awaitingResponse = false;
       }
