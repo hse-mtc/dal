@@ -15,7 +15,7 @@ class RegisterView(generics.GenericAPIView):
 
     def post(self, request):
         user = request.data
-        email = BaseUserManager.normalize_email(user["email"])
+        email = BaseUserManager.normalize_email(user["email"]).lower()
 
         if not User.objects.filter(email=email).exists():
             user["password"] = User.objects.make_random_password()

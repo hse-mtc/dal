@@ -34,6 +34,7 @@ class Lesson(models.Model):
         PRACTICE = "PR", "Практическое занятие"
         FINAL_TEST = "FI", "Зачет"
         EXAM = "EX", "Экзамен"
+        OTHER = "OT", "Другое"
 
     type = models.CharField(
         max_length=2,
