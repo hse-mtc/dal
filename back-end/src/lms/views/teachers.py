@@ -78,9 +78,7 @@ class TeacherViewSet(QuerySetScopingMixin, viewsets.ModelViewSet):
 
         if check_email_exists(email):
             return Response(
-                {
-                    "error_message": "email_already_exists"
-                },
+                {"error_message": "email_already_exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
