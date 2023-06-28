@@ -15,15 +15,7 @@ from common.models.personal import (
 
 
 def check_email_exists(corporate_email: str):
-    contact_info_exists = True
-    try:
-        ContactInfo.objects.exclude(corporate_email__isnull=True).get(
-            corporate_email=corporate_email
-        )
-    except ContactInfo.DoesNotExist:
-        contact_info_exists = False
-
-    return contact_info_exists
+    return ContactInfo.objects.filter(corporate_email=corporate_email).exists()
 
 
 class BirthInfoSerializer(serializers.ModelSerializer):
