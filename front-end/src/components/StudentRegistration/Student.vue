@@ -181,7 +181,7 @@ export default {
     };
 
     const validatePhone = (rule, value, callback) => {
-      const regExp = /^\+7?\d{10}$/;
+      const regExp = /^((\+7|7|8)+([0-9]){10})$/;
       if (value && !regExp.test(value)) {
         callback(new Error("Пожалуйста, введите корректный номер телефона (н-р. +79007331822)"));
       } else {
