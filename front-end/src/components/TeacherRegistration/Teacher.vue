@@ -271,8 +271,8 @@ export default {
         this.$emit("registration-completed");
       } catch (e) {
         if (e.response.data) {
-          if (e.response.data.error_message) {
-            this.$message.error("Ошибка регистрации. Аккаунт с такой электронной почтой уже существует! Если Вы уже подали заявку, ожидайте подтверждения");
+          if (e.response.data.error_message === "email_already_exists") {
+            this.$message.error("Аккаунт с такой электронной почтой уже существует");
           } else {
             postError("преподавателя", e.response?.status);
           }
