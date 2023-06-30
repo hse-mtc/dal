@@ -1,10 +1,21 @@
+import textwrap
+
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.types import Message
 
-from api.auth import session_exists
+from api.auth import fetch_phone, session_exists
+from api.student import (
+    fetch_students,
+    Post,
+    Student,
+)
 
-from keyboards.reply import share_contact_keyboard
+from keyboards.button_texts import ButtonText
+from keyboards.reply import (
+    list_milgroup_keyboard,
+    share_contact_keyboard,
+)
 
 
 class AuthMiddleware(BaseMiddleware):
@@ -19,6 +30,22 @@ class AuthMiddleware(BaseMiddleware):
 
         # User is already authorized.
         if await session_exists(chat_id=message.chat.id):
+            if message.text == "/start":
+                phone = await fetch_phone(chat_id=message.chat.id)
+                user = await fetch_students(many=False, params={"phone": phone})
+                assert isinstance(user, Student)
+
+                await message.reply(
+                    textwrap.dedent(f"""
+                        Здравия желаю, {user.fullname.strip()}.
+                        
+                        Взвод: {user.milgroup.title}.
+                        Должность: {getattr(Post, user.post).value}.
+                        
+                        Нажмите кнопку "{ButtonText.LIST_MILGROUP.value}", чтобы вывести список студентов Вашего взвода.
+                    """),
+                    reply_markup=list_milgroup_keyboard(),
+                )
             return
 
         # User is not authorized and is not trying to authorize, cancel handler.

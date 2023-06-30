@@ -95,6 +95,9 @@ async def toggle_student_absence_status(
     callback_query: CallbackQuery,
     state: FSMContext,
 ) -> None:
+    if callback_query.message.date.date() != datetime.now().date():
+        return
+
     new_state, id_ = map(int, callback_query.data.split())
     students_by_id = await state.get_data()
     students_by_id[id_].state = State(new_state)
@@ -102,11 +105,21 @@ async def toggle_student_absence_status(
     await state.set_data(students_by_id)
     await callback_query.message.edit_reply_markup(
         reply_markup=student_absence_keyboard(id_, new_state),)
+    await silent_report_absence(state)
 
 
 toggle_student_absence_status.handler_filters = [
     lambda callback: True,
 ]
+
+
+async def silent_report_absence(state: FSMContext) -> None:
+    if not await absence_report_overdue():
+        return
+
+    students_by_id: dict[int, Student] = await state.get_data()
+    students = [student for _, student in students_by_id.items()]
+    await post_absence(students)
 
 
 async def report_absence(message: Message, state: FSMContext) -> None:

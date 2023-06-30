@@ -22,6 +22,9 @@ from keyboards.reply import (
 async def share_contact(message: Message) -> None:
     chat_id = message.chat.id
     phone = message.contact["phone_number"]
+    
+    if phone.startswith("+"):
+        phone = phone[1:]
 
     if message.contact["user_id"] != chat_id:
         await message.reply(
