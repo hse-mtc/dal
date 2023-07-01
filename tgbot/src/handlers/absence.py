@@ -123,11 +123,9 @@ async def toggle_student_absence_status(
     
     students_by_id[id_].state = State(new_state)
     
-    print("students_by_id:", students_by_id)
     students_by_id[id_].excuse = match_states(students_by_id[id_].state.value)
 
     students = [student for _, student in students_by_id.items()]
-    print("students_by_id", students)
     await state.set_data(students_by_id)
     await silent_report_absence(state)
     await callback_query.message.edit_reply_markup(
