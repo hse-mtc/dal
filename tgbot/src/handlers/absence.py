@@ -91,6 +91,15 @@ def match_states(state):
         return ""
 
 
+async def silent_report_absence(state: FSMContext) -> None:
+    if not await absence_report_overdue():
+        return
+
+    students_by_id: dict[int, Student] = await state.get_data()
+    students = [student for _, student in students_by_id.items()]
+    await post_absence(students)
+
+
 async def toggle_student_absence_status(
     callback_query: CallbackQuery,
     state: FSMContext,
@@ -111,15 +120,6 @@ async def toggle_student_absence_status(
 toggle_student_absence_status.handler_filters = [
     lambda callback: True,
 ]
-
-
-async def silent_report_absence(state: FSMContext) -> None:
-    if not await absence_report_overdue():
-        return
-
-    students_by_id: dict[int, Student] = await state.get_data()
-    students = [student for _, student in students_by_id.items()]
-    await post_absence(students)
 
 
 async def report_absence(message: Message, state: FSMContext) -> None:
