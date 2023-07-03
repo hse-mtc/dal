@@ -4,10 +4,13 @@ from pathlib import Path
 
 import requests
 
+from django.db import transaction
 from django.db.models.query import QuerySet
 
-from rest_framework import status
-from rest_framework import pagination
+from rest_framework import (
+    status,
+    pagination,
+)
 
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -40,11 +43,11 @@ from ams.serializers.applicants import (
 from ams.filters.applicants import ApplicantFilter
 
 from lms.utils.mixins import QuerySetScopingMixin
-from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
-from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
-from ams.utils.export.comp_sel_protocol import generate_applicants_detail
-from django.db import transaction
+from ams.utils.export.comp_sel_protocol import (
+    generate_export as generate_csp_export,
+    generate_applicants_detail,
+)
 
 
 class XLSXRenderer(BaseRenderer):
@@ -100,10 +103,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         if scope == Permission.Scope.ALL:
             return self.queryset.all()
 
-        if scope == Permission.Scope.SELF and (
-            self.action == "partial_update"
-            or self.action == "retrieve"
-            or self.action == "update"
+        if scope == Permission.Scope.SELF and self.action in (
+            "partial_update",
+            "retrieve",
+            "update",
         ):
             return self.queryset.filter(user__applicant=self.request.user.applicant)
 
@@ -120,7 +123,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             self.scoped_permission_class.permission_class, self.request.method
         )
 
-        if scope == Permission.Scope.ALL or scope == Permission.Scope.SELF:
+        if scope in (Permission.Scope.ALL, Permission.Scope.SELF):
             return True
 
         return False
@@ -167,6 +170,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     def update(self, request, *args, **kwargs):
         applicant = Applicant.objects.get(pk=kwargs["pk"])
         request.data["user"] = applicant.user.id
+
         if (
             request.data["contact_info"]["corporate_email"]
             != applicant.contact_info.corporate_email
@@ -176,6 +180,9 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         result = super(ApplicantViewSet, self).update(request, **kwargs)
+        applicant.user.campuses = [request.data["university_info"]["campus"]]
+        applicant.user.save()
+
         updated_applicant = Applicant.objects.get(pk=kwargs["pk"])
         generate_documents = request.data["generate_documents"]
 
