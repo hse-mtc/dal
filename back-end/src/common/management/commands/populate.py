@@ -27,6 +27,7 @@ from common.utils.date import get_date_range
 
 from auth.models import Group
 from auth.populate.users import create_users
+from auth.populate.users_gen import get_users
 from auth.populate.permissions import (
     get_applicant_permissions,
     get_student_permissions,
@@ -137,10 +138,18 @@ class Command(BaseCommand):
         students.user_set.add(User.objects.get(email="avkurkin@mail.com"))
         students.user_set.add(User.objects.get(email="psivanov@mail.com"))
 
+        for users_tuple in get_users():
+            students.user_set.add(User.objects.get(email=users_tuple.email))
+
         teachers.user_set.add(User.objects.get(email="ivnikandrov@mail.com"))
         teachers.user_set.add(User.objects.get(email="ivmesheryakov@mail.com"))
         teachers.user_set.add(User.objects.get(email="ivkovalchuk@mail.com"))
         teachers.user_set.add(User.objects.get(email="ksgavrilov@mail.com"))
+        teachers.user_set.add(User.objects.get(email="aadolgih@mail.com"))
+        teachers.user_set.add(User.objects.get(email="snermeenko@mail.com"))
+        teachers.user_set.add(User.objects.get(email="vspelyak@mail.com"))
+        teachers.user_set.add(User.objects.get(email="evmaslenkin@mail.com"))
+        teachers.user_set.add(User.objects.get(email="appolyakov@mail.com"))
 
         milfaculty_heads.user_set.add(User.objects.get(email="dnrepalov@mail.com"))
 
