@@ -17,6 +17,7 @@ from drf_spectacular.views import extend_schema
 from common.constants import MUTATE_ACTIONS
 from common.email.registration import send_regconf_email
 from common.views.choices import GenericChoicesList
+from common.serializers.personal import check_email_exists
 
 from auth.models import Permission
 from auth.permissions import BasePermission
@@ -71,16 +72,24 @@ class TeacherViewSet(QuerySetScopingMixin, viewsets.ModelViewSet):
     def registration(self, request):
         serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
-        teacher = self.perform_create(serializer)
 
         # NB: Email uniqueness is guaranteed by ContactInfo.email field.
         email = serializer.validated_data["contact_info"]["corporate_email"]
+
+        if check_email_exists(email):
+            return Response(
+                {"error_message": "email_already_exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         user = get_user_model().objects.create_user(
             email=email,
             password=get_user_model().objects.make_random_password(),
             campuses=["MO"],
             is_active=False,
         )
+
+        teacher = self.perform_create(serializer)
         teacher.user = user
         teacher.save()
 

@@ -190,7 +190,7 @@ export default {
     };
     const emailRule = {
       required: true,
-      trigger: "blue",
+      trigger: "blur",
       validator: validateEmail,
     };
 
@@ -270,7 +270,13 @@ export default {
         await registerTeacher(this.teacher);
         this.$emit("registration-completed");
       } catch (e) {
-        postError("преподавателя", e.response?.status);
+        if (e.response.data) {
+          if (e.response.data.error_message === "email_already_exists") {
+            this.$message.error("Аккаунт с такой электронной почтой уже существует");
+          } else {
+            postError("преподавателя", e.response?.status);
+          }
+        }
       } finally {
         this.awaitingResponse = false;
       }

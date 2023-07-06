@@ -87,7 +87,7 @@
       <div class="field-title">
         Дата рождения
       </div>
-      <ElFormItem prop="birth_date">
+      <ElFormItem prop="birth_info.date">
         <ElInput
           ref="patronymic"
           v-model="student.birth_info.date"
@@ -172,16 +172,6 @@ export default {
       trigger: "blur",
     };
 
-    const getValidator = (regExp, msg) => ({
-      validator: (rule, value, cb) => {
-        if (value && !regExp.test(value)) {
-          cb(new Error(msg));
-        } else {
-          cb();
-        }
-      },
-    });
-
     const validateEmail = (rule, value, callback) => {
       if (!validCorEmail(value)) {
         callback(new Error("Пожалуйста, введите корректный email"));
@@ -190,14 +180,24 @@ export default {
       }
     };
 
-    const phoneRule = getValidator(
-      /^\+?\d{11}$/,
-      "Введите корректный номер телефона",
-    );
+    const validatePhone = (rule, value, callback) => {
+      const regExp = /^((\+7|7|8)+([0-9]){10})$/;
+      if (value && !regExp.test(value)) {
+        callback(new Error("Пожалуйста, введите корректный номер телефона (н-р. +79007331822)"));
+      } else {
+        callback();
+      }
+    };
+
+    const phoneRule = {
+      required: true,
+      trigger: "blur",
+      validator: validatePhone,
+    };
 
     const emailRule = {
       required: true,
-      trigger: "blue",
+      trigger: "blur",
       validator: validateEmail,
     };
 
@@ -274,12 +274,17 @@ export default {
 
       this.awaitingResponse = true;
 
-      console.log("Student:\n", this.student);
       try {
         await registerStudent(this.student);
         this.$emit("registration-completed");
       } catch (e) {
-        postError("студента", e.response?.status);
+        if (e.response.data) {
+          if (e.response.data.error_message === "email_already_exists") {
+            this.$message.error("Аккаунт с такой электронной почтой уже существует");
+          } else {
+            postError("студента", e.response?.status);
+          }
+        }
       } finally {
         this.awaitingResponse = false;
       }

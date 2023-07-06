@@ -14,6 +14,10 @@ from common.models.personal import (
 )
 
 
+def check_email_exists(corporate_email: str):
+    return ContactInfo.objects.filter(corporate_email=corporate_email).exists()
+
+
 class BirthInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = BirthInfo

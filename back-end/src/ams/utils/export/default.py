@@ -38,6 +38,20 @@ def generate_export(applicants: QuerySet, milspecialties: QuerySet) -> Path:
             for col, (data, cell_format) in enumerate(cells):
                 worksheet.write(row, col, data, cell_format)
 
+    worksheet = workbook.add_worksheet("Все ВУС")
+    _set_row_col_sizes(worksheet)
+    _fill_header(worksheet=worksheet, cell_format=formats.table_center)
+    for row, applicant in enumerate(
+        applicants,
+        start=1,  # Skip header.
+    ):
+        cells = _make_applicant_row(
+            applicant=applicant,
+            formats=formats,
+        )
+        for col, (data, cell_format) in enumerate(cells):
+            worksheet.write(row, col, data, cell_format)
+
     workbook.close()
     return path
 
