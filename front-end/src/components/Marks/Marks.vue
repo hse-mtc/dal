@@ -455,15 +455,35 @@ export default {
 
   watch: {
     milgroups(newValue) {
-      this.filter.mg = this.milgroups[0]?.id.toString();
-      this.fetchData({ resetSubjectsOrder: true });
+      if (localStorage.milgroupUpdate) {
+        this.filter.mg = localStorage.milgroupUpdate;
+        this.filter.subject_id = parseInt(localStorage.subjectUpdate, 10);
+        this.fetchData({ resetSubjectsOrder: false });
+      } else {
+        this.filter.mg = this.milgroups[0]?.id.toString();
+        this.fetchData({ resetSubjectsOrder: true });
+      }
+      if (localStorage.dataRange0) {
+        this.filter.dateRange[0] = localStorage.dataRange0;
+        this.filter.dateRange[1] = localStorage.dataRange1;
+      }
     },
   },
 
   async created() {
-    this.filter.mg = this.milgroups[0]?.id.toString();
-    if (this.filter.mg !== undefined) {
-      await this.fetchData({ resetSubjectsOrder: true });
+    if (localStorage.milgroupUpdate) {
+      this.filter.mg = localStorage.milgroupUpdate;
+      this.filter.subject_id = parseInt(localStorage.subjectUpdate, 10);
+      this.fetchData({ resetSubjectsOrder: false });
+    } else {
+      this.filter.mg = this.milgroups[0]?.id.toString();
+      if (this.filter.mg !== undefined) {
+        await this.fetchData({ resetSubjectsOrder: true });
+      }
+    }
+    if (localStorage.dataRange0) {
+      this.filter.dateRange[0] = localStorage.dataRange0;
+      this.filter.dateRange[1] = localStorage.dataRange1;
     }
     await this.getSubjects();
     this.filter.subject_id = this.subjects[0].id;
@@ -529,6 +549,9 @@ export default {
       if (options.resetSubjectsOrder) {
         this.filter.subject_id = this.subjects[0].id;
       }
+      if (typeof this.filter.subject_id === "string") {
+        this.filter.subject_id = this.subjects.filter(subject => subject.title === this.filter.subject_id)[0].id;
+      }
       if (this.filter.mg > 0 && this.filter.subject_id > 0) {
         getMarkJournal({
           milgroup: this.filter.mg,
@@ -541,6 +564,12 @@ export default {
           })
           .catch(err => getError("оценок", err.response.status));
       }
+      localStorage.milgroupUpdate = this.filter.mg;
+      localStorage.subjectUpdate = parseInt(this.filter.subject_id, 10);
+      // eslint-disable-next-line prefer-destructuring
+      localStorage.dataRange0 = this.filter.dateRange[0];
+      // eslint-disable-next-line prefer-destructuring
+      localStorage.dataRange1 = this.filter.dateRange[1];
     },
     async getSubjects() {
       try {
@@ -669,6 +698,9 @@ export default {
             this.lessonDialogVisible = false;
             if (this.filter.mg) {
               this.fetchData({ resetSubjectsOrder: false });
+              localStorage.milgroupUpdate = this.filter.mg;
+              localStorage.subjectUpdate = this.filter.subject_id;
+              window.location.reload();
             }
           })
           .catch(err => patchError("занятия", err.response.status));
@@ -677,7 +709,12 @@ export default {
           .then(() => {
             postSuccess("занятия");
             this.lessonDialogVisible = false;
-            if (this.filter.mg) { this.fetchData({ resetSubjectsOrder: false }); }
+            if (this.filter.mg) {
+              this.fetchData({ resetSubjectsOrder: false });
+              localStorage.milgroupUpdate = this.filter.mg;
+              localStorage.subjectUpdate = this.filter.subject_id;
+              window.location.reload();
+            }
           })
           .catch(err => postError("занятия", err.response.status));
       }
