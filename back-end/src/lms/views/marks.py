@@ -90,6 +90,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=W0221
     def create(self, request, *args, **kwargs):
         request.data["values"] = [request.data.pop("value")]
+        request.data["changed_by"] = request.user.pk
         return super().create(request, *args, **kwargs)
 
     # override PUT - add mark to array
@@ -102,6 +103,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
                 status=status.HTTP_403_FORBIDDEN,
             )
         request.data["values"] = qs.get(id=pk).values + [request.data["value"]]
+        request.data["changed_by"] = request.user.pk
         return super().update(request, pk, partial=True, *args, **kwargs)
 
     # override PATCH - change last mark in array
@@ -115,6 +117,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
             )
         request.data["values"] = qs.get(id=pk).values
         request.data["values"][-1] = request.data["value"]
+        request.data["changed_by"] = request.user.pk
         return super().update(request, pk, partial=True, *args, **kwargs)
 
     # override DELETE - delete last mark in array
@@ -128,6 +131,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
             )
         request.data["values"] = qs.get(id=pk).values
         request.data["values"].pop(-1)
+        request.data["changed_by"] = request.user.pk
         if len(request.data["values"]) == 0:
             return super().destroy(request, pk, *args, **kwargs)
         return super().update(request, pk, *args, **kwargs)

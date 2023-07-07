@@ -5,6 +5,7 @@ from common.models.subjects import Subject
 from lms.models.common import Milgroup
 from lms.models.marks import Mark
 from lms.models.students import Student
+from lms.serializers.history import HistoricalRecordField
 
 from lms.serializers.lessons import LessonSerializer
 from lms.serializers.students import StudentShortSerializer
@@ -15,6 +16,8 @@ from lms.validators import PresentInDatabaseValidator
 class MarkSerializer(serializers.ModelSerializer):
     student = StudentShortSerializer(read_only=True)
     lesson = LessonSerializer(read_only=True)
+    history = HistoricalRecordField(read_only=True)
+    changed_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Mark
@@ -36,7 +39,7 @@ class MarkMutateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Mark
-        fields = ["student", "lesson", "values"]
+        fields = ["student", "lesson", "values", "changed_by"]
 
 
 class MarkJournalQuerySerializer(serializers.Serializer):

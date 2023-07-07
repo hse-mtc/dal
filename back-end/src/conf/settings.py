@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "dms",
     "lms",
     "tgbot",
+    "simple_history",
 ]
 
 if DEBUG:
@@ -72,6 +73,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 if DEBUG:
