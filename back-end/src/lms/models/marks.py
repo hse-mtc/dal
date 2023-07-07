@@ -27,9 +27,7 @@ class Mark(models.Model):
     )
     history = HistoricalRecords()
     changed_by = models.ForeignKey(
-        to=get_user_model(),
-        on_delete=models.CASCADE,
-        null=True
+        to=get_user_model(), on_delete=models.CASCADE, null=True
     )
 
     class Meta:
