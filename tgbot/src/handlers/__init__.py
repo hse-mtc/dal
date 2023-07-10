@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from aiogram.types.message import ContentType
 
-from .menu import menu_handler
+from .menu import menu_handler, start_handler
 
 from .auth import share_contact
 
@@ -17,6 +17,12 @@ def setup(dp: Dispatcher) -> None:
     dp.register_message_handler(
         menu_handler,
         *menu_handler.handler_filters,
+    )
+
+    # Register `/start`.
+    dp.register_message_handler(
+        start_handler,
+        *start_handler.handler_filters,
     )
 
     # Register `auth` handlers.
