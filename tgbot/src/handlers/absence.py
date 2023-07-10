@@ -54,7 +54,7 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
     students_by_id: dict[int, Student] = {student.id: student for student in students}
 
     for today_absence in today_absences:
-        students_by_id[today_absence["student"]["id"]].state = State(state_to_int(today_absence["excuse"]))
+        students_by_id[today_absence["student"]["id"]].state = State(state_str_to_enum(today_absence["excuse"]))
         students_by_id[today_absence["student"]["id"]].excuse = today_absence["excuse"]
 
     await state.set_data(students_by_id)
@@ -91,7 +91,8 @@ def match_states(state):
     elif state == State.PRESENT.value:
         return ""
 
-def state_to_int(state):
+
+def state_str_to_enum(state):
     if state == "LA":
         return State.ABSENT_LA.value
     elif state == "IL":
@@ -99,7 +100,7 @@ def state_to_int(state):
     elif state == "LE":
         return State.ABSENT_LE.value
     elif state == "":
-        return State.PRESENT.value3
+        return State.PRESENT.value
 
 
 async def silent_report_absence(state: FSMContext) -> None:
@@ -120,11 +121,8 @@ async def toggle_student_absence_status(
 
     new_state, id_ = map(int, callback_query.data.split())
     students_by_id = await state.get_data()
-    
     students_by_id[id_].state = State(new_state)
-    
     students_by_id[id_].excuse = match_states(students_by_id[id_].state.value)
-
     students = [student for _, student in students_by_id.items()]
     await state.set_data(students_by_id)
     await silent_report_absence(state)
