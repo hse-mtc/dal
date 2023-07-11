@@ -3,6 +3,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from lms.views.achievements import AchievementViewSet
+from lms.views.import_schedule import ImportScheduleViewSet
 from lms.views.personnel import SearchPersonnelUsersViewSet
 from lms.views.subjects import LessonSubjectViewSet
 from lms.views.uniforms import UniformViewSet
@@ -97,6 +98,7 @@ routers.register("rooms", RoomViewSet)
 routers.register("skills", SkillViewSet)
 routers.register("subjects", LessonSubjectViewSet)
 routers.register("uniforms", UniformViewSet)
+routers.register("import-schedule", ImportScheduleViewSet, basename="ImportSchedule")
 
 choices = [
     path("absence-excuses/", AbsenceExcuseChoicesList.as_view()),
