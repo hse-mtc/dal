@@ -39,6 +39,10 @@ export const LMS_URLS = {
     lesson: "lms/lessons/",
     journal: "lms/lesson-journal/",
   },
+  importSchedule: {
+    parseSchedule: "lms/import-schedule/parse-schedule/",
+    saveParsed: "lms/import-schedule/save-parsed/",
+  },
   marks: {
     mark: "lms/marks/",
     journal: "lms/mark-journal/",

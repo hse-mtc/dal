@@ -28,6 +28,9 @@ class AdminPanelPage extends Vue {
       label: "Управление ролями", name: "Управление ролями", to: "/apanel/roleManagement/", permissions: ["permissions.patch.all"],
     },
     {
+      label: "Импорт расписания", name: "Импорт расписания", to: "/apanel/schedule-import/", permissions: ["lessons.patch.all"],
+    },
+    {
       label: "Справочники", name: "Справочники", to: "/apanel/dictionaries/", permissions: ["publishers.patch.all", "authors.patch.all", "categories.patch.all", "milgroups.patch.all", "achievements.patch.all"],
     },
     {
