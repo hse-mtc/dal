@@ -236,6 +236,13 @@ export const constantRoutes = [
             hidden: true,
           },
           {
+            path: "schedule-import/",
+            name: "schedule-import",
+            component: () => import("@/components/Apanel/ImportSchedule.vue"),
+            meta: { title: "Импорт расписания", permissions: ["lessons.patch.all"] },
+            hidden: true,
+          },
+          {
             path: "dictionaries/",
             name: "dictionaries",
             component: () => import("@/components/Apanel/Dictionaries/index.vue"),
