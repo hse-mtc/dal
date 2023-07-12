@@ -243,53 +243,63 @@ class ImportScheduleViewSet(GenericViewSet):
                 teachers_cache[teacher] = teacher_filtered[0]
         parsed_lessons_list = []
         for elem in lessons_list:
-            lesson = {}
+            lesson = {
+                "input": {},
+                "parsed": {}
+            }
             lesson_name_input = elem["subject"]
+            lesson["input"]["lesson_name_input"] = lesson_name_input
+
             lesson_subject_title = guess_subject_name(lesson_name_input)
+            lesson["input"]["lesson_subject_title"] = lesson_subject_title
+
             lesson_type = guess_subject_type(lesson_name_input)
-            lesson["type"] = lesson_type
-            lesson["date"] = elem["date"]
-            lesson["ordinal"] = elem["ordinal"]
+            lesson["parsed"]["type"] = lesson_type
+
+            lesson["parsed"]["type"] = lesson_type
+            lesson["parsed"]["date"] = elem["date"]
+            lesson["parsed"]["ordinal"] = elem["ordinal"]
             if elem["milgroup"] in milgroups_cache:
                 milgroup = milgroups_cache[elem["milgroup"]]
-                lesson["milgroup_pk"] = milgroup.pk
-                lesson["milgroup_title"] = milgroup.title
+                lesson["parsed"]["milgroup_pk"] = milgroup.pk
+                lesson["parsed"]["milgroup_title"] = milgroup.title
                 subjects = Subject.objects.filter(
                     milspecialty=milgroup.milspecialty, title=lesson_subject_title
                 )
 
                 if len(subjects) > 0:
                     lesson_subject = subjects[0]
-                    lesson["subject_pk"] = lesson_subject.pk
-                    lesson["subject_title"] = lesson_subject.pk
+                    lesson["parsed"]["subject_pk"] = lesson_subject.pk
+                    lesson["parsed"]["subject_title"] = lesson_subject.pk
                 else:
-                    lesson["subject_pk"] = None
-                    lesson["subject_title"] = None
+                    lesson["parsed"]["subject_pk"] = None
+                    lesson["parsed"]["subject_title"] = None
             else:
-                lesson["milgroup_pk"] = None
-                lesson["milgroup_title"] = None
-                lesson["subject_pk"] = None
-                lesson["subject_title"] = None
+                lesson["parsed"]["milgroup_pk"] = None
+                lesson["parsed"]["milgroup_title"] = None
+                lesson["parsed"]["subject_pk"] = None
+                lesson["parsed"]["subject_title"] = None
 
             teacher_names = elem["teachers"]
+            lesson["input"]["teachers"] = teacher_names
             if len(teacher_names) > 0 and teacher_names[0] in teachers_cache:
                 teacher = teachers_cache[teacher_names[0]]
-                lesson["teacher_pk"] = teacher.pk
-                lesson[
+                lesson["parsed"]["teacher_pk"] = teacher.pk
+                lesson["parsed"][
                     "teacher_name"
                 ] = f"{teacher.surname} {teacher.name} {teacher.patronymic}"
             else:
-                lesson["teacher_pk"] = None
-                lesson["teacher_name"] = None
+                lesson["parsed"]["teacher_pk"] = None
+                lesson["parsed"]["teacher_name"] = None
 
             classrooms = elem["classrooms"]
             if len(classrooms) > 0 and classrooms[0] in classrooms_cache:
                 classroom = classrooms_cache[classrooms[0]]
-                lesson["classroom_pk"] = classroom.pk
-                lesson["classroom_title"] = classroom.title
+                lesson["parsed"]["classroom_pk"] = classroom.pk
+                lesson["parsed"]["classroom_title"] = classroom.title
             else:
-                lesson["classroom_pk"] = None
-                lesson["classroom_title"] = None
+                lesson["parsed"]["classroom_pk"] = None
+                lesson["parsed"]["classroom_title"] = None
 
             parsed_lessons_list.append(lesson)
         return Response(parsed_lessons_list)
