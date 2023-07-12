@@ -18,7 +18,7 @@
           </el-button>
           <el-button
             type="primary"
-            @click="onSaveParsed"
+            @click="onSaveParsed()"
           >
             Добавить в базу
           </el-button>
@@ -63,6 +63,7 @@ export default {
       return JSON.stringify(prettyVal, null, indent);
     },
     onScheduleUpload() {
+      this.$data.parsedSchedule = null;
       this.$refs.attachmentUpload.value = null;
       this.$refs.attachmentUpload.click();
     },
