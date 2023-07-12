@@ -1,5 +1,6 @@
+from django.http import HttpResponseBadRequest
 from drf_spectacular.utils import extend_schema, inline_serializer
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -200,6 +201,11 @@ class ImportScheduleViewSet(GenericViewSet):
         permission_classes=[LessonPermission],
     )
     def parse_schedule(self, request: Request):
+        if "content" not in request.data:
+            return Response(
+                {"detail": "Bad request: no file passed"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         file = request.data["content"]
 
         lessons_list = parse_timetable(file)
