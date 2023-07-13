@@ -44,6 +44,12 @@ class LessonMutateSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class LessonParsedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lesson
+        fields = "__all__"
+
+
 class LessonJournalQuerySerializer(serializers.Serializer):
     milgroup = serializers.IntegerField(
         required=True,
