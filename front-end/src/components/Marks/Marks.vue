@@ -5,7 +5,73 @@
         <h1>{{ $route.meta.title }}</h1>
       </el-row>
       <el-row class="filterRow" style="margin-bottom: 15px" :gutter="20">
-        <el-col :offset="11" :span="6">
+        <el-col :offset="6" :span="3">
+          <!-- Marks history -->
+          <el-button type="text" style="margin-left: 40px" @click="showMarksHistory">
+            История изменения оценок
+          </el-button>
+          <el-dialog title="История изменения оценок" :visible.sync="dialogHistoryVisible">
+            <PrimeTable :value="historyMarksData" style="margin-top: -20px">
+              <PrimeColumn
+                header="Студент"
+                :rowspan="2"
+                :field="(row) => row.student"
+                column-key="student"
+              />
+              <PrimeColumn
+                header="Оценка до"
+                :rowspan="2"
+                :field="(row) => row.before"
+                column-key="before"
+              >
+                <template #body="{ data }">
+                  <div class="mark-journal-cell" style="justify-content: left">
+                    <el-tag
+                      effect="dark"
+                      disable-transitions
+                      class="margin-x"
+                      :type="tagByMark(data.before)"
+                    >
+                      {{ data.before }}
+                    </el-tag>
+                  </div>
+                </template>
+              </PrimeColumn>
+              <PrimeColumn
+                header="Оценка после"
+                :rowspan="2"
+                :field="(row) => row.after"
+                column-key="after"
+              >
+                <template #body="{ data }">
+                  <div class="mark-journal-cell" style="justify-content: left">
+                    <el-tag
+                      effect="dark"
+                      disable-transitions
+                      class="margin-x"
+                      :type="tagByMark(data.after)"
+                    >
+                      {{ data.after }}
+                    </el-tag>
+                  </div>
+                </template>
+              </PrimeColumn>
+              <PrimeColumn
+                header="Изменил"
+                :rowspan="2"
+                :field="(row) => row.teacher"
+                column-key="teacher"
+              />
+              <PrimeColumn
+                header="Дата изменения"
+                :rowspan="2"
+                :field="(row) => row.date"
+                column-key="date"
+              />
+            </PrimeTable>
+          </el-dialog>
+        </el-col>
+        <el-col :offset="1" :span="6">
           <el-select
             v-model="filter.subject_id"
             filterable
@@ -335,6 +401,7 @@ import {
   postMark,
   putMark,
   deleteMark,
+  getMark,
 } from "@/api/mark";
 import { getSubjects } from "@/api/subjects-lms";
 import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
@@ -356,6 +423,7 @@ export default {
   mixins: [LessonTypesMixin],
   data() {
     return {
+      dialogHistoryVisible: false,
       lessonDialogVisible: false,
       editLessonFullname: "",
       editLesson: {
@@ -432,6 +500,22 @@ export default {
           },
         ],
       },
+      historyMarksData: [
+        {
+          student: "1",
+          before: 1,
+          after: 2,
+          teacher: "2",
+          date: "25.05.2009",
+        },
+        {
+          student: "3",
+          before: 3,
+          after: 2,
+          teacher: "4",
+          date: "25.05.2009",
+        },
+      ],
     };
   },
 
@@ -740,6 +824,15 @@ export default {
     openDrawer() {
       this.drawer = true;
       // fetch data
+    },
+    showMarksHistory() {
+      this.dialogHistoryVisible = true;
+      getMark()
+        .then(response => {
+          const historymark = response.data;
+          console.log("GGGG", historymark);
+        })
+        .catch(err => getError("оценок", err.response.status));
     },
   },
 };
