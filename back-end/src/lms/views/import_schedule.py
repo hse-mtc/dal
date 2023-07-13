@@ -1,11 +1,10 @@
-from django.http import HttpResponseBadRequest
-from drf_spectacular.utils import extend_schema, inline_serializer
-from rest_framework import serializers, status
-from rest_framework.decorators import action
+from drf_spectacular.utils import extend_schema
+from rest_framework import status, generics
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 
+from auth.models import Permission
+from auth.permissions import BasePermission
 from common.models.subjects import Subject
 from common.parsers import MultiPartWithJSONParser
 import datetime
@@ -17,9 +16,12 @@ import re
 
 from lms.models.lessons import Room, Lesson
 from lms.models.teachers import Teacher
+from lms.serializers.import_schedule import (
+    ImportParsedSerializer,
+    ParseScheduleSerializer,
+)
+from lms.serializers.lessons import LessonParsedSerializer
 from lms.views.lessons import LessonPermission
-
-CUR_YEAR = 2023
 
 month_to_num = {
     "января": 1,
@@ -182,25 +184,21 @@ def parse_timetable(timetable_path: str):
     return final
 
 
-ImportScheduleSerializerForSwagger = inline_serializer(
-    name="ImportSchedule",
-    fields={
-        "content": serializers.FileField(write_only=True),
-    },
-)
+class ImportSchedulePermission(BasePermission):
+    permission_class = "import-permission"
+    view_name_rus = "Импорт расписания из файла"
+    scopes = [
+        Permission.Scope.ALL,
+    ]
 
 
-@extend_schema(request=ImportScheduleSerializerForSwagger, tags=["import-schedule"])
-class ImportScheduleViewSet(GenericViewSet):
+@extend_schema(tags=["import-schedule"])
+class ParseScheduleView(generics.GenericAPIView):
     parser_classes = [MultiPartWithJSONParser]
+    permission_classes = [LessonPermission]
+    serializer_class = ParseScheduleSerializer
 
-    @action(
-        methods=["post"],
-        url_path="parse-schedule",
-        detail=False,
-        permission_classes=[LessonPermission],
-    )
-    def parse_schedule(self, request: Request):
+    def post(self, request: Request):
         if "content" not in request.data:
             return Response(
                 {"detail": "Bad request: no file passed"},
@@ -243,10 +241,7 @@ class ImportScheduleViewSet(GenericViewSet):
                 teachers_cache[teacher] = teacher_filtered[0]
         parsed_lessons_list = []
         for elem in lessons_list:
-            lesson = {
-                "input": {},
-                "parsed": {}
-            }
+            lesson = {"input": {}, "parsed": {}}
             lesson_name_input = elem["subject"]
             lesson["input"]["lesson_name_input"] = lesson_name_input
 
@@ -303,3 +298,24 @@ class ImportScheduleViewSet(GenericViewSet):
 
             parsed_lessons_list.append(lesson)
         return Response(parsed_lessons_list)
+
+
+@extend_schema(tags=["import-schedule"])
+class ImportParsedView(generics.GenericAPIView):
+    permission_classes = [ImportSchedulePermission]
+    serializer_class = ImportParsedSerializer
+
+    def post(self, request: Request):
+        valid_data = []
+        if "parsed" not in request.data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        for data in request.data["parsed"]:
+            serializer = LessonParsedSerializer(data=data)
+            if serializer.is_valid():
+                valid_data.append(data)
+        request.data["parsed"] = valid_data
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"created": len(valid_data)}, status=status.HTTP_201_CREATED)
