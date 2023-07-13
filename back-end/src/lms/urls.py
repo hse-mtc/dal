@@ -125,8 +125,8 @@ urlpatterns = [
     path("milgroup-leaders/", MilgroupLeadersView.as_view()),
     path("birthdays/students", StudentBirthdayAlertView.as_view()),
     path("birthdays/teachers", TeacherBirthdayAlertView.as_view()),
-    path("import-schedule/parse-schedule", ParseScheduleView.as_view()),
-    path("import-schedule/import-parsed", ImportParsedView.as_view()),
+    path("import-schedule/parse-schedule/", ParseScheduleView.as_view()),
+    path("import-schedule/import-parsed/", ImportParsedView.as_view()),
     # Choices lists.
     path("choices/", include(choices)),
 ]
