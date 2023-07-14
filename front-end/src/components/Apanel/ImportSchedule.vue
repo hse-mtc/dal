@@ -43,8 +43,6 @@ import { Message } from "element-ui";
 
 export default {
   name: "ImportScheduleComponent",
-  filters: {
-  },
   data() {
     return {
       parsedSchedule: null,
@@ -149,6 +147,7 @@ export default {
   border: 2px solid #ccc;
   padding: 10px;
   margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .text {
