@@ -827,7 +827,11 @@ export default {
     },
     showMarksHistory() {
       this.dialogHistoryVisible = true;
-      getMark()
+      getMark({
+        milgroup: this.filter.mg,
+        subject: this.filter.subject_id,
+        history: true,
+      })
         .then(response => {
           const historymark = response.data;
           console.log("GGGG", historymark);
