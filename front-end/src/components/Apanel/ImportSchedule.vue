@@ -38,7 +38,8 @@
 
 <script>
 import { patchError } from "@/utils/message";
-import { parseSchedulePost } from "@/api/import-schedule";
+import { parseSchedulePost, saveParsedPost } from "@/api/import-schedule";
+import { Message } from "element-ui";
 
 export default {
   name: "ImportScheduleComponent",
@@ -67,6 +68,12 @@ export default {
       this.$refs.attachmentUpload.value = null;
       this.$refs.attachmentUpload.click();
     },
+    messageImportedLessons(number) {
+      Message({
+        message: `Успешно добавлено ${number} занятий.`,
+        type: "success",
+      });
+    },
     onAttachmentPicked() {
       const formData = new FormData();
       if (this.$refs.attachmentUpload.files[0]) {
@@ -82,7 +89,12 @@ export default {
       }
     },
     onSaveParsed() {
-      return 0;
+      const requestData = JSON.parse(this.$data.parsedSchedule);
+      if (requestData) {
+        saveParsedPost(requestData).then(response => {
+          this.messageImportedLessons(response.data.created);
+        });
+      }
     },
   },
 };
