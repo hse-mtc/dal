@@ -3,7 +3,10 @@ from rest_framework import serializers
 from common.models.subjects import Subject
 
 from lms.models.common import Milgroup
-from lms.models.marks import Mark
+from lms.models.marks import (
+    Mark,
+    HistoricalMark,
+)
 from lms.models.students import Student
 from lms.serializers.history import HistoricalRecordField
 
@@ -72,6 +75,35 @@ class MarkShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mark
         fields = ["id", "values", "lesson"]
+
+
+class MarkHistorySerializer(serializers.ModelSerializer):
+    student = StudentShortSerializer(read_only=True)
+    teacher = serializers.SerializerMethodField(read_only=True)
+
+    after = serializers.SerializerMethodField(read_only=True)
+    before = serializers.SerializerMethodField(read_only=True)
+
+    def get_after(self, obj):
+        return obj.values
+
+    def get_before(self, obj):
+        prev_record = obj.prev_record
+        if prev_record:
+            return prev_record.values
+        return None
+
+    def get_teacher(self, obj):
+        return obj.changed_by
+
+    class Meta:
+        model = HistoricalMark
+        fields = [
+            "after",
+            "before",
+            "student",
+            "teacher",
+        ]
 
 
 class MarkJournalSerializer(serializers.ModelSerializer):
