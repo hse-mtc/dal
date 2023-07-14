@@ -35,11 +35,15 @@ from lms.serializers.lessons import LessonSerializer
 from lms.serializers.marks import (
     MarkSerializer,
     MarkMutateSerializer,
+    MarkHistorySerializer,
     MarkJournalSerializer,
     MarkJournalQuerySerializer,
 )
 
-from lms.filters.marks import MarkFilter
+from lms.filters.marks import (
+    MarkFilter,
+    MarkHistoryFilter,
+)
 
 from lms.utils.functions import milgroup_allowed_by_scope
 from lms.utils.mixins import QuerySetScopingMixin
@@ -70,17 +74,24 @@ class MarkPermission(BasePermission):
 @extend_schema(tags=["marks"])
 class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=too-many-public-methods
-    queryset = Mark.objects.all()
-
     permission_classes = [MarkPermission]
     scoped_permission_class = MarkPermission
 
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
-    filterset_class = MarkFilter
     search_fields = ["student__surname", "student__name", "student__patronymic"]
 
+    def get_queryset(self):
+        if "history" in self.request.data.keys():
+            self.filterset_class = MarkHistoryFilter
+            self.queryset = Mark.history.all()
+        self.filterset_class = MarkFilter
+        self.queryset = Mark.objects.all()
+        return self.queryset
+
     def get_serializer_class(self):
+        if "history" in self.request.data.keys():
+            return MarkHistorySerializer
         if self.action in MUTATE_ACTIONS:
             return MarkMutateSerializer
         return MarkSerializer
