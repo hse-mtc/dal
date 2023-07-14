@@ -19,8 +19,9 @@ from lms.models.teachers import Teacher
 from lms.serializers.import_schedule import (
     ImportParsedSerializer,
     ParseScheduleSerializer,
+    ImportParsedListSerializer,
 )
-from lms.serializers.lessons import LessonParsedSerializer
+
 from lms.views.lessons import LessonPermission
 
 month_to_num = {
@@ -256,7 +257,7 @@ class ParseScheduleView(generics.GenericAPIView):
             lesson["parsed"]["ordinal"] = elem["ordinal"]
             if elem["milgroup"] in milgroups_cache:
                 milgroup = milgroups_cache[elem["milgroup"]]
-                lesson["parsed"]["milgroup_pk"] = milgroup.pk
+                lesson["parsed"]["milgroup"] = milgroup.pk
                 lesson["parsed"]["milgroup_title"] = milgroup.title
                 subjects = Subject.objects.filter(
                     milspecialty=milgroup.milspecialty, title=lesson_subject_title
@@ -264,57 +265,63 @@ class ParseScheduleView(generics.GenericAPIView):
 
                 if len(subjects) > 0:
                     lesson_subject = subjects[0]
-                    lesson["parsed"]["subject_pk"] = lesson_subject.pk
+                    lesson["parsed"]["subject"] = lesson_subject.pk
                     lesson["parsed"]["subject_title"] = lesson_subject.pk
                 else:
-                    lesson["parsed"]["subject_pk"] = None
+                    lesson["parsed"]["subject"] = None
                     lesson["parsed"]["subject_title"] = None
             else:
-                lesson["parsed"]["milgroup_pk"] = None
+                lesson["parsed"]["milgroup"] = None
                 lesson["parsed"]["milgroup_title"] = None
-                lesson["parsed"]["subject_pk"] = None
+                lesson["parsed"]["subject"] = None
                 lesson["parsed"]["subject_title"] = None
 
             teacher_names = elem["teachers"]
             lesson["input"]["teachers"] = teacher_names
             if len(teacher_names) > 0 and teacher_names[0] in teachers_cache:
                 teacher = teachers_cache[teacher_names[0]]
-                lesson["parsed"]["teacher_pk"] = teacher.pk
+                lesson["parsed"]["teacher"] = teacher.pk
                 lesson["parsed"][
                     "teacher_name"
                 ] = f"{teacher.surname} {teacher.name} {teacher.patronymic}"
             else:
-                lesson["parsed"]["teacher_pk"] = None
+                lesson["parsed"]["teacher"] = None
                 lesson["parsed"]["teacher_name"] = None
 
             classrooms = elem["classrooms"]
             if len(classrooms) > 0 and classrooms[0] in classrooms_cache:
                 classroom = classrooms_cache[classrooms[0]]
-                lesson["parsed"]["classroom_pk"] = classroom.pk
-                lesson["parsed"]["classroom_title"] = classroom.title
+                lesson["parsed"]["room"] = classroom.pk
+                lesson["parsed"]["room_title"] = classroom.title
             else:
-                lesson["parsed"]["classroom_pk"] = None
-                lesson["parsed"]["classroom_title"] = None
+                lesson["parsed"]["room"] = None
+                lesson["parsed"]["room_title"] = None
 
             parsed_lessons_list.append(lesson)
-        return Response(parsed_lessons_list)
+        return Response({"lessons": parsed_lessons_list})
 
 
 @extend_schema(tags=["import-schedule"])
 class ImportParsedView(generics.GenericAPIView):
     permission_classes = [ImportSchedulePermission]
-    serializer_class = ImportParsedSerializer
+    serializer_class = ImportParsedListSerializer
 
     def post(self, request: Request):
         valid_data = []
-        if "parsed" not in request.data:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if "lessons" not in request.data:
+            return Response(
+                {"error": "No 'lessons' field found in data"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        for data in request.data["parsed"]:
-            serializer = LessonParsedSerializer(data=data)
-            if serializer.is_valid():
+        for data in request.data["lessons"]:
+            serializer = ImportParsedSerializer(data=data)
+            if serializer.is_valid(raise_exception=False):
                 valid_data.append(data)
-        request.data["parsed"] = valid_data
+            else:
+                print("Bad data:")
+                print(data)
+        request.data["lessons"] = valid_data
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
