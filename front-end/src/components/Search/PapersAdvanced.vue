@@ -21,6 +21,7 @@
           <el-select
             v-model="author"
             clearable
+            filterable
             placeholder="Все авторы"
             class="filters-select"
             @change="updateQuery"
@@ -40,6 +41,7 @@
           <el-select
             v-model="publisher"
             clearable
+            filterable
             placeholder="Все размещения"
             class="filters-select"
             @change="updateQuery"
