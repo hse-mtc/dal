@@ -24,6 +24,7 @@
       <el-select
         v-model="author"
         clearable
+        filterable
         placeholder="Все авторы"
         class="filters-select"
         @change="updateQuery"
@@ -44,6 +45,7 @@
       <el-select
         v-model="year"
         clearable
+        filterable
         placeholder="Все года"
         class="filters-select"
         @change="updateQuery"
@@ -64,6 +66,7 @@
       <el-select
         v-model="subject"
         clearable
+        filterable
         placeholder="Все предметы"
         class="filters-select"
         @change="updateQuery"
