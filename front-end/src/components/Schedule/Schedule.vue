@@ -110,8 +110,11 @@
                         </div>
 
                         <div>
-                          <svg-icon icon-class="map-marker-outline" />
-                          {{ data.lessons.find((x) => x.date === d).room.title }}
+                          <svg-icon
+                            v-if="data.lessons.find((x) => x.date === d).showIcon"
+                            icon-class="map-marker-outline"
+                          />
+                          {{ findRoom(data, d) }}
                         </div>
 
                         <el-tag
@@ -345,19 +348,39 @@ export default {
 
   watch: {
     milgroups(newValue) {
-      this.filter.mg = {
-        id: this.milgroups[0]?.id.toString(),
-        milspecialty: this.milgroups[0]?.milspecialty.id,
-      };
+      if (localStorage.milgroupUpdateId) {
+        this.filter.mg.id = localStorage.milgroupUpdateId;
+        this.filter.mg.milfaculty = localStorage.milgroupUpdateMilfaculty;
+        this.filter.mg.milspecialty = localStorage.milgroupUpdateMilspecialty;
+      } else {
+        this.filter.mg = {
+          id: this.milgroups[0]?.id.toString(),
+          milspecialty: this.milgroups[0]?.milspecialty.id,
+        };
+      }
+      if (localStorage.dataRange0) {
+        this.filter.dateRange[0] = localStorage.dataRange0;
+        this.filter.dateRange[1] = localStorage.dataRange1;
+      }
       this.fetchData();
     },
   },
 
   async created() {
-    this.filter.mg = {
-      id: this.milgroups[0]?.id.toString(),
-      milspecialty: this.milgroups[0]?.milspecialty.id,
-    };
+    if (localStorage.milgroupUpdateId) {
+      this.filter.mg.id = localStorage.milgroupUpdateId;
+      this.filter.mg.milfaculty = localStorage.milgroupUpdateMilfaculty;
+      this.filter.mg.milspecialty = localStorage.milgroupUpdateMilspecialty;
+    } else {
+      this.filter.mg = {
+        id: this.milgroups[0]?.id.toString(),
+        milspecialty: this.milgroups[0]?.milspecialty.id,
+      };
+    }
+    if (localStorage.dataRange0) {
+      this.filter.dateRange[0] = localStorage.dataRange0;
+      this.filter.dateRange[1] = localStorage.dataRange1;
+    }
     if (this.filter.mg.id !== undefined) {
       await this.fetchData();
     }
@@ -444,6 +467,13 @@ export default {
           this.schedule = response.data;
         })
         .catch(err => getError("расписания", err.response.status));
+      localStorage.milgroupUpdateId = this.filter.mg.id;
+      localStorage.milgroupUpdateMilfaculty = this.filter.mg.milfaculty;
+      localStorage.milgroupUpdateMilspecialty = this.filter.mg.milspecialty;
+      // eslint-disable-next-line prefer-destructuring
+      localStorage.dataRange0 = this.filter.dateRange[0];
+      // eslint-disable-next-line prefer-destructuring
+      localStorage.dataRange1 = this.filter.dateRange[1];
     },
 
     async getSubjects() {
@@ -549,6 +579,17 @@ export default {
           })
           .catch(err => deleteError("занятия", err.response.status));
       });
+    },
+
+    findRoom(data, d) {
+      if (data.lessons.find(x => x.date === d).room !== null) {
+        // eslint-disable-next-line no-param-reassign
+        data.lessons.find(x => x.date === d).showIcon = true;
+        return data.lessons.find(x => x.date === d).room.title;
+      }
+      // eslint-disable-next-line no-param-reassign
+      data.lessons.find(x => x.date === d).showIcon = false;
+      return null;
     },
   },
 };
