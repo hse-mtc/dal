@@ -30,22 +30,6 @@ class AuthMiddleware(BaseMiddleware):
 
         # User is already authorized.
         if await session_exists(chat_id=message.chat.id):
-            if message.text == "/start":
-                phone = await fetch_phone(chat_id=message.chat.id)
-                user = await fetch_students(many=False, params={"phone": phone})
-                assert isinstance(user, Student)
-
-                await message.reply(
-                    textwrap.dedent(f"""
-                        Здравия желаю, {user.fullname.strip()}.
-                        
-                        Взвод: {user.milgroup.title}.
-                        Должность: {getattr(Post, user.post).value}.
-                        
-                        Нажмите кнопку "{ButtonText.LIST_MILGROUP.value}", чтобы вывести список студентов Вашего взвода.
-                    """),
-                    reply_markup=list_milgroup_keyboard(),
-                )
             return
 
         # User is not authorized and is not trying to authorize, cancel handler.
