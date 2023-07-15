@@ -369,12 +369,12 @@ export default {
         `lessons.${method}.all`,
         {
           codename: `lessons.${method}.milfaculty`,
-          validator: () => this.userMilfaculty === this.schedule.milgroup.milfaculty,
+          validator: () => this.userMilfaculty === this.schedule.milgroup.milfaculty.id,
         },
         {
           codename: `lessons.${method}.milgroup`,
           validator: () => this.userMilgroups.some(
-            x => x === this.schedule.milgroup.milgroup,
+            x => x === this.schedule.milgroup.id,
           ),
         },
       ];
