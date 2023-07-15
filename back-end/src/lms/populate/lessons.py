@@ -64,7 +64,9 @@ def create_lessons(
     lessons = [
         {
             "type": Lesson.Type.LECTURE.value,
-            "subject": subjects[milgroups["1809"].milspecialty.pk]["Тактическая подготовка"],
+            "subject": subjects[milgroups["1809"].milspecialty.pk][
+                "Тактическая подготовка"
+            ],
             "room": rooms["510"],
             "milgroup": milgroups["1809"],
             "date": nearest_day.strftime(date_f),
@@ -72,7 +74,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.PRACTICE.value,
-            "subject": subjects[milgroups["1809"].milspecialty.pk]["Строевая подготовка"],
+            "subject": subjects[milgroups["1809"].milspecialty.pk][
+                "Строевая подготовка"
+            ],
             "room": rooms["Плац"],
             "milgroup": milgroups["1809"],
             "date": nearest_day.strftime(date_f),
@@ -80,7 +84,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.SEMINAR.value,
-            "subject": subjects[milgroups["1809"].milspecialty.pk]["Военная топография"],
+            "subject": subjects[milgroups["1809"].milspecialty.pk][
+                "Военная топография"
+            ],
             "room": rooms["504"],
             "milgroup": milgroups["1809"],
             "date": nearest_day.strftime(date_f),
@@ -88,7 +94,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.PRACTICE.value,
-            "subject": subjects[milgroups["1810"].milspecialty.pk]["Строевая подготовка"],
+            "subject": subjects[milgroups["1810"].milspecialty.pk][
+                "Строевая подготовка"
+            ],
             "room": rooms["Плац"],
             "milgroup": milgroups["1810"],
             "date": nearest_day.strftime(date_f),
@@ -96,7 +104,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.SEMINAR.value,
-            "subject": subjects[milgroups["1810"].milspecialty.pk]["Военная топография"],
+            "subject": subjects[milgroups["1810"].milspecialty.pk][
+                "Военная топография"
+            ],
             "room": rooms["504"],
             "milgroup": milgroups["1810"],
             "date": nearest_day.strftime(date_f),
@@ -104,7 +114,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.LECTURE.value,
-            "subject": subjects[milgroups["1810"].milspecialty.pk]["Тактическая подготовка"],
+            "subject": subjects[milgroups["1810"].milspecialty.pk][
+                "Тактическая подготовка"
+            ],
             "room": rooms["510"],
             "milgroup": milgroups["1810"],
             "date": nearest_day.strftime(date_f),
@@ -112,7 +124,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.LECTURE.value,
-            "subject": subjects[milgroups["1809"].milspecialty.pk]["Тактическая подготовка"],
+            "subject": subjects[milgroups["1809"].milspecialty.pk][
+                "Тактическая подготовка"
+            ],
             "room": rooms["510"],
             "milgroup": milgroups["1809"],
             "date": (nearest_day - timedelta(7)).strftime(date_f),
@@ -120,7 +134,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.PRACTICE.value,
-            "subject": subjects[milgroups["1809"].milspecialty.pk]["Строевая подготовка"],
+            "subject": subjects[milgroups["1809"].milspecialty.pk][
+                "Строевая подготовка"
+            ],
             "room": rooms["Плац"],
             "milgroup": milgroups["1809"],
             "date": (nearest_day - timedelta(7)).strftime(date_f),
@@ -128,7 +144,9 @@ def create_lessons(
         },
         {
             "type": Lesson.Type.SEMINAR.value,
-            "subject": subjects[milgroups["1809"].milspecialty.pk]["Военная топография"],
+            "subject": subjects[milgroups["1809"].milspecialty.pk][
+                "Военная топография"
+            ],
             "room": rooms["504"],
             "milgroup": milgroups["1809"],
             "date": (nearest_day - timedelta(7)).strftime(date_f),
