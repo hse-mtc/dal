@@ -77,6 +77,9 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     permission_classes = [MarkPermission]
     scoped_permission_class = MarkPermission
 
+    filterset_class = MarkFilter
+    queryset = Mark.objects.all()
+
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
     search_fields = ["student__surname", "student__name", "student__patronymic"]
@@ -84,9 +87,9 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     def get_queryset(self):
         if "history" in self.request.GET.keys():
             self.filterset_class = MarkHistoryFilter
-            return Mark.history.all()
-        self.filterset_class = MarkFilter
-        return Mark.objects.all()
+            self.queryset = Mark.history.all()
+        return super().get_queryset()
+        
 
     def get_serializer_class(self):
         if "history" in self.request.GET.keys():
