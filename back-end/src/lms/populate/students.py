@@ -371,11 +371,16 @@ def create_students(
     objects = {}
 
     for fields in students:
+        existing_students_with_user = Student.objects.filter(user=fields["user"])
+        if len(existing_students_with_user) > 0:
+            objects[fields["surname"]] = existing_students_with_user.first()
+            continue
         fields["contact_info"] = get_or_create(
             ContactInfo,
             **fields.pop("contact_info"),
         )
-        fields["birth_info"] = BirthInfo.objects.create(
+        fields["birth_info"] = get_or_create(
+            BirthInfo,
             **fields.pop("birth_info"),
         )
         fields["passport"] = get_or_create(
