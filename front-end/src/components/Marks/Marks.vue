@@ -10,12 +10,13 @@
           <el-button type="text" style="margin-left: 40px" @click="showMarksHistory">
             История изменения оценок
           </el-button>
-          <el-dialog title="История изменения оценок" :visible.sync="dialogHistoryVisible">
+          <el-dialog width="80%" :visible.sync="dialogHistoryVisible">
+            <span slot="title" style="font-size: 16pt">История изменения оценок</span>
             <PrimeTable :value="historyMarksData" style="margin-top: -20px">
               <PrimeColumn
                 header="Студент"
                 :rowspan="2"
-                :field="(row) => row.student"
+                :field="(row) => row.student_fullname"
                 column-key="student"
               />
               <PrimeColumn
@@ -27,12 +28,14 @@
                 <template #body="{ data }">
                   <div class="mark-journal-cell" style="justify-content: left">
                     <el-tag
+                      v-for="m in data.before"
+                      :key="m"
                       effect="dark"
                       disable-transitions
                       class="margin-x"
-                      :type="tagByMark(data.before)"
+                      :type="tagByMark(m)"
                     >
-                      {{ data.before }}
+                      {{ m }}
                     </el-tag>
                   </div>
                 </template>
@@ -45,27 +48,31 @@
               >
                 <template #body="{ data }">
                   <div class="mark-journal-cell" style="justify-content: left">
-                    <el-tag
-                      effect="dark"
-                      disable-transitions
-                      class="margin-x"
-                      :type="tagByMark(data.after)"
-                    >
-                      {{ data.after }}
-                    </el-tag>
+                    <div>
+                      <el-tag
+                        v-for="m in data.after"
+                        :key="m"
+                        effect="dark"
+                        disable-transitions
+                        class="margin-x"
+                        :type="tagByMark(m)"
+                      >
+                        {{ m }}
+                      </el-tag>
+                    </div>
                   </div>
                 </template>
               </PrimeColumn>
               <PrimeColumn
                 header="Изменил"
                 :rowspan="2"
-                :field="(row) => row.teacher"
+                :field="(row) => row.teacher_fullname"
                 column-key="teacher"
               />
               <PrimeColumn
                 header="Дата изменения"
                 :rowspan="2"
-                :field="(row) => row.date"
+                :field="(row) => formatDate(row.date)"
                 column-key="date"
               />
             </PrimeTable>
@@ -500,22 +507,7 @@ export default {
           },
         ],
       },
-      historyMarksData: [
-        {
-          student: "1",
-          before: 1,
-          after: 2,
-          teacher: "2",
-          date: "25.05.2009",
-        },
-        {
-          student: "3",
-          before: 3,
-          after: 2,
-          teacher: "4",
-          date: "25.05.2009",
-        },
-      ],
+      historyMarksData: [],
     };
   },
 
@@ -834,7 +826,7 @@ export default {
       })
         .then(response => {
           const historymark = response.data;
-          console.log("GGGG", historymark);
+          this.historyMarksData = historymark;
         })
         .catch(err => getError("оценок", err.response.status));
     },
