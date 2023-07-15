@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from common.models.subjects import Subject
 
+from lms.models.teachers import Teacher
 from lms.models.common import Milgroup
 from lms.models.marks import (
     Mark,
@@ -78,11 +79,13 @@ class MarkShortSerializer(serializers.ModelSerializer):
 
 
 class MarkHistorySerializer(serializers.ModelSerializer):
-    student = StudentShortSerializer(read_only=True)
-    teacher = serializers.SerializerMethodField(read_only=True)
+    student_fullname = serializers.SerializerMethodField(read_only=True)
+    teacher_fullname = serializers.SerializerMethodField(read_only=True)
 
     after = serializers.SerializerMethodField(read_only=True)
     before = serializers.SerializerMethodField(read_only=True)
+
+    date = serializers.SerializerMethodField(read_only=True)
 
     def get_after(self, obj):
         return obj.values
@@ -93,16 +96,26 @@ class MarkHistorySerializer(serializers.ModelSerializer):
             return prev_record.values
         return None
 
-    def get_teacher(self, obj):
-        return obj.changed_by
+    def get_student_fullname(self, obj):
+        return obj.student.fullname
+
+    def get_teacher_fullname(self, obj):
+        teacher = Teacher.objects.filter(user=obj.changed_by).first()
+        if teacher:
+            return teacher.fullname
+        return obj.changed_by.email
+
+    def get_date(self, obj):
+        return obj.history_date
 
     class Meta:
         model = HistoricalMark
         fields = [
+            "date",
             "after",
             "before",
-            "student",
-            "teacher",
+            "student_fullname",
+            "teacher_fullname",
         ]
 
 

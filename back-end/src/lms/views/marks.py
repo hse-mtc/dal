@@ -82,15 +82,14 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     search_fields = ["student__surname", "student__name", "student__patronymic"]
 
     def get_queryset(self):
-        if "history" in self.request.data.keys():
+        if "history" in self.request.GET.keys():
             self.filterset_class = MarkHistoryFilter
-            self.queryset = Mark.history.all()
+            return Mark.history.all()
         self.filterset_class = MarkFilter
-        self.queryset = Mark.objects.all()
-        return self.queryset
+        return Mark.objects.all()
 
     def get_serializer_class(self):
-        if "history" in self.request.data.keys():
+        if "history" in self.request.GET.keys():
             return MarkHistorySerializer
         if self.action in MUTATE_ACTIONS:
             return MarkMutateSerializer
