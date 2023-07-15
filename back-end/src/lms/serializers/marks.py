@@ -100,6 +100,8 @@ class MarkHistorySerializer(serializers.ModelSerializer):
         return obj.student.fullname
 
     def get_teacher_fullname(self, obj):
+        if obj.changed_by is None:
+            return None
         teacher = Teacher.objects.filter(user=obj.changed_by).first()
         if teacher:
             return teacher.fullname
