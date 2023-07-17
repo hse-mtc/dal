@@ -163,7 +163,7 @@ class TopicCard extends Vue {
 
   async deleteMaterial(id) {
     await this.$confirm(
-      "Вы уверены, что хотите удалить материал? Это действие не обратимо.",
+      "Вы уверены, что хотите удалить материал? Это действие необратимо.",
       "Подтверждение",
       {
         confirmButtonText: "Да",

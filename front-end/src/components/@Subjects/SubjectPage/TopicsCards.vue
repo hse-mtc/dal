@@ -19,7 +19,7 @@
       :list="topics"
       v-bind="dragOptions"
       :disabled="disableDrag"
-      @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
+      @change="({ moved }) => updateOrder(moved.element.id, oldTopicsList[moved.newIndex].order)"
     >
       <transition-group type="transition" name="flip-list">
         <TopicCard
@@ -36,7 +36,9 @@
 </template>
 
 <script>
-import { Component, Prop, Vue } from "vue-property-decorator";
+import {
+  Component, Prop, Vue, Watch,
+} from "vue-property-decorator";
 
 import Draggable from "vuedraggable";
 
@@ -72,7 +74,9 @@ class TopicsCards extends Vue {
   @Prop({ required: true }) shown
 
   topicsList = []
+  oldTopicsList = []
   topicsListLoaded = false
+  editMutated = false
 
   get topics() {
     if (!this.topicsListLoaded) {
@@ -104,6 +108,7 @@ class TopicsCards extends Vue {
       () => getTopics(this.sectionId),
       data => {
         this.topicsList = data;
+        this.oldTopicsList = JSON.parse(JSON.stringify(this.topicsList));
         this.topicsListLoaded = true;
       },
       "темы",
@@ -113,7 +118,10 @@ class TopicsCards extends Vue {
   async addTopic() {
     const res = await getAddRequest(
       addTopics,
-      data => { this.topicsList = data; },
+      data => {
+        this.topicsList = data;
+        this.oldTopicsList = JSON.parse(JSON.stringify(this.topicsList));
+      },
       "topicsList",
       "тему",
     ).call(this, {
@@ -141,10 +149,13 @@ class TopicsCards extends Vue {
     }
   }
 
-  editTopic({ id, ...newData }) {
-    getEditRequest(
+  async editTopic({ id, ...newData }) {
+    this.editMutated = getEditRequest(
       editTopics,
-      data => { this.topicsList = data; },
+      data => {
+        this.topicsList = data;
+        this.oldTopicsList = JSON.parse(JSON.stringify(this.topicsList));
+      },
       "topicsList",
       "тему",
     ).call(this, { id, ...newData });
@@ -161,21 +172,29 @@ class TopicsCards extends Vue {
       },
     );
 
-    getDeleteRequest(
+    await getDeleteRequest(
       deleteTopics,
-      data => { this.topicsList = data; },
+      data => {
+        this.topicsList = data;
+        this.oldTopicsList = JSON.parse(JSON.stringify(this.topicsList));
+      },
       "topicsList",
       "тему",
     ).call(this, id);
+    this.getTopics();
   }
 
   updateOrder(id, order) {
-    getOrderChangeRequest(
-      changeTopicOrder,
-      data => { this.topicsList = data; },
-      "topicsList",
-      "тему",
-    ).call(this, id, order);
+    changeTopicOrder(id, order);
+    this.getTopics();
+  }
+
+  @Watch("editMutated")
+  onEditMutatedChange() {
+    if (this.editMutated) {
+      this.getTopics();
+      this.editMutated = false;
+    }
   }
 }
 
