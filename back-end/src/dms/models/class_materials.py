@@ -27,7 +27,7 @@ class Topic(OrderedModel):
     section = models.ForeignKey(
         to=Section, on_delete=models.CASCADE, related_name="topics"
     )
-    order_with_respect_to = "section"
+    order_with_respect_to = "section__subject"
 
     class Meta(OrderedModel.Meta):
         verbose_name = "Topic"

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 
 import Draggable from "vuedraggable";
 
@@ -73,6 +73,7 @@ class TopicsCards extends Vue {
 
   topicsList = []
   topicsListLoaded = false
+  editMutated = false
 
   get topics() {
     if (!this.topicsListLoaded) {
@@ -139,10 +140,11 @@ class TopicsCards extends Vue {
         }
       });
     }
+    this.getTopics();
   }
 
-  editTopic({ id, ...newData }) {
-    getEditRequest(
+  async editTopic({ id, ...newData }) {
+    this.editMutated = await getEditRequest(
       editTopics,
       data => { this.topicsList = data; },
       "topicsList",
@@ -160,22 +162,31 @@ class TopicsCards extends Vue {
         type: "warning",
       },
     );
-
-    getDeleteRequest(
+    await getDeleteRequest(
       deleteTopics,
       data => { this.topicsList = data; },
       "topicsList",
       "тему",
     ).call(this, id);
+    this.getTopics();
   }
 
-  updateOrder(id, order) {
-    getOrderChangeRequest(
+  async updateOrder(id, order) {
+    await getOrderChangeRequest(
       changeTopicOrder,
       data => { this.topicsList = data; },
       "topicsList",
       "тему",
     ).call(this, id, order);
+    this.getTopics();
+  }
+
+  @Watch("editMutated")
+  onEditMutatedChange() {
+    if (this.editMutated) {
+      this.getTopics();
+      this.editMutated = false;
+    }
   }
 }
 
