@@ -89,7 +89,6 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
             self.filterset_class = MarkHistoryFilter
             self.queryset = Mark.history.all()
         return super().get_queryset()
-        
 
     def get_serializer_class(self):
         if "history" in self.request.GET.keys():
