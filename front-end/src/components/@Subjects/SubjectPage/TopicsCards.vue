@@ -19,7 +19,7 @@
       :list="topics"
       v-bind="dragOptions"
       :disabled="disableDrag"
-      @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
+      @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex, moved.element.section)"
     >
       <transition-group type="transition" name="flip-list">
         <TopicCard
@@ -70,6 +70,7 @@ import TopicCard from "./TopicCard.vue";
 class TopicsCards extends Vue {
   @Prop({ required: true }) sectionId
   @Prop({ required: true }) shown
+  @Prop({ required: true }) sections
 
   topicsList = []
   topicsListLoaded = false
@@ -171,13 +172,30 @@ class TopicsCards extends Vue {
     this.getTopics();
   }
 
-  async updateOrder(id, order) {
+  async updateOrder(id, order, sectionId) {
+    let newOrder = null;
+    const sectionOrder = this.sections.filter(section => section.id === sectionId)[0].order;
+    if (sectionOrder !== 0) {
+      const previousSectionId = this.sections.filter(section => section.order === sectionOrder - 1)[0].id;
+      let topicsArray = [];
+      await getFetchRequest(
+        () => getTopics(previousSectionId),
+        data => {
+          topicsArray = data;
+          this.topicsListLoaded = true;
+        },
+        "темы",
+      ).call(this);
+      newOrder = topicsArray[topicsArray.length - 1].order + 1 + order;
+    } else {
+      newOrder = order;
+    }
     await getOrderChangeRequest(
       changeTopicOrder,
       data => { this.topicsList = data; },
       "topicsList",
       "тему",
-    ).call(this, id, order);
+    ).call(this, id, newOrder);
     this.getTopics();
   }
 

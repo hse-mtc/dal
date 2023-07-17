@@ -68,6 +68,7 @@
       <TopicsCards
         :shown="opened"
         :section-id="sectionInfo.id"
+        :sections="sections"
       />
     </AZGuard>
   </div>
