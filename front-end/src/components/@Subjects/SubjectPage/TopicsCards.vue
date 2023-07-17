@@ -150,7 +150,7 @@ class TopicsCards extends Vue {
   }
 
   async editTopic({ id, ...newData }) {
-    this.editMutated = getEditRequest(
+    this.editMutated = await getEditRequest(
       editTopics,
       data => {
         this.topicsList = data;
