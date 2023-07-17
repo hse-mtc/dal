@@ -354,7 +354,10 @@ class RecoveryView(generics.GenericAPIView):
         data = request.data
         email = BaseUserManager.normalize_email(data["email"])
 
-        if not User.objects.filter(email=email).exists() or not User.objects.get(email=email).is_active:
+        if (
+            not User.objects.filter(email=email).exists()
+            or not User.objects.get(email=email).is_active
+        ):
             return Response(status=status.HTTP_200_OK)
 
         user = User.objects.get(email=email)
