@@ -36,7 +36,9 @@
 </template>
 
 <script>
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import {
+  Component, Prop, Vue, Watch,
+} from "vue-property-decorator";
 
 import Draggable from "vuedraggable";
 
