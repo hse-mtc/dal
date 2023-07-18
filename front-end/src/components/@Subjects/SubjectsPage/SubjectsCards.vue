@@ -9,6 +9,7 @@
         :id="card.id"
         :annotation="card.annotation"
         :title="card.title"
+        :milspecialty="milspecaltyCode(card.milspecialty)"
         :is-my-subject="userId === card.user.id"
         :owner="card.user.email"
       />
@@ -21,6 +22,7 @@ import { UserModule } from "@/store";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 import SubjectCard from "./SubjectCard/index.vue";
+import { getMilSpecialties } from "@/api/reference-book";
 
 @Component({
   name: "Subjects",
@@ -30,6 +32,17 @@ class Subjects extends Vue {
   @Prop({ default: () => [] }) cards
 
   get userId() { return UserModule.userId; }
+
+  async created() {
+    this.milspecialties = (await getMilSpecialties()).data;
+  }
+
+  milspecaltyCode(milspecialtyId) {
+    if (milspecialtyId) {
+      return `ВУС: ${this.milspecialties.filter(milspecialty => milspecialty.id === milspecialtyId)[0].code}`;
+    }
+    return "";
+  }
 }
 
 export default Subjects;
