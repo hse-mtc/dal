@@ -22,7 +22,6 @@ import { UserModule } from "@/store";
 import { Component, Prop, Vue } from "vue-property-decorator";
 
 import SubjectCard from "./SubjectCard/index.vue";
-import { getMilSpecialties } from "@/api/reference-book";
 
 @Component({
   name: "Subjects",
