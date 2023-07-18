@@ -822,6 +822,8 @@ export default {
       getMark({
         milgroup: this.filter.mg,
         subject: this.filter.subject_id,
+        date_from: this.filter.dateRange[0],
+        date_to: this.filter.dateRange[1],
         history: true,
       })
         .then(response => {
