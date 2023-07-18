@@ -32,6 +32,11 @@ class MarkHistoryFilter(FilterSet):
 
     archived = BooleanFilter(field_name="student__milgroup__archived")
 
+    subject = NumberFilter(field_name="lesson__subject__id")
+
+    date_from = DateFilter(field_name="lesson__date", lookup_expr="gte")
+    date_to = DateFilter(field_name="lesson__date", lookup_expr="lte")
+
     class Meta:
         model = HistoricalMark
         fields = ["student", "lesson", "archived"]
