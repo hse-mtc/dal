@@ -1,5 +1,6 @@
 from django_filters.rest_framework import (
     FilterSet,
+    DateFilter,
     NumberFilter,
     BooleanFilter,
 )
