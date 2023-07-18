@@ -110,6 +110,7 @@ class StudentBasicInfoSerializer(serializers.ModelSerializer):
             "contact_info",
             "status",
             "birth_info",
+            "groups",
         ]
 
 
