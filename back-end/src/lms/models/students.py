@@ -155,7 +155,7 @@ class Student(models.Model):
         return self.milgroup.milfaculty
 
     @property
-    def groups(self) -> str:
+    def groups(self) -> list[str]:
         return [group.name for group in self.user.groups.all()]
 
     @staticmethod

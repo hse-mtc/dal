@@ -314,7 +314,6 @@ export default {
     // eslint-disable-next-line max-len
     this.displayInfo.contact_info.personal_phone_number = this.maskPhone(this.displayInfo.contact_info.personal_phone_number);
     this.displayInfo.groupNames = this.displayInfo.groups.filter(e => e !== "Студент").join(", ");
-    console.log(this.displayInfo);
   },
   methods: {
     formatDate: date => moment(date).format("DD.MM.YYYY"),
