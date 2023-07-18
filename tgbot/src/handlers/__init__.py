@@ -22,7 +22,7 @@ def setup(dp: Dispatcher) -> None:
     # Register `/start`.
     dp.register_message_handler(
         start_handler,
-        *start_handler.handler_filters,
+        commands=['start'],
     )
 
     # Register `auth` handlers.

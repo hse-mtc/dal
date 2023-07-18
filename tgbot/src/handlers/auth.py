@@ -1,5 +1,3 @@
-import textwrap
-
 from aiogram.types import Message
 
 from api.student import (
@@ -12,6 +10,7 @@ from api.auth import (
     authorize,
 )
 
+from keyboards.message_texts import get_hello_message
 from keyboards.button_texts import ButtonText
 from keyboards.reply import (
     list_milgroup_keyboard,
@@ -49,13 +48,6 @@ async def share_contact(message: Message) -> None:
     assert isinstance(user, Student)
 
     await message.reply(
-        textwrap.dedent(f"""
-            Здравия желаю, {user.fullname.strip()}.
-            
-            Взвод: {user.milgroup.title}.
-            Должность: {getattr(Post, user.post).value}.
-            
-            Нажмите кнопку "{ButtonText.LIST_MILGROUP.value}", чтобы вывести список студентов Вашего взвода.
-        """),
+        get_hello_message(user.fullname.strip(), user.milgroup.title, getattr(Post, user.post).value),
         reply_markup=list_milgroup_keyboard(),
     )

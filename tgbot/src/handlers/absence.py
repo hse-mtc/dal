@@ -99,7 +99,7 @@ def state_str_to_enum(state):
         return State.ABSENT_IL.value
     elif state == "LE":
         return State.ABSENT_LE.value
-    elif state == "":
+    else:
         return State.PRESENT.value
 
 
@@ -123,7 +123,6 @@ async def toggle_student_absence_status(
     students_by_id = await state.get_data()
     students_by_id[id_].state = State(new_state)
     students_by_id[id_].excuse = match_states(students_by_id[id_].state.value)
-    students = [student for _, student in students_by_id.items()]
     await state.set_data(students_by_id)
     await silent_report_absence(state)
     await callback_query.message.edit_reply_markup(
