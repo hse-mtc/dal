@@ -176,6 +176,8 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         result = super(ApplicantViewSet, self).update(request, **kwargs)
+        applicant.user.campuses = [request.data["university_info"]["campus"]]
+        applicant.user.save()
         updated_applicant = Applicant.objects.get(pk=kwargs["pk"])
         generate_documents = request.data["generate_documents"]
 
