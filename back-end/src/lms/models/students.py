@@ -154,6 +154,10 @@ class Student(models.Model):
     def milfaculty(self) -> Milfaculty:
         return self.milgroup.milfaculty
 
+    @property
+    def groups(self) -> str:
+        return [group.name for group in self.user.groups.all()]
+
     @staticmethod
     def from_applicant(
         applicant: Applicant,
