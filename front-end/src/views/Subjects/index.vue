@@ -25,6 +25,7 @@
       <SubjectsCards
         v-if="subjects.length"
         :cards="subjects"
+        :milspecialties="milspecialties"
       />
       <div v-else>
         Предметов с такой ВУС не найдено.

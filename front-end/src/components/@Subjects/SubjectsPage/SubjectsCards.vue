@@ -30,12 +30,9 @@ import { getMilSpecialties } from "@/api/reference-book";
 })
 class Subjects extends Vue {
   @Prop({ default: () => [] }) cards
+  @Prop({ default: () => [] }) milspecialties
 
   get userId() { return UserModule.userId; }
-
-  async created() {
-    this.milspecialties = (await getMilSpecialties()).data;
-  }
 
   milspecaltyCode(milspecialtyId) {
     if (milspecialtyId) {
