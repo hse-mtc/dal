@@ -23,6 +23,28 @@ def get_applicant_permissions():
     return res
 
 
+def get_journalist_permissions():
+    values = [
+        "marks.get.milgroup",
+        "marks.post.milgroup",
+        "marks.put.milgroup",
+        "marks.patch.milgroup",
+        "marks.delete.milgroup",
+    ]
+    res = []
+    for val in values:
+        viewset, method, scope = val.split(".")
+        # We can't use .get(codename=val) here as codename is stored at runtime
+        res.append(
+            Permission.objects.get(
+                viewset=viewset,
+                method=method,
+                scope=int(getattr(Permission.Scope, scope.upper())),
+            )
+        )
+    return res
+
+
 def get_student_permissions():
     values = [
         "students.get.self",
