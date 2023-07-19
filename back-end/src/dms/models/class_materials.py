@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Max
 
 from ordered_model.models import OrderedModel
 
@@ -28,6 +29,18 @@ class Topic(OrderedModel):
         to=Section, on_delete=models.CASCADE, related_name="topics"
     )
     order_with_respect_to = "section__subject"
+
+    def save(self, *args, **kwargs):
+        is_new = not self.id  # flag if the object is new
+        order = Topic.objects.filter(section__order__lte=self.section.order).aggregate(Max('order')).get('order__max')
+        if order is not None:
+            order = order + 1
+        else:
+            order = 0
+        super().save(*args, **kwargs)
+
+        if is_new:
+            self.to(order)
 
     class Meta(OrderedModel.Meta):
         verbose_name = "Topic"
