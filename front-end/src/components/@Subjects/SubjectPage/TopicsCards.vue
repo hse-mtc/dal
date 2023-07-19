@@ -184,6 +184,7 @@ class TopicsCards extends Vue {
   }
 
   updateOrder(id, order) {
+    this.getTopics();
     changeTopicOrder(id, order);
     this.getTopics();
   }
