@@ -10,8 +10,7 @@ from api.auth import (
     authorize,
 )
 
-from keyboards.message_texts import get_hello_message
-from keyboards.button_texts import ButtonText
+from messages.message_texts import get_hello_message
 from keyboards.reply import (
     list_milgroup_keyboard,
     share_contact_keyboard,
@@ -21,7 +20,7 @@ from keyboards.reply import (
 async def share_contact(message: Message) -> None:
     chat_id = message.chat.id
     phone = message.contact["phone_number"]
-    
+
     if phone.startswith("+"):
         phone = phone[1:]
 
@@ -48,6 +47,8 @@ async def share_contact(message: Message) -> None:
     assert isinstance(user, Student)
 
     await message.reply(
-        get_hello_message(user.fullname.strip(), user.milgroup.title, getattr(Post, user.post).value),
+        get_hello_message(
+            user.fullname.strip(), user.milgroup.title, getattr(Post, user.post).value
+        ),
         reply_markup=list_milgroup_keyboard(),
     )

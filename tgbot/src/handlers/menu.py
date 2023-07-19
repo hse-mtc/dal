@@ -1,6 +1,6 @@
 from aiogram.types import Message
 
-from keyboards.message_texts import get_hello_message
+from messages.message_texts import get_hello_message
 from keyboards.reply import list_milgroup_keyboard
 from keyboards.button_texts import ButtonText
 
@@ -13,8 +13,10 @@ from api.student import (
 
 
 async def menu_handler(message: Message) -> None:
-    await message.answer('Возврат в главное меню. Выберите нужное действие',
-                         reply_markup=list_milgroup_keyboard())
+    await message.answer(
+        "Возврат в главное меню. Выберите нужное действие",
+        reply_markup=list_milgroup_keyboard(),
+    )
 
 
 menu_handler.handler_filters = [
@@ -29,11 +31,10 @@ async def start_handler(message: Message) -> None:
         assert isinstance(user, Student)
 
         await message.reply(
-            get_hello_message(user.fullname.strip(), user.milgroup.title, getattr(Post, user.post).value),
+            get_hello_message(
+                user.fullname.strip(),
+                user.milgroup.title,
+                getattr(Post, user.post).value,
+            ),
             reply_markup=list_milgroup_keyboard(),
         )
-
-
-start_handler.handler_filters = [
-    lambda message: message.text == ButtonText.MAIN_MENU.value,
-]

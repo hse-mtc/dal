@@ -1,10 +1,6 @@
 import typing as tp
 
-from aiogram.types import (
-    ReplyKeyboardMarkup,
-    KeyboardButton,
-)
-
+from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from keyboards.button_texts import ButtonText
 
 

@@ -1,6 +1,5 @@
 import asyncio
 import operator
-import typing as tp
 from datetime import datetime
 
 from aiogram.types import Message
@@ -54,7 +53,9 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
     students_by_id: dict[int, Student] = {student.id: student for student in students}
 
     for today_absence in today_absences:
-        students_by_id[today_absence["student"]["id"]].state = State(state_str_to_enum(today_absence["excuse"]))
+        students_by_id[today_absence["student"]["id"]].state = State(
+            state_str_to_enum(today_absence["excuse"])
+        )
         students_by_id[today_absence["student"]["id"]].excuse = today_absence["excuse"]
 
     await state.set_data(students_by_id)
@@ -126,7 +127,8 @@ async def toggle_student_absence_status(
     await state.set_data(students_by_id)
     await silent_report_absence(state)
     await callback_query.message.edit_reply_markup(
-        reply_markup=student_absence_keyboard(id_, new_state),)
+        reply_markup=student_absence_keyboard(id_, new_state),
+    )
 
 
 toggle_student_absence_status.handler_filters = [
