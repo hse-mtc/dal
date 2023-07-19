@@ -22,7 +22,7 @@ def setup(dp: Dispatcher) -> None:
     # Register `/start`.
     dp.register_message_handler(
         start_handler,
-        commands=['start'],
+        commands=["start"],
     )
 
     # Register `auth` handlers.
@@ -35,15 +35,15 @@ def setup(dp: Dispatcher) -> None:
     dp.register_message_handler(
         list_milgroup,
         *list_milgroup.handler_filters,
-        state='*',
+        state="*",
     )
     dp.register_callback_query_handler(
         toggle_student_absence_status,
         *toggle_student_absence_status.handler_filters,
-        state='*',
+        state="*",
     )
     dp.register_message_handler(
         report_absence,
         *report_absence.handler_filters,
-        state='*',
+        state="*",
     )

@@ -1,25 +1,13 @@
-import textwrap
-
 from aiogram.dispatcher.middlewares import BaseMiddleware
 from aiogram.dispatcher.handler import CancelHandler
 from aiogram.types import Message
 
-from api.auth import fetch_phone, session_exists
-from api.student import (
-    fetch_students,
-    Post,
-    Student,
-)
+from api.auth import session_exists
 
-from keyboards.button_texts import ButtonText
-from keyboards.reply import (
-    list_milgroup_keyboard,
-    share_contact_keyboard,
-)
+from keyboards.reply import share_contact_keyboard
 
 
 class AuthMiddleware(BaseMiddleware):
-
     def __init__(self) -> None:
         super().__init__()
 
