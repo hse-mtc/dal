@@ -88,6 +88,8 @@ class MarkHistorySerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField(read_only=True)
 
     def get_after(self, obj):
+        if obj.history_type == "-":
+            return None
         return obj.values
 
     def get_before(self, obj):
@@ -102,9 +104,14 @@ class MarkHistorySerializer(serializers.ModelSerializer):
     def get_teacher_fullname(self, obj):
         if obj.changed_by is None:
             return None
+        # Get Teacher fullname
         teacher = Teacher.objects.filter(user=obj.changed_by).first()
         if teacher:
             return teacher.fullname
+        # Get Student journalist fullname
+        journalist = Student.objects.filter(user=obj.changed_by).first()
+        if journalist:
+            return journalist.fullname
         return obj.changed_by.email
 
     def get_date(self, obj):
