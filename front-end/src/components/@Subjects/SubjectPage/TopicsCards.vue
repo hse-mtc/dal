@@ -88,7 +88,7 @@ class TopicsCards extends Vue {
   get dragOptions() {
     return {
       animation: 200,
-      group: "description",
+      group: this.sectionId,
       disabled: false,
       ghostClass: "ghost",
       easing: "cubic-bezier(1, 0.5, 0.8, 1)",
