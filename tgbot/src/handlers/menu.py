@@ -25,16 +25,15 @@ menu_handler.handler_filters = [
 
 
 async def start_handler(message: Message) -> None:
-    if message.text == ButtonText.START.value:
-        phone = await fetch_phone(chat_id=message.chat.id)
-        user = await fetch_students(many=False, params={"phone": phone})
-        assert isinstance(user, Student)
+    phone = await fetch_phone(chat_id=message.chat.id)
+    user = await fetch_students(many=False, params={"phone": phone})
+    assert isinstance(user, Student)
 
-        await message.reply(
-            get_hello_message(
-                user.fullname.strip(),
-                user.milgroup.title,
-                getattr(Post, user.post).value,
-            ),
-            reply_markup=list_milgroup_keyboard(),
-        )
+    await message.reply(
+        get_hello_message(
+            user.fullname.strip(),
+            user.milgroup.title,
+            getattr(Post, user.post).value,
+        ),
+        reply_markup=list_milgroup_keyboard(),
+    )
