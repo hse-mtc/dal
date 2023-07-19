@@ -89,7 +89,7 @@ def match_states(state):
         return "IL"
     elif state == State.ABSENT_LE.value:
         return "LE"
-    elif state == State.PRESENT.value:
+    else:
         return ""
 
 
