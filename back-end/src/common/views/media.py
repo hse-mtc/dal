@@ -19,7 +19,6 @@ class StaticMediaView(APIView):
 
     def get(self, request, request_path, *args, **kwargs):
         request_path = posixpath.normpath(request_path).lstrip("/")
-        print(self.media_root)
         filename = self.media_root / request_path
         if os.path.exists(filename):
             basename = os.path.basename(filename)
