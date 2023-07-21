@@ -5,7 +5,6 @@
 </template>
 
 <script>
-import request from "@/utils/request";
 
 import { downloadError } from "@/utils/message";
 
@@ -33,17 +32,11 @@ export default {
       this.isDataLoading = true;
 
       try {
-        const { data } = await request({
-          url: this.url,
-          method: "GET",
-          responseType: "blob",
-        });
-
+        this.isDataLoading = true;
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(new Blob([data]));
+        link.href = this.url;
         link.download = this.fileName;
         link.click();
-        URL.revokeObjectURL(link.href);
       } catch (e) {
         downloadError("файла", e.response?.status);
       }
