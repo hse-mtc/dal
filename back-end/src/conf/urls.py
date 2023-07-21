@@ -27,7 +27,10 @@ urlpatterns += [
 
 # Serve media files (user uploads)
 urlpatterns += [
-    re_path(r"^media/(?P<request_path>.*)$", StaticMediaView.as_view(media_root=settings.MEDIA_ROOT))
+    re_path(
+        r"^media/(?P<request_path>.*)$",
+        StaticMediaView.as_view(media_root=settings.MEDIA_ROOT),
+    )
 ]
 
 if settings.DEBUG:
