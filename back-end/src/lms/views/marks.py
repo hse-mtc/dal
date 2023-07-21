@@ -74,25 +74,17 @@ class MarkPermission(BasePermission):
 @extend_schema(tags=["marks"])
 class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=too-many-public-methods
+    queryset = Mark.objects.all()
+
     permission_classes = [MarkPermission]
     scoped_permission_class = MarkPermission
 
-    filterset_class = MarkFilter
-    queryset = Mark.objects.all()
-
     filter_backends = [DjangoFilterBackend, SearchFilter]
 
+    filterset_class = MarkFilter
     search_fields = ["student__surname", "student__name", "student__patronymic"]
 
-    def get_queryset(self):
-        if "history" in self.request.GET.keys():
-            self.filterset_class = MarkHistoryFilter
-            self.queryset = Mark.history.all()
-        return super().get_queryset()
-
     def get_serializer_class(self):
-        if "history" in self.request.GET.keys():
-            return MarkHistorySerializer
         if self.action in MUTATE_ACTIONS:
             return MarkMutateSerializer
         return MarkSerializer
@@ -207,6 +199,48 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
                 return data["student"] == personnel.id
             case Teacher():
                 return False
+            case _:
+                assert False, "Unhandled Personnel type"
+
+
+@extend_schema(tags=["marks-history"])
+class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
+    # pylint: disable=too-many-public-methods
+    permission_classes = [MarkPermission]
+    scoped_permission_class = MarkPermission
+
+    filterset_class = MarkHistoryFilter
+    queryset = Mark.history.all()
+    serializer_class = MarkHistorySerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+
+    search_fields = ["student__surname", "student__name", "student__patronymic"]
+
+    def handle_scope_milfaculty(self, personnel: Personnel):
+        match personnel:
+            case Student() | Teacher():
+                milfaculty = personnel.milfaculty
+            case _:
+                assert False, "Unhandled Personnel type"
+
+        return self.queryset.filter(student__milgroup__milfaculty=milfaculty)
+
+    def handle_scope_milgroup(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(student__milgroup=personnel.milgroup)
+            case Teacher():
+                return self.queryset.filter(student__milgroup__in=personnel.milgroups)
+            case _:
+                assert False, "Unhandled Personnel type"
+
+
+    def handle_scope_self(self, personnel: Personnel):
+        match personnel:
+            case Student():
+                return self.queryset.filter(student=personnel)
+            case Teacher():
+                return self.queryset.none()
             case _:
                 assert False, "Unhandled Personnel type"
 

@@ -409,6 +409,7 @@ import {
   putMark,
   deleteMark,
   getMark,
+  getMarkHistory,
 } from "@/api/mark";
 import { getSubjects } from "@/api/subjects-lms";
 import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
@@ -819,7 +820,7 @@ export default {
     },
     showMarksHistory() {
       this.dialogHistoryVisible = true;
-      getMark({
+      getMarkHistory({
         milgroup: this.filter.mg,
         subject: this.filter.subject_id,
         date_from: this.filter.dateRange[0],
