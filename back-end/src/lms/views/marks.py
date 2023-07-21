@@ -234,7 +234,6 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
             case _:
                 assert False, "Unhandled Personnel type"
 
-
     def handle_scope_self(self, personnel: Personnel):
         match personnel:
             case Student():
