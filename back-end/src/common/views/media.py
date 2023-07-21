@@ -18,7 +18,7 @@ class StaticMediaView(APIView):
         super().__init__(*args, **kwargs)
 
     def get(self, request, request_path, *args, **kwargs):
-        request_path = posixpath.normpath(request_path).lstrip('/')
+        request_path = posixpath.normpath(request_path).lstrip("/")
         print(self.media_root)
         filename = self.media_root / request_path
         if os.path.exists(filename):
@@ -28,7 +28,7 @@ class StaticMediaView(APIView):
                 name = ""
             else:
                 name = file_object.get().name
-            response = FileResponse(open(filename, 'rb'), filename=name)
+            response = FileResponse(open(filename, "rb"), filename=name)
             return response
         else:
             return HttpResponseNotFound("<h1>Page not found</h1>")
