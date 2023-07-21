@@ -28,12 +28,11 @@
         <td class="border-box">
           <pre> {{ parsedSchedule
             ? (pretty(parsedSchedule, 4))
-            : "Загрузите файл расписания, нажав на кнопку..."  }} </pre>
+            : "Загрузите файл расписания, нажав на кнопку..." }} </pre>
         </td>
       </tr>
     </table>
   </div>
-
 </template>
 
 <script>

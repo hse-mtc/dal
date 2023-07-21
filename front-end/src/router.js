@@ -262,7 +262,7 @@ export const constantRoutes = [
         path: "applications/",
         name: "applications",
         component: () => import("@/views/ApplicantsDocuments/index.vue"),
-        meta: { title: "Учет поступления документов", icon: "table", permissions: ["applicants.get.self"] },
+        meta: { title: "Учет поступления документов", icon: "table", permissions: ["applicants.get.all"] },
       },
       {
         path: "/applicant-homepage/",
