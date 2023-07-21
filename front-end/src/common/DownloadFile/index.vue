@@ -32,7 +32,6 @@ export default {
       this.isDataLoading = true;
 
       try {
-        this.isDataLoading = true;
         const link = document.createElement("a");
         link.href = this.url;
         link.download = this.fileName;
