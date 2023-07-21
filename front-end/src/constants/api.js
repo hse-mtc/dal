@@ -45,6 +45,7 @@ export const LMS_URLS = {
   },
   marks: {
     mark: "lms/marks/",
+    markHistory: "lms/marks-history/",
     journal: "lms/mark-journal/",
   },
   punishment: {

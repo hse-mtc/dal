@@ -2,12 +2,20 @@ import request from "@/utils/request";
 import { BASE_API_URL, LMS_URLS } from "@/constants/api";
 
 const {
-  marks: { mark, journal },
+  marks: { mark, journal, markHistory },
 } = LMS_URLS;
 
 export function getMark(params) {
   return request({
     url: BASE_API_URL + mark,
+    method: "get",
+    params,
+  });
+}
+
+export function getMarkHistory(params) {
+  return request({
+    url: BASE_API_URL + markHistory,
     method: "get",
     params,
   });
