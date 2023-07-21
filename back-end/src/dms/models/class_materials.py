@@ -32,7 +32,9 @@ class Topic(OrderedModel):
 
     def save(self, *args, **kwargs):
         is_new = not self.id  # flag if the object is new
-        order = Topic.objects.filter(section__order__lte=self.section.order).aggregate(Max('order')).get('order__max')
+        order = Topic.objects.filter(
+            section__subject=self.section.subject,
+            section__order__lte=self.section.order).aggregate(Max('order')).get('order__max')
         if order is not None:
             order = order + 1
         else:
