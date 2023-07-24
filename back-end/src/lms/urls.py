@@ -27,6 +27,7 @@ from lms.views.lessons import (
 from lms.views.marks import (
     MarkViewSet,
     MarkJournalView,
+    MarkHistoryViewSet,
 )
 from lms.views.punishments import (
     PunishmentViewSet,
@@ -88,7 +89,7 @@ routers.register("achievements", AchievementViewSet)
 routers.register("encouragements", EncouragementViewSet)
 routers.register("lessons", LessonViewSet)
 routers.register("marks", MarkViewSet)
-routers.register("marks-history", MarkViewSet)
+routers.register("marks-history", MarkHistoryViewSet)
 routers.register("milfaculties", MilfacultyViewSet)
 routers.register("milgroups", MilgroupViewSet)
 routers.register("milspecialties", MilspecialtyViewSet)
