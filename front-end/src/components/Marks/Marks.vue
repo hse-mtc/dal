@@ -10,9 +10,23 @@
           <el-button type="text" style="margin-left: 40px" @click="showMarksHistory">
             История изменения оценок
           </el-button>
-          <el-dialog width="80%" :visible.sync="dialogHistoryVisible">
-            <span slot="title" style="font-size: 16pt">История изменения оценок</span>
+          <el-dialog width="90%" :visible.sync="dialogHistoryVisible">
+            <span slot="title" style="font-size: 16pt">
+              История изменения оценок: {{ getSubjectTitle(filter.subject_id) }}
+            </span>
             <PrimeTable :value="historyMarksData" style="margin-top: -20px">
+              <PrimeColumn
+                header="Дата изменения"
+                :rowspan="2"
+                :field="(row) => formatDateTime(row.update_date)"
+                column-key="date"
+              />
+              <PrimeColumn
+                header="Дата занятия"
+                :rowspan="2"
+                :field="(row) => formatDate(row.lesson_date)"
+                column-key="date"
+              />
               <PrimeColumn
                 header="Студент"
                 :rowspan="2"
@@ -66,14 +80,8 @@
               <PrimeColumn
                 header="Изменил"
                 :rowspan="2"
-                :field="(row) => row.teacher_fullname"
+                :field="(row) => row.changed_by_fullname"
                 column-key="teacher"
-              />
-              <PrimeColumn
-                header="Дата изменения"
-                :rowspan="2"
-                :field="(row) => formatDate(row.date)"
-                column-key="date"
               />
             </PrimeTable>
           </el-dialog>
@@ -408,7 +416,6 @@ import {
   postMark,
   putMark,
   deleteMark,
-  getMark,
   getMarkHistory,
 } from "@/api/mark";
 import { getSubjects } from "@/api/subjects-lms";
@@ -588,7 +595,11 @@ export default {
       }
       return [];
     },
+    getSubjectTitle(subjectId) {
+      return this.subjects.filter(item => item.id === subjectId)[0].title;
+    },
     formatDate: d => moment(d).format("DD.MM.YY"),
+    formatDateTime: d => moment(d).format("DD.MM.YY hh:mm"),
     tagByLessonType(type) {
       switch (type) {
         case "LE":
