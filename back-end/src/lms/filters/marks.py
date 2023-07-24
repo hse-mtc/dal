@@ -5,10 +5,7 @@ from django_filters.rest_framework import (
     BooleanFilter,
 )
 
-from lms.models.marks import (
-    Mark,
-    HistoricalMark,
-)
+from lms.models.marks import Mark
 
 
 class MarkFilter(FilterSet):
@@ -39,5 +36,5 @@ class MarkHistoryFilter(FilterSet):
     date_to = DateFilter(field_name="lesson__date", lookup_expr="lte")
 
     class Meta:
-        model = HistoricalMark
+        model = Mark.history.model
         fields = ["student", "lesson", "archived"]
