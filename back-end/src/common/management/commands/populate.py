@@ -290,7 +290,7 @@ class Command(BaseCommand):
         create_marks(
             lessons=lessons,
             students=students,
-            user_to_create_marks=User.objects.get(email="superuser@mail.com"),
+            teachers=teachers,
         )
 
         create_uniforms(milfaculties=milfaculties)
