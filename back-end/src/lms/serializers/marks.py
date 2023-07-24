@@ -4,9 +4,7 @@ from common.models.subjects import Subject
 
 from lms.models.teachers import Teacher
 from lms.models.common import Milgroup
-from lms.models.marks import (
-    Mark,
-)
+from lms.models.marks import Mark
 from lms.models.students import Student
 from lms.serializers.history import HistoricalRecordField
 
