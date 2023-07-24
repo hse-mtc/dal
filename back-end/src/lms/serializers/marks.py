@@ -6,7 +6,6 @@ from lms.models.teachers import Teacher
 from lms.models.common import Milgroup
 from lms.models.marks import (
     Mark,
-    HistoricalMark,
 )
 from lms.models.students import Student
 from lms.serializers.history import HistoricalRecordField
@@ -79,13 +78,14 @@ class MarkShortSerializer(serializers.ModelSerializer):
 
 
 class MarkHistorySerializer(serializers.ModelSerializer):
-    student_fullname = serializers.SerializerMethodField(read_only=True)
-    teacher_fullname = serializers.SerializerMethodField(read_only=True)
+    student_fullname = serializers.CharField(source="student.fullname", read_only=True)
+    changed_by_fullname = serializers.SerializerMethodField(read_only=True)
 
     after = serializers.SerializerMethodField(read_only=True)
     before = serializers.SerializerMethodField(read_only=True)
 
-    date = serializers.SerializerMethodField(read_only=True)
+    update_date = serializers.DateTimeField(source="history_date", read_only=True)
+    lesson_date = serializers.DateField(source="lesson.date", read_only=True)
 
     def get_after(self, obj):
         if obj.history_type == "-":
@@ -98,10 +98,7 @@ class MarkHistorySerializer(serializers.ModelSerializer):
             return prev_record.values
         return None
 
-    def get_student_fullname(self, obj):
-        return obj.student.fullname
-
-    def get_teacher_fullname(self, obj):
+    def get_changed_by_fullname(self, obj):
         if obj.changed_by is None:
             return None
         # Get Teacher fullname
@@ -114,17 +111,15 @@ class MarkHistorySerializer(serializers.ModelSerializer):
             return journalist.fullname
         return obj.changed_by.email
 
-    def get_date(self, obj):
-        return obj.history_date
-
     class Meta:
-        model = HistoricalMark
+        model = Mark.history.model
         fields = [
-            "date",
+            "update_date",
             "after",
             "before",
             "student_fullname",
-            "teacher_fullname",
+            "changed_by_fullname",
+            "lesson_date",
         ]
 
 
