@@ -204,7 +204,7 @@ class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
 
 
 @extend_schema(tags=["marks-history"])
-class MarkViewSet(QuerySetScopingMixin, ModelViewSet):
+class MarkHistoryViewSet(QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=too-many-public-methods
     permission_classes = [MarkPermission]
     scoped_permission_class = MarkPermission
