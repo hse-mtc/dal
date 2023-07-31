@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Max
+from django.dispatch import receiver
 
 from ordered_model.models import OrderedModel
 
@@ -40,13 +41,14 @@ class Topic(OrderedModel):
             .aggregate(Max("order"))
             .get("order__max")
         )
-        if order is not None:
-            order = order + 1
-        else:
-            order = 0
         super().save(*args, **kwargs)
 
         if is_new:
+            if order is not None:
+                order = order + 1
+            else:
+                order = 0
+
             self.to(order)
 
     class Meta(OrderedModel.Meta):
@@ -55,6 +57,24 @@ class Topic(OrderedModel):
 
     def __str__(self):
         return self.title
+
+
+def update_topics_in_section(instance: Section):
+    tops = Topic.objects.filter(section__subject=instance.subject)
+    print("gop")
+    for i, elem in enumerate(tops.order_by("section__order", "order")):
+        elem.order = i
+        elem.save()
+
+
+@receiver(models.signals.post_save, sender=Section)
+def update_section_order(sender: Section, instance: Section, **kwargs):
+    # pylint: disable=unused-argument
+    if not isinstance(instance, Section):
+        return
+    update_topics_in_section(instance)
+
+
 
 
 class ClassMaterial(Document):
