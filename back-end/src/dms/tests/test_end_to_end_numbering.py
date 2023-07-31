@@ -1,9 +1,6 @@
-import json
-import os
-from typing import Any, Union
+from typing import Union
 
-from uuid import UUID
-from django.test.client import Client, encode_multipart, BOUNDARY
+from django.test.client import Client
 
 import pytest
 
