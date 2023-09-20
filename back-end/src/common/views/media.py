@@ -13,7 +13,7 @@ class StaticMediaView(APIView):
     permission_classes = [AllowAny]
     media_root = ""
 
-    def __init__(self, media_root: Path, *args, **kwargs):
+    def __init__(self, media_root: Path = "/", *args, **kwargs):
         self.media_root = media_root
         super().__init__(*args, **kwargs)
 
