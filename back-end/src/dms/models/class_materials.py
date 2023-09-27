@@ -61,7 +61,6 @@ class Topic(OrderedModel):
 
 def update_topics_in_section(instance: Section):
     tops = Topic.objects.filter(section__subject=instance.subject)
-    print("gop")
     for i, elem in enumerate(tops.order_by("section__order", "order")):
         elem.order = i
         elem.save()
