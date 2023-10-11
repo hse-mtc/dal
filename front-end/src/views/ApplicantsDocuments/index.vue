@@ -169,6 +169,7 @@ export default {
     // returns empty array, which always leads to default value being selected.
     // This is broken in so many ways :(
     const selectedCampus = UserModule.campuses.length > 0 ? UserModule.campuses[0] : null;
+    const date = new Date();
     return {
       data: [],
       programs: [],
@@ -180,7 +181,7 @@ export default {
       selectedCampus,
       selectedProgram: this.$route.query.program,
       selectedExportOption: APPLICATIONS_EXPORT_OPTIONS.DEF,
-      currentYear: new Date().getFullYear(),
+      currentYear: date.getMonth() >= 9 ? date.getFullYear() + 1 : date.getFullYear(),
     };
   },
   computed: {
@@ -193,7 +194,7 @@ export default {
     },
     admissionYears() {
       const possibleYears = [];
-      for (let year = 2022; year <= new Date().getFullYear(); year += 1) {
+      for (let year = 2022; year <= new Date().getFullYear() + 1; year += 1) {
         possibleYears.push(year);
       }
       return possibleYears;
