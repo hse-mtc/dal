@@ -194,7 +194,9 @@ export default {
     },
     admissionYears() {
       const possibleYears = [];
-      for (let year = 2022; year <= new Date().getFullYear() + 1; year += 1) {
+      const date = new Date();
+      const maxYear = date.getMonth() >= 9 ? date.getFullYear() + 1 : date.getFullYear()
+      for (let year = 2022; year <= maxYear; year += 1) {
         possibleYears.push(year);
       }
       return possibleYears;
