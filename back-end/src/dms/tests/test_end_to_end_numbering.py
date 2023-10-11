@@ -21,14 +21,15 @@ def save_each(objs: list[models.Model]):
         elem.save()
 
 
-def create_section(su_client: Client, title: str, subject: Section):
+def create_section(su_client: Client, title: str, subject: Subject):
     response = su_client.post(
         "/api/dms/sections/",
         {"title": title, "subject": subject.pk},
         content_type="application/json",
     )
-    assert response.status_code == 200
-    return response
+    assert response.status_code == 201
+    created_id = response.json()["id"]
+    return Section.objects.get(pk=created_id)
 
 
 def move_section(su_client: Client, section: Section, position: int):
@@ -41,17 +42,32 @@ def move_section(su_client: Client, section: Section, position: int):
     return response
 
 
-@pytest.mark.django_db
-def test_sections_creating(su_client):
-    ms1 = Milspecialty(title="Test milspec", code="123456", available_for=["MO"])
-    save_each([ms1])
-    subject1 = Subject(title="Subject 1", annotation="Annotation for subject 1", milspecialty=ms1)
-    subject2 = Subject(title="Subject 2", annotation="Annotation for subject 2", milspecialty=ms1)
-    save_each([subject1, subject2])
+def clean_up_class_materials():
+    Topic.objects.all().delete()
+    Section.objects.all().delete()
+    Subject.objects.all().delete()
 
 
-@pytest.mark.django_db
-def test_sections_reordering(su_client):
+def sample_data():
+    # ------
+    # Subject 1:
+    #   Section 1:
+    #     Topic 1
+    #     Topic 2
+    #     Topic 3
+    #   Section 2:
+    #     Topic 4
+    #     Topic 5
+    #   Section 3:
+    #     Topic 6
+    #     Topic 7
+    #   Section 4:
+    # Subject 2:
+    #   Section 4:
+    #     Topic 8
+    #   Section 5:
+    #     Topic 9
+
     ms1 = Milspecialty(title="Test milspec", code="123456", available_for=["MO"])
     save_each([ms1])
     subject1 = Subject(title="Subject 1", annotation="Annotation for subject 1", milspecialty=ms1)
@@ -78,25 +94,37 @@ def test_sections_reordering(su_client):
 
     save_each([topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9])
 
-    # ------
+    return (
+        [section1, section2, section3, section4, section5, section6],
+        [topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9]
+    )
 
-    # Subject 1:
-    #   Section 1:
-    #     Topic 1
-    #     Topic 2
-    #     Topic 3
-    #   Section 2:
-    #     Topic 4
-    #     Topic 5
-    #   Section 3:
-    #     Topic 6
-    #     Topic 7
-    #   Section 4:
-    # Subject 2:
-    #   Section 4:
-    #     Topic 8
-    #   Section 5:
-    #     Topic 9
+
+@pytest.mark.django_db
+def test_sections_creating(su_client):
+    ms1 = Milspecialty(title="Test milspec", code="123456", available_for=["MO"])
+    save_each([ms1])
+    subject1 = Subject(title="Subject 1", annotation="Annotation for subject 1", milspecialty=ms1)
+    subject2 = Subject(title="Subject 2", annotation="Annotation for subject 2", milspecialty=ms1)
+    save_each([subject1, subject2])
+    section1 = create_section(su_client, title="Section 1", subject=subject1)
+    section2 = create_section(su_client, title="Section 2", subject=subject1)
+    check_order([section1, section2])
+
+    section3 = create_section(su_client, title="Section 3", subject=subject2)
+    section4 = create_section(su_client, title="Section 4", subject=subject2)
+    section5 = create_section(su_client, title="Section 5", subject=subject2)
+    check_order([section3, section4, section5])
+
+    clean_up_class_materials()
+
+
+@pytest.mark.django_db
+def test_sections_reordering(su_client):
+    (
+        [section1, section2, section3, section4, section5, section6],
+        [topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9]
+    ) = sample_data()
 
     check_order([section1, section2, section3, section4])
     check_order([topic1, topic2, topic3, topic4, topic5, topic6, topic7])
@@ -173,3 +201,4 @@ def test_sections_reordering(su_client):
     check_order([section6, section5])
     check_order([topic9, topic8])
 
+    clean_up_class_materials()
