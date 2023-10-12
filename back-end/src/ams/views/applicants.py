@@ -5,6 +5,7 @@ from pathlib import Path
 import requests
 
 from django.db.models.query import QuerySet
+from drf_spectacular.utils import OpenApiResponse
 
 from rest_framework import status
 from rest_framework import pagination
@@ -14,12 +15,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.renderers import BaseRenderer
+from django.core.files.base import File as DjangoFile
 
 from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema, OpenApiParameter
 
+from common.models.universities import Campus
 from conf import settings
 
 from common.constants import MUTATE_ACTIONS
@@ -38,23 +40,14 @@ from ams.serializers.applicants import (
 )
 
 from ams.filters.applicants import ApplicantFilter
+from dms.models.documents import File
+from dms.serializers.documents import FileSerializer
 
 from lms.utils.mixins import QuerySetScopingMixin
-from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
 from ams.utils.export.comp_sel_protocol import generate_applicants_detail
 from django.db import transaction
-
-
-class XLSXRenderer(BaseRenderer):
-    media_type = "application/xlsx"
-    format = "xlsx"
-    charset = None
-    render_style = "binary"
-
-    def render(self, data, accepted_media_type=None, renderer_context=None):
-        return data
 
 
 class ApplicantPermission(BasePermission):
@@ -232,7 +225,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         request: Request,
         excel_generator: tp.Callable[[QuerySet, QuerySet], Path],
     ) -> Response:
-        if "campus" not in request.query_params:
+        if "campus" not in request.query_params or request.query_params["campus"] not in Campus:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         students = self.get_queryset()
@@ -250,17 +243,18 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             students.filter(university_info__program__faculty__campus=campus),
             milspecialties,
         )
+
+        campus_name = dict(Campus.choices)[campus]
+        response_file_name = f"{campus_name}.xlsx"
         with open(path, "rb") as file:
-            export = file.read()
+            django_file = DjangoFile(file, name=response_file_name)
+            file = File(name=django_file.name)
+            file.content.save(name=django_file.name, content=django_file)
+            file.save()
         path.unlink(missing_ok=True)
 
         return Response(
-            export,
-            headers={
-                "Content-Disposition": "attachment; filename=export.xlsx",
-            },
-            content_type="application/xlsx",
-            status=status.HTTP_200_OK,
+            FileSerializer(file).data
         )
 
     def generate_docs(
@@ -299,13 +293,16 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             OpenApiParameter(
                 name="mtc_admission_year", description="Filter by admission year"
             ),
-        ]
+        ],
+        responses={
+            201: OpenApiResponse(response=FileSerializer),
+            400: OpenApiResponse(),
+        },
     )
     @action(
         methods=["get"],
         url_path="applications/export",
         detail=False,
-        renderer_classes=[XLSXRenderer],
         permission_classes=[ApplicantPermission],
     )
     def applications_export(self, request: Request) -> Response:
@@ -323,13 +320,16 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             OpenApiParameter(
                 name="mtc_admission_year", description="Filter by admission year"
             ),
-        ]
+        ],
+        responses={
+            201: OpenApiResponse(response=FileSerializer),
+            400: OpenApiResponse(),
+        },
     )
     @action(
         methods=["get"],
         url_path="applications/competitive-selection-protocol/export",
         detail=False,
-        renderer_classes=[XLSXRenderer],
         permission_classes=[ApplicantPermission],
     )
     def generate_comp_sel_protocol(self, request: Request) -> Response:
@@ -348,13 +348,16 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             OpenApiParameter(
                 name="mtc_admission_year", description="Filter by admission year"
             ),
-        ]
+        ],
+        responses={
+            201: OpenApiResponse(response=FileSerializer),
+            400: OpenApiResponse(),
+        },
     )
     @action(
         methods=["get"],
         url_path="applications/applicants-detail/export",
         detail=False,
-        renderer_classes=[XLSXRenderer],
         permission_classes=[ApplicantPermission],
     )
     def generate_applicants_detail_excel(self, request: Request) -> Response:
@@ -364,7 +367,6 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         methods=["get"],
         url_path="generate-docs",
         detail=False,
-        renderer_classes=[XLSXRenderer],
         permission_classes=[ApplicantDocsPermission],
     )
     def applications_generate_docs(self, request: Request) -> Response:

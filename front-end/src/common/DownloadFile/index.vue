@@ -7,6 +7,7 @@
 <script>
 
 import { downloadError } from "@/utils/message";
+import request from "@/utils/request";
 
 export default {
   name: "DownloadFile",
@@ -19,6 +20,10 @@ export default {
       type: String,
       default: "",
     },
+    requireAuth: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return { isDataLoading: false };
@@ -30,12 +35,20 @@ export default {
       }
 
       this.isDataLoading = true;
-
+      let fileUrl = this.url;
+      if (this.requireAuth) {
+        const res = await request({
+          url: this.url,
+          method: "GET",
+        });
+        fileUrl = res.data.content;
+      }
       try {
         const link = document.createElement("a");
-        link.href = this.url;
+        link.href = fileUrl;
         link.download = this.fileName;
         link.click();
+        URL.revokeObjectURL(link.href);
       } catch (e) {
         downloadError("файла", e.response?.status);
       }

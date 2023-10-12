@@ -81,6 +81,7 @@
             <DownloadFile
               :url="makeExportLink()"
               :file-name="makeExportFilename()"
+              :require-auth="true"
             >
               <i class="el-icon-download" /> Экспорт:
               {{ selectedExportOption }}
