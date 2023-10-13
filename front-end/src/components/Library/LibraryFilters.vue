@@ -75,7 +75,7 @@
           v-for="item in subjects"
           :key="item.id"
           :value="item.id"
-          :label="`${item.title} ${milspecialties.find(x => x.id === item.milspecialty).code}`"
+          :label="`${item.title} ${milspecialties.find(x => x.id === item.milspecialty)?.code}`"
         />
       </el-select>
     </div>

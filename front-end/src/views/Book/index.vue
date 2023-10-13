@@ -48,7 +48,6 @@
                     <svg-icon
                       icon-class="close"
                       style="font-size: 24px; margin-right: 8px"
-                      @click="deleteSection"
                     />
 
                     Удалить
@@ -64,7 +63,9 @@
               :color="COLORS.gray_2"
             >
               {{
-                surnameWithInitials(authors.filter((a) => a.id === authorId)[0])
+                authors.filter((a) => a.id === authorId)[0]
+                  ? surnameWithInitials(authors.filter((a) => a.id === authorId)[0])
+                  : ""
               }}
             </CustomText>
             <div class="additional-info">
@@ -73,7 +74,7 @@
                 variant="header"
               >
                 {{
-                  publishers.filter((p) => p.id === book.publishers[0])[0].name
+                  publishers.filter((p) => p.id === book.publishers[0])[0]?.name
                 }}
               </CustomText>
               <template v-if="book.page_count">
@@ -183,7 +184,14 @@ export default {
     surnameWithInitials,
     getSubjectTitle(subjectId) {
       const subject = this.subjects.find(item => item.id === subjectId);
-      return `${subject.title} ${this.milspecialties.find(x => x.id === subject.milspecialty).code}`;
+      if (!subject) {
+        return "";
+      }
+      const milSpec = this.milspecialties.find(x => x.id === subject.milspecialty);
+      if (!milSpec) {
+        return "";
+      }
+      return `${subject.title} ${milSpec.code}`;
     },
     fetchData() {
       this.loading = true;
@@ -209,10 +217,12 @@ export default {
               message: "Удаление завершено",
             });
             this.$router.push(`${this.prevRoute.path}`);
+          }).catch(() => {
+            this.$message.error("Ошибка удаления");
           });
         })
         .catch(() => {
-          this.$message.error("Ошибка удаления");
+          console.log("Closing canceled");
         });
     },
   },
