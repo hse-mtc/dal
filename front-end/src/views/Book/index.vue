@@ -74,7 +74,7 @@
                 variant="header"
               >
                 {{
-                  publishers.filter((p) => p.id === book.publishers[0])[0]?.name
+                  publishers.filter((p) => p.id === book.publishers[0])[0]?.name || ""
                 }}
               </CustomText>
               <template v-if="book.page_count">
