@@ -4,6 +4,26 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse
 from rest_framework.response import Response
 
+from urllib.parse import unquote
+
+
+class BearerTokenMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Check if there's no Authorization header but there's an Authorization cookie
+        if (
+            not request.META.get("HTTP_AUTHORIZATION")
+            and "Authorization" in request.COOKIES
+        ):
+            request.META["HTTP_AUTHORIZATION"] = unquote(
+                request.COOKIES["Authorization"]
+            )
+
+        response = self.get_response(request)
+        return response
+
 
 class LoggingMiddleware:
     def __init__(self, get_response):

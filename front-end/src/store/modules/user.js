@@ -10,6 +10,9 @@ import store, { UserModule } from "@/store";
 import { login, getUser } from "@/api/user";
 
 import { getError } from "@/utils/message";
+
+import Cookies from "js-cookie";
+
 import { tokenService } from "../../utils/tokenService";
 
 @Module({ store, name: "user", namespaced: true })
@@ -36,6 +39,7 @@ class User extends VuexModule {
   SET_TOKENS({ access, refresh }) {
     this.accessToken = access;
     this.refreshToken = refresh;
+    Cookies.set("Authorization", `Bearer ${access}`);
 
     tokenService.setTokens({ access, refresh });
   }
@@ -44,6 +48,7 @@ class User extends VuexModule {
   RESET_TOKENS() {
     this.accessToken = "";
     this.refreshToken = "";
+    Cookies.remove("Authorization");
 
     tokenService.clearTokens();
   }

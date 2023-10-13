@@ -65,6 +65,7 @@ if DEBUG:
 
 MIDDLEWARE = [
     "common.middleware.LoggingMiddleware",
+    'common.middleware.BearerTokenMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
