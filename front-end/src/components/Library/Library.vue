@@ -288,7 +288,7 @@ export default {
           this.lodash.pickBy({
             title: data.bookName,
             annotation: data.annotation,
-            publication_year: moment(data.publishDate).format("YYYY"),
+            publication_year: data.publishDate,
             authors: data.authors,
             publishers: data.publishers,
             subjects: data.subjects,
