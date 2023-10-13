@@ -36,23 +36,12 @@
         <template v-else-if="key === 'publishDate'">
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item prop="publishDate">
-                <span class="InputsBase_title_1SHIu">Год издания</span>
-                <el-date-picker
-                  v-model="formValues.publishDate"
-                  type="date"
-                  :picker-options="{
-                    disabledDate(time) {
-                      return time.getTime() > Date.now();
-                    },
-                    firstDayOfWeek: 1,
-                  }"
-                  format="dd.MM.yyyy"
-                  value-format="yyyy-MM-dd"
-                  placeholder="Выберите дату"
-                  style="width: 100%"
-                />
-              </el-form-item>
+              <SelectInput
+                v-model="formValues.publishDate"
+                :options="years"
+                title="Дата издания"
+                filterable
+              />
             </el-col>
             <el-col :span="12">
               <el-form-item>
@@ -147,6 +136,13 @@ export default {
     };
   },
   computed: {
+    years() {
+      return Array(
+        new Date().getUTCFullYear() - (new Date().getUTCFullYear() - 100),
+      )
+        .fill("")
+        .map((v, idx) => new Date().getUTCFullYear() - idx);
+    },
     subjects() {
       const { milspecialties } = ReferenceModule;
       return SubjectsModule.subjects.map(subject => ({
