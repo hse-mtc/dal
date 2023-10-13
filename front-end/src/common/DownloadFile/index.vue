@@ -48,7 +48,6 @@ export default {
         link.href = fileUrl;
         link.download = this.fileName;
         link.click();
-        URL.revokeObjectURL(link.href);
       } catch (e) {
         downloadError("файла", e.response?.status);
       }
