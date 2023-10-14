@@ -59,11 +59,14 @@ class Topic(OrderedModel):
         return self.title
 
 
-def update_topics_in_section(instance: Section):
+def update_topics_in_subject_of_section(instance: Section):
     tops = Topic.objects.filter(section__subject=instance.subject)
-    for i, elem in enumerate(tops.order_by("section__order", "order")):
-        elem.order = i
-        elem.save()
+    updated_instances = []
+
+    for index, instance in enumerate(tops.order_by("section__order", "order")):
+        instance.order = index
+        updated_instances.append(instance)
+    Topic.objects.bulk_update(updated_instances, ["order"])
 
 
 @receiver(models.signals.post_save, sender=Section)
@@ -71,9 +74,15 @@ def update_section_order(sender: Section, instance: Section, **kwargs):
     # pylint: disable=unused-argument
     if not isinstance(instance, Section):
         return
-    update_topics_in_section(instance)
+    update_topics_in_subject_of_section(instance)
 
 
+@receiver(models.signals.post_delete, sender=Section)
+def update_section_order(sender: Section, instance: Section, **kwargs):
+    # pylint: disable=unused-argument
+    if not isinstance(instance, Section):
+        return
+    update_topics_in_subject_of_section(instance)
 
 
 class ClassMaterial(Document):
