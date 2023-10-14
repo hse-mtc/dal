@@ -4,7 +4,6 @@ from django.test.client import Client
 
 import pytest
 
-from common.models.milspecialties import Milspecialty
 from common.models.subjects import Subject
 from dms.models.class_materials import Section, Topic
 from django.db import models
@@ -42,71 +41,52 @@ def move_section(su_client: Client, section: Section, position: int):
     return response
 
 
+def delete_section(su_client: Client, section: Section):
+    response = su_client.delete(
+        "/api/dms/sections/{}/".format(section.pk),
+        content_type="application/json",
+    )
+    assert response.status_code == 204
+    return response
+
+
+def create_topic(su_client: Client, title: str, section: Section):
+    response = su_client.post(
+        "/api/dms/topics/",
+        {"title": title, "section": section.pk},
+        content_type="application/json",
+    )
+    assert response.status_code == 201
+    created_id = response.json()["id"]
+    return Topic.objects.get(pk=created_id)
+
+
+def move_topic(su_client: Client, topic: Topic, position: int):
+    response = su_client.patch(
+        "/api/dms/topics/{}/order/".format(topic.pk),
+        {"to": position},
+        content_type="application/json",
+    )
+    assert response.status_code == 200
+    return response
+
+
+def delete_topic(su_client: Client, topic: Topic):
+    response = su_client.delete(
+        "/api/dms/topics/{}/".format(topic.pk),
+        content_type="application/json",
+    )
+    assert response.status_code == 204
+    return response
+
+
 def clean_up_class_materials():
     Topic.objects.all().delete()
     Section.objects.all().delete()
     Subject.objects.all().delete()
 
-
-def sample_data():
-    # ------
-    # Subject 1:
-    #   Section 1:
-    #     Topic 1
-    #     Topic 2
-    #     Topic 3
-    #   Section 2:
-    #     Topic 4
-    #     Topic 5
-    #   Section 3:
-    #     Topic 6
-    #     Topic 7
-    #   Section 4:
-    # Subject 2:
-    #   Section 4:
-    #     Topic 8
-    #   Section 5:
-    #     Topic 9
-
-    ms1 = Milspecialty(title="Test milspec", code="123456", available_for=["MO"])
-    save_each([ms1])
-    subject1 = Subject(title="Subject 1", annotation="Annotation for subject 1", milspecialty=ms1)
-    subject2 = Subject(title="Subject 2", annotation="Annotation for subject 2", milspecialty=ms1)
-    save_each([subject1, subject2])
-
-    section1 = Section(title="Section 1", subject=subject1)
-    section2 = Section(title="Section 2", subject=subject1)
-    section3 = Section(title="Section 3", subject=subject1)
-    section4 = Section(title="Section 3", subject=subject1)
-    section5 = Section(title="Section 4", subject=subject2)
-    section6 = Section(title="Section 5", subject=subject2)
-    save_each([section1, section2, section3, section4, section5, section6])
-
-    topic1 = Topic(title="Topic 1", annotation="Annotation for topic 1", section=section1)
-    topic2 = Topic(title="Topic 2", annotation="Annotation for topic 2", section=section1)
-    topic3 = Topic(title="Topic 3", annotation="Annotation for topic 3", section=section1)
-    topic4 = Topic(title="Topic 4", annotation="Annotation for topic 4", section=section2)
-    topic5 = Topic(title="Topic 5", annotation="Annotation for topic 5", section=section2)
-    topic6 = Topic(title="Topic 6", annotation="Annotation for topic 6", section=section3)
-    topic7 = Topic(title="Topic 7", annotation="Annotation for topic 7", section=section3)
-    topic8 = Topic(title="Topic 8", annotation="Annotation for topic 8", section=section5)
-    topic9 = Topic(title="Topic 9", annotation="Annotation for topic 9", section=section6)
-
-    save_each([topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9])
-
-    return (
-        [section1, section2, section3, section4, section5, section6],
-        [topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9]
-    )
-
-
 @pytest.mark.django_db
-def test_sections_creating(su_client):
-    ms1 = Milspecialty(title="Test milspec", code="123456", available_for=["MO"])
-    save_each([ms1])
-    subject1 = Subject(title="Subject 1", annotation="Annotation for subject 1", milspecialty=ms1)
-    subject2 = Subject(title="Subject 2", annotation="Annotation for subject 2", milspecialty=ms1)
-    save_each([subject1, subject2])
+def test_sections_creating(su_client, subject1, subject2):
     section1 = create_section(su_client, title="Section 1", subject=subject1)
     section2 = create_section(su_client, title="Section 2", subject=subject1)
     check_order([section1, section2])
@@ -120,11 +100,11 @@ def test_sections_creating(su_client):
 
 
 @pytest.mark.django_db
-def test_sections_reordering(su_client):
-    (
-        [section1, section2, section3, section4, section5, section6],
-        [topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9]
-    ) = sample_data()
+def test_sections_reordering(
+        su_client,
+        section1, section2, section3, section4, section5, section6,
+        topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9
+):
 
     check_order([section1, section2, section3, section4])
     check_order([topic1, topic2, topic3, topic4, topic5, topic6, topic7])
@@ -160,30 +140,16 @@ def test_sections_reordering(su_client):
     check_order([topic8, topic9])
 
     # ------
-    move_section(su_client=su_client, section=section3, position=0)
-    check_order([section3, section1, section2, section4])
+    move_section(su_client=su_client, section=section4, position=0)
+    check_order([section4, section1, section2, section3])
     check_order([topic6, topic7, topic1, topic2, topic3, topic4, topic5])
     check_order([section5, section6])
     check_order([topic8, topic9])
 
     # ------
     move_section(su_client=su_client, section=section1, position=2)
-    check_order([section3, section2, section1, section4])
-    check_order([topic6, topic7, topic4, topic5, topic1, topic2, topic3])
-    check_order([section5, section6])
-    check_order([topic8, topic9])
-
-    # ------
-    move_section(su_client=su_client, section=section3, position=2)
-    check_order([section2, section1, section3, section4])
-    check_order([topic4, topic5, topic1, topic2, topic3, topic6, topic7])
-    check_order([section5, section6])
-    check_order([topic8, topic9])
-
-    # ------
-    move_section(su_client=su_client, section=section4, position=0)
     check_order([section4, section2, section1, section3])
-    check_order([topic4, topic5, topic1, topic2, topic3, topic6, topic7])
+    check_order([topic6, topic7, topic4, topic5, topic1, topic2, topic3])
     check_order([section5, section6])
     check_order([topic8, topic9])
 
@@ -195,10 +161,136 @@ def test_sections_reordering(su_client):
     check_order([topic8, topic9])
 
     # ------
+    move_section(su_client=su_client, section=section3, position=0)
+    check_order([section3, section2, section1, section4])
+    check_order([topic4, topic5, topic1, topic2, topic3, topic6, topic7])
+    check_order([section5, section6])
+    check_order([topic8, topic9])
+
+    # ------
+    move_section(su_client=su_client, section=section3, position=2)
+    check_order([section2, section1, section3, section4])
+    check_order([topic4, topic5, topic1, topic2, topic3, topic6, topic7])
+    check_order([section5, section6])
+    check_order([topic8, topic9])
+
+    # ------
     move_section(su_client=su_client, section=section6, position=0)
-    check_order([section2, section1, section4, section3])
+    check_order([section2, section1, section3, section4])
     check_order([topic4, topic5, topic1, topic2, topic3, topic6, topic7])
     check_order([section6, section5])
     check_order([topic9, topic8])
 
     clean_up_class_materials()
+
+
+# @pytest.mark.django_db
+# def test_sections_deletion(
+#         su_client,
+#         section1, section2, section3, section4, section5, section6,
+#         topic1, topic2, topic3, topic4, topic5, topic6, topic7, topic8, topic9
+# ):
+#
+#
+
+def random_actions(
+        su_client,
+        subject1,
+        subject2
+):
+    def get_section(sec_id: int):
+        return Section.objects.filter(pk=sec_id).first()
+
+    def get_topic(top_id: int):
+        return Topic.objects.filter(pk=top_id).first()
+
+    def get_sections_order(subj_data):
+        return [get_section(s["id"]) for s in subj_data]
+
+    def get_topics_order(subj_data):
+        return [get_topic(topic["id"]) for s in subj_data for topic in s["topics"]]
+
+    import random
+    random.seed(42)
+    s1_data = []
+    s2_data = []
+    sn, sn_data = subject1, s1_data
+    sold, sold_data = subject2, s2_data
+    for i in range(10000):
+        sn, sn_data, sold, sold_data = sold, sold_data, sn, sn_data
+        section_order = get_sections_order(sn_data)
+        topic_order = get_topics_order(sn_data)
+
+        check_order(section_order)
+        check_order(topic_order)
+
+        actions = ["create_section"]
+        if len(section_order) > 0:
+            actions += ["move_section", "delete_section", "create_topic"]
+        if len(topic_order) > 0:
+            actions += ["move_topic", "delete_topic"]
+
+        action = random.choice(actions)
+        if action == "create_section":
+            new_sec = create_section(su_client, "Section title", sn)
+            sn_data.append({"id": new_sec.pk, "topics": []})
+            print(f"Creating section {new_sec.pk} on subject {sn.pk}")
+
+        elif action == "move_section":
+            c_sec_order = random.randrange(len(section_order))
+            to_move = random.randrange(len(section_order))
+            move_section(su_client, section_order[c_sec_order], to_move)
+            sn_data.insert(to_move, sn_data.pop(c_sec_order))
+            print(f"Moving section {section_order[c_sec_order].pk} to place {to_move} on subject {sn.pk}")
+
+        elif action == "delete_section":
+            c_sec_order = random.randrange(len(section_order))
+            delete_section(su_client, section_order[c_sec_order])
+            sn_data.pop(c_sec_order)
+
+        elif action == "create_topic":
+            c_sec_order = random.randrange(len(section_order))
+            new_topic = create_topic(su_client, "Topic title", section_order[c_sec_order])
+            sn_data[c_sec_order]["topics"].append({"id": new_topic.pk})
+            print(f"Creating topic {new_topic.pk} on section {section_order[c_sec_order].pk} on subject {sn.pk}")
+
+        elif action == "move_topic":
+            while 1:
+                c_sec_order = random.randrange(len(section_order))
+                if sn_data[c_sec_order]["topics"]:
+                    break
+            topic_low = sum([1 for sec_id in range(c_sec_order) for top in sn_data[sec_id]["topics"]])
+            topic_high = sum([1 for sec_id in range(c_sec_order + 1) for top in sn_data[sec_id]["topics"]])
+            assert topic_low < topic_high
+            c_top_order = random.randrange(topic_low, topic_high)
+            to_move = random.randrange(topic_low, topic_high)
+            move_topic(su_client, topic_order[c_top_order], to_move)
+            c_top_order_inside_section = c_top_order - topic_low
+            to_move_inside_section = to_move - topic_low
+            sn_data[c_sec_order]["topics"].insert(to_move_inside_section,
+                                                  sn_data[c_sec_order]["topics"].pop(c_top_order_inside_section))
+            print(f"Moving topic {topic_order[c_top_order].pk} to place {to_move}"
+                  f" on section {section_order[c_sec_order].pk} on subject {sn.pk}")
+
+        elif action == "delete_topic":
+            while 1:
+                c_sec_order = random.randrange(len(section_order))
+                if sn_data[c_sec_order]["topics"]:
+                    break
+
+            topic_low = sum([1 for sec_id in range(c_sec_order) for top in sn_data[sec_id]["topics"]])
+            topic_high = sum([1 for sec_id in range(c_sec_order + 1) for top in sn_data[sec_id]["topics"]])
+            assert topic_low < topic_high
+            c_top_order = random.randrange(topic_low, topic_high)
+            delete_topic(su_client, topic_order[c_top_order])
+            c_top_order_inside_section = c_top_order - topic_low
+            sn_data[c_sec_order]["topics"].pop(c_top_order_inside_section)
+        else:
+            assert False, "Incorrect action"
+
+
+def test_random_actions(
+        su_client,
+        subject1,
+        subject2):
+    random_actions(su_client, subject1, subject2)

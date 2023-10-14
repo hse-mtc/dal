@@ -10,6 +10,8 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 
 from PIL import Image
 
+from common.models.milspecialties import Milspecialty
+from dms.models.class_materials import Section, Topic
 from dms.models.common import Author, Publisher
 from dms.models.documents import File
 
@@ -167,3 +169,148 @@ def book_data(image):
         }
 
     return call_me
+
+
+# ------
+# Subject 1:
+#   Section 1:
+#     Topic 1
+#     Topic 2
+#     Topic 3
+#   Section 2:
+#     Topic 4
+#     Topic 5
+#   Section 3:
+#   Section 4:
+#     Topic 6
+#     Topic 7
+# Subject 2:
+#   Section 5:
+#     Topic 8
+#   Section 6:
+#     Topic 9
+
+@pytest.fixture
+def milspec():
+    return Milspecialty.objects.create(title="Test milspec", code="123456", available_for=["MO"])
+
+
+@pytest.fixture
+def subject1(milspec):
+    return Subject.objects.create(
+        title="Subject S1",
+        annotation="Annotation for subject 1",
+        milspecialty=milspec)
+
+
+@pytest.fixture
+def subject2(milspec):
+    return Subject.objects.create(
+        title="Subject S2",
+        annotation="Annotation for subject 2",
+        milspecialty=milspec)
+
+
+@pytest.fixture
+def section1(subject1):
+    return Section.objects.create(
+        title="Section 1",
+        subject=subject1)
+
+
+@pytest.fixture
+def section2(subject1):
+    return Section.objects.create(
+        title="Section 2",
+        subject=subject1)
+
+
+@pytest.fixture
+def section3(subject1):
+    return Section.objects.create(
+        title="Section 3",
+        subject=subject1)
+
+
+@pytest.fixture
+def section4(subject1):
+    return Section.objects.create(
+        title="Section 4",
+        subject=subject1)
+
+
+@pytest.fixture
+def section5(subject2):
+    return Section.objects.create(
+        title="Section 5",
+        subject=subject2)
+
+
+@pytest.fixture
+def section6(subject2):
+    return Section.objects.create(
+        title="Section 5",
+        subject=subject2)
+
+
+@pytest.fixture
+def topic1(section1):
+    return Topic.objects.create(
+        title="Topic 1",
+        section=section1)
+
+
+@pytest.fixture
+def topic2(section1):
+    return Topic.objects.create(
+        title="Topic 2",
+        section=section1)
+
+
+@pytest.fixture
+def topic3(section1):
+    return Topic.objects.create(
+        title="Topic 3",
+        section=section1)
+
+
+@pytest.fixture
+def topic4(section2):
+    return Topic.objects.create(
+        title="Topic 4",
+        section=section2)
+
+
+@pytest.fixture
+def topic5(section2):
+    return Topic.objects.create(
+        title="Topic 5",
+        section=section2)
+
+
+@pytest.fixture
+def topic6(section4):
+    return Topic.objects.create(
+        title="Topic 6",
+        section=section4)
+
+
+@pytest.fixture
+def topic7(section4):
+    return Topic.objects.create(
+        title="Topic 7",
+        section=section4)
+
+
+@pytest.fixture
+def topic8(section5):
+    return Topic.objects.create(
+        title="Topic 8",
+        section=section5)
+
+
+@pytest.fixture
+def topic9(section6):
+    return Topic.objects.create(
+        title="Topic 9",
+        section=section6)
