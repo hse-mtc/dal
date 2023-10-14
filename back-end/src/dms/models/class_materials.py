@@ -32,7 +32,7 @@ class Topic(OrderedModel):
     order_with_respect_to = "section__subject"
 
     def save(self, *args, **kwargs):
-        is_new = not self.id  # flag if the object is new
+        is_new = not self.id
         order = (
             Topic.objects.filter(
                 section__subject=self.section.subject,
