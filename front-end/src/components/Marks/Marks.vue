@@ -20,12 +20,14 @@
                 :rowspan="2"
                 :field="(row) => formatDateTime(row.update_date)"
                 column-key="date"
+                header-style="width: 180px"
               />
               <PrimeColumn
                 header="Дата занятия"
                 :rowspan="2"
                 :field="(row) => formatDate(row.lesson_date)"
                 column-key="date"
+                header-style="width: 160px"
               />
               <PrimeColumn
                 header="Студент"
@@ -38,19 +40,22 @@
                 :rowspan="2"
                 :field="(row) => row.before"
                 column-key="before"
+                header-style="width: 160px"
               >
                 <template #body="{ data }">
                   <div class="mark-journal-cell" style="justify-content: left">
-                    <el-tag
-                      v-for="m in data.before"
-                      :key="m"
-                      effect="dark"
-                      disable-transitions
-                      class="margin-x"
-                      :type="tagByMark(m)"
-                    >
-                      {{ m }}
-                    </el-tag>
+                    <div>
+                      <el-tag
+                        v-for="m in data.before"
+                        :key="m"
+                        effect="dark"
+                        disable-transitions
+                        class="margin-all"
+                        :type="tagByMark(m)"
+                      >
+                        {{ m }}
+                      </el-tag>
+                    </div>
                   </div>
                 </template>
               </PrimeColumn>
@@ -59,6 +64,7 @@
                 :rowspan="2"
                 :field="(row) => row.after"
                 column-key="after"
+                header-style="width: 160px"
               >
                 <template #body="{ data }">
                   <div class="mark-journal-cell" style="justify-content: left">
@@ -68,7 +74,7 @@
                         :key="m"
                         effect="dark"
                         disable-transitions
-                        class="margin-x"
+                        class="margin-all"
                         :type="tagByMark(m)"
                       >
                         {{ m }}
@@ -240,7 +246,7 @@
                             :type="tagByMark(m)"
                             effect="dark"
                             disable-transitions
-                            class="margin-x"
+                            class="margin-all"
                             :class="{
                               'is-clickable': hasPermission(
                                 getPermissions('patch', 'marks'),
@@ -599,7 +605,7 @@ export default {
       return this.subjects.filter(item => item.id === subjectId)[0].title;
     },
     formatDate: d => moment(d).format("DD.MM.YY"),
-    formatDateTime: d => moment(d).format("DD.MM.YY hh:mm"),
+    formatDateTime: d => moment(d).format("DD.MM.YY HH:mm"),
     tagByLessonType(type) {
       switch (type) {
         case "LE":
