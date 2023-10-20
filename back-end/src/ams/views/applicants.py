@@ -235,8 +235,8 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         excel_generator: tp.Callable[[QuerySet, QuerySet], Path],
     ) -> tp.Union[FileResponse, Response]:
         if (
-                "campus" not in request.query_params
-                or request.query_params["campus"] not in Campus
+            "campus" not in request.query_params
+            or request.query_params["campus"] not in Campus
         ):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -260,15 +260,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         response_file_name = f"{campus_name}.xlsx"
 
         file = open(path, "rb")
-        return FileResponse(
-            file,
-            filename=response_file_name
-        )
+        return FileResponse(file, filename=response_file_name)
 
     def generate_docs(
         self,
     ) -> Response:
-
         applicants = self.get_queryset()
         data = [
             ApplicantSerializer(instance=applicant).data for applicant in applicants
