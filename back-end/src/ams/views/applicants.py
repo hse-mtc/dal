@@ -5,6 +5,7 @@ from pathlib import Path
 import requests
 
 from django.db.models.query import QuerySet
+from django.http import FileResponse
 
 from rest_framework import status
 from rest_framework import pagination
@@ -20,6 +21,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema, OpenApiParameter
 
+from common.models.universities import Campus
 from conf import settings
 
 from common.constants import MUTATE_ACTIONS
@@ -231,8 +233,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         self,
         request: Request,
         excel_generator: tp.Callable[[QuerySet, QuerySet], Path],
-    ) -> Response:
-        if "campus" not in request.query_params:
+    ) -> tp.Union[FileResponse, Response]:
+        if (
+                "campus" not in request.query_params
+                or request.query_params["campus"] not in Campus
+        ):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         students = self.get_queryset()
@@ -250,17 +255,14 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             students.filter(university_info__program__faculty__campus=campus),
             milspecialties,
         )
-        with open(path, "rb") as file:
-            export = file.read()
-        path.unlink(missing_ok=True)
 
-        return Response(
-            export,
-            headers={
-                "Content-Disposition": "attachment; filename=export.xlsx",
-            },
-            content_type="application/xlsx",
-            status=status.HTTP_200_OK,
+        campus_name = dict(Campus.choices)[campus]
+        response_file_name = f"{campus_name}.xlsx"
+
+        file = open(path, "rb")
+        return FileResponse(
+            file,
+            filename=response_file_name
         )
 
     def generate_docs(
