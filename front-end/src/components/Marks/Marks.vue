@@ -1,5 +1,14 @@
 <template>
   <div>
+    <MarksHistory
+      :key="filterKey"
+      :mg="parseInt(filter.mg)"
+      :subject-id="parseInt(filter.subject_id)"
+      :date-range="filter.dateRange"
+      :subject-name="getSubjectTitle(filter.subject_id)"
+      :visible="dialogHistoryVisible"
+      @close="dialogHistoryVisible = false"
+    />
     <el-col :offset="1" :span="22" class="Marks">
       <el-row class="pageTitle">
         <h1>{{ $route.meta.title }}</h1>
@@ -10,87 +19,6 @@
           <el-button type="text" style="margin-left: 40px" @click="showMarksHistory">
             История изменения оценок
           </el-button>
-          <el-dialog width="90%" :visible.sync="dialogHistoryVisible">
-            <span slot="title" style="font-size: 16pt">
-              История изменения оценок: {{ getSubjectTitle(filter.subject_id) }}
-            </span>
-            <PrimeTable :value="historyMarksData" style="margin-top: -20px">
-              <PrimeColumn
-                header="Дата изменения"
-                :rowspan="2"
-                :field="(row) => formatDateTime(row.update_date)"
-                column-key="date"
-                header-style="width: 180px"
-              />
-              <PrimeColumn
-                header="Дата занятия"
-                :rowspan="2"
-                :field="(row) => formatDate(row.lesson_date)"
-                column-key="date"
-                header-style="width: 160px"
-              />
-              <PrimeColumn
-                header="Студент"
-                :rowspan="2"
-                :field="(row) => row.student_fullname"
-                column-key="student"
-              />
-              <PrimeColumn
-                header="Оценка до"
-                :rowspan="2"
-                :field="(row) => row.before"
-                column-key="before"
-                header-style="width: 160px"
-              >
-                <template #body="{ data }">
-                  <div class="mark-journal-cell" style="justify-content: left">
-                    <div>
-                      <el-tag
-                        v-for="m in data.before"
-                        :key="m"
-                        effect="dark"
-                        disable-transitions
-                        class="margin-all"
-                        :type="tagByMark(m)"
-                      >
-                        {{ m }}
-                      </el-tag>
-                    </div>
-                  </div>
-                </template>
-              </PrimeColumn>
-              <PrimeColumn
-                header="Оценка после"
-                :rowspan="2"
-                :field="(row) => row.after"
-                column-key="after"
-                header-style="width: 160px"
-              >
-                <template #body="{ data }">
-                  <div class="mark-journal-cell" style="justify-content: left">
-                    <div>
-                      <el-tag
-                        v-for="m in data.after"
-                        :key="m"
-                        effect="dark"
-                        disable-transitions
-                        class="margin-all"
-                        :type="tagByMark(m)"
-                      >
-                        {{ m }}
-                      </el-tag>
-                    </div>
-                  </div>
-                </template>
-              </PrimeColumn>
-              <PrimeColumn
-                header="Изменил"
-                :rowspan="2"
-                :field="(row) => row.changed_by_fullname"
-                column-key="teacher"
-              />
-            </PrimeTable>
-          </el-dialog>
         </el-col>
         <el-col :offset="1" :span="6">
           <el-select
@@ -98,10 +26,9 @@
             filterable
             placeholder="Дисциплина"
             style="display: block"
-            @change="fetchData({ resetSubjectsOrder: false })"
           >
             <el-option
-              v-for="item in subjects"
+              v-for="item in selectableSubjects"
               :key="item.id"
               :label="item.title"
               :value="item.id"
@@ -120,7 +47,6 @@
             end-placeholder="Конечная дата"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
-            @change="fetchData({ resetSubjectsOrder: false })"
           />
         </el-col>
       </el-row>
@@ -128,7 +54,6 @@
         v-model="filter.mg"
         tab-position="left"
         class="my-tabs"
-        @tab-click="fetchData({ resetSubjectsOrder: true })"
       >
         <el-tab-pane
           v-for="mg in milgroups"
@@ -417,30 +342,23 @@
 <script>
 import moment from "moment";
 import {
-  getMarkJournal,
-  patchMark,
-  postMark,
-  putMark,
-  deleteMark,
-  getMarkHistory,
+  deleteMark, getMarkHistory, getMarkJournal, patchMark, postMark, putMark,
 } from "@/api/mark";
 import { getSubjects } from "@/api/subjects-lms";
-import { postLesson, patchLesson, deleteLesson } from "@/api/lesson";
+import { deleteLesson, patchLesson, postLesson } from "@/api/lesson";
 import {
-  getError,
-  postError,
-  patchError,
-  deleteError,
-  postSuccess,
-  patchSuccess,
-  deleteSuccess,
+  deleteError, deleteSuccess, getError, patchError, patchSuccess, postError, postSuccess,
 } from "@/utils/message";
 import { ReferenceModule, UserModule } from "@/store";
 import { hasPermission } from "@/utils/permissions";
 import { LessonTypesMixin } from "@/mixins/lessons";
+import MarksHistory from "@/components/Marks/MarksHistory.vue";
 
 export default {
   name: "Marks",
+  components: {
+    MarksHistory,
+  },
   mixins: [LessonTypesMixin],
   data() {
     return {
@@ -487,7 +405,7 @@ export default {
           moment().format("YYYY-MM-DD"),
         ],
       },
-      subjects: [],
+      allSubjects: [],
       journal: {},
       pickerOptions: {
         firstDayOfWeek: 1,
@@ -541,42 +459,49 @@ export default {
     userMilgroups() {
       return UserModule.personMilgroups;
     },
+    selectableSubjects() {
+      if (!this.milgroups || this.milgroups.length === 0) {
+        return [];
+      }
+      const selectedMilgroupId = parseInt(this.filter.mg, 10);
+      const selectedMilgroupMilspecId = this.milgroups.filter(
+        milgroup => milgroup.id === selectedMilgroupId,
+      )[0].milspecialty.id;
+      return this.allSubjects.filter(subject => subject.milspecialty === selectedMilgroupMilspecId);
+    },
+    filterKey() {
+      return `${this.filter.mg}-${this.filter.subject_id}-${this.filter.dateRange}`;
+    },
   },
 
   watch: {
     milgroups(newValue) {
-      if (localStorage.milgroupUpdate) {
-        this.filter.mg = localStorage.milgroupUpdate;
-        this.filter.subject_id = parseInt(localStorage.subjectUpdate, 10);
-        this.fetchData({ resetSubjectsOrder: false });
+      if (localStorage.journalMilgroupSelected) {
+        this.getFiltersFromLocalStorage();
       } else {
         this.filter.mg = this.milgroups[0]?.id.toString();
-        this.fetchData({ resetSubjectsOrder: true });
       }
-      if (localStorage.dataRange0) {
-        this.filter.dateRange[0] = localStorage.dataRange0;
-        this.filter.dateRange[1] = localStorage.dataRange1;
+    },
+    "filter.mg": function() {
+      // Assert this applies before filterKey change; otherwise there are one unused query!
+      if (!this.selectableSubjects.find(subject => subject.id === this.filter.subject_id)) {
+        this.filter.subject_id = this.selectableSubjects[0].id;
       }
+    },
+    filterKey(newValue) {
+      console.log("filterKey changed");
+      this.fetchData();
     },
   },
 
   async created() {
-    if (localStorage.milgroupUpdate) {
-      this.filter.mg = localStorage.milgroupUpdate;
-      this.filter.subject_id = parseInt(localStorage.subjectUpdate, 10);
-      this.fetchData({ resetSubjectsOrder: false });
+    await this.getSubjects();
+    if (localStorage.journalMilgroupSelected) {
+      this.getFiltersFromLocalStorage();
     } else {
       this.filter.mg = this.milgroups[0]?.id.toString();
-      if (this.filter.mg !== undefined) {
-        await this.fetchData({ resetSubjectsOrder: true });
-      }
+      this.filter.subject_id = this.selectableSubjects[0].id;
     }
-    if (localStorage.dataRange0) {
-      this.filter.dateRange[0] = localStorage.dataRange0;
-      this.filter.dateRange[1] = localStorage.dataRange1;
-    }
-    await this.getSubjects();
-    this.filter.subject_id = this.subjects[0].id;
   },
 
   methods: {
@@ -602,7 +527,11 @@ export default {
       return [];
     },
     getSubjectTitle(subjectId) {
-      return this.subjects.filter(item => item.id === subjectId)[0].title;
+      console.log("as:", this.allSubjects);
+      if (!this.allSubjects || this.allSubjects.length === 0) {
+        return "";
+      }
+      return this.allSubjects.filter(item => item.id === subjectId)[0]?.title || "";
     },
     formatDate: d => moment(d).format("DD.MM.YY"),
     formatDateTime: d => moment(d).format("DD.MM.YY HH:mm"),
@@ -639,13 +568,6 @@ export default {
       }
     },
     async fetchData(options) {
-      await this.getSubjects();
-      if (options.resetSubjectsOrder) {
-        this.filter.subject_id = this.subjects[0].id;
-      }
-      if (typeof this.filter.subject_id === "string") {
-        this.filter.subject_id = this.subjects.filter(subject => subject.title === this.filter.subject_id)[0].id;
-      }
       if (this.filter.mg > 0 && this.filter.subject_id > 0) {
         getMarkJournal({
           milgroup: this.filter.mg,
@@ -658,21 +580,20 @@ export default {
           })
           .catch(err => getError("оценок", err.response.status));
       }
-      localStorage.milgroupUpdate = this.filter.mg;
-      localStorage.subjectUpdate = parseInt(this.filter.subject_id, 10);
+      localStorage.journalMilgroupSelected = this.filter.mg;
+      localStorage.journalSubjectSelected = parseInt(this.filter.subject_id, 10);
       // eslint-disable-next-line prefer-destructuring
-      localStorage.dataRange0 = this.filter.dateRange[0];
+      localStorage.dataRange0Selected = this.filter.dateRange[0];
       // eslint-disable-next-line prefer-destructuring
-      localStorage.dataRange1 = this.filter.dateRange[1];
+      localStorage.dataRange1Selected = this.filter.dateRange[1];
     },
     async getSubjects() {
+      console.log("GetSubjects");
       try {
-        const response = await getSubjects();
-        // eslint-disable-next-line max-len
-        const milspecialty = this.milgroups.filter(milgroup => milgroup.id === parseInt(this.filter.mg, 10))[0].milspecialty.id;
-        // eslint-disable-next-line max-len
-        this.subjects = response.data.filter(subject => subject.milspecialty === milspecialty);
+        this.allSubjects = (await getSubjects()).data;
+        console.log("all sybjects", this.allSubjects);
       } catch (err) {
+        console.log(err);
         getError("дисциплин", err.response.status);
       }
     },
@@ -792,8 +713,8 @@ export default {
             this.lessonDialogVisible = false;
             if (this.filter.mg) {
               this.fetchData({ resetSubjectsOrder: false });
-              localStorage.milgroupUpdate = this.filter.mg;
-              localStorage.subjectUpdate = this.filter.subject_id;
+              localStorage.journalMilgroupSelected = this.filter.mg;
+              localStorage.journalSubjectSelected = this.filter.subject_id;
               window.location.reload();
             }
           })
@@ -805,8 +726,8 @@ export default {
             this.lessonDialogVisible = false;
             if (this.filter.mg) {
               this.fetchData({ resetSubjectsOrder: false });
-              localStorage.milgroupUpdate = this.filter.mg;
-              localStorage.subjectUpdate = this.filter.subject_id;
+              localStorage.journalMilgroupSelected = this.filter.mg;
+              localStorage.journalSubjectSelected = this.filter.subject_id;
               window.location.reload();
             }
           })
@@ -835,6 +756,12 @@ export default {
       this.drawer = true;
       // fetch data
     },
+    getFiltersFromLocalStorage() {
+      this.filter.mg = localStorage.journalMilgroupSelected;
+      this.filter.subject_id = parseInt(localStorage.journalSubjectSelected, 10);
+      this.filter.dateRange[0] = localStorage.dataRange0Selected;
+      this.filter.dateRange[1] = localStorage.dataRange1Selected;
+    },
     showMarksHistory() {
       this.dialogHistoryVisible = true;
       getMarkHistory({
@@ -845,8 +772,7 @@ export default {
         history: true,
       })
         .then(response => {
-          const historymark = response.data;
-          this.historyMarksData = historymark;
+          this.historyMarksData = response.data;
         })
         .catch(err => getError("оценок", err.response.status));
     },
