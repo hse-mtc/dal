@@ -46,3 +46,7 @@
 .el-range-separator {
   box-sizing: content-box;
 }
+
+.el-date-table td.in-range div {
+    background-color: #eef4ff !important;
+}

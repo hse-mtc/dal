@@ -1,7 +1,6 @@
 <template>
   <div>
     <MarksHistory
-      :key="filterKey"
       :mg="parseInt(filter.mg)"
       :subject-id="parseInt(filter.subject_id)"
       :date-range="filter.dateRange"
@@ -9,6 +8,8 @@
       :visible="dialogHistoryVisible"
       @close="dialogHistoryVisible = false"
     />
+    {{ filter.dateRange }}
+    {{ selectedMilgroup }}
     <el-col :offset="1" :span="22" class="Marks">
       <el-row class="pageTitle">
         <h1>{{ $route.meta.title }}</h1>
@@ -47,6 +48,7 @@
             end-placeholder="Конечная дата"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
+            :picker-options="datePickerOptions"
           />
         </el-col>
       </el-row>
@@ -286,7 +288,7 @@
             style="width: 100%"
             format="dd.MM.yyyy"
             value-format="yyyy-MM-dd"
-            :picker-options="{ firstDayOfWeek: 1 }"
+            :picker-options="datePickerOptions"
           />
         </el-form-item>
         <el-form-item label="Номер занятия: " required>
@@ -342,7 +344,7 @@
 <script>
 import moment from "moment";
 import {
-  deleteMark, getMarkHistory, getMarkJournal, patchMark, postMark, putMark,
+  deleteMark, getMarkJournal, patchMark, postMark, putMark,
 } from "@/api/mark";
 import { getSubjects } from "@/api/subjects-lms";
 import { deleteLesson, patchLesson, postLesson } from "@/api/lesson";
@@ -459,30 +461,42 @@ export default {
     userMilgroups() {
       return UserModule.personMilgroups;
     },
+    selectedMilgroup() {
+      const selectedMilgroupId = parseInt(this.filter.mg, 10);
+      return this.milgroups.filter(
+        milgroup => milgroup.id === selectedMilgroupId,
+      )[0];
+    },
     selectableSubjects() {
       if (!this.milgroups || this.milgroups.length === 0) {
         return [];
       }
-      const selectedMilgroupId = parseInt(this.filter.mg, 10);
-      const selectedMilgroupMilspecId = this.milgroups.filter(
-        milgroup => milgroup.id === selectedMilgroupId,
-      )[0].milspecialty.id;
+      const selectedMilgroupMilspecId = this.selectedMilgroup?.milspecialty?.id;
       return this.allSubjects.filter(subject => subject.milspecialty === selectedMilgroupMilspecId);
     },
     filterKey() {
-      return `${this.filter.mg}-${this.filter.subject_id}-${this.filter.dateRange}`;
+      return `${this.filter.mg}-${this.filter.subject_id}-${this.filter.dateRange[0]}-${this.filter.dateRange[1]}`;
+    },
+    datePickerOptions() {
+      return {
+        firstDayOfWeek: 1,
+        disabledDate: this.dateDisabled,
+      };
     },
   },
 
   watch: {
     milgroups(newValue) {
-      if (localStorage.journalMilgroupSelected) {
-        this.getFiltersFromLocalStorage();
-      } else {
-        this.filter.mg = this.milgroups[0]?.id.toString();
+      console.log("Milgroups updated to value", JSON.stringify(newValue));
+      if (!localStorage.journalMilgroupSelected) {
+        // Only once, after ReferenceBook loaded
+        // and value is not stored in localStorage
+        this.filter.mg = this.milgroups[0].id.toString();
       }
     },
-    "filter.mg": function() {
+    "filter.mg": function(newValue) {
+      console.log("Filter MG updated to value", JSON.stringify(newValue));
+      // Every time when another milgroup selected
       // Assert this applies before filterKey change; otherwise there are one unused query!
       if (
         this.selectableSubjects.length > 0
@@ -491,18 +505,16 @@ export default {
       }
     },
     filterKey(newValue) {
+      console.log("Filter key updated to value", JSON.stringify(newValue));
+      // Every time some filter value is changed
+      this.setFiltersToLocalStorage();
       this.fetchData();
     },
   },
 
   async created() {
     await this.getSubjects();
-    if (localStorage.journalMilgroupSelected) {
-      this.getFiltersFromLocalStorage();
-    } else {
-      this.filter.mg = this.milgroups[0]?.id.toString();
-      this.filter.subject_id = this.selectableSubjects[0].id;
-    }
+    this.getFiltersFromLocalStorage();
   },
 
   methods: {
@@ -512,11 +524,11 @@ export default {
         `${entity}.${method}.all`,
         {
           codename: `${entity}.${method}.milfaculty`,
-          validator: () => this.userMilfaculty === this.journal.milgroup.milfaculty,
+          validator: () => this.userMilfaculty === this.journal?.milgroup?.milfaculty,
         },
         {
           codename: `${entity}.${method}.milgroup`,
-          validator: () => this.userMilgroups.some(x => x === this.journal.milgroup.id),
+          validator: () => this.userMilgroups.some(x => x === this.journal?.milgroup?.id),
         },
       ];
     },
@@ -679,7 +691,7 @@ export default {
         milgroup: this.filter.mg,
         subject: this.filter.subject_id,
         ordinal: 1,
-        date: moment().format("YYYY-MM-DD"),
+        date: this.nextMilitaryDay(),
       };
       this.editLessonFullname = "Новое занятие";
       this.lessonDialogVisible = true;
@@ -746,29 +758,44 @@ export default {
       // fetch data
     },
     getFiltersFromLocalStorage() {
+      if (!localStorage.journalMilgroupSelected) {
+        return;
+      }
       this.filter.mg = localStorage.journalMilgroupSelected;
+
+      if (!localStorage.journalSubjectSelected) {
+        return;
+      }
       this.filter.subject_id = parseInt(localStorage.journalSubjectSelected, 10);
+
+      if (!localStorage.dataRange0Selected || !localStorage.dataRange1Selected) {
+        return;
+      }
+      this.filter.dateRange = ["", ""];
       this.filter.dateRange[0] = localStorage.dataRange0Selected;
       this.filter.dateRange[1] = localStorage.dataRange1Selected;
     },
     setFiltersToLocalStorage() {
+      if (!this.filter.mg) {
+        return;
+      }
       localStorage.journalMilgroupSelected = this.filter.mg;
+      if (!this.filter.subject_id) {
+        return;
+      }
       localStorage.journalSubjectSelected = this.filter.subject_id.toString();
       [localStorage.dataRange0Selected, localStorage.dataRange1Selected] = this.filter.dateRange;
     },
     showMarksHistory() {
       this.dialogHistoryVisible = true;
-      getMarkHistory({
-        milgroup: this.filter.mg,
-        subject: this.filter.subject_id,
-        date_from: this.filter.dateRange[0],
-        date_to: this.filter.dateRange[1],
-        history: true,
-      })
-        .then(response => {
-          this.historyMarksData = response.data;
-        })
-        .catch(err => getError("оценок", err.response.status));
+    },
+    dateDisabled(date) {
+      return date.getDay() !== (this.selectedMilgroup.weekday + 1) % 7;
+    },
+    nextMilitaryDay() {
+      const now = moment();
+      const daysToMilDate = (this.selectedMilgroup.weekday + 7 - now.weekday()) % 7;
+      return now.add(daysToMilDate, "days").format("YYYY-MM-DD");
     },
   },
 };
