@@ -8,8 +8,6 @@
       :visible="dialogHistoryVisible"
       @close="dialogHistoryVisible = false"
     />
-    {{ filter.dateRange }}
-    {{ selectedMilgroup }}
     <el-col :offset="1" :span="22" class="Marks">
       <el-row class="pageTitle">
         <h1>{{ $route.meta.title }}</h1>
