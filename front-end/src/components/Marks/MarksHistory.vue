@@ -88,7 +88,7 @@
 
 <script>
 import moment from "moment";
-import { getMarkHistory, getMarkJournal } from "@/api/mark";
+import { getMarkHistory } from "@/api/mark";
 
 export default {
   name: "MarksHistory",
@@ -125,17 +125,21 @@ export default {
       historyMarksData: [],
     };
   },
-  created() {
-    getMarkHistory({
-      milgroup: this.mg,
-      subject: this.subjectId,
-      date_from: this.dateRange[0],
-      date_to: this.dateRange[1],
-      history: true,
-    })
-      .then(response => {
-        this.historyMarksData = response.data;
-      });
+  watch: {
+    visible(newValue) {
+      if (newValue) {
+        getMarkHistory({
+          milgroup: this.mg,
+          subject: this.subjectId,
+          date_from: this.dateRange[0],
+          date_to: this.dateRange[1],
+          history: true,
+        })
+          .then(response => {
+            this.historyMarksData = response.data;
+          });
+      }
+    },
   },
   methods: {
     formatDate: d => moment(d).format("DD.MM.YY"),
