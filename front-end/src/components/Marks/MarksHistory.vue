@@ -7,7 +7,27 @@
     <span slot="title" style="font-size: 20pt">
       История изменения оценок: {{ subjectName }}
     </span>
-    <PrimeTable :value="historyMarksData" style="margin-top: -20px">
+
+    <div>
+      <table class="lesson-info-table">
+        <tbody>
+          <tr>
+            <td class="field-name">
+              Взвод:
+            </td>
+            <td>{{ milgroupTitle }}</td>
+          </tr>
+          <tr>
+            <td class="field-name">
+              Период:
+            </td>
+            <td>{{ formatDateRange(dateRange) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <PrimeTable :value="historyMarksData">
       <PrimeColumn
         header="Дата изменения"
         :rowspan="2"
@@ -89,6 +109,7 @@
 <script>
 import moment from "moment";
 import { getMarkHistory } from "@/api/mark";
+import { ReferenceModule } from "@/store";
 
 export default {
   name: "MarksHistory",
@@ -124,6 +145,21 @@ export default {
       subjects: [],
       historyMarksData: [],
     };
+  },
+  computed: {
+    milgroupTitle() {
+      const curMilgroup = ReferenceModule.milgroups.filter(milgroup => milgroup.id === this.mg);
+      if (curMilgroup.length > 0) {
+        return curMilgroup[0].title;
+      }
+      return "";
+    },
+    infoData() {
+      return [
+        { field_name: "Взвод", value: this.milgroupTitle },
+        { field_name: "Период", value: this.dateRange },
+      ];
+    },
   },
   watch: {
     visible(newValue) {
@@ -178,6 +214,11 @@ export default {
     },
     getSubjectTitle(subjectId) {
       return this.subjects.filter(item => item.id === subjectId)[0]?.title || "";
+    },
+    formatDateRange(dataRange) {
+      const startDate = moment(dataRange[0]);
+      const endDate = moment(dataRange[1]);
+      return `с ${startDate.format("DD.MM.yyyy")} по ${endDate.format("DD.MM.yyyy")}`;
     },
   },
 };
