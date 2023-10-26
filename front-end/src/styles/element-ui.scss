@@ -47,6 +47,7 @@
   box-sizing: content-box;
 }
 
+// Better coloring a mix disabled and in-range days
 .el-date-table td.in-range div {
     background-color: #eef4ff !important;
 }
