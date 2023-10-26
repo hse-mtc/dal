@@ -352,6 +352,7 @@ import { ReferenceModule, UserModule } from "@/store";
 import { hasPermission } from "@/utils/permissions";
 import { LessonTypesMixin } from "@/mixins/lessons";
 import MarksHistory from "@/components/Marks/MarksHistory.vue";
+import { Message } from "element-ui";
 
 export default {
   name: "Marks",
@@ -710,7 +711,7 @@ export default {
             this.lessonDialogVisible = false;
             window.location.reload();
           })
-          .catch(err => patchError("занятия", err.response.status));
+          .catch(err => this.handleLessonError(err, patchError));
       } else {
         postLesson(this.editLesson)
           .then(() => {
@@ -718,7 +719,7 @@ export default {
             this.lessonDialogVisible = false;
             window.location.reload();
           })
-          .catch(err => postError("занятия", err.response.status));
+          .catch(err => this.handleLessonError(err, postError));
       }
     },
     handleDeleteLesson(id) {
@@ -782,6 +783,16 @@ export default {
       const now = moment();
       const daysToMilDate = (this.selectedMilgroup.weekday + 7 - now.weekday()) % 7;
       return now.add(daysToMilDate, "days").format("YYYY-MM-DD");
+    },
+    handleLessonError(err, defaultHandler) {
+      if (err.response.data.non_field_errors) {
+        Message({
+          message: "Ошибка. В это время уже существует занятие.",
+          type: "error",
+        });
+      } else {
+        defaultHandler("занятия", err.response.status);
+      }
     },
   },
 };
