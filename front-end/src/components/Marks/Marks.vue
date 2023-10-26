@@ -14,7 +14,6 @@
       </el-row>
       <el-row class="filterRow" style="margin-bottom: 15px" :gutter="20">
         <el-col :offset="6" :span="3">
-          <!-- Marks history -->
           <el-button type="text" style="margin-left: 40px" @click="showMarksHistory">
             История изменения оценок
           </el-button>
@@ -485,7 +484,6 @@ export default {
 
   watch: {
     milgroups(newValue) {
-      console.log("Milgroups updated to value", JSON.stringify(newValue));
       if (!localStorage.journalMilgroupSelected) {
         // Only once, after ReferenceBook loaded
         // and value is not stored in localStorage
@@ -493,7 +491,6 @@ export default {
       }
     },
     "filter.mg": function(newValue) {
-      console.log("Filter MG updated to value", JSON.stringify(newValue));
       // Every time when another milgroup selected
       // Assert this applies before filterKey change; otherwise there are one unused query!
       if (
@@ -503,7 +500,6 @@ export default {
       }
     },
     filterKey(newValue) {
-      console.log("Filter key updated to value", JSON.stringify(newValue));
       // Every time some filter value is changed
       this.setFiltersToLocalStorage();
       this.fetchData();
@@ -577,7 +573,7 @@ export default {
           return "info";
       }
     },
-    async fetchData(options) {
+    async fetchData() {
       if (this.filter.mg > 0 && this.filter.subject_id > 0) {
         getMarkJournal({
           milgroup: this.filter.mg,
@@ -712,11 +708,7 @@ export default {
           .then(() => {
             patchSuccess("занятия");
             this.lessonDialogVisible = false;
-            if (this.filter.mg) {
-              this.fetchData(); // todo
-              this.setFiltersToLocalStorage();
-              window.location.reload();
-            }
+            window.location.reload();
           })
           .catch(err => patchError("занятия", err.response.status));
       } else {
@@ -724,11 +716,7 @@ export default {
           .then(() => {
             postSuccess("занятия");
             this.lessonDialogVisible = false;
-            if (this.filter.mg) {
-              this.fetchData(); // todo
-              this.setFiltersToLocalStorage();
-              window.location.reload();
-            }
+            window.location.reload();
           })
           .catch(err => postError("занятия", err.response.status));
       }
@@ -746,7 +734,7 @@ export default {
         deleteLesson({ id })
           .then(() => {
             deleteSuccess("занятия");
-            if (this.filter.mg > 0) { this.fetchData(); } // todo
+            this.fetchData();
           })
           .catch(err => deleteError("занятия", err.response.status));
       });
