@@ -174,7 +174,7 @@ export default {
             {
               name: "СНИЛС",
               content: data.passport.insurance_number,
-            }
+            },
           ],
         },
         {

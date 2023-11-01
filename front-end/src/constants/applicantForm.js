@@ -118,13 +118,13 @@ export const PASSPORT = {
   tax_id: {
     component: "text",
     title: "ИНН",
-    props: { placeholder: "771234567890" }
+    props: { placeholder: "771234567890" },
   },
   insurance_number: {
     component: "text",
     title: "СНИЛС",
-    props: { placeholder: "200-200-200 20" }
-  }
+    props: { placeholder: "200-200-200 20" },
+  },
 };
 
 export const RECRUITMENT_OFFICE = {
