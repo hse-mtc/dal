@@ -36,7 +36,6 @@ def test_get_subject_by_id(
     assert subject_get_response.status_code == 200
 
     subject_get_response = subject_get_response.json()
-    print(subject_get_response, subj_data)
     assert subject_get_response == subj_data
 
 
@@ -82,5 +81,4 @@ def test_get_subjects_by_search(
     subject_response_get = subject_response_get.json()
     assert len(subject_response_get) >= 1
     for subject in subject_response_get:
-        print(subject)
         assert subject["title"].find(word) != -1
