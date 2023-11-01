@@ -115,6 +115,16 @@ export const PASSPORT = {
     title: "Код подразделения",
     props: { placeholder: "700-007" },
   },
+  tax_id: {
+    component: "text",
+    title: "ИНН",
+    props: { placeholder: "771234567890" }
+  },
+  insurance_number: {
+    component: "text",
+    title: "СНИЛС",
+    props: { placeholder: "200-200-200 20" }
+  }
 };
 
 export const RECRUITMENT_OFFICE = {
@@ -250,7 +260,7 @@ export const HEADERS_BY_STEPS = {
   about: "Общие сведения",
   birthInfo: "Информация о рождении",
   contactInfo: "Контактная информация",
-  passport: "Паспортные данные",
+  passport: "Паспортные данные, ИНН и СНИЛС",
   recruitmentOffice: "Военный комиссариат",
   universityInfo: "Информация о ВУЗе",
   photo: "Фотография",
@@ -297,6 +307,8 @@ export const devInitData = {
     ufms_name: "Паспорт выдан",
     issue_date: "2021-04-20",
     ufms_code: "010-191",
+    tax_id: "771234567890",
+    insurance_number: "200-200-200 20",
   },
   recruitmentOffice: { title: "Состою на воинском учете в военном комиссариате" },
   universityInfo: {

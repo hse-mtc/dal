@@ -405,6 +405,8 @@ def generate_passport(city):
             "ufms_name": "УФМС гор. {}",
             "ufms_code": "740-056",
             "issue_date": "2020-10-02",
+            "tax_id": "771234567890",
+            "insurance_number": "200-200-200 20",
         }}""".format(
         generate_passport.series, generate_passport.number, city
     )

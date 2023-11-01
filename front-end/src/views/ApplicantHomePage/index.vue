@@ -145,7 +145,7 @@ export default {
           ],
         },
         {
-          name: "Паспортные данные",
+          name: "Паспортные данные, ИНН и СНИЛС",
           fields: [
             {
               name: "Серия",
@@ -167,6 +167,14 @@ export default {
               name: "Код подразделения",
               content: data.passport.ufms_code,
             },
+            {
+              name: "ИНН",
+              content: data.passport.tax_id,
+            },
+            {
+              name: "СНИЛС",
+              content: data.passport.insurance_number,
+            }
           ],
         },
         {

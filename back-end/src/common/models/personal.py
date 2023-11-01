@@ -83,6 +83,8 @@ class Passport(models.Model):
     ufms_name = models.CharField(max_length=255)
     ufms_code = models.CharField(max_length=7)
     issue_date = models.DateField()
+    tax_id = models.CharField(max_length=13)
+    insurance_number = models.CharField(max_length=14)
 
     class Meta:
         verbose_name = "Passport"
