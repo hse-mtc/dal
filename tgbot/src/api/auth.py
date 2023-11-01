@@ -106,7 +106,7 @@ async def authorize(chat_id: int, phone: str) -> AuthorizeResult:
     if not student.is_milgroup_commander():
         return AuthorizeResult(
             success=False,
-            details="Доступ разрешён только командирам взводов.",
+            details="Доступ разрешён только командирам взводов и командирам отделений.",
         )
 
     session = await fetch_session(params=params)

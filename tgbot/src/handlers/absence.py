@@ -122,6 +122,10 @@ async def toggle_student_absence_status(
 
     new_state, id_ = map(int, callback_query.data.split())
     students_by_id = await state.get_data()
+    if new_state == students_by_id[id_].state.value:
+        await callback_query.answer()
+        return
+
     students_by_id[id_].state = State(new_state)
     students_by_id[id_].excuse = match_states(students_by_id[id_].state.value)
     await state.set_data(students_by_id)
