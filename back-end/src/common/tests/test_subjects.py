@@ -6,7 +6,8 @@ def unpack_subject(subject: Subject):
     return {
         "id": subject.id,
         "title": subject.title,
-        "annotation": subject.annotation
+        "annotation": subject.annotation,
+        "milspecialty": subject.milspecialty.id,
     }
 
 
@@ -20,25 +21,39 @@ def test_trailing_slash_redirect(su_client):
 
 
 @pytest.mark.django_db
-def test_get_subject_by_id(su_client, get_new_subject_data, create_subject):
-    subj_data = get_new_subject_data(title="Строевая подготовка 2")
+def test_get_subject_by_id(
+    su_client, create_milspeciality, get_new_subject_data, create_subject
+):
+    milspeciality = create_milspeciality(
+        title="Математическое обеспечения комплексов ПРО", code="453100"
+    )
+    subj_data = get_new_subject_data(
+        title="Строевая подготовка", milspecialty=milspeciality
+    )
     subject = create_subject(**subj_data)
     subj_data = unpack_subject(subject)
     subject_get_response = su_client.get(f"/api/lms/subjects/{subject.id}/")
     assert subject_get_response.status_code == 200
 
     subject_get_response = subject_get_response.json()
+    print(subject_get_response, subj_data)
     assert subject_get_response == subj_data
 
 
 @pytest.mark.django_db
-def test_get_subjects_by_title(su_client, get_new_subject_data, create_subject):
-    subj_data = get_new_subject_data(title="Тактическая подготовка 2")
+def test_get_subjects_by_title(
+    su_client, create_milspeciality, get_new_subject_data, create_subject
+):
+    milspeciality = create_milspeciality(
+        title="Математическое обеспечения комплексов ПРО", code="453100"
+    )
+    subj_data = get_new_subject_data(
+        title="Тактическая подготовка", milspecialty=milspeciality
+    )
     subject = create_subject(**subj_data)
     subj_data = unpack_subject(subject)
 
-    subject_response_get = su_client.get(
-        f"/api/lms/subjects/?title={subject.title}")
+    subject_response_get = su_client.get(f"/api/lms/subjects/?title={subject.title}")
     assert subject_response_get.status_code == 200
 
     subject_response_get = subject_response_get.json()
@@ -49,9 +64,15 @@ def test_get_subjects_by_title(su_client, get_new_subject_data, create_subject):
 
 
 @pytest.mark.django_db
-def test_get_subjects_by_search(su_client, get_new_subject_data,
-                                create_subject):
-    subj_data = get_new_subject_data(title="Тактико-специальная подготовка 2")
+def test_get_subjects_by_search(
+    su_client, create_milspeciality, get_new_subject_data, create_subject
+):
+    milspeciality = create_milspeciality(
+        title="Математическое обеспечения комплексов ПРО", code="453100"
+    )
+    subj_data = get_new_subject_data(
+        title="Тактико-специальная подготовка 2", milspecialty=milspeciality
+    )
     subject = create_subject(**subj_data)
     word = subject.title.split()[1]
 
