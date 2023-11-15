@@ -9,7 +9,7 @@ from common.models.universities import UniversityInfo
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Passport,
+    PersonalDocuments,
     Photo,
     Relative,
 )
@@ -118,7 +118,7 @@ class Student(models.Model):
         blank=True,
     )
     passport = models.OneToOneField(
-        to=Passport,
+        to=PersonalDocuments,
         on_delete=models.RESTRICT,
         null=True,
         blank=True,

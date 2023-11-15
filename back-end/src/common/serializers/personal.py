@@ -8,7 +8,7 @@ from drf_extra_fields.fields import Base64ImageField
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Passport,
+    PersonalDocuments,
     Photo,
     Relative,
 )
@@ -124,7 +124,7 @@ class PhotoMutateMixin(serializers.Serializer):
 
 class PassportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Passport
+        model = PersonalDocuments
         exclude = ["id"]
 
 

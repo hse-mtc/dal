@@ -6,7 +6,7 @@ from common.models.subjects import Subject
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Passport,
+    PersonalDocuments,
     Photo,
     Relative,
 )
@@ -19,7 +19,7 @@ admin.site.register(Subject)
 # Personal
 admin.site.register(BirthInfo)
 admin.site.register(ContactInfo)
-admin.site.register(Passport)
+admin.site.register(PersonalDocuments)
 admin.site.register(Photo)
 admin.site.register(Relative)
 

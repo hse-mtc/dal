@@ -77,7 +77,7 @@ def auto_delete_image_on_cover_delete(sender, instance: Photo, **kwargs):
         instance.image.delete(save=False)
 
 
-class Passport(models.Model):
+class PersonalDocuments(models.Model):
     series = models.CharField(max_length=4)
     code = models.CharField(max_length=6)
     ufms_name = models.CharField(max_length=255)

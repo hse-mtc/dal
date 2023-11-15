@@ -446,6 +446,20 @@ class ApplicantForm extends Vue {
             "Введите код подразделения в формате 700-007 ",
           ),
         ],
+        tax_id: [
+          required,
+          getValidator(
+            /^\d{12}/,
+            "Введите ИНН в формате 771234567890",
+          ),
+        ],
+        insurance_number: [
+          required,
+          getValidator(
+            /^\d{3}-\d{3}-\d{3} \d{2}/,
+            "Введите СНИЛС в формате 200-200-200 20",
+          ),
+        ],
       },
       recruitmentOffice: makeRequired(["title"]),
       universityInfo: {

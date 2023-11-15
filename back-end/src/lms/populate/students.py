@@ -7,7 +7,7 @@ from common.models.universities import (
 from common.models.personal import (
     ContactInfo,
     BirthInfo,
-    Passport,
+    PersonalDocuments,
     Relative,
 )
 
@@ -384,7 +384,7 @@ def create_students(
             **fields.pop("birth_info"),
         )
         fields["passport"] = get_or_create(
-            Passport,
+            PersonalDocuments,
             **fields.pop("passport"),
         )
         fields["university_info"] = get_or_create(

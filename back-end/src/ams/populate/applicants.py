@@ -13,7 +13,7 @@ from common.models.universities import (
 )
 from common.models.personal import (
     BirthInfo,
-    Passport,
+    PersonalDocuments,
     ContactInfo,
     Relative,
     Photo,
@@ -266,7 +266,7 @@ def create_applicants(
             **fields.pop("birth_info"),
         )
         fields["passport"] = get_or_create(
-            Passport,
+            PersonalDocuments,
             **fields.pop("passport"),
         )
         fields["university_info"] = get_or_create(

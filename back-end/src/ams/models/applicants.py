@@ -11,7 +11,7 @@ from common.models.milspecialties import Milspecialty
 from common.models.personal import (
     BirthInfo,
     ContactInfo,
-    Passport,
+    PersonalDocuments,
     Photo,
     Relative,
 )
@@ -134,7 +134,7 @@ class Applicant(models.Model):
         on_delete=models.RESTRICT,
     )
     passport = models.OneToOneField(
-        to=Passport,
+        to=PersonalDocuments,
         on_delete=models.RESTRICT,
     )
     university_info = models.OneToOneField(
