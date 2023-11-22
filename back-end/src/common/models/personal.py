@@ -4,6 +4,7 @@ from django.db import models
 
 from django.dispatch import receiver
 
+
 class BirthInfo(models.Model):
     date = models.DateField()
     country = models.CharField(
