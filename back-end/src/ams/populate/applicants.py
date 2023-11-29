@@ -58,7 +58,7 @@ def create_applicants(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771234567890",
-                "insurance_number": "200-200-200 20"
+                "insurance_number": "200-200-200 20",
             },
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -156,7 +156,7 @@ def create_applicants(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771234567891",
-                "insurance_number": "201-200-200 21"
+                "insurance_number": "201-200-200 21",
             },
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -196,7 +196,7 @@ def create_applicants(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "781234567890",
-                "insurance_number": "202-200-200 22"
+                "insurance_number": "202-200-200 22",
             },
             "university_info": {
                 "program": programs["Экономика"],
@@ -238,7 +238,7 @@ def create_applicants(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "501234567890",
-                "insurance_number": "203-200-200 23"
+                "insurance_number": "203-200-200 23",
             },
             "university_info": {
                 "program": programs["Юриспруденция"],

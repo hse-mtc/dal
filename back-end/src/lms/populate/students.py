@@ -76,7 +76,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771234567880",
-                "insurance_number": "202-200-240 24"
+                "insurance_number": "202-200-240 24",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -113,7 +113,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771234567890",
-                "insurance_number": "202-200-200 22"
+                "insurance_number": "202-200-200 22",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -148,7 +148,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771233567890",
-                "insurance_number": "202-200-200 29"
+                "insurance_number": "202-200-200 29",
             },
             "citizenship": "РФ",
             "permanent_address": "г. Волжский, ул. Плаксина, дом Какуна",
@@ -187,7 +187,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771245556789",
-                "insurance_number": "202-200-280 22"
+                "insurance_number": "202-200-280 22",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -224,7 +224,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771234567820",
-                "insurance_number": "202-280-200 22"
+                "insurance_number": "202-280-200 22",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -261,7 +261,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "772234567890",
-                "insurance_number": "202-278-200 22"
+                "insurance_number": "202-278-200 22",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -298,7 +298,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771234567812",
-                "insurance_number": "202-200-210 26"
+                "insurance_number": "202-200-210 26",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -335,7 +335,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "771264567890",
-                "insurance_number": "262-200-200 22"
+                "insurance_number": "262-200-200 22",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -372,7 +372,7 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
                 "tax_id": "770123456789",
-                "insurance_number": "202-200-200 22"
+                "insurance_number": "202-200-200 22",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {

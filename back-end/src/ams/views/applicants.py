@@ -266,7 +266,6 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     def generate_docs(
         self,
     ) -> Response:
-
         applicants = self.get_queryset()
         data = [
             ApplicantSerializer(instance=applicant).data for applicant in applicants

@@ -9,7 +9,6 @@ from django.contrib.auth.base_user import BaseUserManager
 
 
 class RegisterView(generics.GenericAPIView):
-
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 

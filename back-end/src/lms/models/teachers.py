@@ -16,7 +16,6 @@ from lms.models.common import (
 
 
 class Teacher(models.Model):
-
     # --------------------------------------------------------------------------
 
     class Post(models.TextChoices):

@@ -92,7 +92,6 @@ class PersonalDocuments(models.Model):
 
 
 class Relative(models.Model):
-
     # --------------------------------------------------------------------------
     # Relative-specific enums.
 

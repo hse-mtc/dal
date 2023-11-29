@@ -507,7 +507,6 @@ def generate():
     users_list = []
     milgroup_students_count = 3
     with open(Path(__file__).parent.parent / "./students_gen.py", "w") as students:
-
         print(STUDENTS_HEADER, file=students)
         for m_group in milgroups:
             gc, sc = random.sample(list(range(milgroup_students_count)), 2)
