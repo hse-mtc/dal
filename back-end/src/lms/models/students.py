@@ -117,7 +117,7 @@ class Student(models.Model):
         max_length=128,
         blank=True,
     )
-    passport = models.OneToOneField(
+    personal_documents = models.OneToOneField(
         to=PersonalDocuments,
         on_delete=models.RESTRICT,
         null=True,
@@ -175,7 +175,7 @@ class Student(models.Model):
             birth_info=applicant.birth_info,
             citizenship=applicant.citizenship,
             permanent_address=applicant.permanent_address,
-            passport=applicant.passport,
+            personal_documents=applicant.personal_documents,
             recruitment_office=applicant.recruitment_office,
             university_info=applicant.university_info,
         )
@@ -206,7 +206,7 @@ def post_delete_fields(sender, instance: Student, **kwargs):
         "user",
         "contact_info",
         "birth_info",
-        "passport",
+        "personal_documents",
         "university_info",
         "photo",
     ]

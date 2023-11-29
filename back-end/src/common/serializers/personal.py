@@ -122,7 +122,7 @@ class PhotoMutateMixin(serializers.Serializer):
         self.create_photo(validated_data)
 
 
-class PassportSerializer(serializers.ModelSerializer):
+class PersonalDocumentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonalDocuments
         exclude = ["id"]

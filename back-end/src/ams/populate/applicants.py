@@ -51,12 +51,14 @@ def create_applicants(
                 "country": "Россия",
                 "place": "Москва",
             },
-            "passport": {
+            "personal_documents": {
                 "series": "1000",
                 "code": "222222",
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20"
             },
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -147,12 +149,14 @@ def create_applicants(
                 "country": "Россия",
                 "place": "Москва",
             },
-            "passport": {
+            "personal_documents": {
                 "series": "1001",
                 "code": "222222",
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+                "tax_id": "771234567891",
+                "insurance_number": "201-200-200 21"
             },
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -185,12 +189,14 @@ def create_applicants(
                 "country": "Беларусь",
                 "place": "Минск",
             },
-            "passport": {
+            "personal_documents": {
                 "series": "1002",
                 "code": "222222",
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+                "tax_id": "781234567890",
+                "insurance_number": "202-200-200 22"
             },
             "university_info": {
                 "program": programs["Экономика"],
@@ -216,7 +222,7 @@ def create_applicants(
             "patronymic": "Олегович",
             "surname_genitive": "Борисов",
             "name_genitive": "Никиты",
-            "patronymic_genitive": "Олеговича",
+            "patronymic_genitive": "Олçеговича",
             "recruitment_office": "Ленинградский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Ульяновск, ул. Победы, д. Неведы",
@@ -225,12 +231,14 @@ def create_applicants(
                 "country": "Россия",
                 "place": "Санкт-Петербург",
             },
-            "passport": {
+            "personal_documents": {
                 "series": "1003",
                 "code": "222222",
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+                "tax_id": "501234567890",
+                "insurance_number": "203-200-200 23"
             },
             "university_info": {
                 "program": programs["Юриспруденция"],
@@ -265,9 +273,9 @@ def create_applicants(
             BirthInfo,
             **fields.pop("birth_info"),
         )
-        fields["passport"] = get_or_create(
+        fields["personal_documents"] = get_or_create(
             PersonalDocuments,
-            **fields.pop("passport"),
+            **fields.pop("personal_documents"),
         )
         fields["university_info"] = get_or_create(
             UniversityInfo,

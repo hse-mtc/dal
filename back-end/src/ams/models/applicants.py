@@ -133,7 +133,7 @@ class Applicant(models.Model):
         to=BirthInfo,
         on_delete=models.RESTRICT,
     )
-    passport = models.OneToOneField(
+    personal_documents = models.OneToOneField(
         to=PersonalDocuments,
         on_delete=models.RESTRICT,
     )

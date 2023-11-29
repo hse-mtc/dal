@@ -23,7 +23,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Москва, ул. Пушкина, дом 4",
-            "passport": {
+            "personal_documents": {
                 "series": "1112",
                 "code": "111112",
                 "ufms_name": "УФМС гор. Москва",
@@ -58,7 +58,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Пушкина, дом 2",
-            "passport": {
+            "personal_documents": {
                 "series": "1113",
                 "code": "111113",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -93,7 +93,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Флотская, дом 80",
-            "passport": {
+            "personal_documents": {
                 "series": "1114",
                 "code": "111114",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -128,7 +128,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Солнечная, дом 6",
-            "passport": {
+            "personal_documents": {
                 "series": "1115",
                 "code": "111115",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -163,7 +163,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Ботаническая, дом 93",
-            "passport": {
+            "personal_documents": {
                 "series": "1116",
                 "code": "111116",
                 "ufms_name": "УФМС гор. Белгород",
@@ -198,7 +198,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Пушкина, дом 73",
-            "passport": {
+            "personal_documents": {
                 "series": "1117",
                 "code": "111117",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -233,7 +233,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Электрозаводская, дом 24",
-            "passport": {
+            "personal_documents": {
                 "series": "1118",
                 "code": "111118",
                 "ufms_name": "УФМС гор. Белгород",
@@ -268,7 +268,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Петровка, дом 72",
-            "passport": {
+            "personal_documents": {
                 "series": "1119",
                 "code": "111119",
                 "ufms_name": "УФМС гор. Белгород",
@@ -303,7 +303,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Астрахань, ул. Пушкина, дом 65",
-            "passport": {
+            "personal_documents": {
                 "series": "1120",
                 "code": "111120",
                 "ufms_name": "УФМС гор. Астрахань",
@@ -338,7 +338,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Ботаническая, дом 3",
-            "passport": {
+            "personal_documents": {
                 "series": "1121",
                 "code": "111121",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -373,7 +373,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Солнечная, дом 31",
-            "passport": {
+            "personal_documents": {
                 "series": "1122",
                 "code": "111122",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -408,7 +408,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Электрозаводская, дом 61",
-            "passport": {
+            "personal_documents": {
                 "series": "1123",
                 "code": "111123",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -443,7 +443,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Флотская, дом 39",
-            "passport": {
+            "personal_documents": {
                 "series": "1124",
                 "code": "111124",
                 "ufms_name": "УФМС гор. Белгород",
@@ -478,7 +478,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Солнечная, дом 71",
-            "passport": {
+            "personal_documents": {
                 "series": "1125",
                 "code": "111125",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -513,7 +513,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Москва, ул. Солнечная, дом 49",
-            "passport": {
+            "personal_documents": {
                 "series": "1126",
                 "code": "111126",
                 "ufms_name": "УФМС гор. Москва",
@@ -548,7 +548,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Архангельск, ул. Ботаническая, дом 75",
-            "passport": {
+            "personal_documents": {
                 "series": "1127",
                 "code": "111127",
                 "ufms_name": "УФМС гор. Архангельск",
@@ -583,7 +583,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Москва, ул. Электрозаводская, дом 46",
-            "passport": {
+            "personal_documents": {
                 "series": "1128",
                 "code": "111128",
                 "ufms_name": "УФМС гор. Москва",
@@ -618,7 +618,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Астрахань, ул. Электрозаводская, дом 12",
-            "passport": {
+            "personal_documents": {
                 "series": "1129",
                 "code": "111129",
                 "ufms_name": "УФМС гор. Астрахань",
@@ -653,7 +653,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Ботаническая, дом 97",
-            "passport": {
+            "personal_documents": {
                 "series": "1130",
                 "code": "111130",
                 "ufms_name": "УФМС гор. Белгород",
@@ -688,7 +688,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Москва, ул. Ботаническая, дом 94",
-            "passport": {
+            "personal_documents": {
                 "series": "1131",
                 "code": "111131",
                 "ufms_name": "УФМС гор. Москва",
@@ -723,7 +723,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Астрахань, ул. Флотская, дом 89",
-            "passport": {
+            "personal_documents": {
                 "series": "1132",
                 "code": "111132",
                 "ufms_name": "УФМС гор. Астрахань",
@@ -758,7 +758,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Флотская, дом 97",
-            "passport": {
+            "personal_documents": {
                 "series": "1133",
                 "code": "111133",
                 "ufms_name": "УФМС гор. Белгород",
@@ -793,7 +793,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Флотская, дом 4",
-            "passport": {
+            "personal_documents": {
                 "series": "1134",
                 "code": "111134",
                 "ufms_name": "УФМС гор. Белгород",
@@ -828,7 +828,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Астрахань, ул. Электрозаводская, дом 2",
-            "passport": {
+            "personal_documents": {
                 "series": "1135",
                 "code": "111135",
                 "ufms_name": "УФМС гор. Астрахань",
@@ -863,7 +863,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Петровка, дом 72",
-            "passport": {
+            "personal_documents": {
                 "series": "1136",
                 "code": "111136",
                 "ufms_name": "УФМС гор. Белгород",
@@ -898,7 +898,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Электрозаводская, дом 2",
-            "passport": {
+            "personal_documents": {
                 "series": "1137",
                 "code": "111137",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -933,7 +933,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Астрахань, ул. Академика Королева, дом 24",
-            "passport": {
+            "personal_documents": {
                 "series": "1138",
                 "code": "111138",
                 "ufms_name": "УФМС гор. Астрахань",
@@ -968,7 +968,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Ботаническая, дом 44",
-            "passport": {
+            "personal_documents": {
                 "series": "1139",
                 "code": "111139",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -1003,7 +1003,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Барнаул, ул. Ботаническая, дом 26",
-            "passport": {
+            "personal_documents": {
                 "series": "1140",
                 "code": "111140",
                 "ufms_name": "УФМС гор. Барнаул",
@@ -1038,7 +1038,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Архангельск, ул. Флотская, дом 26",
-            "passport": {
+            "personal_documents": {
                 "series": "1141",
                 "code": "111141",
                 "ufms_name": "УФМС гор. Архангельск",
@@ -1073,7 +1073,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Ботаническая, дом 88",
-            "passport": {
+            "personal_documents": {
                 "series": "1142",
                 "code": "111142",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -1108,7 +1108,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Флотская, дом 49",
-            "passport": {
+            "personal_documents": {
                 "series": "1143",
                 "code": "111143",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -1143,7 +1143,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Академика Королева, дом 92",
-            "passport": {
+            "personal_documents": {
                 "series": "1144",
                 "code": "111144",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -1178,7 +1178,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Дмитровская, дом 2",
-            "passport": {
+            "personal_documents": {
                 "series": "1145",
                 "code": "111145",
                 "ufms_name": "УФМС гор. Белгород",
@@ -1213,7 +1213,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Солнечная, дом 48",
-            "passport": {
+            "personal_documents": {
                 "series": "1146",
                 "code": "111146",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -1248,7 +1248,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Электрозаводская, дом 72",
-            "passport": {
+            "personal_documents": {
                 "series": "1147",
                 "code": "111147",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -1283,7 +1283,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Флотская, дом 90",
-            "passport": {
+            "personal_documents": {
                 "series": "1148",
                 "code": "111148",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -1318,7 +1318,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Дмитровская, дом 48",
-            "passport": {
+            "personal_documents": {
                 "series": "1149",
                 "code": "111149",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -1353,7 +1353,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Астрахань, ул. Петровка, дом 57",
-            "passport": {
+            "personal_documents": {
                 "series": "1150",
                 "code": "111150",
                 "ufms_name": "УФМС гор. Астрахань",
@@ -1388,7 +1388,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Белгород, ул. Петровка, дом 89",
-            "passport": {
+            "personal_documents": {
                 "series": "1151",
                 "code": "111151",
                 "ufms_name": "УФМС гор. Белгород",
@@ -1423,7 +1423,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Солнечная, дом 66",
-            "passport": {
+            "personal_documents": {
                 "series": "1152",
                 "code": "111152",
                 "ufms_name": "УФМС гор. Биробиджан",
@@ -1458,7 +1458,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Барнаул, ул. Флотская, дом 73",
-            "passport": {
+            "personal_documents": {
                 "series": "1153",
                 "code": "111153",
                 "ufms_name": "УФМС гор. Барнаул",
@@ -1493,7 +1493,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Астрахань, ул. Флотская, дом 4",
-            "passport": {
+            "personal_documents": {
                 "series": "1154",
                 "code": "111154",
                 "ufms_name": "УФМС гор. Астрахань",
@@ -1528,7 +1528,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Санкт-Петербург, ул. Электрозаводская, дом 50",
-            "passport": {
+            "personal_documents": {
                 "series": "1155",
                 "code": "111155",
                 "ufms_name": "УФМС гор. Санкт-Петербург",
@@ -1563,7 +1563,7 @@ def get_students(users, milgroups, skills, programs):
             },
             "citizenship": "РФ",
             "permanent_address": "г. Биробиджан, ул. Пушкина, дом 51",
-            "passport": {
+            "personal_documents": {
                 "series": "1156",
                 "code": "111156",
                 "ufms_name": "УФМС гор. Биробиджан",

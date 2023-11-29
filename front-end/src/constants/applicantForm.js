@@ -3,7 +3,7 @@ import { CAMPUSES } from "@/utils/enums";
 export const STEPS = {
   about: "about",
   birthInfo: "birthInfo",
-  passport: "passport",
+  personalDocuments: "personalDocuments",
   universityInfo: "universityInfo",
   recruitmentOffice: "recruitmentOffice",
   contactInfo: "contactInfo",
@@ -91,7 +91,7 @@ export const CONTACT_INFO = {
   },
 };
 
-export const PASSPORT = {
+export const PERSONAL_DOCUMENTS = {
   series: {
     component: "text",
     title: "Серия",
@@ -243,7 +243,7 @@ export const getRelationData = rel => ({
 export const STEPS_RU = {
   about: "Общее",
   birthInfo: "Рождение",
-  passport: "Паспорт",
+  personalDocuments: "Паспорт, ИНН и СНИЛС",
   universityInfo: "Университет",
   recruitmentOffice: "Военкомат",
   contactInfo: "Контакты",
@@ -260,7 +260,7 @@ export const HEADERS_BY_STEPS = {
   about: "Общие сведения",
   birthInfo: "Информация о рождении",
   contactInfo: "Контактная информация",
-  passport: "Паспортные данные, ИНН и СНИЛС",
+  personalDocuments: "Паспортные данные, ИНН и СНИЛС",
   recruitmentOffice: "Военный комиссариат",
   universityInfo: "Информация о ВУЗе",
   photo: "Фотография",
@@ -301,7 +301,7 @@ export const devInitData = {
     country: "Страна",
     place: "Город",
   },
-  passport: {
+  personalDocuments: {
     series: "1234",
     code: "123456",
     ufms_name: "Паспорт выдан",

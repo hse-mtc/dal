@@ -396,9 +396,9 @@ def generate_birth_info():
     )
 
 
-def generate_passport(city):
-    generate_passport.series += 1
-    generate_passport.number += 1
+def generate_personal_documents(city):
+    generate_personal_documents.series += 1
+    generate_personal_documents.number += 1
     return """{{
             "series": "{}",
             "code": "{}",
@@ -408,7 +408,7 @@ def generate_passport(city):
             "tax_id": "771234567890",
             "insurance_number": "200-200-200 20",
         }}""".format(
-        generate_passport.series, generate_passport.number, city
+        generate_personal_documents.series, generate_personal_documents.number, city
     )
 
 
@@ -431,7 +431,7 @@ def generate_student(args):
     """
     args: surname, name, patronymic, mail,
     milgroup, phone, post, skills, birth_info,
-    adress, passport, university info
+    adress, personal_documents, university info
     """
     return """{{
         "surname": "{}",
@@ -449,7 +449,7 @@ def generate_student(args):
         "birth_info": {},
         "citizenship": "РФ",
         "permanent_address": "{}",
-        "passport": {},
+        "personal_documents": {},
         "recruitment_office": "Московский военкомат",
         "university_info": {},
         "family": [],
@@ -467,8 +467,8 @@ posts = [Posts.NO_POST, Posts.MILGROUP_COMMANDER, Posts.MILSQUAD_COMMANDER]
 
 
 generate_phone.last_phone = 79850000002
-generate_passport.series = 1111
-generate_passport.number = 111111
+generate_personal_documents.series = 1111
+generate_personal_documents.number = 111111
 
 generate_university_info.group = 0
 generate_university_info.card_id = 0
@@ -547,7 +547,7 @@ def generate():
                             generate_skills(skills),
                             generate_birth_info(),
                             permanent_adress,
-                            generate_passport(city),
+                            generate_personal_documents(city),
                             generate_university_info(programs),
                         ]
                     ),

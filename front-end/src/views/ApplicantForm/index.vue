@@ -159,7 +159,7 @@ import {
   ABOUT,
   BIRTH_INFO,
   CONTACT_INFO,
-  PASSPORT,
+  PERSONAL_DOCUMENTS,
   RECRUITMENT_OFFICE,
   UNIVERSITY_INFO,
   MILSPECIALTY,
@@ -207,7 +207,7 @@ class ApplicantForm extends Vue {
         : {
           about: createData(ABOUT),
           birthInfo: createData(BIRTH_INFO),
-          passport: createData(PASSPORT),
+          personalDocuments: createData(PERSONAL_DOCUMENTS),
           recruitmentOffice: createData(RECRUITMENT_OFFICE),
           universityInfo: createData(UNIVERSITY_INFO),
           contactInfo: createData(CONTACT_INFO),
@@ -240,7 +240,7 @@ class ApplicantForm extends Vue {
       };
 
       this.applicantData.birthInfo = ap_data.birth_info;
-      this.applicantData.passport = ap_data.passport;
+      this.applicantData.personalDocuments = ap_data.personal_documents;
       this.applicantData.universityInfo = ap_data.university_info;
       this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
       this.applicantData.contactInfo = ap_data.contact_info;
@@ -273,7 +273,7 @@ class ApplicantForm extends Vue {
   fields = {
     about: ABOUT,
     birthInfo: BIRTH_INFO,
-    passport: PASSPORT,
+    personalDocuments: PERSONAL_DOCUMENTS,
     recruitmentOffice: RECRUITMENT_OFFICE,
     universityInfo: UNIVERSITY_INFO,
     contactInfo: CONTACT_INFO,
@@ -429,7 +429,7 @@ class ApplicantForm extends Vue {
         country: [required, getMaxLengthValidator(64)],
         place: [required, getMaxLengthValidator(64)],
       },
-      passport: {
+      personalDocuments: {
         ...makeRequired(["ufms_name", "issue_date"]),
         series: [
           required,
@@ -449,14 +449,14 @@ class ApplicantForm extends Vue {
         tax_id: [
           required,
           getValidator(
-            /^\d{12}/,
+            /^\d{12}$/,
             "Введите ИНН в формате 771234567890",
           ),
         ],
         insurance_number: [
           required,
           getValidator(
-            /^\d{3}-\d{3}-\d{3} \d{2}/,
+            /^\d{3}-\d{3}-\d{3} \d{2}$/,
             "Введите СНИЛС в формате 200-200-200 20",
           ),
         ],
@@ -660,7 +660,7 @@ class ApplicantForm extends Vue {
         ...this.applicantData.milspecialty,
         birth_info: this.applicantData.birthInfo,
         contact_info: this.applicantData.contactInfo,
-        passport: this.applicantData.passport,
+        personal_documents: this.applicantData.personalDocuments,
         recruitment_office: this.applicantData.recruitmentOffice.title,
         university_info: this.applicantData.universityInfo,
         family,

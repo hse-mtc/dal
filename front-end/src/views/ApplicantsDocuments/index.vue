@@ -269,7 +269,7 @@ export default {
         faculty: item.faculty,
         fullname: item.fullname,
         id: item.id,
-        passport: item.passport,
+        personalDocuments: item.personalDocuments,
         program: item.program_code,
         ...item.application_process,
       }));

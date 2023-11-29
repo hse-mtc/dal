@@ -87,8 +87,8 @@ class PersonalDocuments(models.Model):
     insurance_number = models.CharField(max_length=14)
 
     class Meta:
-        verbose_name = "Passport"
-        verbose_name_plural = "Passports"
+        verbose_name = "Personal Document"
+        verbose_name_plural = "Persona Documents"
 
 
 class Relative(models.Model):

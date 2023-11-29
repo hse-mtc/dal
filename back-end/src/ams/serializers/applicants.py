@@ -15,7 +15,7 @@ from common.serializers.personal import (
     ContactInfoSerializer,
     PhotoMutateMixin,
     RelativeSerializer,
-    PassportSerializer,
+    PersonalDocumentsSerializer,
     RelativeMutateSerializer,
 )
 
@@ -43,7 +43,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
     birth_info = BirthInfoSerializer(read_only=True)
     contact_info = ContactInfoSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
-    passport = PassportSerializer(read_only=True)
+    personal_documents = PersonalDocumentsSerializer(read_only=True)
     photo = serializers.SerializerMethodField(read_only=True)
 
     family = RelativeSerializer(read_only=True, many=True)
@@ -63,7 +63,7 @@ class ApplicantMutateSerializer(
     PhotoMutateMixin,
 ):
     birth_info = BirthInfoSerializer(required=False)
-    passport = PassportSerializer(required=False)
+    personal_documents = PersonalDocumentsSerializer(required=False)
     university_info = UniversityInfoMutateSerializer(required=False)
     contact_info = ContactInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)

@@ -149,31 +149,31 @@ export default {
           fields: [
             {
               name: "Серия",
-              content: data.passport.series,
+              content: data.personal_documents.series,
             },
             {
               name: "Номер",
-              content: data.passport.code,
+              content: data.personal_documents.code,
             },
             {
               name: "Паспорт выдан",
-              content: data.passport.ufms_name,
+              content: data.personal_documents.ufms_name,
             },
             {
               name: "Дата выдачи",
-              content: data.passport.issue_date,
+              content: data.personal_documents.issue_date,
             },
             {
               name: "Код подразделения",
-              content: data.passport.ufms_code,
+              content: data.personal_documents.ufms_code,
             },
             {
               name: "ИНН",
-              content: data.passport.tax_id,
+              content: data.personal_documents.tax_id,
             },
             {
               name: "СНИЛС",
-              content: data.passport.insurance_number,
+              content: data.personal_documents.insurance_number,
             },
           ],
         },
