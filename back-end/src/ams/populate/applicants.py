@@ -222,7 +222,7 @@ def create_applicants(
             "patronymic": "Олегович",
             "surname_genitive": "Борисов",
             "name_genitive": "Никиты",
-            "patronymic_genitive": "Олçеговича",
+            "patronymic_genitive": "Олеговича",
             "recruitment_office": "Ленинградский военкомат",
             "citizenship": "РФ",
             "permanent_address": "г. Ульяновск, ул. Победы, д. Неведы",
