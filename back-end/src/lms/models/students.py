@@ -10,6 +10,7 @@ from common.models.personal import (
     BirthInfo,
     ContactInfo,
     Passport,
+    PersonalDocumentsInfo,
     Photo,
     Relative,
 )
@@ -119,6 +120,12 @@ class Student(models.Model):
     )
     passport = models.OneToOneField(
         to=Passport,
+        on_delete=models.RESTRICT,
+        null=True,
+        blank=True,
+    )
+    personal_documents_info = models.OneToOneField(
+        to=PersonalDocumentsInfo,
         on_delete=models.RESTRICT,
         null=True,
         blank=True,
