@@ -87,7 +87,14 @@ class Passport(models.Model):
     class Meta:
         verbose_name = "Passport"
         verbose_name_plural = "Passports"
+        
+class PersonalDocumentsInfo(models.Model):
+    tax_id = models.CharField(max_length=13)
+    insurance_number = models.CharField(max_length=14)
 
+    class Meta:
+        verbose_name = "Personal Documents Info"
+        verbose_name_plural = "Personal Documents Infos"
 
 class Relative(models.Model):
 

@@ -7,6 +7,7 @@ from common.models.personal import (
     BirthInfo,
     ContactInfo,
     Passport,
+    PersonalDocumentsInfo,
     Photo,
     Relative,
 )
@@ -20,6 +21,7 @@ admin.site.register(Subject)
 admin.site.register(BirthInfo)
 admin.site.register(ContactInfo)
 admin.site.register(Passport)
+admin.site.register(PersonalDocumentsInfo)
 admin.site.register(Photo)
 admin.site.register(Relative)
 

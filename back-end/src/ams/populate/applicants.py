@@ -14,6 +14,7 @@ from common.models.universities import (
 from common.models.personal import (
     BirthInfo,
     Passport,
+    PersonalDocumentsInfo,
     ContactInfo,
     Relative,
     Photo,
@@ -57,6 +58,10 @@ def create_applicants(
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
             },
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -154,6 +159,10 @@ def create_applicants(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
                 "group": "ГРПП11",
@@ -191,6 +200,10 @@ def create_applicants(
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
             },
             "university_info": {
                 "program": programs["Экономика"],
@@ -232,6 +245,10 @@ def create_applicants(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "university_info": {
                 "program": programs["Юриспруденция"],
                 "group": "ГРПП13",
@@ -268,6 +285,10 @@ def create_applicants(
         fields["passport"] = get_or_create(
             Passport,
             **fields.pop("passport"),
+        )
+        fields["personal_documents_info"] = get_or_create(
+            PersonalDocumentsInfo,
+            **fields.pop("personal_documents_info")
         )
         fields["university_info"] = get_or_create(
             UniversityInfo,

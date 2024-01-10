@@ -8,6 +8,7 @@ from common.models.personal import (
     ContactInfo,
     BirthInfo,
     Passport,
+    PersonalDocumentsInfo,
     Relative,
 )
 
@@ -75,6 +76,10 @@ def create_students(
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -144,6 +149,10 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "citizenship": "РФ",
             "permanent_address": "г. Волжский, ул. Плаксина, дом Какуна",
             "recruitment_office": "Московский военкомат",
@@ -181,6 +190,10 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -215,6 +228,10 @@ def create_students(
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -251,6 +268,10 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -285,6 +306,10 @@ def create_students(
                 "ufms_name": "УФМС гор. Москвы",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -321,6 +346,10 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -356,6 +385,10 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -386,6 +419,10 @@ def create_students(
         fields["passport"] = get_or_create(
             Passport,
             **fields.pop("passport"),
+        )
+        fields["personal_documents_info"] = get_or_create(
+            PersonalDocumentsInfo,
+            **fields.pop("personal_documents_info"),
         )
         fields["university_info"] = get_or_create(
             UniversityInfo,
