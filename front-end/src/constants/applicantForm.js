@@ -4,6 +4,7 @@ export const STEPS = {
   about: "about",
   birthInfo: "birthInfo",
   passport: "passport",
+  personalDocumentsInfo: "personalDocumentsInfo",
   universityInfo: "universityInfo",
   recruitmentOffice: "recruitmentOffice",
   contactInfo: "contactInfo",
@@ -115,6 +116,23 @@ export const PASSPORT = {
     title: "Код подразделения",
     props: { placeholder: "700-007" },
   },
+};
+
+export const PERSONAL_DOCUMENTS_INFO = {
+  tax_id: {
+    component: "text",
+    title: "ИНН",
+    props: {
+      placeholder: "771234567890",
+    }
+  },
+  insurance_id: {
+    component: "text",
+    title: "СНИЛС",
+    props: {
+      placeholder: "200-200-200 20",
+    }
+  }
 };
 
 export const RECRUITMENT_OFFICE = {
@@ -234,6 +252,7 @@ export const STEPS_RU = {
   about: "Общее",
   birthInfo: "Рождение",
   passport: "Паспорт",
+  personalDocumentsInfo: "ИНН и СНИЛС",
   universityInfo: "Университет",
   recruitmentOffice: "Военкомат",
   contactInfo: "Контакты",
@@ -251,6 +270,7 @@ export const HEADERS_BY_STEPS = {
   birthInfo: "Информация о рождении",
   contactInfo: "Контактная информация",
   passport: "Паспортные данные",
+  personalDocumentsInfo: "ИНН и СНИЛС",
   recruitmentOffice: "Военный комиссариат",
   universityInfo: "Информация о ВУЗе",
   photo: "Фотография",
@@ -297,6 +317,10 @@ export const devInitData = {
     ufms_name: "Паспорт выдан",
     issue_date: "2021-04-20",
     ufms_code: "010-191",
+  },
+  personalDocumentsInfo: {
+    tax_id: "771234567890",
+    insurance_id: "200-200-200 20",
   },
   recruitmentOffice: { title: "Состою на воинском учете в военном комиссариате" },
   universityInfo: {

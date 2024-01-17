@@ -170,6 +170,19 @@ export default {
           ],
         },
         {
+          name: "ИНН и СНИЛС",
+          fields: [
+            {
+              name: "ИНН",
+              content: data.personal_documents_info.tax_id,
+            },
+            {
+              name: "СНИЛС",
+              content: data.personal_documents_info.insurance_id,
+            }
+          ]
+        },
+        {
           name: "Информация о ВУЗе",
           fields: [
             {
