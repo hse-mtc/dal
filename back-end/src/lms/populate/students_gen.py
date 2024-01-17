@@ -30,6 +30,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771334567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Программная инженерия"],
@@ -64,6 +68,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Санкт-Петербург",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771534567890",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -100,6 +108,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "741234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Программная инженерия"],
@@ -134,6 +146,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Санкт-Петербург",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771234567830",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -170,6 +186,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771237567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Юриспруденция"],
@@ -204,6 +224,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Санкт-Петербург",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771234567899",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -240,6 +264,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567833",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информационная безопасность"],
@@ -274,6 +302,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Белгород",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "771664567890",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -310,6 +342,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "571234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информационная безопасность"],
@@ -344,6 +380,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Санкт-Петербург",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "791234567890",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -380,6 +420,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "791234567890",
+                "insurance_number": "220-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -414,6 +458,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Биробиджан",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "721234567890",
+                "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -450,6 +498,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "891234567890",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информационная безопасность"],
@@ -484,6 +536,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Биробиджан",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "791234567890",
+                "insurance_number": "200-200-400 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {
@@ -520,6 +576,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "791234567890",
+                "insurance_number": "200-200-290 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информационная безопасность"],
@@ -554,6 +614,10 @@ def get_students(users, milgroups, skills, programs):
                 "ufms_name": "УФМС гор. Архангельск",
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
+            },
+            "personal_documents_info": {
+                "tax_id": "791234567890",
+                "insurance_number": "200-200-230 20",
             },
             "recruitment_office": "Московский военкомат",
             "university_info": {

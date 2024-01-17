@@ -160,7 +160,7 @@ def create_applicants(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234555890",
                 "insurance_number": "200-200-200 20",
             },
             "university_info": {
@@ -202,7 +202,7 @@ def create_applicants(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "775534567890",
                 "insurance_number": "200-200-200 20",
             },
             "university_info": {
@@ -246,7 +246,7 @@ def create_applicants(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "774334567890",
                 "insurance_number": "200-200-200 20",
             },
             "university_info": {

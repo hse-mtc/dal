@@ -89,8 +89,8 @@ class Passport(models.Model):
         verbose_name_plural = "Passports"
         
 class PersonalDocumentsInfo(models.Model):
-    tax_id = models.CharField(max_length=13)
-    insurance_number = models.CharField(max_length=14)
+    tax_id = models.CharField(max_length=13, default='')
+    insurance_number = models.CharField(max_length=14, default='')
 
     class Meta:
         verbose_name = "Personal Documents Info"
