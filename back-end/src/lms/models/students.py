@@ -183,6 +183,7 @@ class Student(models.Model):
             citizenship=applicant.citizenship,
             permanent_address=applicant.permanent_address,
             passport=applicant.passport,
+            personal_documents_info=applicant.personal_documents_info,
             recruitment_office=applicant.recruitment_office,
             university_info=applicant.university_info,
         )
@@ -214,6 +215,7 @@ def post_delete_fields(sender, instance: Student, **kwargs):
         "contact_info",
         "birth_info",
         "passport",
+        "personal_documents_info",
         "university_info",
         "photo",
     ]

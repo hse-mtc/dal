@@ -140,6 +140,8 @@ class Applicant(models.Model):
     )
     personal_documents_info = models.OneToOneField(
         to=PersonalDocumentsInfo,
+        null=True,
+        blank=True,
         on_delete=models.RESTRICT,
     )
     university_info = models.OneToOneField(

@@ -78,7 +78,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234567892",
                 "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
@@ -116,6 +116,10 @@ def create_students(
                 "ufms_code": "740-056",
                 "issue_date": "2020-10-02",
             },
+            "personal_documents_info": {
+                "tax_id": "771234567893",
+                "insurance_number": "200-200-200 20",
+            },
             "recruitment_office": "Московский военкомат",
             "university_info": {
                 "program": programs["Информатика и вычислительная техника"],
@@ -150,7 +154,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234547890",
                 "insurance_number": "200-200-200 20",
             },
             "citizenship": "РФ",
@@ -191,7 +195,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234567891",
                 "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
@@ -230,7 +234,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234567894",
                 "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
@@ -269,7 +273,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234567895",
                 "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
@@ -308,7 +312,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234567896",
                 "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
@@ -347,7 +351,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234567897",
                 "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
@@ -386,7 +390,7 @@ def create_students(
                 "issue_date": "2020-10-02",
             },
             "personal_documents_info": {
-                "tax_id": "771234567890",
+                "tax_id": "771234567898",
                 "insurance_number": "200-200-200 20",
             },
             "recruitment_office": "Московский военкомат",
@@ -420,10 +424,13 @@ def create_students(
             Passport,
             **fields.pop("passport"),
         )
-        fields["personal_documents_info"] = get_or_create(
-            PersonalDocumentsInfo,
-            **fields.pop("personal_documents_info"),
-        )
+        personal_documents_info = fields.pop("personal_documents_info", None)
+        if personal_documents_info is not None:
+            fields["personal_documents_info"] = get_or_create(
+                PersonalDocumentsInfo,
+                **personal_documents_info
+            )
+
         fields["university_info"] = get_or_create(
             UniversityInfo,
             **fields.pop("university_info"),
