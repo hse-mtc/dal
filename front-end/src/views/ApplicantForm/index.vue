@@ -160,6 +160,7 @@ import {
   BIRTH_INFO,
   CONTACT_INFO,
   PASSPORT,
+  PERSONAL_DOCUMENTS_INFO,
   RECRUITMENT_OFFICE,
   UNIVERSITY_INFO,
   MILSPECIALTY,
@@ -208,6 +209,7 @@ class ApplicantForm extends Vue {
           about: createData(ABOUT),
           birthInfo: createData(BIRTH_INFO),
           passport: createData(PASSPORT),
+          personalDocumentsInfo: createData(PERSONAL_DOCUMENTS_INFO),
           recruitmentOffice: createData(RECRUITMENT_OFFICE),
           universityInfo: createData(UNIVERSITY_INFO),
           contactInfo: createData(CONTACT_INFO),
@@ -241,6 +243,7 @@ class ApplicantForm extends Vue {
 
       this.applicantData.birthInfo = ap_data.birth_info;
       this.applicantData.passport = ap_data.passport;
+      // this.applicantData.personalDocumentsInfo = ap_data.personal_documents_info,
       this.applicantData.universityInfo = ap_data.university_info;
       this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
       this.applicantData.contactInfo = ap_data.contact_info;
@@ -274,6 +277,7 @@ class ApplicantForm extends Vue {
     about: ABOUT,
     birthInfo: BIRTH_INFO,
     passport: PASSPORT,
+    personalDocumentsInfo: PERSONAL_DOCUMENTS_INFO,
     recruitmentOffice: RECRUITMENT_OFFICE,
     universityInfo: UNIVERSITY_INFO,
     contactInfo: CONTACT_INFO,
@@ -446,6 +450,9 @@ class ApplicantForm extends Vue {
             "Введите код подразделения в формате 700-007 ",
           ),
         ],
+      },
+      personalDocumentsInfo: {
+        ...makeRequired(["tax_id", "insurance_id"]),
       },
       recruitmentOffice: makeRequired(["title"]),
       universityInfo: {

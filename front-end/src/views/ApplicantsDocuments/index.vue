@@ -270,6 +270,7 @@ export default {
         fullname: item.fullname,
         id: item.id,
         passport: item.passport,
+        personalDocumentsInfo: item.personalDocumentsInfo,
         program: item.program_code,
         ...item.application_process,
       }));
