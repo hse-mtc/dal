@@ -427,8 +427,7 @@ def create_students(
         personal_documents_info = fields.pop("personal_documents_info", None)
         if personal_documents_info is not None:
             fields["personal_documents_info"] = get_or_create(
-                PersonalDocumentsInfo,
-                **personal_documents_info
+                PersonalDocumentsInfo, **personal_documents_info
             )
 
         fields["university_info"] = get_or_create(
