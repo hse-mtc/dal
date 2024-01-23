@@ -9,6 +9,7 @@ from common.models.personal import (
     BirthInfo,
     ContactInfo,
     Passport,
+    PersonalDocumentsInfo,
     Photo,
     Relative,
 )
@@ -125,6 +126,12 @@ class PhotoMutateMixin(serializers.Serializer):
 class PassportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Passport
+        exclude = ["id"]
+
+
+class PersonalDocumentsInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PersonalDocumentsInfo
         exclude = ["id"]
 
 
