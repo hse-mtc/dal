@@ -178,7 +178,7 @@ export default {
             },
             {
               name: "СНИЛС",
-              content: data.personal_documents_info.insurance_id,
+              content: data.personal_documents_info.insurance_number,
             },
           ],
         },

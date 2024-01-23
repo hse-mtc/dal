@@ -6,16 +6,8 @@
           {{ headers[step] }}
         </h2>
 
-        <el-steps
-          :active="stepIndex"
-          finish-status="success"
-          :align-center="true"
-        >
-          <el-step
-            v-for="(title, key) in STEPS_RU"
-            :key="key"
-            @click.native="goToStep(key)"
-          />
+        <el-steps :active="stepIndex" finish-status="success" :align-center="true">
+          <el-step v-for="(title, key) in STEPS_RU" :key="key" @click.native="goToStep(key)" />
         </el-steps>
       </div>
 
@@ -33,10 +25,9 @@
         </GenericForm>
 
         <div
-          v-if="
-            step === STEPS.photo &&
-              applicantData.photo.photo &&
-              applicantData.photo.photo.length
+          v-if="step === STEPS.photo &&
+            applicantData.photo.photo &&
+            applicantData.photo.photo.length
           "
           :style="{
             width: '300px',
@@ -295,7 +286,7 @@ class ApplicantForm extends Vue {
   headers = HEADERS_BY_STEPS
 
   step = STEPS.about
-  STEPS= STEPS
+  STEPS = STEPS
   STEPS_RU = STEPS_RU
 
   tabsIndex = {
@@ -452,7 +443,17 @@ class ApplicantForm extends Vue {
         ],
       },
       personalDocumentsInfo: {
-        ...makeRequired(["tax_id", "insurance_id"]),
+        ...makeRequired(["tax_id", "insurance_number"]),
+        tax_id: [
+          required,
+          getValidator(/^\d{12}$/, "Введите ИНН в формате 771234567890"),
+        ],
+        insurance_number: [
+          required,
+          getValidator(
+            /^\d{3}-\d{3}-\d{3} \d{2}$/, "Введите СНИЛС в формате 200-200-200 20",
+          ),
+        ],
       },
       recruitmentOffice: makeRequired(["title"]),
       universityInfo: {
