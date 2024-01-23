@@ -126,7 +126,7 @@ export const PERSONAL_DOCUMENTS_INFO = {
       placeholder: "771234567890",
     },
   },
-  insurance_id: {
+  insurance_number: {
     component: "text",
     title: "СНИЛС",
     props: {
@@ -320,7 +320,7 @@ export const devInitData = {
   },
   personalDocumentsInfo: {
     tax_id: "771234567890",
-    insurance_id: "200-200-200 20",
+    insurance_number: "200-200-200 20",
   },
   recruitmentOffice: { title: "Состою на воинском учете в военном комиссариате" },
   universityInfo: {
