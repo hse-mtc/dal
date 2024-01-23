@@ -179,8 +179,8 @@ export default {
             {
               name: "СНИЛС",
               content: data.personal_documents_info.insurance_id,
-            }
-          ]
+            },
+          ],
         },
         {
           name: "Информация о ВУЗе",

@@ -12,7 +12,6 @@ from dms.models.common import Author, Publisher
 @pytest.fixture
 def non_string_paper_data(author_data, publisher_data, category_data):
     def call_me(num_authors: int = 1, num_publishers: int = 1):
-
         return {
             "authors": [
                 Author.objects.create(**author_data()).id for _ in range(num_authors)

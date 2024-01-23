@@ -124,15 +124,15 @@ export const PERSONAL_DOCUMENTS_INFO = {
     title: "ИНН",
     props: {
       placeholder: "771234567890",
-    }
+    },
   },
   insurance_id: {
     component: "text",
     title: "СНИЛС",
     props: {
       placeholder: "200-200-200 20",
-    }
-  }
+    },
+  },
 };
 
 export const RECRUITMENT_OFFICE = {

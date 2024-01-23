@@ -287,8 +287,7 @@ def create_applicants(
             **fields.pop("passport"),
         )
         fields["personal_documents_info"] = get_or_create(
-            PersonalDocumentsInfo,
-            **fields.pop("personal_documents_info")
+            PersonalDocumentsInfo, **fields.pop("personal_documents_info")
         )
         fields["university_info"] = get_or_create(
             UniversityInfo,

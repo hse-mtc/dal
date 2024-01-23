@@ -38,7 +38,6 @@ class Skill(models.Model):
 
 
 class Student(models.Model):
-
     # --------------------------------------------------------------------------
 
     class Status(models.TextChoices):

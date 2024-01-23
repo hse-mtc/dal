@@ -19,7 +19,6 @@ from common.models.personal import (
 
 
 class ApplicationProcess(models.Model):
-
     # --------------------------------------------------------------------------
 
     class MedicalExamination(models.TextChoices):
