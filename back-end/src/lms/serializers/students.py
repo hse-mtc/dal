@@ -15,6 +15,7 @@ from common.serializers.personal import (
     PhotoMutateMixin,
     RelativeMutateSerializer,
     PassportSerializer,
+    PersonalDocumentsInfoSerializer,
 )
 
 from lms.models.common import Milgroup
@@ -64,6 +65,7 @@ class StudentMutateSerializer(
 
     birth_info = BirthInfoSerializer(required=False)
     passport = PassportSerializer(required=False)
+    personal_documents_info = PersonalDocumentsInfoSerializer(required=False)
     university_info = UniversityInfoMutateSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
 
@@ -117,6 +119,7 @@ class StudentBasicInfoSerializer(serializers.ModelSerializer):
 class StudentExtraInfoSerializer(serializers.ModelSerializer):
     contact_info = ContactInfoSerializer(read_only=True)
     passport = PassportSerializer(read_only=True)
+    personal_documents_info = PersonalDocumentsInfoSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
     milspecialty = MilspecialtySerializer(read_only=True)
 
@@ -130,6 +133,7 @@ class StudentExtraInfoSerializer(serializers.ModelSerializer):
             "citizenship",
             "permanent_address",
             "passport",
+            "personal_documents_info",
         ]
 
 
