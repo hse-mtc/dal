@@ -16,6 +16,7 @@ from common.serializers.personal import (
     PhotoMutateMixin,
     RelativeSerializer,
     PassportSerializer,
+    PersonalDocumentsInfoSerializer,
     RelativeMutateSerializer,
 )
 
@@ -64,6 +65,7 @@ class ApplicantMutateSerializer(
 ):
     birth_info = BirthInfoSerializer(required=False)
     passport = PassportSerializer(required=False)
+    personal_documents_info = PersonalDocumentsInfoSerializer(required=False)
     university_info = UniversityInfoMutateSerializer(required=False)
     contact_info = ContactInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
