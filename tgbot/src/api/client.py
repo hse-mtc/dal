@@ -15,7 +15,6 @@ BASE_URL = f"{PROTOCOL}://{HOST}:{PORT}/api"
 
 
 class Client:
-
     def __init__(self, base_url: str = BASE_URL) -> None:
         self.base_url = base_url
         self.session = None

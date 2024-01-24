@@ -100,7 +100,7 @@ async def authorize(chat_id: int, phone: str) -> AuthorizeResult:
             return AuthorizeResult(
                 success=False,
                 details="Найдено несколько студентов с таким номером телефона.\n"
-                        "Обратитесь к технической поддержке.",
+                "Обратитесь к технической поддержке.",
             )
 
     if not student.is_milgroup_commander():

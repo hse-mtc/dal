@@ -10,9 +10,9 @@ from api.client import client
 
 
 class State(Enum):
-    ABSENT_LA = 0
-    ABSENT_IL = 1
-    ABSENT_LE = 2
+    LA = 0
+    IL = 1
+    LE = 2
     PRESENT = 3
 
 
@@ -44,7 +44,6 @@ class Student:
     fullname: str
     state: State
     milgroup: tp.Optional[Milgroup] = None
-    excuse: str = "IL"
     status: str = "OP"
     reason: str = ""
     post: tp.Optional[str] = None
@@ -55,9 +54,15 @@ class Student:
     @staticmethod
     def from_raw(body: dict[str, tp.Any]) -> "Student":
         # remove unnecessary data
-        for key in ["skills", "contact_info", "birth_info", "university_info", "family"]:
+        for key in [
+            "skills",
+            "contact_info",
+            "birth_info",
+            "university_info",
+            "family",
+        ]:
             body.pop(key)
-            
+
         # parse milgroup & milfaculty
         milgroup_dict = body.pop("milgroup")
         if milgroup_dict is None:
@@ -77,7 +82,7 @@ class Student:
     def to_body(self) -> dict[str, tp.Any]:
         return {
             "student": self.id,
-            "excuse": self.excuse,
+            "excuse": self.state.name,
             "status": self.status,
         }
 

@@ -11,7 +11,7 @@ from api.student import (
     State,
 )
 
-ABSENCES_LIST = [State.ABSENT_LA, State.ABSENT_LE, State.ABSENT_IL]
+ABSENCES_LIST = [State.LA, State.LE, State.IL]
 
 
 def absence_statistic(
@@ -19,7 +19,8 @@ def absence_statistic(
     students: list[Student],
     absent_students: list[Student],
 ) -> str:
-    text = textwrap.dedent(f"""
+    text = textwrap.dedent(
+        f"""
         Список студентов отправлен\\.
         Проверка личного состава произведена\\.
         
@@ -29,7 +30,8 @@ def absence_statistic(
              Налицо: {len(students) - len(absent_students)}
         Отсутствуют: {len(absent_students)}
         ```
-    """)
+    """
+    )
 
     if absent_students:
         absent_students.sort(key=operator.attrgetter("fullname"))
@@ -61,14 +63,12 @@ async def post_absence(
 
     if absences:
         pending_responses = [
-            client.delete(f"lms/absences/{absence['id']}/")
-            for absence in absences
+            client.delete(f"lms/absences/{absence['id']}/") for absence in absences
         ]
         await asyncio.gather(*pending_responses)
 
     absent_students = [
-        student for student in students
-        if student.state in ABSENCES_LIST
+        student for student in students if student.state in ABSENCES_LIST
     ]
 
     if absent_students:
