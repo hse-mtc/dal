@@ -45,6 +45,7 @@ class ApplicantSerializer(serializers.ModelSerializer):
     contact_info = ContactInfoSerializer(read_only=True)
     university_info = UniversityInfoSerializer(read_only=True)
     passport = PassportSerializer(read_only=True)
+    personal_documents_info = PersonalDocumentsInfoSerializer(read_only=True)
     photo = serializers.SerializerMethodField(read_only=True)
 
     family = RelativeSerializer(read_only=True, many=True)
