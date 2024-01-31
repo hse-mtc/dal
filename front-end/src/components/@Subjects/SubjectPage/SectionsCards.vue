@@ -4,6 +4,7 @@
       :list="sections"
       v-bind="dragOptions"
       :disabled="disableDrag"
+      handle=".dragIcon"
       @change="({ moved }) => updateOrder(moved.element.id, moved.newIndex)"
     >
       <transition-group type="transition" name="flip-list">
@@ -11,8 +12,10 @@
           v-for="section in sections"
           :id="`section-${section.id}`"
           :key="section.id"
+          ref="childSection"
           v-model="openedCards[section.id]"
           :section-info="section"
+          @update="updateInSubcomponents"
         />
       </transition-group>
     </Draggable>
@@ -63,8 +66,17 @@ class SectionsCards extends Vue {
     }]);
   }
 
+  @Watch("sections")
+  watchSections() {
+    this.$nextTick(this.updateInSubcomponents);
+  }
+
   updateOrder(id, order) {
-    SubjectsModule.changeSectionsOrder({ id, order });
+    SubjectsModule.changeSectionsOrder({ id, order }).then(this.updateInSubcomponents);
+  }
+
+  updateInSubcomponents() {
+    this.$refs.childSection?.forEach(section => section.updateInSubcomponents());
   }
 
   @Watch("$route", { immediate: true })
