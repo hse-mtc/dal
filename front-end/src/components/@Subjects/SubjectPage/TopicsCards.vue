@@ -19,6 +19,7 @@
       :list="topics"
       v-bind="dragOptions"
       :disabled="disableDrag"
+      handle=".dragIcon"
       @change="({ moved }) => updateOrder(moved.element.id, oldTopicsList[moved.newIndex].order)"
     >
       <transition-group type="transition" name="flip-list">
@@ -128,6 +129,7 @@ class TopicsCards extends Vue {
       section: this.sectionId,
       annotation: "Введите аннотацию",
     });
+    this.$emit("update");
 
     if (res) {
       this.$nextTick(() => {
@@ -180,13 +182,12 @@ class TopicsCards extends Vue {
       "topicsList",
       "тему",
     ).call(this, id);
-    this.getTopics();
+    this.$emit("update");
   }
 
-  updateOrder(id, order) {
-    this.getTopics();
-    changeTopicOrder(id, order);
-    this.getTopics();
+  async updateOrder(id, order) {
+    await changeTopicOrder(id, order);
+    this.$emit("update");
   }
 
   @Watch("editMutated")

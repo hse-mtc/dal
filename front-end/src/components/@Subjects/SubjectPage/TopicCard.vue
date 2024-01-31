@@ -2,7 +2,7 @@
   <div ref="root" :class="$style.root">
     <div :class="$style.header">
       <div :class="$style.topline">
-        <svg-icon icon-class="drag" />
+        <svg-icon class="dragIcon" icon-class="drag" />
 
         <div>Тема №{{ topic.order + 1 }}</div>
 
@@ -198,6 +198,10 @@ export default TopicCard;
   padding: 20px 16px 20px;
   border: 1px solid #e5e5eb;
   border-radius: 12px;
+}
+
+.dragIcon {
+  margin-right: 10px;
 }
 
 .header {

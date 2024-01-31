@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Max
 from django.dispatch import receiver
 
@@ -50,6 +50,10 @@ class Topic(OrderedModel):
                 order = 0
 
             self.to(order)
+
+    @transaction.atomic
+    def to(self, order, extra_update=None):
+        return super().to(order, extra_update=None)
 
     class Meta(OrderedModel.Meta):
         verbose_name = "Topic"
