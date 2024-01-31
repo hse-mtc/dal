@@ -286,23 +286,23 @@ export default {
               },
               {
                 name: `Дата рождения${type[1]}`,
-                content: data.family[counter].birth_info.date,
+                content: data.family[counter].birth_info?.date,
               },
               {
                 name: `Страна рождения${type[1]}`,
-                content: data.family[counter].birth_info.country,
+                content: data.family[counter].birth_info?.country,
               },
               {
                 name: `Город рождения${type[1]}`,
-                content: data.family[counter].birth_info.place,
+                content: data.family[counter].birth_info?.place,
               },
               {
                 name: `Личная почта${type[1]}`,
-                content: data.family[counter].contact_info.personal_email,
+                content: data.family[counter].contact_info?.personal_phone_number,
               },
               {
                 name: `Номер телефона${type[1]}`,
-                content: data.family[counter].contact_info.personal_phone_number,
+                content: data.family[counter].contact_info?.personal_phone_number,
               },
             ],
           });
