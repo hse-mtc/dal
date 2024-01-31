@@ -295,8 +295,8 @@ class ApplicantForm extends Vue {
   STEPS_RU = STEPS_RU
 
   tabsIndex = {
-    brothers: "",
-    sisters: "",
+    brothers: "0",
+    sisters: "0",
   }
 
   tabsLabel = { brothers: "Брат", sisters: "Сестра" }
