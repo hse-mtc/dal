@@ -31,6 +31,10 @@ from utils.time import absence_report_overdue, fetch_restriction_time
 MD2 = ParseMode.MARKDOWN_V2
 
 
+def report_message(restriction_time):
+    return bold_text(f"Время отправки ограничено до {restriction_time}.")
+
+
 async def list_milgroup(message: Message, state: FSMContext) -> None:
     # TODO(TmLev): save user to local storage to prevent excessive requests.
     phone = await fetch_phone(chat_id=message.chat.id)
@@ -70,7 +74,7 @@ async def list_milgroup(message: Message, state: FSMContext) -> None:
 
     restriction_time = await fetch_restriction_time()
     await message.answer(
-        bold_text(f"Время отправки ограничено до {restriction_time}."),
+        report_message(restriction_time),
         parse_mode=MD2,
         reply_markup=report_absence_keyboard(),
     )
@@ -82,9 +86,6 @@ list_milgroup.handler_filters = [
 
 
 async def silent_report_absence(state: FSMContext) -> None:
-    if not await absence_report_overdue():
-        return
-
     students_by_id: dict[int, Student] = await state.get_data()
     students = [student for _, student in students_by_id.items()]
     await post_absence(students)
@@ -94,6 +95,10 @@ async def toggle_student_absence_status(
     callback_query: CallbackQuery,
     state: FSMContext,
 ) -> None:
+    if not await absence_report_overdue():
+        await callback_query.answer()
+        return
+
     if callback_query.message.date.date() != datetime.now().date():
         return
 
@@ -120,7 +125,8 @@ async def report_absence(message: Message, state: FSMContext) -> None:
     if not await absence_report_overdue():
         restriction_time = await fetch_restriction_time()
         await message.answer(
-            f"Время отправки ограничено до {restriction_time}.",
+            report_message(restriction_time),
+            parse_mode=MD2,
             reply_markup=main_menu_keyboard(),
         )
         return
