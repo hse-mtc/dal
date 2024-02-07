@@ -100,6 +100,7 @@ async def toggle_student_absence_status(
         return
 
     if callback_query.message.date.date() != datetime.now().date():
+        await callback_query.answer()
         return
 
     new_state, id_ = map(int, callback_query.data.split())
