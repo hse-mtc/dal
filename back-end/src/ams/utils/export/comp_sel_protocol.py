@@ -46,6 +46,48 @@ def _make_applicant_detail_row(
     else:
         row += [("", formats.table_center)]
 
+    if (phone := applicant.contact_info.personal_phone_number) is not None:
+        row += [(phone, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (tax_id := applicant.personal_documents_info.tax_id) is not None:
+        row += [(tax_id, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (
+        insurance_number := applicant.personal_documents_info.insurance_number
+    ) is not None:
+        row += [(insurance_number, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (passport_series := applicant.passport.series) is not None:
+        row += [(passport_series, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (passport_number := applicant.passport.code) is not None:
+        row += [(passport_number, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (passport_ufms_name := applicant.passport.ufms_name) is not None:
+        row += [(passport_ufms_name, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (passport_ufms_code := applicant.passport.ufms_code) is not None:
+        row += [(passport_ufms_code, formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
+    if (passport_issue_date := applicant.passport.issue_date) is not None:
+        row += [(str(passport_issue_date), formats.table_center)]
+    else:
+        row += [("", formats.table_center)]
+
     if (ro := applicant.recruitment_office) is not None:
         row += [(ro, formats.table_center)]
     else:
@@ -121,7 +163,7 @@ def generate_applicants_detail(applicants: QuerySet, milspecialties: QuerySet) -
     for milspecialty in milspecialties:
         worksheet = workbook.add_worksheet(milspecialty.code)
         set_col_size_details(worksheet)
-        start = 1
+        start = 2
         _fill_applicant_detail_header(worksheet=worksheet, formats=formats)
         studs = applicants.filter(milspecialty=milspecialty)
         max_cols = 0
@@ -157,12 +199,35 @@ def _fill_applicant_detail_header(
         "Место рождения",
         "Гражданство",
         "Адрес прописки",
+        "Номер телефона",
+        "ИНН",
+        "СНИЛС",
+        "Паспорт_Серия",
+        "Паспорт_Номер",
+        "Паспорт_Выдан",
+        "Паспорт_Код_Подразделения",
+        "Паспорт_Дата_Выдачи",
         "Военкомат",
         "Отец",
         "Мать",
         "Братья/сестры",
     )
     worksheet.write_row(0, 0, row, formats.table_center)
+
+    pasp_begin = 12
+    pasp_end = 16
+
+    # Объединение ячеек для столбца "Паспорт"
+    worksheet.merge_range(0, pasp_begin, 0, pasp_end, "Паспорт", formats.table_center)
+
+    # Запись "Серия", "Номер"... под объединенной ячейкой "Паспорт"
+    passport_header = ("Серия", "Номер", "Выдан", "Код Подразделения", "Дата Выдачи")
+    worksheet.write_row(1, pasp_begin, passport_header, formats.table_center)
+
+    # Объединение ячеек для полей на две строки, кроме "Паспорт"
+    for i in range(len(row)):
+        if not (pasp_begin <= i <= pasp_end):
+            worksheet.merge_range(0, i, 1, i, row[i], formats.table_center)
 
 
 def set_col_size_details(worksheet: xlsxwriter.Workbook.worksheet_class):
@@ -386,7 +451,7 @@ def _make_applicant_row(
     formats: Formats,
     index: int,
 ) -> list[...]:
-    row = [(f"{index+1}.", formats.table_center)]
+    row = [(f"{index + 1}.", formats.table_center)]
     row += [(applicant.fullname, formats.table_name)]
 
     # pylint: disable=invalid-name
@@ -481,5 +546,5 @@ def _fill_footer(
         row += 1
 
     worksheet.merge_range(
-        f"D{row-1}:E{row-1}", "Секретарь комиссии:", formats.align_left
+        f"D{row - 1}:E{row - 1}", "Секретарь комиссии:", formats.align_left
     )
