@@ -42,7 +42,9 @@
         v-if="field === 'index'"
         #body="{ index }"
       >
-        {{ startIndex + index + 1 }}
+        <div @click="navigateToApplicantToStudent(data[index])">
+          {{ startIndex + index + 1 }}
+        </div>
       </template>
 
       <template
@@ -366,6 +368,10 @@ class ApplicantsDocuments extends Vue {
     }
 
     return data[field];
+  }
+
+  navigateToApplicantToStudent(data) {
+    this.$router.push({ name: "ApplicantToStudent", query: { userId: data.id } });
   }
 }
 
