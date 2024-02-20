@@ -11,11 +11,7 @@
         Взвод
       </div>
       <ElFormItem prop="milgroup">
-        <ElSelect
-          v-model="student.milgroup"
-          placeholder="Выберите свой взвод"
-          style="display: block"
-        >
+        <ElSelect v-model="student.milgroup" placeholder="Выберите свой взвод" style="display: block">
           <ElOption
             v-for="milgroup in milgroups"
             :key="milgroup.id"
@@ -36,11 +32,7 @@
         Должность
       </div>
       <ElFormItem prop="post">
-        <ElSelect
-          v-model="student.post"
-          placeholder="Выберите должность"
-          style="display: block"
-        >
+        <ElSelect v-model="student.post" placeholder="Выберите должность" style="display: block">
           <ElOption
             v-for="post in studentPosts"
             :key="post.value"
@@ -69,9 +61,17 @@ import { StudentPostsMixin } from "@/mixins/students";
 import { validCorEmail } from "@/utils/validate";
 import { postError, downloadError } from "@/utils/message";
 import { registerStudent } from "@/api/user";
+import { findApplicant } from "@/api/applicants";
 
 export default {
   mixins: [StudentPostsMixin],
+
+  props: {
+    userId: {
+      type: [String, Number],
+      required: true,
+    },
+  },
 
   data() {
     const requiredRule = {
@@ -113,14 +113,14 @@ export default {
       awaitingResponse: false,
 
       student: {
-        surname: "",
-        name: "",
-        patronymic: "",
+        surname: null,
+        name: null,
+        patronymic: null,
         milgroup: null,
         post: null,
         contact_info: {
-          corporate_email: "",
-          personal_phone_number: "",
+          corporate_email: null,
+          personal_phone_number: null,
         },
       },
 
@@ -167,6 +167,15 @@ export default {
     }
 
     this.studentPosts.PRIVATE_STUDENT = { label: "-", value: null };
+
+    const response = await findApplicant(this.userId);
+    const { data } = response;
+
+    this.student.name = data.name;
+    this.student.surname = data.surname;
+    this.student.patronymic = data.patronymic;
+    this.student.contact_info.corporate_email = data.contact_info.personal_email;
+    this.student.contact_info.personal_phone_number = data.contact_info.personal_phone_number;
   },
 
   methods: {

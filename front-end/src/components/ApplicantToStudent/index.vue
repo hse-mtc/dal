@@ -22,6 +22,7 @@
 
           <!-- eslint-disable vue/html-quotes -->
           <Student
+            :user-id="userId"
             @registration-completed="registrationCompleted"
           />
           <!-- eslint-enable vue/html-quotes -->
@@ -51,6 +52,13 @@ import Student from "@/components/ApplicantToStudent/Student";
 
 export default {
   components: { Student },
+
+  props: {
+    userId: {
+      type: [String, Number],
+      required: true,
+    },
+  },
 
   data() {
     return {

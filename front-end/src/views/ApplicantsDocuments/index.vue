@@ -267,6 +267,8 @@ export default {
       this.data = data.results.map(item => ({
         birthday: moment(item.birth_date).format("DD.MM.yyyy"),
         faculty: item.faculty,
+        phone: item.phone,
+        email: item.email,
         fullname: item.fullname,
         id: item.id,
         passport: item.passport,
