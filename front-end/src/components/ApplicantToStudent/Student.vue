@@ -113,15 +113,8 @@ export default {
       awaitingResponse: false,
 
       student: {
-        surname: null,
-        name: null,
-        patronymic: null,
         milgroup: null,
         post: null,
-        contact_info: {
-          corporate_email: null,
-          personal_phone_number: null,
-        },
       },
 
       rules: {
@@ -171,11 +164,7 @@ export default {
     const response = await findApplicant(this.userId);
     const { data } = response;
 
-    this.student.name = data.name;
-    this.student.surname = data.surname;
-    this.student.patronymic = data.patronymic;
-    this.student.contact_info.corporate_email = data.contact_info.personal_email;
-    this.student.contact_info.personal_phone_number = data.contact_info.personal_phone_number;
+    this.student = { ...this.student, ...data };
   },
 
   methods: {

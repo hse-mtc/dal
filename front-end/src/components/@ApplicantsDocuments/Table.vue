@@ -42,9 +42,13 @@
         v-if="field === 'index'"
         #body="{ index }"
       >
-        <div @click="navigateToApplicantToStudent(data[index])">
+        <a
+          title="Зарегистрировать в качестве студента ВУЦа"
+          style="cursor: pointer; text-decoration: default; color: black;"
+          @click="navigateToApplicantToStudent(data[index])"
+        >
           {{ startIndex + index + 1 }}
-        </div>
+        </a>
       </template>
 
       <template
