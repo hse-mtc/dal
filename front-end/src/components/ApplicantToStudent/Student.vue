@@ -115,15 +115,12 @@ export default {
       student: {
         milgroup: null,
         post: null,
+        university_info: null,
       },
 
       rules: {
-        surname: [requiredRule],
-        name: [requiredRule],
         milgroup: [requiredRule],
         rank: [requiredRule],
-        "contact_info.personal_phone_number": [phoneRule],
-        "contact_info.corporate_email": [emailRule],
       },
     };
   },
@@ -162,9 +159,15 @@ export default {
     this.studentPosts.PRIVATE_STUDENT = { label: "-", value: null };
 
     const response = await findApplicant(this.userId);
+
     const { data } = response;
+    delete data.family;
+    delete data.photo;
+
+    const programId = data.university_info.program.id;
 
     this.student = { ...this.student, ...data };
+    this.student.university_info.program = programId;
   },
 
   methods: {
