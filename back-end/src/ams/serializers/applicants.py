@@ -99,14 +99,6 @@ class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
         read_only=True,
         source="university_info.program.faculty.title",
     )
-    corporate_email = serializers.CharField(
-        read_only=True,
-        source="contact_info.corporate_email",
-    )
-    personal_phone_number = serializers.CharField(
-        read_only=True,
-        source="contact_info.personal_phone_number",
-    )
     application_process = ApplicationProcessSerializer(read_only=True)
 
     class Meta:
@@ -116,8 +108,6 @@ class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
             "fullname",
             "birth_date",
             "program_code",
-            "corporate_email",
-            "personal_phone_number",
             "faculty",
             "application_process",
         ]
