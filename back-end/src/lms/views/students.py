@@ -50,6 +50,8 @@ from lms.utils.mixins import QuerySetScopingMixin
 
 from lms.types.personnel import Personnel
 
+from common.models.personal import ContactInfo
+
 
 class StudentPermission(BasePermission):
     permission_class = "students"
@@ -107,6 +109,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         mutate_actions = MUTATE_ACTIONS + [
             "registration",
             "registration_for_existing_students",
+            "registration_for_applicants"
         ]
         if self.action in mutate_actions:
             return StudentMutateSerializer
@@ -181,6 +184,26 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         )
 
         student.user = user
+        student.save()
+
+        return Response(self.get_serializer(student).data)
+
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny])
+    def registration_for_applicants(self, request):
+        request.data["status"] = "ST"  # Выставляем входной структуре статус обучающегося
+        serializer = self.get_serializer_class()(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        contact_info_id = serializer.validated_data["contact_info"]["id"]
+        user_id = serializer.validated_data["user"]["id"]
+
+        user = Student.object.filter(id=user_id)
+        contact_info = ContactInfo.objects.filter(id=contact_info_id)
+
+        student = serializer.save()
+
+        student.user = user
+        student.contact_info = contact_info
         student.save()
 
         return Response(self.get_serializer(student).data)
@@ -275,8 +298,8 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
 # TODO(TmLev): send email, link should forward to front end app.
 def confirm_student_registration(
-    email: str,
-    token: str,
+        email: str,
+        token: str,
 ) -> None:
     link = f"localhost:9528/change-password?token={str(token)}"
     print(link)
