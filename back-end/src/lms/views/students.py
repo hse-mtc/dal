@@ -109,7 +109,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         mutate_actions = MUTATE_ACTIONS + [
             "registration",
             "registration_for_existing_students",
-            "registration_for_applicants"
+            "registration_for_applicants",
         ]
         if self.action in mutate_actions:
             return StudentMutateSerializer
@@ -188,17 +188,23 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         return Response(self.get_serializer(student).data)
 
-    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny])
+    @action(
+        detail=False, methods=["post"], permission_classes=[permissions.AllowAny]
+    )  # TODO: manage permissions
     def registration_for_applicants(self, request):
-        request.data["status"] = "ST"  # Выставляем входной структуре статус обучающегося
-        serializer = self.get_serializer_class()(data=request.data)
+        request.data[
+            "status"
+        ] = "ST"  # Выставляем входной структуре статус обучающегося
+        serializer = self.get_serializer_class()(
+            data=request.data
+        )  # TODO: write new serializer
         serializer.is_valid(raise_exception=True)
 
-        contact_info_id = serializer.validated_data["contact_info"]["id"]
-        user_id = serializer.validated_data["user"]["id"]
+        corporate_email = serializer.validated_data["contact_info"]["corporate_email"]
+        user_id = serializer.validated_data["user"]
 
         user = Student.object.filter(id=user_id)
-        contact_info = ContactInfo.objects.filter(id=contact_info_id)
+        contact_info = ContactInfo.objects.filter(corporate_email=corporate_email)
 
         student = serializer.save()
 
@@ -298,8 +304,8 @@ class ActivateStudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
 # TODO(TmLev): send email, link should forward to front end app.
 def confirm_student_registration(
-        email: str,
-        token: str,
+    email: str,
+    token: str,
 ) -> None:
     link = f"localhost:9528/change-password?token={str(token)}"
     print(link)
