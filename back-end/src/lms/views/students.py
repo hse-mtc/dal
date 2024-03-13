@@ -191,7 +191,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
     @action(
         detail=False, methods=["post"], permission_classes=[permissions.AllowAny]
     )  # TODO: manage permissions
-    def registration_for_applicants(self, request):
+    def register_from_applicant(self, request):
         request.data[
             "status"
         ] = "ST"  # Выставляем входной структуре статус обучающегося
