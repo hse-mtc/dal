@@ -36,62 +36,38 @@ def _make_applicant_detail_row(
     else:
         row += [("", formats.table_date)] * 2
 
-    if (citizenship := applicant.citizenship) is not None:
-        row += [(citizenship, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    citizenship = applicant.citizenship or ""
+    row += [(citizenship, formats.table_center)]
 
-    if (pa := applicant.permanent_address) is not None:
-        row += [(pa, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    pa = applicant.permanent_address or ""
+    row += [(pa, formats.table_center)]
 
-    if (phone := applicant.contact_info.personal_phone_number) is not None:
-        row += [(phone, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    phone = applicant.contact_info.personal_phone_number or ""
+    row += [(phone, formats.table_center)]
 
-    if (tax_id := applicant.personal_documents_info.tax_id) is not None:
-        row += [(tax_id, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    tax_id = applicant.personal_documents_info.tax_id or ""
+    row += [(tax_id, formats.table_center)]
 
-    if (
-        insurance_number := applicant.personal_documents_info.insurance_number
-    ) is not None:
-        row += [(insurance_number, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    insurance_number = applicant.personal_documents_info.insurance_number or ""
+    row += [(insurance_number, formats.table_center)]
 
-    if (passport_series := applicant.passport.series) is not None:
-        row += [(passport_series, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    passport_series = applicant.passport.series or ""
+    row += [(passport_series, formats.table_center)]
 
-    if (passport_number := applicant.passport.code) is not None:
-        row += [(passport_number, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    passport_number = applicant.passport.code or ""
+    row += [(passport_number, formats.table_center)]
 
-    if (passport_ufms_name := applicant.passport.ufms_name) is not None:
-        row += [(passport_ufms_name, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    passport_ufms_name = applicant.passport.ufms_name or ""
+    row += [(passport_ufms_name, formats.table_center)]
 
-    if (passport_ufms_code := applicant.passport.ufms_code) is not None:
-        row += [(passport_ufms_code, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    passport_ufms_code = applicant.passport.ufms_code or ""
+    row += [(passport_ufms_code, formats.table_center)]
 
-    if (passport_issue_date := applicant.passport.issue_date) is not None:
-        row += [(str(passport_issue_date), formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    passport_issue_date = str(applicant.passport.issue_date) or ""
+    row += [(passport_issue_date, formats.table_center)]
 
-    if (ro := applicant.recruitment_office) is not None:
-        row += [(ro, formats.table_center)]
-    else:
-        row += [("", formats.table_center)]
+    ro = applicant.recruitment_office or ""
+    row += [(ro, formats.table_center)]
 
     if fam := applicant.family.all():
         father = fam.filter(type="FA").first()
