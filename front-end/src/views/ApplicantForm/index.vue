@@ -234,7 +234,8 @@ class ApplicantForm extends Vue {
 
       this.applicantData.birthInfo = ap_data.birth_info;
       this.applicantData.passport = ap_data.passport;
-      this.applicantData.personalDocumentsInfo = ap_data.personal_documents_info;
+      this.applicantData.personalDocumentsInfo.tax_id = ap_data.personal_documents_info ? ap_data.personal_documents_info.tax_id : "";
+      this.applicantData.personalDocumentsInfo.insurance_number = ap_data.personal_documents_info ? ap_data.personal_documents_info.insurance_number : "";
       this.applicantData.universityInfo = ap_data.university_info;
       this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
       this.applicantData.contactInfo = ap_data.contact_info;
