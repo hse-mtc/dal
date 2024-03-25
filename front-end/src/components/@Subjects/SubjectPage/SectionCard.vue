@@ -1,7 +1,7 @@
 <template>
   <div>
     <div :class="$style.header">
-      <svg-icon icon-class="drag" :class="$style.dragIcon" />
+      <svg-icon icon-class="drag" :class="$style.dragIcon" class="dragIcon" />
 
       <div
         v-if="!isEditing"
@@ -66,8 +66,10 @@
       ]"
     >
       <TopicsCards
+        ref="topicCards"
         :shown="opened"
         :section-id="sectionInfo.id"
+        @update="propagateUpdate"
       />
     </AZGuard>
   </div>
@@ -96,6 +98,14 @@ class SectionCard extends Vue {
   @Prop({ required: true }) sectionInfo
 
   isEditing = false
+
+  updateInSubcomponents() {
+    this.$refs.topicCards.getTopics();
+  }
+
+  propagateUpdate() {
+    this.$emit("update");
+  }
 
   get sections() { return SubjectsModule.currentSections; }
   get userId() { return UserModule.userId; }

@@ -1,4 +1,6 @@
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Max
+from django.dispatch import receiver
 
 from ordered_model.models import OrderedModel
 
@@ -27,7 +29,31 @@ class Topic(OrderedModel):
     section = models.ForeignKey(
         to=Section, on_delete=models.CASCADE, related_name="topics"
     )
-    order_with_respect_to = "section"
+    order_with_respect_to = "section__subject"
+
+    def save(self, *args, **kwargs):
+        is_new = not self.id
+        order = (
+            Topic.objects.filter(
+                section__subject=self.section.subject,
+                section__order__lte=self.section.order,
+            )
+            .aggregate(Max("order"))
+            .get("order__max")
+        )
+        super().save(*args, **kwargs)
+
+        if is_new:
+            if order is not None:
+                order = order + 1
+            else:
+                order = 0
+
+            self.to(order)
+
+    @transaction.atomic
+    def to(self, order, extra_update=None):
+        return super().to(order, extra_update=None)
 
     class Meta(OrderedModel.Meta):
         verbose_name = "Topic"
@@ -35,6 +61,32 @@ class Topic(OrderedModel):
 
     def __str__(self):
         return self.title
+
+
+def update_topics_in_subject_of_section(instance: Section):
+    tops = Topic.objects.filter(section__subject=instance.subject)
+    updated_instances = []
+
+    for index, instance in enumerate(tops.order_by("section__order", "order")):
+        instance.order = index
+        updated_instances.append(instance)
+    Topic.objects.bulk_update(updated_instances, ["order"])
+
+
+@receiver(models.signals.post_save, sender=Section)
+def update_section_order(sender: Section, instance: Section, **kwargs):
+    # pylint: disable=unused-argument
+    if not isinstance(instance, Section):
+        return
+    update_topics_in_subject_of_section(instance)
+
+
+@receiver(models.signals.post_delete, sender=Section)
+def update_section_order(sender: Section, instance: Section, **kwargs):
+    # pylint: disable=unused-argument
+    if not isinstance(instance, Section):
+        return
+    update_topics_in_subject_of_section(instance)
 
 
 class ClassMaterial(Document):
