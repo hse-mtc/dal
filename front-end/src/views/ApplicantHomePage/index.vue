@@ -169,16 +169,18 @@ export default {
             },
           ],
         },
+        // TODO(kateR): Убрать костыль и сделать так, чтобы для старых абитуриентов (у которых не было ИНН и СНИЛС в форме)
+        // подставлялись пустые строки с бэка
         {
           name: "ИНН и СНИЛС",
           fields: [
             {
               name: "ИНН",
-              content: data.personal_documents_info.tax_id,
+              content: data.personal_documents_info ? data.personal_documents_info.tax_id : "",
             },
             {
               name: "СНИЛС",
-              content: data.personal_documents_info.insurance_number,
+              content: data.personal_documents_info ? data.personal_documents_info.insurance_number : "",
             },
           ],
         },
