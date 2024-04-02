@@ -174,7 +174,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         corporate_email = serializer.validated_data["contact_info"]["corporate_email"]
         user = serializer.validated_data["user"]
 
-        contact_info = ContactInfo.objects.filter(corporate_email=corporate_email)
+        contact_info = ContactInfo.objects.get(corporate_email=corporate_email)
 
         student = serializer.save()
 
