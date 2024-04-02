@@ -32,6 +32,14 @@ export function registerStudent(data) {
   });
 }
 
+export function registerStudentFromApplicant(data) {
+  return request({
+    url: BASE_API_URL + LMS_URLS.register.studentFromApplicant,
+    method: "post",
+    data,
+  });
+}
+
 export function registerTeacher(data) {
   return request({
     url: BASE_API_URL + LMS_URLS.register.teachers,

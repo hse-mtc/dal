@@ -60,7 +60,7 @@ import { ReferenceModule } from "@/store";
 import { StudentPostsMixin } from "@/mixins/students";
 import { validCorEmail } from "@/utils/validate";
 import { postError, downloadError } from "@/utils/message";
-import { registerStudent } from "@/api/user";
+import { registerStudentFromApplicant } from "@/api/user";
 import { findApplicant } from "@/api/applicants";
 
 export default {
@@ -181,7 +181,7 @@ export default {
 
       console.log("Student:\n", this.student);
       try {
-        await registerStudent(this.student);
+        await registerStudentFromApplicant(this.student);
         this.$emit("registration-completed");
       } catch (e) {
         postError("студента", e.response?.status);
