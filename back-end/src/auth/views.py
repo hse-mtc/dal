@@ -347,7 +347,6 @@ class TokenRefreshView(jwt_views.TokenRefreshView):
 
 
 class RecoveryView(generics.GenericAPIView):
-
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):

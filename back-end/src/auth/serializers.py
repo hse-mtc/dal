@@ -114,7 +114,6 @@ class GroupShortSerializer(serializers.ModelSerializer):
 
 
 class GroupMutateSerializer(serializers.ModelSerializer):
-
     permissions = serializers.ListField(
         child=serializers.CharField(),
         write_only=True,

@@ -39,7 +39,6 @@ class StudentSkillsView(ReadOnlyModelViewSet):
 
 @extend_schema(tags=["students"])
 class StudentPerformanceView(APIView):
-
     # pylint:disable=("invalid-name")
     def get(self, request: Request, pk: int) -> Response:
         date_range = get_current_semester_range()

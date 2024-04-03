@@ -90,7 +90,6 @@ class Passport(models.Model):
 
 
 class Relative(models.Model):
-
     # --------------------------------------------------------------------------
     # Relative-specific enums.
 
