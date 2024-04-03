@@ -169,7 +169,6 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
             data=request.data
         )  # TODO: write new serializer
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
 
         corporate_email = serializer.validated_data["contact_info"]["corporate_email"]
         user = serializer.validated_data["user"]

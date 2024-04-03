@@ -89,15 +89,6 @@ class Passport(models.Model):
         verbose_name_plural = "Passports"
 
 
-class PersonalDocumentsInfo(models.Model):
-    tax_id = models.CharField(max_length=13, null=False)
-    insurance_number = models.CharField(max_length=14, null=False)
-
-    class Meta:
-        verbose_name = "Personal Documents Info"
-        verbose_name_plural = "Personal Documents Infos"
-
-
 class Relative(models.Model):
     # --------------------------------------------------------------------------
     # Relative-specific enums.
