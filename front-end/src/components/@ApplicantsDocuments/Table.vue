@@ -42,7 +42,13 @@
         v-if="field === 'index'"
         #body="{ index }"
       >
-        {{ startIndex + index + 1 }}
+        <a
+          title="Зарегистрировать в качестве студента ВУЦа"
+          style="cursor: pointer; text-decoration: default; color: black;"
+          @click="navigateToApplicantToStudent(data[index])"
+        >
+          {{ startIndex + index + 1 }}
+        </a>
       </template>
 
       <template
@@ -366,6 +372,10 @@ class ApplicantsDocuments extends Vue {
     }
 
     return data[field];
+  }
+
+  navigateToApplicantToStudent(data) {
+    this.$router.push({ name: "ApplicantToStudent", query: { userId: data.id } });
   }
 }
 

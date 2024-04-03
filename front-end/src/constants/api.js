@@ -25,6 +25,7 @@ export const AMS_URLS = {
 export const LMS_URLS = {
   register: {
     students: "lms/students/registration/",
+    studentFromApplicant: "lms/students/register_from_applicant/",
     teachers: "lms/teachers/registration/",
   },
   absence: {

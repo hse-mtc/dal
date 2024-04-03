@@ -11,11 +11,7 @@
         Взвод
       </div>
       <ElFormItem prop="milgroup">
-        <ElSelect
-          v-model="student.milgroup"
-          placeholder="Выберите свой взвод"
-          style="display: block"
-        >
+        <ElSelect v-model="student.milgroup" placeholder="Выберите свой взвод" style="display: block">
           <ElOption
             v-for="milgroup in milgroups"
             :key="milgroup.id"
@@ -36,11 +32,7 @@
         Должность
       </div>
       <ElFormItem prop="post">
-        <ElSelect
-          v-model="student.post"
-          placeholder="Выберите должность"
-          style="display: block"
-        >
+        <ElSelect v-model="student.post" placeholder="Выберите должность" style="display: block">
           <ElOption
             v-for="post in studentPosts"
             :key="post.value"
@@ -68,10 +60,18 @@ import { ReferenceModule } from "@/store";
 import { StudentPostsMixin } from "@/mixins/students";
 import { validCorEmail } from "@/utils/validate";
 import { postError, downloadError } from "@/utils/message";
-import { registerStudent } from "@/api/user";
+import { registerStudentFromApplicant } from "@/api/user";
+import { findApplicant } from "@/api/applicants";
 
 export default {
   mixins: [StudentPostsMixin],
+
+  props: {
+    userId: {
+      type: [String, Number],
+      required: true,
+    },
+  },
 
   data() {
     const requiredRule = {
@@ -113,24 +113,14 @@ export default {
       awaitingResponse: false,
 
       student: {
-        surname: "",
-        name: "",
-        patronymic: "",
         milgroup: null,
         post: null,
-        contact_info: {
-          corporate_email: "",
-          personal_phone_number: "",
-        },
+        university_info: null,
       },
 
       rules: {
-        surname: [requiredRule],
-        name: [requiredRule],
         milgroup: [requiredRule],
         rank: [requiredRule],
-        "contact_info.personal_phone_number": [phoneRule],
-        "contact_info.corporate_email": [emailRule],
       },
     };
   },
@@ -167,6 +157,17 @@ export default {
     }
 
     this.studentPosts.PRIVATE_STUDENT = { label: "-", value: null };
+
+    const response = await findApplicant(this.userId);
+
+    const { data } = response;
+    delete data.family;
+    delete data.photo;
+
+    const programId = data.university_info.program.id;
+
+    this.student = { ...this.student, ...data };
+    this.student.university_info.program = programId;
   },
 
   methods: {
@@ -180,7 +181,7 @@ export default {
 
       console.log("Student:\n", this.student);
       try {
-        await registerStudent(this.student);
+        await registerStudentFromApplicant(this.student);
         this.$emit("registration-completed");
       } catch (e) {
         postError("студента", e.response?.status);
