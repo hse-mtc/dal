@@ -50,6 +50,8 @@ from lms.utils.mixins import QuerySetScopingMixin
 
 from lms.types.personnel import Personnel
 
+from common.models.personal import ContactInfo
+
 
 class StudentPermission(BasePermission):
     permission_class = "students"
@@ -107,6 +109,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         mutate_actions = MUTATE_ACTIONS + [
             "registration",
             "registration_for_existing_students",
+            "register_from_applicant",
         ]
         if self.action in mutate_actions:
             return StudentMutateSerializer
@@ -156,6 +159,30 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    @action(detail=False, methods=["post"], permission_classes=[permissions.AllowAny])
+    def register_from_applicant(self, request):
+        request.data[
+            "status"
+        ] = "ST"  # Выставляем входной структуре статус обучающегося
+        serializer = self.get_serializer_class()(
+            data=request.data
+        )  # TODO: write new serializer
+        serializer.is_valid(raise_exception=True)
+        print(serializer.validated_data)
+
+        corporate_email = serializer.validated_data["contact_info"]["corporate_email"]
+        user = serializer.validated_data["user"]
+
+        contact_info = ContactInfo.objects.get(corporate_email=corporate_email)
+
+        student = serializer.save()
+
+        student.user = user
+        student.contact_info = contact_info
+        student.save()
+
+        return Response(self.get_serializer(student).data)
 
     @registration.mapping.post
     def registration_for_existing_students(self, request):
