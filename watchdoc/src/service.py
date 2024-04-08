@@ -43,6 +43,7 @@ DOCUMENTS = [
     ("medical-records.docx", "Медкарта.docx"),
     ("family-info.docx", "Сведения о семье.docx"),
     ("applicant-form.docx", "Анкета абитуриента.docx"),
+    ("exercise-choice.docx", "Карточка кандидата для выбора физ. упражнений.docx"),
 ]
 
 
