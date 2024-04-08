@@ -90,8 +90,8 @@ class Passport(models.Model):
 
 
 class PersonalDocumentsInfo(models.Model):
-    tax_id = models.CharField(max_length=13, default="")
-    insurance_number = models.CharField(max_length=14, default="")
+    tax_id = models.CharField(max_length=13, null=False)
+    insurance_number = models.CharField(max_length=14, null=False)
 
     class Meta:
         verbose_name = "Personal Documents Info"

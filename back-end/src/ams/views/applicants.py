@@ -45,7 +45,7 @@ from lms.utils.mixins import QuerySetScopingMixin
 from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
-from ams.utils.export.comp_sel_protocol import generate_applicants_detail
+from ams.utils.export.detailed import generate_applicants_detail
 from django.db import transaction
 
 

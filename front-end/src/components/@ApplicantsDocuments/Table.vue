@@ -215,7 +215,7 @@ const additionalFields = {
     width: 120,
   },
   pull_ups: {
-    title: "Подтягивания",
+    title: "Сила",
     width: 140,
   },
   speed_run: {
@@ -223,7 +223,7 @@ const additionalFields = {
     width: 100,
   },
   long_run: {
-    title: "Кросс",
+    title: "Выносливость",
     width: 100,
   },
   physical_test_grade: {
