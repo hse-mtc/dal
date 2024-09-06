@@ -13,14 +13,14 @@ jobs:
       - run:  cp tgbot/.env.example tgbot/.env
       - run:  cp watchdoc/.env.example watchdoc/.env
       - name: "Build back-end container"
-        run:  docker-compose build back-end
+        run:  docker compose build back-end
       - name: "Run Postgres in background"
-        run:  docker-compose up -d postgres
+        run:  docker compose up -d postgres
       - name: "Run tests"
-        run:  docker-compose run back-end scripts/test.sh
+        run:  docker compose run back-end scripts/test.sh
       - name: "Check code style"
-        run:  docker-compose run back-end scripts/format.sh --check
+        run:  docker compose run back-end scripts/format.sh --check
       # - name: "Lint code"
       #   run:  docker-compose run back-end scripts/lint.sh
       - name: "Stop all containers"
-        run:  docker-compose down
+        run:  docker compose down

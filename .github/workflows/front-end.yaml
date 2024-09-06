@@ -20,4 +20,4 @@ jobs:
       - name: "Check code style"
         run: cd front-end && npm run lint .
       - name: "Build front end container"
-        run:  docker-compose build front-end
+        run:  docker compose build front-end
