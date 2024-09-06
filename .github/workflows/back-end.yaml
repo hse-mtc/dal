@@ -16,11 +16,6 @@ jobs:
         run:  docker compose up -d postgres
       - name: "Build back-end container"
         run:  docker compose build back-end
-      - name: Wait for PostgreSQL
-        run: |
-          while ! nc -z postgres 5432; do
-            sleep 1
-          done
       - name: "Run tests"
         run:  docker compose run back-end scripts/test.sh
       - name: "Check code style"
