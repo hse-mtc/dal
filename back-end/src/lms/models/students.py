@@ -72,7 +72,9 @@ class Student(models.Model):
     )
     contact_info = models.OneToOneField(
         to=ContactInfo,
-        on_delete=models.RESTRICT,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
 
     # --------------------------------------------------------------------------
