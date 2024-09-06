@@ -123,7 +123,6 @@ def test_sections_reordering(
     topic8,
     topic9,
 ):
-
     check_order([section1, section2, section3, section4])
     check_order([topic1, topic2, topic3, topic4, topic5, topic6, topic7])
     check_order([section5, section6])
