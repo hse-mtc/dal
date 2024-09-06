@@ -12,10 +12,10 @@ jobs:
       - run:  cp back-end/.env.example back-end/.env
       - run:  cp tgbot/.env.example tgbot/.env
       - run:  cp watchdoc/.env.example watchdoc/.env
-      - name: "Build back-end container"
-        run:  docker compose build back-end
       - name: "Run Postgres in background"
         run:  docker compose up -d postgres
+      - name: "Build back-end container"
+        run:  docker compose build back-end
       - name: "Run tests"
         run:  docker compose run back-end scripts/test.sh
       - name: "Check code style"
