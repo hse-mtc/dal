@@ -55,7 +55,7 @@ export default {
 
   props: {
     userId: {
-      type: [String, Number],
+      type: [Number],
       required: true,
     },
   },

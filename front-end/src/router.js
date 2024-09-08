@@ -78,7 +78,6 @@ export const constantRoutes = [
     hidden: true,
   },
 
-  // FIXME(ShishckovA): doesn't work, have to change (i.e. pushing instead of patching), fix and test
   {
     path: "/applicant-to-student/",
     name: "ApplicantToStudent",
