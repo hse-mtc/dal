@@ -160,7 +160,9 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    @action(detail=False, methods=["post"], permission_classes=[permissions.IsAdminUser])
+    @action(
+        detail=False, methods=["post"], permission_classes=[permissions.IsAdminUser]
+    )
     def register_from_applicant(self, request):
         request.data[
             "status"
