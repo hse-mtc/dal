@@ -72,9 +72,7 @@ class Student(models.Model):
     )
     contact_info = models.OneToOneField(
         to=ContactInfo,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.RESTRICT,
     )
 
     # --------------------------------------------------------------------------
@@ -210,6 +208,13 @@ def student_post_callback(sender, instance: Student, *args, **kwargs):
 
 @receiver(models.signals.post_delete, sender=Student)
 def post_delete_fields(sender, instance: Student, **kwargs):
+    # Если у пользователя есть модель абитуриента, удаляем и её
+    if instance.user:
+        try:
+            applicant = Applicant.objects.get(user=instance.user)
+            applicant.delete()
+        except Applicant.DoesNotExist:
+            pass
     # pylint: disable=unused-argument
     attributes_to_delete = [
         "user",

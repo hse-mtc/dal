@@ -149,9 +149,7 @@ class Applicant(models.Model):
     )
     contact_info = models.OneToOneField(
         to=ContactInfo,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.RESTRICT,
     )
     photo = models.OneToOneField(
         to=Photo,
@@ -174,9 +172,7 @@ class Applicant(models.Model):
     )
     user = models.OneToOneField(
         to=get_user_model(),
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        on_delete=models.RESTRICT,
     )
 
     objects = ApplicantManager()
