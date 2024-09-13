@@ -46,9 +46,9 @@ jobs:
           script: |
             cd /home/dal/dal/ && \
             git pull origin master && \
-            docker-compose build back-end front-end watchdoc tgbot && \
-            docker-compose stop back-end front-end watchdoc ofelia tgbot && \
-            docker-compose up -d back-end front-end watchdoc ofelia tgbot
+            docker compose build back-end front-end watchdoc tgbot && \
+            docker compose stop back-end front-end watchdoc ofelia tgbot && \
+            docker compose up -d back-end front-end watchdoc ofelia tgbot
       - name: Kill VPN connection
         if: always()
         run: |
