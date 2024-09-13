@@ -1,15 +1,12 @@
 import base64
+from pathlib import PurePath
 import logging as log
 
 import jinja2
 
-import shutil
-
 from docxtpl import DocxTemplate
 
-from auth import obtain_credentials
 from email_service import EmailService
-from drive import DriveService
 from campuses import Campus
 from family import RelativeType
 from proto import Applicant
@@ -21,6 +18,7 @@ from config import (
     EMAIL_HOST_USER,
     EMAIL_HOST_PASSWORD,
     EMAIL_USE_TLS,
+    YADISK_TOKEN,
 )
 
 from email_utils import create_message
@@ -29,10 +27,11 @@ from date_utils import (
     month_to_russian_title,
     today,
 )
+from src.disk import DiskService
 
-WATCHDOC_FOLDER: str = "watchdoc"
-APPLICANTS_FOLDER: str = "Абитуриенты"
-CAMPUSES_FOLDER: str = "Кампусы"
+WATCHDOC_FOLDER: PurePath = PurePath("watchdoc")
+APPLICANTS_FOLDER: PurePath = WATCHDOC_FOLDER / "Абитуриенты"
+CAMPUSES_FOLDER: PurePath = APPLICANTS_FOLDER / "Кампусы"
 
 DUMMY_IMAGE = TEMPLATES_DIR / "dummy.png"
 
@@ -42,8 +41,6 @@ DOCUMENTS = [
     ("ro-reference-signed.docx", "Направление ВК (подписано).docx"),
     ("medical-records.docx", "Медкарта.docx"),
     ("family-info.docx", "Сведения о семье.docx"),
-    ("applicant-form.docx", "Анкета абитуриента.docx"),
-    ("exercise-choice.docx", "Карточка кандидата для выбора физ. упражнений.docx"),
 ]
 
 
@@ -56,21 +53,19 @@ class WatchDocService:
         folder_link = wds.upload_documents(applicant)
         wds.notify(applicant, folder_link)
     """
-    def generate_documents(self, applicant: Applicant, docs=DOCUMENTS):
-        applicant_path = applicant.full_name + ' ' +\
-            applicant.contact_info.corporate_email
-        applicant_dir = GENERATED_DIR / applicant_path
 
-        if applicant_dir.exists():
-            shutil.rmtree(applicant_dir, ignore_errors=True)
+    def generate_documents(self, applicant: Applicant):
+        applicant_dir = GENERATED_DIR / applicant.contact_info.corporate_email
         applicant_dir.mkdir(exist_ok=True)
 
         parents = [
-            r for r in applicant.family
+            r
+            for r in applicant.family
             if r.type in [RelativeType.FATHER, RelativeType.MOTHER]
         ]
         siblings = [
-            r for r in applicant.family
+            r
+            for r in applicant.family
             if r.type in [RelativeType.BROTHER, RelativeType.SISTER]
         ]
 
@@ -89,7 +84,7 @@ class WatchDocService:
             **data,
         }
 
-        for (en, rus) in docs:
+        for (en, rus) in DOCUMENTS:
             doc = DocxTemplate(TEMPLATES_DIR / en)
             doc.render(context, self.jinja_env)
             doc.replace_media(DUMMY_IMAGE, photo_path)
@@ -101,26 +96,18 @@ class WatchDocService:
         folder_name = f"{applicant.full_name} {email}"
 
         applicant_folder = self.ds.obtain_folder(
-            name=folder_name,
-            parents=[self._campus_folders[campus]["id"]],
-            delete_if_exists=True
+            self._campus_folders[campus] / folder_name
         )
 
         for (_, rus) in DOCUMENTS:
-            body = {
-                "name": rus,
-                "parents": [applicant_folder["id"]],
-            }
             self.ds.upload_docx(
-                body=body,
-                path=GENERATED_DIR / folder_name / rus,
+                local_path=GENERATED_DIR / email / rus,
+                remote_path=applicant_folder / rus,
+                overwrite=True,
             )
 
-        self.ds.read_share_folder_with_anyone(
-            folder_id=applicant_folder["id"],
-        )
-
-        return applicant_folder["webViewLink"]
+        link = self.ds.read_share_folder_with_anyone(applicant_folder)
+        return link
 
     def notify(self, applicant: Applicant, folder_link: str):
         email = applicant.contact_info.corporate_email
@@ -134,20 +121,13 @@ class WatchDocService:
         # Templates
         self.jinja_env = self._init_jinja_env()
 
-        # Credentials
-        credentials = obtain_credentials()
-
         # Email
         self.email_service = EmailService(
-            EMAIL_HOST,
-            EMAIL_PORT,
-            EMAIL_HOST_USER,
-            EMAIL_HOST_PASSWORD,
-            EMAIL_USE_TLS
+            EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, EMAIL_USE_TLS
         )
 
-        # Drive
-        self.ds = DriveService(credentials)
+        # Disk
+        self.ds = DiskService(token=YADISK_TOKEN)
         self._watchdoc_folder = self._init_watchdoc_folder()
         self._applicants_folder = self._init_applicants_folder()
         self._campuses_folder = self._init_campuses_folder()
@@ -160,34 +140,22 @@ class WatchDocService:
         return env
 
     def _init_watchdoc_folder(self):
-        folder = self.ds.obtain_folder(name=WATCHDOC_FOLDER)
-        log.info(f"`{WATCHDOC_FOLDER}` web view link: "
-                 f"{folder['webViewLink']}")
+        folder = self.ds.obtain_folder(WATCHDOC_FOLDER)
+        log.info(f"Created applicant folder in `{folder}`")
         return folder
 
     def _init_applicants_folder(self):
-        folder = self.ds.obtain_folder(
-            name=APPLICANTS_FOLDER,
-            parents=[self._watchdoc_folder["id"]],
-        )
-        log.info(f"`{APPLICANTS_FOLDER}` web view link: "
-                 f"{folder['webViewLink']}")
+        folder = self.ds.obtain_folder(APPLICANTS_FOLDER)
+        log.info(f"Created applicant folder in `{folder}`")
         return folder
 
     def _init_campuses_folder(self):
-        folder = self.ds.obtain_folder(
-            name=CAMPUSES_FOLDER,
-            parents=[self._applicants_folder["id"]],
-        )
-        log.info(f"`{CAMPUSES_FOLDER}` web view link: "
-                 f"{folder['webViewLink']}")
+        folder = self.ds.obtain_folder(CAMPUSES_FOLDER)
+        log.info(f"Created applicant folder in `{folder}`")
         return folder
 
     def _init_campus_folders(self):
         folders = {}
         for abbr, campus in Campus.choices():
-            folders[abbr] = self.ds.obtain_folder(
-                name=campus,
-                parents=[self._campuses_folder["id"]],
-            )
+            folders[abbr] = self.ds.obtain_folder(CAMPUSES_FOLDER / campus)
         return folders
