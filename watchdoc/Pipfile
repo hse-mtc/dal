@@ -12,6 +12,7 @@ google-auth-oauthlib = "*"
 jinja2 = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 pydantic = "*"
+yadisk = "*"
 
 [dev-packages]
 
