@@ -74,7 +74,7 @@ export default {
       this.registrationComplete = true;
       setTimeout(() => {
         this.$router.replace({ name: "Login" });
-      }, 3000);
+      }, 7000);
     },
   },
 };
