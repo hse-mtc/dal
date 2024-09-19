@@ -170,7 +170,10 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         # Если студент регистрировался в 2022 или 2023 году, у него нет ИНН и СНИЛСа в системе,
         # нужно заполнить
-        if "personal_documents_info" not in request.data:
+        if (
+            "personal_documents_info" not in request.data
+            or request.data["personal_documents_info"] is None
+        ):
             request.data["personal_documents_info"] = {
                 "tax_id": "-",
                 "insurance_number": "-",
