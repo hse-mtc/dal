@@ -22,7 +22,7 @@ from common.serializers.personal import check_email_exists
 
 from common.views.choices import GenericChoicesList
 
-from auth.models import Permission
+from auth.models import Group, Permission
 from auth.permissions import BasePermission
 from auth.tokens.registration import generate_regconf_token
 
@@ -50,7 +50,7 @@ from lms.utils.mixins import QuerySetScopingMixin
 
 from lms.types.personnel import Personnel
 
-from common.models.personal import ContactInfo
+from common.models.personal import ContactInfo, PersonalDocumentsInfo
 
 
 class StudentPermission(BasePermission):
@@ -161,7 +161,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         return Response(serializer.data)
 
     @action(
-        detail=False, methods=["post"], permission_classes=[permissions.IsAdminUser]
+        detail=False, methods=["post"], permission_classes=[permissions.IsAuthenticated]
     )
     def register_from_applicant(self, request):
         request.data[
@@ -181,7 +181,21 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         student.user = user
         student.contact_info = contact_info
+
+        # Если студент регистрировался в 2022 или 2023 году, у него нет ИНН и СНИЛСа в системе,
+        # нужно заполнить
+        if student.personal_documents_info == None:
+            student.personal_documents_info = PersonalDocumentsInfo(
+                tax_id="", insurance_number=""
+            )
+        
         student.save()
+
+        students, _ = Group.objects.get_or_create(name="Студент")
+        students.user_set.add(user)
+
+        applicants, _ = Group.objects.get_or_create(name="Абитуриент")
+        applicants.user_set.remove(user)
 
         return Response(self.get_serializer(student).data)
 
