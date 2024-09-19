@@ -161,15 +161,26 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
         return Response(serializer.data)
 
     @action(
-        detail=False, methods=["post"], permission_classes=[permissions.IsAuthenticated]
+        detail=False, methods=["post"], permission_classes=[permissions.IsAdminUser]
     )
     def register_from_applicant(self, request):
         request.data[
             "status"
         ] = "ST"  # Выставляем входной структуре статус обучающегося
+
+        # Если студент регистрировался в 2022 или 2023 году, у него нет ИНН и СНИЛСа в системе,
+        # нужно заполнить
+        if request.data.personal_documents_info is None:
+            personal_documents_info = PersonalDocumentsInfo(
+                tax_id="", insurance_number=""
+            )
+            personal_documents_info.save()
+            request.data["personal_documents_info"] = personal_documents_info
+
         serializer = self.get_serializer_class()(
             data=request.data
         )  # TODO: write new serializer
+
         serializer.is_valid(raise_exception=True)
 
         corporate_email = serializer.validated_data["contact_info"]["corporate_email"]
@@ -181,15 +192,6 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
 
         student.user = user
         student.contact_info = contact_info
-
-        # Если студент регистрировался в 2022 или 2023 году, у него нет ИНН и СНИЛСа в системе,
-        # нужно заполнить
-        if student.personal_documents_info == None:
-            personal_documents_info = PersonalDocumentsInfo(
-                tax_id="", insurance_number=""
-            )
-            personal_documents_info.save()
-            student.personal_documents_info = personal_documents_info
 
         student.save()
 
