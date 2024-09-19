@@ -188,7 +188,7 @@ class StudentViewSet(QuerySetScopingMixin, ModelViewSet):
             student.personal_documents_info = PersonalDocumentsInfo(
                 tax_id="", insurance_number=""
             )
-        
+
         student.save()
 
         students, _ = Group.objects.get_or_create(name="Студент")
