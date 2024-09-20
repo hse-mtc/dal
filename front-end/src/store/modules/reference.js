@@ -362,6 +362,7 @@ class Reference extends VuexModule {
     return await getFetchRequest(
       getRooms,
       data => {
+        data.sort((a, b) => a - b);
         this.SET_ROOMS(data);
         this.SET_IS_LOADED({ field: "_roomsLoaded", value: true });
       },
