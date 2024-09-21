@@ -741,12 +741,14 @@ class ApplicantForm extends Vue {
 
   @Watch("applicantData.universityInfo.campus")
   async onCampusChange() {
+    if (this.applicantData.universityInfo.program) {
+      this.applicantData.universityInfo.program = null;
+    }
     try {
       const { data } = await getAvailableForApplicantsProgramsByCampus(
         this.applicantData.universityInfo.campus,
       );
       this.fillProgramOptions(data);
-      this.applicantData.universityInfo.program = this.fields.universityInfo.program.props.options[0].value;
     } catch (e) {
       this.$message({
         type: "error",
