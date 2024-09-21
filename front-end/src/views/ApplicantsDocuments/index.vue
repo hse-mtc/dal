@@ -195,7 +195,8 @@ export default {
     admissionYears() {
       const possibleYears = [];
       const date = new Date();
-      const maxYear = date.getMonth() >= 9 ? date.getFullYear() + 1 : date.getFullYear();
+      // Enumeration is from 0. Next admission year is from the Sept, 1st
+      const maxYear = date.getMonth() >= 8 ? date.getFullYear() + 1 : date.getFullYear();
       for (let year = 2022; year <= maxYear; year += 1) {
         possibleYears.push(year);
       }
