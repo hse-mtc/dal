@@ -1,5 +1,6 @@
 <template>
   <PrimeTable
+    ref="primeTable"
     :value="data"
     class="p-datatable-gridlines"
     frozen-width="400px"
@@ -21,7 +22,7 @@
           : `height: 200px; width: ${width}px`
       "
       :body-style="`width: ${width}px; height: 110px`"
-      :body-class="editableFields.includes(field) ? $style.editableField : ''"
+      :body-class="cellBodyClass(field)"
       :frozen="['index', 'fullname'].includes(field)"
     >
       <template #header>
@@ -313,6 +314,46 @@ class ApplicantsDocuments extends Vue {
 
   savePrevValue({ data, field }) {
     this.currentEditingValue = data[field];
+  }
+
+  synchronizeHeights() {
+    this.$nextTick(() => {
+      const rowsFrozen = this.$refs.primeTable.$el.querySelectorAll(".p-datatable-frozen-view tr");
+      const rowsUnfrozen = this.$refs.primeTable.$el.querySelectorAll(".p-datatable-unfrozen-view tr");
+      if (rowsFrozen.length !== rowsUnfrozen.length) {
+        console.error("Mismatch in row count between frozen and scrollable sections");
+        return;
+      }
+
+      for (let i = 0; i < rowsFrozen.length; i += 1) {
+        const frozenRow = rowsFrozen[i];
+        const scrollableRow = rowsUnfrozen[i];
+
+        const frozenHeight = frozenRow.offsetHeight;
+        const scrollableHeight = scrollableRow.offsetHeight;
+        const maxHeight = Math.max(frozenHeight, scrollableHeight);
+
+        frozenRow.style.height = `${maxHeight}px`;
+        scrollableRow.style.height = `${maxHeight}px`;
+      }
+    });
+  }
+
+  cellBodyClass(field) {
+    const arr = [];
+    if (this.editableFields.includes(field)) {
+      arr.push(this.$style.editableField);
+    }
+    if (["index", "fullname"].includes(field)) {
+      arr.push("frozen-cell");
+    } else {
+      arr.push("scrollable-cell");
+    }
+    return arr.join(" ");
+  }
+
+  mounted() {
+    this.synchronizeHeights();
   }
 
   getCellText(data, field) {
