@@ -136,7 +136,9 @@
 </template>
 
 <script>
-import { Component, Prop, Vue } from "vue-property-decorator";
+import {
+  Component, Prop, Vue, Watch,
+} from "vue-property-decorator";
 import { SelectInput, SingleCheckbox, NumberInput } from "@/common/inputs";
 import { UserModule } from "@/store";
 
@@ -353,6 +355,11 @@ class ApplicantsDocuments extends Vue {
   }
 
   mounted() {
+    this.synchronizeHeights();
+  }
+
+  @Watch("data", { immediate: true, deep: true })
+  onDataChanged(newVal, oldVal) {
     this.synchronizeHeights();
   }
 
