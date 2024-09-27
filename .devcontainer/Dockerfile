@@ -9,6 +9,10 @@ RUN sh install-postgres-client.sh
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt -y install nodejs
 
+# Setup fish
+RUN apt -y install fish; chsh -s /usr/bin/fish; mkdir /root/.config; mkdir /root/.config/fish
+COPY .devcontainer/config.fish /root/.config/fish
+
 # Setup starship
 RUN curl https://starship.rs/install.sh --output /starship_install.sh; chmod +x /starship_install.sh
 RUN sh -c "/starship_install.sh -y"
@@ -23,20 +27,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 # Help Python with imports
 ENV PYTHONPATH "src:${PYTHONPATH}"
-
-RUN apt-get install ca-certificates curl
-RUN install -m 0755 -d /etc/apt/keyrings
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
-RUN chmod a+r /etc/apt/keyrings/docker.asc
-
-# Add the repository to Apt sources:
-RUN echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN apt-get update
-RUN apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
 
 # Copy pipenv manifests
 COPY back-end/Pipfile* ./
