@@ -61,7 +61,7 @@
         scrollable
         scroll-height="600px"
         :value="students"
-        :sort-field="fullname"
+        :sort-field="milgroupField"
         :sort-order="1"
         class="p-datatable-striped p-datatable-gridlines p-datatable-sm"
         :row-class="() => 'clickable'"
@@ -73,9 +73,10 @@
           header-style="width: 68px"
           body-style="width: 68px"
           column-key="index"
+          :sortable="false"
         >
-          <template #body="{ data }">
-            {{ students.indexOf(data) + 1 }}
+          <template #body="{ index }">
+            {{ index + 1 }}
           </template>
         </PrimeColumn>
         <PrimeColumn
