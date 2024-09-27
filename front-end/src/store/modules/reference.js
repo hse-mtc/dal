@@ -362,7 +362,34 @@ class Reference extends VuexModule {
     return await getFetchRequest(
       getRooms,
       data => {
-        data.sort((a, b) => a - b);
+        console.log(data);
+        data.sort((a, b) => {
+          const titleA = a.title;
+          const titleB = b.title;
+
+          const numA = Number(titleA);
+          const numB = Number(titleB);
+
+          const isNumA = !Number.isNaN(numA);
+          const isNumB = !Number.isNaN(numB);
+
+          if (isNumA && isNumB) {
+            return numA - numB;
+          }
+
+          if (isNumA) {
+            return -1;
+          }
+
+          if (isNumB) {
+            return 1;
+          }
+
+          if (titleA < titleB) { return -1; }
+          if (titleA > titleB) { return 1; }
+
+          return titleA.localeCompare(titleB);
+        });
         this.SET_ROOMS(data);
         this.SET_IS_LOADED({ field: "_roomsLoaded", value: true });
       },
