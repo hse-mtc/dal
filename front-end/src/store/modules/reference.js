@@ -362,7 +362,6 @@ class Reference extends VuexModule {
     return await getFetchRequest(
       getRooms,
       data => {
-        console.log(data);
         data.sort((a, b) => {
           const titleA = a.title;
           const titleB = b.title;
@@ -384,9 +383,6 @@ class Reference extends VuexModule {
           if (isNumB) {
             return 1;
           }
-
-          if (titleA < titleB) { return -1; }
-          if (titleA > titleB) { return 1; }
 
           return titleA.localeCompare(titleB);
         });
