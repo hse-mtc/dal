@@ -1,5 +1,5 @@
 # Base Python image
-FROM python:3.9.1-bullseye
+FROM python:3.9.20-bullseye
 
 # Set working directory
 WORKDIR /watchdoc
