@@ -1,13 +1,13 @@
 # Base Python image
-FROM python:3.9.20-bullseye
+FROM python:3.10-bullseye
 
 # Update system and install backup utilities
 COPY back-end/docker/image/install-postgres-client.sh /
 RUN sh install-postgres-client.sh
 
-# Install node 14
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
-RUN apt -y install nodejs
+# Install node 16
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+RUN . ~/.nvm/nvm.sh && nvm install 16
 
 # Setup fish
 RUN apt -y install fish; chsh -s /usr/bin/fish; mkdir /root/.config; mkdir /root/.config/fish
