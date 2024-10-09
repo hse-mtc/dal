@@ -164,7 +164,7 @@ import {
   dataURLtoFile,
 } from "@/constants/applicantForm";
 
-import { getAvailableForApplicantsProgramsByCampus, getMilSpecialties } from "@/api/reference-book";
+import { getAvailableForApplicantsProgramsByCampus, getMilSpecialtiesSelectableByProgram } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
 import { UserModule } from "@/store";
 
@@ -193,6 +193,7 @@ class ApplicantForm extends Vue {
 
   data() {
     return {
+      milSpecialtiesSelectableByProgram: {},
       applicantData: __DEV__ && ("fill" in this.$route.query)
         // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
         ? require("@/constants/applicantForm").devInitData
@@ -507,6 +508,7 @@ class ApplicantForm extends Vue {
           ? `${item.code} - ${item.title}`
           : item.code,
         value: item.id,
+        class: item.selectable_by_program ? "" : this.$style.nonSelectable,
       }),
     );
   }
@@ -758,6 +760,28 @@ class ApplicantForm extends Vue {
     }
   }
 
+  @Watch("applicantData.universityInfo.program")
+  async onProgramChange() {
+    if (this.applicantData.milspecialty.milspecialty) {
+      this.applicantData.milspecialty.milspecialty = null;
+    }
+  }
+
+  @Watch("applicantData.milspecialty.milspecialty")
+  async checkIsSelectable(newValue) {
+    if (!newValue) {
+      return;
+    }
+    if (!this.milSpecialtiesSelectableByProgram[newValue]) {
+      this.$message({
+        type: "error",
+        duration: 1000 * 5,
+        message: "Данная военная специальность недоступна для выбора на Вашей программе обучения",
+      });
+      this.applicantData.milspecialty.milspecialty = null;
+    }
+  }
+
   @Watch("step")
   async onStepChange(nextValue) {
     window.scrollTo({
@@ -772,9 +796,15 @@ class ApplicantForm extends Vue {
     }
     if (nextValue === STEPS.milspecialty) {
       try {
-        const { data } = await getMilSpecialties(
+        const { data } = await getMilSpecialtiesSelectableByProgram(
           this.applicantData.universityInfo.campus,
+          this.applicantData.universityInfo.program,
         );
+        this.milSpecialtiesSelectableByProgram = data.reduce((accumulator, current) => {
+          accumulator[current.id] = current.selectable_by_program;
+          return accumulator;
+        }, {});
+
         this.fillMilspecialtyOptions(data);
       } catch (e) {
         this.$message({
@@ -831,4 +861,9 @@ export default ApplicantForm;
 :global(.el-message-box) {
   width: auto !important;
 }
+
+.nonSelectable {
+  color: #bbbbbb
+}
+
 </style>
