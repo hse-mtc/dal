@@ -22,13 +22,13 @@ def test_trailing_slash_redirect(su_client):
 
 @pytest.mark.django_db
 def test_get_subject_by_id(
-    su_client, create_milspeciality, get_new_subject_data, create_subject
+    su_client, create_milspecialty, get_new_subject_data, create_subject
 ):
-    milspeciality = create_milspeciality(
+    milspecialty = create_milspecialty(
         title="Математическое обеспечения комплексов ПРО", code="453100"
     )
     subj_data = get_new_subject_data(
-        title="Строевая подготовка", milspecialty=milspeciality
+        title="Строевая подготовка", milspecialty=milspecialty
     )
     subject = create_subject(**subj_data)
     subj_data = unpack_subject(subject)
@@ -41,13 +41,13 @@ def test_get_subject_by_id(
 
 @pytest.mark.django_db
 def test_get_subjects_by_title(
-    su_client, create_milspeciality, get_new_subject_data, create_subject
+    su_client, create_milspecialty, get_new_subject_data, create_subject
 ):
-    milspeciality = create_milspeciality(
+    milspecialty = create_milspecialty(
         title="Математическое обеспечения комплексов ПРО", code="453100"
     )
     subj_data = get_new_subject_data(
-        title="Тактическая подготовка", milspecialty=milspeciality
+        title="Тактическая подготовка", milspecialty=milspecialty
     )
     subject = create_subject(**subj_data)
     subj_data = unpack_subject(subject)
@@ -64,13 +64,13 @@ def test_get_subjects_by_title(
 
 @pytest.mark.django_db
 def test_get_subjects_by_search(
-    su_client, create_milspeciality, get_new_subject_data, create_subject
+    su_client, create_milspecialty, get_new_subject_data, create_subject
 ):
-    milspeciality = create_milspeciality(
+    milspecialty = create_milspecialty(
         title="Математическое обеспечения комплексов ПРО", code="453100"
     )
     subj_data = get_new_subject_data(
-        title="Тактико-специальная подготовка 2", milspecialty=milspeciality
+        title="Тактико-специальная подготовка 2", milspecialty=milspecialty
     )
     subject = create_subject(**subj_data)
     word = subject.title.split()[1]
