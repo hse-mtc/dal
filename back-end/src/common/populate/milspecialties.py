@@ -10,11 +10,13 @@ def create_milspecialties() -> dict[str, Milspecialty]:
             "code": "453000",
             "title": "Организация эксплуатации и ремонта автоматизированных систем управления и вычислительных комплексов ракетно-космической обороны",
             "available_for": [Campus.MOSCOW.value],
+            "selectable_by_every_program": False,
         },
         {
             "code": "453100",
             "title": "Математическое и программное обеспечение функционирования вычислительных комплексов ракетно-космической обороны",
             "available_for": [Campus.MOSCOW.value],
+            "selectable_by_every_program": False,
         },
         {
             "code": "461300",

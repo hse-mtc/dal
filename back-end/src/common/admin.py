@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from common.models.milspecialties import Milspecialty
+from common.models.milspecialties import Milspecialty, MilspecialtySelectableByProgram
 from common.models.subjects import Subject
 
 from common.models.personal import (
@@ -32,3 +32,4 @@ admin.site.register(Faculty)
 
 # Milspeciality
 admin.site.register(Milspecialty)
+admin.site.register(MilspecialtySelectableByProgram)
