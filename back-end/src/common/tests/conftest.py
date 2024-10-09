@@ -3,19 +3,25 @@ import pytest
 from auth.models import User
 from common.models.milspecialties import Milspecialty
 from common.models.subjects import Subject
+from common.models.universities import Program, Faculty
 from typing import Optional
 
 
 @pytest.fixture
 def create_milspecialty():
-    def call_me(title: str, code: str, available_for: Optional[list[str]]=None, selectable_by_every_program: bool = True):
+    def call_me(
+        title: str,
+        code: str,
+        available_for: Optional[list[str]] = None,
+        selectable_by_every_program: bool = True,
+    ):
         if available_for is None:
             available_for = ["MO"]
         milspecialty, _ = Milspecialty.objects.get_or_create(
             title=title,
             code=code,
             available_for=available_for,
-            selectable_by_every_program=selectable_by_every_program
+            selectable_by_every_program=selectable_by_every_program,
         )
         return milspecialty
 
@@ -71,5 +77,37 @@ def get_new_subject_data():
             "user": user,
         }
         return data
+
+    return call_me
+
+
+@pytest.fixture
+def create_faculty():
+    def call_me(title: str, abbreviation: str, campus: str = "MO"):
+        faculty, _ = Faculty.objects.get_or_create(
+            title=title,
+            abbreviation=abbreviation,
+            campus=campus,
+        )
+        return faculty
+
+    return call_me
+
+
+@pytest.fixture
+def create_program():
+    def call_me(
+        title: str,
+        code: str,
+        faculty: Faculty,
+        available_to_choose_for_applicants: bool = True,
+    ):
+        program, _ = Program.objects.get_or_create(
+            title=title,
+            code=code,
+            faculty=faculty,
+            available_to_choose_for_applicants=available_to_choose_for_applicants,
+        )
+        return program
 
     return call_me

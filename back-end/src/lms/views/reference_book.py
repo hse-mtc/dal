@@ -2,6 +2,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError
+from rest_framework import status
+from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -132,6 +135,17 @@ class MilspecialtyViewSet(ModelViewSet):
         ]
     )
     def list(self, request, *args, **kwargs):
+        program = request.query_params.get("program")
+        if program is not None:
+            try:
+                # Attempt to convert the program to an integer
+                int(program)
+            except ValueError:
+                # If conversion fails, raise a validation error
+                raise ValidationError(
+                    {"program": "Program must be a valid integer."},
+                    code=status.HTTP_400_BAD_REQUEST,
+                )
         return super().list(request, *args, **kwargs)
 
 
