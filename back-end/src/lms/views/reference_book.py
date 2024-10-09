@@ -12,7 +12,7 @@ from common.constants import MUTATE_ACTIONS
 from common.models.milspecialties import Milspecialty
 from common.models.universities import Program
 
-from common.serializers.milspecialties import MilspecialtySerializer
+from common.serializers.milspecialties import MilspecialtySerializer, MilspecialtySelectableByProgramSerializer
 from common.serializers.universities import ProgramSerializer
 
 from common.filters.milspecialties import MilspecialtyFilter
@@ -106,13 +106,31 @@ class MilfacultyViewSet(ModelViewSet):
 
 @extend_schema(tags=["reference-book"])
 class MilspecialtyViewSet(ModelViewSet):
-    serializer_class = MilspecialtySerializer
+
+    def get_serializer_class(self):
+        if 'program' in self.request.query_params:
+            return MilspecialtySelectableByProgramSerializer
+        return MilspecialtySerializer
+
     queryset = Milspecialty.objects.all()
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = MilspecialtyFilter
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='program',
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description="Show if selectable by program"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 @extend_schema(tags=["reference-book"])
