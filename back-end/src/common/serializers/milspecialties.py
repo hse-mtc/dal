@@ -14,8 +14,10 @@ class MilspecialtySelectableByProgramSerializer(MilspecialtySerializer):
 
     def get_selectable_by_program(self, obj):
         request = self.context["request"]
-        program = request.query_params.get('program')
+        program = request.query_params.get("program")
         if program is not None:
-            return obj.selectable_by.filter(pk=program).exists() or obj.selectable_by_every_program
+            return (
+                obj.selectable_by.filter(pk=program).exists()
+                or obj.selectable_by_every_program
+            )
         return False
-

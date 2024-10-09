@@ -20,7 +20,9 @@ from common.populate.universities import (
     create_faculties,
     create_programs,
 )
-from common.populate.milspecialities_selectable_by_programs import create_milspecialities_selectable_by_programs
+from common.populate.milspecialities_selectable_by_programs import (
+    create_milspecialities_selectable_by_programs,
+)
 
 from common.utils.date import get_date_range
 
@@ -171,8 +173,7 @@ class Command(BaseCommand):
         faculties = create_faculties()
         programs = create_programs(faculties)
         create_milspecialities_selectable_by_programs(
-            milspecialties=milspecialties,
-            programs=programs
+            milspecialties=milspecialties, programs=programs
         )
 
         print(" OK")
