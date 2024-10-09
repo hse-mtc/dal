@@ -18,7 +18,8 @@ services:
       - ../back-end/.env
     volumes:
       # Forwards the local Docker socket to the container.
-      - /var/run/docker.sock:/var/run/docker-host.sock 
+      - ~/.ssh:/root/.ssh
+      - /var/run/docker.sock:/var/run/docker.sock 
       # Update this to wherever you want VS Code to mount the folder of your project
       - ..:/workspace:cached
 
