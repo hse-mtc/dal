@@ -32,6 +32,8 @@ from auth.permissions import Permission, BasePermission
 
 from ams.models.applicants import Applicant
 
+from common.models.universities import Program
+
 from ams.serializers.applicants import (
     ApplicantSerializer,
     ApplicantMutateSerializer,
@@ -147,6 +149,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         request.data["user"] = self.request.user.id
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if not self.milspecialty_is_selectable(request.data["milspecialty"], request.data["university_info"]["program"]):
+            return Response(
+                {"detail": "You can't select this milspecialty with your educational program"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         self.request.user.campuses = [self.request.data["university_info"]["campus"]]
         self.request.user.save()
         if self.is_creation_allowed_by_scope(request.data):
@@ -177,6 +184,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 {"detail": "Bad request"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if not self.milspecialty_is_selectable(request.data["milspecialty"], request.data["university_info"]["program"]):
+            return Response(
+                {"detail": "You can't select this milspecialty with your educational program"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         result = super(ApplicantViewSet, self).update(request, **kwargs)
         applicant.user.campuses = [request.data["university_info"]["campus"]]
         applicant.user.save()
@@ -186,6 +198,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         if generate_documents:
             generate_documents_for_applicant(updated_applicant)
         return result
+
+
+    def milspecialty_is_selectable(self, milspecialty_id: int, program_id: int):
+        milspecialty = Milspecialty.objects.filter(pk=milspecialty_id).first()
+        return milspecialty.selectable_by.filter(pk=program_id) or milspecialty.selectable_by_every_program
 
     @transaction.atomic
     def perform_create(self, serializer):
