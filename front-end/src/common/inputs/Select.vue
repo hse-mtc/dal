@@ -14,10 +14,11 @@
       v-bind="$attrs"
     >
       <el-option
-        v-for="{ label, optionValue } in selectOptions"
+        v-for="{ label, optionValue, class_ } in selectOptions"
         :key="optionValue"
         :value="optionValue"
         :label="label"
+        :class="class_"
       />
     </el-select>
   </InputsBase>
@@ -55,6 +56,7 @@ class SelectInput extends InputsMixin {
       return {
         label: _isObject(rawLabel) ? JSON.stringify(rawLabel) : rawLabel,
         optionValue: getValue(option),
+        class_: option.class
       };
     });
   }

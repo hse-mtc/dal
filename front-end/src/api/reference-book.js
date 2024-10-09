@@ -31,6 +31,14 @@ export function getMilSpecialties(campus) {
   });
 }
 
+export function getMilSpecialtiesSelectableByProgram(campus, program) {
+  return request({
+    url: BASE_API_URL + milspecialties,
+    method: "get",
+    params: { campus, program },
+  });
+}
+
 export function editMilSpecialty(id, data) {
   return request({
     url: `${BASE_API_URL}${milspecialties}${id}/`,
