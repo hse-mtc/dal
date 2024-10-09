@@ -12,7 +12,10 @@ from common.constants import MUTATE_ACTIONS
 from common.models.milspecialties import Milspecialty
 from common.models.universities import Program
 
-from common.serializers.milspecialties import MilspecialtySerializer, MilspecialtySelectableByProgramSerializer
+from common.serializers.milspecialties import (
+    MilspecialtySerializer,
+    MilspecialtySelectableByProgramSerializer,
+)
 from common.serializers.universities import ProgramSerializer
 
 from common.filters.milspecialties import MilspecialtyFilter
@@ -106,9 +109,8 @@ class MilfacultyViewSet(ModelViewSet):
 
 @extend_schema(tags=["reference-book"])
 class MilspecialtyViewSet(ModelViewSet):
-
     def get_serializer_class(self):
-        if 'program' in self.request.query_params:
+        if "program" in self.request.query_params:
             return MilspecialtySelectableByProgramSerializer
         return MilspecialtySerializer
 
@@ -122,10 +124,10 @@ class MilspecialtyViewSet(ModelViewSet):
     @extend_schema(
         parameters=[
             OpenApiParameter(
-                name='program',
+                name="program",
                 type=int,
                 location=OpenApiParameter.QUERY,
-                description="Show if selectable by program"
+                description="Show if selectable by program",
             ),
         ]
     )
