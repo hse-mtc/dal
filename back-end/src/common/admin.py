@@ -30,6 +30,6 @@ admin.site.register(UniversityInfo)
 admin.site.register(Program)
 admin.site.register(Faculty)
 
-# Milspeciality
+# Milspecialty
 admin.site.register(Milspecialty)
 admin.site.register(MilspecialtySelectableByProgram)

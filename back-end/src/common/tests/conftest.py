@@ -3,19 +3,21 @@ import pytest
 from auth.models import User
 from common.models.milspecialties import Milspecialty
 from common.models.subjects import Subject
+from typing import Optional
 
 
 @pytest.fixture
-def create_milspeciality():
-    def call_me(title: str, code: str, available_for=None):
+def create_milspecialty():
+    def call_me(title: str, code: str, available_for: Optional[list[str]]=None, selectable_by_every_program: bool = True):
         if available_for is None:
             available_for = ["MO"]
-        milspeciality, _ = Milspecialty.objects.get_or_create(
+        milspecialty, _ = Milspecialty.objects.get_or_create(
             title=title,
             code=code,
             available_for=available_for,
+            selectable_by_every_program=selectable_by_every_program
         )
-        return milspeciality
+        return milspecialty
 
     return call_me
 
