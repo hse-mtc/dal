@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
@@ -30,6 +32,16 @@ class Milspecialty(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def is_selectable_by_program(self, program_: Union[Program, int]):
+        if isinstance(program_, Program):
+            program = program_.pk
+        else:
+            program = program_
+        return (
+                self.selectable_by.filter(pk=program).exists()
+                or self.selectable_by_every_program
+            )
 
 
 class MilspecialtySelectableByProgram(models.Model):

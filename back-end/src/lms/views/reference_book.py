@@ -17,7 +17,7 @@ from common.models.universities import Program
 
 from common.serializers.milspecialties import (
     MilspecialtySerializer,
-    MilspecialtySelectableByProgramSerializer,
+    WithSelectableByProgramMilspecialtySerializer,
 )
 from common.serializers.universities import ProgramSerializer
 
@@ -114,7 +114,7 @@ class MilfacultyViewSet(ModelViewSet):
 class MilspecialtyViewSet(ModelViewSet):
     def get_serializer_class(self):
         if "program" in self.request.query_params:
-            return MilspecialtySelectableByProgramSerializer
+            return WithSelectableByProgramMilspecialtySerializer
         return MilspecialtySerializer
 
     queryset = Milspecialty.objects.all()
