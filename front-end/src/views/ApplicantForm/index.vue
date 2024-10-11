@@ -818,6 +818,7 @@ class ApplicantForm extends Vue {
       }
     }
   }
+
   async restringNonSelectableMilspecialty() {
     const milSpec = this.applicantData.milspecialty.milspecialty;
     if (!milSpec) {

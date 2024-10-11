@@ -56,7 +56,7 @@ class SelectInput extends InputsMixin {
       return {
         label: _isObject(rawLabel) ? JSON.stringify(rawLabel) : rawLabel,
         optionValue: getValue(option),
-        class_: option.class
+        class_: option.class,
       };
     });
   }

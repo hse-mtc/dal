@@ -39,9 +39,9 @@ class Milspecialty(models.Model):
         else:
             program = program_
         return (
-                self.selectable_by.filter(pk=program).exists()
-                or self.selectable_by_every_program
-            )
+            self.selectable_by.filter(pk=program).exists()
+            or self.selectable_by_every_program
+        )
 
 
 class MilspecialtySelectableByProgram(models.Model):
