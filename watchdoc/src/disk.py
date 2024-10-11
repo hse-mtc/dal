@@ -5,7 +5,7 @@ class DiskService:
     """Yandex Disk API wrapper.
 
     Usage:
-        ds = DiskService()
+        ds = DiskService(token=yadisk_token)
     """
 
     def __init__(self, token) -> None:
