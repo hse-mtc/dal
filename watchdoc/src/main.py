@@ -2,23 +2,15 @@ import logging as log
 import os
 import zipfile
 
-from fastapi import (
-    FastAPI,
-    Response,
-    BackgroundTasks,
-)
+from fastapi import BackgroundTasks, FastAPI, Response
+from fastapi.responses import FileResponse
 
-from service import WatchDocService
+from config import DEBUG, GENERATED_DIR, TEMP_DIR, WATCHDOC_PORT
 from proto import Applicant
-from config import (
-    TEMP_DIR,
-    WATCHDOC_PORT,
-    DEBUG, GENERATED_DIR,
-)
+from service import WatchDocService
 
 from typing import List
 
-from fastapi.responses import FileResponse
 
 log.basicConfig(
     level="INFO",
@@ -53,8 +45,7 @@ def get_docs(applicants: list[Applicant], background_tasks: BackgroundTasks):
         email = applicant.contact_info.corporate_email
 
         log.info(f"{email}: generating documents...")
-        wds.generate_documents(applicant, 
-            docs=[("applicant-form.docx", "Анкета абитуриента.docx")])
+        wds.generate_documents(applicant, docs=[("applicant-form.docx", "Анкета абитуриента.docx")])
 
     docs_zip = zipfile.ZipFile(TEMP_DIR / "docs.zip", "w")
 
