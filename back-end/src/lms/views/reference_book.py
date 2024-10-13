@@ -2,6 +2,9 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
+from rest_framework.exceptions import ValidationError
+from rest_framework import status
+from rest_framework.response import Response
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -12,7 +15,10 @@ from common.constants import MUTATE_ACTIONS
 from common.models.milspecialties import Milspecialty
 from common.models.universities import Program
 
-from common.serializers.milspecialties import MilspecialtySerializer
+from common.serializers.milspecialties import (
+    MilspecialtySerializer,
+    WithSelectableByProgramMilspecialtySerializer,
+)
 from common.serializers.universities import ProgramSerializer
 
 from common.filters.milspecialties import MilspecialtyFilter
@@ -106,13 +112,41 @@ class MilfacultyViewSet(ModelViewSet):
 
 @extend_schema(tags=["reference-book"])
 class MilspecialtyViewSet(ModelViewSet):
-    serializer_class = MilspecialtySerializer
+    def get_serializer_class(self):
+        if "program" in self.request.query_params:
+            return WithSelectableByProgramMilspecialtySerializer
+        return MilspecialtySerializer
+
     queryset = Milspecialty.objects.all()
 
     permission_classes = [ReadOnly | ReferenceBookPermission]
 
     filter_backends = [DjangoFilterBackend]
     filterset_class = MilspecialtyFilter
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="program",
+                type=int,
+                location=OpenApiParameter.QUERY,
+                description="Show if selectable by program",
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        program = request.query_params.get("program")
+        if program is not None:
+            try:
+                # Attempt to convert the program to an integer
+                int(program)
+            except ValueError:
+                # If conversion fails, raise a validation error
+                raise ValidationError(
+                    {"program": "Program must be a valid integer."},
+                    code=status.HTTP_400_BAD_REQUEST,
+                )
+        return super().list(request, *args, **kwargs)
 
 
 @extend_schema(tags=["reference-book"])
