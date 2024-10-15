@@ -9,6 +9,12 @@ class MilspecialtySerializer(serializers.ModelSerializer):
         exclude = ["selectable_by", "selectable_by_every_program"]
 
 
+class MilspecialtyWithPrivateFieldsSerializer(MilspecialtySerializer):
+    class Meta:
+        model = Milspecialty
+        fields = "__all__"
+
+
 class WithSelectableByProgramMilspecialtySerializer(MilspecialtySerializer):
     selectable_by_program = serializers.SerializerMethodField()
 
