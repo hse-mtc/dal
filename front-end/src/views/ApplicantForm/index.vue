@@ -164,7 +164,7 @@ import {
   dataURLtoFile,
 } from "@/constants/applicantForm";
 
-import { getAvailableForApplicantsProgramsByCampus, getMilSpecialties } from "@/api/reference-book";
+import { getAvailableForApplicantsProgramsByCampus, getMilSpecialtiesSelectableByProgram } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
 import { UserModule } from "@/store";
 
@@ -193,6 +193,8 @@ class ApplicantForm extends Vue {
 
   data() {
     return {
+      disableWatchers: false,
+      milSpecialtiesSelectableByProgram: {},
       applicantData: __DEV__ && ("fill" in this.$route.query)
         // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
         ? require("@/constants/applicantForm").devInitData
@@ -216,11 +218,10 @@ class ApplicantForm extends Vue {
   }
 
   mounted() {
-    const id = this.userId;
     findApplicant(this.personId).then(request => {
+      this.disableWatchers = true;
       // eslint-disable-next-line camelcase
       const ap_data = request.data;
-      console.log(ap_data);
       this.applicantData.about = {
         surname: ap_data.surname,
         name: ap_data.name,
@@ -237,6 +238,7 @@ class ApplicantForm extends Vue {
       this.applicantData.personalDocumentsInfo.tax_id = ap_data.personal_documents_info ? ap_data.personal_documents_info.tax_id : "";
       this.applicantData.personalDocumentsInfo.insurance_number = ap_data.personal_documents_info ? ap_data.personal_documents_info.insurance_number : "";
       this.applicantData.universityInfo = ap_data.university_info;
+      this.applicantData.universityInfo.program = ap_data.university_info.program.id;
       this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
       this.applicantData.contactInfo = ap_data.contact_info;
       this.applicantData.photo = {
@@ -262,6 +264,9 @@ class ApplicantForm extends Vue {
       this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "BR"));
       this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "SI"));
       this.applicantData.milspecialty.milspecialty = ap_data.milspecialty.id;
+      this.$nextTick(() => {
+        this.disableWatchers = false;
+      });
     });
   }
 
@@ -507,6 +512,7 @@ class ApplicantForm extends Vue {
           ? `${item.code} - ${item.title}`
           : item.code,
         value: item.id,
+        class: item.selectable_by_program ? "" : this.$style.nonSelectable,
       }),
     );
   }
@@ -741,6 +747,9 @@ class ApplicantForm extends Vue {
 
   @Watch("applicantData.universityInfo.campus")
   async onCampusChange() {
+    if (this.disableWatchers) {
+      return;
+    }
     if (this.applicantData.universityInfo.program) {
       this.applicantData.universityInfo.program = null;
     }
@@ -758,6 +767,24 @@ class ApplicantForm extends Vue {
     }
   }
 
+  @Watch("applicantData.universityInfo.program")
+  async onProgramChange() {
+    if (this.disableWatchers) {
+      return;
+    }
+    if (this.applicantData.milspecialty.milspecialty) {
+      this.applicantData.milspecialty.milspecialty = null;
+    }
+  }
+
+  @Watch("applicantData.milspecialty.milspecialty")
+  async checkIsSelectable() {
+    if (this.disableWatchers) {
+      return;
+    }
+    this.restringNonSelectableMilspecialty();
+  }
+
   @Watch("step")
   async onStepChange(nextValue) {
     window.scrollTo({
@@ -772,10 +799,16 @@ class ApplicantForm extends Vue {
     }
     if (nextValue === STEPS.milspecialty) {
       try {
-        const { data } = await getMilSpecialties(
+        const { data } = await getMilSpecialtiesSelectableByProgram(
           this.applicantData.universityInfo.campus,
+          this.applicantData.universityInfo.program,
         );
+        this.milSpecialtiesSelectableByProgram = data.reduce((accumulator, current) => {
+          accumulator[current.id] = current.selectable_by_program;
+          return accumulator;
+        }, {});
         this.fillMilspecialtyOptions(data);
+        this.restringNonSelectableMilspecialty();
       } catch (e) {
         this.$message({
           type: "error",
@@ -783,6 +816,21 @@ class ApplicantForm extends Vue {
           message: "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
         });
       }
+    }
+  }
+
+  async restringNonSelectableMilspecialty() {
+    const milSpec = this.applicantData.milspecialty.milspecialty;
+    if (!milSpec) {
+      return;
+    }
+    if (!this.milSpecialtiesSelectableByProgram[milSpec]) {
+      this.$message({
+        type: "error",
+        duration: 1000 * 5,
+        message: "Данная военная специальность недоступна для выбора на Вашей программе обучения",
+      });
+      this.applicantData.milspecialty.milspecialty = null;
     }
   }
 }
@@ -831,4 +879,9 @@ export default ApplicantForm;
 :global(.el-message-box) {
   width: auto !important;
 }
+
+.nonSelectable {
+  color: #bbbbbb
+}
+
 </style>

@@ -181,7 +181,7 @@ export default {
       selectedCampus,
       selectedProgram: this.$route.query.program,
       selectedExportOption: APPLICATIONS_EXPORT_OPTIONS.DEF,
-      currentYear: date.getMonth() >= 9 ? date.getFullYear() + 1 : date.getFullYear(),
+      currentYear: date.getMonth() >= 8 ? date.getFullYear() + 1 : date.getFullYear(),
     };
   },
   computed: {
