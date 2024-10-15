@@ -14,7 +14,7 @@ from PIL import Image, ImageChops
 from dms.models.documents import File
 from dms.models.books import Cover, Book
 
-from auth.models import Permission
+from src.conftest import give_permission_to_user
 
 
 def dump_data(data):
@@ -77,18 +77,6 @@ def assert_book_data_equal(su_client, original_data, book_id):
         field_name: original_data["data"][field_name]
         for field_name in to_compare_fields
     }
-
-
-@pytest.fixture(autouse=True)
-def remove_permissions(test_user):
-    yield
-    test_user.permissions.clear()
-
-
-def give_permission_to_user(user, data):
-    permission = Permission.objects.create(**data)
-    user.permissions.add(permission)
-    user.save()
 
 
 @pytest.mark.django_db
