@@ -1,10 +1,7 @@
 import pytest
 
 
-@pytest.mark.django_db
-def test_milspecialty_selectable(
-    su_client, create_faculty, create_milspecialty, create_program
-):
+def get_test_milspec(create_faculty, create_milspecialty, create_program):
     cs = create_faculty(
         title="Факультет Компьютерных Наук", abbreviation="ФКН", campus="MO"
     )
@@ -43,6 +40,17 @@ def test_milspecialty_selectable(
     # Allow selection of "Математическое и программное обеспечение" by ami
     officers.selectable_by.add(ami)
 
+    return cs, economy, ami
+
+
+@pytest.mark.django_db
+def test_milspecialty_selectable(
+    su_client, create_faculty, create_milspecialty, create_program
+):
+    cs, economy, ami = get_test_milspec(
+        create_faculty, create_milspecialty, create_program
+    )
+
     # Default case (no program specified) – do not show selectable_by_program flag
     milspecialties_no_program = su_client.get(
         f"/api/lms/milspecialties/?campus={cs.campus}"
@@ -79,3 +87,32 @@ def test_milspecialty_selectable(
             milspecialty["selectable_by_program"]
             == golden_selectable_by_ami[milspecialty["code"]]
         ), f"Incorrect selectable_by_program (ami) for milspecialty \"{milspecialty['title']}\""
+
+
+def test_milspecialty_return_fields(
+    su_client, test_client, create_faculty, create_milspecialty, create_program
+):
+    cs, ami, _ = get_test_milspec(create_faculty, create_milspecialty, create_program)
+    milspecialties_no_program_user = test_client.get(
+        f"/api/lms/milspecialties/?campus={cs.campus}"
+    ).json()
+    for milspec in milspecialties_no_program_user:
+        assert "selectable_by" not in milspec
+        assert "selectable_by_every_progrm" not in milspec
+        assert "selectable_by_program" not in milspec
+
+    milspecialties_no_program_admin = su_client.get(
+        f"/api/lms/milspecialties/?campus={cs.campus}"
+    ).json()
+    for milspec in milspecialties_no_program_admin:
+        assert "selectable_by" in milspec
+        assert "selectable_by_every_program" in milspec
+        assert "selectable_by_program" not in milspec
+
+    milspecialties_for_ami = test_client.get(
+        f"/api/lms/milspecialties/?campus={cs.campus}&program={ami.pk}"
+    ).json()
+    for milspec in milspecialties_for_ami:
+        assert "selectable_by" not in milspec
+        assert "selectable_by_every_program" not in milspec
+        assert "selectable_by_program" in milspec
