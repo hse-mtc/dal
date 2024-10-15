@@ -66,6 +66,7 @@ class ReferenceBookPermission(BasePermission):
     permission_class = "reference-books"
     view_name_rus = "Справочные данные"
 
+
 class MilspecialtySensitiveInformationPermission(BasePermission):
     permission_class = "milpecialty-sensetive-information"
     view_name_rus = "Чувствительная информация о ВУС"
@@ -124,7 +125,9 @@ class MilspecialtyViewSet(ModelViewSet):
     def get_serializer_class(self):
         if "program" in self.request.query_params:
             return WithSelectableByProgramMilspecialtySerializer
-        if MilspecialtySensitiveInformationPermission().has_permission(self.request, self):
+        if MilspecialtySensitiveInformationPermission().has_permission(
+            self.request, self
+        ):
             return MilspecialtyWithSensitiveInformationSerializer
         return MilspecialtySerializer
 

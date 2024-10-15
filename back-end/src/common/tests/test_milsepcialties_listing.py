@@ -1,4 +1,5 @@
 import pytest
+from src.conftest import give_permission_to_user
 
 
 def get_test_milspec(create_faculty, create_milspecialty, create_program):
@@ -90,16 +91,15 @@ def test_milspecialty_selectable(
 
 
 def test_milspecialty_return_fields(
-    su_client, test_client, create_faculty, create_milspecialty, create_program
+    su_client,
+    test_user,
+    test_client,
+    permission_data,
+    create_faculty,
+    create_milspecialty,
+    create_program,
 ):
     cs, ami, _ = get_test_milspec(create_faculty, create_milspecialty, create_program)
-    milspecialties_no_program_user = test_client.get(
-        f"/api/lms/milspecialties/?campus={cs.campus}"
-    ).json()
-    for milspec in milspecialties_no_program_user:
-        assert "selectable_by" not in milspec
-        assert "selectable_by_every_progrm" not in milspec
-        assert "selectable_by_program" not in milspec
 
     milspecialties_no_program_admin = su_client.get(
         f"/api/lms/milspecialties/?campus={cs.campus}"
@@ -109,6 +109,14 @@ def test_milspecialty_return_fields(
         assert "selectable_by_every_program" in milspec
         assert "selectable_by_program" not in milspec
 
+    milspecialties_no_program_user = test_client.get(
+        f"/api/lms/milspecialties/?campus={cs.campus}"
+    ).json()
+    for milspec in milspecialties_no_program_user:
+        assert "selectable_by" not in milspec
+        assert "selectable_by_every_program" not in milspec
+        assert "selectable_by_program" not in milspec
+
     milspecialties_for_ami = test_client.get(
         f"/api/lms/milspecialties/?campus={cs.campus}&program={ami.pk}"
     ).json()
@@ -116,3 +124,15 @@ def test_milspecialty_return_fields(
         assert "selectable_by" not in milspec
         assert "selectable_by_every_program" not in milspec
         assert "selectable_by_program" in milspec
+
+    give_permission_to_user(
+        test_user, permission_data("milpecialty-sensetive-information", "get", "all")
+    )
+
+    milspecialties_no_program_user = test_client.get(
+        f"/api/lms/milspecialties/?campus={cs.campus}"
+    ).json()
+    for milspec in milspecialties_no_program_user:
+        assert "selectable_by" in milspec
+        assert "selectable_by_every_program" in milspec
+        assert "selectable_by_program" not in milspec
