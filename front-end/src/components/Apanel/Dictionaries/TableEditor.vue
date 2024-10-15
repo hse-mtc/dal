@@ -22,12 +22,20 @@
     </template>
 
     <PrimeColumn
-      v-for="({ title, width, editorType, props }, field) in columns"
+      v-for="({
+        title,
+        width,
+        editorType,
+        props,
+        allOptions,
+        optionsGenFunction,
+        disabledGenFunction,
+      }, field) in columns"
       :key="field"
       :column-key="field"
       :header="title"
-      :header-style="width ? `width: ${width}px;`: ''"
-      :body-style="width ? `width: ${width}px;`: ''"
+      :header-style="width ? `width: ${width}px;` : ''"
+      :body-style="width ? `width: ${width}px;` : ''"
       :body-class="editorType ? $style.editableField : ''"
       :field="field"
     >
@@ -36,7 +44,7 @@
           {{ data[field] ? 'Да' : 'Нет' }}
         </template>
         <template v-else-if="editorType === 'select'">
-          {{ getOptionLabel(data[field], props.options) }}
+          {{ getOptionLabel(data[field], allOptions) }}
         </template>
         <template v-else>
           {{ data[field] }}
@@ -63,7 +71,11 @@
         <SelectInput
           v-else-if="editorType === 'select'"
           v-model="editorData[field]"
-          v-bind="props"
+          v-bind="{
+            ...props,
+            disabled: disabledGenFunction ? disabledGenFunction(editorData) : null,
+            options: optionsGenFunction ? optionsGenFunction(editorData) : allOptions,
+          }"
           @change="onEdit(editorData, field)"
         />
       </template>
@@ -133,29 +145,27 @@ class DictionariesTableEditor extends Vue {
           title: "Цикл",
           width: 200,
           editorType: "select",
-          props: { options: this.milfacultiesOptions },
+          allOptions: this.milfacultiesOptions,
         },
         milspecialty: {
           title: "ВУС",
           width: 300,
           editorType: "select",
-          props: { options: this.milspecialtiesOptions },
+          allOptions: this.milspecialtiesOptions,
         },
         weekday: {
           title: "День посещения",
           width: 150,
           editorType: "select",
-          props: {
-            options: [
-              { value: 0, label: "Понедельник" },
-              { value: 1, label: "Вторник" },
-              { value: 2, label: "Среда" },
-              { value: 3, label: "Четверг" },
-              { value: 4, label: "Пятница" },
-              { value: 5, label: "Суббота" },
-              { value: 6, label: "Воскресенье" },
-            ],
-          },
+          allOptions: [
+            { value: 0, label: "Понедельник" },
+            { value: 1, label: "Вторник" },
+            { value: 2, label: "Среда" },
+            { value: 3, label: "Четверг" },
+            { value: 4, label: "Пятница" },
+            { value: 5, label: "Суббота" },
+            { value: 6, label: "Воскресенье" },
+          ],
         },
         archived: { title: "Заархивирован", width: 150, editorType: "checkbox" },
       },
@@ -170,14 +180,30 @@ class DictionariesTableEditor extends Vue {
         code: { title: "Код", width: 100, editorType: "input" },
         title: { title: "Название", width: 500, editorType: "input" },
         available_for: {
-          title: "Доступно в",
+          title: "Доступно в кампусах",
           width: 250,
           editorType: "select",
           props: {
-            options: Object.entries(CAMPUSES)
-              .map(([value, label]) => ({ value, label })),
             multiple: true,
           },
+          allOptions: Object.entries(CAMPUSES).map(([value, label]) => ({ value, label })),
+        },
+        selectable_by_every_program: {
+          title: "Доступно для всех программ",
+          width: 250,
+          editorType: "checkbox",
+        },
+        selectable_by: {
+          title: "Доступно для программ",
+          width: 500,
+          editorType: "select",
+          props: {
+            multiple: true,
+            filterable: true,
+          },
+          allOptions: this.programsOptions,
+          optionsGenFunction: this.programsOptionsByCampus,
+          disabledGenFunction: editorData => editorData.selectable_by_every_program,
         },
       },
       // programs: {
@@ -206,6 +232,23 @@ class DictionariesTableEditor extends Vue {
 
   get milspecialtiesOptions() {
     return ReferenceModule.milspecialties.map(item => ({
+      label: item.code,
+      value: item.id,
+    }));
+  }
+
+  get programsOptions() {
+    return ReferenceModule.programs.map(item => ({
+      label: item.code,
+      value: item.id,
+    }));
+  }
+
+  programsOptionsByCampus(editorData) {
+    const avaliableForSelection = ReferenceModule.programs.filter(
+      item => editorData.available_for.includes(item.faculty.campus),
+    );
+    return avaliableForSelection.map(item => ({
       label: item.code,
       value: item.id,
     }));
