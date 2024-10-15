@@ -17,6 +17,7 @@ from common.models.universities import Program
 
 from common.serializers.milspecialties import (
     MilspecialtySerializer,
+    MilspecialtyWithPrivateFieldsSerializer,
     WithSelectableByProgramMilspecialtySerializer,
 )
 from common.serializers.universities import ProgramSerializer
@@ -115,6 +116,8 @@ class MilspecialtyViewSet(ModelViewSet):
     def get_serializer_class(self):
         if "program" in self.request.query_params:
             return WithSelectableByProgramMilspecialtySerializer
+        if ReferenceBookPermission().has_permission(self.request, None):
+            return MilspecialtyWithPrivateFieldsSerializer
         return MilspecialtySerializer
 
     queryset = Milspecialty.objects.all()

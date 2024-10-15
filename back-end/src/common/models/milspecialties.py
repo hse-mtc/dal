@@ -43,6 +43,12 @@ class Milspecialty(models.Model):
             or self.selectable_by_every_program
         )
 
+    def save(self, *args, **kwargs):
+        if self.pk:
+            if self.selectable_by_every_program:
+                self.selectable_by.clear()
+        return super().save(*args, **kwargs)
+
 
 @receiver(m2m_changed, sender=Milspecialty.selectable_by.through)
 def validate_b_titles(
