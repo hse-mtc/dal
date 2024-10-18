@@ -90,6 +90,7 @@ def test_milspecialty_selectable(
         ), f"Incorrect selectable_by_program (ami) for milspecialty \"{milspecialty['title']}\""
 
 
+@pytest.mark.django_db
 def test_milspecialty_return_fields(
     su_client,
     test_user,
