@@ -68,7 +68,7 @@ class ReferenceBookPermission(BasePermission):
 
 
 class MilspecialtySensitiveInformationPermission(BasePermission):
-    permission_class = "milpecialty-sensetive-information"
+    permission_class = "milpecialty-sensitive-information"
     view_name_rus = "Чувствительная информация о ВУС"
     scopes = [
         Permission.Scope.ALL,

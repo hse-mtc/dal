@@ -126,7 +126,7 @@ def test_milspecialty_return_fields(
         assert "selectable_by_program" in milspec
 
     give_permission_to_user(
-        test_user, permission_data("milpecialty-sensetive-information", "get", "all")
+        test_user, permission_data("milpecialty-sensitive-information", "get", "all")
     )
 
     milspecialties_no_program_user = test_client.get(
