@@ -150,7 +150,7 @@ def get_teacher_permissions():
         "papers.get.all",
         "categories.get.all",
         "publishers.get.all",
-        "milpecialty-sensetive-information.get.all",
+        "milpecialty-sensitive-information.get.all",
     ]
 
     res = []
@@ -245,7 +245,7 @@ def get_milfaculty_head_permissions():
         "approve-student.patch.self",
         "approve-student.patch.milgroup",
         "approve-student.patch.milfaculty",
-        "milpecialty-sensetive-information.get.all",
+        "milpecialty-sensitive-information.get.all",
     ]
 
     res = []
