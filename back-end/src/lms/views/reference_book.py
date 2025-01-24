@@ -17,6 +17,7 @@ from common.models.universities import Program
 
 from common.serializers.milspecialties import (
     MilspecialtySerializer,
+    MilspecialtyWithSensitiveInformationSerializer,
     WithSelectableByProgramMilspecialtySerializer,
 )
 from common.serializers.universities import ProgramSerializer
@@ -64,6 +65,15 @@ from lms.types.personnel import Personnel
 class ReferenceBookPermission(BasePermission):
     permission_class = "reference-books"
     view_name_rus = "Справочные данные"
+
+
+class MilspecialtySensitiveInformationPermission(BasePermission):
+    permission_class = "milpecialty-sensitive-information"
+    view_name_rus = "Чувствительная информация о ВУС"
+    scopes = [
+        Permission.Scope.ALL,
+    ]
+    methods = ["get"]
 
 
 class MilgroupPermission(BasePermission):
@@ -115,6 +125,10 @@ class MilspecialtyViewSet(ModelViewSet):
     def get_serializer_class(self):
         if "program" in self.request.query_params:
             return WithSelectableByProgramMilspecialtySerializer
+        if MilspecialtySensitiveInformationPermission().has_permission(
+            self.request, self
+        ):
+            return MilspecialtyWithSensitiveInformationSerializer
         return MilspecialtySerializer
 
     queryset = Milspecialty.objects.all()

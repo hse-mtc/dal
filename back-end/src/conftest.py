@@ -85,3 +85,15 @@ def test_client(test_user):
     )
     access_token = response.data["access"]
     return Client(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+
+
+@pytest.fixture(autouse=True)
+def remove_permissions(test_user):
+    yield
+    test_user.permissions.clear()
+
+
+def give_permission_to_user(user, data):
+    permission = Permission.objects.create(**data)
+    user.permissions.add(permission)
+    user.save()
