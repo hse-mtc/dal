@@ -38,7 +38,7 @@ class Program(models.Model):
     available_to_choose_for_applicants = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"[{self.code}] {self.title}"
+        return f"{self.faculty.campus} [{self.code}] {self.title}"
 
     @property
     def digit_code(self) -> str:
