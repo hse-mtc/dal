@@ -16,6 +16,7 @@ from common.models.personal import (
     Photo,
     Relative,
 )
+from common.models.military import MilitaryOffice
 
 
 class ApplicationProcess(models.Model):
@@ -174,6 +175,14 @@ class Applicant(models.Model):
         to=get_user_model(),
         on_delete=models.RESTRICT,
     )
+    military_office = models.ForeignKey(
+        MilitaryOffice, 
+        on_delete=models.SET_NULL, 
+        blank=True, 
+        null=True,
+        related_name="applicants"
+    )
+    custom_military_office = models.CharField(max_length=255, blank=True, null=True)
 
     objects = ApplicantManager()
 

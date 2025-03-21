@@ -142,6 +142,7 @@ import _pick from "lodash/pick";
 import _omit from "lodash/omit";
 
 import GenericForm from "@/common/Form/index.vue";
+import MilitaryOfficeSelector from '@/components/MilitaryOfficeSelector.vue';
 
 import allowMobileView from "@/utils/allowMobileView";
 import { findApplicant, postApplicant, putApplicant } from "@/api/applicants";
@@ -178,7 +179,7 @@ const createData = fields => Object.keys(fields).reduce(
 
 @Component({
   name: "ApplicantForm",
-  components: { GenericForm },
+  components: { GenericForm, MilitaryOfficeSelector },
   computed: {
     userId() {
       return UserModule.userId;
