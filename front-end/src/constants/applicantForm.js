@@ -136,13 +136,11 @@ export const PERSONAL_DOCUMENTS_INFO = {
 };
 
 export const RECRUITMENT_OFFICE = {
-  title: {
-    component: "text",
-    title: "Состою на воинском учете в военном комиссариате...",
+  militaryOfficeId: {
+    component: "custom",
+    title: "Военный комиссариат",
     props: {
-      isTextArea: true,
-      placeholder:
-        "городов Одинцово, Звенигород, Краснознаменск и Одинцовского городского округа",
+      componentName: "MilitaryOfficeSelector",
     },
   },
 };
