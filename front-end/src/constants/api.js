@@ -64,6 +64,7 @@ export const LMS_URLS = {
     ranks: "lms/ranks/",
     milfaculties: "lms/milfaculties/",
     milspecialties: "lms/milspecialties/",
+    recruitmentOffices: "lms/recruitment-offices/",
     achievementTypes: "lms/achievement-types/",
     programs: "lms/programs/",
     rooms: "lms/rooms/",

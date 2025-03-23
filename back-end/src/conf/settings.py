@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "ordered_model",
     "taggit",
+    "import_export",
     # REST framework
     "rest_framework",
     "rest_framework.authtoken",

@@ -164,7 +164,7 @@ import {
   dataURLtoFile,
 } from "@/constants/applicantForm";
 
-import { getAvailableForApplicantsProgramsByCampus, getMilSpecialtiesSelectableByProgram } from "@/api/reference-book";
+import { getAvailableForApplicantsProgramsByCampus, getMilSpecialtiesSelectableByProgram, getRecruitmentOffices } from "@/api/reference-book";
 import copyToClipboard from "@/utils/copyToClipboard";
 import { UserModule } from "@/store";
 
@@ -505,6 +505,13 @@ class ApplicantForm extends Vue {
     }));
   }
 
+  fillRecruitmentOfficesOptions(data) {
+    this.fields.recruitmentOffice.title.props.options = data.map(item => ({
+      label: item.name,
+      value: item.name,
+    }));
+  }
+
   fillMilspecialtyOptions(data) {
     this.fields.milspecialty.milspecialty.props.options = data.map(
       item => ({
@@ -814,6 +821,18 @@ class ApplicantForm extends Vue {
           type: "error",
           duration: 1000 * 5,
           message: "Ошибка загрузки данных. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг",
+        });
+      }
+    }
+    if (nextValue == STEPS.recruitmentOffice) {
+      try {
+        const {data} = await getRecruitmentOffices();
+        this.fillRecruitmentOfficesOptions(data);
+      } catch (e) {
+        this.$message({
+          type: "error",
+          duration: 1000 * 5,
+          message: `${e} Ошибка загрузки данных о военкоматах. Вернитесь к предыдущему шагу и заново перейдите на текущий шаг`,
         });
       }
     }

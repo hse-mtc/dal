@@ -11,6 +11,7 @@ const {
     programs,
     ranks,
     rooms,
+    recruitmentOffices,
     skills,
   },
 } = LMS_URLS;
@@ -255,5 +256,12 @@ export function addSkill(data) {
     url: `${BASE_API_URL}${skills}`,
     method: "POST",
     data,
+  });
+}
+
+export function getRecruitmentOffices() {
+  return request({
+    url: `${BASE_API_URL}${recruitmentOffices}`,
+    method: "GET"
   });
 }

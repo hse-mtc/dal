@@ -12,6 +12,9 @@
       v-model="value"
       style="width: 100%; max-width: 100%"
       v-bind="$attrs"
+      filterable
+      :allow-create="allowCustom"
+      default-first-option
     >
       <el-option
         v-for="{ label, optionValue, class_ } in selectOptions"
@@ -26,17 +29,18 @@
 
 <script>
 import { Component, Prop } from "vue-property-decorator";
-
 import _isObject from "lodash/isObject";
 import _isArray from "lodash/isArray";
-
 import InputsMixin from "./inputsMixin";
 
 @Component({
   name: "SelectInput",
 })
 class SelectInput extends InputsMixin {
-  @Prop({ type: Array, default: () => [] }) options
+  // Массив опций для селекта
+  @Prop({ type: Array, default: () => [] }) options;
+  // Пропс, позволяющий разрешить ввод кастомного значения
+  @Prop({ type: Boolean, default: false }) allowCustom;
 
   get selectOptions() {
     return this.options.map(option => {
@@ -45,11 +49,11 @@ class SelectInput extends InputsMixin {
 
       const getValue = item => {
         if (isObj) {
-          if (_isObject(item.value)) { return JSON.stringify(item.value); }
-
+          if (_isObject(item.value)) {
+            return JSON.stringify(item.value);
+          }
           return item.value;
         }
-
         return item;
       };
 
@@ -65,7 +69,6 @@ class SelectInput extends InputsMixin {
     if (_isArray(this.modelValue)) {
       return this.modelValue.map(item => this.encodeValue(item));
     }
-
     return this.encodeValue(this.modelValue);
   }
 
@@ -83,17 +86,19 @@ class SelectInput extends InputsMixin {
   }
 
   encodeValue(value) {
-    if (!value && value !== 0) { return value; }
-
+    if (!value && value !== 0) {
+      return value;
+    }
     if (_isObject(value)) {
       return JSON.stringify(value);
     }
-
     return value;
   }
 
   decodeValue(value) {
-    if (!value && value !== 0) { return value; }
+    if (!value && value !== 0) {
+      return value;
+    }
     try {
       return JSON.parse(value);
     } catch (e) {
