@@ -37,11 +37,12 @@ admin.site.register(Faculty)
 # Milspecialty
 admin.site.register(Milspecialty)
 
+
 # Recruitment office
 @admin.register(RecruitmentOffice)
 class RecruitmentOfficeAdmin(ImportExportModelAdmin):
     resource_class = RecruitmentOfficeResource
-    search_fields = ('city', 'name')
+    search_fields = ("city", "name")
 
     def get_export_queryset(self, request):
         return self.get_queryset(request)

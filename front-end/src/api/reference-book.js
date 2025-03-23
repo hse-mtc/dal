@@ -262,6 +262,6 @@ export function addSkill(data) {
 export function getRecruitmentOffices() {
   return request({
     url: `${BASE_API_URL}${recruitmentOffices}`,
-    method: "GET"
+    method: "GET",
   });
 }

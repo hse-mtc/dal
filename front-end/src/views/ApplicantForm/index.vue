@@ -824,9 +824,9 @@ class ApplicantForm extends Vue {
         });
       }
     }
-    if (nextValue == STEPS.recruitmentOffice) {
+    if (nextValue === STEPS.recruitmentOffice) {
       try {
-        const {data} = await getRecruitmentOffices();
+        const { data } = await getRecruitmentOffices();
         this.fillRecruitmentOfficesOptions(data);
       } catch (e) {
         this.$message({

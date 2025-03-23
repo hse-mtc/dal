@@ -152,7 +152,8 @@ export const UNIVERSITY_INFO = {
     title: "Кампус",
     props: {
       options: Object.entries(CAMPUSES)
-        .map(([value, label]) => ({ value, label })), allowCustom: false,
+        .map(([value, label]) => ({ value, label })),
+      allowCustom: false,
     },
   },
   card_id: {
@@ -163,7 +164,7 @@ export const UNIVERSITY_INFO = {
   program: {
     component: "select",
     title: "Образовательная программа",
-    props: { options: [], allowCustom: false, },
+    props: { options: [], allowCustom: false },
   },
   group: {
     component: "text",
@@ -176,7 +177,7 @@ export const MILSPECIALTY = {
   milspecialty: {
     component: "select",
     title: "Желаемая военная специальность",
-    props: { options: [], allowCustom: false, },
+    props: { options: [], allowCustom: false },
   },
 };
 
