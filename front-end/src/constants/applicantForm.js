@@ -137,12 +137,11 @@ export const PERSONAL_DOCUMENTS_INFO = {
 
 export const RECRUITMENT_OFFICE = {
   title: {
-    component: "text",
-    title: "Состою на воинском учете в военном комиссариате...",
+    component: "select",
+    title: "Военный комиссариат",
     props: {
-      isTextArea: true,
-      placeholder:
-        "городов Одинцово, Звенигород, Краснознаменск и Одинцовского городского округа",
+      options: [],
+      allowCustom: true,
     },
   },
 };
@@ -153,7 +152,7 @@ export const UNIVERSITY_INFO = {
     title: "Кампус",
     props: {
       options: Object.entries(CAMPUSES)
-        .map(([value, label]) => ({ value, label })),
+        .map(([value, label]) => ({ value, label })), allowCustom: false,
     },
   },
   card_id: {
@@ -164,7 +163,7 @@ export const UNIVERSITY_INFO = {
   program: {
     component: "select",
     title: "Образовательная программа",
-    props: { options: [] },
+    props: { options: [], allowCustom: false, },
   },
   group: {
     component: "text",
@@ -177,7 +176,7 @@ export const MILSPECIALTY = {
   milspecialty: {
     component: "select",
     title: "Желаемая военная специальность",
-    props: { options: [] },
+    props: { options: [], allowCustom: false, },
   },
 };
 

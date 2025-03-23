@@ -2,6 +2,8 @@ from django.urls import path, include
 
 from rest_framework.routers import DefaultRouter
 
+from common.views.recruitment_office import RecruitmentOfficeView
+
 from lms.views.achievements import AchievementViewSet
 from lms.views.import_schedule import ParseScheduleView, ImportParsedView
 from lms.views.personnel import SearchPersonnelUsersViewSet
@@ -131,4 +133,5 @@ urlpatterns = [
     path("import-schedule/save-parsed/", ImportParsedView.as_view()),
     # Choices lists.
     path("choices/", include(choices)),
+    path("recruitment-offices/", RecruitmentOfficeView.as_view()),
 ]
