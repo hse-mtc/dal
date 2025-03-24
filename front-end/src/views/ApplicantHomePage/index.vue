@@ -313,7 +313,7 @@ export default {
               },
               {
                 name: `Личная почта${type[1]}`,
-                content: data.family[counter].contact_info?.personal_phone_number,
+                content: data.family[counter].contact_info?.personal_email,
               },
               {
                 name: `Номер телефона${type[1]}`,
