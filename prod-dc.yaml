@@ -17,6 +17,8 @@ services:
     env_file:
       - .env
     restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   ofelia:
     image: mcuadros/ofelia:latest

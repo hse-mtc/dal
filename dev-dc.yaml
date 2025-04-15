@@ -17,6 +17,8 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   ofelia:
     image: mcuadros/ofelia:latest
@@ -56,7 +58,6 @@ services:
       sh -c "/tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
              python manage.py migrate &&
              python manage.py register_permissions &&
-             python manage.py populate &&
              python manage.py runserver 0.0.0.0:$BACK_END_PORT"
     restart: unless-stopped
     volumes:
@@ -97,3 +98,6 @@ services:
       - ./tgbot:/tgbot
     # depends_on:
     #   - back-end
+
+volumes:
+  postgres-data:
