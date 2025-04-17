@@ -11,6 +11,20 @@
   }
 }
 
+.popover-action {
+  display: block;
+  padding: 4px 0;
+  font-size: 15px;
+  color: #606266;       
+  cursor: pointer;
+  transition: color .2s ease, background-color .2s ease;
+
+  &:hover {
+    color: #0050b2;        
+    background-color: rgba(0, 80, 207, .08);
+  }
+}
+
 .document-card {
   margin-bottom: 40px;
 
