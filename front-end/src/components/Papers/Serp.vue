@@ -79,16 +79,18 @@
                 </DownloadFile>
               </AZGuard>
               <AZGuard :permissions="['papers.patch.all']">
-                <div v-if="$route.query.category !== 'bin'" 
-                class="popover-action" 
-                @click="editPaper(document.id)">
+                <div
+                  v-if="$route.query.category !== 'bin'"
+                  class="popover-action"
+                  @click="editPaper(document.id)"
+                >
                   Редактировать
                 </div>
               </AZGuard>
               <AZGuard :permissions="['papers.delete.all']">
                 <div
                   v-if="$route.query.category !== 'bin'"
-                  class="popover-action" 
+                  class="popover-action"
                   @click="toggleBinStatus(document.id, true)"
                 >
                   Переместить в корзину
