@@ -73,19 +73,22 @@
                   v-if="$route.query.category !== 'bin'"
                   :url="document.file.content"
                   :file-name="document.file.name"
+                  class="popover-action"
                 >
                   Скачать
                 </DownloadFile>
               </AZGuard>
               <AZGuard :permissions="['papers.patch.all']">
-                <div v-if="$route.query.category !== 'bin'" style="cursor: pointer" @click="editPaper(document.id)">
+                <div v-if="$route.query.category !== 'bin'" 
+                class="popover-action" 
+                @click="editPaper(document.id)">
                   Редактировать
                 </div>
               </AZGuard>
               <AZGuard :permissions="['papers.delete.all']">
                 <div
                   v-if="$route.query.category !== 'bin'"
-                  style="cursor: pointer"
+                  class="popover-action" 
                   @click="toggleBinStatus(document.id, true)"
                 >
                   Переместить в корзину
