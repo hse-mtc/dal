@@ -62,6 +62,13 @@ class AdminPanelPage extends Vue {
 export default AdminPanelPage;
 </script>
 
+<style lang="scss">
+.p-tabmenu .p-tabmenu-nav .p-tabmenuitem {
+  display: flex;
+  align-items: flex-end;
+}
+</style>
+
 <style lang="scss" module>
 .root {
   margin: 50px;
