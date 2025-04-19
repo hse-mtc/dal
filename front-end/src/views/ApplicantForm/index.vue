@@ -218,56 +218,58 @@ class ApplicantForm extends Vue {
   }
 
   mounted() {
-    findApplicant(this.personId).then(request => {
-      this.disableWatchers = true;
-      // eslint-disable-next-line camelcase
-      const ap_data = request.data;
-      this.applicantData.about = {
-        surname: ap_data.surname,
-        name: ap_data.name,
-        patronymic: ap_data.patronymic,
-        citizenship: ap_data.citizenship,
-        permanent_address: ap_data.permanent_address,
-        surname_genitive: ap_data.surname_genitive,
-        name_genitive: ap_data.name_genitive,
-        patronymic_genitive: ap_data.patronymic_genitive,
-      };
+    if (this.personId) {
+      findApplicant(this.personId).then(request => {
+        this.disableWatchers = true;
+        // eslint-disable-next-line camelcase
+        const ap_data = request.data;
+        this.applicantData.about = {
+          surname: ap_data.surname,
+          name: ap_data.name,
+          patronymic: ap_data.patronymic,
+          citizenship: ap_data.citizenship,
+          permanent_address: ap_data.permanent_address,
+          surname_genitive: ap_data.surname_genitive,
+          name_genitive: ap_data.name_genitive,
+          patronymic_genitive: ap_data.patronymic_genitive,
+        };
 
-      this.applicantData.birthInfo = ap_data.birth_info;
-      this.applicantData.passport = ap_data.passport;
-      this.applicantData.personalDocumentsInfo.tax_id = ap_data.personal_documents_info ? ap_data.personal_documents_info.tax_id : "";
-      this.applicantData.personalDocumentsInfo.insurance_number = ap_data.personal_documents_info ? ap_data.personal_documents_info.insurance_number : "";
-      this.applicantData.universityInfo = ap_data.university_info;
-      this.applicantData.universityInfo.program = ap_data.university_info.program.id;
-      this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
-      this.applicantData.contactInfo = ap_data.contact_info;
-      this.applicantData.photo = {
-        photo: [
-          {
-            name: "photo.png",
-            percentage: 0,
-            raw: dataURLtoFile(`data:image/png;base64,${ap_data.photo}`, "photo.png"),
-            status: "ready",
-          },
-        ],
-      };
-      const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "FA"));
-      const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "MO"));
-      if (father.length > 0) {
-        // eslint-disable-next-line prefer-destructuring
-        this.applicantData.father = father[0];
-      }
-      if (mother.length > 0) {
-        // eslint-disable-next-line prefer-destructuring
-        this.applicantData.mother = mother[0];
-      }
-      this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "BR"));
-      this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "SI"));
-      this.applicantData.milspecialty.milspecialty = ap_data.milspecialty.id;
-      this.$nextTick(() => {
-        this.disableWatchers = false;
+        this.applicantData.birthInfo = ap_data.birth_info;
+        this.applicantData.passport = ap_data.passport;
+        this.applicantData.personalDocumentsInfo.tax_id = ap_data.personal_documents_info ? ap_data.personal_documents_info.tax_id : "";
+        this.applicantData.personalDocumentsInfo.insurance_number = ap_data.personal_documents_info ? ap_data.personal_documents_info.insurance_number : "";
+        this.applicantData.universityInfo = ap_data.university_info;
+        this.applicantData.universityInfo.program = ap_data.university_info.program.id;
+        this.applicantData.recruitmentOffice.title = ap_data.recruitment_office;
+        this.applicantData.contactInfo = ap_data.contact_info;
+        this.applicantData.photo = {
+          photo: [
+            {
+              name: "photo.png",
+              percentage: 0,
+              raw: dataURLtoFile(`data:image/png;base64,${ap_data.photo}`, "photo.png"),
+              status: "ready",
+            },
+          ],
+        };
+        const father = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "FA"));
+        const mother = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "MO"));
+        if (father.length > 0) {
+          // eslint-disable-next-line prefer-destructuring
+          this.applicantData.father = father[0];
+        }
+        if (mother.length > 0) {
+          // eslint-disable-next-line prefer-destructuring
+          this.applicantData.mother = mother[0];
+        }
+        this.applicantData.brothers = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "BR"));
+        this.applicantData.sisters = this.parseFamilyMembers(ap_data.family.filter(member => member.type === "SI"));
+        this.applicantData.milspecialty.milspecialty = ap_data.milspecialty.id;
+        this.$nextTick(() => {
+          this.disableWatchers = false;
+        });
       });
-    });
+    }
   }
 
   fields = {
