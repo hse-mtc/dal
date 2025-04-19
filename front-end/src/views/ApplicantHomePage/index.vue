@@ -58,12 +58,23 @@
               </el-row>
             </div>
           </div>
-          <div style="margin-bottom: 30px">
-            <router-link to="/applicant-form/">
-              <el-button type="primary">
-                Исправить форму
+          <div class="buttons">
+            <div style="margin-bottom: 30px">
+              <router-link to="/applicant-form/">
+                <el-button type="primary">
+                  Исправить форму
+                </el-button>
+              </router-link>
+            </div>
+            <div style="margin-bottom: 30px; margin-left: 30px">
+              <el-button
+                type="primary"
+                native-type="submit"
+                @click="resubmitDocs"
+              >
+                Отправить повторно документы
               </el-button>
-            </router-link>
+            </div>
           </div>
         </div>
       </el-col>
@@ -74,7 +85,7 @@
 <script>
 import PageHeader from "@/common/PageHeader";
 import { UserModule } from "@/store";
-import { findApplicant } from "@/api/applicants";
+import { findApplicant, resumbmitApplicantDocs } from "@/api/applicants";
 import { dataURLtoFile } from "@/constants/applicantForm";
 import { CAMPUSES } from "@/utils/enums";
 
@@ -104,6 +115,17 @@ export default {
 
     getFormattedProgram(program) {
       return `${program.code} – ${program.title}`;
+    },
+
+    async resubmitDocs() {
+      const data = await resumbmitApplicantDocs();
+      if (data.status === 200) {
+        this.$message({
+          type: "success",
+          message: "Документы отправлены на вашу почту.",
+          duration: 3000,
+        });
+      }
     },
 
     async fetchDocs() {
@@ -342,6 +364,10 @@ export default {
 .contentcol {
   border-left: 1px solid lightgray;
   background-color: white;
+}
+
+.buttons {
+  display: flex;
 }
 
 </style>
