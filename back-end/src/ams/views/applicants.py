@@ -109,7 +109,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             or self.action == "retrieve"
             or self.action == "update"
         ):
-            if hasattr(self.request.user, 'applicant'):
+            if hasattr(self.request.user, "applicant"):
                 return self.queryset.filter(user__applicant=self.request.user.applicant)
             return self.queryset.none()
 
