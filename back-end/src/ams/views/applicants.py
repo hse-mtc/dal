@@ -396,6 +396,26 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         """
         return self.generate_docs()
 
+    @extend_schema(request=None, responses={200: None})
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="resubmit-docs",
+        permission_classes=[ApplicantPermission],
+    )
+    def resubmit_docs(self, request):
+        """
+        Resubmiting documents for the applicant.
+        """
+        applicant = Applicant.objects.filter(user=request.user).first()
+        if not applicant:
+            return Response(
+                {"detail": "You do not have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        generate_documents_for_applicant(applicant)
+        return Response(status=status.HTTP_200_OK)
+
 
 def generate_documents_for_applicant(applicant: Applicant) -> None:
     data = ApplicantSerializer(instance=applicant).data
