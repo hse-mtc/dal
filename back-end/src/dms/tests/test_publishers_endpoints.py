@@ -3,10 +3,7 @@ from dms.models.common import Publisher
 
 
 def unpack_publisher(publisher: Publisher):
-    return {
-        "id": publisher.id,
-        "name": publisher.name
-    }
+    return {"id": publisher.id, "name": publisher.name}
 
 
 def create_publisher(name: str):
@@ -56,9 +53,7 @@ def test_get_publishers_by_id(su_client, publisher_data):
 @pytest.mark.django_db
 def test_post_publishers_creates_publisher(su_client, publisher_data):
     first = su_client.post(
-        "/api/dms/publishers/",
-        publisher_data(),
-        content_type="application/json"
+        "/api/dms/publishers/", publisher_data(), content_type="application/json"
     )
     assert first.status_code == 201
 
@@ -74,9 +69,7 @@ def test_put_changes_name(su_client, publisher_data):
 
     changes = {"name": "Changed name"}
     put_response = su_client.put(
-        f"/api/dms/publishers/{id_}/",
-        changes,
-        content_type="application/json"
+        f"/api/dms/publishers/{id_}/", changes, content_type="application/json"
     )
     assert put_response.status_code == 200
     publisher = Publisher.objects.get(id=id_)
@@ -105,9 +98,7 @@ def test_patch_formats_publisher(su_client, publisher_data):
 
     changes = {"name": "New name"}
     put_response = su_client.patch(
-        f"/api/dms/publishers/{id_}/",
-        changes,
-        content_type="application/json"
+        f"/api/dms/publishers/{id_}/", changes, content_type="application/json"
     )
     assert put_response.status_code == 200
     publisher = Publisher.objects.get(id=id_)
