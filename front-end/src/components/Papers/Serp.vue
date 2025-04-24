@@ -99,14 +99,18 @@
               <AZGuard :permissions="['papers.delete.all']">
                 <div
                   v-if="$route.query.category === 'bin'"
-                  style="cursor: pointer"
+                  class="popover-action"
                   @click="toggleBinStatus(document.id, false)"
                 >
                   Восстановить
                 </div>
               </AZGuard>
               <AZGuard :permissions="['papers.delete.all']">
-                <div v-if="$route.query.category === 'bin'" style="cursor: pointer" @click="deletePaper(document.id)">
+                <div
+                  v-if="$route.query.category === 'bin'"
+                  class="popover-action"
+                  @click="deletePaper(document.id)"
+                >
                   Удалить
                 </div>
               </AZGuard>
