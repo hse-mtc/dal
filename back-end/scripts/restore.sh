@@ -33,13 +33,13 @@ if [ "$NO_INPUT" ]; then
 fi
 
 if [ "$DATABASE" ]; then
-  python manage.py dbrestore "${ARGUMENTS[@]}"
+  uv run python manage.py dbrestore "${ARGUMENTS[@]}"
 else
   echo "[INFO] database restore was not requested (-d | --database)"
 fi
 
 if [ "$MEDIA" ]; then
-  python manage.py mediarestore "${ARGUMENTS[@]}"
+  uv run python manage.py mediarestore "${ARGUMENTS[@]}"
 else
   echo "[INFO] media files restore was not requested (-m | --media)"
 fi

@@ -5,6 +5,9 @@ FROM python:3.10-bullseye
 COPY back-end/docker/image/install-postgres-client.sh /
 RUN sh install-postgres-client.sh
 
+# Install uv
+RUN pip install uv
+
 # Set working directory
 WORKDIR /back-end
 
@@ -15,12 +18,11 @@ ENV PYTHONUNBUFFERED 1
 # Help Python with imports
 ENV PYTHONPATH "src:${PYTHONPATH}"
 
-# Copy pipenv manifests
-COPY back-end/Pipfile* ./
+# Copy uv manifests
+COPY back-end/pyproject.toml back-end/uv.lock ./
 
-# Install pipenv & dependencies
-RUN pip install pipenv && \
-    pipenv install --system --dev
+# Install dependencies with uv
+RUN uv sync --frozen --dev
 
 # Copy tools
 COPY tools /tools

@@ -24,13 +24,13 @@ ARGUMENTS=(
 )
 
 if [ "$DATABASE" ]; then
-  python manage.py dbbackup "${ARGUMENTS[@]}"
+  uv run python manage.py dbbackup "${ARGUMENTS[@]}"
 else
   echo "[INFO] database backup was not requested (-d | --database)"
 fi
 
 if [ "$MEDIA" ]; then
-  python manage.py mediabackup "${ARGUMENTS[@]}"
+  uv run python manage.py mediabackup "${ARGUMENTS[@]}"
 else
   echo "[INFO] media files backup was not requested (-m | --media)"
 fi

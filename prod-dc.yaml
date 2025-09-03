@@ -57,10 +57,10 @@ services:
     #   - $BACK_END_PORT:$BACK_END_PORT
     command: >
       sh -c "/tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
-             python manage.py migrate &&
-             python manage.py register_permissions &&
+             uv run python manage.py migrate &&
+             uv run python manage.py register_permissions &&
              rm -rf static &&
-             python manage.py collectstatic --clear &&
+             uv run python manage.py collectstatic --clear &&
              gunicorn conf.wsgi:application --config src/gunicorn.conf.py"
     restart: always
     volumes:
