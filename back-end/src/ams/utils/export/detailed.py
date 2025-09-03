@@ -19,11 +19,12 @@ def _make_applicant_detail_row(
     if (uni_info := applicant.university_info) is not None:
         row += [
             (uni_info.program.faculty.title, formats.table_center),
+            (uni_info.program.digit_code, formats.table_center),
             (uni_info.program.title, formats.table_center),
             (uni_info.group, formats.table_center),
         ]
     else:
-        row += [("", formats.table_center)] * 3
+        row += [("", formats.table_center)] * 4
 
     # pylint: disable=invalid-name
     if (bi := applicant.birth_info) is not None:
@@ -167,6 +168,7 @@ def _fill_applicant_detail_header(
         "№",
         "ФИО",
         "Название факультета",
+        "Код специальности (направление подготовки)",
         "Название ОП",
         "Номер группы",
         "Дата рождения",
@@ -208,11 +210,12 @@ def set_col_size_details(worksheet: xlsxwriter.Workbook.worksheet_class):
     worksheet.set_column(0, 0, width=25 / 6)
     worksheet.set_column(1, 1, width=171 / 6)
     worksheet.set_column(2, 2, width=171 / 6)
-    worksheet.set_column(3, 3, width=150 / 6)
-    worksheet.set_column(4, 4, width=50 / 6)
+    worksheet.set_column(3, 3, width=180 / 6) 
+    worksheet.set_column(4, 4, width=150 / 6)
     worksheet.set_column(5, 5, width=50 / 6)
-    worksheet.set_column(6, 6, width=80 / 6)
-    worksheet.set_column(7, 7, width=70 / 6)
-    worksheet.set_column(8, 8, width=100 / 6)
+    worksheet.set_column(6, 6, width=50 / 6)
+    worksheet.set_column(7, 7, width=80 / 6)
+    worksheet.set_column(8, 8, width=70 / 6)
     worksheet.set_column(9, 9, width=100 / 6)
-    worksheet.set_column(10, 20, width=250 / 6)
+    worksheet.set_column(10, 10, width=100 / 6)
+    worksheet.set_column(11, 21, width=250 / 6)
