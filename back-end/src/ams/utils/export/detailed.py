@@ -210,7 +210,7 @@ def set_col_size_details(worksheet: xlsxwriter.Workbook.worksheet_class):
     worksheet.set_column(0, 0, width=25 / 6)
     worksheet.set_column(1, 1, width=171 / 6)
     worksheet.set_column(2, 2, width=171 / 6)
-    worksheet.set_column(3, 3, width=180 / 6) 
+    worksheet.set_column(3, 3, width=180 / 6)
     worksheet.set_column(4, 4, width=150 / 6)
     worksheet.set_column(5, 5, width=50 / 6)
     worksheet.set_column(6, 6, width=50 / 6)
