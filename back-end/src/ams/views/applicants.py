@@ -274,7 +274,7 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         campus = request.query_params["campus"]
 
         students = (
-            Student.objects.filter(status=Student.Status.ENROLLED)
+            Student.objects.filter(status=Student.Status.STUDYING)
             .select_related(
                 "contact_info",
                 "birth_info",
@@ -295,9 +295,10 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         if "mtc_admission_year" in request.query_params:
             mtc_admission_year = request.query_params["mtc_admission_year"]
             students = students.filter(
-                application_process__mtc_admission_year=mtc_admission_year
+                user__applicant__application_process__mtc_admission_year=mtc_admission_year
             )
-
+        
+        print(len(students))
         milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
 
         path = excel_generator(students, milspecialties)

@@ -48,7 +48,7 @@ HEADERS = [
 
 
 def _fmt_date(d: date | None) -> str:
-    return d.strftime("%d.%m.%Y") if isinstance(d, date) else ""
+    return d.strftime("%-d\%-m\%Y") if isinstance(d, date) else ""
 
 
 def _passport_str(st: Student) -> str:
@@ -100,12 +100,14 @@ def generate_export(students_qs, _milspecialties_qs) -> Path:
 
         ovu = mg.title if mg else ""
 
-        fgos = ui.program.code if ui and ui.program else ""
+        fgos = ui.program.code.split()[0] if ui and ui.program else ""
 
         mil_prog = mg.milspecialty.title if mg and mg.milspecialty else ""
+        
+        year_enrolled = st.user.applicant.application_process.mtc_admission_year
 
-        vuc_start_year = ""
-        vuc_start_month = ""
+        vuc_start_year = int(year_enrolled) + 1
+        vuc_start_month = 9
         vuc_duration_months = ""
         vuc_end_year = ""
         vuc_end_month = ""
@@ -116,7 +118,7 @@ def generate_export(students_qs, _milspecialties_qs) -> Path:
         expel_order = ""
         expel_reason = ""
         vk_destination = ""
-        personal_number = str(st.id)
+        personal_number = ""
         surname = st.surname
         name = st.name
         patronymic = st.patronymic or ""
