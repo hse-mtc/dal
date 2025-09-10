@@ -14,6 +14,7 @@ export const APPLICATIONS_EXPORT_OPTIONS = {
   DEF: "по умолч.",
   CSP: "протокол",
   DET: "детализ.",
+  STUD: "обучающиеся",
 };
 
 export const WEEKDAYS = [
