@@ -21,6 +21,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_spectacular.views import extend_schema, OpenApiParameter
 
+
 from common.models.universities import Campus
 from conf import settings
 
@@ -43,11 +44,15 @@ from ams.serializers.applicants import (
 
 from ams.filters.applicants import ApplicantFilter
 
+from lms.models.students import Student
 from lms.utils.mixins import QuerySetScopingMixin
 from lms.types.personnel import Personnel
 from ams.utils.export.default import generate_export as generate_def_export
 from ams.utils.export.comp_sel_protocol import generate_export as generate_csp_export
 from ams.utils.export.detailed import generate_applicants_detail
+from ams.utils.export.enrolled_students import (
+    generate_export as generate_enrolled_export,
+)
 from django.db import transaction
 
 
@@ -255,6 +260,52 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             data=ApplicationProcessSerializer(instance=updated).data,
         )
 
+    def generate_students_excel_report(
+        self,
+        request: Request,
+        excel_generator: tp.Callable[[QuerySet, QuerySet], Path],
+    ) -> tp.Union[FileResponse, Response]:
+        if (
+            "campus" not in request.query_params
+            or request.query_params["campus"] not in Campus
+        ):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        campus = request.query_params["campus"]
+
+        students = (
+            Student.objects.filter(status=Student.Status.ENROLLED)
+            .select_related(
+                "contact_info",
+                "birth_info",
+                "passport",
+                "personal_documents_info",
+                "university_info",
+                "photo",
+                "milgroup",
+                "milgroup__milfaculty",
+                "user",
+                "university_info__program",
+                "university_info__program__faculty",
+            )
+            .filter(university_info__program__faculty__campus=campus)
+            .order_by("surname", "name", "patronymic", "id")
+        )
+
+        if "mtc_admission_year" in request.query_params:
+            mtc_admission_year = request.query_params["mtc_admission_year"]
+            students = students.filter(
+                application_process__mtc_admission_year=mtc_admission_year
+            )
+
+        milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
+
+        path = excel_generator(students, milspecialties)
+
+        campus_name = dict(Campus.choices)[campus]
+        file = open(path, "rb")
+        return FileResponse(file, filename=f"{campus_name}.xlsx")
+
     def generate_excel_report(
         self,
         request: Request,
@@ -338,6 +389,30 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         Applicants are filtered by campus, specified in request query params.
         """
         return self.generate_excel_report(request, generate_def_export)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name="campus", description="Filter by campus", required=True, type=str
+            ),
+            OpenApiParameter(
+                name="mtc_admission_year", description="Filter by admission year"
+            ),
+        ]
+    )
+    @action(
+        methods=["get"],
+        url_path="students/export",
+        detail=False,
+        renderer_classes=[XLSXRenderer],
+        permission_classes=[ApplicantPermission],
+    )
+    def students_export(self, request: Request) -> Response:
+        """
+        Send an excel file with info about ENROLLED students.
+        Students are filtered by campus, specified in request query params.
+        """
+        return self.generate_students_excel_report(request, generate_enrolled_export)
 
     @extend_schema(
         parameters=[
