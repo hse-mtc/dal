@@ -5,6 +5,7 @@ from pathlib import Path
 import requests
 
 from django.db.models.query import QuerySet
+from django.db.models import Subquery, OuterRef
 from django.http import FileResponse
 
 from rest_framework import status
@@ -272,9 +273,14 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         campus = request.query_params["campus"]
+        year_param = request.query_params.get("mtc_admission_year")
+        try:
+            year = int(year_param) if year_param is not None else None
+        except (TypeError, ValueError):
+            year = None
 
         students = (
-            Student.objects.filter(status=Student.Status.ENROLLED)
+            Student.objects.filter(status=Student.Status.STUDYING)
             .select_related(
                 "contact_info",
                 "birth_info",
@@ -289,22 +295,30 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
                 "university_info__program__faculty",
             )
             .filter(university_info__program__faculty__campus=campus)
-            .order_by("surname", "name", "patronymic", "id")
         )
 
-        if "mtc_admission_year" in request.query_params:
-            mtc_admission_year = request.query_params["mtc_admission_year"]
-            students = students.filter(
-                application_process__mtc_admission_year=mtc_admission_year
-            )
+        latest_app_year_sq = (
+            Applicant.objects.filter(user=OuterRef("user"))
+            .order_by("-application_process__mtc_admission_year", "-id")
+            .values("application_process__mtc_admission_year")[:1]
+        )
+        students = students.annotate(mtc_admission_year=Subquery(latest_app_year_sq))
+
+        if year is not None:
+            students = students.filter(mtc_admission_year=year)
+
+        students = students.order_by("surname", "name", "patronymic", "id")
 
         milspecialties = Milspecialty.objects.filter(available_for__contains=[campus])
-
         path = excel_generator(students, milspecialties)
 
         campus_name = dict(Campus.choices)[campus]
-        file = open(path, "rb")
-        return FileResponse(file, filename=f"{campus_name}.xlsx")
+        return FileResponse(
+            open(path, "rb"),
+            as_attachment=True,
+            filename=f"{campus_name}.xlsx",
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
 
     def generate_excel_report(
         self,
