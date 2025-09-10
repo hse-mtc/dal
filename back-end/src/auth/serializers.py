@@ -225,9 +225,9 @@ class UserSerializer(serializers.ModelSerializer):
             id=personnel.id,
             type=personnel.__class__.__name__.lower(),
             milgroups=milgroups,
-            milfaculty=str(personnel.milfaculty.id)
-            if hasattr(personnel, "milfaculty")
-            else "",
+            milfaculty=(
+                str(personnel.milfaculty.id) if hasattr(personnel, "milfaculty") else ""
+            ),
         )
         return PersonSerializer(person).data
 
