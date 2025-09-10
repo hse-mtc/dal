@@ -104,6 +104,12 @@
               >
                 Детализированная информация
               </el-dropdown-item>
+              <el-dropdown-item
+                icon="el-icon-document-copy"
+                command="STUD"
+              >
+                Обучающиеся
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
@@ -142,6 +148,7 @@ import {
   APPLICATIONS_EXPORT_LINK,
   APPLICATIONS_CSP_EXPORT_LINK,
   APPLICATIONS_DET_EXPORT_LINK,
+  APPLICATIONS_STUD_EXPORT_LINK,
 } from "@/api/applicants";
 import { getProgramsByCampus } from "@/api/reference-book";
 
@@ -308,6 +315,8 @@ export default {
           return `${APPLICATIONS_CSP_EXPORT_LINK}?campus=${this.selectedCampus}&mtc_admission_year=${this.currentYear}`;
         case APPLICATIONS_EXPORT_OPTIONS.DET:
           return `${APPLICATIONS_DET_EXPORT_LINK}?campus=${this.selectedCampus}&mtc_admission_year=${this.currentYear}`;
+        case APPLICATIONS_EXPORT_OPTIONS.STUD: // TODO
+          return `${APPLICATIONS_STUD_EXPORT_LINK}?campus=${this.selectedCampus}&mtc_admission_year=${this.currentYear}`;
         default:
           return `${APPLICATIONS_EXPORT_LINK}?campus=${this.selectedCampus}&mtc_admission_year=${this.currentYear}`;
       }
