@@ -59,6 +59,12 @@ class UniversityInfo(models.Model):
     )
     group = models.CharField(max_length=32)
     card_id = models.CharField(max_length=32)
+    graduation_year = models.IntegerField(
+        default=None,
+        null=True,
+        blank=False,
+        verbose_name="Год окончания вуза",
+    )
 
     class Meta:
         verbose_name = "University Info"

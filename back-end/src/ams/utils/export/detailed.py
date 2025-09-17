@@ -22,6 +22,7 @@ def _make_applicant_detail_row(
             (uni_info.program.digit_code, formats.table_center),
             (uni_info.program.title, formats.table_center),
             (uni_info.group, formats.table_center),
+            (uni_info.graduation_year, formats.table_center),
         ]
     else:
         row += [("", formats.table_center)] * 4
@@ -37,6 +38,9 @@ def _make_applicant_detail_row(
 
     citizenship = applicant.citizenship or ""
     row += [(citizenship, formats.table_center)]
+
+    nationality = applicant.nationality or ""
+    row += [(nationality, formats.table_center)]
 
     pa = applicant.permanent_address or ""
     row += [(pa, formats.table_center)]
@@ -171,9 +175,11 @@ def _fill_applicant_detail_header(
         "Код специальности (направление подготовки)",
         "Название ОП",
         "Номер группы",
+        "Год окончания ВУЗа",
         "Дата рождения",
         "Место рождения",
         "Гражданство",
+        "Национальность",
         "Адрес прописки",
         "Номер телефона",
         "ИНН",

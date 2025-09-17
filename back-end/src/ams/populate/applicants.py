@@ -46,6 +46,7 @@ def create_applicants(
             "patronymic_genitive": "Ивановича",
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
+            "nationality": "Русский",
             "permanent_address": "г. Москва, ул. Тверская, д. 6",
             "birth_info": {
                 "date": "2000-11-04",
@@ -67,6 +68,7 @@ def create_applicants(
                 "program": programs["Информатика и вычислительная техника"],
                 "group": "ГРПП10",
                 "card_id": "СТДБ10",
+                "graduation_year": 2024,
             },
             "contact_info": {
                 "corporate_email": f"ivanov@{TEST_CORPORATE_EMAIL_DOMAIN}",
@@ -146,6 +148,7 @@ def create_applicants(
             "patronymic_genitive": "Евгеньевича",
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
+            "nationality": "Русский",
             "permanent_address": "г. Челябинск, ул. Ленина, д. 12",
             "birth_info": {
                 "date": "2001-10-22",
@@ -167,6 +170,7 @@ def create_applicants(
                 "program": programs["Информатика и вычислительная техника"],
                 "group": "ГРПП11",
                 "card_id": "СТДБ11",
+                "graduation_year": 2024,
             },
             "contact_info": {
                 "corporate_email": f"petrov@{TEST_CORPORATE_EMAIL_DOMAIN}",
@@ -188,6 +192,7 @@ def create_applicants(
             "patronymic_genitive": "Александровича",
             "recruitment_office": "Объединённый Одинцовский военкомат",
             "citizenship": "Беларусь",
+            "nationality": "Русский",
             "permanent_address": "г. Минск, ул. Картошки, д. Матрёшки",
             "birth_info": {
                 "date": "1999-01-31",
@@ -209,6 +214,7 @@ def create_applicants(
                 "program": programs["Экономика"],
                 "group": "ГРПП12",
                 "card_id": "СТДБ12",
+                "graduation_year": 2023,
             },
             "contact_info": {
                 "corporate_email": f"sidorov@{TEST_CORPORATE_EMAIL_DOMAIN}",
@@ -232,6 +238,7 @@ def create_applicants(
             "patronymic_genitive": "Олеговича",
             "recruitment_office": "Ленинградский военкомат",
             "citizenship": "РФ",
+            "nationality": "Русский",
             "permanent_address": "г. Ульяновск, ул. Победы, д. Неведы",
             "birth_info": {
                 "date": "2002-04-12",
