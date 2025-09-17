@@ -151,6 +151,12 @@ class Applicant(models.Model):
         to=ContactInfo,
         on_delete=models.RESTRICT,
     )
+    nationality = models.CharField(
+        max_length=64,
+        blank=False,
+        default="-",
+        verbose_name="Национальность",
+    )
     photo = models.OneToOneField(
         to=Photo,
         on_delete=models.SET_NULL,
