@@ -228,6 +228,7 @@ class ApplicantForm extends Vue {
           name: ap_data.name,
           patronymic: ap_data.patronymic,
           citizenship: ap_data.citizenship,
+          nationality: ap_data.nationality,
           permanent_address: ap_data.permanent_address,
           surname_genitive: ap_data.surname_genitive,
           name_genitive: ap_data.name_genitive,
@@ -370,6 +371,7 @@ class ApplicantForm extends Vue {
         "surname",
         "name",
         "citizenship",
+        "nationality",
         "permanent_address",
         "date",
       ]),
@@ -424,6 +426,7 @@ class ApplicantForm extends Vue {
         "surname",
         "name",
         "citizenship",
+        "nationality",
         "surname_genitive",
         "name_genitive",
       ]),
@@ -465,7 +468,7 @@ class ApplicantForm extends Vue {
       },
       recruitmentOffice: makeRequired(["title"]),
       universityInfo: {
-        ...makeRequired(["campus", "card_id", "program", "group"]),
+        ...makeRequired(["campus", "card_id", "program", "group", "graduation_year"]),
         program: [
           required,
         ],
