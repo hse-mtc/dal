@@ -144,6 +144,10 @@ export default {
               content: data.citizenship,
             },
             {
+              name: "Национальность",
+              content: data.nationality,
+            },
+            {
               name: "Адрес постоянной регистрации",
               content: data.permanent_address,
             },
@@ -224,6 +228,10 @@ export default {
             {
               name: "Номер группы",
               content: data.university_info.group,
+            },
+            {
+              name: "Год окончания ВУЗа",
+              content: data.university_info.graduation_year,
             },
           ],
         },

@@ -105,6 +105,21 @@
             </span>
           </transition>
         </el-form-item>
+        <el-form-item label="Год окончания ВУЗа:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-input
+              v-if="modify"
+              v-model="modifyInfo.university_info.graduation_year"
+            />
+            <span v-else class="field-value">
+              {{
+                displayInfo.university_info
+                  ? displayInfo.university_info.graduation_year
+                  : "---"
+              }}
+            </span>
+          </transition>
+        </el-form-item>
         <el-form-item label="Паспорт, серия и номер:">
           <transition name="el-fade-in" mode="out-in">
             <el-input
@@ -175,6 +190,14 @@
             <el-input v-if="modify" v-model="modifyInfo.citizenship" />
             <span v-else class="field-value">
               {{ displayInfo.citizenship ? displayInfo.citizenship : "---" }}
+            </span>
+          </transition>
+        </el-form-item>
+        <el-form-item label="Национальность:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-input v-if="modify" v-model="modifyInfo.nationality" />
+            <span v-else class="field-value">
+              {{ displayInfo.nationality ? displayInfo.nationality : "---" }}
             </span>
           </transition>
         </el-form-item>

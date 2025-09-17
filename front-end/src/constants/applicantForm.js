@@ -38,6 +38,11 @@ export const ABOUT = {
     title: "Гражданство",
     props: { onlyChars: true, placeholder: "РФ" },
   },
+  nationality: {
+    component: "text",
+    title: "Национальность",
+    props: { onlyChars: true, placeholder: "Русский" },
+  },
   permanent_address: {
     component: "text",
     title: "Адрес постоянной регистрации",
@@ -171,6 +176,11 @@ export const UNIVERSITY_INFO = {
     title: "Номер группы",
     props: { placeholder: "БИТ 123" },
   },
+  graduation_year: {
+    component: "text",
+    title: "Год окончания ВУЗа",
+    props: { placeholder: new Date().getFullYear() + 3 },
+  },
 };
 
 export const MILSPECIALTY = {
@@ -301,6 +311,7 @@ export const devInitData = {
     name: "Имя",
     patronymic: "Отчество",
     citizenship: "Гражданство",
+    nationality: "Национальность",
     permanent_address: "Адрес постоянной регистрации",
     surname_genitive: "Фамилия в родительном падеже",
     name_genitive: "Имя в родительном падеже",
@@ -328,6 +339,7 @@ export const devInitData = {
     card_id: "Номер студенческого билета",
     program: 1,
     group: "БИВ123",
+    graduation_year: new Date().getFullYear() + 3,
   },
   contactInfo: {
     personal_email: "test@mail.ru",
