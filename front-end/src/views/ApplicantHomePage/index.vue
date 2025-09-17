@@ -148,6 +148,10 @@ export default {
               content: data.nationality,
             },
             {
+              name: "Семейное положение",
+              content: data.marital_status,
+            },
+            {
               name: "Адрес постоянной регистрации",
               content: data.permanent_address,
             },
