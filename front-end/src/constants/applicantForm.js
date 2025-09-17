@@ -43,6 +43,11 @@ export const ABOUT = {
     title: "Национальность",
     props: { onlyChars: true, placeholder: "Русский" },
   },
+  marital_status: {
+    component: "select",
+    title: "Семейное положение",
+    props: { options: ["Холост", "Женат"], allowCustom: false },
+  },
   permanent_address: {
     component: "text",
     title: "Адрес постоянной регистрации",
@@ -312,6 +317,7 @@ export const devInitData = {
     patronymic: "Отчество",
     citizenship: "Гражданство",
     nationality: "Национальность",
+    marital_status: "Холост",
     permanent_address: "Адрес постоянной регистрации",
     surname_genitive: "Фамилия в родительном падеже",
     name_genitive: "Имя в родительном падеже",

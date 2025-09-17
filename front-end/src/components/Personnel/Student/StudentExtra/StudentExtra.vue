@@ -201,6 +201,14 @@
             </span>
           </transition>
         </el-form-item>
+        <el-form-item label="Семейное положение:">
+          <transition name="el-fade-in" mode="out-in">
+            <el-input v-if="modify" v-model="modifyInfo.marital_status" />
+            <span v-else class="field-value">
+              {{ displayInfo.marital_status ? displayInfo.marital_status : "---" }}
+            </span>
+          </transition>
+        </el-form-item>
         <el-form-item label="Адрес:">
           <transition name="el-fade-in" mode="out-in">
             <el-input v-if="modify" v-model="modifyInfo.permanent_address" />
