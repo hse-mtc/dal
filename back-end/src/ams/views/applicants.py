@@ -155,6 +155,16 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         # pylint: disable=too-many-locals
 
         request.data["user"] = self.request.user.id
+
+        if "marital_status" in request.data:
+            display_to_code = {
+                label: code for code, label in Applicant.MaritalStatus.choices
+            }
+            display_value = request.data["marital_status"]
+            request.data["marital_status"] = display_to_code.get(
+                display_value, Applicant.MaritalStatus.UNKNOWN
+            )
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         if not self.milspecialty_is_selectable(

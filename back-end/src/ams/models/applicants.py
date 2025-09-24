@@ -108,6 +108,11 @@ class ApplicantManager(models.Manager):
 
 
 class Applicant(models.Model):
+    class MaritalStatus(models.TextChoices):
+        UNKNOWN = "UN", ""
+        SINGLE = "SI", "Холост"
+        MARRIED = "MA", "Женат"
+
     surname = models.CharField(max_length=64)
     name = models.CharField(max_length=64)
     patronymic = models.CharField(
@@ -156,6 +161,12 @@ class Applicant(models.Model):
         blank=False,
         default="-",
         verbose_name="Национальность",
+    )
+    marital_status = models.CharField(
+        max_length=2,
+        default=MaritalStatus.UNKNOWN,
+        choices=MaritalStatus.choices,
+        blank=False,
     )
     photo = models.OneToOneField(
         to=Photo,

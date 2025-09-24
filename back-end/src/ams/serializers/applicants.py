@@ -47,10 +47,14 @@ class ApplicantSerializer(serializers.ModelSerializer):
     passport = PassportSerializer(read_only=True)
     personal_documents_info = PersonalDocumentsInfoSerializer(read_only=True)
     photo = serializers.SerializerMethodField(read_only=True)
+    marital_status = serializers.SerializerMethodField(read_only=True)
 
     family = RelativeSerializer(read_only=True, many=True)
 
     milspecialty = MilspecialtySerializer(read_only=True)
+
+    def get_marital_status(self, obj):
+        return obj.get_marital_status_display()
 
     def get_photo(self, obj: Applicant) -> str:
         return base64.b64encode(obj.photo.image.read()).decode()
@@ -100,6 +104,10 @@ class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
         source="university_info.program.faculty.title",
     )
     application_process = ApplicationProcessSerializer(read_only=True)
+    marital_status = serializers.SerializerMethodField(read_only=True)
+
+    def get_marital_status(self, obj):
+        return obj.get_marital_status_display()
 
     class Meta:
         model = Applicant
