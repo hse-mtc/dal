@@ -42,6 +42,11 @@ def _make_applicant_detail_row(
     nationality = applicant.nationality or ""
     row += [(nationality, formats.table_center)]
 
+    marital_status = (
+        applicant.get_marital_status_display() if applicant.marital_status else ""
+    )
+    row += [(marital_status, formats.table_center)]
+
     pa = applicant.permanent_address or ""
     row += [(pa, formats.table_center)]
 
@@ -180,6 +185,7 @@ def _fill_applicant_detail_header(
         "Место рождения",
         "Гражданство",
         "Национальность",
+        "Семейное положение",
         "Адрес прописки",
         "Номер телефона",
         "ИНН",

@@ -47,6 +47,7 @@ def create_applicants(
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
             "nationality": "Русский",
+            "marital_status": "UN",
             "permanent_address": "г. Москва, ул. Тверская, д. 6",
             "birth_info": {
                 "date": "2000-11-04",
@@ -149,6 +150,7 @@ def create_applicants(
             "recruitment_office": "Московский военкомат",
             "citizenship": "РФ",
             "nationality": "Русский",
+            "marital_status": "SI",
             "permanent_address": "г. Челябинск, ул. Ленина, д. 12",
             "birth_info": {
                 "date": "2001-10-22",
@@ -193,6 +195,7 @@ def create_applicants(
             "recruitment_office": "Объединённый Одинцовский военкомат",
             "citizenship": "Беларусь",
             "nationality": "Русский",
+            "marital_status": "MA",
             "permanent_address": "г. Минск, ул. Картошки, д. Матрёшки",
             "birth_info": {
                 "date": "1999-01-31",
