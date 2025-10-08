@@ -29,6 +29,8 @@ class MultiPartWithJSONParser(MultiPartParser):
             for key, value in data[0].items():
                 if isinstance(value, list):
                     daf.data.setlist(key, value)
+                elif isinstance(value, dict):
+                    daf.data[key] = json.dumps(value)
                 else:
                     daf.data[key] = value
 
