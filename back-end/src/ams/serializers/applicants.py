@@ -118,4 +118,5 @@ class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
             "program_code",
             "faculty",
             "application_process",
+            "marital_status",
         ]
