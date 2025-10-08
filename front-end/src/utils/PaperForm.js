@@ -11,6 +11,7 @@ export default class PaperForm {
     publishers = [],
     tags = [],
     title = "",
+    categoryFilters = {},
   ) {
     this.annotation = annotation;
     this.authors = authors;
@@ -20,6 +21,7 @@ export default class PaperForm {
     this.publishers = publishers;
     this.tags = tags;
     this.title = title;
+    this.categoryFilters = categoryFilters;
   }
 
   getContent(action) {
@@ -42,6 +44,16 @@ export default class PaperForm {
     const date = this.publicationDate;
     if (date) {
       data.publication_date = moment(date).format("YYYY-MM-DD");
+    }
+
+    // Добавляем фильтры категории
+    if (this.categoryFilters && Object.keys(this.categoryFilters).length > 0) {
+      Object.keys(this.categoryFilters).forEach(filterName => {
+        const filterValue = this.categoryFilters[filterName];
+        if (filterValue !== null && filterValue !== undefined && filterValue !== "") {
+          data[`filter_${filterName}`] = filterValue;
+        }
+      });
     }
 
     return data;

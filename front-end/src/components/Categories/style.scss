@@ -12,4 +12,34 @@
   border: 1px solid #ccc;
   z-index: 203;
   overflow-y: scroll;
+
+  .filters-form-item {
+    ::v-deep .el-form-item__label {
+      padding-top: 20px !important;
+    }
+  }
+
+  .filters-section {
+    border: 1px solid #e4e7ed;
+    border-radius: 4px;
+    padding: 16px;
+    background-color: #fafafa;
+
+    .filter-item {
+      margin-bottom: 12px;
+      
+      &:last-of-type {
+        margin-bottom: 16px;
+      }
+    }
+
+    .add-filter-btn {
+      color: #409eff;
+      font-size: 14px;
+      
+      &:hover {
+        color: #66b1ff;
+      }
+    }
+  }
 }
