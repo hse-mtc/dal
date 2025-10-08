@@ -48,6 +48,7 @@ def test_get_categories_returns_list(su_client, category_data):
 
     for id_, category in enumerate(response.data, start=min_id):
         data = category_data(id_ - min_id)
+        data["additional_schema"] = None
         data["id"] = id_
         assert category == data
 
@@ -57,6 +58,7 @@ def test_get_category_by_id_returns_single_category(su_client, category_data):
     data = category_data()
     id_ = Category.objects.create(**data).id
     data["id"] = id_
+    data["additional_schema"] = None
 
     response = su_client.get(f"/api/dms/categories/{id_}/")
     assert response.status_code == 200
