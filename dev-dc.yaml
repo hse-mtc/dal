@@ -57,8 +57,8 @@ services:
     command: >
       sh -c "/tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
              python manage.py migrate &&
-             python manage.py populate &&
              python manage.py register_permissions &&
+             python manage.py populate &&
              python manage.py runserver 0.0.0.0:$BACK_END_PORT"
     restart: unless-stopped
     volumes:
