@@ -77,6 +77,28 @@
         </ElSelect>
       </ElFormItem>
 
+      <!-- Фильтры категории -->
+      <div v-if="currentCategoryFilters.length > 0" class="category-filters-section">
+        <h3>Фильтры категории</h3>
+        <ElFormItem
+          v-for="filter in currentCategoryFilters"
+          :key="filter.filtername"
+          :label="filter.filtername"
+        >
+          <ElInput
+            v-if="filter.type === 'string'"
+            v-model="paperForm.categoryFilters[filter.filtername]"
+            :placeholder="`Введите ${filter.filtername.toLowerCase()}`"
+          />
+          <ElInputNumber
+            v-else
+            v-model="paperForm.categoryFilters[filter.filtername]"
+            :placeholder="`Введите ${filter.filtername.toLowerCase()}`"
+            style="width: 300px"
+          />
+        </ElFormItem>
+      </div>
+
       <TagsInput v-model="paperForm.tags" label="Ключевые слова" />
 
       <ElFormItem label="Файл" prop="files">
@@ -147,6 +169,19 @@ export default {
   data() {
     const { paper } = this;
     const empty = isEmpty(paper);
+
+    // Инициализируем фильтры категории из существующего документа
+    const categoryFilters = {};
+    if (!empty && paper) {
+      // Извлекаем фильтры из полей документа, начинающихся с filter_
+      Object.keys(paper).forEach(key => {
+        if (key.startsWith("filter_")) {
+          const filterName = key.replace("filter_", "");
+          categoryFilters[filterName] = paper[key];
+        }
+      });
+    }
+
     const paperForm = empty
       ? new PaperForm()
       : new PaperForm(
@@ -158,7 +193,15 @@ export default {
         paper.publishers,
         paper.tags,
         paper.title,
+        {},
       );
+
+    // Инициализируем categoryFilters как реактивное свойство после создания формы
+    if (categoryFilters && Object.keys(categoryFilters).length > 0) {
+      paperForm.categoryFilters = categoryFilters;
+    } else {
+      paperForm.categoryFilters = {};
+    }
 
     const required = { required: true, message: "Обязательное поле" };
 
@@ -181,6 +224,31 @@ export default {
     today() {
       return moment().format(this.dateFormat.toUpperCase());
     },
+
+    // Получаем фильтры для текущей категории из JSON Schema
+    currentCategoryFilters() {
+      if (!this.paperForm.category) { return []; }
+      const category = this.categories.find(cat => cat.id === this.paperForm.category);
+
+      // Если filters это JSON Schema, преобразуем в массив фильтров
+      if (category?.filters && category.filters.properties) {
+        return Object.keys(category.filters.properties).map(propertyName => ({
+          filtername: propertyName,
+          type: category.filters.properties[propertyName].type,
+        }));
+      }
+
+      return [];
+    },
+  },
+
+  watch: {
+    // Сброс фильтров при смене категории
+    "paperForm.category": function(newCategoryId, oldCategoryId) {
+      if (newCategoryId !== oldCategoryId) {
+        this.$set(this.paperForm, "categoryFilters", {});
+      }
+    },
   },
 
   methods: {
@@ -195,6 +263,7 @@ export default {
       }
 
       const { data, content } = this.paperForm.split(this.action);
+      console.log("Sending data to server:", data); // Отладка
       const formData = new FormData();
       formData.set("data", JSON.stringify(data));
       if (content) {
@@ -242,5 +311,20 @@ export default {
 
 .paperFileUploaded ::v-deep .el-upload {
   display: block !important;
+}
+
+.category-filters-section {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #e4e7ed;
+  border-radius: 4px;
+  background-color: #fafafa;
+
+  h3 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #606266;
+    font-weight: 600;
+  }
 }
 </style>
