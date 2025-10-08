@@ -13,6 +13,11 @@ from dms.models.common import (
 
 class Category(models.Model):
     title = models.CharField(max_length=255, unique=True)
+    additional_schema = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="JSON Schema for additional fields of the category",
+    )
 
     class Meta:
         verbose_name = "Category"
@@ -29,6 +34,11 @@ class Paper(Document):
     publishers = models.ManyToManyField(to=Publisher, blank=True)
     tags = TaggableManager(blank=True)
     is_binned = models.BooleanField(default=False)
+    additional_fields = models.JSONField(
+        blank=True,
+        null=True,
+        help_text="Additional fields specific to the category, matching the category's additional_schema",
+    )
 
     class Meta:
         verbose_name = "Paper"

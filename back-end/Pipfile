@@ -31,6 +31,7 @@ requests = "==2.31.0"
 xlsxwriter = "==3.0.7"
 openpyxl = "==3.0.10"
 django-simple-history = "==3.3.0"
+jsonschema = "==4.24.1"
 
 [requires]
 python_version = "3.10"
