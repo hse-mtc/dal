@@ -1,4 +1,8 @@
 from rest_framework import serializers
+from jsonschema import (
+    validate as jsonschema_validate,
+    ValidationError as JSONSchemaError,
+)
 
 from taggit.models import Tag
 
@@ -50,6 +54,24 @@ class PaperMutateSerializer(DocumentMutateSerializer):
     class Meta:
         model = Paper
         fields = "__all__"
+
+    def validate(self, attrs):
+        category = attrs.get("category") or getattr(self.instance, "category", None)
+        additional_fields = attrs.get("additional_fields")
+
+        if category and category.additional_schema:
+            try:
+                jsonschema_validate(
+                    instance=additional_fields, schema=category.additional_schema
+                )
+            except JSONSchemaError as e:
+                raise serializers.ValidationError(
+                    {
+                        "additional_fields": f"Does not match JSON Schema for category '{category.title}': {e.message}"
+                    }
+                )
+
+        return attrs
 
     def create(self, validated_data):
         tags = validated_data.pop("tags", None)
