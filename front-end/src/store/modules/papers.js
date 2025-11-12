@@ -162,7 +162,13 @@ class Papers extends VuexModule {
     return await getFetchRequest(
       getPaperCategories,
       data => {
-        this.SET_CATEGORIES([...data, { title: "Корзина", id: "bin" }]);
+        const mapped = data.map(cat => ({
+          ...cat,
+          filters: Object.prototype.hasOwnProperty.call(cat, "filters")
+            ? cat.filters
+            : cat.additional_schema,
+        }));
+        this.SET_CATEGORIES([...mapped, { title: "Корзина", id: "bin" }]);
         this.SET_IS_LOADED({ field: "_categoriesLoaded", value: true });
       },
       "категории",
@@ -170,34 +176,67 @@ class Papers extends VuexModule {
   }
 
   @Action
+  async reloadCategories() {
+    try {
+      const { data } = await getPaperCategories();
+      const mapped = data.map(cat => ({
+        ...cat,
+        filters: Object.prototype.hasOwnProperty.call(cat, "filters")
+          ? cat.filters
+          : cat.additional_schema,
+      }));
+      this.SET_CATEGORIES([...mapped, { title: "Корзина", id: "bin" }]);
+      this.SET_IS_LOADED({ field: "_categoriesLoaded", value: true });
+      return true;
+    } catch (e) {
+      console.error("Не удалось перезагрузить категории:", e);
+      return false;
+    }
+  }
+
+  @Action
   async addCategory(newItem) {
+    const payload = { ...newItem };
+
+    if (payload.filters) {
+      payload.additional_schema = payload.filters;
+      delete payload.filters;
+    }
+
     return await getAddRequest(
       addPaperCategory,
       this.SET_CATEGORIES,
       "_categoriesList",
       "категорию",
-    ).call(this, newItem);
+    ).call(this, payload);
   }
 
-  @Action
+@Action
   async editCategories({ id, ...newData }) {
+    const payload = { id, ...newData };
+
+    if (payload.filters) {
+      payload.additional_schema = payload.filters;
+      delete payload.filters;
+    }
+
     return await getEditRequest(
       editPaperCategory,
       this.SET_CATEGORIES,
       "_categoriesList",
       "категорию",
-    ).call(this, { id, ...newData });
+    ).call(this, payload);
   }
 
   @Action
-  async deleteCategory(id) {
-    return await getDeleteRequest(
-      deletePaperCategory,
-      this.SET_CATEGORIES,
-      "_categoriesList",
-      "категорию",
-    ).call(this, id);
-  }
+async deleteCategory(id) {
+  return await getDeleteRequest(
+    deletePaperCategory,
+    this.SET_CATEGORIES,
+    "_categoriesList",
+    "категорию",
+  ).call(this, id);
+}
 
   get categories() {
     if (!this._categoriesLoaded) {
