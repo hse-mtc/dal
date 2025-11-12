@@ -46,14 +46,17 @@ export default class PaperForm {
       data.publication_date = moment(date).format("YYYY-MM-DD");
     }
 
-    // Добавляем фильтры категории
     if (this.categoryFilters && Object.keys(this.categoryFilters).length > 0) {
+      const additional = {};
       Object.keys(this.categoryFilters).forEach(filterName => {
         const filterValue = this.categoryFilters[filterName];
         if (filterValue !== null && filterValue !== undefined && filterValue !== "") {
-          data[`filter_${filterName}`] = filterValue;
+          additional[filterName] = filterValue;
         }
       });
+      if (Object.keys(additional).length > 0) {
+        data.additional_fields = additional;
+      }
     }
 
     return data;

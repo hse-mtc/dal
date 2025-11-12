@@ -173,11 +173,15 @@ export default {
     // Инициализируем фильтры категории из существующего документа
     const categoryFilters = {};
     if (!empty && paper) {
-      // Извлекаем фильтры из полей документа, начинающихся с filter_
+      if (paper.additional_fields && typeof paper.additional_fields === "object") {
+        Object.assign(categoryFilters, paper.additional_fields);
+      }
       Object.keys(paper).forEach(key => {
         if (key.startsWith("filter_")) {
           const filterName = key.replace("filter_", "");
-          categoryFilters[filterName] = paper[key];
+          if (categoryFilters[filterName] === undefined) {
+            categoryFilters[filterName] = paper[key];
+          }
         }
       });
     }
@@ -249,6 +253,12 @@ export default {
         this.$set(this.paperForm, "categoryFilters", {});
       }
     },
+  },
+
+  async created() {
+    if (PapersModule && typeof PapersModule.reloadCategories === "function") {
+      await PapersModule.reloadCategories();
+    }
   },
 
   methods: {

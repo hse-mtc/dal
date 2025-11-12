@@ -176,6 +176,7 @@ export default {
     userId() { return UserModule.userId; },
     authors() { return PapersModule.authors; },
     publishers() { return PapersModule.publishers; },
+    categories() { return PapersModule.categories; },
   },
   watch: {
     $route() {
@@ -294,13 +295,44 @@ export default {
         this.loading = true;
 
         try {
+          const queryParams = {
+            limit: this.limit,
+            offset: this.documents.length,
+            user: this.isMyDocuments ? this.userId : undefined,
+            ...this.$route.query,
+          };
+
+          const categoryId = queryParams.category;
+          const category = this.categories.find(cat => cat.id === categoryId);
+          const extraFilters = [];
+
+          if (category && category.filters && category.filters.properties) {
+            Object.keys(queryParams).forEach(key => {
+              if (key.startsWith("filter_")) {
+                const filterName = key.replace("filter_", "");
+                const value = queryParams[key];
+                const filterDef = category.filters.properties[filterName];
+
+                if (filterDef && value !== undefined && value !== null && value !== "") {
+                  if (filterDef.type === "string") {
+                    extraFilters.push(`contains|${filterName}|${value}`);
+                  } else if (filterDef.type === "integer") {
+                    extraFilters.push(`eq|${filterName}|${value}`);
+                  } else {
+                    extraFilters.push(`eq|${filterName}|${value}`);
+                  }
+                }
+                delete queryParams[key];
+              }
+            });
+          }
+
+          if (extraFilters.length > 0) {
+            queryParams.extra_filter = extraFilters.join(",");
+          }
+
           const { data } = await getPapers(
-            this.lodash.pickBy({
-              limit: this.limit,
-              offset: this.documents.length,
-              user: this.isMyDocuments ? this.userId : undefined,
-              ...this.$route.query,
-            }),
+            this.lodash.pickBy(queryParams),
           );
 
           this.documents = [...this.documents, ...data.results];
