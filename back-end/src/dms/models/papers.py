@@ -1,14 +1,14 @@
 import datetime
 
 from django.db import models
-
 from taggit.managers import TaggableManager
 
-from dms.models.documents import Document
 from dms.models.common import (
     Author,
     Publisher,
 )
+from dms.models.documents import Document
+from dms.validators import validate_json_schema
 
 
 class Category(models.Model):
@@ -17,6 +17,7 @@ class Category(models.Model):
         blank=True,
         null=True,
         help_text="JSON Schema for additional fields of the category",
+        validators=[validate_json_schema],
     )
 
     class Meta:
