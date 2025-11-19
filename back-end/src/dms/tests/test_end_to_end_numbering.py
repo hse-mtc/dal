@@ -1,14 +1,12 @@
+import random
+from logging import getLogger
 from typing import Union
 
-from django.test.client import Client
-
 import pytest
-
 from common.models.subjects import Subject
-from dms.models.class_materials import Section, Topic
 from django.db import models
-from logging import getLogger
-import random
+from django.test.client import Client
+from dms.models.class_materials import Section, Topic
 
 
 def check_order(collection: list[Union[Section, Topic]]):
@@ -255,7 +253,7 @@ def random_actions(su_client, subject1, subject2):
             delete_section(su_client, section_order[c_sec_order])
             sn_data.pop(c_sec_order)
             logger.debug(
-                f"Deleting topic {section_order[c_sec_order].pk}" f"on subject {sn.pk}"
+                f"Deleting topic {section_order[c_sec_order].pk}on subject {sn.pk}"
             )
 
         elif action == "create_topic":
