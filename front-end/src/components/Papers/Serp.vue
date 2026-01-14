@@ -295,41 +295,34 @@ export default {
         this.loading = true;
 
         try {
-          const queryParams = {
-            limit: this.limit,
-            offset: this.documents.length,
-            user: this.isMyDocuments ? this.userId : undefined,
-            ...this.$route.query,
-          };
+          const queryParams = { ...this.$route.query, limit: this.limit, offset: this.documents.length };
 
-          const categoryId = queryParams.category;
+          const categoryId = Number(queryParams.category);
           const category = this.categories.find(cat => cat.id === categoryId);
+
           const extraFilters = [];
 
-          if (category && category.filters && category.filters.properties) {
+          if (category?.filters?.properties) {
             Object.keys(queryParams).forEach(key => {
-              if (key.startsWith("filter_")) {
-                const filterName = key.replace("filter_", "");
-                const value = queryParams[key];
-                const filterDef = category.filters.properties[filterName];
+              if (!key.startsWith("filter_")) { return; }
 
-                if (filterDef && value !== undefined && value !== null && value !== "") {
-                  if (filterDef.type === "string") {
-                    extraFilters.push(`contains|${filterName}|${value}`);
-                  } else if (filterDef.type === "integer") {
-                    extraFilters.push(`eq|${filterName}|${value}`);
-                  } else {
-                    extraFilters.push(`eq|${filterName}|${value}`);
-                  }
+              const filterName = key.replace("filter_", "");
+              const value = queryParams[key];
+              const filterDef = category.filters.properties[filterName];
+
+              if (filterDef && value !== "" && value !== null && value !== undefined) {
+                if (filterDef.type === "string") {
+                  extraFilters.push(`contains|${filterName}|${value}`);
+                } else {
+                  extraFilters.push(`eq|${filterName}|${value}`);
                 }
-                delete queryParams[key];
               }
+
+              delete queryParams[key];
             });
           }
 
-          if (extraFilters.length > 0) {
-            queryParams.extra_filter = extraFilters.join(",");
-          }
+          if (extraFilters.length) { queryParams.extra_filter = extraFilters.join(","); }
 
           const { data } = await getPapers(
             this.lodash.pickBy(queryParams),
