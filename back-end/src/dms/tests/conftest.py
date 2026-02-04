@@ -1,21 +1,18 @@
 # pylint: disable=unused-argument,redefined-outer-name,import-outside-toplevel,invalid-name
-from typing import List
 import datetime
+from typing import List
 
 import pytest
-
-from django.core.files.base import ContentFile
-from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
-
-from PIL import Image
-
 from common.models.milspecialties import Milspecialty
+from common.models.subjects import Subject
+from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import SimpleUploadedFile
 from dms.models.class_materials import Section, Topic
 from dms.models.common import Author, Publisher
 from dms.models.documents import File
-
-from common.models.subjects import Subject
+from dms.models.papers import Category
+from PIL import Image
 
 
 @pytest.fixture
@@ -49,9 +46,30 @@ def file():
 
 @pytest.fixture(scope="function")
 def category_data():
-    def call_me(index: int = 0) -> dict:
+    import uuid
+
+    def call_me(index: int = None) -> dict:
+        if index is None:
+            # Generate unique name using UUID
+            unique_suffix = str(uuid.uuid4())[:8]
+            return {"title": f"category_{unique_suffix}"}
+        return {"title": f"category_{index}"}
+
+    return call_me
+
+
+@pytest.fixture
+def non_string_paper_data(author_data, publisher_data, category_data):
+    def call_me(num_authors: int = 1, num_publishers: int = 1):
         return {
-            "title": f"category_{index}",
+            "authors": [
+                Author.objects.create(**author_data()).id for _ in range(num_authors)
+            ],
+            "publishers": [
+                Publisher.objects.create(**publisher_data()).id
+                for _ in range(num_publishers)
+            ],
+            "category": Category.objects.create(**category_data()).id,
         }
 
     return call_me

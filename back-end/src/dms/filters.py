@@ -1,22 +1,21 @@
-from django_filters import rest_framework as filters
+import re
 
 from common.models.subjects import Subject
+from django.db.models import F, IntegerField, Q
+from django.db.models.fields.json import KeyTextTransform
+from django.db.models.functions import Cast
+from django_filters import rest_framework as filters
 
-from dms.models.common import Author
-from dms.models.papers import Paper
-from dms.models.class_materials import (
-    Section,
-    Topic,
-)
 from dms.models.books import (
     Book,
     FavoriteBook,
 )
-from django.db.models import Q, F, IntegerField
-from django.db.models.functions import Cast
-from django.db.models.fields.json import KeyTextTransform
-
-from django.db.models import Q
+from dms.models.class_materials import (
+    Section,
+    Topic,
+)
+from dms.models.common import Author
+from dms.models.papers import Paper
 
 
 class PaperFilter(filters.FilterSet):
@@ -24,6 +23,9 @@ class PaperFilter(filters.FilterSet):
     end_date = filters.DateFilter(field_name="publication_date", lookup_expr="lte")
     category = filters.CharFilter(method="filter_by_category")
     extra_filter = filters.BaseInFilter(field_name=None, method="filter_json")
+
+    # Supported operators for filter tokens
+    FILTER_OPERATORS = ("eq", "in", "contains", "lte", "gte")
 
     def filter_by_category(self, queryset, name, value):
         # pylint: disable=unused-argument
@@ -37,6 +39,40 @@ class PaperFilter(filters.FilterSet):
             return int(s)
         except:
             return None
+
+    def _sanitize_alias(self, name):
+        """
+        Sanitize the alias name to be valid for Django annotations.
+        Removes/replaces whitespace and other forbidden characters.
+        """
+        # Replace spaces with underscores, remove other problematic chars
+        return re.sub(r'[\s"\';]', "_", name)
+
+    def _split_filter_tokens(self, value):
+        """
+        Split a comma-separated filter string into individual tokens.
+
+        Handles the case where user sends:
+        "eq|field1|10,contains|field2|text"
+
+        This should return: ["eq|field1|10", "contains|field2|text"]
+
+        The tricky part is that `in` operator uses commas for values:
+        "in|status|active,archived" should NOT be split.
+
+        Solution: Split on comma followed by an operator prefix.
+        """
+        if not value:
+            return []
+
+        # Pattern: comma followed by one of the operators and a pipe
+        # This splits: "eq|a|1,contains|b|2" -> ["eq|a|1", "contains|b|2"]
+        # But preserves: "in|status|val1,val2" as one token
+        ops_pattern = "|".join(self.FILTER_OPERATORS)
+        split_pattern = rf",(?=(?:{ops_pattern})\|)"
+
+        tokens = re.split(split_pattern, value)
+        return [t.strip() for t in tokens if t.strip()]
 
     def _build_q_from_token(self, token, json_field):
         """
@@ -64,7 +100,8 @@ class PaperFilter(filters.FilterSet):
         if op in ("lte", "gte"):
             num = self._parse_number(val)
             if num is not None:
-                ann_name = f"__{key}_num_cast"
+                # Sanitize the annotation alias to avoid spaces and special chars
+                ann_name = f"__{self._sanitize_alias(key)}_num_cast"
                 expr = Cast(KeyTextTransform(key, F(json_field)), IntegerField())
                 query = Q(**{f"{ann_name}__{op}": num}), {ann_name: expr}
             else:
@@ -77,15 +114,24 @@ class PaperFilter(filters.FilterSet):
 
         json_field = "additional_fields"
         queries = []
+        all_annotations = {}
+
         for v in self.request.GET.getlist(name):
-            build = self._build_q_from_token(v, json_field)
-            if isinstance(build, tuple):
-                q, annotations = build
-                if annotations:
-                    queryset = queryset.annotate(**annotations)
-                queries.append(q)
-            else:
-                queries.append(build)
+            # Split the value into individual tokens (handles comma-separated filters)
+            tokens = self._split_filter_tokens(v)
+            for token in tokens:
+                build = self._build_q_from_token(token, json_field)
+                if isinstance(build, tuple):
+                    q, annotations = build
+                    if annotations:
+                        all_annotations.update(annotations)
+                    queries.append(q)
+                else:
+                    queries.append(build)
+
+        # Apply all annotations at once
+        if all_annotations:
+            queryset = queryset.annotate(**all_annotations)
 
         q = Q()
         for query in queries:
