@@ -164,6 +164,26 @@
         size="mini"
         :model="editLesson"
       >
+        <el-form-item label="Дата: " required>
+          <el-date-picker
+            v-model="editLesson.date"
+            type="date"
+            placeholder="Выберите дату"
+            style="width: 100%"
+            format="dd.MM.yyyy"
+            value-format="yyyy-MM-dd"
+          />
+        </el-form-item>
+        <el-form-item label="Номер занятия: " required>
+          <el-input-number
+            v-model="editLesson.ordinal"
+            size="mini"
+            controls-position="right"
+            :min="1"
+            :max="10"
+            style="width: 100%"
+          />
+        </el-form-item>
         <el-form-item label="Дисциплина: " required>
           <el-select
             v-model="editLesson.subject"
