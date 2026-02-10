@@ -6,12 +6,15 @@ on:
 jobs:
   renew-certificates:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - name: Install OpenVPN
         run: |
           sudo apt-get update
           sudo apt-get --assume-yes --no-install-recommends install openvpn
+
       - name: Setup VPN config
         run: |
           echo "${{ secrets.CA_CRT }}" > ca.crt
@@ -19,24 +22,27 @@ jobs:
           echo "${{ secrets.USER_KEY }}" > user.key
           echo "${{ secrets.SECRET_USERNAME_PASSWORD }}" > secret.txt
           echo "${{ secrets.TLS_KEY }}" > tls.key
+
       - name: Connect VPN
         run: sudo openvpn --config ".github/vpn/config.ovpn" --log "vpn.log" --daemon
 
       - name: Wait for a VPN connection
         timeout-minutes: 1
-        run: sleep 7 && until ping -c1 ${{ secrets.SSH_HOST }}; do sleep 2; done
+        run: |
+          sleep 7
+          until ping -c1 ${{ secrets.SSH_HOST }}; do sleep 2; done
 
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: 'just-a-placeholder-so-we-dont-get-errors'
+          known_hosts: "just-a-placeholder-so-we-dont-get-errors"
 
       - name: Adding Known Hosts
         run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
       - name: Renew certificates
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -45,14 +51,16 @@ jobs:
           script: |
             sudo certbot renew --quiet
             sudo systemctl reload nginx
+
       - name: Kill VPN connection
         if: always()
         run: |
           sudo chmod 777 vpn.log
-          sudo killall openvpn
+          sudo killall openvpn || true
+
       - name: Upload VPN logs
-        uses: actions/upload-artifact@v3
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: VPN logs
+          name: VPN-logs
           path: vpn.log
