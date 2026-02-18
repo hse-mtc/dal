@@ -20,6 +20,15 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
+  quizzes-db:
+    image: postgres:13-alpine
+    env_file:
+      - .env
+      - quizzes/.env
+    restart: always
+    volumes:
+      - quizzes-data:/var/lib/postgresql/data
+
   ofelia:
     image: mcuadros/ofelia:latest
     command: daemon --config=/ofelia/config.ini
@@ -102,9 +111,19 @@ services:
     # depends_on:
     #   - back-end
 
+  quizzes:
+    build:
+      context: .
+      dockerfile: quizzes/Dockerfile
+    env_file:
+      - quizzes/.env
+    depends_on:
+      - quizzes-db
+
 volumes:
   postgres-data:
   back-end-backups:
   back-end-media:
   watchdoc-generated:
   watchdoc-secrets:
+  quizzes-data:

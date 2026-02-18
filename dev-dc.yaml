@@ -20,6 +20,20 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
+  quizzes-db:
+    image: postgres:13-alpine
+    env_file:
+      - quizzes/.env
+    environment:
+      POSTGRES_DB: ${QUIZZES_DB_NAME}
+      POSTGRES_USER: ${QUIZZES_DB_USER}
+      POSTGRES_PASSWORD: ${QUIZZES_DB_PASSWORD}
+    ports:
+      - $QUIZZES_DB_PORT:5432
+    restart: unless-stopped
+    volumes:
+      - quizzes-data:/var/lib/postgresql/data
+
   ofelia:
     image: mcuadros/ofelia:latest
     command: daemon --config=/ofelia/config.ini
@@ -100,5 +114,17 @@ services:
     # depends_on:
     #   - back-end
 
+  quizzes:
+    build:
+      context: .
+      dockerfile: quizzes/Dockerfile
+    env_file:
+      - quizzes/.env
+    ports:
+      - 5050:5050
+    depends_on:
+      - quizzes-db
+
 volumes:
   postgres-data:
+  quizzes-data:

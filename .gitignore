@@ -51,3 +51,7 @@ watchdoc/.env
 ## Files
 tools/parse-programs/*.docx
 tools/parse-programs/*.json
+
+## Files
+quizzes/.env
+quizzes/.env
