@@ -10,6 +10,7 @@ jobs:
       - uses: actions/checkout@v2
       - run:  cp .env.example .env
       - run:  cp back-end/.env.example back-end/.env
+      - run:  cp quizzes/.env.example quizzes/.env
       - run:  cp tgbot/.env.example tgbot/.env
       - run:  cp watchdoc/.env.example watchdoc/.env
       - name: "Run Postgres in background"
