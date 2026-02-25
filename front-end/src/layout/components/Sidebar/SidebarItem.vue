@@ -23,7 +23,7 @@
         </AZGuard>
       </template>
       <div v-else>
-        <AZGuard :permissions="permissions">
+        <AZGuard :permissions="groupPermissions">
           <div>
             <el-submenu
               ref="subMenu"
@@ -96,7 +96,10 @@ export default {
   },
   computed: {
     permissions() {
-      return this.onlyOneChild?.meta?.permissions;
+      return this.onlyOneChild?.meta?.permissions || [];
+    },
+    groupPermissions() {
+      return this.item?.meta?.permissions || [];
     },
   },
   methods: {

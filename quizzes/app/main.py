@@ -1,6 +1,7 @@
 from datetime import datetime
 import uvicorn
 from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 
@@ -159,6 +160,51 @@ async def delete_question(
     return {"status": "ok"}
 
 
+@app.post("/tests/{test_id}/attempts/start", response_model=schemas.AttemptStartResult)
+async def start_attempt(
+    test_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    principal: Principal = Depends(get_principal),
+):
+    test = await crud.get_test(session, test_id)
+    if not test:
+        raise HTTPException(status_code=404, detail="Test not found")
+
+    attempt = await crud.create_attempt(session, test_id=test_id, user_id=principal.user_id)
+
+    return schemas.AttemptStartResult(
+        attempt_id=attempt.id,
+        started_at=attempt.started_at,
+    )
+
+
+@app.get("/tests/{test_id}/attempts/me", response_model=schemas.AttemptOut)
+async def get_my_attempt(
+    test_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    principal: Principal = Depends(get_principal),
+):
+    test = await crud.get_test(session, test_id)
+    if not test:
+        raise HTTPException(status_code=404, detail="Test not found")
+
+    attempt = await crud.get_attempt_by_test_and_user(
+        session,
+        test_id=test_id,
+        user_id=principal.user_id,
+    )
+    if not attempt:
+        raise HTTPException(status_code=404, detail="Attempt not found")
+
+    return schemas.AttemptOut(
+        attempt_id=attempt.id,
+        started_at=attempt.started_at,
+        completed_at=attempt.completed_at,
+        score=attempt.score,
+        max_score=attempt.max_score,
+    )
+
+
 # ---------- ПРОХОЖДЕНИЕ ТЕСТА (submit) ----------
 
 @app.post("/tests/{test_id}/submit", response_model=schemas.SubmitResult)
@@ -200,8 +246,35 @@ async def submit_test(
             )
         answers_by_question[ans.question_id] = ans
 
-    attempt = models.Attempt(test_id=test_id, user_id=principal.user_id)
-    session.add(attempt)
+    attempt = None
+    if payload.attempt_id is not None:
+        attempt_stmt = select(models.Attempt).where(
+            models.Attempt.id == payload.attempt_id,
+            models.Attempt.test_id == test_id,
+            models.Attempt.user_id == principal.user_id,
+        )
+        attempt_result = await session.execute(attempt_stmt)
+        attempt = attempt_result.scalar_one_or_none()
+
+        if not attempt:
+            raise HTTPException(status_code=404, detail="Attempt not found")
+    else:
+        attempt = await crud.get_attempt_by_test_and_user(
+            session,
+            test_id=test_id,
+            user_id=principal.user_id,
+        )
+        if attempt is None:
+            attempt = models.Attempt(test_id=test_id, user_id=principal.user_id)
+            session.add(attempt)
+            await session.flush()
+
+    if attempt.completed_at is not None:
+        raise HTTPException(status_code=400, detail="Attempt already completed")
+
+    await session.execute(
+        delete(models.AttemptAnswer).where(models.AttemptAnswer.attempt_id == attempt.id)
+    )
     await session.flush()
 
     score = 0
@@ -215,7 +288,7 @@ async def submit_test(
         q_type = q.type
         is_correct = False
 
-        if q_type in (models.QuestionType.SINGLE, models.QuestionType.MULTIPLE):
+        if q_type in (models.QuestionType.single, models.QuestionType.multiple):
             option_ids = ans.option_ids
             if not option_ids:
                 raise HTTPException(
@@ -234,7 +307,7 @@ async def submit_test(
 
             correct_set = correct_options_by_question.get(q.id, set())
 
-            if q_type == models.QuestionType.SINGLE:
+            if q_type == models.QuestionType.single:
                 if len(selected_set) != 1:
                     raise HTTPException(
                         status_code=400,
@@ -255,7 +328,7 @@ async def submit_test(
                     )
                 )
 
-        elif q_type == models.QuestionType.NUMERIC:
+        elif q_type == models.QuestionType.numeric:
             if ans.numeric_answer is None:
                 raise HTTPException(
                     status_code=400,

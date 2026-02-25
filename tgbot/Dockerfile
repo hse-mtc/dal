@@ -13,7 +13,7 @@ COPY tgbot/Pipfile* ./
 
 # Install pipenv & packages
 RUN pip install pipenv && \
-    pipenv install --system --deploy --dev
+    pipenv install --system --dev --skip-lock
 
 # Copy everything else
 COPY tgbot/ .

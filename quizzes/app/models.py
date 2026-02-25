@@ -77,10 +77,13 @@ class Option(Base):
 
 class Attempt(Base):
     __tablename__ = "attempts"
+    __table_args__ = (
+        UniqueConstraint("test_id", "user_id", name="uq_attempts_test_user"),
+    )
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     test_id: Mapped[UUID] = mapped_column(ForeignKey("tests.id", ondelete="CASCADE"))
-    user_id: Mapped[UUID]
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False)
 
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
