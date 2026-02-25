@@ -124,6 +124,8 @@ services:
       - 5050:5050
     depends_on:
       - quizzes-db
+      - back-end
+      - postgres
 
 volumes:
   postgres-data:

@@ -34,6 +34,8 @@ import {
   FormItem,
   Tabs,
   TabPane,
+  Table,
+  TableColumn,
   Tag,
   Tree,
   Alert,
@@ -91,6 +93,8 @@ Vue.use(Submenu);
 Vue.use(Switch);
 Vue.use(TabPane);
 Vue.use(Tabs);
+Vue.use(Table);
+Vue.use(TableColumn);
 Vue.use(Tag);
 Vue.use(TimePicker);
 Vue.use(Tooltip);

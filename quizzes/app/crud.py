@@ -102,8 +102,12 @@ async def create_question(
 
     session.add(question)
     await session.commit()
-    await session.refresh(question)
-    return question
+
+    created_question = await get_question(session, test.id, question.id)
+    if created_question is None:
+        raise RuntimeError("Created question was not found after commit")
+
+    return created_question
 
 
 async def update_question(
@@ -137,10 +141,43 @@ async def update_question(
                 )
 
     await session.commit()
-    await session.refresh(question)
-    return question
+
+    updated_question = await get_question(session, question.test_id, question.id)
+    if updated_question is None:
+        raise RuntimeError("Updated question was not found after commit")
+
+    return updated_question
 
 
 async def delete_question(session: AsyncSession, question: models.Question) -> None:
     await session.delete(question)
     await session.commit()
+
+
+async def create_attempt(
+    session: AsyncSession,
+    test_id: UUID,
+    user_id: int,
+) -> models.Attempt:
+    existing_attempt = await get_attempt_by_test_and_user(session, test_id=test_id, user_id=user_id)
+    if existing_attempt is not None:
+        return existing_attempt
+
+    attempt = models.Attempt(test_id=test_id, user_id=user_id)
+    session.add(attempt)
+    await session.commit()
+    await session.refresh(attempt)
+    return attempt
+
+
+async def get_attempt_by_test_and_user(
+    session: AsyncSession,
+    test_id: UUID,
+    user_id: int,
+) -> models.Attempt | None:
+    stmt = select(models.Attempt).where(
+        models.Attempt.test_id == test_id,
+        models.Attempt.user_id == user_id,
+    )
+    res = await session.execute(stmt)
+    return res.scalar_one_or_none()

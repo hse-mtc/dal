@@ -153,6 +153,36 @@ export const constantRoutes = [
             component: () => import("@/views/Marks/index"),
             meta: { title: "Журнал оценок", icon: "journal", permissions: ["marks.get.self"] },
           },
+          {
+            path: "quizzes/",
+            name: "DisciplinesQuizzes",
+            component: () => import("@/views/Quizzes/index"),
+            meta: {
+              title: "Прохождение квизов",
+              icon: "journal",
+              permissions: [],
+            },
+          },
+          {
+            path: "quizzes/:quizId/",
+            hidden: true,
+            name: "DisciplineQuiz",
+            component: () => import("@/views/Quiz/index"),
+            meta: {
+              title: "Прохождение квизов",
+              activeMenu: "/discipline-control/quizzes/",
+            },
+          },
+          {
+            path: "quizzes/:quizId/attempt/:attemptId/",
+            hidden: true,
+            name: "DisciplineQuizAttempt",
+            component: () => import("@/views/QuizAttempt/index"),
+            meta: {
+              title: "Прохождение квизов",
+              activeMenu: "/discipline-control/quizzes/",
+            },
+          },
         ],
       },
 

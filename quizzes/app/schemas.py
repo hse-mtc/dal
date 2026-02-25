@@ -50,11 +50,11 @@ class QuestionCreate(BaseModel):
     options: list[OptionCreate] = []
     correct_number: float | None = None
 
-    @model_validator(mode='before')
-    def validate_by_type(cls, values: dict):
-        q_type: QuestionType = values.get("type")
-        options: list[OptionCreate] = values.get("options") or []
-        correct_number = values.get("correct_number")
+    @model_validator(mode="after")
+    def validate_by_type(self):
+        q_type = self.type
+        options = self.options or []
+        correct_number = self.correct_number
 
         if q_type in (QuestionType.single, QuestionType.multiple):
             if correct_number is not None:
@@ -73,7 +73,7 @@ class QuestionCreate(BaseModel):
             if correct_number is None:
                 raise ValueError("correct_number is required for numeric questions")
 
-        return values
+        return self
 
 
 class QuestionUpdate(BaseModel):
@@ -98,7 +98,7 @@ class QuestionOut(BaseModel):
 
 class SubmitAnswer(BaseModel):
     question_id: UUID
-    option_ids: list[int] | None = None
+    option_ids: list[UUID] | None = None
     numeric_answer: float | None = None
 
     @model_validator(mode='before')
@@ -114,6 +114,7 @@ class SubmitAnswer(BaseModel):
 
 
 class SubmitRequest(BaseModel):
+    attempt_id: UUID | None = None
     answers: list[SubmitAnswer]
 
 
@@ -122,3 +123,16 @@ class SubmitResult(BaseModel):
     score: int
     max_score: int
     completed_at: datetime
+
+
+class AttemptStartResult(BaseModel):
+    attempt_id: UUID
+    started_at: datetime
+
+
+class AttemptOut(BaseModel):
+    attempt_id: UUID
+    started_at: datetime
+    completed_at: datetime | None
+    score: int | None = None
+    max_score: int | None = None
