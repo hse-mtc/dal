@@ -3,6 +3,23 @@ import os
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 
+# ------------------------------------------------------------------------------
+# Populate imports
+
+# Common
+
+from common.populate.subjects import create_subjects
+from common.populate.milspecialties import create_milspecialties
+from common.populate.universities import (
+    create_faculties,
+    create_programs,
+)
+from common.populate.milspecialities_selectable_by_programs import (
+    create_milspecialities_selectable_by_programs,
+)
+
+# Auth
+
 from auth.models import Group
 from auth.populate.permissions import (
     get_applicant_permissions,
@@ -11,10 +28,35 @@ from auth.populate.permissions import (
     get_milfaculty_head_permissions,
 )
 
-from common.populate.milspecialties import create_milspecialties
-from common.populate.prod_universities import (
-    create_faculties,
-    create_programs,
+# DMS
+
+from dms.populate.common import (
+    create_authors,
+    create_publishers,
+)
+from dms.populate.papers import (
+    create_categories,
+)
+from dms.populate.class_materials import (
+    create_sections,
+    create_topics,
+)
+
+# LMS
+
+from lms.populate.uniforms import create_uniforms
+from lms.populate.achievements import (
+    create_achievement_types,
+)
+from lms.populate.common import (
+    create_milfaculties,
+    create_milgroups,
+)
+from lms.populate.lessons import (
+    create_rooms,
+)
+from lms.populate.students import (
+    create_skills,
 )
 
 User = get_user_model()
@@ -52,5 +94,52 @@ class Command(BaseCommand):
         students.permissions.set(get_student_permissions())
         teachers.permissions.set(get_teacher_permissions())
         milfaculty_heads.permissions.set(get_milfaculty_head_permissions())
+
+        print(" OK")
+
+        # ----------------------------------------------------------------------
+        # Common
+
+        print("Populating `common` models...", end="")
+
+        milspecialties = create_milspecialties()
+        subjects = create_subjects(milspecialties)
+        faculties = create_faculties()
+        programs = create_programs(faculties)
+        create_milspecialities_selectable_by_programs(
+            milspecialties=milspecialties, programs=programs
+        )
+
+        print(" OK")
+
+        # ----------------------------------------------------------------------
+        # DMS
+
+        print("Populating `dms` models...", end="")
+
+        create_authors()
+        create_publishers()
+        create_categories()
+
+        sections = create_sections(subjects[0])
+        create_topics(sections[0])
+
+        print(" OK")
+
+        # ----------------------------------------------------------------------
+        # LMS
+
+        print("Populating `lms` models...", end="")
+
+        milfaculties = create_milfaculties()
+        create_milgroups(milfaculties, milspecialties)
+
+        create_skills()
+
+        create_achievement_types()
+
+        create_rooms()
+
+        create_uniforms(milfaculties=milfaculties)
 
         print(" OK")
