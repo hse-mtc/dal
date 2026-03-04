@@ -62,6 +62,9 @@ services:
     env_file:
       - .env
       - back-end/.env
+    environment:
+      - SUPERUSER_EMAIL
+      - SUPERUSER_PASSWORD
     # ports:
     #   - $BACK_END_PORT:$BACK_END_PORT
     command: >
