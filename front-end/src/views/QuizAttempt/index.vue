@@ -55,7 +55,7 @@
 
               <el-radio-group
                 v-if="question.type === 'single'"
-                v-model="singleAnswers[question.id]"
+                v-model="question.selectedSingleOptionId"
               >
                 <el-radio
                   v-for="option in question.options"
@@ -67,23 +67,20 @@
                 </el-radio>
               </el-radio-group>
 
-              <el-checkbox-group
-                v-else-if="question.type === 'multiple'"
-                v-model="multipleAnswers[question.id]"
-              >
+              <div v-else-if="question.type === 'multiple'">
                 <el-checkbox
                   v-for="option in question.options"
                   :key="option.id"
-                  :label="option.id"
+                  v-model="option.selected"
                   class="answer-option"
                 >
                   {{ option.text }}
                 </el-checkbox>
-              </el-checkbox-group>
+              </div>
 
               <el-input-number
                 v-else
-                v-model="numericAnswers[question.id]"
+                v-model="question.selectedNumericAnswer"
                 :controls="false"
                 placeholder="Введите число"
               />
@@ -122,9 +119,6 @@ export default {
       successMessage: "",
       quizTitle: "Прохождение квиза",
       questions: [],
-      singleAnswers: {},
-      multipleAnswers: {},
-      numericAnswers: {},
     };
   },
   computed: {
@@ -150,16 +144,29 @@ export default {
         ]);
 
         this.quizTitle = quizResponse?.data?.title || "Прохождение квиза";
-        this.questions = questionsResponse?.data || [];
+        this.questions = (questionsResponse?.data || []).map(question => {
+          const options = Array.isArray(question.options)
+            ? question.options.map(option => {
+              // Создаем новый объект с реактивным свойством selected
+              const newOption = {
+                id: option.id,
+                text: option.text,
+                is_correct: option.is_correct,
+                selected: false,
+              };
+              return newOption;
+            })
+            : [];
 
-        this.questions.forEach(question => {
-          if (question.type === "single") {
-            this.$set(this.singleAnswers, question.id, null);
-          } else if (question.type === "multiple") {
-            this.$set(this.multipleAnswers, question.id, []);
-          } else if (question.type === "numeric") {
-            this.$set(this.numericAnswers, question.id, null);
-          }
+          return {
+            id: question.id,
+            text: question.text,
+            type: question.type,
+            order: question.order,
+            options,
+            selectedSingleOptionId: null,
+            selectedNumericAnswer: null,
+          };
         });
       } catch (error) {
         this.errorMessage = "Не удалось загрузить вопросы квиза";
@@ -172,7 +179,7 @@ export default {
 
       this.questions.forEach(question => {
         if (question.type === "single") {
-          const optionId = this.singleAnswers[question.id];
+          const optionId = question.selectedSingleOptionId;
           if (optionId) {
             payload.push({
               question_id: question.id,
@@ -180,7 +187,15 @@ export default {
             });
           }
         } else if (question.type === "multiple") {
-          const optionIds = this.multipleAnswers[question.id] || [];
+          console.log(`Question ${question.id} options:`, question.options);
+          const optionIds = (question.options || [])
+            .filter(option => {
+              console.log(`Option ${option.id} selected:`, option.selected);
+              return option.selected;
+            })
+            .map(option => option.id)
+            .filter(Boolean);
+          console.log(`Question ${question.id} selected option IDs:`, optionIds);
           if (optionIds.length) {
             payload.push({
               question_id: question.id,
@@ -188,7 +203,7 @@ export default {
             });
           }
         } else if (question.type === "numeric") {
-          const numericAnswer = this.numericAnswers[question.id];
+          const numericAnswer = question.selectedNumericAnswer;
           if (numericAnswer !== null && numericAnswer !== undefined && numericAnswer !== "") {
             payload.push({
               question_id: question.id,
@@ -198,6 +213,7 @@ export default {
         }
       });
 
+      console.log("Final payload:", payload);
       return payload;
     },
     async submitAnswers() {
@@ -207,13 +223,18 @@ export default {
 
       try {
         const answers = this.buildAnswersPayload();
+        if (!answers.length) {
+          this.errorMessage = "Выберите хотя бы один ответ перед отправкой";
+          return;
+        }
+
         const response = await submitQuizAnswers(this.quizId, this.attemptId, answers);
         const result = response?.data;
 
         this.$message.success(`Попытка завершена. Результат: ${result.score} из ${result.max_score}`);
         this.$router.push("/discipline-control/quizzes/");
       } catch (error) {
-        this.errorMessage = "Не удалось отправить ответы";
+        this.errorMessage = error?.response?.data?.detail || "Не удалось отправить ответы";
       } finally {
         this.isSubmitting = false;
       }
