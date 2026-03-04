@@ -53,7 +53,7 @@ jobs:
             docker-compose up -d back-end front-end watchdoc ofelia tgbot && \
             sleep 120 && \
             docker logs back-end && \
-            docker logs front-end
+            docker logs dal_front-end_1
       - name: Kill VPN connection
         if: always()
         run: |
