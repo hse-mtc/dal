@@ -183,6 +183,16 @@ export const constantRoutes = [
               activeMenu: "/discipline-control/quizzes/",
             },
           },
+          {
+            path: "quizzes-admin/",
+            name: "DisciplinesQuizzesAdmin",
+            component: () => import("@/views/QuizzesAdmin/index"),
+            meta: {
+              title: "Конструктор квизов",
+              icon: "table",
+              permissions: ["marks.post.milfaculty"],
+            },
+          },
         ],
       },
 

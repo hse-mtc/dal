@@ -246,6 +246,12 @@ async def submit_test(
             )
         answers_by_question[ans.question_id] = ans
 
+    if not answers_by_question:
+        raise HTTPException(
+            status_code=400,
+            detail="No answers provided",
+        )
+
     attempt = None
     if payload.attempt_id is not None:
         attempt_stmt = select(models.Attempt).where(
@@ -315,7 +321,7 @@ async def submit_test(
                     )
                 is_correct = selected_set == correct_set
             else:
-                is_correct = selected_set == correct_set
+                is_correct = bool(selected_set) and selected_set.issubset(correct_set)
 
             for oid in selected_set:
                 session.add(

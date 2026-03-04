@@ -178,4 +178,87 @@ export async function submitQuizAnswers(quizId, attemptId, answers) {
   };
 }
 
+export async function getAdminQuizzes() {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests`,
+    method: "get",
+  });
+
+  const quizzes = Array.isArray(data) ? data.map(normalizeQuiz) : [];
+
+  return {
+    data: quizzes,
+  };
+}
+
+export async function createQuizTest(payload) {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests`,
+    method: "post",
+    data: payload,
+  });
+
+  return {
+    data: normalizeQuiz(data),
+  };
+}
+
+export async function createQuizQuestion(quizId, payload) {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests/${quizId}/questions`,
+    method: "post",
+    data: payload,
+  });
+
+  return {
+    data,
+  };
+}
+
+export async function updateQuizTest(quizId, payload) {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests/${quizId}`,
+    method: "patch",
+    data: payload,
+  });
+
+  return {
+    data: normalizeQuiz(data),
+  };
+}
+
+export async function updateQuizQuestion(quizId, questionId, payload) {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests/${quizId}/questions/${questionId}`,
+    method: "patch",
+    data: payload,
+  });
+
+  return {
+    data,
+  };
+}
+
+export async function deleteQuizTest(quizId) {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests/${quizId}`,
+    method: "delete",
+  });
+
+  return {
+    data,
+  };
+}
+
+export async function deleteQuizQuestion(quizId, questionId) {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests/${quizId}/questions/${questionId}`,
+    method: "delete",
+  });
+
+  return {
+    data,
+  };
+}
+
 export const QUIZ_STATUS = STATUS;
