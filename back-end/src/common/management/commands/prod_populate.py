@@ -1,4 +1,7 @@
+import os
+
 from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
 
 from auth.models import Group
 from auth.populate.permissions import (
@@ -14,6 +17,8 @@ from common.populate.prod_universities import (
     create_programs,
 )
 
+User = get_user_model()
+
 
 class Command(BaseCommand):
     help = "Populate database with prod data (for prod usage)"
@@ -21,6 +26,20 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # ----------------------------------------------------------------------
         # Auth
+
+        print("\nCreating superuser...", end="")
+        superuser_email = os.environ.get("SUPERUSER_EMAIL")
+        superuser_password = os.environ.get("SUPERUSER_PASSWORD")
+        User.objects.get_or_create(
+            email=superuser_email,
+            defaults={
+                "is_staff": True,
+                "is_superuser": True,
+            },
+        )
+        admin_user = User.objects.get(email=superuser_email)
+        admin_user.set_password(superuser_password)
+        admin_user.save()
 
         print("Populating `auth` models...", end="")
 
