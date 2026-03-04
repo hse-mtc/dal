@@ -55,8 +55,8 @@ jobs:
           sudo chmod 777 vpn.log
           sudo killall openvpn
       - name: Upload VPN logs
-        uses: actions/upload-artifact@v3
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: VPN logs
           path: vpn.log
