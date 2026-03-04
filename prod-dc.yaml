@@ -20,14 +20,14 @@ services:
     volumes:
       - /opt/dal/postgres-data:/var/lib/postgresql/data
 
-  quizzes-db:
-    image: postgres:13-alpine
-    env_file:
-      - .env
-      - quizzes/.env
-    restart: always
-    volumes:
-      - quizzes-data:/var/lib/postgresql/data
+  # quizzes-db:
+  #   image: postgres:13-alpine
+  #   env_file:
+  #     - .env
+  #     - quizzes/.env
+  #   restart: always
+  #   volumes:
+  #     - /opt/dal/quizzes-data:/var/lib/postgresql/data
 
   ofelia:
     image: mcuadros/ofelia:latest
@@ -111,16 +111,15 @@ services:
     # depends_on:
     #   - back-end
 
-  quizzes:
-    build:
-      context: .
-      dockerfile: quizzes/Dockerfile
-    env_file:
-      - quizzes/.env
-    depends_on:
-      - quizzes-db
+  # quizzes:
+  #   build:
+  #     context: .
+  #     dockerfile: quizzes/Dockerfile
+  #   env_file:
+  #     - quizzes/.env
+  #   depends_on:
+  #     - quizzes-db
 
 volumes:
   watchdoc-generated:
   watchdoc-secrets:
-  quizzes-data:
