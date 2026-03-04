@@ -99,16 +99,9 @@ services:
     restart: always
     volumes:
       - ./nginx/prod.conf:/etc/nginx/nginx.conf
-      - letsencrypt:/etc/letsencrypt
-      - certbot-www:/var/www/certbot
+      - /etc/letsencrypt:/etc/letsencrypt
     # depends_on:
     #   - back-end
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - letsencrypt:/etc/letsencrypt
-      - certbot-www:/var/www/certbot
 
   tgbot:
     container_name: tgbot
@@ -134,5 +127,3 @@ services:
 volumes:
   watchdoc-generated:
   watchdoc-secrets:
-  letsencrypt:
-  certbot-www:
