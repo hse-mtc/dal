@@ -1,32 +1,33 @@
 import base64
 
-from rest_framework import serializers
-
-from drf_writable_nested.serializers import WritableNestedModelSerializer
-
-from ams.utils.common import get_current_admission_year
 from common.serializers.milspecialties import MilspecialtySerializer
-from common.serializers.universities import (
-    UniversityInfoSerializer,
-    UniversityInfoMutateSerializer,
-)
 from common.serializers.personal import (
     BirthInfoSerializer,
     ContactInfoSerializer,
-    PhotoMutateMixin,
-    RelativeSerializer,
     PassportSerializer,
     PersonalDocumentsInfoSerializer,
+    PhotoMutateMixin,
     RelativeMutateSerializer,
+    RelativeSerializer,
 )
+from common.serializers.universities import (
+    UniversityInfoMutateSerializer,
+    UniversityInfoSerializer,
+)
+from drf_writable_nested.serializers import WritableNestedModelSerializer
+from rest_framework import serializers
 
 from ams.models.applicants import (
-    ApplicationProcess,
     Applicant,
+    ApplicationProcess,
 )
+from ams.serializers.physical import ExerciseResultSerializer
+from ams.utils.common import get_current_admission_year
 
 
 class ApplicationProcessSerializer(serializers.ModelSerializer):
+    exercise_results = ExerciseResultSerializer(many=True, read_only=True)
+
     class Meta:
         model = ApplicationProcess
         exclude = ["id"]
