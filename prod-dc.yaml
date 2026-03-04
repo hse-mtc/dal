@@ -18,7 +18,7 @@ services:
       - .env
     restart: always
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - /opt/dal/postgres-data:/var/lib/postgresql/data
 
   quizzes-db:
     image: postgres:13-alpine
@@ -73,8 +73,8 @@ services:
              gunicorn conf.wsgi:application --config src/gunicorn.conf.py"
     restart: always
     volumes:
-      - back-end-backups:/back-end/backups
-      - back-end-media:/back-end/media
+      - /opt/dal/back-end-backups:/back-end/backups
+      - /opt/dal/back-end-media:/back-end/media
     depends_on:
       - postgres
 
@@ -121,9 +121,6 @@ services:
       - quizzes-db
 
 volumes:
-  postgres-data:
-  back-end-backups:
-  back-end-media:
   watchdoc-generated:
   watchdoc-secrets:
   quizzes-data:
