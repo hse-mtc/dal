@@ -92,7 +92,6 @@ services:
     env_file:
       - .env
     ports:
-      - 80:80
       - $FRONT_END_PORT:443
     command: >
       sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
