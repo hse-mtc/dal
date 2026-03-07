@@ -88,7 +88,6 @@ def _build_registry() -> dict[str, ExerciseDefinition]:
             convert=convert_kettlebell_snatch,
             extra_params=["weight"],  # Вес спортсмена в кг
         ),
-        
         # Быстрота
         ExerciseType.SPEED_RUN_60M: ExerciseDefinition(
             exercise_type=ExerciseType.SPEED_RUN_60M,
@@ -114,7 +113,6 @@ def _build_registry() -> dict[str, ExerciseDefinition]:
             higher_is_better=False,
             convert=convert_shuttle_run,
         ),
-        
         # Выносливость
         ExerciseType.LONG_RUN_1KM: ExerciseDefinition(
             exercise_type=ExerciseType.LONG_RUN_1KM,
