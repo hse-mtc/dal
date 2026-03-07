@@ -14,9 +14,6 @@ from common.populate.prod_universities import (
     create_faculties,
     create_programs,
 )
-from common.populate.milspecialities_selectable_by_programs import (
-    create_milspecialities_selectable_by_programs,
-)
 
 # Auth
 
@@ -105,10 +102,7 @@ class Command(BaseCommand):
         milspecialties = create_milspecialties()
         subjects = create_subjects(milspecialties)
         faculties = create_faculties()
-        programs = create_programs(faculties)
-        create_milspecialities_selectable_by_programs(
-            milspecialties=milspecialties, programs=programs
-        )
+        create_programs(faculties)
 
         print(" OK")
 
