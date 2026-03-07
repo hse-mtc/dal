@@ -10,7 +10,7 @@ from django.contrib.auth import get_user_model
 
 from common.populate.subjects import create_subjects
 from common.populate.milspecialties import create_milspecialties
-from common.populate.universities import (
+from common.populate.prod_universities import (
     create_faculties,
     create_programs,
 )
