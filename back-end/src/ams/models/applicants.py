@@ -1,12 +1,3 @@
-from django.db import models
-from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator,
-)
-from django.contrib.auth import get_user_model
-
-from ams.utils.common import get_current_admission_year
-from common.models.universities import UniversityInfo
 from common.models.milspecialties import Milspecialty
 from common.models.personal import (
     BirthInfo,
@@ -16,6 +7,15 @@ from common.models.personal import (
     Photo,
     Relative,
 )
+from common.models.universities import UniversityInfo
+from django.contrib.auth import get_user_model
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+)
+from django.db import models
+
+from ams.utils.common import get_current_admission_year
 
 
 class ApplicationProcess(models.Model):
@@ -82,6 +82,10 @@ class ApplicationProcess(models.Model):
         blank=True,
     )
     physical_test_grade = models.SmallIntegerField(default=0)
+
+    strength_score = models.SmallIntegerField(default=0)
+    speed_score = models.SmallIntegerField(default=0)
+    endurance_score = models.SmallIntegerField(default=0)
 
     class Meta:
         verbose_name = "Application Process"
