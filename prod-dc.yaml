@@ -130,8 +130,6 @@ services:
     volumes:
       - certbot:/etc/letsencrypt:ro
       - webroot:/var/www/certbot:ro
-    depends_on:
-      - backend
 
   certbot:
     image: certbot/certbot
