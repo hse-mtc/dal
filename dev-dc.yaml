@@ -24,11 +24,11 @@ services:
     image: postgres:13-alpine
     env_file:
       - quizzes/.env
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ${QUIZZES_DB_NAME}
       POSTGRES_USER: ${QUIZZES_DB_USER}
       POSTGRES_PASSWORD: ${QUIZZES_DB_PASSWORD}
-    restart: unless-stopped
     volumes:
       - quizzes-data:/var/lib/postgresql/data
 
@@ -132,7 +132,6 @@ services:
     depends_on:
       - quizzes-db
       - back-end
-      - postgres
 
 volumes:
   postgres-data:
