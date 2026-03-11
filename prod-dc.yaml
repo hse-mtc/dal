@@ -75,9 +75,9 @@ services:
     build:
       context: .
       dockerfile: front-end/Dockerfile
-    args:
-      - VUE_APP_BACK_END_HOST=$BACK_END_HOST
-      - VUE_APP_BACK_END_PORT=$BACK_END_PORT
+      args:
+        - VUE_APP_BACK_END_HOST=$BACK_END_HOST
+        - VUE_APP_BACK_END_PORT=$BACK_END_PORT
     env_file:
       - .env
     command: >
