@@ -20,14 +20,14 @@ services:
     volumes:
       - /opt/dal/postgres-data:/var/lib/postgresql/data
 
-  # quizzes-db:
-  #   image: postgres:13-alpine
-  #   env_file:
-  #     - .env
-  #     - quizzes/.env
-  #   restart: always
-  #   volumes:
-  #     - /opt/dal/quizzes-data:/var/lib/postgresql/data
+  quizzes-db:
+    image: postgres:13-alpine
+    env_file:
+      - .env
+      - quizzes/.env
+    restart: always
+    volumes:
+      - /opt/dal/quizzes-data:/var/lib/postgresql/data
 
   ofelia:
     image: mcuadros/ofelia:latest
@@ -96,19 +96,21 @@ services:
       - tgbot/.env
     restart: always
 
-  # quizzes:
-  #   build:
-  #     context: .
-  #     dockerfile: quizzes/Dockerfile
-  #   env_file:
-  #     - quizzes/.env
-  #   depends_on:
-  #     - quizzes-db
+  quizzes:
+    build:
+      context: .
+      dockerfile: quizzes/Dockerfile
+    env_file:
+      - quizzes/.env
+    depends_on:
+      - quizzes-db
 
   nginx:
     build:
       context: .
       dockerfile: nginx/Dockerfile
+      args:
+        - NGINX_CONF=nginx/prod.conf
     ports:
       - "80:80"
       - "443:443"

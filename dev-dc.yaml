@@ -28,8 +28,6 @@ services:
       POSTGRES_DB: ${QUIZZES_DB_NAME}
       POSTGRES_USER: ${QUIZZES_DB_USER}
       POSTGRES_PASSWORD: ${QUIZZES_DB_PASSWORD}
-    ports:
-      - $QUIZZES_DB_PORT:5432
     restart: unless-stopped
     volumes:
       - quizzes-data:/var/lib/postgresql/data
@@ -89,16 +87,25 @@ services:
         - VUE_APP_BACK_END_PORT=$BACK_END_PORT
     env_file:
       - .env
-    ports:
-      - $FRONT_END_PORT:80
-    command: >
-      sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
-             nginx -g \"daemon off;\""
-    restart: unless-stopped
     volumes:
-      - ./nginx/dev.conf:/etc/nginx/nginx.conf
-    # depends_on:
-    #   - back-end
+      - frontend-dist:/dist
+    command: >
+      sh -c "cp -r /front-end/dist/* /dist/ && tail -f /dev/null"
+    restart: "no"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+      args:
+        - NGINX_CONF=nginx/dev.conf
+    ports:
+      - "7070:80"
+    volumes:
+      - frontend-dist:/usr/share/nginx/html:ro
+    depends_on:
+      - back-end
+      - front-end
 
   tgbot:
     container_name: tgbot
@@ -130,3 +137,4 @@ services:
 volumes:
   postgres-data:
   quizzes-data:
+  frontend-dist:
