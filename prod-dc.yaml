@@ -23,9 +23,12 @@ services:
   quizzes-db:
     image: postgres:13-alpine
     env_file:
-      - .env
       - quizzes/.env
-    restart: always
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${QUIZZES_DB_NAME}
+      POSTGRES_USER: ${QUIZZES_DB_USER}
+      POSTGRES_PASSWORD: ${QUIZZES_DB_PASSWORD}
     volumes:
       - /opt/dal/quizzes-data:/var/lib/postgresql/data
 
@@ -104,6 +107,7 @@ services:
       - quizzes/.env
     depends_on:
       - quizzes-db
+      - back-end
 
   nginx:
     build:
