@@ -36,8 +36,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./ofelia:/ofelia:ro
-    # depends_on:
-    #   - back-end
 
   watchdoc:
     build:
@@ -46,9 +44,6 @@ services:
     env_file:
       - .env
       - watchdoc/.env
-    # ports:
-    #   - $WATCHDOC_PORT:$WATCHDOC_PORT
-    #   - $WATCHDOC_AUTH_PORT:$WATCHDOC_AUTH_PORT
     restart: always
     volumes:
       - watchdoc-generated:/watchdoc/generated
@@ -62,11 +57,6 @@ services:
     env_file:
       - .env
       - back-end/.env
-    environment:
-      - SUPERUSER_EMAIL
-      - SUPERUSER_PASSWORD
-    # ports:
-    #   - $BACK_END_PORT:$BACK_END_PORT
     command: >
       sh -c "/tools/wait-for-it.sh $POSTGRES_HOST:$POSTGRES_PORT -t 0 &&
              python manage.py migrate &&
@@ -85,19 +75,15 @@ services:
     build:
       context: .
       dockerfile: front-end/Dockerfile
-      args:
-        - VUE_APP_BACK_END_HOST=$BACK_END_HOST
-        - VUE_APP_BACK_END_PORT=$BACK_END_PORT
+    args:
+      - VUE_APP_BACK_END_HOST=$BACK_END_HOST
+      - VUE_APP_BACK_END_PORT=$BACK_END_PORT
     env_file:
       - .env
     command: >
       sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
              nginx -g \"daemon off;\""
     restart: always
-    volumes:
-      - ./nginx/prod.conf:/etc/nginx/nginx.conf
-    # depends_on:
-    #   - back-end
 
   tgbot:
     container_name: tgbot
@@ -108,8 +94,6 @@ services:
       - .env
       - tgbot/.env
     restart: always
-    # depends_on:
-    #   - back-end
 
   # quizzes:
   #   build:
@@ -130,13 +114,16 @@ services:
     volumes:
       - certbot:/etc/letsencrypt:ro
       - webroot:/var/www/certbot:ro
+    depends_on:
+      - back-end
+      - front-end
 
   certbot:
     image: certbot/certbot
     volumes:
       - certbot:/etc/letsencrypt
       - webroot:/var/www/certbot
-  
+
   renew:
     image: certbot/certbot
     volumes:
@@ -145,7 +132,7 @@ services:
     entrypoint: >
       sh -c "
         while sleep 12h; do
-          certbot renew --webroot -w /var/www/certbot --deploy-hook 'echo reload' ;
+          certbot renew --webroot -w /var/www/certbot --deploy-hook 'nginx -s reload || echo reload_failed' ;
         done
       "
 
