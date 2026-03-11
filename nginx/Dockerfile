@@ -5,6 +5,5 @@ RUN mkdir -p /var/www/certbot
 
 RUN rm -f /etc/nginx/conf.d/default.conf
 
-COPY nginx/prod.conf /etc/nginx/nginx.conf
-
-EXPOSE 80 443
+ARG NGINX_CONF=nginx/dev.conf
+COPY ${NGINX_CONF} /etc/nginx/nginx.conf
