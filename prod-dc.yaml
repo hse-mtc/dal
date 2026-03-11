@@ -80,10 +80,11 @@ services:
         - VUE_APP_BACK_END_PORT=$BACK_END_PORT
     env_file:
       - .env
+    volumes:
+      - frontend-dist:/dist
     command: >
-      sh -c "tools/wait-for-it.sh back-end:$BACK_END_PORT -t 0 &&
-             nginx -g \"daemon off;\""
-    restart: always
+      sh -c "cp -r /front-end/dist/* /dist/ && tail -f /dev/null"
+    restart: "no"
 
   tgbot:
     container_name: tgbot
@@ -114,6 +115,7 @@ services:
     volumes:
       - certbot:/etc/letsencrypt:ro
       - webroot:/var/www/certbot:ro
+      - frontend-dist:/usr/share/nginx/html:ro
     depends_on:
       - back-end
       - front-end
@@ -141,3 +143,4 @@ volumes:
   watchdoc-secrets:
   certbot:
   webroot:
+  frontend-dist:
