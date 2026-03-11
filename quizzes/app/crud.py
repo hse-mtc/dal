@@ -181,3 +181,16 @@ async def get_attempt_by_test_and_user(
     )
     res = await session.execute(stmt)
     return res.scalar_one_or_none()
+
+
+async def list_attempts_for_test(
+    session: AsyncSession,
+    test_id: UUID,
+) -> list[models.Attempt]:
+    stmt = (
+        select(models.Attempt)
+        .where(models.Attempt.test_id == test_id)
+        .order_by(models.Attempt.started_at.desc())
+    )
+    res = await session.execute(stmt)
+    return list(res.scalars().all())

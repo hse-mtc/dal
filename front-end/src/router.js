@@ -158,7 +158,7 @@ export const constantRoutes = [
             name: "DisciplinesQuizzes",
             component: () => import("@/views/Quizzes/index"),
             meta: {
-              title: "Прохождение квизов",
+              title: "Прохождение летучек",
               icon: "journal",
               permissions: [],
             },
@@ -169,7 +169,7 @@ export const constantRoutes = [
             name: "DisciplineQuiz",
             component: () => import("@/views/Quiz/index"),
             meta: {
-              title: "Прохождение квизов",
+              title: "Прохождение летучки",
               activeMenu: "/discipline-control/quizzes/",
             },
           },
@@ -179,7 +179,7 @@ export const constantRoutes = [
             name: "DisciplineQuizAttempt",
             component: () => import("@/views/QuizAttempt/index"),
             meta: {
-              title: "Прохождение квизов",
+              title: "Прохождение летучки",
               activeMenu: "/discipline-control/quizzes/",
             },
           },
@@ -188,8 +188,18 @@ export const constantRoutes = [
             name: "DisciplinesQuizzesAdmin",
             component: () => import("@/views/QuizzesAdmin/index"),
             meta: {
-              title: "Конструктор квизов",
+              title: "Конструктор летучек",
               icon: "table",
+              permissions: ["marks.post.milfaculty"],
+            },
+          },
+          {
+            path: "quizzes-results/",
+            name: "DisciplinesQuizzesResults",
+            component: () => import("@/views/QuizzesResults/index"),
+            meta: {
+              title: "Результаты летучек",
+              icon: "people",
               permissions: ["marks.post.milfaculty"],
             },
           },

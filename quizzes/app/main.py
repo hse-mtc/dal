@@ -205,6 +205,31 @@ async def get_my_attempt(
     )
 
 
+@app.get("/tests/{test_id}/attempts", response_model=list[schemas.AttemptResultItem])
+async def list_test_attempts(
+    test_id: UUID,
+    session: AsyncSession = Depends(get_session),
+    principal: Principal = Depends(require_permission("marks.post.milfaculty")),
+):
+    """Список всех попыток по тесту — только для преподавателей."""
+    test = await crud.get_test(session, test_id)
+    if not test:
+        raise HTTPException(status_code=404, detail="Test not found")
+
+    attempts = await crud.list_attempts_for_test(session, test_id)
+    return [
+        schemas.AttemptResultItem(
+            attempt_id=a.id,
+            user_id=a.user_id,
+            started_at=a.started_at,
+            completed_at=a.completed_at,
+            score=a.score,
+            max_score=a.max_score,
+        )
+        for a in attempts
+    ]
+
+
 # ---------- ПРОХОЖДЕНИЕ ТЕСТА (submit) ----------
 
 @app.post("/tests/{test_id}/submit", response_model=schemas.SubmitResult)

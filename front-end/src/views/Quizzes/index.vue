@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="20" :offset="2">
-        <PageHeader title="Прохождение квизов" />
+        <PageHeader title="Прохождение летучек" />
 
         <template>
           <div class="statistics">
@@ -76,7 +76,7 @@
           >
             <el-table-column
               prop="title"
-              label="Название квиза"
+              label="Название летучки"
               min-width="260"
             />
             <el-table-column
@@ -128,7 +128,7 @@
             class="state-wrapper"
           >
             <div class="empty-state">
-              Доступных квизов пока нет
+              Доступных летучек пока нет
             </div>
           </div>
         </template>
@@ -190,7 +190,7 @@ export default {
         const response = await getStudentQuizzes();
         this.quizzes = response.data || [];
       } catch (error) {
-        this.errorMessage = "Не удалось загрузить список квизов";
+        this.errorMessage = "Не удалось загрузить список летучек";
       } finally {
         this.loading = false;
       }

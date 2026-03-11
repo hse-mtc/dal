@@ -90,7 +90,7 @@ export default {
       attemptMaxScore: null,
       quiz: {
         id: "",
-        title: "Квиз",
+        title: "Летучка",
         discipline: null,
         timeLimitMinutes: null,
         questionsCount: null,
@@ -104,7 +104,7 @@ export default {
       return this.$route.params.quizId;
     },
     quizTitle() {
-      return this.quiz.title || "Прохождение квизов";
+      return this.quiz.title || "Прохождение летучки";
     },
     questionsCountLabel() {
       return this.quiz.questionsCount !== null && this.quiz.questionsCount !== undefined
@@ -152,19 +152,19 @@ export default {
           this.quiz.status = QUIZ_STATUS.completed;
           this.attemptScore = attempt.score;
           this.attemptMaxScore = attempt.maxScore;
-          this.completedMessage = "Вы уже отправили ответы на этот квиз";
+          this.completedMessage = "Вы уже отправили ответы на эту летучку";
         } else if (attempt && attempt.attemptId) {
           this.quiz.status = QUIZ_STATUS.inProgress;
         }
       } catch (error) {
-        this.errorMessage = "Не удалось загрузить информацию о квизе";
+        this.errorMessage = "Не удалось загрузить информацию о летучке";
       } finally {
         this.loading = false;
       }
     },
     async startAttempt() {
       if (this.isCompletedAttempt) {
-        this.errorMessage = "Вы уже отправили ответы на этот квиз";
+        this.errorMessage = "Вы уже отправили ответы на эту летучку";
         return;
       }
 
