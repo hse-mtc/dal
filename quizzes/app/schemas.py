@@ -136,3 +136,15 @@ class AttemptOut(BaseModel):
     completed_at: datetime | None
     score: int | None = None
     max_score: int | None = None
+
+
+class AttemptResultItem(BaseModel):
+    attempt_id: UUID
+    user_id: int
+    started_at: datetime
+    completed_at: datetime | None
+    score: int | None = None
+    max_score: int | None = None
+
+    class Config:
+        from_attributes = True

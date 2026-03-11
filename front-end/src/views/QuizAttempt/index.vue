@@ -41,7 +41,7 @@
             />
 
             <div v-if="!questions.length" class="quiz-attempt-content">
-              В этом квизе пока нет вопросов
+              В этой летучке пока нет вопросов
             </div>
 
             <div
@@ -117,7 +117,7 @@ export default {
       isSubmitting: false,
       errorMessage: "",
       successMessage: "",
-      quizTitle: "Прохождение квиза",
+      quizTitle: "Прохождение летучки",
       questions: [],
     };
   },
@@ -143,7 +143,7 @@ export default {
           getQuizQuestions(this.quizId),
         ]);
 
-        this.quizTitle = quizResponse?.data?.title || "Прохождение квиза";
+        this.quizTitle = quizResponse?.data?.title || "Прохождение летучки";
         this.questions = (questionsResponse?.data || []).map(question => {
           const options = Array.isArray(question.options)
             ? question.options.map(option => {
@@ -169,7 +169,7 @@ export default {
           };
         });
       } catch (error) {
-        this.errorMessage = "Не удалось загрузить вопросы квиза";
+        this.errorMessage = "Не удалось загрузить вопросы летучки";
       } finally {
         this.loading = false;
       }

@@ -23,6 +23,7 @@ function normalizeQuiz(item = {}) {
     questionsCount: Number.isFinite(questionsCount) ? questionsCount : null,
     timeLimitMinutes: item.time_limit_minutes || null,
     description: item.description || null,
+    created_at: item.created_at || null,
   };
 }
 
@@ -258,6 +259,17 @@ export async function deleteQuizQuestion(quizId, questionId) {
 
   return {
     data,
+  };
+}
+
+export async function getTestAttempts(quizId) {
+  const { data } = await request({
+    url: `${QUIZZES_API_URL}/tests/${quizId}/attempts`,
+    method: "get",
+  });
+
+  return {
+    data: Array.isArray(data) ? data : [],
   };
 }
 

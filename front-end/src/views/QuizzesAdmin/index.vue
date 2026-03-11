@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-row>
       <el-col :span="20" :offset="2">
-        <PageHeader title="Конструктор квизов" />
+        <PageHeader title="Конструктор летучек" />
 
         <el-alert
           v-if="errorMessage"
@@ -15,12 +15,12 @@
 
         <el-card shadow="never" class="card-block">
           <div slot="header" class="card-header">
-            Создать тест
+            Создать летучку
           </div>
 
           <el-form :model="testForm" label-width="140px">
             <el-form-item label="Название">
-              <el-input v-model="testForm.title" placeholder="Введите название теста" />
+              <el-input v-model="testForm.title" placeholder="Введите название летучки" />
             </el-form-item>
             <el-form-item label="Описание">
               <el-input
@@ -32,7 +32,7 @@
             </el-form-item>
             <el-form-item>
               <el-button type="primary" :loading="creatingTest" @click="createTest">
-                Создать тест
+                Создать летучку
               </el-button>
             </el-form-item>
           </el-form>
@@ -40,7 +40,7 @@
 
         <el-card shadow="never" class="card-block">
           <div slot="header" class="card-header">
-            Доступные тесты
+            Доступные летучки
           </div>
 
           <el-table v-loading="loadingTests" :data="tests" class="tests-table">
@@ -68,7 +68,7 @@
 
         <el-card v-if="selectedTest" shadow="never" class="card-block">
           <div slot="header" class="card-header">
-            Добавить вопрос в тест: {{ selectedTest.title }}
+            Добавить вопрос в летучку: {{ selectedTest.title }}
           </div>
 
           <el-form :model="questionForm" label-width="160px">
@@ -134,7 +134,7 @@
           <el-divider />
 
           <div class="sub-title">
-            Вопросы теста
+            Вопросы летучки
           </div>
           <el-table v-loading="loadingQuestions" :data="questions" class="tests-table">
             <el-table-column prop="order" label="#" width="80" />
@@ -158,7 +158,7 @@
         </el-card>
 
         <el-dialog
-          title="Редактировать тест"
+          title="Редактировать летучку"
           :visible.sync="editTestDialogVisible"
           width="560px"
         >
@@ -312,7 +312,7 @@ export default {
         const response = await getAdminQuizzes();
         this.tests = response.data || [];
       } catch (error) {
-        this.errorMessage = "Не удалось загрузить список тестов";
+        this.errorMessage = "Не удалось загрузить список летучек";
       } finally {
         this.loadingTests = false;
       }
@@ -328,14 +328,14 @@ export default {
         const response = await getQuizQuestions(this.selectedTest.id);
         this.questions = response.data || [];
       } catch (error) {
-        this.errorMessage = "Не удалось загрузить вопросы теста";
+        this.errorMessage = "Не удалось загрузить вопросы летучки";
       } finally {
         this.loadingQuestions = false;
       }
     },
     async createTest() {
       if (!this.testForm.title.trim()) {
-        this.errorMessage = "Введите название теста";
+        this.errorMessage = "Введите название летучки";
         return;
       }
 
@@ -348,13 +348,13 @@ export default {
           description: this.testForm.description?.trim() || null,
         });
 
-        this.$message.success("Тест создан");
+        this.$message.success("Летучка создана");
         this.testForm.title = "";
         this.testForm.description = "";
         await this.fetchTests();
         this.selectTest(response.data);
       } catch (error) {
-        this.errorMessage = error?.response?.data?.detail || "Не удалось создать тест";
+        this.errorMessage = error?.response?.data?.detail || "Не удалось создать летучку";
       } finally {
         this.creatingTest = false;
       }
@@ -384,7 +384,7 @@ export default {
         return;
       }
       if (!this.editTestForm.title.trim()) {
-        this.errorMessage = "Название теста не может быть пустым";
+        this.errorMessage = "Название летучки не может быть пустым";
         return;
       }
 
@@ -397,7 +397,7 @@ export default {
           description: this.editTestForm.description?.trim() || null,
         });
 
-        this.$message.success("Тест обновлён");
+        this.$message.success("Летучка обновлена");
         this.editTestDialogVisible = false;
         await this.fetchTests();
 
@@ -405,7 +405,7 @@ export default {
           this.selectedTest = response.data;
         }
       } catch (error) {
-        this.errorMessage = error?.response?.data?.detail || "Не удалось обновить тест";
+        this.errorMessage = error?.response?.data?.detail || "Не удалось обновить летучку";
       } finally {
         this.updatingTest = false;
       }
@@ -550,7 +550,7 @@ export default {
     },
     async createQuestion() {
       if (!this.selectedTest?.id) {
-        this.errorMessage = "Сначала выберите тест";
+        this.errorMessage = "Сначала выберите летучку";
         return;
       }
 
@@ -578,7 +578,7 @@ export default {
     async removeTest(test) {
       try {
         await this.$confirm(
-          `Удалить тест "${test.title}"?`,
+          `Удалить летучку "${test.title}"?`,
           "Подтверждение",
           {
             confirmButtonText: "Удалить",
@@ -588,7 +588,7 @@ export default {
         );
 
         await deleteQuizTest(test.id);
-        this.$message.success("Тест удалён");
+        this.$message.success("Летучка удалена");
 
         if (this.selectedTest?.id === test.id) {
           this.selectedTest = null;
@@ -599,7 +599,7 @@ export default {
         await this.fetchTests();
       } catch (error) {
         if (error !== "cancel") {
-          this.errorMessage = error?.response?.data?.detail || "Не удалось удалить тест";
+          this.errorMessage = error?.response?.data?.detail || "Не удалось удалить летучку";
         }
       }
     },
