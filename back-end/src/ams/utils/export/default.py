@@ -142,9 +142,9 @@ def _make_applicant_row(
             row.append(("Да" if getattr(ap, field) else "Нет", formats.table_center))
 
         row += [
-            (ap.pull_ups, formats.int),
-            (ap.speed_run, formats.float),
-            (ap.long_run, formats.float),
+            (ap.strength_score, formats.int),
+            (ap.speed_score, formats.int),
+            (ap.endurance_score, formats.int),
             (ap.physical_test_grade, formats.int),
         ]
 
@@ -152,8 +152,8 @@ def _make_applicant_row(
         row += [("", formats.table_center)] * 14
         row += [(0, formats.table_center)]  # ФИЗО
 
-    mean_grade_scaled = row[5][0]
-    physical_test_grade = row[18][0]
+    mean_grade_scaled = row[6][0]
+    physical_test_grade = row[19][0]
     try:
         row += [(mean_grade_scaled + physical_test_grade, formats.int)]
     except TypeError:
