@@ -5,6 +5,7 @@ from common.models.personal import (
     Passport,
     PersonalDocumentsInfo,
     Photo,
+    Video,
     Relative,
 )
 from common.models.universities import UniversityInfo
@@ -176,6 +177,12 @@ class Applicant(models.Model):
         to=Photo,
         on_delete=models.SET_NULL,
         null=True,
+    )
+    video = models.OneToOneField(
+        to=Video,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
     )
     family = models.ManyToManyField(
         to=Relative,

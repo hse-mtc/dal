@@ -9,6 +9,7 @@ from dms.views.books import (
     BookViewSet,
     FavoriteBookViewSet,
 )
+from dms.views.videos import VideoViewSet
 from dms.views.papers import (
     PaperViewSet,
     CategoryViewSet,
@@ -31,6 +32,7 @@ from dms.views.common import (
 router = routers.DefaultRouter()
 router.register("authors", AuthorViewSet)
 router.register("books", BookViewSet)
+router.register("videos", VideoViewSet)
 router.register("favorite-books", FavoriteBookViewSet)
 router.register("categories", CategoryViewSet)
 router.register("class-materials", ClassMaterialViewSet)

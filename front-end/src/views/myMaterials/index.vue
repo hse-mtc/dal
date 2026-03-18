@@ -27,6 +27,9 @@
       <div v-if="activeTab === 'library'">
         <Library :is-my-library="true" />
       </div>
+      <div v-if="activeTab === 'videos'">
+        <MediaLibrary />
+      </div>
       <div v-if="activeTab === 'books'">
         <Library :is-favorite-books="true" />
       </div>
@@ -35,11 +38,13 @@
 </template>
 
 <script>
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import Statistics from "@/components/MyMaterials/Statistics";
 import PageHeader from "@/common/PageHeader";
 import MyDisciplines from "@/components/MyMaterials/MyDisciplines";
 import MyDocuments from "@/components/MyMaterials/MyDocuments";
 import Library from "@/components/Library/Library";
+import MediaLibrary from "@/components/MediaLibrary/Library.vue";
 import { UserModule } from "@/store";
 import { hasPermission } from "@/utils/permissions";
 
@@ -47,6 +52,7 @@ export default {
   name: "MyMaterials",
   components: {
     Library,
+    MediaLibrary,
     MyDisciplines,
     MyDocuments,
     Statistics,
@@ -75,6 +81,10 @@ export default {
 
     if (hasPermission(["books.post.self"])) {
       this.tabs.push({ label: "Электронная библиотека", value: "library" });
+    }
+
+    if (hasPermission(["videos.post.self", "videos.get.self"])) {
+      this.tabs.push({ label: "Электронная медиатека", value: "videos" });
     }
 
     if (hasPermission(["favorite-books.post.self"])) {

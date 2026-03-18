@@ -11,6 +11,7 @@ from common.models.personal import (
     Passport,
     PersonalDocumentsInfo,
     Photo,
+    Video,
     Relative,
 )
 
@@ -27,6 +28,7 @@ admin.site.register(ContactInfo)
 admin.site.register(Passport)
 admin.site.register(PersonalDocumentsInfo)
 admin.site.register(Photo)
+admin.site.register(Video)
 admin.site.register(Relative)
 
 # University

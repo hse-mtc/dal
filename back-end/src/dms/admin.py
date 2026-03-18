@@ -5,6 +5,7 @@ from dms.models.books import (
     Book,
     FavoriteBook,
 )
+from dms.models.videos import Video
 from dms.models.documents import File
 from dms.models.papers import (
     Category,
@@ -24,6 +25,7 @@ admin.site.register(Author)
 admin.site.register(Cover)
 admin.site.register(Book)
 admin.site.register(FavoriteBook)
+admin.site.register(Video)
 admin.site.register(Category)
 admin.site.register(ClassMaterial)
 admin.site.register(Publisher)

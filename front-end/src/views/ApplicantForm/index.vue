@@ -732,16 +732,16 @@ class ApplicantForm extends Vue {
           }
         }
 
-        reader.onerror = () => {
-          this.isSubmitting = false;
-          console.error("Ошибка чтения файла:", reader.error);
-          this.$message({
-            type: "error",
-            message: "Ошибка чтения файла",
-          });
-        };
-
         this.isSubmitting = false;
+      };
+
+      reader.onerror = () => {
+        this.isSubmitting = false;
+        console.error("Ошибка чтения файла:", reader.error);
+        this.$message({
+          type: "error",
+          message: "Ошибка чтения файла",
+        });
       };
 
       try {

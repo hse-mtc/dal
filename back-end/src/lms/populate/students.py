@@ -21,7 +21,6 @@ from lms.models.students import (
 )
 from lms.populate.students_gen import get_students
 
-
 User = get_user_model()
 
 

@@ -13,7 +13,6 @@ from dms.models.books import (
     FavoriteBook,
 )
 
-
 User = get_user_model()
 
 
