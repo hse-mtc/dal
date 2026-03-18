@@ -11,6 +11,7 @@ from common.models.personal import (
     Passport,
     PersonalDocumentsInfo,
     Photo,
+    Video,
     Relative,
 )
 
@@ -121,6 +122,40 @@ class PhotoMutateMixin(serializers.Serializer):
             instance.photo.delete()
 
         self.create_photo(validated_data)
+
+
+class VideoSerializer(serializers.ModelSerializer):
+    file = serializers.FileField(
+        use_url=False,
+        allow_null=True,
+        required=False,
+        read_only=True,
+    )
+
+    class Meta:
+        model = Video
+        exclude = ["id"]
+
+
+class VideoMutateMixin(serializers.Serializer):
+    video_file = serializers.FileField(write_only=True, required=False)
+
+    def create_video(self, validated_data):
+        video_file = validated_data.pop("video_file", None)
+        if video_file is None:
+            return
+
+        video = Video.objects.create(file=video_file)
+        validated_data["video"] = video
+
+    def update_video(self, instance, validated_data):
+        if "video_file" not in validated_data:
+            return
+
+        if instance.video:
+            instance.video.delete()
+
+        self.create_video(validated_data)
 
 
 class PassportSerializer(serializers.ModelSerializer):

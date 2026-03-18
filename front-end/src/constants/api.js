@@ -109,6 +109,9 @@ export const DMS_URLS = {
     books: "dms/books/",
     favorite: "dms/favorite-books/",
   },
+  videos: {
+    videos: "dms/videos/",
+  },
   papers: {
     papers: "dms/papers/",
   },

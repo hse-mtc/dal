@@ -19,7 +19,6 @@ from lms.models.common import (
     Milgroup,
 )
 
-
 SUPERUSER_EMAIL = "superuserfortests@mail.com"
 SUPERUSER_PASSWORD = "superuserpasswordfortests"
 

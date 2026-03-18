@@ -8,7 +8,6 @@ from lms.models.common import (
     Milgroup,
 )
 
-
 User = get_user_model()
 
 

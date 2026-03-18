@@ -50,6 +50,11 @@ def upload_to(instance, filename):
     return f"photos/{instance.id}"
 
 
+def upload_video_to(instance, filename):
+    # pylint: disable=unused-argument
+    return f"videos/{instance.id}"
+
+
 class Photo(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -75,6 +80,33 @@ def auto_delete_image_on_cover_delete(sender, instance: Photo, **kwargs):
 
     if instance and instance.image:
         instance.image.delete(save=False)
+
+
+class Video(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    file = models.FileField(
+        upload_to=upload_video_to,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "PersonVideo"
+        verbose_name_plural = "PersonVideos"
+
+    def __str__(self) -> str:
+        return self.file.name
+
+
+@receiver(models.signals.post_delete, sender=Video)
+def auto_delete_video_on_delete(sender, instance: Video, **kwargs):
+    # pylint: disable=unused-argument
+
+    if instance and instance.file:
+        instance.file.delete(save=False)
 
 
 class Passport(models.Model):

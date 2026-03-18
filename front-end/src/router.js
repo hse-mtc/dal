@@ -96,7 +96,7 @@ export const constantRoutes = [
         path: "my-materials/",
         name: "Мои материалы",
         component: () => import("@/views/myMaterials/index"),
-        meta: { title: "Мои материалы", icon: "materials", permissions: ["subjects.get.self", "papers.get.self", "books.get.self", "favorite-books.get.self"] },
+        meta: { title: "Мои материалы", icon: "materials", permissions: ["subjects.get.self", "papers.get.self", "books.get.self", "favorite-books.get.self", "videos.get.self"] },
       },
 
       {
@@ -104,6 +104,21 @@ export const constantRoutes = [
         name: "Papers",
         component: () => import("@/views/Papers/index"),
         meta: { title: "Военно-научные работы", icon: "study", permissions: ["papers.get.self"] },
+      },
+
+      {
+        path: "media-library/",
+        name: "MediaLibrary",
+        component: () => import("@/views/MediaLibrary/index"),
+        meta: { title: "Электронная медиатека", icon: "presentation", permissions: ["videos.get.self"] },
+      },
+
+      {
+        path: "media-library/video/:id/",
+        name: "Video",
+        component: () => import("@/views/Video/index"),
+        meta: { title: "Электронная медиатека" },
+        hidden: true,
       },
 
       {
