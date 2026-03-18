@@ -65,7 +65,7 @@
               <el-table-column label="Студент" min-width="200">
                 <template slot-scope="{ row }">
                   <span v-if="row.studentName">{{ row.studentName }}</span>
-                  <span v-else class="user-id-fallback">ID: {{ row.user_id }}</span>
+                  <span v-else class="user-id-fallback">ID: {{ row.email }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -136,7 +136,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import PageHeader from "@/common/PageHeader";
 import { getAdminQuizzes, getTestAttempts } from "@/api/quizzes";
-import { findStudentBasic } from "@/api/students";
+import { findStudentByUserId } from "@/api/students";
 
 export default {
   name: "QuizzesResultsPage",
@@ -191,8 +191,8 @@ export default {
         const attemptsWithNames = await Promise.all(
           rawAttempts.map(async attempt => {
             try {
-              const studentResponse = await findStudentBasic(attempt.user_id);
-              const student = studentResponse?.data;
+              const studentResponse = await findStudentByUserId(attempt.user_id);
+              const student = studentResponse?.data[0];
               const fullName = student?.fullname
                 || (student?.surname && student?.name
                   ? `${student.surname} ${student.name}${student.patronymic ? ` ${student.patronymic}` : ""}`

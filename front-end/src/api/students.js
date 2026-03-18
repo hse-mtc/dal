@@ -35,6 +35,13 @@ export function findStudentBasic(id) {
   });
 }
 
+export function findStudentByUserId(id) {
+  return request({
+    url: `${BASE_API_URL}${students}?user_id=${id}`,
+    method: "get",
+  });
+}
+
 export function findStudent(id) {
   return request({
     url: `${BASE_API_URL}${students}${id}/`,

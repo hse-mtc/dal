@@ -12,6 +12,8 @@ from lms.models.students import (
 
 
 class StudentFilter(FilterSet):
+    user_id = NumberFilter(field_name="user__id")
+
     # TODO(TmLev): consider different formats, strip +7/8/7 from beginning.
     phone = CharFilter(field_name="contact_info__personal_phone_number")
 
@@ -29,6 +31,7 @@ class StudentFilter(FilterSet):
     class Meta:
         model = Student
         fields = [
+            "user_id",
             "phone",
             "milfaculty",
             "skill",
