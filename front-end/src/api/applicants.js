@@ -1,5 +1,5 @@
-import request from "@/utils/request";
 import { AMS_URLS, BASE_API_URL } from "@/constants/api";
+import request from "@/utils/request";
 
 const {
   applicants: {
@@ -10,6 +10,8 @@ const {
     applicationsCSPExport,
     applicationsDETExport,
     applicationsSTUDExport,
+    exercises,
+    exerciseResults,
   },
 } = AMS_URLS;
 
@@ -75,3 +77,35 @@ export const APPLICATIONS_EXPORT_LINK = `${BASE_API_URL}${applicationsExport}`;
 export const APPLICATIONS_CSP_EXPORT_LINK = `${BASE_API_URL}${applicationsCSPExport}`;
 export const APPLICATIONS_DET_EXPORT_LINK = `${BASE_API_URL}${applicationsDETExport}`;
 export const APPLICATIONS_STUD_EXPORT_LINK = `${BASE_API_URL}${applicationsSTUDExport}`;
+
+// GET /ams/physical/exercises/
+export const getExercises = () => request({
+  url: BASE_API_URL + exercises,
+  method: "GET",
+});
+
+// GET /ams/applicants/{id}/exercise-results/
+export const getExerciseResults = applicantId => request({
+  url: `${BASE_API_URL}${exerciseResults}${applicantId}/exercise-results/`,
+  method: "GET",
+});
+
+// POST /ams/applicants/{id}/exercise-results/
+export const createExerciseResult = (applicantId, data) => request({
+  url: `${BASE_API_URL}${exerciseResults}${applicantId}/exercise-results/`,
+  method: "POST",
+  data,
+});
+
+// PATCH /ams/applicants/{id}/exercise-results/{exerciseType}/
+export const updateExerciseResult = (applicantId, exerciseType, data) => request({
+  url: `${BASE_API_URL}${exerciseResults}${applicantId}/exercise-results/${exerciseType}/`,
+  method: "PATCH",
+  data,
+});
+
+// DELETE /ams/applicants/{id}/exercise-results/{exerciseType}/
+export const deleteExerciseResult = (applicantId, exerciseType) => request({
+  url: `${BASE_API_URL}${exerciseResults}${applicantId}/exercise-results/${exerciseType}/`,
+  method: "DELETE",
+});
