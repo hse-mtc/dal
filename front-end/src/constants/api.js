@@ -20,6 +20,8 @@ export const AMS_URLS = {
     applicationsCSPExport: "ams/applicants/applications/competitive-selection-protocol/export/",
     applicationsDETExport: "ams/applicants/applications/applicants-detail/export/",
     applicationsSTUDExport: "ams/applicants/students/export/",
+    exercises: "ams/physical/exercises/",
+    exerciseResults: "ams/applicants/",
   },
 };
 

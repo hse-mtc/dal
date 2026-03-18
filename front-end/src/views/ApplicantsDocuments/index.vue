@@ -121,6 +121,7 @@
         :data="data"
         :start-index="(currentPage - 1) * pageSize"
         :on-change="onUpdate"
+        :on-open-physical-modal="openPhysicalModal"
       />
 
       <div :class="$style.pagination">
@@ -135,6 +136,13 @@
         />
       </div>
     </div>
+
+    <PhysicalTestModal
+      v-if="selectedApplicantForPhysical"
+      :visible.sync="physicalModalVisible"
+      :applicant="selectedApplicantForPhysical"
+      @saved="onPhysicalSaved"
+    />
   </div>
 </template>
 
@@ -154,6 +162,7 @@ import { getProgramsByCampus } from "@/api/reference-book";
 
 import { TextInput } from "@/common/inputs";
 import InfoTable from "@/components/@ApplicantsDocuments/Table.vue";
+import PhysicalTestModal from "@/components/@ApplicantsDocuments/PhysicalTestModal.vue";
 import { UserModule } from "@/store";
 import { CAMPUSES, APPLICATIONS_EXPORT_OPTIONS } from "@/utils/enums";
 import DownloadFile from "@/common/DownloadFile";
@@ -163,6 +172,7 @@ export default {
   components: {
     DownloadFile,
     InfoTable,
+    PhysicalTestModal,
     TextInput,
   },
   filters: {
@@ -189,6 +199,8 @@ export default {
       selectedProgram: this.$route.query.program,
       selectedExportOption: APPLICATIONS_EXPORT_OPTIONS.DEF,
       currentYear: date.getMonth() >= 8 ? date.getFullYear() + 1 : date.getFullYear(),
+      physicalModalVisible: false,
+      selectedApplicantForPhysical: null,
     };
   },
   computed: {
@@ -328,6 +340,15 @@ export default {
     search: _debounce(function debouncedFetch() {
       this.fetchData();
     }, 750),
+
+    openPhysicalModal(rowData) {
+      this.selectedApplicantForPhysical = rowData;
+      this.physicalModalVisible = true;
+    },
+
+    onPhysicalSaved() {
+      this.fetchData();
+    },
   },
 };
 </script>

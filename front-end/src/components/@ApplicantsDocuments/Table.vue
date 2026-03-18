@@ -39,17 +39,26 @@
         </div>
       </template>
 
-      <template
-        v-if="field === 'index'"
-        #body="{ index }"
-      >
-        <a
-          title="Зарегистрировать в качестве студента ВУЦа"
-          style="cursor: pointer; text-decoration: default; color: black;"
-          @click="navigateToApplicantToStudent(data[index])"
-        >
-          {{ startIndex + index + 1 }}
-        </a>
+      <template #body="slotProps">
+        <template v-if="field === 'index'">
+          <a
+            title="Зарегистрировать в качестве студента ВУЦа"
+            style="cursor: pointer; text-decoration: default; color: black;"
+            @click="navigateToApplicantToStudent(data[slotProps.index])"
+          >
+            {{ startIndex + slotProps.index + 1 }}
+          </a>
+        </template>
+        <template v-else-if="field === 'physical_entry'">
+          <el-button
+            size="mini"
+            icon="el-icon-edit"
+            @click.stop="onOpenPhysicalModal(slotProps.data)"
+          />
+        </template>
+        <template v-else>
+          {{ slotProps.data[field] }}
+        </template>
       </template>
 
       <template
@@ -87,47 +96,6 @@
           :min="0"
           :min-fraction-digits="2"
           :max-fraction-digits="2"
-          @change="onUpdate(editorData, field, $event || 0)"
-        />
-
-        <NumberInput
-          v-if="field === 'pull_ups'"
-          v-model="editorData[field]"
-          :controls="false"
-          :min="0"
-          :min-fraction-digits="0"
-          :max-fraction-digits="0"
-          @change="onUpdate(editorData, field, $event || 0)"
-        />
-
-        <NumberInput
-          v-if="field === 'speed_run'"
-          v-model="editorData[field]"
-          :controls="false"
-          :min="0"
-          :min-fraction-digits="1"
-          :max-fraction-digits="1"
-          @change="onUpdate(editorData, field, $event || 0)"
-        />
-
-        <NumberInput
-          v-if="field === 'long_run'"
-          v-model="editorData[field]"
-          :controls="false"
-          :min="0"
-          :min-fraction-digits="1"
-          :max-fraction-digits="1"
-          @change="onUpdate(editorData, field, $event || 0)"
-        />
-
-        <NumberInput
-          v-if="field === 'physical_test_grade'"
-          v-model="editorData[field]"
-          :controls="false"
-          :max="100"
-          :min="0"
-          :min-fraction-digits="0"
-          :max-fraction-digits="0"
           @change="onUpdate(editorData, field, $event || 0)"
         />
       </template>
@@ -223,22 +191,31 @@ const additionalFields = {
     title: "Заявление",
     width: 120,
   },
-  pull_ups: {
-    title: "Сила",
-    width: 140,
-  },
-  speed_run: {
-    title: "Скорость",
+  strength_score: {
+    abbr: "Сила",
+    title: "Балл по направлению «Сила»",
     width: 100,
   },
-  long_run: {
-    title: "Выносливость",
+  speed_score: {
+    abbr: "Быстрота",
+    title: "Балл по направлению «Быстрота»",
+    width: 100,
+  },
+  endurance_score: {
+    abbr: "Выносливость",
+    title: "Балл по направлению «Выносливость»",
     width: 100,
   },
   physical_test_grade: {
     abbr: "ФИЗО",
     title: "Итоговая оценка за физические испытания",
     width: 100,
+  },
+  physical_entry: {
+    abbr: "Ввод ФИЗО",
+    title: "Ввод результатов физической подготовки",
+    width: 100,
+    rotate: false,
   },
 };
 
@@ -279,6 +256,7 @@ class ApplicantsDocuments extends Vue {
   @Prop({ type: Array, required: true, default: () => [] }) data
   @Prop({ type: Number, required: true }) startIndex
   @Prop({ type: Function, default: () => true }) onChange
+  @Prop({ type: Function, default: undefined }) onOpenPhysicalModal
 
   // undefined, so as not to be reactive
   currentEditingValue = undefined
@@ -296,10 +274,6 @@ class ApplicantsDocuments extends Vue {
     "mean_grade",
     "medical_examination",
     "prof_psy_selection",
-    "pull_ups",
-    "speed_run",
-    "long_run",
-    "physical_test_grade",
   ]
 
   medicalExaminationOptions = medicalExaminationOptions
@@ -391,32 +365,8 @@ class ApplicantsDocuments extends Vue {
       return (+data[field]).toFixed(2);
     }
 
-    if (field === "pull_ups") {
-      if (data[field] === undefined) {
-        return "---";
-      }
-      return +data[field];
-    }
-
-    if (field === "speed_run") {
-      if (data[field] === undefined) {
-        return "---";
-      }
-      return (+data[field]).toFixed(2);
-    }
-
-    if (field === "long_run") {
-      if (data[field] === undefined) {
-        return "---";
-      }
-      return (+data[field]).toFixed(2);
-    }
-
-    if (field === "physical_test_grade") {
-      if (data[field] === undefined) {
-        return 0;
-      }
-      return +data[field];
+    if (["strength_score", "speed_score", "endurance_score", "physical_test_grade"].includes(field)) {
+      return data[field] !== undefined && data[field] !== null ? data[field] : 0;
     }
 
     return data[field];
