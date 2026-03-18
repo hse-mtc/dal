@@ -6,6 +6,7 @@ class Campus(models.TextChoices):
     SAINT_PETERSBURG = "SP", "Санкт-Петербург"
     NIZHNY_NOVGOROD = "NN", "Нижний Новгород"
     PERM = "PE", "Пермь"
+    VAVT = "VA", "Всероссийская академия внешней торговли"
 
 
 class Faculty(models.Model):
