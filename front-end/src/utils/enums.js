@@ -8,6 +8,7 @@ export const CAMPUSES = {
   SP: "Санкт-Петербург",
   NN: "Нижний Новгород",
   PE: "Пермь",
+  VA: "Всероссийская академия внешней торговли",
 };
 
 export const APPLICATIONS_EXPORT_OPTIONS = {

@@ -14,6 +14,10 @@
         </h3>
       </div>
 
+      <p class="hse-email-hint">
+        Студенты НИУ ВШЭ должны указывать адрес электронной почты, оканчивающийся на @edu.hse.ru.
+      </p>
+
       <el-form-item prop="email">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -98,7 +102,7 @@ export default {
             this.loginForm.email = "";
             this.$message({
               title: "Ошибка",
-              message: "Пожалуйста, введите корректную корпоративную почту",
+              message: "Пожалуйста, введите корректный адрес электронной почты",
               type: "error",
             });
           }
@@ -200,6 +204,14 @@ $dark_gray: #889aa4;
       text-align: center;
       font-weight: bold;
     }
+  }
+
+  .hse-email-hint {
+    font-size: 14px;
+    line-height: 1.45;
+    color: $dark_gray;
+    margin: -24px 0 20px;
+    text-align: center;
   }
 
   .show-pwd {

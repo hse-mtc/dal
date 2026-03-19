@@ -7,11 +7,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         if not (email := attrs.pop("email", None)):
             return super().validate(attrs)
 
-        corporate_email_ending = "@edu.hse.ru"
-        if not email.endswith(corporate_email_ending):
-            raise serializers.ValidationError(
-                f"Corporate email must end with {corporate_email_ending}"
-            )
+        # Временно отключено: регистрация не только с @edu.hse.ru.
+        # corporate_email_ending = "@edu.hse.ru"
+        # if not email.endswith(corporate_email_ending):
+        #     raise serializers.ValidationError(
+        #         f"Corporate email must end with {corporate_email_ending}"
+        #     )
         attrs["email"] = email.lower()
         return super().validate(attrs)
 
