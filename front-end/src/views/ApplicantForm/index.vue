@@ -12,6 +12,12 @@
       </div>
 
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
+        <p
+          v-if="step === STEPS.contactInfo"
+          :class="$style.contactInfoHint"
+        >
+          Студенты НИУ ВШЭ должны указывать адрес электронной почты, оканчивающийся на @edu.hse.ru.
+        </p>
         <GenericForm
           :key="step"
           ref="form"
@@ -354,10 +360,11 @@ class ApplicantForm extends Vue {
     });
 
     const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
-    const corpMailValidator = getValidator(
-      /[A-Za-z0-9._%+-]+@edu\.hse\.ru$/,
-      "Почта должна оканчиваться на @edu.hse.ru",
-    );
+    // Временно: домен @edu.hse.ru больше не обязателен; подсказка для студентов ВШЭ — в шаблоне.
+    // const corpMailValidator = getValidator(
+    //   /[A-Za-z0-9._%+-]+@edu\.hse\.ru$/,
+    //   "Почта должна оканчиваться на @edu.hse.ru",
+    // );
     const phoneValidator = getValidator(
       /^\+?\d{11}$/,
       "Введите корректный номер телефона",
@@ -476,7 +483,7 @@ class ApplicantForm extends Vue {
       },
       contactInfo: {
         personal_email: [mailValidator],
-        corporate_email: [required, corpMailValidator],
+        corporate_email: [required, mailValidator],
         personal_phone_number: [phoneValidator],
       },
       mother: withMotherRules ? relationFields : {},
@@ -907,6 +914,13 @@ export default ApplicantForm;
 
 .nonSelectable {
   color: #bbbbbb
+}
+
+.contactInfoHint {
+  margin: 0 0 16px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: #606266;
 }
 
 </style>
