@@ -519,7 +519,6 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
 
 def generate_documents_for_applicant(applicant: Applicant) -> None:
-    return
     data = ApplicantSerializer(instance=applicant).data
     response = requests.post(
         f"http://{settings.WATCHDOC_HOST}:{settings.WATCHDOC_PORT}/applicants/",
