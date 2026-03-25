@@ -33,7 +33,7 @@ service.interceptors.response.use(
       console.error("Не удалось обновить аксесс токен");
     } else if (originalRequest.url.includes(AUTH_URLS.obtain)) {
       Message({
-        message: "Почта или пароль введены неверно, попробуйте еще раз",
+        message: "Не удалось войти. Проверьте email и пароль: студентам и преподавателям нужна корпоративная почта ВШЭ, абитуриентам — адрес, указанный при регистрации.",
         type: "error",
         duration: 5 * 1000,
       });
