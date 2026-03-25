@@ -14,14 +14,20 @@
         </h3>
       </div>
 
+      <p class="email-hint">
+        Для студентов и преподавателей вход выполняется по корпоративной почте ВШЭ
+        (`@hse.ru` или `@edu.hse.ru`). Абитуриентам нужно использовать адрес,
+        указанный при регистрации.
+      </p>
+
       <el-form-item prop="email">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
           ref="email"
-          v-model="loginForm.email"
-          placeholder="mail@example.com"
+          v-model.trim="loginForm.email"
+          placeholder="Введите email"
           name="email"
           type="text"
           tabindex="1"
@@ -232,6 +238,14 @@ $dark_gray: #889aa4;
       text-align: center;
       font-weight: bold;
     }
+  }
+
+  .email-hint {
+    font-size: 14px;
+    line-height: 1.45;
+    color: $dark_gray;
+    margin: -24px 0 20px;
+    text-align: center;
   }
 
   .show-pwd {

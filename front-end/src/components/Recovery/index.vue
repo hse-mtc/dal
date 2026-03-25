@@ -12,11 +12,17 @@
       </h3>
     </div>
 
+    <p class="email-hint">
+      Для студентов и преподавателей используйте корпоративную почту ВШЭ
+      (`@hse.ru` или `@edu.hse.ru`). Абитуриентам нужно указать адрес,
+      использованный при регистрации.
+    </p>
+
     <el-form-item prop="email">
       <el-input
         ref="email"
-        v-model="recoveryForm.email"
-        placeholder="mail@example.com"
+        v-model.trim="recoveryForm.email"
+        placeholder="Введите email"
         name="email"
         type="text"
         tabindex="1"
@@ -77,4 +83,12 @@ export default {
 
 <style lang="scss" scoped>
     @import "style";
+
+    .email-hint {
+      font-size: 14px;
+      line-height: 1.45;
+      color: #889aa4;
+      margin: -24px 0 20px;
+      text-align: center;
+    }
 </style>

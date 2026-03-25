@@ -48,7 +48,6 @@
 
 <script>
 import { validEmail } from "@/utils/validate";
-import { UserModule } from "@/store";
 import { postEmail } from "@/api/applicants";
 
 export default {
@@ -88,9 +87,10 @@ export default {
         if (valid) {
           this.loading = true;
           this.disablebtn = true;
+          const normalizedEmail = this.loginForm.email.trim().toLowerCase();
           try {
             await postEmail({
-              email: this.loginForm.email,
+              email: normalizedEmail,
             });
             this.$message({
               title: "Письмо отправлено",
@@ -102,7 +102,7 @@ export default {
             this.loginForm.email = "";
             this.$message({
               title: "Ошибка",
-              message: "Пожалуйста, введите корректный адрес электронной почты",
+              message: "Не удалось отправить письмо для регистрации. Проверьте адрес и попробуйте ещё раз.",
               type: "error",
             });
           }
