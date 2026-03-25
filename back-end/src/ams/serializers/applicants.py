@@ -65,6 +65,14 @@ class ApplicantSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
+class MaritalStatusField(serializers.ChoiceField):
+    def to_internal_value(self, data):
+        for key, display in self.choices.items():
+            if display == data:
+                return key
+        return super().to_internal_value(data)
+
+
 class ApplicantMutateSerializer(
     WritableNestedModelSerializer,
     PhotoMutateMixin,
@@ -76,6 +84,9 @@ class ApplicantMutateSerializer(
     contact_info = ContactInfoSerializer(required=False)
     family = RelativeMutateSerializer(required=False, many=True)
     generate_documents = serializers.BooleanField(required=False)
+    marital_status = MaritalStatusField(
+        choices=Applicant.MaritalStatus.choices, required=False
+    )
 
     class Meta:
         model = Applicant
