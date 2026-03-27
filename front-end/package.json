@@ -19,7 +19,7 @@
     "element-ui": "~2.15.14",
     "js-cookie": "2.2.0",
     "jwt-decode": "^3.1.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.23",
     "maska": "^1.4.2",
     "moment": "^2.24.0",
     "normalize.css": "7.0.0",
