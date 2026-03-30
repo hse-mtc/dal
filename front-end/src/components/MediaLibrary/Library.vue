@@ -1,24 +1,11 @@
 <template>
   <div class="root">
-    <div class="hero">
-      <div>
-        <CustomText variant="page-header-1" class="heroTitle">
-          Электронная медиатека
-        </CustomText>
-        <CustomText variant="paragraph" :color="'#667085'" class="heroText">
-          Отдельный раздел для учебных и внутренних видеоматериалов с быстрым поиском и просмотром.
-        </CustomText>
-      </div>
-
-      <CtaButton
-        background="#0f62fe"
-        color="#fff"
-        border="1px solid #0f62fe"
-        :click="openCreateModal"
-      >
-        + Добавить видео
-      </CtaButton>
-    </div>
+    <PageHeader
+      title="Электронная медиатека"
+      button="+ Добавить видео"
+      :click="openCreateModal"
+      :permissions="['books.post.self']"
+    />
 
     <VideoModal
       v-if="showModal"
@@ -70,9 +57,9 @@
 </template>
 
 <script>
+import PageHeader from "@/common/PageHeader";
 import SearchBar from "@/common/SearchBar";
 import CustomText from "@/common/CustomText";
-import CtaButton from "@/common/CtaButton";
 import { SIZES } from "@/utils/appConsts";
 import {
   editVideo,
@@ -92,9 +79,9 @@ const getInitialData = () => ({
 export default {
   name: "MediaLibrary",
   components: {
-    CtaButton,
     CustomText,
     SearchBar,
+    PageHeader,
     VideoCard,
     VideoModal,
   },
@@ -227,7 +214,6 @@ export default {
 @import "@/styles/variables.scss";
 
 .root {
-  padding-bottom: $xxl;
 }
 
 .hero {
