@@ -146,10 +146,10 @@
             </el-table-column>
             <el-table-column label="Действие" width="120" align="right">
               <template slot-scope="scope">
-                <el-button type="text" @click="openEditQuestion(scope.row)">
+                <el-button size="mini" type="text" @click="openEditQuestion(scope.row)">
                   Редактировать
                 </el-button>
-                <el-button type="text" @click="removeQuestion(scope.row)">
+                <el-button size="mini" type="text" @click="removeQuestion(scope.row)">
                   Удалить
                 </el-button>
               </template>
@@ -654,6 +654,7 @@ export default {
 
 .card-header {
   font-family: $nova-bold;
+  margin-bottom: $l;
 }
 
 .tests-table {

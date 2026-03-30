@@ -64,8 +64,7 @@
               <el-table-column type="index" label="№" width="55" />
               <el-table-column label="Студент" min-width="200">
                 <template slot-scope="{ row }">
-                  <span v-if="row.studentName">{{ row.studentName }}</span>
-                  <span v-else class="user-id-fallback">ID: {{ row.email }}</span>
+                  <span>{{ row.studentName }}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -196,7 +195,7 @@ export default {
               const fullName = student?.fullname
                 || (student?.surname && student?.name
                   ? `${student.surname} ${student.name}${student.patronymic ? ` ${student.patronymic}` : ""}`
-                  : null);
+                  : attempt.user_id);
               return { ...attempt, studentName: fullName || null };
             } catch {
               return { ...attempt, studentName: null };
