@@ -16,11 +16,7 @@
       :key="field"
       :column-key="field"
       :field="data => getCellText(data, field)"
-      :header-style="
-        rotate
-          ? `height: 200px; width: ${width}px; writing-mode: vertical-rl; transform: rotate(180deg); text-align: right`
-          : `height: 200px; width: ${width}px`
-      "
+      :header-style="headerStyle(rotate, width)"
       :body-style="`width: ${width}px; height: 110px`"
       :body-class="cellBodyClass(field)"
       :frozen="['index', 'fullname'].includes(field)"
@@ -57,7 +53,7 @@
           />
         </template>
         <template v-else>
-          {{ slotProps.data[field] }}
+          {{ getCellText(slotProps.data, field) }}
         </template>
       </template>
 
@@ -290,6 +286,17 @@ class ApplicantsDocuments extends Vue {
 
   savePrevValue({ data, field }) {
     this.currentEditingValue = data[field];
+  }
+
+  headerStyle(rotate, width) {
+    const baseStyle = `height: 200px; width: ${width}px; text-align: center; `
+      + "white-space: normal; word-break: break-word; line-height: 1.2; overflow: hidden";
+
+    if (!rotate) {
+      return baseStyle;
+    }
+
+    return `${baseStyle}; writing-mode: vertical-rl; text-orientation: mixed`;
   }
 
   synchronizeHeights() {
