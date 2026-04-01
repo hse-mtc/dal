@@ -82,6 +82,7 @@ import { UserModule } from "@/store";
 
 export default {
   name: "Login",
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   data() {
     const validateEmail = (rule, value, callback) => {
       if (!validEmail(value)) {
@@ -115,6 +116,7 @@ export default {
   },
   watch: {
     $route: {
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       handler(route) {
         this.redirect = route.query && route.query.redirect;
       },
@@ -122,6 +124,7 @@ export default {
     },
   },
   methods: {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     showPwd() {
       if (this.passwordType === "password") {
         this.passwordType = "";
@@ -132,6 +135,7 @@ export default {
         this.$refs.password.focus();
       });
     },
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     handleLogin() {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
