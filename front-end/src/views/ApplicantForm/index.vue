@@ -365,10 +365,42 @@ class ApplicantForm extends Vue {
     //   /[A-Za-z0-9._%+-]+@edu\.hse\.ru$/,
     //   "Почта должна оканчиваться на @edu.hse.ru",
     // );
-    const phoneValidator = getValidator(
-      /^\+?\d{11}$/,
-      "Введите корректный номер телефона",
-    );
+
+    // Phone validator matching backend rules:
+    // - Must be 11 digits starting with 7
+    // - Can start with +, 8 (converted to 7), or 7
+    const phoneValidator = {
+      validator: (rule, value, cb) => {
+        if (!value) {
+          cb();
+          return;
+        }
+
+        let number = value.trim();
+
+        if (!number) {
+          cb();
+          return;
+        }
+
+        // Remove leading '+'
+        if (number.startsWith("+")) {
+          number = number.slice(1);
+        }
+
+        // Replace leading '8' with '7'
+        if (number.startsWith("8")) {
+          number = `7${number.slice(1)}`;
+        }
+
+        // Check if it's exactly 11 digits and starts with 7
+        if (number.length === 11 && number.startsWith("7") && /^\d{11}$/.test(number)) {
+          cb();
+        } else {
+          cb(new Error("Номер телефона должен состоять из 11 цифр и начинаться с 7 (или +7, или 8)"));
+        }
+      },
+    };
     const makeRequired = fields => fields.reduce((memo, item) => ({
       ...memo,
       [item]: [required],
