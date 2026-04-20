@@ -6,6 +6,7 @@ class Campus(Enum):
     SAINT_PETERSBURG = "SP"
     NIZHNY_NOVGOROD = "NN"
     PERM = "PE"
+    VAVT = "VA"
 
     @property
     def label(self) -> str:
@@ -17,6 +18,8 @@ class Campus(Enum):
             return "Нижний Новгород"
         if self == Campus.PERM:
             return "Пермь"
+        if self == Campus.VAVT:
+            return "Всероссийская академия внешней торговли"
         raise ValueError("Unknown campus")
 
     @staticmethod
@@ -26,6 +29,7 @@ class Campus(Enum):
             Campus.SAINT_PETERSBURG,
             Campus.NIZHNY_NOVGOROD,
             Campus.PERM,
+            Campus.VAVT,
         ]
         return [(c.value, c.label) for c in campuses]
 
