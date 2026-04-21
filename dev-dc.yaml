@@ -56,6 +56,20 @@ services:
     volumes:
       - ./watchdoc:/watchdoc
 
+  list-folders:
+    build:
+      context: .
+      dockerfile: watchdoc/Dockerfile
+    env_file:
+      - .env
+      - watchdoc/.env
+    command: python scripts/list_folders.py
+    volumes:
+      - ./watchdoc:/watchdoc
+    working_dir: /watchdoc
+    depends_on:
+      - watchdoc
+
   back-end:
     container_name: back-end
     build:
