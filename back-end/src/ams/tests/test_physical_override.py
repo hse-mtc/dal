@@ -158,9 +158,7 @@ def test_override_replaces_stale_results(su_client, applicant):
     )
     assert resp.status_code == 200
 
-    types = set(
-        ap.exercise_results.values_list("exercise_type", flat=True)
-    )
+    types = set(ap.exercise_results.values_list("exercise_type", flat=True))
     assert types == {"PULL_UPS", "RUN_60", "RUN_1K"}  # RUN_3K удалён
 
 
