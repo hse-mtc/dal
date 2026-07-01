@@ -25,6 +25,11 @@ exercise_results_detail = ExerciseResultViewSet.as_view(
         "delete": "destroy",
     }
 )
+exercise_results_override = ExerciseResultViewSet.as_view(
+    {
+        "post": "override",
+    }
+)
 
 urlpatterns = [
     # Router.
@@ -41,6 +46,13 @@ urlpatterns = [
         "applicants/<int:applicant_pk>/exercise-results/",
         exercise_results_list,
         name="exercise-results-list",
+    ),
+    # Ручная (дословная) загрузка результатов комиссии — до detail-роута,
+    # чтобы "override" не был распознан как exercise_type.
+    path(
+        "applicants/<int:applicant_pk>/exercise-results/override/",
+        exercise_results_override,
+        name="exercise-results-override",
     ),
     path(
         "applicants/<int:applicant_pk>/exercise-results/<str:exercise_type>/",

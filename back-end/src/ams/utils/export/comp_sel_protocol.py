@@ -358,7 +358,9 @@ def _make_applicant_row(
             row += [("", formats.table_center)] * 3
             continue
 
-        result_value = _format_exercise_value(exercise["value"])
+        result_value = _format_exercise_value(
+            exercise["value"], exercise.get("exercise_type")
+        )
         row += [
             (exercise["number"], formats.table_center),
             (result_value, formats.table_center),
@@ -420,14 +422,23 @@ def _select_best_exercises(application_process, registry: dict) -> dict:
                 "number": EXERCISE_NUMBERS.get(result.exercise_type, ""),
                 "value": result.value,
                 "score": result.secondary_score,
+                "exercise_type": result.exercise_type,
             }
 
     return best
 
 
-def _format_exercise_value(value):
+# Беговые упражнения на длинные дистанции хранятся в десятичных минутах,
+# но в протоколе показываются как мин:сек (3.85 -> "3:51").
+_MMSS_EXERCISES = {ExerciseType.LONG_RUN_1KM, ExerciseType.LONG_RUN_3KM}
+
+
+def _format_exercise_value(value, exercise_type=None):
     if value is None:
         return ""
+    if exercise_type in _MMSS_EXERCISES and isinstance(value, (int, float)):
+        total_seconds = round(value * 60)
+        return f"{total_seconds // 60}:{total_seconds % 60:02d}"
     if isinstance(value, float) and value.is_integer():
         return int(value)
     return round(value, 2) if isinstance(value, float) else value
