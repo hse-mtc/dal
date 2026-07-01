@@ -36,9 +36,10 @@ class ExerciseResult(models.Model):
 
     def save(self, *args, **kwargs):
         """Автоматический пересчет баллов при сохранении."""
-        # Избегаем рекурсии: если обновляется только secondary_score, не пересчитываем
+        # Избегаем рекурсии: если обновляется только secondary_score, не пересчитываем.
+        # `_skip_recalc` — ручной ввод результатов комиссии (балл задаётся дословно).
         update_fields = kwargs.get("update_fields")
-        should_recalculate = (
+        should_recalculate = not getattr(self, "_skip_recalc", False) and (
             update_fields is None
             or "secondary_score" not in update_fields
             or len(update_fields) > 1
@@ -56,6 +57,10 @@ class ExerciseResult(models.Model):
 @receiver(post_delete, sender=ExerciseResult)
 def recalculate_on_delete(sender, instance, **kwargs):
     """Пересчет баллов при удалении результата."""
+    # При ручной замене результатов (override) пересчёт подавляется.
+    if getattr(instance, "_skip_recalc", False):
+        return
+
     from ams.physical.recalculate import recalculate_physical_scores
 
     recalculate_physical_scores(instance.application_process)

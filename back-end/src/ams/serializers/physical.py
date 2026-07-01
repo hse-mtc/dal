@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from ams.models.physical import ExerciseResult
+from ams.physical.exercises import ExerciseType
 
 
 class ExerciseResultSerializer(serializers.ModelSerializer):
@@ -81,3 +82,31 @@ class ExerciseDefinitionSerializer(serializers.Serializer):
     unit = serializers.CharField()
     extra_params = serializers.ListField(child=serializers.CharField())
     higher_is_better = serializers.BooleanField()
+
+
+class ExerciseResultOverrideItemSerializer(serializers.Serializer):
+    """Один результат при ручной (дословной) загрузке данных комиссии.
+
+    В отличие от `ExerciseResultSerializer`, `secondary_score` записывается
+    напрямую и НЕ пересчитывается из `value`. Валидацию `extra_params` по
+    определению упражнения намеренно не выполняем — вводим числа дословно.
+    """
+
+    exercise_type = serializers.ChoiceField(choices=ExerciseType.choices)
+    value = serializers.FloatField()
+    secondary_score = serializers.IntegerField(min_value=0, max_value=100)
+    extra_params = serializers.JSONField(required=False, default=dict)
+
+
+class PhysicalOverrideSerializer(serializers.Serializer):
+    """Полная (дословная) выгрузка физ. результатов абитуриента от комиссии.
+
+    Заменяет весь набор результатов и выставляет агрегаты напрямую, без
+    вызова калькулятора баллов.
+    """
+
+    results = ExerciseResultOverrideItemSerializer(many=True)
+    strength_score = serializers.IntegerField(min_value=0, max_value=100)
+    speed_score = serializers.IntegerField(min_value=0, max_value=100)
+    endurance_score = serializers.IntegerField(min_value=0, max_value=100)
+    physical_test_grade = serializers.IntegerField(min_value=0, max_value=100)
