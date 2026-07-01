@@ -102,9 +102,7 @@ class ExerciseResultViewSet(ModelViewSet):
 
         with transaction.atomic():
             # Удаляем устаревшие результаты (пересчёт подавляем).
-            for stale in ap.exercise_results.exclude(
-                exercise_type__in=incoming.keys()
-            ):
+            for stale in ap.exercise_results.exclude(exercise_type__in=incoming.keys()):
                 stale._skip_recalc = True
                 stale.delete()
 
@@ -114,9 +112,7 @@ class ExerciseResultViewSet(ModelViewSet):
             for etype, item in incoming.items():
                 obj = ap.exercise_results.filter(exercise_type=etype).first()
                 if obj is None:
-                    obj = ExerciseResult(
-                        application_process=ap, exercise_type=etype
-                    )
+                    obj = ExerciseResult(application_process=ap, exercise_type=etype)
                 obj.value = item["value"]
                 obj.secondary_score = item["secondary_score"]
                 obj.extra_params = item.get("extra_params", {})
