@@ -119,6 +119,7 @@
         :key="`${currentPage}-${entriesAmount}`"
         :class="$style.table"
         :data="data"
+        :campus="selectedCampus"
         :start-index="(currentPage - 1) * pageSize"
         :on-change="onUpdate"
         :on-open-physical-modal="openPhysicalModal"
@@ -153,6 +154,7 @@ import moment from "moment";
 import {
   getApplicationsStudents,
   updateStudentApplicationInfo,
+  updateApplicantMilspecialty,
   APPLICATIONS_EXPORT_LINK,
   APPLICATIONS_CSP_EXPORT_LINK,
   APPLICATIONS_DET_EXPORT_LINK,
@@ -294,6 +296,9 @@ export default {
         passport: item.passport,
         personal_documents_info: item.personal_documents_info,
         program: item.program_code,
+        program_id: item.program_id,
+        milspecialty: item.milspecialty,
+        milspecialty_id: item.milspecialty?.id,
         ...item.application_process,
       }));
       this.entriesAmount = data.count;
@@ -306,7 +311,11 @@ export default {
 
     async onUpdate({ id, key, value }) {
       try {
-        await updateStudentApplicationInfo(id, { [key]: value });
+        if (key === "milspecialty") {
+          await updateApplicantMilspecialty(id, value);
+        } else {
+          await updateStudentApplicationInfo(id, { [key]: value });
+        }
         return true;
       } catch (e) {
         console.error("Не удалось обновить данные студента о поступлении: ", e);

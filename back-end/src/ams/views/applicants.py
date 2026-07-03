@@ -29,6 +29,7 @@ from conf import settings
 from common.constants import MUTATE_ACTIONS
 
 from common.models.milspecialties import Milspecialty
+from common.serializers.milspecialties import MilspecialtySerializer
 
 from auth.permissions import Permission, BasePermission
 
@@ -41,6 +42,7 @@ from ams.serializers.applicants import (
     ApplicantMutateSerializer,
     ApplicationProcessSerializer,
     ApplicantWithApplicationProcessSerializer,
+    ApplicantMilspecialtyMutateSerializer,
 )
 
 from ams.filters.applicants import ApplicantFilter
@@ -88,7 +90,10 @@ class ApplicantPageNumberPagination(pagination.PageNumberPagination):
 @extend_schema(tags=["applicants"])
 class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
     # pylint: disable=too-many-public-methods
-    queryset = Applicant.objects.order_by("surname", "name", "patronymic", "id")
+    queryset = Applicant.objects.select_related(
+        "milspecialty",
+        "university_info__program__faculty",
+    ).order_by("surname", "name", "patronymic", "id")
 
     permission_classes = [ApplicantPermission]
     scoped_permission_class = ApplicantPermission
@@ -142,6 +147,8 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
             return ApplicantWithApplicationProcessSerializer
         if self.action == "application":
             return ApplicationProcessSerializer
+        if self.action == "milspecialty":
+            return ApplicantMilspecialtyMutateSerializer
         if self.action in MUTATE_ACTIONS:
             return ApplicantMutateSerializer
         return ApplicantSerializer
@@ -269,6 +276,38 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         return Response(
             status=status.HTTP_200_OK,
             data=ApplicationProcessSerializer(instance=updated).data,
+        )
+
+    @action(detail=True, methods=["patch"], permission_classes=[ApplicantPermission])
+    def milspecialty(self, request: Request, pk=None) -> Response:
+        """Перенести абитуриента в другую ВУС (без перегенерации документов)."""
+
+        # pylint: disable=unused-argument,invalid-name
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        applicant = self.get_object()
+        new_milspecialty: Milspecialty = serializer.validated_data["milspecialty"]
+
+        program_id = applicant.university_info.program_id
+        campus = applicant.university_info.program.faculty.campus
+        if (
+            not new_milspecialty.is_selectable_by_program(program_id)
+            or campus not in new_milspecialty.available_for
+        ):
+            return Response(
+                {
+                    "detail": "You can't select this milspecialty with your educational program"
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        applicant.milspecialty = new_milspecialty
+        applicant.save(update_fields=["milspecialty"])
+
+        return Response(
+            status=status.HTTP_200_OK,
+            data=MilspecialtySerializer(instance=new_milspecialty).data,
         )
 
     def generate_students_excel_report(
