@@ -17,6 +17,8 @@ from common.serializers.universities import (
 from drf_writable_nested.serializers import WritableNestedModelSerializer
 from rest_framework import serializers
 
+from common.models.milspecialties import Milspecialty
+
 from ams.models.applicants import (
     Applicant,
     ApplicationProcess,
@@ -111,10 +113,15 @@ class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
         read_only=True,
         source="university_info.program.code",
     )
+    program_id = serializers.IntegerField(
+        read_only=True,
+        source="university_info.program.id",
+    )
     faculty = serializers.CharField(
         read_only=True,
         source="university_info.program.faculty.title",
     )
+    milspecialty = MilspecialtySerializer(read_only=True)
     application_process = ApplicationProcessSerializer(read_only=True)
     marital_status = serializers.SerializerMethodField(read_only=True)
 
@@ -128,7 +135,17 @@ class ApplicantWithApplicationProcessSerializer(serializers.ModelSerializer):
             "fullname",
             "birth_date",
             "program_code",
+            "program_id",
             "faculty",
+            "milspecialty",
             "application_process",
             "marital_status",
         ]
+
+
+class ApplicantMilspecialtyMutateSerializer(serializers.Serializer):
+    """Смена ВУС абитуриента (лёгкий перенос без документов)."""
+
+    milspecialty = serializers.PrimaryKeyRelatedField(
+        queryset=Milspecialty.objects.all()
+    )

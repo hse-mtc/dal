@@ -61,6 +61,12 @@ export const updateStudentApplicationInfo = (id, data) => request({
   data,
 });
 
+export const updateApplicantMilspecialty = (id, milspecialtyId) => request({
+  url: `${BASE_API_URL}${applicants}${id}/milspecialty/`,
+  method: "PATCH",
+  data: { milspecialty: milspecialtyId },
+});
+
 export const findApplicant = id => request({
   url: `${BASE_API_URL}${applicants}${id}/`,
   method: "GET",

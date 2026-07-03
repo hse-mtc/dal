@@ -62,6 +62,14 @@
         #editor="{ data: editorData }"
       >
         <SelectInput
+          v-if="field === 'milspecialty'"
+          v-model="editorData.milspecialty_id"
+          :options="milspecialtyOptionsFor(editorData)"
+          :clearable="false"
+          @change="onUpdateMilspecialty(editorData, $event)"
+        />
+
+        <SelectInput
           v-if="field === 'medical_examination'"
           v-model="editorData[field]"
           :options="medicalExaminationOptions"
@@ -105,6 +113,7 @@ import {
 } from "vue-property-decorator";
 import { SelectInput, SingleCheckbox, NumberInput } from "@/common/inputs";
 import { UserModule } from "@/store";
+import { getMilSpecialtiesSelectableByProgram } from "@/api/reference-book";
 
 const fields = {
   index: {
@@ -143,6 +152,12 @@ const fields = {
 };
 
 const additionalFields = {
+  milspecialty: {
+    abbr: "ВУС",
+    title: "Военно-учётная специальность",
+    width: 180,
+    rotate: false,
+  },
   medical_examination: {
     abbr: "Результаты медицинского освидетельствования",
     title: "Результаты медицинского освидетельствования",
@@ -253,9 +268,13 @@ class ApplicantsDocuments extends Vue {
   @Prop({ type: Number, required: true }) startIndex
   @Prop({ type: Function, default: () => true }) onChange
   @Prop({ type: Function, default: undefined }) onOpenPhysicalModal
+  @Prop({ type: String, default: null }) campus
 
   // undefined, so as not to be reactive
   currentEditingValue = undefined
+
+  // Кэш опций ВУС по id образовательной программы (разные строки — разные программы)
+  milspecialtyOptionsByProgram = {}
 
   fields = UserModule.email.includes("study.office")
     ? fields
@@ -270,6 +289,7 @@ class ApplicantsDocuments extends Vue {
     "mean_grade",
     "medical_examination",
     "prof_psy_selection",
+    "milspecialty",
   ]
 
   medicalExaminationOptions = medicalExaminationOptions
@@ -286,6 +306,62 @@ class ApplicantsDocuments extends Vue {
 
   savePrevValue({ data, field }) {
     this.currentEditingValue = data[field];
+  }
+
+  milspecialtyOptionsFor(row) {
+    return this.milspecialtyOptionsByProgram[row.program_id] || [];
+  }
+
+  // Предзагрузка опций ВУС по всем программам, встречающимся в текущих данных.
+  // Делается заранее (а не по cell-edit-init), т.к. PrimeColumn.field — функция,
+  // и событие редактирования не даёт строкового имени поля.
+  preloadMilspecialtyOptions() {
+    if (!this.fields.milspecialty) {
+      return;
+    }
+    const programIds = [
+      ...new Set((this.data || []).map(row => row.program_id).filter(Boolean)),
+    ];
+    programIds.forEach(programId => this.loadMilspecialtyOptions(programId));
+  }
+
+  async loadMilspecialtyOptions(programId) {
+    if (!programId || this.milspecialtyOptionsByProgram[programId]) {
+      return;
+    }
+    try {
+      const { data } = await getMilSpecialtiesSelectableByProgram(
+        this.campus,
+        programId,
+      );
+      const options = data
+        .filter(item => item.selectable_by_program)
+        .map(item => ({
+          label: item.title ? `${item.code} - ${item.title}` : item.code,
+          value: item.id,
+          code: item.code,
+          title: item.title,
+        }));
+      this.$set(this.milspecialtyOptionsByProgram, programId, options);
+    } catch (e) {
+      console.error("Не удалось загрузить список ВУС", e);
+    }
+  }
+
+  async onUpdateMilspecialty(data, newId) {
+    const prevId = data.milspecialty_id;
+    if (await this.onChange({ id: data.id, key: "milspecialty", value: newId })) {
+      const option = this.milspecialtyOptionsFor(data).find(o => o.value === newId);
+      if (option) {
+        // eslint-disable-next-line no-param-reassign
+        data.milspecialty = { id: newId, code: option.code, title: option.title };
+      }
+      // eslint-disable-next-line no-param-reassign
+      data.milspecialty_id = newId;
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      data.milspecialty_id = prevId;
+    }
   }
 
   headerStyle(rotate, width) {
@@ -342,6 +418,7 @@ class ApplicantsDocuments extends Vue {
   @Watch("data", { immediate: true, deep: true })
   onDataChanged(newVal, oldVal) {
     this.synchronizeHeights();
+    this.preloadMilspecialtyOptions();
   }
 
   getCellText(data, field) {
@@ -359,6 +436,15 @@ class ApplicantsDocuments extends Vue {
 
     if (field === "prof_psy_selection") {
       return getSelectLabel(data[field], profPsySelection);
+    }
+
+    if (field === "milspecialty") {
+      if (!data.milspecialty) {
+        return "—";
+      }
+      return data.milspecialty.title
+        ? `${data.milspecialty.code} - ${data.milspecialty.title}`
+        : data.milspecialty.code;
     }
 
     if (checkboxesFields.includes(field)) {
