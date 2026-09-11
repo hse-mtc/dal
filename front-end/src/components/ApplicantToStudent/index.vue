@@ -18,6 +18,18 @@
             <h3 class="sub-title">
               Регистрация студента ВУЦ из абитуриента
             </h3>
+            <AZGuard :permissions="['applicants.get.all']">
+              <a
+                :href="getApplicantAdminUrl(userId)"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="django-admin-link"
+              >
+                <ElButton size="small" icon="el-icon-setting">
+                  Открыть в Django Admin
+                </ElButton>
+              </a>
+            </AZGuard>
           </div>
 
           <!-- eslint-disable vue/html-quotes -->
@@ -49,6 +61,7 @@
 
 <script>
 import Student from "@/components/ApplicantToStudent/Student";
+import { getApplicantAdminUrl } from "@/utils/djangoAdmin";
 
 export default {
   components: { Student },
@@ -66,10 +79,8 @@ export default {
     };
   },
 
-  computed: {
-  },
-
   methods: {
+    getApplicantAdminUrl,
     registrationCompleted() {
       this.registrationComplete = true;
       setTimeout(() => {
@@ -82,4 +93,9 @@ export default {
 
 <style lang="scss" scoped>
 @import "style";
+
+.django-admin-link {
+  display: inline-block;
+  margin-top: 12px;
+}
 </style>
