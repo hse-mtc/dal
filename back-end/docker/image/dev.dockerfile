@@ -1,5 +1,5 @@
 # Base Python image
-FROM python:3.10-bullseye
+FROM python:3.10-bookworm
 
 # Update system and install backup utilities
 COPY back-end/docker/image/install-postgres-client.sh /
