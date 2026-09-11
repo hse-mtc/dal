@@ -165,6 +165,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Applicant photos are sent as base64, which adds roughly 33% to the request.
+# Keep the request limit above the explicit 2 MiB photo validation threshold.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 4 * 1024 * 1024
+
 # REST framework settings
 
 REST_FRAMEWORK = {

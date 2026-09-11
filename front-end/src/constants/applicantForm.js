@@ -21,27 +21,27 @@ export const ABOUT = {
   surname: {
     component: "text",
     title: "Фамилия",
-    props: { onlyChars: true, placeholder: "Чехов" },
+    props: { placeholder: "Чехов" },
   },
   name: {
     component: "text",
     title: "Имя",
-    props: { onlyChars: true, placeholder: "Антон" },
+    props: { placeholder: "Антон" },
   },
   patronymic: {
     component: "text",
     title: "Отчество (при наличии)",
-    props: { onlyChars: true, placeholder: "Павлович" },
+    props: { placeholder: "Павлович" },
   },
   citizenship: {
     component: "text",
     title: "Гражданство",
-    props: { onlyChars: true, placeholder: "РФ" },
+    props: { placeholder: "РФ" },
   },
   nationality: {
     component: "text",
     title: "Национальность",
-    props: { onlyChars: true, placeholder: "Русский" },
+    props: { placeholder: "Русский" },
   },
   marital_status: {
     component: "select",
@@ -55,17 +55,17 @@ export const ABOUT = {
   surname_genitive: {
     component: "text",
     title: "Фамилия в родительном падеже",
-    props: { onlyChars: true, placeholder: "Чехова" },
+    props: { placeholder: "Чехова" },
   },
   name_genitive: {
     component: "text",
     title: "Имя в родительном падеже",
-    props: { onlyChars: true, placeholder: "Антона" },
+    props: { placeholder: "Антона" },
   },
   patronymic_genitive: {
     component: "text",
     title: "Отчество в родительном падеже (при наличии)",
-    props: { onlyChars: true, placeholder: "Павловича" },
+    props: { placeholder: "Павловича" },
   },
 };
 
@@ -200,7 +200,11 @@ export const PHOTO = {
   photo: {
     component: "file",
     title: "Загрузите фотографию размером 3x4",
-    props: { filesTypes: [".png", ".jpg", ".jpeg"] },
+    props: {
+      filesTypes: [".png", ".jpg", ".jpeg"],
+      limit: 1,
+      annotation: "JPG или PNG, не более 2 МБ",
+    },
   },
 };
 
@@ -219,22 +223,19 @@ export const getRelationData = rel => ({
   surname: {
     component: "text",
     title: `Фамилия ${rel}`,
-    props: { onlyChars: true },
   },
   name: {
     component: "text",
     title: `Имя ${rel}`,
-    props: { onlyChars: true },
   },
   patronymic: {
     component: "text",
     title: `Отчество ${rel} (при наличии)`,
-    props: { onlyChars: true },
   },
   citizenship: {
     component: "text",
     title: `Гражданство ${rel}`,
-    props: { onlyChars: true, placeholder: "РФ" },
+    props: { placeholder: "РФ" },
   },
   permanent_address: {
     component: "text",
@@ -245,7 +246,6 @@ export const getRelationData = rel => ({
     component: "text",
     title: `Страна рождения ${rel}`,
     props: {
-      onlyChars: true,
       annotation: "не более 64х символов",
     },
   },

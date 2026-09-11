@@ -11,6 +11,23 @@
         </el-steps>
       </div>
 
+      <div
+        v-if="validationErrors.length"
+        :class="$style.errors"
+        role="alert"
+        aria-live="polite"
+      >
+        <p>Исправьте ошибки в анкете:</p>
+        <ul>
+          <li v-for="(error, index) in validationErrors" :key="index">
+            <button v-if="error.step" type="button" @click="showError(error)">
+              {{ errorLabel(error) }}: {{ error.message }}
+            </button>
+            <span v-else>{{ error.message }}</span>
+          </li>
+        </ul>
+      </div>
+
       <template v-if="step !== STEPS.brothers && step !== STEPS.sisters">
         <p
           v-if="step === STEPS.contactInfo"
@@ -22,8 +39,9 @@
           :key="step"
           ref="form"
           v-model="applicantData[step]"
-          :rules="rules[step]"
+          :errors="fieldErrors(step)"
           :fields="fields[step]"
+          @field-change="clearFieldError(step, null, $event)"
         >
           <template #buttons>
             {{ null }}
@@ -76,8 +94,9 @@
                 ref="form"
                 :key="`${step}-${index}`"
                 v-model="applicantData[step][index]"
-                :rules="rules[step]"
+                :errors="fieldErrors(step, index)"
                 :fields="fields[step]"
+                @field-change="clearFieldError(step, index, $event)"
               >
                 <template #buttons>
                   {{ null }}
@@ -108,6 +127,7 @@
         <el-button
           v-else
           v-loading="isSubmitting"
+          :disabled="isSubmitting"
           type="primary"
           native-type="submit"
           @click="submit"
@@ -144,8 +164,6 @@
 import {
   Component, Ref, Vue, Watch,
 } from "vue-property-decorator";
-import _pick from "lodash/pick";
-import _omit from "lodash/omit";
 
 import GenericForm from "@/common/Form/index.vue";
 
@@ -171,7 +189,7 @@ import {
 } from "@/constants/applicantForm";
 
 import { getAvailableForApplicantsProgramsByCampus, getMilSpecialtiesSelectableByProgram, getRecruitmentOffices } from "@/api/reference-book";
-import copyToClipboard from "@/utils/copyToClipboard";
+import { validateApplicant, normalizeApplicant, applicantApiErrors } from "@/utils/applicantValidation";
 import { UserModule } from "@/store";
 
 const createData = fields => Object.keys(fields).reduce(
@@ -299,6 +317,7 @@ class ApplicantForm extends Vue {
 
   formSubmitted = false
   isSubmitting = false
+  validationErrors = []
   headers = HEADERS_BY_STEPS
 
   step = STEPS.about
@@ -324,209 +343,6 @@ class ApplicantForm extends Vue {
 
   get stepIndex() { return Object.keys(STEPS).indexOf(this.step); }
   get campus() { return this.applicantData.universityInfo.campus; }
-
-  get rules() {
-    const required = { required: true, message: "Обязательное поле" };
-    const requiredBool = {
-      required: true,
-      message: "Обязательное поле",
-      validator: (rule, value, cb) => {
-        if (!value) {
-          cb(new Error("Обязательное поле"));
-        } else {
-          cb();
-        }
-      },
-    };
-
-    const getValidator = (regExp, msg) => ({
-      validator: (rule, value, cb) => {
-        if (value && !regExp.test(value)) {
-          cb(new Error(msg));
-        } else {
-          cb();
-        }
-      },
-    });
-
-    const getMaxLengthValidator = max => ({
-      validator: (rule, value, cb) => {
-        if (value && value.length > max) {
-          cb(new Error(`Максимальное количество символов - ${max}`));
-        } else {
-          cb();
-        }
-      },
-    });
-
-    const mailValidator = getValidator(/@.+\..+/, "Введите корректную почту");
-    // Временно: домен @edu.hse.ru больше не обязателен; подсказка для студентов ВШЭ — в шаблоне.
-    // const corpMailValidator = getValidator(
-    //   /[A-Za-z0-9._%+-]+@edu\.hse\.ru$/,
-    //   "Почта должна оканчиваться на @edu.hse.ru",
-    // );
-
-    // Phone validator matching backend rules:
-    // - Must be 11 digits starting with 7
-    // - Can start with +, 8 (converted to 7), or 7
-    const phoneValidator = {
-      validator: (rule, value, cb) => {
-        if (!value) {
-          cb();
-          return;
-        }
-
-        let number = value.trim();
-
-        if (!number) {
-          cb();
-          return;
-        }
-
-        // Remove leading '+'
-        if (number.startsWith("+")) {
-          number = number.slice(1);
-        }
-
-        // Replace leading '8' with '7'
-        if (number.startsWith("8")) {
-          number = `7${number.slice(1)}`;
-        }
-
-        // Check if it's exactly 11 digits and starts with 7
-        if (number.length === 11 && number.startsWith("7") && /^\d{11}$/.test(number)) {
-          cb();
-        } else {
-          cb(new Error("Номер телефона должен состоять из 11 цифр и начинаться с 7 (или +7, или 8)"));
-        }
-      },
-    };
-    const makeRequired = fields => fields.reduce((memo, item) => ({
-      ...memo,
-      [item]: [required],
-    }), {});
-
-    const relationFields = {
-      ...makeRequired([
-        "surname",
-        "name",
-        "citizenship",
-        "permanent_address",
-        "date",
-      ]),
-      place: [required, getMaxLengthValidator(64)],
-      country: [required, getMaxLengthValidator(64)],
-      personal_email: [mailValidator],
-      personal_phone_number: [phoneValidator],
-    };
-
-    const withMotherRules = Object.values(this.applicantData.mother).filter(
-      Boolean,
-    ).length;
-
-    const withFatherRules = Object.values(this.applicantData.father).filter(
-      Boolean,
-    ).length;
-
-    const motherFatherPhone = [
-      {
-        required: true,
-        message: withFatherRules
-          ? "Укажите номер матери или отца"
-          : "Укажите номер матери",
-      },
-      phoneValidator,
-    ];
-
-    let fatherFields = {};
-
-    if (!withMotherRules) {
-      if (withFatherRules) {
-        fatherFields = {
-          ...relationFields,
-          personal_phone_number: motherFatherPhone,
-        };
-      }
-    } else if (!this.applicantData.mother.personal_phone_number) {
-      if (withFatherRules) {
-        fatherFields = {
-          ...relationFields,
-          personal_phone_number: motherFatherPhone,
-        };
-      } else {
-        fatherFields = {
-          personal_phone_number: motherFatherPhone,
-        };
-      }
-    }
-
-    return {
-      about: makeRequired([
-        "surname",
-        "name",
-        "citizenship",
-        "nationality",
-        "marital_status",
-        "surname_genitive",
-        "name_genitive",
-      ]),
-      birthInfo: {
-        ...makeRequired(["date"]),
-        country: [required, getMaxLengthValidator(64)],
-        place: [required, getMaxLengthValidator(64)],
-      },
-      passport: {
-        ...makeRequired(["ufms_name", "issue_date"]),
-        series: [
-          required,
-          getValidator(/^\d{4}$/, "Введите серию паспорта в формате 1234"),
-        ],
-        code: [
-          required,
-          getValidator(/^\d{6}$/, "Введите номер паспорта в формате 567890"),
-        ],
-        ufms_code: [
-          required,
-          getValidator(
-            /^\d{3}-\d{3}$/,
-            "Введите код подразделения в формате 700-007 ",
-          ),
-        ],
-      },
-      personalDocumentsInfo: {
-        ...makeRequired(["tax_id", "insurance_number"]),
-        tax_id: [
-          required,
-          getValidator(/^\d{12}$/, "Введите ИНН в формате 771234567890"),
-        ],
-        insurance_number: [
-          required,
-          getValidator(
-            /^\d{3}-\d{3}-\d{3} \d{2}$/, "Введите СНИЛС в формате 200-200-200 20",
-          ),
-        ],
-      },
-      recruitmentOffice: makeRequired(["title"]),
-      universityInfo: {
-        ...makeRequired(["campus", "card_id", "program", "group", "graduation_year"]),
-        program: [
-          required,
-        ],
-      },
-      contactInfo: {
-        personal_email: [mailValidator],
-        corporate_email: [required, mailValidator],
-        personal_phone_number: [phoneValidator],
-      },
-      mother: withMotherRules ? relationFields : {},
-      father: fatherFields,
-      brothers: relationFields,
-      sisters: relationFields,
-      photo: { photo: [required] },
-      milspecialty: { milspecialty: [required] },
-      agreement: { agreement: [requiredBool], isDataCorrect: [requiredBool] },
-    };
-  }
 
   created() { allowMobileView(true); }
 
@@ -597,46 +413,54 @@ class ApplicantForm extends Vue {
     };
   }
 
-  validate() {
-    let isValid = true;
+  fieldErrors(step, index = null) {
+    return this.validationErrors
+      .filter(error => error.step === step && error.index === index)
+      .reduce((result, error) => ({ ...result, [error.field]: error.message }), {});
+  }
 
-    const formValidate = valid => {
-      if (!valid && isValid) {
-        this.$message({
-          type: "error",
-          message: "Заполните все обязательные поля",
-        });
-        isValid = false;
-      }
-    };
+  clearFieldError(step, index, field) {
+    this.validationErrors = this.validationErrors.filter(
+      error => error.step !== step || error.index !== index || error.field !== field,
+    );
+  }
 
-    if (this.form) {
-      if (this.lodash.isArray(this.form)) {
-        this.form.forEach(item => {
-          formValidate(item.validate());
-        });
-      } else {
-        formValidate(this.form.validate());
-      }
+  errorLabel(error) {
+    const field = (this.fields[error.step] || {})[error.field];
+    const number = error.index === null ? "" : ` №${error.index + 1}`;
+    return `${STEPS_RU[error.step]}${number} — ${field ? field.title : "Данные раздела"}`;
+  }
+
+  async showError(error) {
+    this.step = error.step;
+    if (error.index !== null) {
+      this.$set(this.tabsIndex, error.step, String(error.index));
     }
+    await this.$nextTick();
+    const form = Array.isArray(this.form) ? this.form[0] : this.form;
+    if (form) {
+      form.focusField(error.field);
+    }
+  }
 
-    return isValid;
+  validate(all = false) {
+    this.applicantData = normalizeApplicant(this.applicantData);
+    const errors = validateApplicant(this.applicantData, all ? undefined : [this.step]);
+    this.validationErrors = all ? errors : [
+      ...this.validationErrors.filter(error => error.step !== this.step),
+      ...errors,
+    ];
+    if (errors.length) {
+      this.showError(errors[0]);
+      return false;
+    }
+    return true;
   }
 
   next() {
-    const { applicantData, step } = this;
-    const data = applicantData[step];
-
-    Object.keys(data).forEach(key => {
-      if (this.lodash.isString(data[key])) {
-        data[key] = data[key].trim();
-      }
-    });
-
     if (this.validate()) {
       const stepsKeys = Object.keys(STEPS);
-      const stepIndex = stepsKeys.indexOf(step);
-      this.step = stepsKeys[stepIndex + 1] || stepsKeys[stepsKeys.length - 1];
+      this.step = stepsKeys[this.stepIndex + 1] || this.lastStep;
     }
   }
 
@@ -668,6 +492,9 @@ class ApplicantForm extends Vue {
     const newArr = [...this.applicantData[step]];
     newArr.splice(+index, 1);
     this.applicantData[step] = newArr;
+    this.validationErrors = this.validationErrors
+      .filter(error => error.step !== step || error.index !== +index)
+      .map(error => (error.step === step && error.index > +index ? { ...error, index: error.index - 1 } : error));
     this.tabsIndex = {
       ...this.tabsIndex,
       [step]: +this.tabsIndex[step] ? `${+this.tabsIndex[step] - 1}` : "0",
@@ -679,7 +506,10 @@ class ApplicantForm extends Vue {
   }
 
   submit() {
-    if (this.validate()) {
+    if (this.isSubmitting) {
+      return;
+    }
+    if (this.validate(true)) {
       const family = [];
 
       if (Object.values(this.applicantData.father).filter(Boolean).length) {
@@ -719,6 +549,7 @@ class ApplicantForm extends Vue {
         university_info: this.applicantData.universityInfo,
         family,
         generate_documents: true,
+        ...this.applicantData.agreement,
       };
 
       reader.onload = async() => {
@@ -733,41 +564,26 @@ class ApplicantForm extends Vue {
           }
           this.formSubmitted = true;
         } catch (e) {
-          if (e.response.status < 500) {
-            this.$alert(
-              "Проверьте правильность заполненных данных. Если проблема не решится, отправьте текст ошибки нам на почту: <a href=\"mailto:dal.mtc.hse@yandex.ru\">dal.mtc.hse@yandex.ru</a>",
-              "Не удалось отправить форму",
-              {
-                confirmButtonText: "Скопировать текст ошибки",
-                type: "error",
-                dangerouslyUseHTMLString: true,
-                callback: async action => {
-                  const dataToCopy = e.response
-                    ? _pick(e.response, ["config", "data"])
-                    : { config: e.config };
-
-                  dataToCopy.config.data = _omit(JSON.parse(dataToCopy.config.data), ["image"]);
-                  if (action !== "cancel") {
-                    if (await copyToClipboard(JSON.stringify(dataToCopy, null, 4))) {
-                      this.$message({
-                        type: "success",
-                        message: "Текст скопирован",
-                      });
-                    } else {
-                      this.$message({
-                        type: "error",
-                        message: "Текст не скопирован",
-                      });
-                    }
-                  }
-                },
-              },
-            );
+          const { response } = e;
+          if (response && response.status === 400) {
+            this.validationErrors = applicantApiErrors(response.data, family);
+            if (!this.validationErrors.length) {
+              this.validationErrors = [{ message: "Проверьте заполнение анкеты и попробуйте ещё раз" }];
+            }
+            const firstFieldError = this.validationErrors.find(error => error.step);
+            if (firstFieldError) {
+              this.showError(firstFieldError);
+            }
           } else {
-            this.$message({
-              type: "error",
-              message: "Ошибка сервера",
-            });
+            let message = "Не удалось отправить анкету. Попробуйте позже; если ошибка повторится, обратитесь в поддержку: dal.mtc.hse@yandex.ru";
+            if (!response) {
+              message = "Не удалось связаться с сервером. Проверьте подключение к интернету и повторите отправку";
+            } else if (response.status === 403) {
+              message = "Недостаточно прав для отправки анкеты. Обратитесь в поддержку: dal.mtc.hse@yandex.ru";
+            } else if (response.status === 413) {
+              message = "Фотография слишком большая. Уменьшите размер файла и повторите отправку";
+            }
+            this.validationErrors = [{ message }];
           }
         }
 
@@ -946,6 +762,26 @@ export default ApplicantForm;
 
 .nonSelectable {
   color: #bbbbbb
+}
+
+.errors {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #f5b9b9;
+  border-radius: 4px;
+  background: #fff4f4;
+  color: #a12622;
+
+  button {
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .contactInfoHint {

@@ -12,6 +12,8 @@
       v-for="({ component, title, props = {}, display = (value) => value }, key) in fields"
       :key="key"
       :prop="key"
+      :error="errors[key]"
+      :data-field="key"
     >
       <component
         :is="components[component]"
@@ -87,6 +89,7 @@ class GenericForm extends Vue {
   @Model("change", { type: Object, required: true }) formData
   @Prop({ type: Object, required: true, default: () => ({}) }) fields
   @Prop({ type: Object, default: () => ({}) }) rules
+  @Prop({ type: Object, default: () => ({}) }) errors
   @Prop({ type: Function, default: () => ({}) }) onSubmit
   @Prop({ type: Boolean }) leftLabel
   @Prop({ default: "auto" }) labelWidth
@@ -106,10 +109,23 @@ class GenericForm extends Vue {
 
   @Emit("change")
   onChange(field, value) {
+    this.$emit("field-change", field);
     return {
       ...this.formData,
       [field]: value,
     };
+  }
+
+  focusField(field) {
+    const item = Array.from(this.$el.querySelectorAll("[data-field]"))
+      .find(element => element.dataset.field === field);
+    if (item) {
+      item.scrollIntoView({ behavior: "smooth", block: "center" });
+      const input = item.querySelector("input, textarea, button");
+      if (input) {
+        input.focus({ preventScroll: true });
+      }
+    }
   }
 
   validate() {

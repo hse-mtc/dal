@@ -163,26 +163,8 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
 
         request.data["user"] = self.request.user.id
 
-        if "marital_status" in request.data:
-            display_to_code = {
-                label: code for code, label in Applicant.MaritalStatus.choices
-            }
-            display_value = request.data["marital_status"]
-            request.data["marital_status"] = display_to_code.get(
-                display_value, Applicant.MaritalStatus.UNKNOWN
-            )
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if not self.milspecialty_is_selectable(
-            request.data["milspecialty"], request.data["university_info"]["program"]
-        ):
-            return Response(
-                {
-                    "detail": "You can't select this milspecialty with your educational program"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         self.request.user.campuses = [self.request.data["university_info"]["campus"]]
         self.request.user.save()
         if self.is_creation_allowed_by_scope(request.data):
@@ -203,38 +185,18 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         )
 
     def update(self, request, *args, **kwargs):
-        applicant = Applicant.objects.get(pk=kwargs["pk"])
+        applicant = self.get_object()
         request.data["user"] = applicant.user.id
-        if (
-            request.data["contact_info"]["corporate_email"]
-            != applicant.contact_info.corporate_email
-        ):
-            return Response(
-                {"detail": "Bad request"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        if not self.milspecialty_is_selectable(
-            request.data["milspecialty"], request.data["university_info"]["program"]
-        ):
-            return Response(
-                {
-                    "detail": "You can't select this milspecialty with your educational program"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         result = super(ApplicantViewSet, self).update(request, **kwargs)
-        applicant.user.campuses = [request.data["university_info"]["campus"]]
+        applicant.refresh_from_db()
+        applicant.user.campuses = [applicant.university_info.campus]
         applicant.user.save()
         updated_applicant = Applicant.objects.get(pk=kwargs["pk"])
-        generate_documents = request.data["generate_documents"]
+        generate_documents = request.data.get("generate_documents", False)
 
         if generate_documents:
             generate_documents_for_applicant(updated_applicant)
         return result
-
-    def milspecialty_is_selectable(self, milspecialty_id: int, program_id: int):
-        milspecialty = Milspecialty.objects.filter(pk=milspecialty_id).first()
-        return milspecialty.is_selectable_by_program(program_id)
 
     @transaction.atomic
     def perform_create(self, serializer):
