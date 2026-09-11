@@ -37,13 +37,31 @@
 
       <template #body="slotProps">
         <template v-if="field === 'index'">
-          <a
-            title="Зарегистрировать в качестве студента ВУЦа"
-            style="cursor: pointer; text-decoration: default; color: black;"
-            @click="navigateToApplicantToStudent(data[slotProps.index])"
-          >
-            {{ startIndex + slotProps.index + 1 }}
-          </a>
+          <div :class="$style.indexCell">
+            <a
+              title="Зарегистрировать в качестве студента ВУЦа"
+              :class="$style.applicantLink"
+              @click="navigateToApplicantToStudent(data[slotProps.index])"
+            >
+              {{ startIndex + slotProps.index + 1 }}
+            </a>
+            <el-tooltip
+              effect="dark"
+              content="Открыть в Django Admin"
+              placement="bottom"
+            >
+              <a
+                :href="getApplicantAdminUrl(slotProps.data.id)"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Открыть в Django Admin"
+                :class="$style.adminButton"
+                @click.stop
+              >
+                <i class="el-icon-setting" />
+              </a>
+            </el-tooltip>
+          </div>
         </template>
         <template v-else-if="field === 'physical_entry'">
           <el-button
@@ -114,11 +132,12 @@ import {
 import { SelectInput, SingleCheckbox, NumberInput } from "@/common/inputs";
 import { UserModule } from "@/store";
 import { getMilSpecialtiesSelectableByProgram } from "@/api/reference-book";
+import { getApplicantAdminUrl } from "@/utils/djangoAdmin";
 
 const fields = {
   index: {
     title: "№",
-    width: 50,
+    width: 72,
     rotate: false,
   },
   fullname: {
@@ -294,6 +313,7 @@ class ApplicantsDocuments extends Vue {
 
   medicalExaminationOptions = medicalExaminationOptions
   profPsySelection = profPsySelection
+  getApplicantAdminUrl = getApplicantAdminUrl
 
   async onUpdate(data, key, value) {
     if (!await this.onChange({ id: data.id, key, value })) {
@@ -485,6 +505,39 @@ export default ApplicantsDocuments;
 
   &:hover {
     color: $darkBlue;
+  }
+}
+
+.indexCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.applicantLink {
+  color: #303133;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.adminButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: $darkBlue;
+  background: #fff;
+  border: 1px solid #c6d5e7;
+  border-radius: 50%;
+  text-decoration: none;
+
+  &:hover,
+  &:focus {
+    color: #409eff;
+    background: #ecf5ff;
+    border-color: #a0cfff;
   }
 }
 
