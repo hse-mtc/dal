@@ -3,6 +3,11 @@
 
 module.exports = {
   clearMocks: true,
+  globals: {
+    __DEV__: false,
+    // Unit tests exercise form behavior; SCSS is compiled by the application build.
+    "vue-jest": { experimentalCSSCompile: false },
+  },
   coverageReporters: ["text"],
   testEnvironment: "jsdom",
   moduleFileExtensions: ["js", "json", "vue"],

@@ -39,7 +39,7 @@ service.interceptors.response.use(
       });
 
       console.error("Не удалось авторизоваться");
-    } else if (error.response.status === 401) {
+    } else if (error.response && error.response.status === 401) {
       const { refreshToken } = UserModule;
 
       try {

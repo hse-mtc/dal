@@ -1,5 +1,7 @@
 import base64
 
+from django.utils import translation
+
 from common.serializers.milspecialties import MilspecialtySerializer
 from common.serializers.personal import (
     BirthInfoSerializer,
@@ -7,11 +9,9 @@ from common.serializers.personal import (
     PassportSerializer,
     PersonalDocumentsInfoSerializer,
     PhotoMutateMixin,
-    RelativeMutateSerializer,
     RelativeSerializer,
 )
 from common.serializers.universities import (
-    UniversityInfoMutateSerializer,
     UniversityInfoSerializer,
 )
 from drf_writable_nested.serializers import WritableNestedModelSerializer
@@ -25,6 +25,17 @@ from ams.models.applicants import (
 )
 from ams.serializers.physical import ExerciseResultSerializer
 from ams.utils.common import get_current_admission_year
+
+from ams.serializers.validation import (
+    QuestionnaireFieldsMixin,
+    ApplicantBirthSerializer,
+    ApplicantContactSerializer,
+    ApplicantPassportSerializer,
+    ApplicantDocumentsSerializer,
+    ApplicantUniversitySerializer,
+    ApplicantRelativeSerializer,
+    ApplicantImageField,
+)
 
 
 class ApplicationProcessSerializer(serializers.ModelSerializer):
@@ -76,19 +87,103 @@ class MaritalStatusField(serializers.ChoiceField):
 
 
 class ApplicantMutateSerializer(
+    QuestionnaireFieldsMixin,
     WritableNestedModelSerializer,
     PhotoMutateMixin,
 ):
-    birth_info = BirthInfoSerializer(required=False)
-    passport = PassportSerializer(required=False)
-    personal_documents_info = PersonalDocumentsInfoSerializer(required=False)
-    university_info = UniversityInfoMutateSerializer(required=False)
-    contact_info = ContactInfoSerializer(required=False)
-    family = RelativeMutateSerializer(required=False, many=True)
-    generate_documents = serializers.BooleanField(required=False)
-    marital_status = MaritalStatusField(
-        choices=Applicant.MaritalStatus.choices, required=False
+    birth_info = ApplicantBirthSerializer()
+    passport = ApplicantPassportSerializer()
+    personal_documents_info = ApplicantDocumentsSerializer()
+    university_info = ApplicantUniversitySerializer()
+    contact_info = ApplicantContactSerializer()
+    family = ApplicantRelativeSerializer(required=False, many=True)
+    image = ApplicantImageField(write_only=True, required=True)
+    agreement = serializers.BooleanField(write_only=True)
+    isDataCorrect = serializers.BooleanField(write_only=True)
+    generate_documents = serializers.BooleanField(required=False, default=False)
+    marital_status = MaritalStatusField(choices=Applicant.MaritalStatus.choices)
+    required_fields = ("citizenship", "nationality", "marital_status")
+    name_fields = (
+        "surname",
+        "name",
+        "patronymic",
+        "surname_genitive",
+        "name_genitive",
+        "patronymic_genitive",
     )
+
+    def run_validation(self, data=serializers.empty):
+        # Include built-in DRF errors (dates, email, lengths and foreign keys).
+        with translation.override("ru"):
+            return super().run_validation(data)
+
+    def validate_marital_status(self, value):
+        if value not in (
+            Applicant.MaritalStatus.SINGLE,
+            Applicant.MaritalStatus.MARRIED,
+        ):
+            raise serializers.ValidationError("Выберите семейное положение из списка")
+        return value
+
+    def validate(self, attrs):
+        errors = {}
+        for field in ("agreement", "isDataCorrect"):
+            if field in attrs and attrs.pop(field) is not True:
+                errors[field] = "Для отправки формы необходимо поставить галочку"
+        birth = attrs.get("birth_info", {})
+        passport = attrs.get("passport", {})
+        birth_date = birth.get("date")
+        issue_date = passport.get("issue_date")
+        if self.instance:
+            birth_date = birth_date or self.instance.birth_info.date
+            issue_date = issue_date or self.instance.passport.issue_date
+        if birth_date and issue_date and issue_date < birth_date:
+            errors["passport"] = {
+                "issue_date": "Дата выдачи паспорта не может быть раньше даты рождения"
+            }
+        family = attrs.get("family", [])
+        parents = [
+            i for i, member in enumerate(family) if member.get("type") in ("MO", "FA")
+        ]
+        if parents and not any(
+            family[i].get("contact_info", {}).get("personal_phone_number")
+            for i in parents
+        ):
+            family_errors = [{} for _ in family]
+            family_errors[parents[0]] = {
+                "contact_info": {
+                    "personal_phone_number": "Укажите телефон хотя бы одного из родителей"
+                }
+            }
+            errors["family"] = family_errors
+        university = attrs.get("university_info", {})
+        program = university.get("program")
+        specialty = attrs.get("milspecialty")
+        if self.instance:
+            program = program or self.instance.university_info.program
+            specialty = specialty or self.instance.milspecialty
+        if (
+            program
+            and specialty
+            and (
+                program.faculty.campus not in specialty.available_for
+                or not specialty.is_selectable_by_program(program)
+            )
+        ):
+            errors[
+                "milspecialty"
+            ] = "Эта военная специальность недоступна для выбранной образовательной программы"
+        if self.instance:
+            email = attrs.get("contact_info", {}).get(
+                "corporate_email", self.instance.contact_info.corporate_email
+            )
+            if email != self.instance.contact_info.corporate_email:
+                errors["contact_info"] = {
+                    "corporate_email": "Нельзя изменить email учётной записи через анкету"
+                }
+        if errors:
+            raise serializers.ValidationError(errors)
+        return super().validate(attrs)
 
     class Meta:
         model = Applicant
