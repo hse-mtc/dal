@@ -39,6 +39,7 @@ from common.models.universities import Program
 
 from ams.serializers.applicants import (
     ApplicantSerializer,
+    ApplicantForStudentSerializer,
     ApplicantMutateSerializer,
     ApplicationProcessSerializer,
     ApplicantWithApplicationProcessSerializer,
@@ -143,6 +144,11 @@ class ApplicantViewSet(QuerySetScopingMixin, ModelViewSet):
         return False
 
     def get_serializer_class(self):
+        if (
+            self.action == "retrieve"
+            and self.request.query_params.get("for_student") == "true"
+        ):
+            return ApplicantForStudentSerializer
         if self.action == "applications":
             return ApplicantWithApplicationProcessSerializer
         if self.action == "application":

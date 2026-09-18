@@ -67,6 +67,16 @@ class ApplicantSerializer(serializers.ModelSerializer):
         exclude = ["id"]
 
 
+class ApplicantForStudentSerializer(ApplicantSerializer):
+    """Registration data without reading the photo or loading relatives."""
+
+    photo = None
+    family = None
+
+    class Meta(ApplicantSerializer.Meta):
+        exclude = ["id", "photo", "family"]
+
+
 class MaritalStatusField(serializers.ChoiceField):
     def to_internal_value(self, data):
         for key, display in self.choices.items():

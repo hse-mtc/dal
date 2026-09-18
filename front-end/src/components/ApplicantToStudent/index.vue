@@ -18,18 +18,6 @@
             <h3 class="sub-title">
               Регистрация студента ВУЦ из абитуриента
             </h3>
-            <AZGuard :permissions="['applicants.get.all']">
-              <a
-                :href="getApplicantAdminUrl(userId)"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="django-admin-link"
-              >
-                <ElButton size="small" icon="el-icon-setting">
-                  Открыть в Django Admin
-                </ElButton>
-              </a>
-            </AZGuard>
           </div>
 
           <!-- eslint-disable vue/html-quotes -->

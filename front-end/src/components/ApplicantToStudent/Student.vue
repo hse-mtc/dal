@@ -11,7 +11,7 @@
         Взвод
       </div>
       <ElFormItem prop="milgroup">
-        <ElSelect v-model="student.milgroup" placeholder="Выберите свой взвод" style="display: block">
+        <ElSelect v-model="student.milgroup" placeholder="Выберите взвод студента" style="display: block">
           <ElOption
             v-for="milgroup in milgroups"
             :key="milgroup.id"
@@ -44,11 +44,12 @@
 
       <ElButton
         :loading="loading"
+        :disabled="!applicantLoaded"
         type="primary"
         style="width: 190px; margin-bottom: 30px; margin-top: 20px"
         @click.native.prevent="registerStudent"
       >
-        Зарегистрироваться
+        Создать студента
       </ElButton>
     </ElForm>
   </div>
@@ -61,7 +62,7 @@ import { StudentPostsMixin } from "@/mixins/students";
 import { validCorEmail } from "@/utils/validate";
 import { postError, downloadError } from "@/utils/message";
 import { registerStudentFromApplicant } from "@/api/user";
-import { findApplicant } from "@/api/applicants";
+import { findApplicantForStudent } from "@/api/applicants";
 
 export default {
   mixins: [StudentPostsMixin],
@@ -111,6 +112,7 @@ export default {
 
     return {
       awaitingResponse: false,
+      applicantLoaded: false,
 
       student: {
         milgroup: null,
@@ -149,29 +151,27 @@ export default {
     /* eslint-enable no-underscore-dangle */
 
     try {
-      await Promise.all(responses);
+      const [response] = await Promise.all([findApplicantForStudent(this.userId), ...responses]);
+      const { data } = response;
+      const programId = data.university_info.program.id;
+
+      this.student = { ...this.student, ...data };
+      this.student.university_info.program = programId;
+      this.applicantLoaded = true;
     } catch (e) {
-      downloadError("данныe о циклах и взводах", e.response?.status);
+      downloadError("данные поступившего и взводов", e.response?.status);
     } finally {
       this.awaitingResponse = false;
     }
 
     this.studentPosts.PRIVATE_STUDENT = { label: "-", value: null };
-
-    const response = await findApplicant(this.userId);
-
-    const { data } = response;
-    delete data.family;
-    delete data.photo;
-
-    const programId = data.university_info.program.id;
-
-    this.student = { ...this.student, ...data };
-    this.student.university_info.program = programId;
   },
 
   methods: {
     async registerStudent() {
+      if (!this.applicantLoaded) {
+        return;
+      }
       const isDataValid = await this.$refs.form.validate();
       if (!isDataValid) {
         return;

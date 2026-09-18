@@ -72,6 +72,12 @@ export const findApplicant = id => request({
   method: "GET",
 });
 
+export const findApplicantForStudent = id => request({
+  url: `${BASE_API_URL}${applicants}${id}/`,
+  method: "GET",
+  params: { for_student: true },
+});
+
 export function resumbmitApplicantDocs() {
   return request({
     url: `${BASE_API_URL}${applicants}resubmit-docs/`,

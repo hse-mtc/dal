@@ -38,13 +38,9 @@
       <template #body="slotProps">
         <template v-if="field === 'index'">
           <div :class="$style.indexCell">
-            <a
-              title="Зарегистрировать в качестве студента ВУЦа"
-              :class="$style.applicantLink"
-              @click="navigateToApplicantToStudent(data[slotProps.index])"
-            >
+            <span>
               {{ startIndex + slotProps.index + 1 }}
-            </a>
+            </span>
             <el-tooltip
               effect="dark"
               content="Открыть в Django Admin"
@@ -61,6 +57,19 @@
                 <i class="el-icon-setting" />
               </a>
             </el-tooltip>
+          </div>
+        </template>
+        <template v-else-if="field === 'fullname'">
+          <div :class="$style.fullnameCell">
+            <span>{{ getCellText(slotProps.data, field) }}</span>
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-user"
+              @click.stop="navigateToApplicantToStudent(slotProps.data)"
+            >
+              Создать студента
+            </el-button>
           </div>
         </template>
         <template v-else-if="field === 'physical_entry'">
@@ -515,10 +524,11 @@ export default ApplicantsDocuments;
   gap: 8px;
 }
 
-.applicantLink {
-  color: #303133;
-  cursor: pointer;
-  text-decoration: none;
+.fullnameCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .adminButton {
