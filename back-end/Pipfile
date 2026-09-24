@@ -12,7 +12,7 @@ pylint-django = "==2.5.3"
 pytest-django = "==4.5.2"
 
 [packages]
-django = "==3.2.20"
+django = "==4.2.26"
 django-cors-headers = "==3.13.0"
 django-dbbackup = "==4.0.2"
 django-extra-fields = "==3.0.2"
