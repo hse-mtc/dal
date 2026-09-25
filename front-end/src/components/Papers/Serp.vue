@@ -69,6 +69,11 @@
               style="text-align: center; margin: 0; padding: 0; font-size: 15px"
             >
               <AZGuard :permissions="['papers.get.all']">
+                <FilePreview
+                  v-if="$route.query.category !== 'bin'"
+                  :file="document.file"
+                  class="popover-action"
+                />
                 <DownloadFile
                   v-if="$route.query.category !== 'bin'"
                   :url="document.file.content"
@@ -144,13 +149,14 @@ import * as message from "@/utils/message";
 
 import { scrollMixin } from "@/mixins/scrollMixin";
 import DownloadFile from "@/common/DownloadFile/index.vue";
+import FilePreview from "@/common/FilePreview";
 import { surnameWithInitials } from "@/utils/person";
 import { PapersModule, UserModule } from "@/store";
 import EventBus from "../EventBus";
 
 export default {
   name: "PaperSerp",
-  components: { DownloadFile },
+  components: { DownloadFile, FilePreview },
   filters: {
     moment(date) {
       return moment(date).format("DD MMMM YYYY");

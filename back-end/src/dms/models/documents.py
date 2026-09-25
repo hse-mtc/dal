@@ -1,6 +1,7 @@
 import uuid
 import datetime
 
+from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
 
@@ -8,6 +9,7 @@ from dms.models.common import (
     User,
     super_user_id,
 )
+from dms.previews import remove_cached_preview
 
 
 def upload_to(instance, filename):
@@ -71,6 +73,7 @@ def auto_delete_file_on_file_delete(sender, instance: File, **kwargs):
 
     if instance and instance.content:
         instance.content.delete(save=False)
+    remove_cached_preview(settings.MEDIA_ROOT, instance.id)
 
 
 @receiver(models.signals.pre_save, sender=File)
@@ -86,3 +89,4 @@ def auto_delete_file_on_file_change(sender, instance: File, **kwargs):
         return
     if old_instance.content != instance.content and old_instance.content:
         old_instance.content.delete(save=False)
+        remove_cached_preview(settings.MEDIA_ROOT, instance.id)

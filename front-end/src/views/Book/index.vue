@@ -97,13 +97,19 @@
               </template>
             </div>
 
-            <DownloadFile
-              class="cta"
-              :url="book.file.content"
-              :file-name="book.file.name"
-            >
-              Скачать
-            </DownloadFile>
+            <div class="file-actions">
+              <FilePreview :file="book.file" class="cta preview-cta">
+                Предпросмотр
+              </FilePreview>
+
+              <DownloadFile
+                class="cta"
+                :url="book.file.content"
+                :file-name="book.file.name"
+              >
+                Скачать
+              </DownloadFile>
+            </div>
 
             <CustomText
               variant="header"
@@ -144,6 +150,7 @@
 <script>
 import CustomText from "@/common/CustomText";
 import DownloadFile from "@/common/DownloadFile/index.vue";
+import FilePreview from "@/common/FilePreview";
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { getBook, deleteBook } from "@/api/books";
 import { surnameWithInitials } from "@/utils/person";
@@ -154,7 +161,12 @@ import {
 
 export default {
   name: "Book",
-  components: { CtaButton, CustomText, DownloadFile },
+  components: {
+    CtaButton,
+    CustomText,
+    DownloadFile,
+    FilePreview,
+  },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       // eslint-disable-next-line no-param-reassign
@@ -335,6 +347,17 @@ export default {
   background: $darkBlue;
   border-radius: $xs;
   padding: 14px 51px;
+}
+
+.file-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.preview-cta {
+  background: #fff;
+  color: $darkBlue;
+  border: 1px solid $darkBlue;
 }
 
 .subjects {

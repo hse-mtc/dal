@@ -65,6 +65,15 @@
         </CustomText>
       </div>
       <div class="buttons">
+        <FilePreview :file="data.file" class="button preview-button">
+          <CustomText
+            :mt="SIZES.m"
+            :color="COLORS.darkBlue"
+            variant="paragraph"
+          >
+            Предпросмотр
+          </CustomText>
+        </FilePreview>
         <DownloadFile :url="data.file.content" :file-name="data.file.name">
           <CustomText
             :mt="SIZES.m"
@@ -98,6 +107,7 @@
 <script>
 import CustomText from "@/common/CustomText";
 import DownloadFile from "@/common/DownloadFile/index.vue";
+import FilePreview from "@/common/FilePreview";
 import { COLORS, SIZES } from "@/utils/appConsts";
 import { saveFavBook, unsaveFavBook } from "@/api/books";
 import { surnameWithInitials } from "@/utils/person";
@@ -105,7 +115,7 @@ import { PapersModule, UserModule } from "@/store";
 
 export default {
   name: "Book",
-  components: { CustomText, DownloadFile },
+  components: { CustomText, DownloadFile, FilePreview },
   props: {
     data: {
       type: Object,
@@ -238,6 +248,11 @@ export default {
   .button {
     cursor: pointer;
     margin-left: 20px;
+  }
+
+  .preview-button {
+    margin-left: 0;
+    margin-right: 20px;
   }
 }
 </style>

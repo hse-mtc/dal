@@ -91,9 +91,15 @@
                   </div>
                 </AZGuard>
 
+                <FilePreview
+                  :file="material.file"
+                  :class="$style.fileAction"
+                />
+
                 <DownloadFile
                   :url="material.file.content"
                   :file-name="material.file.name"
+                  :class="$style.fileAction"
                 >
                   Скачать
                 </DownloadFile>
@@ -131,12 +137,14 @@ import { getDeleteRequest } from "@/utils/mutators";
 import { addTopicFile, deleteMaterial } from "@/api/material";
 import { downloadError } from "@/utils/message";
 import DownloadFile from "@/common/DownloadFile/index.vue";
+import FilePreview from "@/common/FilePreview";
 import { FileInput } from "@/common/inputs";
 
 @Component({
   name: "ClassMaterials",
   components: {
     DownloadFile,
+    FilePreview,
     FileInput,
   },
 })
@@ -317,5 +325,10 @@ export default ClassMaterials;
   margin: 20px 0 0 auto;
   font-size: 18px;
   color: #0c4b9a;
+}
+
+.fileAction {
+  display: block;
+  padding: 5px 10px;
 }
 </style>

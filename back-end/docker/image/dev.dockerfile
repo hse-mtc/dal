@@ -5,6 +5,15 @@ FROM python:3.10-bookworm
 COPY back-end/docker/image/install-postgres-client.sh /
 RUN sh install-postgres-client.sh
 
+# Convert office documents to PDF for in-browser previews.
+RUN apt-get install -y --no-install-recommends \
+    libreoffice-calc \
+    libreoffice-impress \
+    libreoffice-writer \
+    fonts-dejavu-core \
+    fonts-liberation && \
+    rm -rf /var/lib/apt/lists/*
+
 # Set working directory
 WORKDIR /back-end
 
