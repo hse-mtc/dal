@@ -17,7 +17,9 @@ from rest_framework.views import APIView
 from dms.models.documents import File
 from dms.previews import (
     PreviewConversionError,
+    PreviewPageError,
     get_or_create_pdf_preview,
+    get_or_create_slide_preview,
     get_preview_kind,
     requires_conversion,
 )
@@ -39,6 +41,7 @@ class StaticMediaView(APIView):
         media_root = Path(self.media_root).resolve()
         filename = (media_root / request_path).resolve()
         is_preview = request.query_params.get("preview") == "1"
+        preview_page_count = None
 
         try:
             filename.relative_to(media_root)
@@ -52,9 +55,11 @@ class StaticMediaView(APIView):
             except (ValidationError, ValueError):
                 file_object = None
             name = file_object.name if file_object else basename
+            original_name = name
 
             if is_preview:
-                if file_object is None or not get_preview_kind(name):
+                preview_kind = get_preview_kind(name)
+                if file_object is None or not preview_kind:
                     return JsonResponse(
                         {"detail": "Preview is not available for this file."},
                         status=415,
@@ -75,6 +80,49 @@ class StaticMediaView(APIView):
                             status=503,
                         )
                     name = f"{Path(name).stem}.pdf"
+
+                page_parameter = request.query_params.get("page")
+                if page_parameter is not None:
+                    if preview_kind != "presentation":
+                        return JsonResponse(
+                            {
+                                "detail": (
+                                    "Page preview is available only for "
+                                    "presentations."
+                                )
+                            },
+                            status=400,
+                        )
+                    try:
+                        page_number = int(page_parameter)
+                    except ValueError:
+                        return JsonResponse(
+                            {"detail": "Page number must be an integer."},
+                            status=400,
+                        )
+
+                    try:
+                        filename, preview_page_count = get_or_create_slide_preview(
+                            pdf_path=filename,
+                            media_root=self.media_root,
+                            file_id=basename,
+                            page_number=page_number,
+                        )
+                    except PreviewPageError as error:
+                        return JsonResponse(
+                            {"detail": str(error)},
+                            status=416,
+                        )
+                    except PreviewConversionError as error:
+                        logger.warning(
+                            "Could not prepare presentation slide: %s",
+                            error,
+                        )
+                        return JsonResponse(
+                            {"detail": "Could not prepare the slide."},
+                            status=503,
+                        )
+                    name = f"{Path(original_name).stem}-slide-" f"{page_number}.png"
 
             content_type = mimetypes.guess_type(name)[0] or "application/octet-stream"
 
@@ -97,6 +145,8 @@ class StaticMediaView(APIView):
                     response["Accept-Ranges"] = "bytes"
                     if is_preview:
                         response["X-Frame-Options"] = "SAMEORIGIN"
+                    if preview_page_count is not None:
+                        response["X-Preview-Page-Count"] = str(preview_page_count)
                     return response
 
             response = FileResponse(
@@ -108,6 +158,8 @@ class StaticMediaView(APIView):
             response["Accept-Ranges"] = "bytes"
             if is_preview:
                 response["X-Frame-Options"] = "SAMEORIGIN"
+            if preview_page_count is not None:
+                response["X-Preview-Page-Count"] = str(preview_page_count)
             return response
         else:
             return HttpResponseNotFound("<h1>Page not found</h1>")

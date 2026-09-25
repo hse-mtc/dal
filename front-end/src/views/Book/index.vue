@@ -99,7 +99,7 @@
 
             <div class="file-actions">
               <FilePreview :file="book.file" class="cta preview-cta">
-                Предпросмотр
+                Показать
               </FilePreview>
 
               <DownloadFile
