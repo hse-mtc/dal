@@ -244,6 +244,13 @@ export const constantRoutes = [
       },
 
       {
+        path: "formations/",
+        name: "Formations",
+        component: () => import("@/views/Formations/index.vue"),
+        meta: { title: "Построения", icon: "people", permissions: ["formation-reports.get.milgroup"] },
+      },
+
+      {
         path: "absence/",
         name: "Absence",
         component: () => import("@/views/Absence/index"),

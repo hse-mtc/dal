@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from auth.models import Permission
+from auth.models import Group, Permission
 from auth.permissions import BasePermission
 
 
@@ -45,7 +45,15 @@ class Command(BaseCommand):
         )
 
         for val in permissions:
-            Permission.objects.get_or_create(**val)
+            permission, created = Permission.objects.get_or_create(**val)
+            if (
+                created
+                and val["viewset"] in {"formation-reports", "formation-remarks"}
+                and val["scope"] == Permission.Scope.MILFACULTY
+            ):
+                head = Group.objects.filter(name="Начальник цикла").first()
+                if head:
+                    head.permissions.add(permission)
 
     def handle(self, *args, **options):
         # Info about permissions that must be saved in db could

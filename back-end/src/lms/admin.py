@@ -6,6 +6,7 @@ from lms.models.teachers import Teacher
 from lms.models.marks import Mark
 from lms.models.uniforms import Uniform
 from lms.models.absences import Absence, AbsenceTime, AbsenceAttachment
+from lms.models.formations import FormationReport, FormationRemark
 from lms.models.common import (
     Milgroup,
     Milfaculty,
@@ -47,6 +48,8 @@ admin.site.register(Lesson)
 admin.site.register(Absence)
 admin.site.register(AbsenceTime)
 admin.site.register(AbsenceAttachment)
+admin.site.register(FormationReport)
+admin.site.register(FormationRemark)
 
 # Encouragements
 admin.site.register(Encouragement)
