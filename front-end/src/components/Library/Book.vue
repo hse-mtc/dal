@@ -71,7 +71,7 @@
             :color="COLORS.darkBlue"
             variant="paragraph"
           >
-            Предпросмотр
+            Показать
           </CustomText>
         </FilePreview>
         <DownloadFile :url="data.file.content" :file-name="data.file.name">

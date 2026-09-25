@@ -10,6 +10,7 @@ RUN apt-get install -y --no-install-recommends \
     libreoffice-calc \
     libreoffice-impress \
     libreoffice-writer \
+    poppler-utils \
     fonts-dejavu-core \
     fonts-liberation && \
     rm -rf /var/lib/apt/lists/*
