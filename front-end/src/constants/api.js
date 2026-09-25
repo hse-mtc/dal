@@ -31,6 +31,11 @@ export const LMS_URLS = {
     studentFromApplicant: "lms/students/register_from_applicant/",
     teachers: "lms/teachers/registration/",
   },
+  formations: {
+    reports: "lms/formation-reports/",
+    remarks: "lms/formation-remarks/",
+    categories: "lms/choices/formation-remark-categories/",
+  },
   absence: {
     absence: "lms/absences/",
     journal: "lms/absence-journal/",

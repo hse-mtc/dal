@@ -195,7 +195,18 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
     def get_all_permissions(self, obj) -> list[str]:
-        return PermissionSerializer(obj.get_all_permissions(), many=True).data
+        result = PermissionSerializer(obj.get_all_permissions(), many=True).data
+        student = getattr(obj, "student", None)
+        if (
+            student
+            and student.post == Student.Post.MILGROUP_COMMANDER
+            and student.status == Student.Status.STUDYING
+        ):
+            commander_permissions = Permission.objects.filter(
+                viewset="formation-reports", scope=Permission.Scope.MILGROUP
+            )
+            result.extend(PermissionSerializer(commander_permissions, many=True).data)
+        return result
 
     def get_person(self, obj) -> str:
         # pylint:disable=invalid-name,redefined-builtin

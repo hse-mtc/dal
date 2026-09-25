@@ -9,6 +9,11 @@ from lms.views.import_schedule import ParseScheduleView, ImportParsedView
 from lms.views.personnel import SearchPersonnelUsersViewSet
 from lms.views.subjects import LessonSubjectViewSet
 from lms.views.uniforms import UniformViewSet
+from lms.views.formations import (
+    FormationReportViewSet,
+    FormationRemarkViewSet,
+    FormationRemarkCategoryChoicesList,
+)
 from lms.views.absences import (
     AbsenceViewSet,
     AbsenceJournalView,
@@ -85,6 +90,8 @@ routers.register("teachers/approvals", ApproveTeacherViewSet)
 routers.register("teachers", TeacherViewSet)
 
 routers.register("absences", AbsenceViewSet)
+routers.register("formation-reports", FormationReportViewSet)
+routers.register("formation-remarks", FormationRemarkViewSet)
 routers.register("absence-attachments", AbsenceAttachmentViewSet)
 routers.register("achievement-types", AchievementTypeViewSet)
 routers.register("achievements", AchievementViewSet)
@@ -107,6 +114,7 @@ routers.register("uniforms", UniformViewSet)
 choices = [
     path("absence-excuses/", AbsenceExcuseChoicesList.as_view()),
     path("absence-statuses/", AbsenceStatusChoicesList.as_view()),
+    path("formation-remark-categories/", FormationRemarkCategoryChoicesList.as_view()),
     path("encouragement-types/", EncouragementTypeChoicesList.as_view()),
     path("lesson-types/", LessonTypeChoicesList.as_view()),
     path("punishment-types/", PunishmentTypeChoicesList.as_view()),
