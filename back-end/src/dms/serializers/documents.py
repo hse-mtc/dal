@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from dms.models.documents import File
+from dms.previews import get_preview_kind
 
 
 class FileField(serializers.FileField):
@@ -26,6 +27,16 @@ class FileSerializer(serializers.ModelSerializer):
     extension = serializers.CharField(
         source="get_extension", required=False, read_only=True
     )
+    preview_url = serializers.SerializerMethodField()
+    preview_kind = serializers.SerializerMethodField()
+
+    def get_preview_url(self, obj: File):
+        if not obj.content or not get_preview_kind(obj.name):
+            return None
+        return f"{obj.content.url}?preview=1"
+
+    def get_preview_kind(self, obj: File):
+        return get_preview_kind(obj.name)
 
     class Meta:
         model = File
